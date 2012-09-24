@@ -34,7 +34,8 @@ from bungeni.alchemist.interfaces import (
 )
 
 from bungeni.ui.utils import common 
-
+from bungeni.ui.i18n import _
+from bungeni.utils import naming
 
 # ore.alchemist.model
 
@@ -503,6 +504,9 @@ class ModelDescriptor(object):
         self._fields_by_name = {}
         self.sanity_check_fields()
         log.warn("!+NO_NEED_TO_INSTANTIATE: %s" % (self))
+        # declare display/container names as i18n msgids (for extraction)
+        naming.MSGIDS.add(self.display_name)
+        naming.MSGIDS.add(self.container_name)
     
     def sanity_check_fields(self):
         """Do necessary checks on all specified Field instances.
@@ -568,4 +572,14 @@ class ModelDescriptor(object):
     def view_columns(self):
         return self._mode_columns("view")
     
-
+    
+    # fallback values for descriptor display_name and container_name
+    
+    @property
+    def display_name(self):
+        cls_name = naming.cls_name_from_descriptor_cls_name(self.__class__.__name__)
+        return _(naming.split_camel(cls_name)) # !+unicode
+    @property
+    def container_name(self):
+        return _(naming.plural(self.display_name)) # !+unicode
+    

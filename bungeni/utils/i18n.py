@@ -19,7 +19,7 @@ fixes to allow:
 - inclusion of extra paths in buildout configuration
 TODO: Submit changes to lovely.recipe code repository on launchpad
 """
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 import os
 import logging
@@ -30,7 +30,7 @@ import zc.recipe.egg
 import pkg_resources
 
 this_loc = pkg_resources.working_set.find(
-    pkg_resources.Requirement.parse('lovely.recipe')).location
+    pkg_resources.Requirement.parse("lovely.recipe")).location
 
 
 class I18n(object):

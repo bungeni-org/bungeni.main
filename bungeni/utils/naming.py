@@ -49,8 +49,13 @@ def un_camel(name):
 un_camel.first_cap_re = re.compile("(.)([A-Z][a-z]+)")
 un_camel.all_cap_re = re.compile("([a-z0-9])([A-Z])")
 
+def split_camel(name):
+    """Split a CamelCase name into separate words.
+    """
+    s1 = un_camel.first_cap_re.sub(r"\1 \2", name)
+    return un_camel.all_cap_re.sub(r"\1 \2", s1)
 
-# !+should become not needed
+
 def singular(pname):
     """Get the english singular of (plural) name.
     """
@@ -66,6 +71,10 @@ def plural(sname):
     """
     return plural.custom.get(sname, None) or "%ss" % (sname)
 plural.custom = {
+    "Address": "Addresses",
+    "Ministry": "Ministries",
+    "Signatory": "Signatories",
+    "Country": "Countries",
     "user_address": "user_addresses",
     "group_address": "group_addresses",
 }
@@ -101,4 +110,26 @@ def resolve_relative(dotted_relative, obj):
     # (instance, type) or (module)
     module_path = getattr(obj, "__module__", None) or getattr(obj, "__name__")
     return resolve(dotted_relative, obj.__module__)
+
+
+# descriptor
+
+DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
+
+def descriptor_cls_name_from_type_key(type_key):
+    cls_name = camel(type_key)
+    return "%s%s" % (cls_name, DESCRIPTOR_CLASSNAME_POSTFIX)
+
+def type_key_from_descriptor_cls_name(descriptor_cls_name):
+    return un_camel(cls_name_from_descriptor_cls_name(descriptor_cls_name))
+
+def cls_name_from_descriptor_cls_name(descriptor_cls_name):
+    assert descriptor_cls_name.endswith(DESCRIPTOR_CLASSNAME_POSTFIX)
+    return descriptor_cls_name[0:-len(DESCRIPTOR_CLASSNAME_POSTFIX)]
+
+
+# i18n msgids --
+# set of message ids built dynamically, then dumped as needed for extractor
+
+MSGIDS = set()
 

@@ -123,8 +123,6 @@ def AdmissibleDateField(name="admissible_date"):
 class UserDescriptor(ModelDescriptor):
     order = 4 # top
     localizable = True
-    display_name = _("User")
-    container_name = _("Users")
     sort_on = ["user_id"]
     sort_dir = "asc"
     
@@ -326,8 +324,8 @@ class UserDelegationDescriptor(ModelDescriptor):
     """Delegate rights to act on behalf of that user."""
     order = 3 # top
     localizable = True
-    display_name = _("Delegate to user")
-    container_name = _("Delegations")
+    #display_name = "Delegate to user"
+    #container_name = "Delegations"
     
     fields = [
         F(name="delegation_id",
@@ -347,8 +345,8 @@ class GroupMembershipRoleDescriptor(ModelDescriptor):
     """Role associated with a group membership
     """
     localizable = False
-    display_name = _("sub roles")
-    container_name = _("sub roles")
+    #display_name = "sub roles"
+    #container_name = "sub roles"
     fields = [
         F(name="role_id",
           label="sub role",
@@ -465,11 +463,10 @@ _ORDER_BY_CONTAINER_NAMES = [
     "title_types",
 ]
 
+# !+naming
 class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("parliamentmembers")
     localizable = True
-    display_name = _("Member of parliament")
-    container_name = _("Members of parliament")
     sort_on = ["user_id"]
     fields = [
         F(name="user_id",
@@ -552,8 +549,6 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
 class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
     """Membership of a user in a political group."""
     localizable = True
-    display_name = _("member")
-    container_name = _("members")
     
     fields = [
         F(name="user_id",
@@ -583,8 +578,6 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
 
 class GroupDescriptor(ModelDescriptor):
     localizable = True # !+ARCHETYPE_LOCALIZATION
-    display_name = _("Group")
-    container_name = _("Groups")
     sort_on = ["group_id"]
     sort_dir = "asc"
     _combined_name_title = "%s [%s]" % (_("Full Name"), _("Short Name"))
@@ -671,8 +664,6 @@ class GroupDescriptor(ModelDescriptor):
 class ParliamentDescriptor(GroupDescriptor):
     order = 1 # top
     localizable = True
-    display_name = _("Parliament")
-    container_name = _("Parliaments")
     sort_on = ["start_date"]
     default_field_order = [
         "full_name",
@@ -760,8 +751,6 @@ class ParliamentDescriptor(GroupDescriptor):
 class CommitteeDescriptor(GroupDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("committees")
     localizable = True
-    display_name = _("Profile")
-    container_name = _("Committees")
     
     fields = deepcopy(GroupDescriptor.fields)
     get_field(fields, "start_date").localizable = [
@@ -874,8 +863,6 @@ class CommitteeDescriptor(GroupDescriptor):
 
 class CommitteeMemberDescriptor(GroupMembershipDescriptor):
     localizable = True
-    display_name = _("Member")
-    container_name = _("Members")
     
     fields = [
         F(name="user_id",
@@ -905,8 +892,6 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
 
 class AddressDescriptor(ModelDescriptor):
     localizable = False
-    display_name = _("Address")
-    container_name = _("Addresses")
     
     fields = [
         F(name="logical_address_type",
@@ -1004,8 +989,6 @@ class UserAddressDescriptor(AddressDescriptor):
 class TitleTypeDescriptor(ModelDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("title_types")
     localizable = True
-    display_name = _("Title types")
-    container_name = _("Title types")
     fields = [
         F(name="title_name",
             label="Name",
@@ -1042,8 +1025,6 @@ class TitleTypeDescriptor(ModelDescriptor):
 
 class MemberTitleDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Title")
-    container_name = _("Titles")
     
     fields = [
         F(name="title_type_id",
@@ -1092,9 +1073,7 @@ class MemberTitleDescriptor(ModelDescriptor):
 
 class CommitteeStaffDescriptor(GroupMembershipDescriptor):
     localizable = True
-    display_name = _("Staff")
-    container_name = _("Staff")
-
+    
     fields = [
         F(name="user_id",
             label="Name",
@@ -1124,8 +1103,6 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
 class PoliticalGroupDescriptor(GroupDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("politicalgroups")
     localizable = True
-    display_name = _("political group")
-    container_name = _("political groups")
     
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
@@ -1153,8 +1130,6 @@ class PoliticalGroupDescriptor(GroupDescriptor):
 class OfficeDescriptor(GroupDescriptor):
     order = 2 # top
     localizable = True
-    display_name = _("Office")
-    container_name = _("Offices")
     
     fields = [
         F(name="identifier",
@@ -1182,8 +1157,6 @@ class OfficeDescriptor(GroupDescriptor):
 
 class OfficeMemberDescriptor(GroupMembershipDescriptor):
     localizable = True
-    display_name = _("Office Member")
-    container_name = _("Office Members")
     
     fields = [
         F(name="user_id",
@@ -1213,9 +1186,7 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
 
 class MinistryDescriptor(GroupDescriptor):
     localizable = True
-    display_name = _("Ministry")
-    container_name = _("Ministries")
-
+    
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
         F(name="identifier",
@@ -1232,9 +1203,7 @@ class MinistryDescriptor(GroupDescriptor):
 
 class MinisterDescriptor(GroupMembershipDescriptor):
     localizable = True
-    display_name = _("Minister")
-    container_name = _("Ministers")
-
+    
     fields = [
         F(name="user_id",
             label="Name",
@@ -1264,8 +1233,6 @@ class MinisterDescriptor(GroupMembershipDescriptor):
 class GovernmentDescriptor(GroupDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("governments")
     localizable = True
-    display_name = _("Government")
-    container_name = _("Governments")
     sort_on = ["start_date"]
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
@@ -1283,8 +1250,6 @@ class GovernmentDescriptor(GroupDescriptor):
 
 class AttachmentDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Attachment")
-    container_name = _("Attachments")
     default_field_order = [
         #"attachment_id",
         #"head_id",
@@ -1375,8 +1340,6 @@ class AttachmentDescriptor(ModelDescriptor):
 ''' !+VERSION_CLASS_PER_TYPE
 class AttachedFileVersionDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Attached file version")
-    container_name = _("Versions")
     
     fields = deepcopy(AttachmentDescriptor.fields)
     fields[fields.index(get_field(fields, "status"))] = Field(
@@ -1604,8 +1567,6 @@ class DocDescriptor(ModelDescriptor):
 class EventDescriptor(DocDescriptor):
     
     localizable = True
-    display_name = _("Event")
-    container_name = _("Events")
     
     # !+ phase out default_field_order...
     fields = deepcopy(DocDescriptor.fields)
@@ -1745,8 +1706,6 @@ class AttachmentVersionDescriptor(VersionDescriptor):
 class HeadingDescriptor(ModelDescriptor):
     order = 3 # top
     localizable = True
-    display_name = _("Heading")
-    container_name = _("Headings")
     
     fields = [
         F(name="text",
@@ -1765,8 +1724,6 @@ class HeadingDescriptor(ModelDescriptor):
 class AgendaItemDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("agendaitems")
     localizable = True
-    display_name = _("Agenda item")
-    container_name = _("Agenda items")
     
     fields = deepcopy(DocDescriptor.fields)
     insert_field_after(fields, "submission_date", AdmissibleDateField())
@@ -1778,16 +1735,12 @@ class AgendaItemDescriptor(DocDescriptor):
 ''' !+VERSION_CLASS_PER_TYPE
 class AgendaItemVersionDescriptor(VersionDescriptor):
     localizable = True
-    display_name = _("Agenda Item version")
-    container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 '''
 
 class MotionDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("motions")
     localizable = True
-    display_name = _("Motion")
-    container_name = _("Motions")
     fields = deepcopy(DocDescriptor.fields)
     insert_field_after(fields, "submission_date", AdmissibleDateField())
     insert_field_after(fields, "admissible_date", 
@@ -1806,20 +1759,15 @@ class MotionDescriptor(DocDescriptor):
     default_field_order.insert(
         default_field_order.index("submission_date") + 2, "notice_date")
 
-
 ''' !+VERSION_CLASS_PER_TYPE
 class MotionVersionDescriptor(VersionDescriptor):
     localizable = True
-    display_name = _("Motion version")
-    container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 '''
 
 ''' !+AuditLogView(mr, nov-2011)
 class MotionChangeDescriptor(ChangeDescriptor):
     localizable = True
-    display_name = "Changes changes"
-    container_name = "Changes"
     fields = deepcopy(ChangeDescriptor.fields)
 '''
 
@@ -1827,9 +1775,7 @@ class MotionChangeDescriptor(ChangeDescriptor):
 class BillDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("bills")
     localizable = True
-    display_name = _("Bill")
-    container_name = _("Bills")
-
+    
     fields = deepcopy(DocDescriptor.fields)
     replace_field(fields, 
         F(name="doc_type",
@@ -1891,8 +1837,6 @@ class BillDescriptor(DocDescriptor):
 ''' !+VERSION_CLASS_PER_TYPE
 class BillVersionDescriptor(VersionDescriptor):
     localizable = True
-    display_name = _("Bill version")
-    container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 '''
 
@@ -1900,8 +1844,6 @@ class BillVersionDescriptor(VersionDescriptor):
 class QuestionDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("questions")
     localizable = True
-    display_name = _("Question")
-    container_name = _("Questions")
     
     fields = deepcopy(DocDescriptor.fields)
     replace_field(fields, 
@@ -1994,16 +1936,12 @@ class QuestionDescriptor(DocDescriptor):
 ''' !+VERSION_CLASS_PER_TYPE
 class QuestionVersionDescriptor(VersionDescriptor):
     localizable = True
-    display_name = _("Question version")
-    container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 '''
 
 class TabledDocumentDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("tableddocuments")
     localizable = True
-    display_name = _("Tabled document")
-    container_name = _("Tabled documents")
     fields = deepcopy(DocDescriptor.fields)
     insert_field_after(fields, "submission_date", AdmissibleDateField())
     default_field_order = DocDescriptor.default_field_order[:]
@@ -2014,15 +1952,11 @@ class TabledDocumentDescriptor(DocDescriptor):
 ''' !+VERSION_CLASS_PER_TYPE
 class TabledDocumentVersionDescriptor(VersionDescriptor):
     localizable = True
-    display_name = _("Tabled Document version")
-    container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 '''
 
 class VenueDescriptor(ModelDescriptor):
     localizable = False
-    display_name = _("Venue")
-    container_name = _("Venues")
     fields = [
         F(name="short_name",
             label="Title",
@@ -2048,8 +1982,6 @@ class VenueDescriptor(ModelDescriptor):
 class SittingDescriptor(ModelDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("sittings")
     localizable = True
-    display_name = _("Sitting")
-    container_name = _("Sittings")
     fields = [
         F(name="short_name",
             label="Name of activity",
@@ -2131,8 +2063,6 @@ class SittingDescriptor(ModelDescriptor):
 class SessionDescriptor(ModelDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("sessions")
     localizable = True
-    display_name = _("Parliamentary session")
-    container_name = _("Parliamentary sessions")
     sort_on = ["start_date", ]
     sort_dir = "desc"
     fields = [
@@ -2187,8 +2117,6 @@ class SessionDescriptor(ModelDescriptor):
 
 class SittingAttendanceDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Sitting attendance")
-    container_name = _("Sitting attendances")
     sort_on = ["member_id"]
     fields = [
         F(name="member_id",
@@ -2218,8 +2146,6 @@ class SittingAttendanceDescriptor(ModelDescriptor):
 
 class SignatoryDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Signatory")
-    container_name = _("Signatories")
     fields = [
         F(name="status",
             label="Signature Status",
@@ -2255,8 +2181,6 @@ class SignatoryDescriptor(ModelDescriptor):
 
 class CountryDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Country")
-    container_name = _("Countries")
     fields = [
         LanguageField("language"),
         F(name="country_id",
@@ -2282,8 +2206,8 @@ class CountryDescriptor(ModelDescriptor):
 
 class ItemScheduleDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Scheduling")
-    container_name = _("Schedulings")
+    #display_name = "Scheduling"
+    #container_name = "Schedulings"
     sort_on = ["planned_order", ]
     sort_dir = "asc"
     #!+VOCABULARY(mb, nov-2010) item_id references a variety of content
@@ -2330,8 +2254,6 @@ class ItemScheduleDescriptor(ModelDescriptor):
 
 class EditorialNoteDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Editorial Note")
-    container_name = "Editorial Notes"
     fields = [
         F(name="editorial_note_id",
             label="Item",
@@ -2357,8 +2279,8 @@ class EditorialNoteDescriptor(ModelDescriptor):
 
 class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Discussion")
-    container_name = _("Discussions")
+    #display_name = "Discussion"
+    #container_name = "Discussions"
     
     fields = [
         LanguageField("language"),
@@ -2383,8 +2305,6 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
 class ReportDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("preports")
     localizable = True
-    display_name = _("Report")
-    container_name = _("Reports")
     sort_on = ["end_date"] + DocDescriptor.sort_on
     fields = [
         LanguageField("language"),

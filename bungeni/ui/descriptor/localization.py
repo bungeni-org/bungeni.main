@@ -31,7 +31,6 @@ from bungeni.utils.misc import xml_attr_str
 from bungeni.ui.descriptor import descriptor as DESCRIPTOR_MODULE
 
 CUSTOM_PATH = capi.get_path_for("forms", "ui.xml")
-DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
 
 ROLES_DEFAULT = " ".join(Field._roles)
 INDENT = " " * 4
@@ -51,6 +50,7 @@ def write_custom(old_content, content):
     open(CUSTOM_PATH, "w").write(content.encode("utf-8"))
 
 def check_reload_localization(event):
+    """Called once_per_request on IBeforeTraverseEvent events (ui.publication)."""
     if capi.is_modified_since(CUSTOM_PATH):
         localize_descriptors()
 
@@ -80,8 +80,7 @@ def localizable_descriptor_classes(module):
 # Localize descriptors from {bungeni_custom}/forms/ui.xml.
 
 def get_localizable_descriptor_class(module, type_key):
-    cls_name = naming.camel(type_key)
-    descriptor_cls_name = "%s%s" % (cls_name, DESCRIPTOR_CLASSNAME_POSTFIX)
+    descriptor_cls_name = naming.descriptor_cls_name_from_type_key(type_key)
     assert hasattr(module, descriptor_cls_name), \
         "Unknown descriptor [%s]" % (descriptor_cls_name)
     cls = getattr(module, descriptor_cls_name) # raises AttributeError
@@ -247,8 +246,7 @@ def serialize_cls(cls, depth=1):
     
     Assumption: cls (subclass of ModelDescriptor) is localizable.
     """
-    assert cls.__name__.endswith(DESCRIPTOR_CLASSNAME_POSTFIX)
-    type_key = naming.un_camel(cls.__name__[0:-len(DESCRIPTOR_CLASSNAME_POSTFIX)])
+    type_key = naming.type_key_from_descriptor_cls_name(cls.__name__)
     order = cls.order
     
     _acc = []
@@ -298,10 +296,10 @@ def dump_i18n_message_ids():
     for internationalization.
     """
     from os import path
-    from bungeni.ui.descriptor.field import F
     msgids_py_source_file_path = path.join(
         path.dirname(path.abspath(__file__)), "_field_msgids.py")
-    msgids_py_source = "\n".join([ '_(%r)' % msgid for msgid in sorted(F.msgids) ])
+    msgids_py_source = "\n".join(
+        [ "_(%r)" % msgid for msgid in sorted(naming.MSGIDS) ])
     open(msgids_py_source_file_path, "w").write(msgids_py_source.encode("utf-8"))
     print "Descriptor Field message IDs:", msgids_py_source_file_path
     print msgids_py_source

@@ -107,10 +107,10 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
             m_data["attendee"] = IDCDescriptiveProperties(member).title
             m_data["has_record"] = int(bool(attd))
             m_data["records"] = [ {
-                    "name" : self.make_id(member.user_id),
-                    "checked" : bool(attd) and (
+                    "name": self.make_id(member.user_id),
+                    "checked": bool(attd) and (
                         attd[0].attendance_type == at_type.value),
-                    "value" : at_type.value
+                    "value": at_type.value
                 } for at_type in self.attendance_types ]
             list_data.append(m_data)
         sorted_list = sorted(list_data,

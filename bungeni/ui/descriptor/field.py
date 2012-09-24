@@ -9,11 +9,12 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.descriptor.field")
 
 from zope import schema
-from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
+from bungeni.alchemist.model import Field
 from bungeni.ui import widgets
 from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import listing, constraints
+from bungeni.utils import naming
 
 
 # supported value types
@@ -216,10 +217,10 @@ def F(name=None, label=None, description=None,
     
     # i18n attributes
     if label:
-        F.msgids.add(label);
+        naming.MSGIDS.add(label);
         label = _(label) # !+unicode
     if description:
-        F.msgids.add(description)
+        naming.MSGIDS.add(description)
         description = _(description) # !+unicode
     
     # Field.*_widgets
@@ -278,5 +279,4 @@ def F(name=None, label=None, description=None,
         ) = widgets[0:4]
         
     return f
-F.msgids = set()
 
