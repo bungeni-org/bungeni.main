@@ -126,18 +126,17 @@ def getSelected(selection_column, request):
 
 from zope import schema
 from zc.table import column
-from bungeni.alchemist import model, utils
 import alchemist.ui
 def setUpColumns(domain_model):
     """Use model descriptor on domain model extract columns for table listings
     """
     columns = []
-    domain_interface = model.queryModelInterface(domain_model)
+    domain_interface = bungeni.alchemist.model.queryModelInterface(domain_model)
     
     if not domain_interface:
         raise SyntaxError("Model must have domain interface %r" % (domain_model))
     
-    descriptor_model = utils.get_descriptor(domain_interface)
+    descriptor_model = bungeni.alchemist.utils.get_descriptor(domain_interface)
     
     field_column_names = \
         descriptor_model and descriptor_model.listing_columns \

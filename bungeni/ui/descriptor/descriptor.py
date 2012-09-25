@@ -467,6 +467,8 @@ _ORDER_BY_CONTAINER_NAMES = [
 class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("parliamentmembers")
     localizable = True
+    display_name = "Member of parliament" # !+Parliament Member
+    container_name = "Members of parliament" # !+Parliament Members
     sort_on = ["user_id"]
     fields = [
         F(name="user_id",
@@ -892,7 +894,8 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
 
 class AddressDescriptor(ModelDescriptor):
     localizable = False
-    
+    display_name = "Address" # !+
+    container_name = "Addresses" # !+
     fields = [
         F(name="logical_address_type",
             label="Address Type",
@@ -989,6 +992,8 @@ class UserAddressDescriptor(AddressDescriptor):
 class TitleTypeDescriptor(ModelDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("title_types")
     localizable = True
+    display_name = "Title types" # !+
+    container_name = "Title types" # !+
     fields = [
         F(name="title_name",
             label="Name",
@@ -1025,7 +1030,8 @@ class TitleTypeDescriptor(ModelDescriptor):
 
 class MemberTitleDescriptor(ModelDescriptor):
     localizable = True
-    
+    display_name = "Title"
+    container_name = "Titles"
     fields = [
         F(name="title_type_id",
             label="Title",
@@ -2063,6 +2069,8 @@ class SittingDescriptor(ModelDescriptor):
 class SessionDescriptor(ModelDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("sessions")
     localizable = True
+    display_name = "Parliamentary session"
+    container_name = "Parliamentary sessions"
     sort_on = ["start_date", ]
     sort_dir = "desc"
     fields = [
