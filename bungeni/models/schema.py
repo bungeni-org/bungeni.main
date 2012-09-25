@@ -569,6 +569,9 @@ sitting = rdb.Table("sitting", metadata,
     # to make it possible to delete the original sitting
     rdb.Column("recurring_id", rdb.Integer),
     rdb.Column("recurring_type", rdb.String(32)),
+    rdb.Column("recurring_end_date", rdb.DateTime(timezone=False), 
+        nullable=True),
+    
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
         server_default=text("now()"),

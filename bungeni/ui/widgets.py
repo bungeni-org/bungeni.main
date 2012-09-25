@@ -631,8 +631,10 @@ class TextDateTimeWidget(TextDateWidget):
         return self.name.replace(".", "__") + "__time"
 
     def hasInput(self):
-        return (self.date_name in self.request.form and
-                self.time_name in self.request.form)
+        return ((self.date_name in self.request.form and
+                self.time_name in self.request.form) or 
+                (self.name in self.request.form)
+        )
 
     def _hasPartialInput(self):
         return (self.date_name in self.request.form or
@@ -640,6 +642,8 @@ class TextDateTimeWidget(TextDateWidget):
     
     def _getFormInput(self):
         """extract the input value from the submitted form """
+        if self.name in self.request.form:
+            return self._getFieldInput(self.name).split(" ")
         return (self._getFieldInput(self.date_name),
                 self._getFieldInput(self.time_name))
     

@@ -9,6 +9,7 @@ $Id$
 
 log = __import__("logging").getLogger("bungeni.ui.calendar")
 
+from copy import copy
 import time
 import datetime
 timedelta = datetime.timedelta
@@ -56,7 +57,7 @@ from bungeni.ui.utils import misc, url, date
 from bungeni.ui.menu import get_actions
 from bungeni.ui.widgets import LanguageLookupWidget
 from bungeni.ui.container import ContainerJSONListingRaw
-from bungeni.ui.forms.common import AddForm
+from bungeni.ui.forms.common import AddForm, DeleteForm, EditForm
 from bungeni.ui.reporting import generators
 
 from bungeni.models import domain
@@ -70,6 +71,8 @@ from bungeni.utils.capi import capi
 
 # Filter key names prefix - for available items listings
 FILTER_PREFIX = "filter_"
+
+DT_FORMAT = "%Y-%m-%d %H:%M"
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -619,7 +622,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             else:
                 error_string += error.__str__() + "\n"
         #!+CALENDAR(mb, oct-2011) Include error messages in XML
-        #return "%s \n%s" % (error_message, error_string)
+        log.error(error_message)
+        log.error(error_string)
         self.template_data.append(
             dict(action="invalid", ids=data["ids"], sitting_id=data["ids"])
         )
@@ -629,7 +633,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     def generate_dates(self, data):
         trusted = removeSecurityProxy(ISchedulingContext(self.context))
         recurrence_start_date = data["start_date"].replace(tzinfo=None)
-        recurrence_end_date = data["end_date"].replace(tzinfo=None)
+        recurrence_end_date = data["rec_end_date"].replace(tzinfo=None)
         group = trusted.get_group()
         # If group is none then there is a big problem
         assert group is not None
@@ -650,81 +654,76 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     @form.action(u"insert", failure="insert_sitting_failure_handler")
     def handle_insert(self, action, data):
         session = Session()
+        data["rec_end_date"] = data["end_date"]
         self.template_data = []
-        trusted = removeSecurityProxy(ISchedulingContext(self.context))
-        if ("rec_type" in data.keys()) and (data["rec_type"] not in [None, "none"]):
-            # !+ DATETIME(miano, dec-2010) the datetime widget above returns
-            # aware datetime objects while the current database setup only 
-            # supports naive objects. The lines below(and in subsequent actions)
-            # convert them to naive datetimes
-            length = data["event_length"]
-            sitting_length = timedelta(seconds=length)
-            base_sitting_length = sitting_length + timedelta(hours=1)
-            initial_sitting = None
-            recurrent_sittings = []
-            dates = self.generate_dates(data)
-            for count, date in enumerate(dates):
-                sitting = domain.Sitting()
-                sitting.group_id = trusted.group_id
-                sitting.short_name = data.get("short_name", None)
-                sitting.start_date = date
-                sitting.language = data["language"]
-                sitting.venue_id = data["venue"]
-                sitting.activity_type = data.get("activity_type", None)
-                sitting.meeting_type = data.get("meeting_type", None)
-                sitting.convocation_type = data.get("convocation_type", None)
-                if not count:
-                    sitting.end_date = dates[len(dates)-1] + base_sitting_length
-                    sitting.recurring_type = data.get("rec_type")
-                    sitting.recurring_id = 0
-                    sitting.sitting_length = length
-                    session.add(sitting)
-                    session.flush()
-                    initial_sitting = sitting
-                else:
-                    end_date = date + sitting_length
-                    sitting.end_date = end_date
-                    sitting.sitting_length = int(time.mktime(date.timetuple()))
-                    sitting.recurring_id = initial_sitting.sitting_id
-                    session.add(sitting)
-                    recurrent_sittings.append(sitting)
-            session.flush()
-            for s in ([initial_sitting] + recurrent_sittings):
-                notify(ObjectCreatedEvent(s))
-                self.template_data.append({
-                        "sitting_id": s.sitting_id, 
-                        "action": "inserted",
-                        "ids": data["ids"],
-                    })
-            self.request.response.setHeader("Content-type", "text/xml")
-            return self.xml_template()
+        trusted = removeSecurityProxy(ISchedulingContext(self.context))        
+        initial_sitting = None
+        length = data["event_length"]
+        if data.get("rec_type") not in [None, "none"]:
+            data["end_date"] = data["start_date"] + timedelta(seconds=length)
+            self.request.form["end_date"] = data["end_date"].strftime(DT_FORMAT)
+        data["venue_id"] = unicode(data["venue"])
+        data["headless"] = "true"
+        self.request.form["venue_id"] = unicode(data["venue"])
+        self.request.form["headless"] = "true"
+        add_form = AddForm(trusted.get_group().sittings, self.request)
+        add_form.update()
+        if not add_form.errors:
+            initial_sitting = add_form.created_object
         else:
-            sitting = domain.Sitting()
-            sitting.short_name = data.get("short_name", None)
-            sitting.start_date = data["start_date"].replace(tzinfo=None)
-            sitting.end_date = data["end_date"].replace(tzinfo=None)
-            sitting.recurring_type = data["rec_type"]
-            sitting.sitting_length = data.get("event_length")
-            sitting.recurring_id = data.get("event_pid")
-            sitting.group_id = trusted.group_id
-            sitting.language = data["language"]
-            sitting.venue_id = data["venue"]
-            sitting.activity_type = data.get("activity_type", None)
-            sitting.meeting_type = data.get("meeting_type", None)
-            sitting.convocation_type = data.get("convocation_type", None)
-            session.add(sitting)
-            session.flush()
-            notify(ObjectCreatedEvent(sitting))
-            sitting_action = "inserted"
-            if data["rec_type"] == "none":
-                sitting_action = "deleted"
-            self.template_data.append({
-                    "sitting_id": sitting.sitting_id, 
-                    "action": sitting_action,
-                    "ids": data["ids"],
-                })
-            self.request.response.setHeader("Content-type", "text/xml")
-            return self.xml_template()
+            return self.insert_sitting_failure_handler(action, data,
+                add_form.errors
+            )
+        if ("rec_type" in data.keys()) and (data["rec_type"] not in [None, "none"]):
+            # create recurring sittings
+            #base_sitting_length = sitting_length + timedelta(hours=1)
+            sitting_length = timedelta(seconds=length)
+            base_sitting_length = timedelta(seconds=length) + timedelta(hours=1)
+            dates = self.generate_dates(data)
+            initial_sitting.recurring_type = data.get("rec_type")
+            initial_sitting.recurring_id = 0
+            initial_sitting.sitting_length = length
+            for count, date in enumerate(dates):
+                if not count:
+                    #we've already added the initial sitting
+                    initial_sitting.recurring_end_date = (
+                        dates[len(dates)-1] + base_sitting_length)
+                    session.merge(initial_sitting)
+                    continue
+                
+                sitting_data = copy(data)
+                sitting_data["start_date"] = date.strftime(DT_FORMAT)
+                sitting_data["end_date"] = (date + sitting_length).strftime(DT_FORMAT)
+                
+                request_copy = copy(self.request)
+                request_copy.form = sitting_data
+                add_form = AddForm(trusted.get_group().sittings, request_copy)
+                add_form.update()
+                if not add_form.errors:
+                    # use finishConstruction API here
+                    obj = add_form.created_object                    
+                    obj.sitting_length = int(time.mktime(date.timetuple()))
+                    obj.recurring_id = initial_sitting.sitting_id
+                    session.merge(obj)
+        else:
+            initial_sitting.recurring_type = data.get("rec_type")
+            initial_sitting.recurring_id = data.get("event_pid", 0)
+            if data.get("event_length"):
+                initial_sitting.sitting_length = data.get("event_length")
+            session.merge(initial_sitting)
+            wfc = IWorkflowController(initial_sitting)
+            wfc.fireAutomatic()
+        sitting_action = "inserted"
+        if data["rec_type"] == "none":
+            sitting_action = "deleted"
+            session.merge(initial_sitting)
+        self.template_data.append({
+                "sitting_id": initial_sitting.sitting_id, 
+                "action": sitting_action,
+                "ids": data["ids"],
+            })
+        self.request.response.setHeader("Content-type", "text/xml")
+        return self.xml_template()
           
     def update_sitting_failure_handler(self, action, data, errors):
         error_string = u""
@@ -733,14 +732,27 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             if error.message not in ("", None): 
                 error_string += error.message + "\n"
             else:
-                error_string += error.__str__() + "\n"  
-        return "%s \n%s" % (error_message, error_string)   
+                error_string += error.__str__() + "\n" 
+        log.error(error_message)
+        log.error(error_string)
+        self.template_data.append(
+            dict(action="invalid", ids=data["ids"], sitting_id=data["ids"])
+        )
+        self.request.response.setHeader("Content-type", "text/xml")
+        return self.xml_template()
+
         
     @form.action(u"update", failure="update_sitting_failure_handler")
     def handle_update(self, action, data):
         session = Session()
         self.template_data = []
-        trusted = removeSecurityProxy(ISchedulingContext(self.context))
+        data["rec_end_date"] = data["end_date"]
+        self.request.form["venue_id"] = unicode(data["venue"])
+        self.request.form["headless"] = "true"
+        if ISchedulingContext.providedBy(self.context):
+            container = removeSecurityProxy(self.context.__parent__).sittings
+        else:
+            container = self.context.publishTraverse(self.request, "sittings")
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
             # updating recurring events - we assume existing events fall
             # at the beginning of the sequence and offer in place update.
@@ -748,21 +760,32 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             length = data["event_length"]
             sitting_length = timedelta(seconds=length)
             base_sitting_length = sitting_length + timedelta(hours=1)
-            siblings = session.query(domain.Sitting).filter(or_(
+            siblings_filter = or_(
                 domain.Sitting.recurring_id==parent_sitting_id,
                 domain.Sitting.sitting_id==parent_sitting_id
-            )).order_by(domain.Sitting.sitting_id).all()
+            )
+            siblings = [ sitting for sitting in
+                container.batch(order_by=(domain.Sitting.sitting_id),
+                    limit=None, filter=siblings_filter
+                )
+            ] 
             dates = self.generate_dates(data)
             current_count = len(siblings)
             for count, date in enumerate(dates):
                 is_new = not count < current_count
                 if is_new:
-                    sitting = domain.Sitting()
+                    add_form = AddForm(container, self.request)
+                    add_form.update()
+                    if add_form.errors:
+                        continue
+                    else:
+                        sitting = add_form.created_object
                 else:
                     sitting = siblings[count]
                 sitting.start_date = date
                 if not count:
-                    sitting.end_date = dates[len(dates)-1] + base_sitting_length
+                    sitting.recurring_end_date = dates[len(dates)-1] + base_sitting_length
+                    sitting.end_date = date + sitting_length
                     sitting.recurring_type = data.get("rec_type")
                     sitting.recurring_id = 0
                     sitting.sitting_length = length
@@ -770,6 +793,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                     end_date = date + sitting_length
                     sitting.end_date = end_date
                     sitting.sitting_length = int(time.mktime(date.timetuple()))
+                    sitting.recurring_type = None
                 #apply changes to parent and siblings new or existing
                 sitting.short_name = data.get("short_name", None)
                 sitting.venue_id = data["venue"]
@@ -778,14 +802,16 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 sitting.meeting_type = data.get("meeting_type", None)
                 sitting.convocation_type = data.get("convocation_type", None)
                 if is_new:
-                    sitting.group_id = trusted.group_id
                     sitting.recurring_id = parent_sitting_id
-                    session.add(sitting)
-                    session.flush()
-                    notify(ObjectCreatedEvent(sitting))
+                    session.merge(sitting)
                 else:
-                    session.flush()
-                    notify(ObjectModifiedEvent(sitting))
+                    self.request.form = {}
+                    edit_form = EditForm(sitting, self.request)
+                    edit_form.update()
+                    if edit_form.errors:
+                        continue
+                    else:
+                        session.merge(edit_form.context)
                 self.template_data.append({
                         "sitting_id": sitting.sitting_id, 
                         "action": (is_new and "inserted" or "updated"),
@@ -793,67 +819,80 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 })
             #delete any sittings outside recurring bounds
             for del_sibling in siblings[len(dates):]:
-                session.delete(del_sibling)
-                del_id = del_sibling.sitting_id
-                notify(ObjectRemovedEvent(del_sibling))
-                self.template_data.append({
-                    "sitting_id": del_id,
-                    "action": "deleted",
-                    "ids": del_id
-                })
+                delete_form = DeleteForm(del_sibling, self.request)
+                delete_form.update()
+                if delete_form.errors:
+                    continue
+                else:
+                    self.template_data.append({
+                        "sitting_id": del_sibling.sitting_id,
+                        "action": "deleted",
+                        "ids": del_sibling.sitting_id
+                    })
         else:
             sitting_id = int(data["ids"])
             parent_id = data["event_pid"]
-            sitting = session.query(domain.Sitting).get(sitting_id)
+            sitting = container.get(sitting_id)
             if sitting is None:
-                sitting = session.query(domain.Sitting).get(parent_id)
-            sitting.start_date = data["start_date"].replace(tzinfo=None)
-            sitting.end_date = data["end_date"].replace(tzinfo=None)
-            sitting.sitting_length = data.get("event_length")
-            if "language" in data.keys():
-                sitting.language = data["language"]
-            if "venue" in data.keys():
-                sitting.venue_id = data["venue"]
-            sitting.short_name = data.get("short_name", None)
-            sitting.activity_type = data.get("activity_type", None)
-            sitting.meeting_type = data.get("meeting_type", None)
-            sitting.convocation_type = data.get("convocation_type", None)
-            session.flush()
-            notify(ObjectModifiedEvent(sitting))
-            self.template_data.append({
-                    "sitting_id": sitting.sitting_id, 
-                    "action": "updated",
-                    "ids": data["ids"],
-                })
+                sitting = container.get(int(parent_id))
+            edit_form = EditForm(sitting, self.request)
+            edit_form.update()
+            if edit_form.errors:
+                return self.update_sitting_failure_handler(action, data,
+                    edit_form.errors
+                )
+            else:
+                sitting.sitting_length = data.get("event_length")
+                session.merge(sitting)
+                self.template_data.append({
+                        "sitting_id": sitting.sitting_id, 
+                        "action": "updated",
+                        "ids": data["ids"],
+                    })
         self.request.response.setHeader("Content-type", "text/xml")
         return self.xml_template()
         
     def delete_sitting_failure_handler(self, action, data, errors):
         error_string = u""
+        error_message = _(u"Error Deleting Sitting")
         for error in errors:
             if error.message not in ("", None): 
                 error_string += error.message + "\n"
             else:
-                error_string += error.__str__() + "\n"  
-        return "%s \n%s" % (error_message, error_string)  
+                error_string += error.__str__() + "\n"
+        log.error(error_message)
+        log.error(error_string)
+        self.template_data.append(
+            dict(action="inserted", ids=data["ids"], sitting_id=data["ids"])
+        )
+        self.request.response.setHeader("Content-type", "text/xml")
+        return self.xml_template()
         
     @form.action(u"delete", failure="delete_sitting_failure_handler")
     def handle_delete(self, action, data):
-        session = Session()
         self.template_data = []
-        sitting = session.query(domain.Sitting).get(data["ids"])
-        # set extra data needed by template
+        if ISchedulingContext.providedBy(self.context):
+            container = removeSecurityProxy(self.context.__parent__).sittings
+        else:
+            container = self.context.publishTraverse(self.request, "sittings")
+        sitting = container.get(int(data["ids"]))
         self.template_data = []
         if sitting is not None:
-            self.request.response.setHeader("Content-type", "text/xml")
-            self.template_data.append({
-                    "sitting_id": sitting.sitting_id, 
-                    "action": "deleted",
-                    "ids": data["ids"],
-                })
-            session.delete(sitting)
-            session.flush()
-            return self.xml_template()
+            self.request.form["headless"] = "true"
+            delete_form = DeleteForm(sitting, self.request)
+            delete_form.update()
+            if not delete_form.errors:
+                self.template_data.append({
+                        "sitting_id": sitting.sitting_id, 
+                        "action": "deleted",
+                        "ids": data["ids"],
+                    })
+            else:
+                return self.delete_sitting_failure_handler(action, data,
+                    delete_form.errors
+                )
+        self.request.response.setHeader("Content-type", "text/xml")
+        return self.xml_template()
 
 class DhtmlxCalendarSittings(BrowserView):
     """This view returns xml of the sittings for the week and group 
@@ -872,8 +911,9 @@ class DhtmlxCalendarSittings(BrowserView):
         self.__parent__ = context
           
     def get_sessions(self):
-        sessions = [ removeSecurityProxy(session) for session in
-            Session().query(domain.Session).all()
+        sessions = [ removeSecurityProxy(session) for key, session in 
+            self.context.get_group().sessions.items()
+            if checkPermission("zope.View", session)
         ]
         colours = utils.generate_event_colours(len(sessions))
         for (index, sess) in enumerate(sessions):

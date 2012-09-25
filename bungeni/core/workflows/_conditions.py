@@ -76,6 +76,8 @@ def has_agenda(context):
 def agenda_finalized(context):
     return utils.check_agenda_finalized(context)
 
+def sitting_dummy(context):
+    return context.recurring_type == 'none'
 
 # question
 
