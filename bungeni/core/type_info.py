@@ -100,8 +100,6 @@ def _get(discriminator):
         getter = _get_by_workflow
     elif IModelDescriptor.implementedBy(discri):
         getter = _get_by_descriptor_model
-    elif IModelDescriptor.providedBy(discri):
-        getter = _get_by_descriptor
     
     if getter is not None:
         ti = getter(discri)
@@ -151,8 +149,6 @@ def _get_by_descriptor_model(descriptor_model):
     for type_key, ti in _iter():
         if descriptor_model is ti.descriptor_model:
             return ti
-def _get_by_descriptor(descriptor):
-    return _get_by_descriptor_model(type(descriptor))
 
 # 
 
@@ -170,8 +166,6 @@ class TI(object):
                 the domain class
             descriptor_model
                 the descriptor model for UI views for the type
-            descriptor
-                a descriptor instance for UI views for the type
     """
     def __init__(self, workflow_key, iface):
         self.workflow_key = workflow_key
@@ -179,7 +173,6 @@ class TI(object):
         self.workflow = None
         self.domain_model = None
         self.descriptor_model = None
-        self.descriptor = None
         self.custom = False # type loaded from custom configuration
     def __str__(self):
         return str(self.__dict__)

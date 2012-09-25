@@ -126,8 +126,6 @@ def catalyse_descriptors(module):
         assert ti.domain_model is kls, "%s domain_model %s is not %s" % (
                 type_key, ti.domain_model, kls)
         ti.descriptor_model = descriptor
-        # !+NO_NEED_TO_INSTANTIATE here we cache an instance...
-        ti.descriptor = descriptor()
     
     m = "\n\nDone all workflow/descriptor setup... running with:\n\n%s\n\n" % (
             "\n\n".join(sorted(
@@ -207,10 +205,11 @@ def catalyst(ctx,
 
 
 def GenerateDomainInterface(ctx):
+    #!+NO_NEED_TO_INSTANTIATE
     # when called from zcml, most likely we'll get a class not an instance
     # if it is a class go ahead and call instantiate it
-    if isinstance(ctx.descriptor, type):
-        ctx.descriptor = ctx.descriptor()
+    #if isinstance(ctx.descriptor, type):
+    #    ctx.descriptor = ctx.descriptor()
     
     assert ctx.interface_module, "No interface module."
     

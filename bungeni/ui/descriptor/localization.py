@@ -165,15 +165,10 @@ def localize_descriptors():
                     vocabulary=xml_attr_str(f_elem, "vocabulary")
                 ))
         
-        # !+NO_NEED_TO_INSTANTIATE
-        ti = capi.get_type_info(type_key)
-        assert cls is ti.descriptor_model
-        assert cls is ti.descriptor.__class__
         # replace contents of descriptor cls fields list, retaining list instance
         cls.fields[:] = fields
-        # validate/update (existing) descriptor instance 
-        ti.descriptor.sanity_check_fields()
-        # !+/NO_NEED_TO_INSTANTIATE 
+        # validate/update descriptor model
+        cls.sanity_check_fields()
     
     log.warn("LOCALIZING DESCRIPTORS...\n           ...DONE [in %s seconds]" % (
         time()-start_time))

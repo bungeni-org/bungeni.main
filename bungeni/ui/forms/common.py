@@ -197,7 +197,10 @@ class BaseForm(formlib.form.FormBase):
 
     def filter_fields(self):
         return self.form_fields
-
+    
+    def get_form_fields(self):
+        return ui.setUpFields(self.domain_model, self.mode)
+    
     def validate(self, action, data):
         """Validation that require context must be called here,
         invariants may be defined in the descriptor."""

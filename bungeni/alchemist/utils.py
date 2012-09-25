@@ -16,7 +16,7 @@ from sqlalchemy.orm import class_mapper
 
 def get_descriptor(discriminator):
     from bungeni.utils.capi import capi
-    return capi.get_type_info(discriminator).descriptor
+    return capi.get_type_info(discriminator).descriptor_model
 
 
 # sqlalchemy 

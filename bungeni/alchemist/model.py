@@ -428,19 +428,32 @@ class Field(object):
 
 # Model
 
+class classproperty(object):
+    "A read-only class property descriptor."
+    def __init__(self, getter):
+        self.getter = getter
+    def __get__(self, instance, cls):
+        return self.getter(cls)
+
 class MDType(type):
     """Meta class for ModelDescriptor"""
     
     def __init__(self, name, bases, attrs):
         super(MDType, self).__init__(name, bases, attrs)
+        if self.fields is None:
+            self.fields = []
+        self.fields_by_name = {}
+        self.sanity_check_fields()
         self.update_default_field_order()
+        # declare display/container names as i18n msgids (for extraction)
+        naming.MSGIDS.add(self.display_name)
+        naming.MSGIDS.add(self.container_name)
     
     def update_default_field_order(self):
         """Apply default_field_order to class's fields list, any unmentioned 
         fields preserve their current order but will follow the specified fields.
         """
-        fields_by_name = dict([ (f.name, f) for f in self.fields ])
-        ordered_fields = [ fields_by_name[name] 
+        ordered_fields = [ self.fields_by_name[name]
             for name in self.default_field_order ]
         other_fields = [ f for f in self.fields 
             if f not in ordered_fields ]
@@ -468,9 +481,11 @@ class ModelDescriptor(object):
     # editable table listing !+
     #edit_grid = True 
     
-    # for subclasses to reset
-    fields = [] # [Field] - may be explicit, defined in place, constructed via 
-    # copying plus extending, etc.
+    fields = None # [Field] - may be explicit, defined in place, constructed via 
+    # copying plus extending, etc. Every sub-class must define own list instance.
+    fields_by_name = None # {field.name: field} - a cache for internal use, 
+    # initialized on class construction, must be kept "in sync" with fields
+    
     default_field_order = () # [field.name] - explicit default ordering 
     # (before Descriptor is localized) by field name, for all fields in 
     # this ModelDescriptor.
@@ -491,92 +506,95 @@ class ModelDescriptor(object):
     # sort_dir = desc | asc
     sort_dir = "desc"
     
+    '''!+NO_NEED_TO_INSTANTIATE
     def __call__(self, iface):
-        """Models are also adapters for the underlying objects
+        """Models (classes) are also adapters for the underlying objects.
         """
-        return self
+        return self.__class__
+    '''
     
     def __init__(self):
-        # !+NO_NEED_TO_INSTANTIATE(mr, jun-2011) there is really no longer 
-        # any need to singleton-instantiate each ModelDescriptor class, 
+        # !+NO_NEED_TO_INSTANTIATE(mr, jun-2011) there is no need
+        # to singleton-instantiate each ModelDescriptor class,
         # just use the class definition directly!
-        log.info("Initializing ModelDescriptor: %s" % self)
-        self._fields_by_name = {}
-        self.sanity_check_fields()
-        log.warn("!+NO_NEED_TO_INSTANTIATE: %s" % (self))
-        # declare display/container names as i18n msgids (for extraction)
-        naming.MSGIDS.add(self.display_name)
-        naming.MSGIDS.add(self.container_name)
+        raise NotImplementedError(
+            "May not initialize a ModelDescriptor class: %s" % self)
     
-    def sanity_check_fields(self):
+    @classmethod
+    def sanity_check_fields(cls):
         """Do necessary checks on all specified Field instances.
-        Also updates internally used _fields_by_name mapping.
+        Also updates internally used fields_by_name mapping.
         """
-        self._fields_by_name.clear()
-        for f in self.__class__.fields:
+        cls.fields_by_name.clear()
+        for f in cls.fields:
             name = f["name"]
-            assert name not in self._fields_by_name, \
+            assert name not in cls.fields_by_name, \
                 "[%s] Can't have two fields with same name [%s]" % (
                     self.__class__.__name__, name)
-            self._fields_by_name[name] = f
+            cls.fields_by_name[name] = f
     
-    # we use self._fields_by_name to define the following methods as this 
+    # we use cls.fields_by_name to define the following methods as this
     # makes the implementation simpler and faster.
     
-    def get(self, name, default=None):
-        #print '!+ModelDescriptor.get("%s")' % (name), self
-        return self._fields_by_name.get(name, default)
+    @classmethod
+    def get(cls, name, default=None):
+        #print '!+ModelDescriptor.get("%s")' % (name), cls
+        return cls.fields_by_name.get(name, default)
     
-    def keys(self):
-        #print "!+ModelDescriptor.keys", self
-        return self._fields_by_name.keys()
+    @classmethod
+    def keys(cls):
+        #print "!+ModelDescriptor.keys", cls
+        return cls.fields_by_name.keys()
     
-    def values(self):
-        #print "!+ModelDescriptor.values", self
-        return self._fields_by_name.values()
+    @classmethod
+    def values(cls):
+        #print "!+ModelDescriptor.values", cls
+        return cls.fields_by_name.values()
     
-    def __getitem__(self, name):
-        #print "!+ModelDescriptor.__getitem__", self
-        return self._fields_by_name[name]
+    @classmethod
+    def __getitem__(cls, name):
+        #print "!+ModelDescriptor.__getitem__", cls
+        return cls.fields_by_name[name]
     
-    def __contains__(self, name):
-        #print "!+ModelDescriptor.__contains__", self
-        return name in self._fields_by_name
+    @classmethod
+    def __contains__(cls, name):
+        #print "!+ModelDescriptor.__contains__", cls
+        return name in cls.fields_by_name
     
-    def _mode_columns(self, mode):
+    @classmethod
+    def _mode_columns(cls, mode):
         # request-relevant roles to determine displayabe fields in this mode
         request_context_roles = common.get_request_context_roles(None)
-        return [ field for field in self.__class__.fields 
+        return [ field for field in cls.fields 
             if field.is_displayable(mode, request_context_roles) ]
     
     # !+_mode_fields(mr, jan-2012)
     # !+listing_field_names(mr, jan-2012) !
     
-    @property
-    def listing_columns(self):
-        return [ f.name for f in self._mode_columns("listing") ]
-    @property
-    def search_columns(self): 
-        return self._mode_columns("search")
-    @property
-    def edit_columns(self):
-        return self._mode_columns("edit")
-    @property
-    def add_columns(self):
-        return self._mode_columns("add")
-    @property
-    def view_columns(self):
-        return self._mode_columns("view")
-    
+    @classproperty
+    def listing_columns(cls):
+        return [ f.name for f in cls._mode_columns("listing") ]
+    @classproperty
+    def search_columns(cls): 
+        return cls._mode_columns("search")
+    @classproperty
+    def edit_columns(cls):
+        return cls._mode_columns("edit")
+    @classproperty
+    def add_columns(cls):
+        return cls._mode_columns("add")
+    @classproperty
+    def view_columns(cls):
+        return cls._mode_columns("view")
     
     # fallback values for descriptor display_name and container_name
     
-    @property
-    def display_name(self):
-        cls_name = naming.cls_name_from_descriptor_cls_name(self.__class__.__name__)
+    @classproperty
+    def display_name(cls):
+        cls_name = naming.cls_name_from_descriptor_cls_name(cls.__name__)
         return _(naming.split_camel(cls_name)) # !+unicode
-    @property
-    def container_name(self):
-        return _(naming.plural(self.display_name)) # !+unicode
+    @classproperty
+    def container_name(cls):
+        return _(naming.plural(cls.display_name)) # !+unicode
 
 
