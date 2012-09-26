@@ -1998,14 +1998,14 @@ class SittingDescriptor(ModelDescriptor):
         ),
         LanguageField("language"),
         # !+DURATION, should probably be a single "compound" field, with a 
-        # dedicated and rendering/listing logic.
+        # dedicated rendering/listing logic.
         F(name="start_date",
             label="Date",
             required=True,
             localizable=[
                 show("view edit add listing"),
             ],
-            value_type="duration", # in listing "consumes" also "end_date"
+            value_type="duration", # !+DURATION, in listing "consumes" also "end_date"
             render_type="datetime",
         ),
         F(name="end_date",
@@ -2014,7 +2014,7 @@ class SittingDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit add listing"),
             ],
-            value_type="datetime", # in listing "consumed" by "start_date"
+            value_type="datetime", # !+DURATION, in listing "consumed" by "start_date"
             render_type="datetime",
         ),
         F(name="venue_id",

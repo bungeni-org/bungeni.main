@@ -56,7 +56,7 @@ def stringKey(instance):
 
 def valueKey(identity_key):
     """Returns a tuple, (domain_class, primary_key)"""
-    if not isinstance(identity_key, (str, unicode)):
+    if not isinstance(identity_key, basestring):
         raise ValueError
     properties = identity_key.split("-")
     if len(properties) != 2:

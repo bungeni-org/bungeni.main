@@ -8,7 +8,7 @@
 Recommended usage:
 `from bungeni.ui.utils import report_tools`
 
-$Id:$
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.utils.reports")
 
@@ -65,7 +65,7 @@ def match_period_spec(period):
     ()
     
     """
-    assert type(period) in [str, unicode]
+    assert isinstance(period, basestring)
     period = period.lower()
     matched = ()
     for matcher in MATCHERS:

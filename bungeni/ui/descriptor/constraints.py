@@ -34,12 +34,12 @@ class FailedRegexMatch(zope.schema.ValidationError):
 class RegexChecker(object):
     """Regex constraint factory"""
     def __init__(self, regex, e_message):
-        assert type(regex) in [str, unicode]
+        assert isinstance(regex, basestring)
         self.regex = regex
         self.e_message = e_message
     
     def __call__(self, value):
-        if type(value) in [str, unicode]:
+        if isinstance(value, basestring):
             if re.match(self.regex, value) is None:
                 raise FailedRegexMatch(self.e_message)
                 return False

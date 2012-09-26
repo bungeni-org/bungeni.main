@@ -22,7 +22,8 @@
                           current python: current and 'navTreeCurrentNode' or ''"
               tal:attributes="class string:navTreeItem visualNoMarker $current">
 	    <a tal:define="selected python: selected and 'navTreeCurrentItem' or ''"
-	       tal:attributes="href node/url;
+	       tal:attributes="href node/url; 
+                    id node/id;
 			       class string:${selected}"
 	       ><img width="16" height="16"
 	       tal:define="kind node/kind"

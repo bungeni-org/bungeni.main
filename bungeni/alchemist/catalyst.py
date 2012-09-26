@@ -306,7 +306,7 @@ def GenerateContainer(ctx,
             "%sContainer" % (ctx.domain_model.__name__)
         
         # allow passing in dotted python path
-        if isinstance(ctx.container_module, (str, unicode)):
+        if isinstance(ctx.container_module, basestring):
             ctx.container_module = resolve(ctx.container_module)
         # if not present use the domain class's module
         elif ctx.container_module is None:

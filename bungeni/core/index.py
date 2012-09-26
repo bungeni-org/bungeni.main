@@ -226,7 +226,7 @@ class ContentIndexer(object):
             if value is None:
                 value = u''
 
-            if not isinstance(value, (str, unicode)):
+            if not isinstance(value, basestring):
                 value = unicode(value)
 
             #if interfaces.ENABLE_LOGGING:

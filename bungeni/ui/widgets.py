@@ -34,8 +34,6 @@ from zc.resourcelibrary import need
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from bungeni.alchemist import Session
-from bungeni.models import domain
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, debug, date, misc, common
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
@@ -909,7 +907,7 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
         for k, v in _options.items():
             if isinstance(v, bool):
                 v = str(v).lower()
-            elif isinstance(v, (str, unicode)):
+            elif isinstance(v, basestring):
                 try:
                     v = int(v)
                 except ValueError:

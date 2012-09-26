@@ -36,7 +36,7 @@ from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
 from bungeni.ui import browser
 from bungeni.utils.capi import capi
-
+from bungeni.utils import naming
 
 def _get_context_chain(context):
     chain = []
@@ -310,34 +310,40 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
     path = ()
     
     def __new__(cls, context, request, view, manager):
-        # we have both primary and secondary navigation, so we won't
-        # show the navigation tree unless we're at a depth > 2
-        chain = _get_context_chain(context)[:-2]
+        chain = _get_context_chain(context)
+        bungeni_app = chain.pop()
+        top_section = chain.pop()
+        
         if not chain:
             return
-
+        
         # we require the tree to begin with a container object
         if not IReadContainer.providedBy(chain[-1]):
             return
 
         # remove any views from navigation tree
-        if not(IAlchemistContent.providedBy(chain[0]) 
-            or IAlchemistContainer.providedBy(chain[0])
-            or ISection.providedBy(chain[0])):
-                chain.pop(0)
-
+        if not(IAlchemistContent.providedBy(chain[0]) or 
+                IAlchemistContainer.providedBy(chain[0]) or
+                ISection.providedBy(chain[0])
+            ):
+            chain.pop(0)
+        
         subcontext = chain[-1]
         if (len(chain) > 1 or
-            IReadContainer.providedBy(subcontext) and not
-            IAlchemistContainer.providedBy(subcontext) and len(subcontext)):
+                IReadContainer.providedBy(subcontext) and 
+                not IAlchemistContainer.providedBy(subcontext) and 
+                len(subcontext)
+            ):
             inst = object.__new__(cls, context, request, view, manager)
             inst.chain = chain
+            inst.top_section_url = url.absoluteURL(top_section, request)
+            inst.id_prefix = "nav"
             return inst
 
     def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= view
+        self.__parent__ = view
         self.manager = manager
         self.name = ""
     
@@ -386,6 +392,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 self.expand_containers(nodes, containers, _url, chain, None)
 
             items.append({
+                    "id": self.get_nav_entry_id(_url),
                     "title": title,
                     "url": _url,
                     "current": True,
@@ -393,7 +400,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     "kind": "content",
                     "nodes": nodes,
                 })
-
+        
         elif IAlchemistContainer.providedBy(context):
             # loop through all managed containers of the parent
             # object, and include the present container as the
@@ -441,6 +448,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 nodes = self.expand(chain)
             i_id = getattr(props, "id","N/A")
             items.append({
+                    "id": self.get_nav_entry_id(_url),
                     "title": getattr(props, "title", i_id),
                     "url": _url,
                     "current": True,
@@ -462,9 +470,10 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
     
     def expand_containers(self, items, containers, _url, chain=(), context=None):
         #seen_context = False
+        _url = _url.rstrip("/")
         current = False
-        
         for key, container in self._sort_containers(containers):
+            
             if IAlchemistContainer.providedBy(container):
                 descriptor = utils.get_descriptor(container.domain_model)
                 if descriptor:
@@ -489,14 +498,22 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             else:
                 nodes = ()
             
+            key_url = "%s/%s" % (_url, key)
             items.append({
+                    "id": self.get_nav_entry_id(key_url),
                     "title": name,
-                    "url": "%s/%s" % (_url.rstrip("/"), key),
+                    "url": key_url,
                     "current": current,
                     "selected": selected,
                     "kind": "container",
                     "nodes": nodes,
                 })
+            assert not chain
+    
+    def get_nav_entry_id(self, _url):
+        assert _url.startswith(self.top_section_url)
+        _id = "_".join(_url[len(self.top_section_url):].strip("/").split("/"))
+        return "%s_%s" % (self.id_prefix, _id)
 
 
 class TopLevelContainerNavigation(NavigationTreeViewlet):
