@@ -45,7 +45,7 @@ change = rdb.Table("change", metadata,
     rdb.Column("audit_id", rdb.Integer, 
         rdb.ForeignKey("audit.audit_id"),
         primary_key=True),
-    rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id"), 
+    rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("user.user_id"), 
         nullable=False),
     rdb.Column("action", rdb.Unicode(16), nullable=False),
     # accumulative count, per (change.audit.audit_head_id, change.action) 
@@ -158,7 +158,7 @@ def make_audit_table(table, metadata):
 # Users 
 #######################
 
-users = rdb.Table("users", metadata,
+user = rdb.Table("user", metadata,
     rdb.Column("user_id", rdb.Integer, PrincipalSequence, primary_key=True),
     # login is our principal id
     rdb.Column("login", rdb.Unicode(80), unique=True, nullable=False),
@@ -174,13 +174,13 @@ users = rdb.Table("users", metadata,
     ),
     rdb.Column("date_of_birth", rdb.Date),
     rdb.Column("birth_country", rdb.String(2),
-        rdb.ForeignKey("countries.country_id")
+        rdb.ForeignKey("country.country_id")
     ),
     rdb.Column("birth_nationality", rdb.String(2),
-        rdb.ForeignKey("countries.country_id")
+        rdb.ForeignKey("country.country_id")
     ),
     rdb.Column("current_nationality", rdb.String(2),
-        rdb.ForeignKey("countries.country_id")
+        rdb.ForeignKey("country.country_id")
     ),
     rdb.Column("marital_status", rdb.Unicode(128),
         default=None,
@@ -212,17 +212,17 @@ users = rdb.Table("users", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-admin_users = rdb.Table("admin_users", metadata,
+admin_user = rdb.Table("admin_user", metadata,
     rdb.Column("user_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         primary_key=True,
     )
 )
 
 # associations table for many-to-many relation between user and doc
 user_doc = rdb.Table("user_doc", metadata,
-    rdb.Column("users_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+    rdb.Column("user_id", rdb.Integer,
+        rdb.ForeignKey("user.user_id"),
         primary_key=True
     ),
     rdb.Column("doc_id", rdb.Integer,
@@ -232,13 +232,13 @@ user_doc = rdb.Table("user_doc", metadata,
 )
 
 # delegate rights to act on behalf of a user to another user
-user_delegations = rdb.Table("user_delegations", metadata,
+user_delegation = rdb.Table("user_delegation", metadata,
     rdb.Column("user_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         primary_key=True
     ),
     rdb.Column("delegation_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         primary_key=True
     )
 )
@@ -246,7 +246,7 @@ user_delegations = rdb.Table("user_delegations", metadata,
 # document that user is being currently editing
 currently_editing_document = rdb.Table("currently_editing_document", metadata,
     rdb.Column("user_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         primary_key=True # !+ so, a user can only edit only ONE document at a TIME ?!?!?!?!?
     ),
     rdb.Column("currently_editing_id", rdb.Integer,
@@ -259,7 +259,7 @@ currently_editing_document = rdb.Table("currently_editing_document", metadata,
 # password restore links
 password_restore_link = rdb.Table("password_restore_link", metadata,
     rdb.Column("user_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         primary_key=True
     ),
     rdb.Column("hash", rdb.Unicode(256), nullable=False),
@@ -268,9 +268,9 @@ password_restore_link = rdb.Table("password_restore_link", metadata,
 
 
 # specific user classes
-parliament_memberships = rdb.Table("parliament_memberships", metadata,
+parliament_membership = rdb.Table("parliament_membership", metadata,
     rdb.Column("membership_id", rdb.Integer,
-        rdb.ForeignKey("user_group_memberships.membership_id"),
+        rdb.ForeignKey("user_group_membership.membership_id"),
         primary_key=True
     ),
     # The region/province/constituency (divisions and order may be in any way 
@@ -296,7 +296,7 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
 # Countries
 #########################
 
-countries = rdb.Table("countries", metadata,
+country = rdb.Table("country", metadata,
     rdb.Column("country_id", rdb.String(2), primary_key=True),
     rdb.Column("iso_name", rdb.Unicode(80), nullable=False),
     rdb.Column("country_name", rdb.Unicode(80), nullable=False),
@@ -311,7 +311,7 @@ countries = rdb.Table("countries", metadata,
 # we"re using a very normalized form here to represent all kinds of
 # groups and their relations to other things in the system.
 
-groups = rdb.Table("groups", metadata,
+group = rdb.Table("group", metadata,
     rdb.Column("group_id", rdb.Integer, PrincipalSequence, primary_key=True),
     rdb.Column("short_name", rdb.Unicode(512), nullable=False),
     rdb.Column("full_name", rdb.Unicode(1024)),
@@ -331,7 +331,7 @@ groups = rdb.Table("groups", metadata,
     # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema
     rdb.Column("group_principal_id", rdb.Unicode(50)),
     rdb.Column("parent_group_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id")
+        rdb.ForeignKey("group.group_id")
      ),
      rdb.Column("language", rdb.String(5), nullable=False),
     
@@ -342,13 +342,13 @@ groups = rdb.Table("groups", metadata,
     rdb.Column("custom4", rdb.UnicodeText, nullable=True),
 )
 # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding index on group_principal_id column
-groups_principal_id_index = rdb.Index("grp_grpprincipalid_idx", 
-    groups.c["group_principal_id"]
+group_principal_id_index = rdb.Index("grp_grpprincipalid_idx", 
+    group.c["group_principal_id"]
 )
 
-offices = rdb.Table("offices", metadata,
+office = rdb.Table("office", metadata,
     rdb.Column("office_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"),
+        rdb.ForeignKey("group.group_id"),
         primary_key=True),
     #The role that members of this office will get
     rdb.Column("office_role", rdb.Unicode(256),
@@ -357,17 +357,17 @@ offices = rdb.Table("offices", metadata,
     ),
 )
 
-parliaments = rdb.Table("parliaments", metadata,
+parliament = rdb.Table("parliament", metadata,
     rdb.Column("parliament_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"),
+        rdb.ForeignKey("group.group_id"),
         primary_key=True
     ),
    rdb.Column("election_date", rdb.Date, nullable=False),
 )
 
-committees = rdb.Table("committees", metadata,
+committee = rdb.Table("committee", metadata,
     rdb.Column("committee_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"),
+        rdb.ForeignKey("group.group_id"),
         primary_key=True
     ),
     rdb.Column("group_continuity", rdb.Unicode(128),
@@ -392,7 +392,7 @@ committees = rdb.Table("committees", metadata,
 # political group (inside the parliament)
 political_group = rdb.Table("political_group", metadata,
     rdb.Column("group_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"), primary_key=True),
+        rdb.ForeignKey("group.group_id"), primary_key=True),
     rdb.Column("logo_data", rdb.Binary),
     rdb.Column("logo_name", rdb.String(127)),
     rdb.Column("logo_mimetype", rdb.String(127)),
@@ -403,10 +403,10 @@ political_group = rdb.Table("political_group", metadata,
 #  The personal roles a person may have varies with the context. In a party
 #  one may have the role spokesperson, member, ...
 
-title_types = rdb.Table("title_types", metadata,
+title_type = rdb.Table("title_type", metadata,
     rdb.Column("title_type_id", rdb.Integer, primary_key=True),
     rdb.Column("group_id", rdb.Integer, 
-                rdb.ForeignKey("groups.group_id"), nullable=False),
+                rdb.ForeignKey("group.group_id"), nullable=False),
     rdb.Column("title_name", rdb.Unicode(40), nullable=False),
     rdb.Column("user_unique", rdb.Boolean, default=False,), # nullable=False),
     rdb.Column("sort_order", rdb.Integer(2), nullable=False),
@@ -416,7 +416,7 @@ title_types = rdb.Table("title_types", metadata,
 # sub roles to be granted when a document is assigned to a user
 group_membership_role = rdb.Table("group_membership_role", metadata,
     rdb.Column("membership_id", rdb.Integer,
-               rdb.ForeignKey("user_group_memberships.membership_id"),
+               rdb.ForeignKey("user_group_membership.membership_id"),
                primary_key=True),
     rdb.Column("role_id", rdb.Unicode(256), nullable=False,
                primary_key=True),
@@ -427,14 +427,14 @@ group_membership_role = rdb.Table("group_membership_role", metadata,
 # group memberships encompasses any user participation in a group, including
 # substitutions.
 
-user_group_memberships = rdb.Table("user_group_memberships", metadata,
+user_group_membership = rdb.Table("user_group_membership", metadata,
     rdb.Column("membership_id", rdb.Integer, primary_key=True),
     rdb.Column("user_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         nullable=False
     ),
     rdb.Column("group_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"),
+        rdb.ForeignKey("group.group_id"),
         nullable=False
     ),
     # Workflow State
@@ -455,7 +455,7 @@ user_group_memberships = rdb.Table("user_group_memberships", metadata,
     # these fields are only present when a membership is result of substitution
     # unique because you can only replace one specific group member.
     rdb.Column("replaced_id", rdb.Integer,
-        rdb.ForeignKey("user_group_memberships.membership_id"),
+        rdb.ForeignKey("user_group_membership.membership_id"),
         unique=True
     ),
     rdb.Column("substitution_type", rdb.Unicode(100)),
@@ -473,15 +473,15 @@ user_group_memberships = rdb.Table("user_group_memberships", metadata,
 # To indicate the title a persons has in a specific context (Ministry, 
 # Committee, Parliament, ...) and for what period (from - to)
 
-member_titles = rdb.Table("member_titles", metadata,
+member_title = rdb.Table("member_title", metadata,
     rdb.Column("member_title_id", rdb.Integer, primary_key=True),
     rdb.Column("membership_id", rdb.Integer,
-        rdb.ForeignKey("user_group_memberships.membership_id"),
+        rdb.ForeignKey("user_group_membership.membership_id"),
         nullable=False
     ),
     # title of user"s group role
     rdb.Column("title_type_id", rdb.Integer,
-        rdb.ForeignKey("title_types.title_type_id"),
+        rdb.ForeignKey("title_type.title_type_id"),
         nullable=False
     ),
     rdb.Column("start_date", rdb.Date, default=datetime.now, nullable=False),
@@ -496,9 +496,9 @@ member_titles = rdb.Table("member_titles", metadata,
 
 def _make_address_table(metadata, fk_key="user"):
     assert fk_key in ("user", "group")
-    table_name = "%s_addresses" % (fk_key) # e.g. user_addresses
+    table_name = "%s_address" % (fk_key) # e.g. user_address
     fk_col_name = "%s_id" % (fk_key) # e.g. user_id
-    fk_target = "%ss.%s_id" % (fk_key, fk_key) # e.g. users.user_id
+    fk_target = "%s.%s_id" % (fk_key, fk_key) # e.g. user.user_id
     return rdb.Table(table_name, metadata,
         rdb.Column("address_id", rdb.Integer, primary_key=True),
         # user|personal or group|official addresses
@@ -518,7 +518,7 @@ def _make_address_table(metadata, fk_key="user"):
         rdb.Column("city", rdb.Unicode(256), nullable=True),
         rdb.Column("zipcode", rdb.Unicode(20)),
         rdb.Column("country_id", rdb.String(2),
-            rdb.ForeignKey("countries.country_id"),
+            rdb.ForeignKey("country.country_id"),
             nullable=True
         ),
         rdb.Column("phone", rdb.Unicode(256)),
@@ -531,18 +531,18 @@ def _make_address_table(metadata, fk_key="user"):
             nullable=False
         ),
     )
-group_addresses = _make_address_table(metadata, "group")
-user_addresses = _make_address_table(metadata, "user")
+group_address = _make_address_table(metadata, "group")
+user_address = _make_address_table(metadata, "user")
 
 
 ##################
 # Activity 
 #
 
-sessions = rdb.Table("sessions", metadata,
+session = rdb.Table("session", metadata,
     rdb.Column("session_id", rdb.Integer, primary_key=True),
     rdb.Column("parliament_id", rdb.Integer, # group_id
-        rdb.ForeignKey("parliaments.parliament_id"),
+        rdb.ForeignKey("parliament.parliament_id"),
         nullable=False
     ),
     rdb.Column("short_name", rdb.Unicode(512), nullable=False), #!+ACRONYM
@@ -556,7 +556,7 @@ sessions = rdb.Table("sessions", metadata,
 sitting = rdb.Table("sitting", metadata,
     rdb.Column("sitting_id", rdb.Integer, primary_key=True),
     rdb.Column("group_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"),
+        rdb.ForeignKey("group.group_id"),
         nullable=False
     ),
     rdb.Column("short_name", rdb.Unicode(512), nullable=True),
@@ -578,7 +578,7 @@ sitting = rdb.Table("sitting", metadata,
         nullable=False
     ),
     # venue for the sitting
-    rdb.Column("venue_id", rdb.Integer, rdb.ForeignKey("venues.venue_id")),
+    rdb.Column("venue_id", rdb.Integer, rdb.ForeignKey("venue.venue_id")),
     rdb.Column("language", rdb.String(5), nullable=False),
     # other vocabularies
     rdb.Column("activity_type", rdb.Unicode(1024)),
@@ -592,7 +592,7 @@ sitting_attendance = rdb.Table("sitting_attendance", metadata,
         primary_key=True
     ),
     rdb.Column("member_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         primary_key=True
     ),
     rdb.Column("attendance_type", rdb.Unicode(128),
@@ -602,18 +602,18 @@ sitting_attendance = rdb.Table("sitting_attendance", metadata,
 )
 
 # headings
-headings = rdb.Table("headings", metadata,
+heading = rdb.Table("heading", metadata,
     rdb.Column("heading_id", rdb.Integer, primary_key=True),
     rdb.Column("text", rdb.Unicode(512), nullable=False),
     rdb.Column("status", rdb.Unicode(32)),
     rdb.Column("language", rdb.String(5), nullable=False),
-    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id"))
+    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("group.group_id"))
 )
 
 
 # venues for sittings:
 
-venues = rdb.Table("venues", metadata,
+venue = rdb.Table("venue", metadata,
     rdb.Column("venue_id", rdb.Integer, primary_key=True),
     rdb.Column("short_name", rdb.Unicode(512), nullable=False),
     rdb.Column("description", rdb.UnicodeText),
@@ -657,34 +657,34 @@ resourcebookings = rdb.Table("resourcebookings", metadata,
 # Parliament
 #######################
 
-item_votes = rdb.Table("item_votes", metadata,
+item_vote = rdb.Table("item_vote", metadata,
     rdb.Column("vote_id", rdb.Integer, primary_key=True),
     rdb.Column("item_id", rdb.Integer, # !+RENAME doc_id
         rdb.ForeignKey("doc.doc_id"),
         nullable=False
     ),
     rdb.Column("date", rdb.Date),
-    rdb.Column("affirmative_votes", rdb.Integer),
-    rdb.Column("negative_votes", rdb.Integer),
+    rdb.Column("affirmative_vote", rdb.Integer),
+    rdb.Column("negative_vote", rdb.Integer),
     rdb.Column("remarks", rdb.UnicodeText),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-item_member_votes = rdb.Table("item_member_votes", metadata,
+item_member_vote = rdb.Table("item_member_vote", metadata,
     rdb.Column("vote_id", rdb.Integer,
-        rdb.ForeignKey("item_votes"),
+        rdb.ForeignKey("item_vote"),
         primary_key=True,
         nullable=False
     ),
     rdb.Column("member_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         primary_key=True,
         nullable=False
     ),
     rdb.Column("vote", rdb.Boolean,),
 )
 
-item_schedules = rdb.Table("item_schedules", metadata,
+item_schedule = rdb.Table("item_schedule", metadata,
     rdb.Column("schedule_id", rdb.Integer, primary_key=True),
     rdb.Column("item_id", rdb.Integer, nullable=False),
     rdb.Column("item_type", rdb.String(30), nullable=False),
@@ -706,7 +706,7 @@ item_schedules = rdb.Table("item_schedules", metadata,
 editorial_note = rdb.Table("editorial_note", metadata,
     rdb.Column("editorial_note_id", rdb.Integer, primary_key=True),
     rdb.Column("text", rdb.UnicodeText, nullable=True),
-    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id"),
+    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("group.group_id"),
         nullable=True
     ),
     rdb.Column("language", rdb.String(5), nullable=False)
@@ -715,10 +715,10 @@ editorial_note = rdb.Table("editorial_note", metadata,
 # to produce the proceedings:
 # capture the discussion on this item
 
-item_schedule_discussions = rdb.Table("item_schedule_discussions", metadata,
+item_schedule_discussion = rdb.Table("item_schedule_discussion", metadata,
     rdb.Column("discussion_id", rdb.Integer, primary_key=True),
     rdb.Column("schedule_id", rdb.Integer,
-        rdb.ForeignKey("item_schedules.schedule_id"),),
+        rdb.ForeignKey("item_schedule.schedule_id"),),
     rdb.Column("body", rdb.UnicodeText),
     rdb.Column("sitting_time", rdb.Time(timezone=False)),
     rdb.Column("language", rdb.String(5),
@@ -807,7 +807,7 @@ doc = rdb.Table("doc", metadata,
     # "custodian" group, to which the doc is "assigned to" for handling.
     # !+PARLIAMENT_ID should be nullable=False, but fails on creating an Event...
     rdb.Column("parliament_id", rdb.Integer,
-        rdb.ForeignKey("parliaments.parliament_id"),
+        rdb.ForeignKey("parliament.parliament_id"),
         nullable=True
     ),
     # !+bicameral(mr, feb-2012) should parliament_id simply always be 
@@ -825,7 +825,7 @@ doc = rdb.Table("doc", metadata,
     # of the item (and not necessarily the conceptual owner, that may be an 
     # entity outside of Parliament). 
     rdb.Column("owner_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         nullable=False
     ),
     
@@ -836,7 +836,7 @@ doc = rdb.Table("doc", metadata,
     #rdb.Column("creator", rdb.Unicode(1024), nullable=True),
     # !+dc:Contributor, these are the signatories? external contributors?
     # !+seconder clarify usage (was on motion); always 1? overlapssignatories?
-    #rdb.Column("seconder_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
+    #rdb.Column("seconder_id", rdb.Integer, rdb.ForeignKey("user.user_id")),
     
     # TYPE
     # sub document type discriminator: string enum
@@ -900,7 +900,7 @@ doc = rdb.Table("doc", metadata,
     # sub-type e.g. ministry for bill & question, group for agendaitem, ...
     # !+CONTAINER_CUSTODIAN_GROUPS
     rdb.Column("group_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"),
+        rdb.ForeignKey("group.group_id"),
         nullable=True
     ),
     
@@ -980,7 +980,7 @@ signatory = rdb.Table("signatory", metadata,
         nullable=False,
     ),
     rdb.Column("user_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id"),
+        rdb.ForeignKey("user.user_id"),
         nullable=False,
     ),
     rdb.Column("status", rdb.Unicode(32)),
@@ -1015,7 +1015,7 @@ signatory_audit = make_audit_table(signatory, metadata)
 # Settings
 #######################
 
-settings = rdb.Table("settings", metadata,
+setting = rdb.Table("setting", metadata,
     rdb.Column("setting_id", rdb.Integer, primary_key=True),
     rdb.Column("object_id", rdb.Integer), # scope
     rdb.Column("object_type", rdb.String(50)),
@@ -1024,8 +1024,8 @@ settings = rdb.Table("settings", metadata,
     rdb.Column("value", rdb.String(400)),
     rdb.Column("type", rdb.String(40)),
 )
-settings_index = rdb.Index("settings_propsheet_idx", 
-    settings.c["propertysheet"]
+setting_index = rdb.Index("setting_propsheet_idx", 
+    setting.c["propertysheet"]
 )
 
 holiday = rdb.Table("holiday", metadata,
@@ -1036,7 +1036,7 @@ holiday = rdb.Table("holiday", metadata,
 )
 
 
-translations = rdb.Table("translations", metadata,
+translation = rdb.Table("translation", metadata,
     rdb.Column("object_id", rdb.Integer, primary_key=True, nullable=False),
     rdb.Column("object_type", rdb.String(50),
         primary_key=True,
@@ -1047,9 +1047,9 @@ translations = rdb.Table("translations", metadata,
     rdb.Column("field_text", rdb.UnicodeText),
 )
 translation_lookup_index = rdb.Index("translation_lookup_index",
-    translations.c.object_id,
-    translations.c.object_type,
-    translations.c.lang
+    translation.c.object_id,
+    translation.c.object_type,
+    translation.c.lang
 )
 
 #for table_name in metadata.tables.keys():

@@ -10,7 +10,7 @@ from bungeni.alchemist import Session
 
 from bungeni.models import domain, schema
 
-bookedvenues = schema.venues.join(schema.sitting)
+bookedvenues = schema.venue.join(schema.sitting)
 
 class BookedVenue(object):
     """ venue booked for a Sitting """
@@ -49,7 +49,7 @@ def get_available_venues( start, end, sitting=None ):
         if sitting.sitting_id:
             b_filter = sql.and_(b_filter,
                 schema.sitting.c.sitting_id != sitting.sitting_id)
-    query = query.filter(sql.not_(schema.venues.c.venue_id.in_(
+    query = query.filter(sql.not_(schema.venue.c.venue_id.in_(
                 sql.select( [schema.sitting.c.venue_id] ).where(b_filter) )))
     venues = query.all()
     return venues

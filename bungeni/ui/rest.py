@@ -4,9 +4,9 @@ from bungeni.rest.rest import REST
 
 from bungeni.models import domain
 
-from bungeni.models.schema import users
-from bungeni.models.schema import groups
-from bungeni.models.schema import user_group_memberships
+from bungeni.models.schema import user
+from bungeni.models.schema import group
+from bungeni.models.schema import user_group_membership
 
 from bungeni.alchemist import Session
 import sqlalchemy as rdb
@@ -24,14 +24,14 @@ class Users(REST):
     
     def GET(self):
         if "auth" in self.request.keys():
-            cols = [users.c.user_id ]
+            cols = [user.c.user_id ]
             if self.request["auth"] != "None":
-                cols.extend([users.c.password, users.c.salt])
+                cols.extend([user.c.password, user.c.salt])
             session = Session()
             connection = session.connection(domain.Group)
             res = connection.execute(rdb.select(cols,
-                                rdb.and_(users.c.login == self.request["login"],
-                                         users.c.active_p == "A"
+                                rdb.and_(user.c.login == self.request["login"],
+                                         user.c.active_p == "A"
                                 )))
             uid_tuple = res.fetchone()
             if not uid_tuple:
@@ -63,8 +63,8 @@ class Users(REST):
                 }
             return self.json_response(data)            
         else:
-            user_values = users.select(
-                [users.c.login], users.c.active_p == "A").execute()
+            user_values = user.select(
+                [user.c.login], user.c.active_p == "A").execute()
             if "user_manager_id" in self.request.keys():
                 plugin_id = self.request["user_manager_id"]
                 data = [dict(id=safeencode(r["login"]),
@@ -75,7 +75,7 @@ class Users(REST):
             return self.json_response(data)
 
     def POST(self):
-        insert = users.insert()
+        insert = user.insert()
         insert.values(login = self.request["login"],
                        salt = self.request["salt"],
                        password = self.request["password"], type="user",
@@ -85,7 +85,7 @@ class Users(REST):
                        ).execute()        
         
     def PUT(self):
-        users.update().where(users.c.user_id == self.request["uid"]).values(
+        user.update().where(user.c.user_id == self.request["uid"]).values(
             salt = self.request["salt"],
             password = self.request["password"]
             ).execute()
@@ -93,7 +93,7 @@ class Users(REST):
     def DELETE(self):
         # update user to show as inactive
         uid = self.request["uid"]
-        users.update().where(users.c.user_id == uid).values(
+        user.update().where(user.c.user_id == uid).values(
                                                      active_p = 'I').execute()        
 
 class enumerateUsers(REST):
@@ -129,45 +129,45 @@ class enumerateUsers(REST):
         elif id == "None":
             clause = None
             for key, value in kw.items():
-                column = getattr(users.c, key, None)
+                column = getattr(user.c, key, None)
                 if column:
                     clause = rdb.and_(clause, column.contains(value))
                 else:
                     like_val ='%' + str(value) +'%'
                     clause = rdb.and_(clause, 
-                        rdb.or_(users.c.login.like(like_val),
-                                users.c.first_name.like(like_val),
-                                users.c.last_name.like(like_val)
+                        rdb.or_(user.c.login.like(like_val),
+                                user.c.first_name.like(like_val),
+                                user.c.last_name.like(like_val)
                             )
                         )
         elif isinstance(id, (list, tuple)) and exact_match == "True":
             statements = []
             for i in id:
-                statements.append(users.c.login == i)
+                statements.append(user.c.login == i)
             clause = rdb.or_(*statements)
         elif isinstance( id, (list, tuple)) and exact_match != "True":
             like_val ="%" + str(id) +"%"
-            clause = rdb.or_(*(map(users.c.login.like, like_val)))
+            clause = rdb.or_(*(map(user.c.login.like, like_val)))
         elif exact_match!="True":
             like_val ="%" + str(id) +"%"
-            clause = rdb.or_(users.c.login.like(like_val),
-                             users.c.first_name.like(like_val),
-                             users.c.last_name.like(like_val)
+            clause = rdb.or_(user.c.login.like(like_val),
+                             user.c.first_name.like(like_val),
+                             user.c.last_name.like(like_val)
                             )
         else:
-            clause = users.c.login == id
+            clause = user.c.login == id
         session = Session()
         
         query = session.query(domain.User).filter(
                         rdb.and_(clause,
-                            users.c.active_p == "A",
-                            users.c.login != None
+                            user.c.active_p == "A",
+                            user.c.login != None
                                 ))
         if sort_by != "None":
             assert sort_by in ("login", "last_name")
-            query = query.order_by(getattr(users.c, sort_by))
+            query = query.order_by(getattr(user.c, sort_by))
         else:
-            query = query.order_by(users.c.last_name, users.c.first_name)
+            query = query.order_by(user.c.last_name, user.c.first_name)
                     
         if max_results != "None" and isinstance(max_results, int):
             query =query.limit(max_results)
@@ -254,7 +254,7 @@ class enumerateGroups(REST):
             query = query.filter(clause)
         if sort_by != "None":
             assert sort_by in ("group_id", "short_name")
-            query = query.order_by(getattr(groups.c, sort_by))
+            query = query.order_by(getattr(group.c, sort_by))
 
         if exact_match !="False":
             max_results = 1
@@ -375,21 +375,21 @@ class Memberships(REST):
         return self.json_response([r.group_principal_id
                 for r in session.query(domain.Group).filter(
                     rdb.and_(
-                        users.c.login == self.request["principal_id"],
-                        user_group_memberships.c.user_id == users.c.user_id,
-                        groups.c.group_id == user_group_memberships.c.group_id,
-                        groups.c.status == "active",
-                        user_group_memberships.c.active_p == True)).all()])
+                        user.c.login == self.request["principal_id"],
+                        user_group_membership.c.user_id == user.c.user_id,
+                        group.c.group_id == user_group_membership.c.group_id,
+                        group.c.status == "active",
+                        user_group_membership.c.active_p == True)).all()])
 
 
 class GroupMembers(REST):
     """ RESTful view for Group Membership listing."""
     def GET(self):
         session = Session()
-        ugm = user_group_memberships
+        ugm = user_group_membership
         user_values = session.query(domain.User).filter(
-            rdb.and_(users.c.user_id == ugm.c.user_id,
-                     groups.c.group_id == ugm.c.group_id,
+            rdb.and_(user.c.user_id == ugm.c.user_id,
+                     group.c.group_id == ugm.c.group_id,
                      domain.Group.group_principal_id == self.request["group_id"],
                      ugm.c.active_p == True)).all()
         return self.json_response([r.login for r in user_values])
@@ -399,9 +399,9 @@ class GroupMembers(REST):
         values=[r.group_principal_id
                 for r in session.query(domain.Group).filter(
                     rdb.and_(
-                        users.c.login == self.request["principal_id"],
-                        user_group_memberships.c.user_id == users.c.user_id,
-                        groups.c.group_id == user_group_memberships.c.group_id,
-                        groups.c.status == "active",
-                        user_group_memberships.c.active_p == True)).all() ]
+                        user.c.login == self.request["principal_id"],
+                        user_group_membership.c.user_id == user.c.user_id,
+                        group.c.group_id == user_group_membership.c.group_id,
+                        group.c.status == "active",
+                        user_group_membership.c.active_p == True)).all() ]
         return self.json_response(values)

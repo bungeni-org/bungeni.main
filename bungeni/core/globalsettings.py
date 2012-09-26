@@ -32,8 +32,8 @@ def get_current_parliament(date=None):
     """
     def getFilter(date):
         return sql.or_(
-            sql.between(date, schema.groups.c.start_date, schema.groups.c.end_date),
-            sql.and_(schema.groups.c.start_date<=date, schema.groups.c.end_date==None)
+            sql.between(date, schema.group.c.start_date, schema.group.c.end_date),
+            sql.and_(schema.group.c.start_date<=date, schema.group.c.end_date==None)
             )
     if not date:
         date = datetime.date.today()
@@ -47,7 +47,7 @@ def get_current_parliament(date=None):
         # needs some review if there is more than one parliament active e.g.
         # bicameral legislatures
         query = session.query(domain.Parliament).filter(
-            schema.groups.c.status=="active"
+            schema.group.c.status=="active"
         )
         try:
             return query.one()

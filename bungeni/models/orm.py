@@ -91,11 +91,11 @@ def configurable_mappings(kls):
 
 # Users
 # general representation of a person
-mapper(domain.User, schema.users,
+mapper(domain.User, schema.user,
     properties={
         "user_addresses": relation(domain.UserAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("head", remote_side=schema.users.c.user_id)
+            backref=backref("head", remote_side=schema.user.c.user_id)
         ),
         "subscriptions": relation(domain.Doc,
             secondary=schema.user_doc
@@ -105,7 +105,7 @@ mapper(domain.User, schema.users,
 
 mapper(domain.UserSubscription, schema.user_doc)
 
-mapper(domain.AdminUser, schema.admin_users,
+mapper(domain.AdminUser, schema.admin_user,
     properties={
         "user":relation(domain.User)
     }
@@ -128,56 +128,56 @@ mapper(domain.PasswordRestoreLink, schema.password_restore_link,
 
 # Groups
 
-mapper(domain.Group, schema.groups,
-    primary_key=[schema.groups.c.group_id],
+mapper(domain.Group, schema.group,
+    primary_key=[schema.group.c.group_id],
     properties={
         "members": relation(domain.GroupMembership),
         # !+GROUP_PRINCIPAL_ID(ah,sep-2011) - removing group_principal_id as 
         # orm property, this is now on the schema.
         #"group_principal_id": column_property(
         #    ("group." + schema.groups.c.type + "." +
-        #     rdb.cast(schema.groups.c.group_id, rdb.String)
+        #     rdb.cast(schema.group.c.group_id, rdb.String)
         #    ).label("group_principal_id")
         #),
         "titletypes": relation(domain.TitleType),
         "contained_groups": relation(domain.Group,
             backref=backref("parent_group",
-                remote_side=schema.groups.c.group_id)
+                remote_side=schema.group.c.group_id)
         ),
         "group_addresses": relation(domain.GroupAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("head", remote_side=schema.groups.c.group_id)
+            backref=backref("head", remote_side=schema.group.c.group_id)
         ),
-        # "keywords": relation(domain.Keyword, secondary=schema.groups_keywords)
+        # "keywords": relation(domain.Keyword, secondary=schema.group_keywords)
     },
-    polymorphic_on=schema.groups.c.type,
+    polymorphic_on=schema.group.c.type,
     polymorphic_identity=polymorphic_identity(domain.Group)
 )
 
 # Keywords for groups
 #mapper(domain.Keyword, schema.keywords,
 #    properties = {
-#       "groups": relation(domain.Group, 
-#            secondary=schema.groups_keywords, backref="keywords"
+#       "group": relation(domain.Group, 
+#            secondary=schema.group_keyword, backref="keyword"
 #       ),
 #    }
 #)
 
 # delegate rights to act on behalf of a user
-mapper(domain.UserDelegation, schema.user_delegations,
+mapper(domain.UserDelegation, schema.user_delegation,
     properties={
         "user": relation(domain.User,
             primaryjoin=rdb.and_(
-                schema.user_delegations.c.user_id == schema.users.c.user_id
+                schema.user_delegation.c.user_id == schema.user.c.user_id
             ),
             uselist=False,
             lazy=True
         ),
         "delegation": relation(domain.User,
             primaryjoin=rdb.and_(
-                (schema.user_delegations.c.delegation_id ==
-                    schema.users.c.user_id),
-                schema.users.c.active_p == "A"
+                (schema.user_delegation.c.delegation_id ==
+                    schema.user.c.user_id),
+                schema.user.c.active_p == "A"
             ),
             uselist=False,
             lazy=True
@@ -189,37 +189,37 @@ mapper(domain.UserDelegation, schema.user_delegations,
 
 mapper(domain.Government,
     inherits=domain.Group,
-    polymorphic_on=schema.groups.c.type,
+    polymorphic_on=schema.group.c.type,
     polymorphic_identity=polymorphic_identity(domain.Government)
 )
 
-mapper(domain.Parliament, schema.parliaments,
+mapper(domain.Parliament, schema.parliament,
     inherits=domain.Group,
-    polymorphic_on=schema.groups.c.type,
+    polymorphic_on=schema.group.c.type,
     polymorphic_identity=polymorphic_identity(domain.Parliament)
 )
 
 mapper(domain.PoliticalGroup, schema.political_group,
     inherits=domain.Group,
-    polymorphic_on=schema.groups.c.type,
+    polymorphic_on=schema.group.c.type,
     polymorphic_identity=polymorphic_identity(domain.PoliticalGroup)
 )
 
 mapper(domain.Ministry,
     inherits=domain.Group,
-    polymorphic_on=schema.groups.c.type,
+    polymorphic_on=schema.group.c.type,
     polymorphic_identity=polymorphic_identity(domain.Ministry)
 )
 
-mapper(domain.Committee, schema.committees,
+mapper(domain.Committee, schema.committee,
     inherits=domain.Group,
-    polymorphic_on=schema.groups.c.type,
+    polymorphic_on=schema.group.c.type,
     polymorphic_identity=polymorphic_identity(domain.Committee)
 )
 
-mapper(domain.Office, schema.offices,
+mapper(domain.Office, schema.office,
     inherits=domain.Group,
-    polymorphic_on=schema.groups.c.type,
+    polymorphic_on=schema.group.c.type,
     polymorphic_identity=polymorphic_identity(domain.Office)
 )
 
@@ -229,27 +229,27 @@ mapper(domain.Office, schema.offices,
 
 # we need to specify join clause for user explicitly because we have multiple fk
 # to the user table.
-mapper(domain.GroupMembership, schema.user_group_memberships,
+mapper(domain.GroupMembership, schema.user_group_membership,
     properties={
         "user":relation(domain.User,
-            primaryjoin=rdb.and_(schema.user_group_memberships.c.user_id ==
-                schema.users.c.user_id),
+            primaryjoin=rdb.and_(schema.user_group_membership.c.user_id ==
+                schema.user.c.user_id),
             uselist=False,
             lazy=False),
         "group":relation(domain.Group,
-            primaryjoin=(schema.user_group_memberships.c.group_id ==
-                schema.groups.c.group_id),
+            primaryjoin=(schema.user_group_membership.c.group_id ==
+                schema.group.c.group_id),
             uselist=False,
             lazy=True),
         "replaced":relation(domain.GroupMembership,
-            primaryjoin=(schema.user_group_memberships.c.replaced_id ==
-                schema.user_group_memberships.c.membership_id),
+            primaryjoin=(schema.user_group_membership.c.replaced_id ==
+                schema.user_group_membership.c.membership_id),
             uselist=False,
             lazy=True),
         "sub_roles":relation(domain.GroupMembershipRole),
         "member_titles":relation(domain.MemberTitle)
     },
-    polymorphic_on=schema.user_group_memberships.c.membership_type,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
     polymorphic_identity=polymorphic_identity(domain.GroupMembership)
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
@@ -262,40 +262,40 @@ mapper(domain.GroupMembershipRole, schema.group_membership_role,
 )
 
 # !+RENAME ParliamentMember
-mapper(domain.MemberOfParliament, schema.parliament_memberships,
+mapper(domain.MemberOfParliament, schema.parliament_membership,
     inherits=domain.GroupMembership,
-    primary_key=[schema.user_group_memberships.c.membership_id],
+    primary_key=[schema.user_group_membership.c.membership_id],
     properties={
         "start_date": column_property(
-            schema.user_group_memberships.c.start_date.label("start_date")),
+            schema.user_group_membership.c.start_date.label("start_date")),
         "end_date": column_property(
-            schema.user_group_memberships.c.end_date.label("end_date")),
+            schema.user_group_membership.c.end_date.label("end_date")),
     },
-    polymorphic_on=schema.user_group_memberships.c.membership_type,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
     polymorphic_identity=polymorphic_identity(domain.MemberOfParliament)
 )
 
 mapper(domain.Minister,
     inherits=domain.GroupMembership,
-    polymorphic_on=schema.user_group_memberships.c.membership_type,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
     polymorphic_identity=polymorphic_identity(domain.Minister)
 )
 
 mapper(domain.CommitteeMember,
     inherits=domain.GroupMembership,
-    polymorphic_on=schema.user_group_memberships.c.membership_type,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
     polymorphic_identity=polymorphic_identity(domain.CommitteeMember)
 )
 
 mapper(domain.PoliticalGroupMember,
     inherits=domain.GroupMembership,
-    polymorphic_on=schema.user_group_memberships.c.membership_type,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
     polymorphic_identity=polymorphic_identity(domain.PoliticalGroupMember)
 )
 
 mapper(domain.OfficeMember,
     inherits=domain.GroupMembership,
-    polymorphic_on=schema.user_group_memberships.c.membership_type,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
     polymorphic_identity=polymorphic_identity(domain.OfficeMember)
 )
 
@@ -303,11 +303,11 @@ mapper(domain.OfficeMember,
 
 mapper(domain.CommitteeStaff,
     inherits=domain.GroupMembership,
-    polymorphic_on=schema.user_group_memberships.c.membership_type,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
     polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
 )
 
-mapper(domain.Session, schema.sessions,
+mapper(domain.Session, schema.session,
     properties={
         "group": relation(domain.Parliament, lazy=False),
     }
@@ -316,7 +316,7 @@ mapper(domain.Session, schema.sessions,
 mapper(domain.Sitting, schema.sitting,
     properties={
         "group": relation(domain.Group,
-            primaryjoin=schema.sitting.c.group_id == schema.groups.c.group_id,
+            primaryjoin=schema.sitting.c.group_id == schema.group.c.group_id,
             uselist=False,
             lazy=True
         ),
@@ -327,7 +327,7 @@ mapper(domain.Sitting, schema.sitting,
             schema.sitting.c.end_date.label("end_date")
         ),
         "item_schedule": relation(domain.ItemSchedule,
-            order_by=schema.item_schedules.c.planned_order,
+            order_by=schema.item_schedule.c.planned_order,
             cascade="all"
         ),
         "sa_attendance": relation(domain.SittingAttendance,
@@ -347,7 +347,7 @@ mapper(domain.Resource, schema.resources)
 mapper(domain.ResourceBooking, schema.resourcebookings)
 '''
 
-mapper(domain.Venue, schema.venues)
+mapper(domain.Venue, schema.venue)
 
 ##############################
 # Document
@@ -404,7 +404,7 @@ mapper(domain.Doc, schema.doc,
     properties={
         "owner": relation(domain.User,
             primaryjoin=rdb.and_(schema.doc.c.owner_id ==
-                schema.users.c.user_id),
+                schema.user.c.user_id),
             uselist=False,
             lazy=False),
         # !+AlchemistManagedContainer, X same as amc_X.values(), property @X?
@@ -451,7 +451,7 @@ mapper(domain.Doc, schema.doc,
             viewonly=True,
         ),
         "group": relation(domain.Group,
-            primaryjoin=schema.doc.c.group_id == schema.groups.c.group_id,
+            primaryjoin=schema.doc.c.group_id == schema.group.c.group_id,
             #backref="agenda_items",
             lazy=False,
             uselist=False,
@@ -476,7 +476,7 @@ mapper(domain.Change, schema.change,
         ),
         "user": relation(domain.User,
             primaryjoin=rdb.and_(schema.change.c.user_id ==
-                schema.users.c.user_id),
+                schema.user.c.user_id),
             uselist=False,
             lazy=False
         ),
@@ -489,7 +489,7 @@ mapper(domain.Change, schema.change,
                 schema.change_tree.c.child_id == schema.change.c.audit_id,
                 # child.action == action, # !+constraint
             ),
-            backref=backref("parent", 
+            backref=backref("parent",
                 uselist=False
             ),
             uselist=True,
@@ -659,11 +659,11 @@ mapper(domain.AttachmentVersion,
     },
 )
 
-mapper(domain.Heading, schema.headings,
+mapper(domain.Heading, schema.heading,
     properties={
         "group": relation(domain.Group, 
             backref=backref("group",
-                remote_side=schema.headings.c.group_id
+                remote_side=schema.heading.c.group_id
             )
         )
     }
@@ -673,7 +673,7 @@ mapper(domain.Heading, schema.headings,
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule
 
-mapper(domain.ItemSchedule, schema.item_schedules,
+mapper(domain.ItemSchedule, schema.item_schedule,
     properties={
         "sitting": relation(domain.Sitting, uselist=False
         ),
@@ -682,7 +682,7 @@ mapper(domain.ItemSchedule, schema.item_schedules,
 
 mapper(domain.EditorialNote, schema.editorial_note)
 
-mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions,
+mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussion,
     properties={
         "scheduled_item": relation(domain.ItemSchedule, uselist=False,
             backref=backref("itemdiscussions", cascade="all, delete-orphan")
@@ -699,8 +699,8 @@ mapper(domain.Signatory, schema.signatory,
         "user": relation(domain.User, uselist=False),
         "member": relation(domain.MemberOfParliament,
             primaryjoin=rdb.and_(schema.signatory.c.user_id == 
-                schema.user_group_memberships.c.user_id),
-            secondary=schema.user_group_memberships,
+                schema.user_group_membership.c.user_id),
+            secondary=schema.user_group_membership,
             uselist=False,
         ),
         "audits": relation(domain.SignatoryAudit,
@@ -725,7 +725,7 @@ mapper(domain.Holiday, schema.holiday)
 ######################
 #
 
-mapper(domain.Country, schema.countries)
+mapper(domain.Country, schema.country)
 
 
 # !+RENAME simply to "Attendance"
@@ -736,22 +736,22 @@ mapper(domain.SittingAttendance, schema.sitting_attendance,
     }
 )
 
-mapper(domain.TitleType, schema.title_types,
+mapper(domain.TitleType, schema.title_type,
     properties={ "group": relation(domain.Group, uselist=False, lazy=False) }
 )
-mapper(domain.MemberTitle, schema.member_titles,
+mapper(domain.MemberTitle, schema.member_title,
     properties={
         "title_type": relation(domain.TitleType, uselist=False, lazy=False),
         "member": relation(domain.GroupMembership, uselist=False, lazy=False),
     }
 )
 
-mapper(domain.UserAddress, schema.user_addresses,
+mapper(domain.UserAddress, schema.user_address,
     properties={
         "country": relation(domain.Country, uselist=False, lazy=False),
     },
 )
-mapper(domain.GroupAddress, schema.group_addresses,
+mapper(domain.GroupAddress, schema.group_address,
     properties={
         "country": relation(domain.Country, uselist=False, lazy=False),
     },
@@ -784,7 +784,7 @@ mapper(domain.Report4Sitting, schema.sitting_report,
     inherits=domain.Report
 )
 
-mapper(domain.ObjectTranslation, schema.translations)
+mapper(domain.ObjectTranslation, schema.translation)
 
 
 # !+IChange-vertical-properties special case: 

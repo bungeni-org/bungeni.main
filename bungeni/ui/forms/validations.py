@@ -140,7 +140,7 @@ class AllPoliticalGroupMemberships(object):
     """
 
 all_political_group_memberships = rdb.join(
-    schema.user_group_memberships, schema.groups).join(schema.political_group)
+    schema.user_group_membership, schema.group).join(schema.political_group)
         
 rdb.orm.mapper(AllPoliticalGroupMemberships, all_political_group_memberships)
 
@@ -327,9 +327,9 @@ class GroupMemberTitle(object):
     """ Titels that may be held by multiple persons of the
     group at the same time"""
 
-group_member_title = rdb.join(schema.user_group_memberships, 
-        schema.member_titles).join(
-            schema.title_types)
+group_member_title = rdb.join(schema.user_group_membership, 
+        schema.member_title).join(
+            schema.title_type)
 
 rdb.orm.mapper(GroupMemberTitle, group_member_title)
 
@@ -344,28 +344,28 @@ def validate_member_titles(action, data, context, container):
     def get_q_user(date):
         return session.query(GroupMemberTitle).filter(
                 rdb.and_(
-                    schema.user_group_memberships.c.group_id == group_id,
-                    schema.user_group_memberships.c.membership_id == membership_id,
-                    schema.member_titles.c.title_type_id == title_type_id,
+                    schema.user_group_membership.c.group_id == group_id,
+                    schema.user_group_membership.c.membership_id == membership_id,
+                    schema.member_title.c.title_type_id == title_type_id,
                     rdb.or_(
                         rdb.between(
                             date, 
-                            schema.member_titles.c.start_date,
-                            schema.member_titles.c.end_date),
-                        schema.member_titles.c.end_date == None
+                            schema.member_title.c.start_date,
+                            schema.member_title.c.end_date),
+                        schema.member_title.c.end_date == None
                     )))
     def get_q_unique(date):
         return session.query(GroupMemberTitle).filter(
             rdb.and_(
-                schema.user_group_memberships.c.group_id == group_id,
-                schema.title_types.c.user_unique == True,
-                schema.member_titles.c.title_type_id == title_type_id,
+                schema.user_group_membership.c.group_id == group_id,
+                schema.title_type.c.user_unique == True,
+                schema.member_title.c.title_type_id == title_type_id,
                 rdb.or_(
                     rdb.between(
                         date, 
-                        schema.member_titles.c.start_date,
-                        schema.member_titles.c.end_date),
-                    schema.member_titles.c.end_date == None
+                        schema.member_title.c.start_date,
+                        schema.member_title.c.end_date),
+                    schema.member_title.c.end_date == None
                 )))
     start_date = data.get("start_date")
     end_date = data.get("end_date")
@@ -587,7 +587,7 @@ def validate_sub_role_unique(action, data, context, container):
         group_id = container.__parent__.group_id
         session = Session()
         title_types = session.query(domain.TitleType
-            ).filter(schema.title_types.c.group_id==group_id).all()
+            ).filter(schema.title_type.c.group_id==group_id).all()
         if sub_role_id in [title_type.role_id for title_type in title_types]:
             errors.append(Invalid(
                         _(u"A title with %s sub role already exists") % (

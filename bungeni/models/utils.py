@@ -184,10 +184,10 @@ def get_ministries_for_user_in_government(user_id, government_id):
     session = Session()
     query = session.query(domain.Ministry).join(domain.Minister).filter(
         rdb.and_(
-            schema.user_group_memberships.c.user_id == user_id,
-            schema.groups.c.parent_group_id == government_id,
-            schema.groups.c.status == 'active',
-            schema.user_group_memberships.c.active_p == True))
+            schema.user_group_membership.c.user_id == user_id,
+            schema.group.c.parent_group_id == government_id,
+            schema.group.c.status == 'active',
+            schema.user_group_membership.c.active_p == True))
     return query.all()
 def get_ministry_ids_for_user_in_government(user_id, government_id):
     """Get the ministry ids where user_id is a active member."""
@@ -196,17 +196,17 @@ def get_ministry_ids_for_user_in_government(user_id, government_id):
     '''
     # alternative approach to get ministry_ids: 
     connection = session.connection(domain.Group)
-    ministries_ids_query = rdb.select([schema.groups.c.group_id],
+    ministries_ids_query = rdb.select([schema.group.c.group_id],
         from_obj=[
-        rdb.join(schema.groups, schema.user_group_memberships,
-        schema.groups.c.group_id == schema.user_group_memberships.c.group_id),
+        rdb.join(schema.group, schema.user_group_membership,
+        schema.group.c.group_id == schema.user_group_membership.c.group_id),
         ],
         whereclause =
             rdb.and_(
-            schema.user_group_memberships.c.user_id==user_id,
-            schema.groups.c.parent_group_id==government_id,
-            schema.groups.c.status=='active',
-            schema.user_group_memberships.c.active_p==True))
+            schema.user_group_membership.c.user_id==user_id,
+            schema.group.c.parent_group_id==government_id,
+            schema.group.c.status=='active',
+            schema.user_group_membership.c.active_p==True))
     session = Session()
     connection = session.connection(domain.Group)
     return [ group_id[0] for group_id in 
@@ -221,31 +221,31 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
     group_ids = get_all_group_ids_in_parliament(parliament_id)
     #!+MODELS(miano, 16 march 2011) Why are these queries hardcorded?
     #TODO:Fix this
-    offices_held = rdb.select([schema.groups.c.short_name,
-        schema.groups.c.full_name,
-        schema.groups.c.type,
-        schema.title_types.c.title_name,
-        schema.member_titles.c.start_date,
-        schema.member_titles.c.end_date,
-        schema.user_group_memberships.c.start_date,
-        schema.user_group_memberships.c.end_date,
+    offices_held = rdb.select([schema.group.c.short_name,
+        schema.group.c.full_name,
+        schema.group.c.type,
+        schema.title_type.c.title_name,
+        schema.member_title.c.start_date,
+        schema.member_title.c.end_date,
+        schema.user_group_membership.c.start_date,
+        schema.user_group_membership.c.end_date,
         ],
         from_obj=[
-        rdb.join(schema.groups, schema.user_group_memberships,
-        schema.groups.c.group_id == schema.user_group_memberships.c.group_id
+        rdb.join(schema.group, schema.user_group_membership,
+        schema.group.c.group_id == schema.user_group_membership.c.group_id
             ).outerjoin(
-            schema.member_titles, schema.user_group_memberships.c.membership_id ==
-            schema.member_titles.c.membership_id).outerjoin(
-                schema.title_types,
-                schema.member_titles.c.title_type_id ==
-                    schema.title_types.c.title_type_id)],
+            schema.member_title, schema.user_group_membership.c.membership_id ==
+            schema.member_title.c.membership_id).outerjoin(
+                schema.title_type,
+                schema.member_title.c.title_type_id ==
+                    schema.title_type.c.title_type_id)],
             whereclause=rdb.and_(
-                schema.groups.c.group_id.in_(group_ids),
-                schema.user_group_memberships.c.user_id == user_id),
-            order_by=[schema.user_group_memberships.c.start_date,
-                        schema.user_group_memberships.c.end_date,
-                        schema.member_titles.c.start_date,
-                        schema.member_titles.c.end_date]
+                schema.group.c.group_id.in_(group_ids),
+                schema.user_group_membership.c.user_id == user_id),
+            order_by=[schema.user_group_membership.c.start_date,
+                        schema.user_group_membership.c.end_date,
+                        schema.member_title.c.start_date,
+                        schema.member_title.c.end_date]
             )
     o_held = connection.execute(offices_held)
     return o_held
@@ -255,10 +255,10 @@ def get_group_ids_for_user_in_parliament(user_id, parliament_id):
     session = Session()
     connection = session.connection(domain.Group)
     group_ids = get_all_group_ids_in_parliament(parliament_id)
-    my_groups = rdb.select([schema.user_group_memberships.c.group_id],
-        rdb.and_(schema.user_group_memberships.c.active_p == True,
-            schema.user_group_memberships.c.user_id == user_id,
-            schema.user_group_memberships.c.group_id.in_(group_ids)),
+    my_groups = rdb.select([schema.user_group_membership.c.group_id],
+        rdb.and_(schema.user_group_membership.c.active_p == True,
+            schema.user_group_membership.c.user_id == user_id,
+            schema.user_group_membership.c.group_id.in_(group_ids)),
         distinct=True)
     my_group_ids = []
     for group_id in connection.execute(my_groups):

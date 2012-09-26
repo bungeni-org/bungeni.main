@@ -175,7 +175,7 @@ def get_sittings_between(sittings, start, end):
 # !+ mv to models.utils
 def get_user_id(name):
     session = Session()
-    userq = session.query(domain.User).filter(schema.users.c.login == name )
+    userq = session.query(domain.User).filter(schema.user.c.login == name )
     results = userq.all()
     if results:
         user_id = results[0].user_id

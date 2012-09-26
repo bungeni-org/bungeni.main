@@ -487,7 +487,7 @@ class GroupTitleTypesFactory(SpecializedSource):
     def constructQuery(self, context):
         session= Session()
         return session.query(domain.TitleType) \
-                .filter(schema.title_types.c.group_id == context.group_id)
+                .filter(schema.title_type.c.group_id == context.group_id)
     
     def __call__(self, context=None):
         while not IBungeniGroup.providedBy(context):
@@ -530,12 +530,12 @@ component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 class MemberOfParliament(object):
     """Member of Parliament = user join group membership join parliament"""
     
-member_of_parliament = rdb.join(schema.user_group_memberships, 
-    schema.users,
-    schema.user_group_memberships.c.user_id == schema.users.c.user_id
-).join(schema.parliaments,
-    schema.user_group_memberships.c.group_id ==
-        schema.parliaments.c.parliament_id)
+member_of_parliament = rdb.join(schema.user_group_membership, 
+    schema.user,
+    schema.user_group_membership.c.user_id == schema.user.c.user_id
+).join(schema.parliament,
+    schema.user_group_membership.c.group_id ==
+        schema.parliament.c.parliament_id)
 mapper(MemberOfParliament, member_of_parliament)
 
 class MemberOfParliamentImmutableSource(SpecializedSource):
@@ -589,7 +589,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
                 ))
         user_id = getattr(context, self.value_field, None) 
         if user_id:
-            if len(query.filter(schema.users.c.user_id == user_id).all()) == 0:
+            if len(query.filter(schema.user.c.user_id == user_id).all()) == 0:
                 # The user is not a member of this parliament. 
                 # This should not happen in real life
                 # but if we do not add it her the view form will 
@@ -923,8 +923,8 @@ class UserNotMPSource(SpecializedSource):
         session= Session()
         trusted=removeSecurityProxy(context)
         parliament_id = self._get_parliament_id(trusted)
-        mp_user_ids = sql.select([schema.user_group_memberships.c.user_id], 
-            schema.user_group_memberships.c.group_id == parliament_id)
+        mp_user_ids = sql.select([schema.user_group_membership.c.user_id], 
+            schema.user_group_membership.c.group_id == parliament_id)
         query = session.query(domain.User).filter(sql.and_(
             sql.not_(domain.User.user_id.in_(mp_user_ids)),
             domain.User.active_p == "A")).order_by(
@@ -988,10 +988,10 @@ class SittingAttendanceSource(SpecializedSource):
             sitting = trusted.__parent__
             group_id = sitting.group_id
             sitting_id = sitting.sitting_id
-            all_member_ids = sql.select([schema.user_group_memberships.c.user_id], 
+            all_member_ids = sql.select([schema.user_group_membership.c.user_id], 
                     sql.and_(
-                        schema.user_group_memberships.c.group_id == group_id,
-                        schema.user_group_memberships.c.active_p == True))
+                        schema.user_group_membership.c.group_id == group_id,
+                        schema.user_group_membership.c.active_p == True))
             attended_ids = sql.select([schema.sitting_attendance.c.member_id],
                      schema.sitting_attendance.c.sitting_id == sitting_id)
             query = session.query(domain.User).filter(
@@ -1016,7 +1016,7 @@ class SittingAttendanceSource(SpecializedSource):
                    ))
         user_id = getattr(context, self.value_field, None) 
         if user_id:
-            if len(query.filter(schema.users.c.user_id == user_id).all()) == 0:
+            if len(query.filter(schema.user.c.user_id == user_id).all()) == 0:
                 session = Session()
                 ob = session.query(domain.User).get(user_id)
                 terms.append(
@@ -1102,10 +1102,10 @@ component.provideUtility(substitution, IVocabularyFactory, "substitution")
 class PartyMembership(object):
     pass
 
-party_membership = sql.join(schema.political_parties, schema.groups,
-        schema.political_parties.c.party_id == schema.groups.c.group_id
-    ).join(schema.user_group_memberships,
-        schema.groups.c.group_id == schema.user_group_memberships.c.group_id)
+party_membership = sql.join(schema.political_party, schema.group,
+        schema.political_party.c.party_id == schema.group.c.group_id
+    ).join(schema.user_group_membership,
+        schema.group.c.group_id == schema.user_group_membership.c.group_id)
 
 mapper(PartyMembership, party_membership)
 '''

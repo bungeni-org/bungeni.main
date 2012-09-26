@@ -50,8 +50,8 @@ def unschedule_doc(doc):
     # !+unschedule(mr, may-2012) review this logic here, seems clunky...
     session = Session()
     active_filter = rdb.and_(
-        schema.item_schedules.c.item_id == doc.doc_id,
-        schema.item_schedules.c.active==True
+        schema.item_schedule.c.item_id == doc.doc_id,
+        schema.item_schedule.c.active==True
     )
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()
@@ -88,8 +88,8 @@ def getActiveItemSchedule(doc_id):
     """
     session = Session()
     active_filter = rdb.and_(
-        schema.item_schedules.c.item_id == doc_id,
-        schema.item_schedules.c.active == True
+        schema.item_schedule.c.item_id == doc_id,
+        schema.item_schedule.c.active == True
     )
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()
@@ -116,10 +116,10 @@ def get_ministry(ministry_id):
 class _Minister(object):
     pass
 
-ministers = rdb.join(schema.groups,schema.user_group_memberships, 
-        schema.groups.c.group_id == schema.user_group_memberships.c.group_id
-    ).join(schema.users,
-        schema.user_group_memberships.c.user_id == schema.users.c.user_id)
+ministers = rdb.join(schema.group,schema.user_group_membership, 
+        schema.group.c.group_id == schema.user_group_membership.c.group_id
+    ).join(schema.user,
+        schema.user_group_membership.c.user_id == schema.user.c.user_id)
 mapper(_Minister, ministers)
 
 def get_ministers(ministry):
@@ -141,29 +141,29 @@ def deactivateGroupMembers(group):
     assert(end_date != None)
     connection = session.connection(domain.Group)
     connection.execute(
-        schema.user_group_memberships.update().where(
+        schema.user_group_membership.update().where(
             rdb.and_(
-                schema.user_group_memberships.c.group_id == group_id,
-                schema.user_group_memberships.c.active_p == True
+                schema.user_group_membership.c.group_id == group_id,
+                schema.user_group_membership.c.active_p == True
             )
         ).values(active_p=False)
     )
     connection.execute(
-        schema.user_group_memberships.update().where(
+        schema.user_group_membership.update().where(
             rdb.and_(
-                schema.user_group_memberships.c.group_id == group_id,
-                schema.user_group_memberships.c.end_date == None
+                schema.user_group_membership.c.group_id == group_id,
+                schema.user_group_membership.c.end_date == None
             )
         ).values(end_date=end_date)
     )
     def deactivateGroupMemberTitles(group):
-        group_members = rdb.select([schema.user_group_memberships.c.user_id],
-                 schema.user_group_memberships.c.group_id == group_id)
+        group_members = rdb.select([schema.user_group_membership.c.user_id],
+                 schema.user_group_membership.c.group_id == group_id)
         connection.execute(
-            schema.member_titles.update().where(
+            schema.member_title.update().where(
                 rdb.and_( 
-                    schema.member_titles.c.membership_id.in_(group_members),
-                    schema.member_titles.c.end_date == None
+                    schema.member_title.c.membership_id.in_(group_members),
+                    schema.member_title.c.end_date == None
                 ) 
             ).values(end_date=end_date)
         )

@@ -15,7 +15,7 @@ from zope import schema
 from zope.security.proxy import removeSecurityProxy
 import sqlalchemy as rdb
 from sqlalchemy import orm
-from schema import settings
+from schema import setting
 
 import datetime
 import interfaces
@@ -57,10 +57,10 @@ class SettingsBase( object ):
         
     def _fetch( self ):
         oid, otype = self._context()
-        values = rdb.select( [settings.c.name, settings.c.value ],
-                             rdb.and_( settings.c.propertysheet == self.settings_schema.__name__,
-                                       settings.c.object_type == otype,
-                                       settings.c.object_id == oid )
+        values = rdb.select( [setting.c.name, settings.c.value ],
+                             rdb.and_( setting.c.propertysheet == self.settings_schema.__name__,
+                                       setting.c.object_type == otype,
+                                       setting.c.object_id == oid )
                              )
         d = {}
         names = set()
@@ -97,15 +97,15 @@ class SettingsBase( object ):
                      value = svalue,
                      type = fs.__class__.__name__ )
         if k not in self._storedattrs:
-            statement = settings.insert(values=values)
+            statement = setting.insert(values=values)
             self._storedattrs.add( k )
         else:
-            statement = settings.update(
-                whereclause=rdb.and_( settings.c.name == k,
-                    settings.c.propertysheet == \
+            statement = setting.update(
+                whereclause=rdb.and_( setting.c.name == k,
+                    setting.c.propertysheet == \
                         self.settings_schema.__name__,
-                    settings.c.object_type == otype,
-                    settings.c.object_id == oid,
+                    setting.c.object_type == otype,
+                    setting.c.object_id == oid,
                 ),
                 values=values,
             )

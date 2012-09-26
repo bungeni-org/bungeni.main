@@ -185,9 +185,9 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
         sitting_id = self.context.__parent__.sitting_id
         sch = session.query(domain.ItemSchedule).filter(
             sql.and_(
-                model_schema.item_schedules.c.sitting_id == sitting_id,
-                model_schema.item_schedules.c.item_id == data["item_id"],
-                model_schema.item_schedules.c.item_type == data["item_type"]
+                model_schema.item_schedule.c.sitting_id == sitting_id,
+                model_schema.item_schedule.c.item_id == data["item_id"],
+                model_schema.item_schedule.c.item_type == data["item_type"]
             )).all()
         for i in sch:
             session.delete(i)
