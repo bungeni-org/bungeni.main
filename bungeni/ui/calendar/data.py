@@ -31,10 +31,10 @@ def get_schedulable_types():
             schedulable_types.append((key, type_info))
     return dict([
         (type_key, dict(
-            title=type_info.descriptor.container_name,
+            title=type_info.descriptor_model.container_name,
             domain_model=type_info.domain_model,
             workflow=type_info.workflow,
-            display_name=type_info.descriptor.display_name
+            display_name=type_info.descriptor_model.display_name
         ))
         for (type_key, type_info) in schedulable_types
     ])

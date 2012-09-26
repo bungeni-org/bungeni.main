@@ -642,7 +642,7 @@ class TextDateTimeWidget(TextDateWidget):
     
     def _getFormInput(self):
         """extract the input value from the submitted form """
-        if self.name in self.request.form:
+        if not self.time_name in self.request.form:
             return self._getFieldInput(self.name).split(" ")
         return (self._getFieldInput(self.date_name),
                 self._getFieldInput(self.time_name))

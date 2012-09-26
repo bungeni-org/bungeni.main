@@ -747,7 +747,9 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         session = Session()
         self.template_data = []
         data["rec_end_date"] = data["end_date"]
+        data["headless"] = 'true'
         self.request.form["venue_id"] = unicode(data["venue"])
+        data["venue_id"] = unicode(data["venue"])
         self.request.form["headless"] = "true"
         if ISchedulingContext.providedBy(self.context):
             container = removeSecurityProxy(self.context.__parent__).sittings
@@ -773,45 +775,41 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             current_count = len(siblings)
             for count, date in enumerate(dates):
                 is_new = not count < current_count
+                sitting_data = copy(data)
+                sitting_data["start_date"] = date.strftime(DT_FORMAT)
+                sitting_data["end_date"] = (date + sitting_length).strftime(DT_FORMAT)
+                request_copy = copy(self.request)
+                request_copy.form = sitting_data
                 if is_new:
-                    add_form = AddForm(container, self.request)
+                    add_form = AddForm(container, request_copy)
                     add_form.update()
                     if add_form.errors:
+                        log.error("Could not add sitting in sequence: %s",
+                            sitting_data
+                        )
                         continue
                     else:
                         sitting = add_form.created_object
+                        sitting.recurring_id = parent_sitting_id
                 else:
                     sitting = siblings[count]
-                sitting.start_date = date
                 if not count:
                     sitting.recurring_end_date = dates[len(dates)-1] + base_sitting_length
-                    sitting.end_date = date + sitting_length
                     sitting.recurring_type = data.get("rec_type")
                     sitting.recurring_id = 0
                     sitting.sitting_length = length
                 else:
-                    end_date = date + sitting_length
-                    sitting.end_date = end_date
                     sitting.sitting_length = int(time.mktime(date.timetuple()))
                     sitting.recurring_type = None
-                #apply changes to parent and siblings new or existing
-                sitting.short_name = data.get("short_name", None)
-                sitting.venue_id = data["venue"]
-                sitting.language = data["language"]
-                sitting.activity_type = data.get("activity_type", None)
-                sitting.meeting_type = data.get("meeting_type", None)
-                sitting.convocation_type = data.get("convocation_type", None)
-                if is_new:
-                    sitting.recurring_id = parent_sitting_id
-                    session.merge(sitting)
-                else:
-                    self.request.form = {}
-                    edit_form = EditForm(sitting, self.request)
+                if not is_new:
+                    edit_form = EditForm(sitting, request_copy)
                     edit_form.update()
                     if edit_form.errors:
                         continue
                     else:
                         session.merge(edit_form.context)
+                else:
+                    session.merge(sitting)
                 self.template_data.append({
                         "sitting_id": sitting.sitting_id, 
                         "action": (is_new and "inserted" or "updated"),
