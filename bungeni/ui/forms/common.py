@@ -377,9 +377,9 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     def createAndAdd(self, data):
         ob = super(AddForm, self).createAndAdd(data)
-        self.created_object = added_obj
+        self.created_object = ob
         cascade_modifications(ob)
-        return added_obj
+        return ob
     
     @formlib.form.action(
         _(u"Save and view"),
