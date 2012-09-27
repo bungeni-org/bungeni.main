@@ -11,6 +11,8 @@ $Id$
 $URL$
 """
 
+# !!!! Cleanout this source file !!!!
+
 from zope import schema
 from zope.security.proxy import removeSecurityProxy
 import sqlalchemy as rdb
@@ -53,11 +55,10 @@ class SettingsBase( object ):
     def __init__( self, context ):
         self.context = context
         self._data, self._storedattrs = self._fetch()
-
-        
+    
     def _fetch( self ):
         oid, otype = self._context()
-        values = rdb.select( [setting.c.name, settings.c.value ],
+        values = rdb.select( [setting.c.name, setting.c.value ],
                              rdb.and_( setting.c.propertysheet == self.settings_schema.__name__,
                                        setting.c.object_type == otype,
                                        setting.c.object_id == oid )
