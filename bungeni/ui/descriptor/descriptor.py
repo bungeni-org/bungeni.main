@@ -992,7 +992,7 @@ class UserAddressDescriptor(AddressDescriptor):
 class TitleTypeDescriptor(ModelDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("title_types")
     localizable = True
-    display_name = "Title types" # !+
+    display_name = "Title type" # !+
     container_name = "Title types" # !+
     fields = [
         F(name="title_name",

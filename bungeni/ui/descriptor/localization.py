@@ -227,8 +227,12 @@ def serialize_field(f, depth=2):
         if value is not None:
             if isinstance(value, bool):
                 attr_strs.append(attr_tmpl % (name, str(value).lower()))
-            else: # should all be str
+            elif isinstance(value, basestring):
                 attr_strs.append(attr_tmpl % (name, value))
+            else:
+                raise ValueError("Field [name=%s] _decl attribute [%s] "
+                    "is NOT serialized as an XML attribute" % (
+                        f.name, attr_tmpl % (name, value)))
     decl_attrs = " ".join(attr_strs)
     
     acc = []

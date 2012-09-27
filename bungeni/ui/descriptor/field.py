@@ -223,15 +223,15 @@ def F(name=None, label=None, description=None,
         naming.MSGIDS.add(description)
         description = _(description) # !+unicode
     
-    # Field.*_widgets
-    widgets = WIDGETS[(value_type, render_type)]
-
     # modes    
     if localizable is not None:
         # !+ ensure unique, normalized order
         modes = [ mode for loc in localizable for mode in loc.modes ]
     else:
         modes = []
+    
+    # Field.*_widgets
+    widgets = WIDGETS[(value_type, render_type)]
     
     # listing column params
     listing_column, listing_column_filter = None, None
@@ -241,42 +241,46 @@ def F(name=None, label=None, description=None,
             listing_column = listing_column_factory(name, label, vocabulary=vocabulary)
         listing_column_filter = widgets[5]
     
-    # Field
-    f = Field(name=name, 
-            label=label, 
-            description=description, 
-            #modes=None
-            localizable=localizable,
-            listing_column=listing_column, 
-            listing_column_filter=listing_column_filter,
-        )
-    # !+decl remember *as-is* all declarative attr values
-    f._decl = (
-        ("name", name),
-        ("label", label),
-        ("description", description),
-        ("required", required),
-        #("localizable", ),
-        ("value_type", value_type),
-        ("render_type", render_type),
-        ("vocabulary", vocabulary),
-    )
-    
     # Field.property -- see zope.schema.Field, TextLine, Choice, ...
+    render_property = None
     if render_type is not None and RENDERTYPE[render_type] is not None:
         RType = RENDERTYPE[render_type]
-        property_kwargs = dict(
+        render_property_kwargs = dict(
             title=label,
             description=description,
             required=required
         )
         if vocabulary is not None:
-            property_kwargs["vocabulary"] = vocabulary
-        property_kwargs.update(VALUETYPE[value_type])
-        f.property = RType(**property_kwargs)
+            render_property_kwargs["vocabulary"] = vocabulary
+        render_property_kwargs.update(VALUETYPE[value_type])
+        render_property = RType(**render_property_kwargs)
     
-    (f.view_widget, f.edit_widget, f.add_widget, f.search_widget
-        ) = widgets[0:4]
-        
+    view_widget, edit_widget, add_widget, search_widget = widgets[0:4]
+    
+    # Field
+    f = Field(name=name, 
+            label=label, 
+            description=description, 
+            #modes=None, #!+inferred from localizable
+            localizable=localizable,
+            property=render_property,
+            listing_column=listing_column, 
+            listing_column_filter=listing_column_filter,
+            view_widget=view_widget, 
+            edit_widget=edit_widget, 
+            add_widget=add_widget, 
+            search_widget=search_widget,
+        )
+    # !+decl remember all declarative attrs *as-is*
+    f._decl = (
+        ("name", name),
+        ("label", label),
+        ("description", description),
+        ("required", required),
+        #("localizable", localizable),
+        ("value_type", value_type),
+        ("render_type", render_type),
+        ("vocabulary", vocabulary),
+    )
     return f
 

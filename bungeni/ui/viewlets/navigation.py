@@ -508,7 +508,6 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     "kind": "container",
                     "nodes": nodes,
                 })
-            assert not chain
     
     def get_nav_entry_id(self, _url):
         assert _url.startswith(self.top_section_url)

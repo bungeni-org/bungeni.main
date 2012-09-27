@@ -303,7 +303,8 @@ class Field(object):
     
     def __init__(self, 
             name=None, label=None, description=None, 
-            modes=None, localizable=None, property=None,
+            #modes=None, #!+inferred from localizable
+            localizable=None, property=None,
             listing_column=None, listing_column_filter=None,
             view_widget=None, edit_widget=None, add_widget=None, 
             search_widget=None,
