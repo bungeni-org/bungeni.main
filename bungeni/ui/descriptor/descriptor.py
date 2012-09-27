@@ -33,38 +33,8 @@ def insert_field_after(fields, name, field):
     fields.insert(fields.index(get_field(fields, name)) + 1, field)
     
 
-####
 # Fields
 
-# Notes:
-#
-# Field parameters, if specified, should be in the following order:
-#   name, label, description, modes, localizable, property, 
-#   listing_column, view_widget, edit_widget, add_widget, search_widget
-#
-#   !+FIELD_PERMISSIONS(mr, nov-2010) view_permission/edit_permission params
-#   are deprecated -- when applied to any field (that corresponds to an
-#   attribute of the domain's class), the domain.zcml setting for that same
-#   class attribute will anyway take precedence.
-#
-# modes: !+
-# - default: "view edit add"
-# - all individual bool params {view, edit, add, listing, search} for each
-#   supported mode are now obsolete
-# - to specify a non-default mode, must redefine entire modes parameter
-#   e.g. to add "listing" mode must state modes="view edit add listing"
-# - use modes="" as the equivalent of OBSOLETED omit=True
-#
-# property
-# by default, property itself is None
-# if not None, then the property's default values for schema.Field init params:
-#   title="", description="", __name__="",
-#   required=True, readonly=False, constraint=None, default=None
-#
-# required
-# - Field.property.required: by default required=True for all schema.Field
-# - !+Field.required(mr, oct-2010) OBSOLETED.
-#
 # localization -- guidelines
 # - [user] fields should, whenever possible, be displayable/localizable in all
 #   modes, but as a minimum fields should at least be displayable/localizable

@@ -145,7 +145,7 @@
     />-->
     
     <browser:page name="search"
-        for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.View"
         class=".search.PagedSearch"
     />

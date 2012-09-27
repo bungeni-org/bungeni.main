@@ -73,7 +73,7 @@ from bungeni.ui import vocabulary
 from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.utils.url import get_section_name, absoluteURL
 
-from ore.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.interfaces import IAlchemistContainer
 
 MINIMAL_PARTIAL_QUERY = 4
 

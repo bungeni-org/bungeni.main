@@ -150,6 +150,27 @@ def hide(modes=None, roles=None):
 
 # Field
 
+# Notes:
+#
+# Field parameters, if specified, should be in the following order:
+#   name, label, description, localizable, property, 
+#   listing_column, view_widget, edit_widget, add_widget, search_widget
+#
+#   !+FIELD_PERMISSIONS(mr, nov-2010) view_permission/edit_permission params
+#   are deprecated -- when applied to any field (that corresponds to an
+#   attribute of the domain's class), the domain.zcml setting for that same
+#   class attribute will anyway take precedence.
+#
+# property
+# by default, property itself is None
+# if not None, then the property's default values for schema.Field init params:
+#   title="", description="", __name__="",
+#   required=True, readonly=False, constraint=None, default=None
+#
+# required
+# - Field.property.required: by default required=True for all schema.Field
+# - !+Field.required(mr, oct-2010) OBSOLETED.
+
 class IModelDescriptorField(interface.Interface):
     # name
     # label
@@ -208,7 +229,7 @@ class Field(object):
     
     # A field in a descriptor must be displayable in at least one of these modes
     _modes = ["view", "edit", "add", "listing"] #!+"search"]
-    @classmethod 
+    @classmethod
     def validated_modes(cls, modes, nullable=False):
         return validated_set("modes", cls._modes, modes, nullable=nullable)
     
@@ -219,7 +240,7 @@ class Field(object):
         "bungeni.Anonymous", # unauthenticated user, anonymous
         "bungeni.Signatory",
     ]
-    @classmethod 
+    @classmethod
     def validated_roles(cls, roles, nullable=False):
         return validated_set("roles", cls._roles, roles, nullable=nullable)
     

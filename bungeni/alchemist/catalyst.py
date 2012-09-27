@@ -64,7 +64,7 @@ def catalyse_descriptors(module):
     !+ this is probably catalyzing some descriptors unnecessarily... 
     !+ if there is a need to be finer grained or for an explicit declaration
     of what descriptors should be catalysed, a flag may be added e.g. a 
-    catalyse:bool attribute could be added on Descriptor class.
+    catalyse:bool attribute could be added on Descriptor class or xml defn.
     """
     import sys
     import inspect
@@ -238,7 +238,7 @@ def GenerateDomainInterface(ctx):
     
     def get_model_interface(domain_model):
         """Get dedicated interface (name convention) that is marked as a domain
-        model interface (provides IIModelInterface) AND is impelemented by the
+        model interface (provides IIModelInterface) AND is implemented by the
         domain class.
         """
         interface_name = "I%s" % (domain_model.__name__) #!+naming
