@@ -1,17 +1,17 @@
 var timeline_mapping = {
     "default":{
-        x_unit: "hour",
-        x_step: 6,
-        x_size: 20,
-        x_start: 1,
-        x_date:"%j%a",
+        x_unit: "day",
+        x_step: 1,
+        x_size: 7,
+        x_start: 0,
+        x_date:"%l, %j %M",
     },
     "month":{
         x_unit:"day",
         x_step: 1,
         x_size: 31,
         x_start: 0,
-        x_date: "%d-%M",
+        x_date: "%j",
     },
     "week":{
         x_unit:"day",
@@ -32,7 +32,7 @@ var timeline_mapping = {
         x_step: 4,
         x_size: 6,
         x_start: 1,
-        x_date:"%D, %j%a",
+        x_date:"%D, %j-%M %h%a",
     }
 }
 
