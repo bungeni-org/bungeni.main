@@ -552,7 +552,7 @@ class ModelDescriptor(object):
             name = f["name"]
             assert name not in cls.fields_by_name, \
                 "[%s] Can't have two fields with same name [%s]" % (
-                    self.__class__.__name__, name)
+                    cls.__name__, name)
             cls.fields_by_name[name] = f
     
     # we use cls.fields_by_name to define the following methods as this

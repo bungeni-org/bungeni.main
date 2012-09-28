@@ -13,17 +13,17 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # used directly in bungeni
 __all__ = [
-    "AddForm",      # alias -> alchemist.catalyst.ui
-    "DisplayForm",  # alias -> alchemist.catalyst.ui
-    "EditForm",     # alias -> alchemist.catalyst.ui
+    "AddForm",      # redefn -> alchemist.catalyst.ui
+    "DisplayForm",  # redefn -> alchemist.catalyst.ui
+    "EditForm",     # redefn -> alchemist.catalyst.ui
     "catalyse_descriptors"
-    #"sa2zs",        # alias -> ore.alchemist !+ALCHEMIST_INTERNAL
     #"catalyst",     # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
-    #"ApplySecurity",      # alias -> alchemist.catalyst.domain !+ALCHEMIST_INTERNAL
+    #"ApplySecurity",      # redefn -> alchemist.catalyst.domain !+ALCHEMIST_INTERNAL
+    #"GenerateDomainInterface" # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
+    #"GenerateContainer", # redefn -> alchemist.catalyst.container !+ALCHEMIST_INTERNAL
+    #"GenerateCollectionTraversal" # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
+    #"sa2zs",        # alias -> ore.alchemist !+ALCHEMIST_INTERNAL
 ]
-from alchemist.catalyst.ui import AddForm
-from alchemist.catalyst.ui import DisplayForm
-from alchemist.catalyst.ui import EditForm
 from ore.alchemist import sa2zs
 
 # from bungeni.alchemist, used only here
@@ -35,7 +35,7 @@ from bungeni.alchemist.interfaces import (
     IIModelInterface,
 )
 from bungeni.alchemist.container import AlchemistContainer
-from bungeni.alchemist.traversal import CollectionTraverser
+from bungeni.alchemist.traversal import CollectionTraverser, ManagedContainerDescriptor
 from bungeni.alchemist import utils
 
 ###
@@ -46,15 +46,75 @@ import types
 from zope import interface, component
 from zope.dottedname.resolve import resolve
 from zope.publisher.interfaces import IPublisherRequest, IPublishTraverse
-from zope.app.security.protectclass import protectName # !+remove
+from zope.security.proxy import removeSecurityProxy
+from zope.app.security.protectclass import (
+        protectName, # !+remove
+        protectSetAttribute, 
+        protectLikeUnto
+)
+from zope import formlib
 
 from z3c.traverser.interfaces import ITraverserPlugin
 from z3c.traverser.traverser import PluggableTraverser
 
 from sqlalchemy import orm
 
+import bungeni.alchemist.ui
 import bungeni.models.interfaces
 import bungeni.ui.content
+
+
+class BaseForm(object):
+    name_template = "%sForm"
+    template = formlib.namedtemplate.NamedTemplate("alchemist.form")
+    
+    additional_form_fields = formlib.form.Fields()
+    
+    status = None
+    mode = None
+    
+    @property
+    def domain_model(self):
+        return removeSecurityProxy(self.context).__class__
+    
+    @property
+    def model_schema(self):
+        return tuple(interface.implementedBy(self.domain_model))[0]
+    
+    def get_form_fields(self):
+        return bungeni.alchemist.ui.setUpFields(self.domain_model, self.mode)
+    
+    def _get_form_fields(self):
+        try:
+            fields = self.__dict__["form_fields"]
+        except KeyError:
+            fields = self.__dict__["form_fields"] = self.get_form_fields()
+        return fields
+    
+    def _set_form_fields(self, form_fields):
+        self.__dict__["form_fields"] = form_fields
+    
+    form_fields = property(_get_form_fields, _set_form_fields)
+
+
+class AddForm(BaseForm, bungeni.alchemist.ui.Add):
+    mode = "add"
+    defaults = {}
+    
+    @property
+    def domain_model(self):
+        return removeSecurityProxy(self.context).domain_model
+    
+    def update(self):
+        for name, value in self.defaults.items():
+            self.form_fields[name].field.default = value
+        super(AddForm, self).update()
+
+class EditForm(BaseForm, bungeni.alchemist.ui.EditForm):
+    mode = "edit"
+
+class DisplayForm(bungeni.alchemist.ui.ContentDisplayForm):
+    pass
 
 
 def catalyse_descriptors(module):
@@ -71,7 +131,6 @@ def catalyse_descriptors(module):
     from bungeni.alchemist.model import IModelDescriptor
     from bungeni.models import domain
     from bungeni.core.workflow.interfaces import IWorkflowed
-    from bungeni.core import type_info
     from bungeni.utils.capi import capi
     from bungeni.utils import naming
     from bungeni.ui.utils import debug
@@ -102,7 +161,7 @@ def catalyse_descriptors(module):
             # need a dedicated domain type
             kls = getattr(domain, kls_name) # AttributeError
             # only catalyze mapped domain types
-            kls_mapper = orm.class_mapper(kls) # UnmappedClassError
+            kls_mapper = orm.class_mapper(kls) # force UnmappedClassError
         except (AttributeError, orm.exc.UnmappedClassError):
             # no corresponding domain class, ignore e.g. Model
             # unmapped class e.g. Address
@@ -192,7 +251,7 @@ def catalyst(ctx,
     # this also creates an adapter between the interface and desc.
     GenerateDomainInterface(ctx)
     
-    from alchemist.catalyst.domain import ApplySecurity #!+ALCHEMIST_INTERNAL
+    # setup security
     ApplySecurity(ctx)
     
     # create a container class 
@@ -202,6 +261,31 @@ def catalyst(ctx,
     GenerateCollectionTraversal(ctx)
     
     return ctx
+
+
+def ApplySecurity(ctx):
+    for c in ctx.domain_model.__bases__:
+        if c is object:
+            continue
+        protectLikeUnto(ctx.domain_model, c)
+    attributes = set(
+        [ n for n,d in ctx.domain_interface.namesAndDescriptions(1) ])
+    attributes = attributes.union(
+        set([ f.get("name") for f in ctx.descriptor.fields ]))
+    descriptor = ctx.descriptor
+    for n in attributes:
+        model_field = descriptor.get(n)
+        p = model_field and model_field.view_permission or "zope.Public"
+        protectName(ctx.domain_model, n, p )
+    for n in attributes:
+        model_field = descriptor.get(n)
+        p = model_field and model_field.edit_permission or "zope.Public" # "zope.ManageContent"
+        protectSetAttribute(ctx.domain_model, n, p)
+    for k, v in ctx.domain_model.__dict__.items():
+        if (isinstance(v, ManagedContainerDescriptor) or 
+                isinstance(v, orm.attributes.InstrumentedAttribute)
+            ):
+            protectName(ctx.domain_model, k, "zope.Public")
 
 
 def GenerateDomainInterface(ctx):

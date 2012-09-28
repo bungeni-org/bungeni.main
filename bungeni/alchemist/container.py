@@ -74,7 +74,6 @@ def stringKey(obj):
 #from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory("zope")
-import alchemist.ui
 import bungeni.alchemist
 from zc.table import column, table
 class ContainerListing(form.DisplayForm):
@@ -88,8 +87,7 @@ class ContainerListing(form.DisplayForm):
         context = proxy.removeSecurityProxy(self.context)
         columns = bungeni.alchemist.ui.setUpColumns(context.domain_model)
         columns.append(
-            column.GetterColumn(title=_(u"Actions"), 
-                getter=alchemist.ui.container.viewEditLinks))
+            column.GetterColumn(title=_(u"Actions"), getter=viewEditLinks))
         self.columns = columns
         super(ContainerListing, self).update()
     
@@ -117,6 +115,14 @@ class ContainerListing(form.DisplayForm):
     @form.action(_(u"Add"))
     def handle_add(self, action, data):
         self.request.response.redirect("add")
+
+
+def viewLink(item, formatter):
+    return u'<a class="button-link" href="%s">View</a>' % (stringKey(item))
+def editLink(item, formatter):
+    return u'<a class="button-link" href="%s/edit">Edit</a>' % (stringKey(item))
+def viewEditLinks(item, formatter):
+    return u"%s %s" % (viewLink(item, formatter), editLink(item, formatter))
 
 
 def getFields(context, interface=None, annotation=None):

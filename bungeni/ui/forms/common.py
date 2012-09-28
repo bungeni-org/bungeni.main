@@ -588,8 +588,7 @@ class TranslateForm(AddForm):
             if field.__name__ not in self.translatable_field_names():
                 field.for_display = True
                 field.custom_widget = self.model_descriptor.get(
-                    field.__name__
-                ).view_widget
+                    field.__name__).view_widget
 
     def validate(self, action, data):
         return formlib.form.getWidgetsData(self.widgets, self.prefix, data)
