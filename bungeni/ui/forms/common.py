@@ -187,6 +187,12 @@ class BaseForm(formlib.form.FormBase):
             group = groups.setdefault(iface, [])
             group.append(widget)
         return groups
+    
+    @property
+    def is_headless(self):
+        """Boolean flag if form has been submitted in headless mode
+        """
+        return str(self.request.get("headless", "")).lower() in TRUE_VALS
 
     def update(self):
         self.status = self.request.get("portal_status_message", self.status)
@@ -849,8 +855,10 @@ class DeleteForm(PageForm):
         if next_url is None:
             next_url = url.absoluteURL(container, self.request) + \
                        "/?portal_status_message=%d items deleted" % count
-
-        self.request.response.redirect(next_url)
+        if self.is_headless:
+            log.info("Deleting in headless mode - No redirection")
+        else:
+            self.request.response.redirect(next_url)
         
     @formlib.form.action(_(u"Cancel"), name="cancel",
                          validator=ui.null_validator)
