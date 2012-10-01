@@ -63,6 +63,8 @@ def get_descriptive_properties(context):
     return IDCDescriptiveProperties(context)
 
 
+# All DC property text values e.g. title, description, are ALWAYS translated.
+
 class DescriptiveProperties(object):
     interface.implements(IDCDescriptiveProperties)
     
@@ -106,6 +108,8 @@ class DocumentDescriptiveProperties(DescriptiveProperties):
     def mover(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
+        # !+TRANSLATE_MESS(mr, oct-2012) this is content data and NOT a UI msgid?
+        # Should then be using translate_obj ?!
         return translate_i18n(
             IDCDescriptiveProperties(context.owner).title_member
         )

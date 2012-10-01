@@ -20,7 +20,8 @@ from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.browsermenu.interfaces import IBrowserMenu
 from zope.publisher.defaultview import getDefaultViewName, queryDefaultViewName
-from zope.annotation.interfaces import IAnnotations
+#from zope.annotation.interfaces import IAnnotations
+from zope.i18n import translate
 
 from ore.wsgiapp.interfaces import IApplication
 
@@ -32,11 +33,10 @@ from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.alchemist import utils
 from bungeni.core.interfaces import IWorkspaceContainer, ISection
 from bungeni.core import location
+from bungeni.core.translation import get_request_language
 from bungeni.ui.utils import url, debug
-from bungeni.ui import interfaces
 from bungeni.ui import browser
-from bungeni.utils.capi import capi
-from bungeni.utils import naming
+
 
 def _get_context_chain(context):
     chain = []
@@ -90,7 +90,7 @@ So, we temporarily default the above to the context.__class__.__name__:
         title = IDCDescriptiveProperties(context).title
     return title
 
-
+#!+DevProgammingGuide(mr, oct-2012) always return localized template data
 class SecondaryNavigationViewlet(browser.BungeniViewlet):
 
     render = ViewPageTemplateFile("templates/secondary-navigation.pt")
@@ -193,9 +193,10 @@ class SecondaryNavigationViewlet(browser.BungeniViewlet):
                     _url))
 
 
+#!+DevProgammingGuide(mr, oct-2012) always return localized template data
 class GlobalSectionsViewlet(browser.BungeniViewlet):
 
-    render = ViewPageTemplateFile('templates/sections.pt')
+    render = ViewPageTemplateFile("templates/sections.pt")
     
     selected_portal_tab = None
     
@@ -237,12 +238,13 @@ class GlobalSectionsViewlet(browser.BungeniViewlet):
                 self.selected_portal_tab = item["id"]
 
 
+#!+DevProgammingGuide(mr, oct-2012) always return localized template data
 class BreadCrumbsViewlet(browser.BungeniViewlet):
     """Breadcrumbs.
     
     Render the breadcrumbs to show a user his current location.
     """
-    render = ViewPageTemplateFile('templates/bread-crumbs.pt')
+    render = ViewPageTemplateFile("templates/bread-crumbs.pt")
 
     def __init__(self,  context, request, view, manager):
         self.context = context
@@ -304,14 +306,14 @@ class BreadCrumbsViewlet(browser.BungeniViewlet):
 
 class NavigationTreeViewlet(browser.BungeniViewlet):
     """Render a navigation tree."""
-
-    render = ViewPageTemplateFile( 'templates/bungeni-navigation-tree.pt' )
+    
+    render = ViewPageTemplateFile("templates/bungeni-navigation-tree.pt")
     
     path = ()
     
     def __new__(cls, context, request, view, manager):
         chain = _get_context_chain(context)
-        bungeni_app = chain.pop()
+        chain.pop() # bungeni_app
         top_section = chain.pop()
         
         if not chain:
@@ -320,7 +322,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         # we require the tree to begin with a container object
         if not IReadContainer.providedBy(chain[-1]):
             return
-
+        
         # remove any views from navigation tree
         if not(IAlchemistContent.providedBy(chain[0]) or 
                 IAlchemistContainer.providedBy(chain[0]) or
@@ -339,7 +341,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             inst.top_section_url = url.absoluteURL(top_section, request)
             inst.id_prefix = "nav"
             return inst
-
+    
     def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
@@ -349,35 +351,24 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
     
     def update(self):
         """Creates a navigation tree for ``context``.
-
+        
         Recursively, by visiting the parent chain in reverse order,
         the tree is built. The siblings of managed containers are
         included.
         """
         chain = list(self.chain)
         self.nodes = self.expand(chain, include_siblings=False)
-
+    
     def expand(self, chain, include_siblings=True):
         if len(chain) == 0:
             return ()
-        
         context = chain.pop()
         items = []
         
         if IApplication.providedBy(context):
             items.extend(self.expand(chain))
-        
         elif IAlchemistContent.providedBy(context):
             _url = url.absoluteURL(context, self.request)
-            if IDCDescriptiveProperties.providedBy(context):
-                title = context.title
-            else:
-                props = IDCDescriptiveProperties(context, None)
-                if props is not None:
-                    title = props.title
-                else:
-                    title = context.title
-            
             selected = len(chain) == 0
             
             if chain:
@@ -390,17 +381,16 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 ]
                 nodes = []
                 self.expand_containers(nodes, containers, _url, chain, None)
-
+            
             items.append({
                     "id": self.get_nav_entry_id(_url),
-                    "title": title,
+                    "label": IDCDescriptiveProperties(context).title,
                     "url": _url,
                     "current": True,
                     "selected": selected,
                     "kind": "content",
                     "nodes": nodes,
                 })
-        
         elif IAlchemistContainer.providedBy(context):
             # loop through all managed containers of the parent
             # object, and include the present container as the
@@ -408,34 +398,29 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             parent = context.__parent__
             assert parent is not None
             _url = url.absoluteURL(parent, self.request)
-
+            
             # append managed containers as child nodes
             kls = type(proxy.removeSecurityProxy(parent))
-
+            
             if include_siblings is True:
                 if IApplication.providedBy(parent):
-                    containers = [
-                        (name, parent[name])
+                    containers = [ (name, parent[name])
                         for name in 
                             location.model_to_container_name_mapping.values()
-                        if name in parent
-                    ]
+                        if name in parent ]
                 elif IReadContainer.providedBy(parent):
                     containers = list(parent.items())
                 else:
-                    containers = [
-                        (key, getattr(parent, key))
+                    containers = [ (key, getattr(parent, key))
                         for key, value in kls.__dict__.items()
-                        if isinstance(value, ManagedContainerDescriptor)]
+                        if isinstance(value, ManagedContainerDescriptor) ]
             else:
                 containers = [(context.__name__, context)]
             self.expand_containers(items, containers, _url, chain, context)
         
         elif ILocation.providedBy(context):
+            # e.g. bungeni.core.content.Section
             _url = url.absoluteURL(context, self.request)
-            props = (IDCDescriptiveProperties(context, None) or 
-                proxy.removeSecurityProxy(context)
-            )
             selected = len(chain) == 0
             if selected and IReadContainer.providedBy(context):
                 nodes = []
@@ -446,10 +431,9 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     pass
             else:
                 nodes = self.expand(chain)
-            i_id = getattr(props, "id","N/A")
             items.append({
                     "id": self.get_nav_entry_id(_url),
-                    "title": getattr(props, "title", i_id),
+                    "label": IDCDescriptiveProperties(context).title,
                     "url": _url,
                     "current": True,
                     "selected": selected,
@@ -457,6 +441,8 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     "nodes": nodes,
                 })
         elif IReadContainer.providedBy(context):
+            #!+NavigationTreeViewlet-EXPAND-IReadContainer(mr, oct-2012) does this ever execute?!
+            raise Exception("!+NavigationTreeViewlet-EXPAND-IReadContainer [%s]" % context)
             items.extend(self.expand(chain))
         return items
     
@@ -472,26 +458,18 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         #seen_context = False
         _url = _url.rstrip("/")
         current = False
+        
         for key, container in self._sort_containers(containers):
-            
-            if IAlchemistContainer.providedBy(container):
-                descriptor = utils.get_descriptor(container.domain_model)
-                if descriptor:
-                    name = getattr(descriptor, "container_name", None)
-                    if name is None:
-                        name = getattr(descriptor, "display_name", None)
-                if not name:
-                    name = container.domain_model.__name__
-            else:
-                assert IDCDescriptiveProperties.providedBy(container)
-                container = proxy.removeSecurityProxy(container)
-                name = container.title
+            assert IAlchemistContainer.providedBy(container)
+            label = container.domain_model.__name__
+            descriptor = utils.get_descriptor(container.domain_model)
+            if descriptor:
+                label = getattr(descriptor, "container_name", None) or \
+                    getattr(descriptor, "display_name", None)
             
             if context is not None:
                 current = container.__name__ == context.__name__
-            
             selected = not len(chain) and current
-            
             if current:
                 #seen_context = True
                 nodes = self.expand(chain)
@@ -501,7 +479,9 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             key_url = "%s/%s" % (_url, key)
             items.append({
                     "id": self.get_nav_entry_id(key_url),
-                    "title": name,
+                    "label": translate(label, 
+                        target_language=get_request_language(request=self.request),
+                        domain="bungeni"),
                     "url": key_url,
                     "current": current,
                     "selected": selected,

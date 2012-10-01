@@ -23,7 +23,7 @@
 	       ><img width="16" height="16"
 	       tal:define="kind node/kind"
 	       tal:attributes="src string:/@@/portal/images/icon_${kind}.gif"
-	       />&nbsp;<span i18n:translate="" tal:replace="node/title" /></a>
+	       />&nbsp;<span tal:replace="node/label" /></a>
             <ul tal:condition="is_folderish"
                 tal:attributes="class string:navTree navTreeLevel${nesting_level} navTreeFolderish">
               <tal:nesting define="nesting_level python: nesting_level + 1">

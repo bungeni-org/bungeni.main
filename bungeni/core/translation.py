@@ -245,7 +245,7 @@ def is_translation(context):
            context.status in (u"draft_translation",)
 
 def translate_i18n(message_id, language=None, domain="bungeni"):
-    """Get's message_ids translation from catalogs
+    """Get message_id translation from catalogs.
     """
     #!+I18N(murithi, july-2011) should not be used if message ids exist in 
     # translation catalogs and a locale-aware context exists.
