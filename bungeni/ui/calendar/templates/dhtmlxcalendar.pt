@@ -147,7 +147,9 @@
                 );
                 scheduler.attachEvent("onBeforeLightbox", handle_lightbox);
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
+                dp.styles.invalid = "border:2px solid red;color:red;"
                 dp.init(scheduler);
+                dp.attachEvent("onRowMark", row_marked);
             }
             window.onload = canEdit;
         </script>

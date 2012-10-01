@@ -342,6 +342,14 @@ class CalendarView(BungeniBrowserView):
             text_convocation_type=translate_i18n(_(u"Convocation Type")),
             text_sitting=translate_i18n(_(u"Sitting")),
             text_view=translate_i18n(_(u"View")),
+            error_messages=dict(
+                default=_(u"Please check the highlighted sittings. " 
+                    "Failed to apply changes"),
+                updated=_(u"Please review the highlighted sittings." 
+                    " Could not apply changes."),
+                deleted=_(u"Please review the highlighted events."
+                    " Could not be deleted.")
+            )
         )
         return """var cal_globals = %s;
             var timeline_data = { venues: %s, committees: %s };
