@@ -43,7 +43,9 @@ from bungeni.ui.htmldiff import htmldiff
 FormTemplate = namedtemplate.NamedTemplateImplementation(
     ViewPageTemplateFile("templates/form.pt")
 )
-
+SubFormTemplate = namedtemplate.NamedTemplateImplementation(
+    ViewPageTemplateFile("templates/subform.pt")
+)
 ContentTemplate = namedtemplate.NamedTemplateImplementation(
     ViewPageTemplateFile("templates/content.pt")
 )

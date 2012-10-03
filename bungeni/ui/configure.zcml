@@ -5,10 +5,8 @@
            i18n_domain="bungeni.ui">
 
     <!-- Alchemist UI overrides -->
-    <include package="alchemist.ui" />
+    <includeOverrides package=".forms" file="overrides.zcml" />
     
-  <includeOverrides package=".forms" file="overrides.zcml" />
-
   <include package="bungeni.models" file="domain.zcml" />
   <include package="bungeni.portal" />
 
@@ -83,6 +81,12 @@
     <!--End Experimental transcripts support -->
 
 
+    <browser:viewletManager name="alchemist.content.view"
+        provides="bungeni.alchemist.interfaces.IContentViewManager"
+        class="bungeni.alchemist.ui.ContentViewletManager"
+        permission="zope.ManageContent"
+    />
+    
     <adapter name="widget"
         for="* zope.publisher.interfaces.http.IHTTPRequest"
         provides="zope.traversing.interfaces.ITraversable"

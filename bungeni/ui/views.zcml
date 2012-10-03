@@ -392,6 +392,26 @@
     <!-- container UI -->
     <browser:page name="index"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.View"
+        template="templates/generic-container.pt"
+        class="bungeni.alchemist.container.ContainerListing"
+    />
+    <browser:page name="json"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.View"
+        class=".container.ContainerJSONListing"
+    />
+    <browser:defaultView name="index"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
+    />
+    <!-- Default Content View -->
+    <browser:defaultView name="view"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
+    />
+    
+    
+    <browser:page name="index"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
         menu="context_actions"
         title="Listing"

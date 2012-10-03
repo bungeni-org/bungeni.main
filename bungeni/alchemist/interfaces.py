@@ -4,7 +4,6 @@
 
 """Bungeni Alchemist interfaces - [
     ore.alchemist.interfaces
-    alchemist.ui.interfaces
 ]
 
 $Id$
@@ -20,8 +19,8 @@ __all__ = [
     "IIModelInterface",     # alias -> ore.alchemist.interfaces
     "IModelDescriptor",     # alias -> ore.alchemist.interfaces
     
-    "IManagedContainer",    # alias -> alchemist.traversal.interfaces
-    "IContentViewManager",    # alias -> alchemist.ui.interfaces
+    "IManagedContainer",    # redefn -> alchemist.traversal.interfaces
+    "IContentViewManager",  # redefn -> alchemist.ui.interfaces
 ]
 
 
@@ -37,8 +36,23 @@ from ore.alchemist.interfaces import (
     IModelDescriptor
 )
 
-from alchemist.traversal.interfaces import IManagedContainer
+#
 
-from alchemist.ui.interfaces import IContentViewManager
+from zope import interface
+from zope.viewlet.interfaces import IViewletManager
+
+# alchemist.security.interfaces
+class IAlchemistUser(interface.Interface):
+    """The domain class for authentication."""
+    def checkPassword(password):
+        """Return true if the password matches."""
+
+# alchemist.traversal.interfaces
+class IManagedContainer(interface.Interface):
+    """ """
+
+# alchemist.ui.interfaces
+class IContentViewManager(IViewletManager):
+    """Viewlet manager interface."""    
 
 

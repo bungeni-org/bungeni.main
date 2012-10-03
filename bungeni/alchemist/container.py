@@ -4,7 +4,6 @@
 
 """Bungeni Alchemist container - [
     ore.alchemist.container
-    alchemist.ui.container
 ]
 
 $Id$

@@ -2,7 +2,7 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Bungeni Alchemist UI [alchemist.ui]
+"""Bungeni Alchemist UI
 
 $Id$
 """
@@ -29,6 +29,7 @@ import copy, math, itertools
 from zope import interface
 from zope.security.proxy import removeSecurityProxy
 from zope.formlib import form, namedtemplate
+from zope.viewlet import manager
 from zope.event import notify
 from zope.lifecycleevent import Attributes, \
     ObjectCreatedEvent, ObjectModifiedEvent
@@ -516,4 +517,12 @@ def createInstance(cls, data):
     ob = cls(*args)
 
     return ob
-    
+
+
+# viewlet
+
+class ContentViewletManager(manager.ViewletManagerBase):
+    template = namedtemplate.NamedTemplate("alchemist.content")
+
+
+

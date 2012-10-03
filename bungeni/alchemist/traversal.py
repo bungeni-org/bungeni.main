@@ -2,9 +2,7 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Bungeni Alchemist traversal - [
-    alchemist.traversal.managed
-]
+"""Bungeni Alchemist traversal
 
 $Id$
 """
@@ -18,8 +16,7 @@ __all__ = [
     "CollectionTraverser",          # redefn -> alchemist.traversal.collection
     #!+ALCHEMIST_INTERNAL "One2Many", # redefn -> alchemist.traversal.managed
     #!+ALCHEMIST_INTERNAL "CollectionTraverser", # redefn -> alchemist.traversal.collection
-
-    "one2manyindirect",
+    "one2manyindirect",             # redefn -> alchemist.traversal.managed
     "PartialContainer",             # alias -> ore.alchemist.container
 ]
 

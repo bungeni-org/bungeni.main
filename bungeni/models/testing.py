@@ -1,7 +1,7 @@
 import datetime
 
 from zope import component
-from bungeni.alchemist.security import schema as security
+from bungeni.alchemist import security
 from bungeni.alchemist.interfaces import IDatabaseEngine
 from sqlalchemy import create_engine
 from bungeni.models import domain
@@ -51,8 +51,8 @@ def drop_all(engine):
 '''
 
 def setup_db():
-    db = create_engine('postgres://localhost/bungeni-test', echo=False)
-    component.provideUtility( db, IDatabaseEngine, 'bungeni-db' )
+    db = create_engine("postgres://localhost/bungeni-test", echo=False)
+    component.provideUtility(db, IDatabaseEngine, "bungeni-db")
     schema.metadata.bind = db
     # !+DROP_ALL(ah,sep-2011)
     #drop_all(db)

@@ -138,6 +138,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
     def update(self):
         self.setupActions()
         #super(BungeniAttributeDisplay, self).update()
+        #super(DynamicFields, self).update()
         DynamicFields.update(self)
         self.setupActions()  # after we transition we have different actions
         try:

@@ -26,15 +26,20 @@
   <apidoc:rootModule module="bungeni" />
   <apidoc:moduleImport allow="true" />
   -->
-  <!-- Expose form for use as a macro -->
-  <browser:page
-     for="*"
-     name="alchemist-form"
-     permission="zope.Public"
-     template="templates/form.pt"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-
+    
+    <!-- Expose form for use as macro -->
+    <browser:page name="alchemist-form"
+        for="*" 
+        permission="zope.Public"
+        template="templates/form.pt"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
+    <!-- SubForm Layout as Named Template -->
+    <adapter name="alchemist.subform"
+        for="*"
+        factory=".forms.SubFormTemplate"
+    />
 
   <!-- Generic forms -->
 

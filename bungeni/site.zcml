@@ -68,9 +68,6 @@
     <include package="bungeni.ui" file="meta.zcml" />
     <include package="bungeni_custom.sys" file="openoffice.zcml" />
     
-    <!-- Alchemist UI -->
-    <include package="alchemist.ui" />
-    
     <!-- REST API support -->
     <include package="bungeni.rest" />  
     
