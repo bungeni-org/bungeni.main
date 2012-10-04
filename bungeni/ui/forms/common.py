@@ -32,7 +32,6 @@ from zope.formlib.namedtemplate import NamedTemplate
 from sqlalchemy.exc import IntegrityError
 
 from bungeni.alchemist import Session
-from bungeni.alchemist import catalyst
 from bungeni.alchemist import ui
 from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
@@ -96,6 +95,18 @@ class DefaultAction(formlib.form.Action):
 
     def submitted(self):
         return True
+
+
+class DisplayForm(browser.BungeniBrowserView):
+    """Content Display
+    """
+    #template = z3evoque.PageViewTemplateFile("content.html#view")
+    template = ViewPageTemplateFile("templates/content-view.pt")
+    
+    form_name = _("View")
+    
+    def __call__(self):
+        return self.template()
 
 
 class BaseForm(formlib.form.FormBase):
@@ -175,7 +186,7 @@ class BaseForm(formlib.form.FormBase):
         call = super(BaseForm, self).__call__()
         #session.close()
         return call
-
+    
     @property
     def widget_groups(self):
         groups = {}
@@ -238,7 +249,10 @@ class BaseForm(formlib.form.FormBase):
         """
         return filter(None,
                 [ error.message for error in self.invariantErrors ])
-
+    
+    # !+BaseForm(mr, oct-2012) combine this BaseForm with alchemist.ui.BaseForm
+    # e.g. following props "overlap" into "defn focus" of alchemist.ui.BaseForm
+    
     @cached_property.cachedIn("__cached_descriptor__")
     def model_descriptor(self):
         return utils.get_descriptor(self.domain_model)
@@ -263,41 +277,31 @@ class PageForm(BaseForm, formlib.form.PageForm, browser.BungeniBrowserView):
     #template = z3evoque.PageViewTemplateFile("form.html#page")
     template = NamedTemplate("alchemist.form")
 
-class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
-    
-    #template = z3evoque.PageViewTemplateFile("content.html#view")
-    template = ViewPageTemplateFile("templates/content-view.pt")
-
-    form_name = _("View")
-
-    def __call__(self):
-        return self.template()
-
 
 @register.view(IAttachmentContainer, layer=IBungeniSkin, name="add",
     protect={"bungeni.attachment.Add": register.VIEW_DEFAULT_ATTRS})
 #@register.view(ISittingContainer, layer=IBungeniSkin, name="add",
 #    protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})
-class AddForm(BaseForm, catalyst.AddForm):
+class AddForm(BaseForm, ui.AddForm):
     """Custom add-form for Bungeni content.
 
     Additional actions are set up to allow users to continue editing
     an object, or add another of the same kind.
     """
-
     interface.implements(ILocation, IDCDescriptiveProperties)
     description = None
-
+    
+    # !+ why the difference, converge to AddForm.@domain_model !
     def getDomainModel(self):
         return getattr(self.context, "domain_model", self.context.__class__)
-
+    
     def validate(self, action, data):
         errors = super(AddForm, self).validate(action, data)
         errors += self.validateUnique(action, data)
         for validator in getattr(self.model_descriptor, "custom_validators", ()):
             errors += validator(action, data, None, self.context)
         return errors
-
+    
     def validateUnique(self, action, data):
         """Validate unique.
         
@@ -307,11 +311,11 @@ class AddForm(BaseForm, catalyst.AddForm):
         """
         errors = []
         domain_model = removeSecurityProxy(self.getDomainModel())
-
+        
         # find unique columns in data model.. TODO do this statically
         mapper = rdb.orm.class_mapper(domain_model)
         ucols = list(ui.unique_columns(mapper))
-
+        
         # query out any existing values with the same unique values,
         session = Session()
         # find data matching unique columns
@@ -332,10 +336,10 @@ class AddForm(BaseForm, catalyst.AddForm):
                 widget._error = error
                 errors.append(error)
         return errors
-
+    
     def filter_fields(self):
         return filterFields(self.context, self.form_fields)
-
+    
     def update(self):
         super(AddForm, self).update()
         # set humanized default value for choice fields with no defaults
@@ -349,11 +353,11 @@ class AddForm(BaseForm, catalyst.AddForm):
                             "choose ${title} ...",
                         mapping = {"title": field.title}
                     )
-
+    
     @property
     def context_class(self):
         return self.domain_model
-
+    
     @property
     def type_name(self):
         if self.model_descriptor:
@@ -361,26 +365,26 @@ class AddForm(BaseForm, catalyst.AddForm):
         if not name:
             name = getattr(self.domain_model, "__name__", None)
         return name
-
+    
     @property
     def form_name(self):
         return _(u"add_item_legend", default=u"Add $name", mapping={
             "name": translate(self.type_name.lower(), context=self.request)})
-
+    
     @property
     def title(self):
         return _(u"add_item_title", default=u"Adding $name", mapping={
             "name": translate(self.type_name.lower(), context=self.request)})
-
+    
     def finishConstruction(self, ob):
         """Adapt the custom fields to the object."""
         adapts = self.Adapts
         if adapts is None:
-            adapts = self.model_schema
+            adapts = self.model_interface
         self.adapters = {
-            adapts : ob
+            adapts: ob
         }
-
+    
     def createAndAdd(self, data):
         ob = super(AddForm, self).createAndAdd(data)
         self.created_object = ob
@@ -435,7 +439,7 @@ class AddForm(BaseForm, catalyst.AddForm):
     protect={"bungeni.attachment.Edit": register.VIEW_DEFAULT_ATTRS})
 #@register.view(domain.Sitting, layer=IBungeniSkin, name="edit",
 #    protect={"bungeni.sitting.Edit": register.VIEW_DEFAULT_ATTRS})
-class EditForm(BaseForm, catalyst.EditForm):
+class EditForm(BaseForm, ui.EditForm):
     """Custom edit-form for Bungeni content.
     """
 

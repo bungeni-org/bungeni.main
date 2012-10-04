@@ -12,7 +12,7 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.formlib import form
 
 from bungeni.alchemist import Session
-from bungeni.alchemist import catalyst
+from bungeni.alchemist import ui
 from bungeni.models import domain, interfaces
 from bungeni.core.index import IndexReset
 from bungeni.ui import browser
@@ -23,7 +23,7 @@ from bungeni.utils import register
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="settings",
     protect={"zope.ManageSite": register.VIEW_DEFAULT_ATTRS})
-class Settings(catalyst.EditForm):
+class Settings(ui.EditForm):
     
     form_fields = form.Fields(interfaces.IBungeniSettings)
     
@@ -54,7 +54,7 @@ class Settings(catalyst.EditForm):
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="email-settings",
     like_class=Settings)
-class EmailSettings(catalyst.EditForm):
+class EmailSettings(ui.EditForm):
     
     form_fields = form.Fields(interfaces.IBungeniEmailSettings)
     
@@ -67,7 +67,7 @@ class EmailSettings(catalyst.EditForm):
 
 
 @register.view(None, IBungeniSkin, name="user-settings")
-class UserSettings(catalyst.EditForm):
+class UserSettings(ui.EditForm):
 
     form_fields = form.Fields(interfaces.IBungeniUserSettings, interfaces.IUser)
     form_fields = form_fields.omit("user_id", "login", "date_of_death", "status")
@@ -105,7 +105,7 @@ class XapianSettings(browser.BungeniBrowserView):
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="registry-settings",
     like_class=Settings)
-class RegistrySettings(catalyst.EditForm):
+class RegistrySettings(ui.EditForm):
     
     form_fields = form.Fields(interfaces.IBungeniRegistrySettings)
     

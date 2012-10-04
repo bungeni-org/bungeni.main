@@ -8,21 +8,20 @@ $Id$
 $URL$
 """
 
-
 from zope.schema import Text
 from zope.schema.interfaces import IVocabularyFactory
 from zope.interface import implements    
 from zope.component import getUtility
 from zope.schema.interfaces import ValidationError
-from bungeni.ui.interfaces import IVocabularyTextField, ITreeVocabulary
+from bungeni.ui.interfaces import IVocabularyTextField
 from bungeni.ui.i18n import _
 
 class InvalidVocabularySelection(ValidationError):
     __doc__ = _("""Choose items from provided vocabulary""")
 
 class VocabularyTextField(Text):
-    """
-    Field for selection of controlled vocabulary terms
+    """Field for selection of controlled heirarchical (ITreeVocabulary) 
+    vocabulary terms.
     """
     implements(IVocabularyTextField)
     
@@ -38,7 +37,7 @@ class VocabularyTextField(Text):
         super(VocabularyTextField, self)._validate(values)
         if values:
             try:
-                self.vocabulary.validateTerms(values.split('\n'))
+                self.vocabulary.validateTerms(values.split("\n"))
             except LookupError:
                 raise InvalidVocabularySelection(values, ())
                 

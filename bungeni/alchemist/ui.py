@@ -34,7 +34,6 @@ from zope.event import notify
 from zope.lifecycleevent import Attributes, \
     ObjectCreatedEvent, ObjectModifiedEvent
 from zope.traversing.browser import absoluteURL
-from zope.publisher.browser import BrowserView
 from sqlalchemy import orm
 from bungeni.alchemist.interfaces import (
     IAlchemistContent,
@@ -304,13 +303,56 @@ class DynamicFields(object):
 
 # alchemist.ui.content
 
-class AddFormBase(object):
+class BaseForm(object):
+    name_template = "%sForm"
+    template = namedtemplate.NamedTemplate("alchemist.form")
+    
+    additional_form_fields = form.Fields()
+    
+    status = None
+    mode = None
+    
+    @property
+    def domain_model(self):
+        return removeSecurityProxy(self.context).__class__
+    
+    @property
+    def model_interface(self):
+        # !+ does this give the the correct interface?
+        return tuple(interface.implementedBy(self.domain_model))[0]
+    
+    def get_form_fields(self):
+        return setUpFields(self.domain_model, self.mode)
+    
+    def form_fields():
+        doc = "The prepared fields for self.mode."
+        def fget(self):
+            try:
+                fields = self.__dict__["form_fields"]
+            except KeyError:
+                fields = self.__dict__["form_fields"] = self.get_form_fields()
+            return fields
+        def fset(self, form_fields):
+            self.__dict__["form_fields"] = form_fields
+        return locals()
+    form_fields = property(**form_fields())
+
+
+class AddForm(BaseForm, form.AddForm):
+    """Static add form for db content.
+    """
+    mode = "add"
+    defaults = {}
     
     _next_url = None
     adapters = None
-
+    
+    @property
+    def domain_model(self):
+        return removeSecurityProxy(self.context).domain_model
+    
     def createAndAdd(self, data):
-        domain_model = removeSecurityProxy(self.context.domain_model)
+        domain_model = self.domain_model
         # create the object, inspect data for constructor args      
         try:  
             ob = createInstance(domain_model, data)
@@ -353,8 +395,10 @@ class AddFormBase(object):
         return self._next_url
         
     def update(self):
+        for name, value in self.defaults.items():
+            self.form_fields[name].field.default = value
         self.status = self.request.get("portal_status_message", "")
-        super(AddFormBase, self).update()
+        super(AddForm, self).update()
     
     def validateAdd(self, action, data):
         errors = self.validateUnique(action, data)
@@ -369,14 +413,14 @@ class AddFormBase(object):
         condition=form.haveInputWidgets, validator="validateAdd")
     def handle_add_edit(self, action, data):
         ob = self.createAndAdd(data)
-        name = self.context.domain_model.__name__
+        name = self.domain_model.__name__
         self._next_url = "%s/@@edit?portal_status_message=%s Added" % (
             absoluteURL(ob, self.request), name)
         
     @form.action(_(u"Save and add another"), condition=form.haveInputWidgets)
     def handle_add_and_another(self, action, data):
         self.createAndAdd(data)
-        name = self.context.domain_model.__name__
+        name = self.domain_model.__name__
         self._next_url = "%s/@@add?portal_status_message=%s Added" % (
             absoluteURL(self.context, self.request), name)
         
@@ -387,11 +431,9 @@ class AddFormBase(object):
                 errors.append(error)
         return errors
 
-class Add(AddFormBase, form.AddForm):
-    """Static add form for db content.
-    """
 
-class EditForm(form.EditForm):
+class EditForm(BaseForm, form.EditForm):
+    mode = "edit"
     
     adapters = None
     
@@ -415,7 +457,7 @@ class EditForm(form.EditForm):
             if isinstance(error, interface.Invalid):
                 errors.append(error)
         return errors
-        
+
 # alchemist.ui.core.handle_edit_action
 # formlib 3.5.0 backports.. these variants will send field descriptions on edit
 def _handle_edit_action(self, action, data):
@@ -459,16 +501,6 @@ def _handle_edit_action(self, action, data):
         self.status = status
     else:
         self.status = _("No changes")
-
-
-class Display(BrowserView):
-    """Content Display
-    """
-    template = None # bungeni/ui/forms/templates/content-view.pt
-    form_name = _("View")    
-    def __call__( self ):
-        return self.template()
-ContentDisplayForm = Display
 
 
 # alchemist.ui.generic

@@ -11,9 +11,6 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # used directly in bungeni
 __all__ = [
-    "AddForm",      # redefn -> alchemist.catalyst.ui
-    "DisplayForm",  # redefn -> alchemist.catalyst.ui
-    "EditForm",     # redefn -> alchemist.catalyst.ui
     "catalyse_descriptors"
     #"catalyst",     # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
     #"ApplySecurity",      # redefn -> alchemist.catalyst.domain !+ALCHEMIST_INTERNAL
@@ -44,75 +41,19 @@ import types
 from zope import interface, component
 from zope.dottedname.resolve import resolve
 from zope.publisher.interfaces import IPublisherRequest, IPublishTraverse
-from zope.security.proxy import removeSecurityProxy
 from zope.app.security.protectclass import (
         protectName, # !+remove
         protectSetAttribute, 
         protectLikeUnto
 )
-from zope import formlib
 
 from z3c.traverser.interfaces import ITraverserPlugin
 from z3c.traverser.traverser import PluggableTraverser
 
 from sqlalchemy import orm
 
-import bungeni.alchemist.ui
 import bungeni.models.interfaces
 import bungeni.ui.content
-
-
-class BaseForm(object):
-    name_template = "%sForm"
-    template = formlib.namedtemplate.NamedTemplate("alchemist.form")
-    
-    additional_form_fields = formlib.form.Fields()
-    
-    status = None
-    mode = None
-    
-    @property
-    def domain_model(self):
-        return removeSecurityProxy(self.context).__class__
-    
-    @property
-    def model_schema(self):
-        return tuple(interface.implementedBy(self.domain_model))[0]
-    
-    def get_form_fields(self):
-        return bungeni.alchemist.ui.setUpFields(self.domain_model, self.mode)
-    
-    def _get_form_fields(self):
-        try:
-            fields = self.__dict__["form_fields"]
-        except KeyError:
-            fields = self.__dict__["form_fields"] = self.get_form_fields()
-        return fields
-    
-    def _set_form_fields(self, form_fields):
-        self.__dict__["form_fields"] = form_fields
-    
-    form_fields = property(_get_form_fields, _set_form_fields)
-
-
-class AddForm(BaseForm, bungeni.alchemist.ui.Add):
-    mode = "add"
-    defaults = {}
-    
-    @property
-    def domain_model(self):
-        return removeSecurityProxy(self.context).domain_model
-    
-    def update(self):
-        for name, value in self.defaults.items():
-            self.form_fields[name].field.default = value
-        super(AddForm, self).update()
-
-class EditForm(BaseForm, bungeni.alchemist.ui.EditForm):
-    mode = "edit"
-
-class DisplayForm(bungeni.alchemist.ui.ContentDisplayForm):
-    pass
 
 
 def catalyse_descriptors(module):

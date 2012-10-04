@@ -72,7 +72,7 @@ def set_widget_errors(widgets, errors):
                 if widget._error is None:
                     widget._error = error
 
-def flag_changed_widgets( widgets, context, data):
+def flag_changed_widgets(widgets, context, data):
     for widget in widgets:
         name = widget.context.getName()
         # If the field is not in the data, then go on to the next one
@@ -85,21 +85,21 @@ def flag_changed_widgets( widgets, context, data):
             widget.changed = True
     return []
 
-class ResponseEditForm( EditForm ):
+class ResponseEditForm(EditForm):
     """ Answer a Question
     UI for ministry to input response
     Display the question when adding the answer.
     """
-    CustomValidations =  validations.null_validator
+    CustomValidations = validations.null_validator
 
     
-class ResponseAddForm( AddForm ):
+class ResponseAddForm(AddForm):
     """
     Answer a Question
     UI for ministry to input response
     Display the question when adding the answer.
     """
-    CustomValidation =  validations.null_validator
+    CustomValidation = validations.null_validator
 
     
 class ItemScheduleContainerReorderForm(ReorderForm):

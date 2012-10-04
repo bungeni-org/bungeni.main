@@ -45,7 +45,7 @@ def configurable_mappings(kls):
         # propagate any extended attributes on head kls also to its audit_kls
         for vp_name, vp_type in kls.extended_properties:
             mapper_add_relation_vertical_property(audit_kls, vp_name, vp_type)
-    
+        # !+NOTE: capi.get_type_info(kls).descriptor_model is still None
     # add any properties to the head kls itself
     def mapper_add_configurable_properties(kls):
         kls_mapper = class_mapper(kls)
