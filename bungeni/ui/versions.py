@@ -138,7 +138,7 @@ class VersionLogMixin(object):
             interaction = getInteraction()
             # sorted desc by sqlalchemy, so following sorting not necessary:
             self._data_items = [
-                removeSecurityProxy(v) for v in self.context.versions
+                removeSecurityProxy(v) for v in removeSecurityProxy(self.context).versions
                 if interaction.checkPermission("zope.View", v) ]
         return self._data_items
     
@@ -182,6 +182,7 @@ class VersionLogView(VersionLogMixin,
     diff_view = None
     
     def __init__(self, context, request):
+        #!+context = removeSecurityProxy(context)
         browser.BungeniBrowserView.__init__(self, context, request)
         VersionLogMixin.__init__(self)
         self._page_title = translate(self.__class__._page_title)
@@ -191,7 +192,7 @@ class VersionLogView(VersionLogMixin,
     
     def publishTraverse(self, request, ver_seq):
         seq = int(ver_seq[len("ver-"):])
-        for ver in self.context.versions:
+        for ver in removeSecurityProxy(self.context).versions:
             if ver.seq == seq:
                 removeSecurityProxy(ver).__parent__ = self
                 return ver

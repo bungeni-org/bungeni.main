@@ -184,8 +184,8 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         for domain in domains:
             value = workspace_config.get_type(domain)
             if value:
-                descriptor = utils.get_descriptor(domain)
-                name = descriptor.display_name if descriptor else value
+                descriptor_model = utils.get_descriptor(domain)
+                name = descriptor_model.display_name if descriptor_model else value
                 result[value] = translate(name, context=self.request)
         return result
 
@@ -293,7 +293,7 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
         for type_key, ti in capi.iter_type_info():
             workflow = ti.workflow
             if workflow and workflow.has_feature("workspace"):
-                name = ti.descriptor.display_name
+                name = ti.descriptor_model.display_name
                 result[ti.workflow_key] = translate(name, context=self.request)
         return result
 

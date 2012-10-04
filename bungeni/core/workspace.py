@@ -586,7 +586,7 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
                 ).filter(domain_class.status.in_(status)
                 ).enable_eagerloads(False
                 ).join(domain.UserSubscription
-                ).filter(domain.UserSubscription.users_id == user.user_id)
+                ).filter(domain.UserSubscription.user_id == user.user_id)
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
             query = self.filter_status_date(query, domain_class, kw)
