@@ -315,8 +315,8 @@ class GroupMembershipRoleDescriptor(ModelDescriptor):
     """Role associated with a group membership
     """
     localizable = False
-    #display_name = "sub roles"
-    #container_name = "sub roles"
+    display_name = "sub roles"
+    container_name = "sub roles"
     fields = [
         F(name="role_id",
           label="sub role",

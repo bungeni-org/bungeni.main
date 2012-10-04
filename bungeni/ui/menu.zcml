@@ -316,6 +316,14 @@
         order="30"
     />
     <browser:menuItem menu="additems"
+        for="bungeni.models.interfaces.IBungeniGroupMembership"
+        title="Add subrole..."
+        action="./subroles/add"
+        permission="bungeni.groupmemberrole.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="31"
+    />
+    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IGroupMembershipRoleContainer"
         title="Add member role..."
         action="./add"
@@ -468,6 +476,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="80"
     />
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IOfficeMember"
         action="edit"
