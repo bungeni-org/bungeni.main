@@ -162,17 +162,23 @@ class TI(object):
                 is None for non-workflowed types
             interface
                 the dedicated interface for the type
+            derived_table_schema
+                auto-generated db schema interface, provides IIModelInterface
             domain_model
                 the domain class
             descriptor_model
                 the descriptor model for UI views for the type
+            container_class
+                conatiner class for domain_model
     """
     def __init__(self, workflow_key, iface):
         self.workflow_key = workflow_key
         self.interface = iface
+        self.derived_table_schema = None # provides IIModelInterface
         self.workflow = None
         self.domain_model = None
         self.descriptor_model = None
+        self.container_class = None
         self.custom = False # type loaded from custom configuration
     def __str__(self):
         return str(self.__dict__)

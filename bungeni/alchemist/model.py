@@ -534,7 +534,6 @@ class ModelDescriptor(object):
         """
         return self.__class__
     '''
-    
     def __init__(self):
         # !+NO_NEED_TO_INSTANTIATE(mr, jun-2011) there is no need
         # to singleton-instantiate each ModelDescriptor class,
