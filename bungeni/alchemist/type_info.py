@@ -9,11 +9,11 @@ via bungeni.utils.capi.
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.core.type_info")
+log = __import__("logging").getLogger("bungeni.alchemist.type_info")
 
 from zope.interface.interfaces import IInterface
 from zope.security.proxy import removeSecurityProxy
-from bungeni.alchemist.interfaces import IModelDescriptor
+from bungeni.alchemist.interfaces import IModelDescriptor, IIModelInterface
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow
@@ -33,9 +33,7 @@ def _iter():
         yield type_key, ti
 
 ''' !+UNUSED
-def _add(workflow_key, iface, workflow, domain_model, 
-        descriptor_model, descriptor
-    ):
+def _add(workflow_key, iface, workflow, domain_model, descriptor_model):
     """Create and add a TypeInfo instance for supplied information.
     Raise ValueError is an entry exists already.
     """
@@ -50,9 +48,6 @@ def _add(workflow_key, iface, workflow, domain_model,
         ti.workflow = workflow
         ti.domain_model = domain_model
         ti.descriptor_model = descriptor_model
-        if descriptor is None and descriptor_model is not None:
-            desciptor = descriptor_model()
-        ti.descriptor = descriptor
         TYPE_REGISTRY.append((type_key, ti))
     else:
         raise ValueError, "An type entry for [%s] already exists." % (type_key)
@@ -79,8 +74,10 @@ def _get(discriminator):
     getter = None
     
     # !+IALCHEMISTCONTENT normalize trickier discriminator cases to type_key
-    if IInterface.providedBy(discri):
-        discri = naming.polymorphic_identity(discri)
+    if IIModelInterface.providedBy(discri):
+        discri = naming.type_key_from_table_schema_interface_name(discri.__name__)
+    elif IInterface.providedBy(discri):
+        discri = naming.type_key_from_model_interface_name(discri.__name__)
     elif type(discri) is type and issubclass(discri, domain.Entity):
         discri = naming.polymorphic_identity(discri)
     elif isinstance(discri, domain.Entity):
@@ -121,8 +118,8 @@ def _get_by_type_key(key):
     for type_key, ti in _iter():
         if type_key == key:
             return ti
-def _get_by_interface(iface):
-    ''' !+IALCHEMISTCONTENT fails on different interfaces with same name!
+#def _get_by_interface(iface):
+''' !+IALCHEMISTCONTENT fails on different interfaces with same name!
 (Pdb) ti.interface
 <InterfaceClass bungeni.models.interfaces.ISession>
 (Pdb) ti.interface.__bases__
@@ -131,10 +128,10 @@ def _get_by_interface(iface):
 <InterfaceClass bungeni.models.interfaces.ISession>
 (Pdb) iface.__bases__
 (<InterfaceClass zope.interface.Interface>,)
-    '''
-    for type_key, ti in _iter():
-        if iface is ti.interface: #!+issubclass(iface, ti.interface)?
-            return ti
+'''
+#    for type_key, ti in _iter():
+#        if iface is ti.interface: #!+issubclass(iface, ti.interface)?
+#            return ti
 def _get_by_model(model):
     for type_key, ti in _iter():
         if model is ti.domain_model: #!+issubclass(model, ti.domain_model)?
@@ -161,7 +158,8 @@ class TI(object):
                 same workflow insatnce may be used by multiple types
                 is None for non-workflowed types
             interface
-                the dedicated interface for the type
+                the manually applied application-dedicated model interface 
+                (if any) for the type
             derived_table_schema
                 auto-generated db schema interface, provides IIModelInterface
             domain_model

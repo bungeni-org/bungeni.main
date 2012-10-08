@@ -165,7 +165,7 @@ def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
     """
     from zope.dottedname.resolve import resolve
-    from bungeni.core.type_info import TYPE_REGISTRY, TI
+    from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
     def class_name(type_key):
         return naming.camel(type_key)
     def interface_name(type_key):

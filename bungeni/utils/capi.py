@@ -23,7 +23,7 @@ import time
 import os
 from zope.dottedname.resolve import resolve
 from bungeni.utils import error
-from bungeni.core import type_info
+from bungeni.alchemist import type_info
 import bungeni_custom as bc
 
 
@@ -196,9 +196,9 @@ class CAPI(object):
             type_key: str (the lowercase underscore-separated of domain cls name)
             workflow: an instance of Workflow, provides IWorkflow
             interface: provides IInterface
-            domain model: provides IBungeniContent
+            domain model: implements IBungeniContent
             domain model instance: type provides IBungeniContent
-            descriptor: provides IModelDescriptor
+            descriptor_model: implements IModelDescriptor
         
         Raise KeyError if no entry matched.
         """

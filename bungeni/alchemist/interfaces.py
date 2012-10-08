@@ -27,12 +27,12 @@ __all__ = [
 # ore.alchemist.interfaces
 
 from ore.alchemist.interfaces import (
-    IAlchemistContent,
+    IAlchemistContent, # provides IIModelInterface
+    IIModelInterface, # marker interface provided by all "I%TableSchema" interfaces
     IAlchemistContainer,
     
     IDatabaseEngine,
 
-    IIModelInterface,
     IModelDescriptor
 )
 

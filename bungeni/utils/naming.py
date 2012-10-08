@@ -29,10 +29,12 @@ def polymorphic_identity(cls):
     a zope.interface.Iterface, that is specially handled.
     """
     name = cls.__name__
+    ''' !+ should not be here? type_info get_by_interface?
     if IInterface.providedBy(cls):
         assert name.startswith("I"), \
             'InterfaceClass %s name does not start with "I"' % (cls)
         name = name[1:]
+    '''
     return un_camel(name)
 
 
@@ -112,7 +114,24 @@ def resolve_relative(dotted_relative, obj):
     return resolve(dotted_relative, obj.__module__)
 
 
-# descriptor
+# interface, descriptor
+
+INTERFACE_PREFIX = "I"
+TABLE_SCHEMA_POSTFIX = "TableSchema"
+
+def model_interface_name(type_key):
+    return "%s%s" % (INTERFACE_PREFIX, camel(type_key))
+def type_key_from_model_interface_name(model_interface_name):
+    assert model_interface_name.startswith(INTERFACE_PREFIX)
+    return un_camel(model_interface_name[len(INTERFACE_PREFIX):])
+
+def table_schema_interface_name(type_key):
+    return "%s%s%s" % (INTERFACE_PREFIX, camel(type_key), TABLE_SCHEMA_POSTFIX)
+def type_key_from_table_schema_interface_name(table_schema_interface_name):
+    assert table_schema_interface_name.startswith(INTERFACE_PREFIX)
+    assert table_schema_interface_name.endswith(TABLE_SCHEMA_POSTFIX)
+    return un_camel(table_schema_interface_name[
+            len(INTERFACE_PREFIX):-len(TABLE_SCHEMA_POSTFIX)])
 
 DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
 

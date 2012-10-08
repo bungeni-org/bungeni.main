@@ -9,7 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.alchemist")
 
 
-# List everything from this module exported externally to bungnei.alchemist.
+# List everything from this module intended for package-external use.
 __all__ = [
     "catalyse_descriptors"
     #"catalyst",     # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
@@ -35,11 +35,8 @@ from bungeni.alchemist import utils
 
 ###
 
-import logging
-import types
 
 from zope import interface, component
-from zope.dottedname.resolve import resolve
 from zope.publisher.interfaces import IPublisherRequest, IPublishTraverse
 from zope.app.security.protectclass import (
         protectName, # !+remove
@@ -56,10 +53,8 @@ from sqlalchemy import orm
 import bungeni.models.interfaces as INTERFACE_MODULE
 import bungeni.models.domain as CONTAINER_MODULE
 #import bungeni.ui.content as UI_MODULE
-# sanity checks
-assert isinstance(INTERFACE_MODULE, types.ModuleType), "Invalid Interface Module"
-assert isinstance(CONTAINER_MODULE, types.ModuleType), "Invalid Container Module"
-#assert isinstance(UI_MODULE, types.ModuleType), "Invalid UI Module"
+
+from bungeni.utils import naming
 
 
 def catalyse_descriptors(module):
@@ -75,9 +70,7 @@ def catalyse_descriptors(module):
     import inspect
     from bungeni.alchemist.model import IModelDescriptor
     from bungeni.models import domain
-    from bungeni.core.workflow.interfaces import IWorkflowed
     from bungeni.utils.capi import capi
-    from bungeni.utils import naming
     from bungeni.ui.utils import debug
     
     def descriptor_classes():
@@ -98,28 +91,30 @@ def catalyse_descriptors(module):
         for cls in [ cls for (line_num, cls) in sorted(decorated) ]:
             yield cls
     
+    def is_model_mapped(domain_model):
+        # try get mapper to force UnmappedClassError
+        try:
+            orm.class_mapper(domain_model)
+            return True
+        except orm.exc.UnmappedClassError:
+            # unmapped class e.g. Address, Version
+            return False
+    
     for descriptor_model in descriptor_classes():
         descriptor_name = descriptor_model.__name__
         assert descriptor_name.endswith("Descriptor")
-        
         domain_model_name = descriptor_name[0:-len("Descriptor")]
-        try:
-            # need a dedicated domain type
-            domain_model = getattr(domain, domain_model_name) # AttributeError
-            # only catalyze mapped types - get mapper to force UnmappedClassError
-            orm.class_mapper(domain_model)
-        except (AttributeError, orm.exc.UnmappedClassError):
-            # no corresponding domain class, ignore e.g. Model
-            # unmapped class e.g. Address
-            debug.log_exc(sys.exc_info(), log_handler=log.warn)
+        # need a dedicated domain type
+        domain_model = getattr(domain, domain_model_name, None)
+        # only catalyze "mapped domain models"
+        if not (domain_model and is_model_mapped(domain_model)):
+            log.warn("Not catalysing: %s" % (descriptor_name))
             continue
-        
-        # type_info, register the descriptor_model
+        # type_info, register descriptor_model, domain_model
         type_key = naming.type_key_from_descriptor_cls_name(descriptor_name)
         ti = capi.get_type_info(type_key)
         ti.descriptor_model = descriptor_model
         ti.domain_model = domain_model
-        
         # catalyse each (domain_model, descriptor_model) pair
         catalyst(ti)
     
@@ -137,7 +132,7 @@ def catalyst(ti):
             ti.domain_model, ti.descriptor_model))
     # create a domain interface if it doesn't already exist 
     # this also creates an adapter between the interface and desc.
-    GenerateDomainInterface(ti)
+    generate_table_schema_interface(ti)
     # setup security
     ApplySecurity(ti)
     # create a container class 
@@ -147,11 +142,10 @@ def catalyst(ti):
     return ti
 
 
-def GenerateDomainInterface(ti):
-    #!+alchemist.catalyst.domain.getDomainInterfaces
+def generate_table_schema_interface(ti):
     def get_domain_interfaces(domain_model):
         """Return the domain bases for an interface as well as a filtered 
-        implements only list.
+        implements only list (base interfaces removed).
         """
         domain_bases = []
         domain_implements = []
@@ -162,70 +156,39 @@ def GenerateDomainInterface(ti):
                 domain_implements.append(iface)
         domain_bases = tuple(domain_bases) or (IAlchemistContent,)
         return domain_bases, domain_implements
-    bases, implements = get_domain_interfaces(ti.domain_model)
     
-    # interface for domain model 
-    # !+ why same name as typically pre-defined I%(class)s ?
-    interface_name = "I%s" % (ti.domain_model.__name__) #!+naming
-    log.info("GenerateDomainInterface [model=%s] generated interface %s.%s " % (
-        ti.domain_model.__name__, INTERFACE_MODULE.__name__, interface_name))
-    
-    '''
-    def get_model_interface(domain_model):
-        """Get dedicated interface (name convention) that is marked as a domain
-        model interface (provides IIModelInterface) AND is implemented by the
-        domain class.
-        """
-        interface_name = "I%s" % (domain_model.__name__) #!+naming
-        for iface in interface.implementedBy(domain_model):
-            if iface.__name__ == interface_name:
-                if IIModelInterface.providedBy(iface):
-                    #!+AUDIT_TESTS passes here in audit doctests (only?)
-                    #raise Exception("!+%s provides %s!!"  % (iface, IIModelInterface))
-                    return iface
-    '''
     # derived_table_schema:
     # - ALWAYS dynamically generated
     # - directlyProvides IIModelInterface
+    type_key = naming.polymorphic_identity(ti.domain_model)
     # use the class's mapper select table as input for the transformation
+    table_schema_interface_name = naming.table_schema_interface_name(type_key)
     domain_table = utils.get_local_table(ti.domain_model)
+    bases, implements = get_domain_interfaces(ti.domain_model)
     derived_table_schema = sa2zs.transmute(
         domain_table,
         annotation=ti.descriptor_model,
-        interface_name=interface_name,
+        interface_name=table_schema_interface_name,
         __module__=INTERFACE_MODULE.__name__,
         bases=bases)
+    # register interface on type_info and set on INTERFACE_MODULE
+    ti.derived_table_schema = derived_table_schema
+    setattr(INTERFACE_MODULE, table_schema_interface_name, derived_table_schema)
+    log.info("generate_table_schema_interface [model=%s] generated [%s.%s]" % (
+            ti.domain_model.__name__, INTERFACE_MODULE.__name__, 
+            table_schema_interface_name))
     
-    # if we're replacing an existing interface, make sure the new
-    # interface implements it
-    old = getattr(INTERFACE_MODULE, interface_name, None)
-    if old is not None:
-        if old not in implements:
-            implements.append(old)
-        #assert old is not derived_table_schema #!+AUDIT_TESTS fails
-    # !+RETAIN_SAME_INTERFACE_CLASS determine whether a same-named interface 
-    # already exists e.g. getattr(INTERFACE_MODULE, interface_name) and
-    # whether domain_model provides it... if so, then "splice" extra info from
-    # auto-generated interface into the predefined one... 
-    # ELSE adopt policy that if provided, then it must be fully defined 
-    # (total resposibility of user, never auto-modified!).
+    # if a conventionally-named domain interface exists, ensure that 
+    # domain model implements it
+    model_interface_name = naming.model_interface_name(type_key)
+    model_interface = getattr(INTERFACE_MODULE, model_interface_name, None)
+    if model_interface is not None:
+        assert not issubclass(model_interface, derived_table_schema)
+        if model_interface not in implements:
+            implements.append(model_interface)
+    # add derived_table_schema and apply
     implements.insert(0, derived_table_schema)
     interface.classImplementsOnly(ti.domain_model, *implements)
-    setattr(INTERFACE_MODULE, interface_name, derived_table_schema)
-    ti.derived_table_schema = derived_table_schema
-    # ensure interfaces are unique, preserving the order
-    #implements = [ ifc for i,ifc in enumerate(implements) 
-    #               if implements.index(ifc)==i ]
-    #
-    # XXX: Oooh, strangely the above does not work... it turns out that 
-    # implements contains seemingly repeated interfaces e.g. the first and last 
-    # interfaces are both "<InterfaceClass bungeni.models.interfaces.IReport>"
-    # but, they are not the same! So, to compare unique we use the string
-    # representation of each interface:
-    # str_implements = map(str, implements)
-    # implements = [ ifc for i,ifc in enumerate(implements) 
-    #                if str_implements.index(str(ifc))==i ]
-    # Ooops making the interfaces unique breaks other things downstream :(
 
 
 def ApplySecurity(ti):
