@@ -9,9 +9,10 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
 import os
+import math
 from StringIO import StringIO
 from zipfile import ZipFile
-from threading import Thread
+from threading import Thread, Timer
 
 from xml.etree.cElementTree import Element, ElementTree
 from tempfile import NamedTemporaryFile as tmp
@@ -44,6 +45,13 @@ from bungeni.utils import register, naming
 import transaction
 import pika
 
+# timer delays in setting up serialization workers
+INITIAL_DELAY = 10
+MAX_DELAY = 300
+TIMER_DELAYS = {
+    "serialize_setup": INITIAL_DELAY
+}
+                
 def setupStorageDirectory(part_target="xml_db"):
     """ Returns path to store xml files.
     """
@@ -267,6 +275,43 @@ def serialization_worker():
                           queue=SERIALIZE_QUEUE)
     channel.start_consuming()
 
+
+class SerializeThread(Thread):
+    """This thread will respawn after n seconds if it crashes
+    """
+    is_running = True
+    daemon = True
+    def run(self):
+        while self.is_running:
+            try:
+                super(SerializeThread, self).run()
+            except Exception, e:
+                log.error("Exception in thread %s: %s", self.name, e)
+                delay = TIMER_DELAYS[self.name]
+                if delay > MAX_DELAY:
+                    num_attempts = int(math.log((delay/10), 2));
+                    log.error("Giving up re-spawning serialization " 
+                        "worker after %d seconds (%d attempts).", 
+                        delay, num_attempts
+                    )
+                else:
+                    log.info("Attempting to respawn serialization "
+                        "consumer in %d seconds", delay
+                    )
+                    next_delay = delay * 2
+                    timer = Timer(delay, init_thread, [], 
+                        {"delay": next_delay })
+                    timer.start()
+                self.is_running = False
+                del TIMER_DELAYS[self.name]
+
+def init_thread(*args, **kw):
+    log.info("Initializing serialization consumer thread...")
+    delay = kw.get("delay", INITIAL_DELAY)
+    task_thread = SerializeThread(target=serialization_worker)
+    task_thread.start()
+    TIMER_DELAYS[task_thread.name] = delay
+
 @register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
 @register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
 def queue_object_serialization(obj, event):
@@ -317,6 +362,20 @@ def serialization_notifications():
     mq_utility = zope.component.getUtility(IMessageQueueConfig)
     connection = get_mq_connection()
     if not connection:
+        #delay
+        delay = TIMER_DELAYS["serialize_setup"]
+        if delay > MAX_DELAY:
+            log.error("Could not set up amqp workers - No rabbitmq " 
+            "connection found after %d seconds.", delay)
+        else:
+            log.info("Attempting to setup serialization AMQP consumers "
+                "in %d seconds", delay
+            )
+            timer = Timer(TIMER_DELAYS["serialize_setup"],
+                serialization_notifications
+            )
+            timer.start()
+            TIMER_DELAYS["serialize_setup"] *= 2
         return
     channel = connection.channel()
     #create exchange
@@ -335,6 +394,4 @@ def serialization_notifications():
         exchange=SERIALIZE_OUTPUT_EXCHANGE,
         routing_key=SERIALIZE_OUTPUT_ROUTING_KEY)
     for i in range(mq_utility.get_number_of_workers()):
-        task_thread = Thread(target=serialization_worker)
-        task_thread.daemon = True
-        task_thread.start()
+        init_thread()
