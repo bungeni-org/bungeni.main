@@ -51,7 +51,9 @@ def provideAdapterWorkflow(factory, adapts_kls):
     component.provideAdapter(factory, (adapts_kls,), IWorkflow)
 
 
-def load_workflow(name, path_custom_workflows=capi.get_path_for("workflows")):
+def load_workflow(type_key, name, 
+        path_custom_workflows=capi.get_path_for("workflows")
+    ):
     """Setup (once) and return the Workflow instance, from XML definition, 
     for named workflow.
     """
@@ -59,7 +61,7 @@ def load_workflow(name, path_custom_workflows=capi.get_path_for("workflows")):
     #
     #if not component.queryUtility(IWorkflow, name): !+BREAKS_DOCTESTS
     if not get_workflow._WORKFLOWS.has_key(name):
-        wf = xmlimport.load(path_custom_workflows, name)
+        wf = xmlimport.load(type_key, name, path_custom_workflows)
         log.debug("Loading WORKFLOW: %s %s" % (name, wf))
         # debug info
         for state_key, state in wf.states.items():
@@ -111,7 +113,7 @@ def load_workflows():
     for type_key, ti in capi.iter_type_info():
         if ti.workflow_key is not None:
             # load/get Workflow instance for this key, and associate with type
-            ti.workflow = load_workflow(ti.workflow_key)
+            ti.workflow = load_workflow(type_key, ti.workflow_key)
             # adjust domain_model as per workflow, register/associate domain_model
             apply_customization_workflow(type_key, ti)
 

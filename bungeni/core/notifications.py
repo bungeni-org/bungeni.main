@@ -1,3 +1,6 @@
+
+# !+ !!!! Correct SRC CODE formatting of this module !!!!
+
 log = __import__("logging").getLogger("bungeni.core.notifications")
 
 import os
@@ -350,5 +353,5 @@ def load_notifications():
     for type_key, ti in capi.iter_type_info():
         workflow = ti.workflow
         if workflow and workflow.has_feature("notification"):
-            load_notification_config("%s.xml" % ti.workflow_key,
-                                     ti.domain_model)
+            load_notification_config("%s.xml" % type_key, ti.domain_model)
+

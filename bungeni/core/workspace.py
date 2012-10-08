@@ -1,4 +1,13 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Bungeni Workspace
+
+$Id: $
+"""
 log = __import__("logging").getLogger("bungeni.core.workspace")
+
 import os
 import time
 from sqlalchemy import orm, Date, cast
@@ -19,10 +28,12 @@ from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
 from bungeni.models import utils, domain
 from bungeni.utils.capi import capi, bungeni_custom_errors
-from bungeni.core.interfaces import (IWorkspaceTabsUtility,
-                                     IWorkspaceContainer,
-                                     IWorkspaceUnderConsiderationContainer,
-                                     IWorkspaceTrackedDocumentsContainer)
+from bungeni.core.interfaces import (
+    IWorkspaceTabsUtility,
+    IWorkspaceContainer,
+    IWorkspaceUnderConsiderationContainer,
+    IWorkspaceTrackedDocumentsContainer
+)
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
 
@@ -41,7 +52,7 @@ OBJECT_ROLES = ["bungeni.Owner", "bungeni.Signatory"]
 # All logged in users get a workspace with these tabs
 TABS = ["draft", "inbox", "pending", "archive"]
 
-TabCountRecord = namedtuple('TabCountRecord', ['timestamp', 'count'])
+TabCountRecord = namedtuple("TabCountRecord", ["timestamp", "count"])
 
 
 def stringKey(instance):
@@ -55,7 +66,7 @@ def stringKey(instance):
 
 
 def valueKey(identity_key):
-    """Returns a tuple, (domain_class, primary_key)"""
+    """Returns a tuple, (domain_class, primary_key)."""
     if not isinstance(identity_key, basestring):
         raise ValueError
     properties = identity_key.split("-")
@@ -91,8 +102,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
             if domain_classes:
                 for domain_class in domain_classes:
                     status = self.workspace_config.get_status(
-                        role, domain_class, tab
-                        )
+                        role, domain_class, tab)
                     if status:
                         if domain_class in domain_status.keys():
                             domain_status[domain_class].extend(status)
@@ -108,8 +118,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
                 domain_status[domain_class] = []
                 for role in roles:
                     statuses = self.workspace_config.get_status(
-                        role, domain_class, self.__name__
-                        )
+                        role, domain_class, self.__name__)
                     if kw.get("filter_status", None):
                         if kw["filter_status"] in statuses:
                             domain_status[domain_class].append(
@@ -131,24 +140,24 @@ class WorkspaceBaseContainer(AlchemistContainer):
             if not domain_status[domain_class]:
                 del domain_status[domain_class]
         return domain_status
-
+    
     def title_column(self, domain_class):
         table = orm.class_mapper(domain_class).mapped_table
         utk = dict([(table.columns[k].key, k) for k in table.columns.keys()])
-        # TODO : update to support other fields
+        # !+ update to support other fields
         column = table.columns[utk["title"]]
         return column
-
+    
     def filter_title(self, query, domain_class, kw):
         if kw.get("filter_title", None):
             column = self.title_column(domain_class)
-            return query.filter("""(lower(%s) LIKE '%%%s%%')""" %
-                        (column, kw["filter_title"].lower()))
+            return query.filter("""(lower(%s) LIKE "%%%s%%")""" % (
+                    column, kw["filter_title"].lower()))
         return query
-
+    
     def order_query(self, query, domain_class, kw, reverse):
         if (kw.get("sort_on", None) and
-            hasattr(domain_class, str(kw.get("sort_on")))
+                hasattr(domain_class, str(kw.get("sort_on")))
             ):
             if reverse:
                 return query.order_by(expression.desc(
@@ -157,7 +166,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
                 return query.order_by(expression.asc(
                     getattr(domain_class, str(kw.get("sort_on")))))
         return query
-
+    
     def filter_status_date(self, query, domain_class, kw):
         #filter on status_date
         attr = getattr(domain_class, "status_date")
@@ -170,21 +179,21 @@ class WorkspaceBaseContainer(AlchemistContainer):
         if end_date:
             query = query.filter(cast(attr, Date) <= end_date)
         return query
-
+    
     def _query(self, **kw):
         raise NotImplementedError("Inheriting class must implement this")
-
+    
     def query(self, **kw):
         return self._query(**kw)
-
+    
     def items(self, **kw):
         for obj in self._query(kw):
             name = stringKey(obj)
             yield (name, contained(obj, self, name))
-
+    
     def set_tab_count(self, principal_id, count):
         self.tab_count_cache[principal_id] = TabCountRecord(time.time(), count)
-
+    
     def count(self, read_from_cache=True):
         """Count of items in a container
         """
@@ -192,8 +201,9 @@ class WorkspaceBaseContainer(AlchemistContainer):
         results = []
         principal = utils.get_principal()
         if (read_from_cache and principal.id in self.tab_count_cache.keys() and
-            (self.tab_count_cache[principal.id].timestamp +
-             capi.workspace_tab_count_cache_refresh_time) > time.time()):
+                (self.tab_count_cache[principal.id].timestamp +
+                    capi.workspace_tab_count_cache_refresh_time) > time.time()
+            ):
             return self.tab_count_cache[principal.id].count
         roles = get_workspace_roles()
         group_roles_domain_status = self.item_status_filter(kw, roles)
@@ -226,8 +236,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         roles = get_workspace_roles() + OBJECT_ROLES
         for role in roles:
             statuses = self.workspace_config.get_status(
-                role, domain_class, self.__name__
-                )
+                role, domain_class, self.__name__)
             if statuses and status in statuses:
                 return True
         return False
@@ -248,7 +257,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
             return value
         else:
             return default
-
+    
     @property
     def parliament_id(self):
         """Vocabularies in the forms get the parliament id from the context,
@@ -256,14 +265,14 @@ class WorkspaceBaseContainer(AlchemistContainer):
         the workspace is meant only for adding current documents
         """
         return utils.get_current_parliament().group_id
-
+    
     def __getitem__(self, name):
         value = self.get(name)
         if value is None:
             raise KeyError(name)
         return value
     # see alchemist.traversal.managed.One2Many
-    # see alchemist.ui.content.AddFormBase -> self.context[''] = ob
+    # see alchemist.ui.content.AddFormBase -> self.context[""] = ob
     # see bungeni.core.app.AppSetup
     # In the managed containers, the constraint manager
     # in One2Many sets the foreign key of an item to the
@@ -272,7 +281,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
     # The add forms in the workspace are only to add documents to the
     # current parliament.
     # This sets the foreign key of the doc to the current parliament.
-
+    
     def __setitem__(self, name, item):
         session = Session()
         current_parliament = utils.get_current_parliament()
@@ -282,7 +291,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
 class WorkspaceContainer(WorkspaceBaseContainer):
     interface.implements(IWorkspaceContainer)
-
+    
     def _query(self, **kw):
         principal = utils.get_principal()
         roles = get_workspace_roles()
@@ -333,7 +342,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         # Sort items
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
-                         reverse=reverse)
+                reverse=reverse)
         if not first_page:
             count = len(results)
         if not (kw.get("filter_title", None) or
@@ -365,15 +374,15 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
 
 class WorkspaceContainerTraverser(SimpleComponentTraverser):
     """Traverser for workspace containers"""
-
+    
     def __init__(self, context, request):
         self.context = context
         self.request = request
-
+    
     def publishTraverse(self, request, name):
         """First checks if the name refers to a view of this container,
-           then checks if the name refers to an item in this container,
-           else raises a NotFound
+        then checks if the name refers to an item in this container,
+        else raises a NotFound.
         """
         workspace = removeSecurityProxy(self.context)
         view = component.queryMultiAdapter((workspace, request), name=name)
@@ -387,7 +396,7 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
 
 
 class WorkspaceTabsUtility(object):
-    """This is utility stores the workflow configuration
+    """This is utility stores the workflow configuration.
     """
     interface.implements(IWorkspaceTabsUtility)
 
@@ -412,17 +421,19 @@ class WorkspaceTabsUtility(object):
         a name.
         """
         if item_type in self.domain_type.keys():
-            raise ValueError("Multiple workspace declarations"
-                             "with same name - %s") % (item_type)
+            raise ValueError(
+                "Multiple workspace declarations with same name - %s") % (
+                    item_type)
         if domain_class in self.domain_type.keys():
-            raise ValueError("Multiple workspace domain classes"
-                             "with same name - %s") % (domain_class)
+            raise ValueError(
+                "Multiple workspace domain classes with same name - %s") % (
+                    domain_class)
         self.domain_type[item_type] = domain_class
         self.domain_type[domain_class] = item_type
-
+    
     def get_role_domains(self, role, tab):
         """Returns a list of domain classes that a role will see for a
-        certain tab
+        certain tab.
         """
         if role in self.workspaces.keys():
             if tab in self.workspaces[role].keys():
@@ -430,20 +441,20 @@ class WorkspaceTabsUtility(object):
         return []
 
     def get_domain(self, key):
-        """Passed a type string returns the domain class"""
+        """Passed a type string returns the domain class."""
         if key in self.domain_type:
             return self.domain_type[key]
         return None
 
     def get_type(self, key):
-        """Passed a domain class returns a string"""
+        """Passed a domain class returns a string."""
         if key in self.domain_type:
             return self.domain_type[key]
         return None
 
     def get_tab(self, role, domain_class, status):
         """Returns the tab an object should be in, given its domain class,
-        status and role
+        status and role.
         """
         if role in self.workspaces:
             for tab in self.workspaces[role]:
@@ -455,7 +466,7 @@ class WorkspaceTabsUtility(object):
 
     def get_status(self, role, domain_class, tab):
         """Returns all applicable statuses given the role,
-        domain_class and tab
+        domain_class and tab.
         """
         if role in self.workspaces:
             if tab in self.workspaces[role]:
@@ -470,7 +481,7 @@ def load_workspaces():
     for type_key, ti in capi.iter_type_info():
         workflow = ti.workflow
         if workflow and workflow.has_feature("workspace"):
-            load_workspace("%s.xml" % ti.workflow_key, ti.domain_model)
+            load_workspace("%s.xml" % type_key, ti.domain_model)
 
 @bungeni_custom_errors
 def load_workspace(file_name, domain_class):
@@ -597,3 +608,4 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                          reverse=reverse)
         return (results, count)
+
