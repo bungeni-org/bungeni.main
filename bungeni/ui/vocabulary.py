@@ -349,7 +349,8 @@ class GroupSubRoleFactory(BaseVocabularyFactory):
     def __call__(self, context):
         terms = []
         while not IBungeniGroup.providedBy(context):
-            context = context.__parent__
+            context = (getattr(context, "group", None) or 
+                getattr(context, "__parent__", None))
             if not context:
                 raise NotImplementedError("Context does not implement IBungeniGroup")
         trusted = removeSecurityProxy(context)
