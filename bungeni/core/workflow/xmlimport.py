@@ -117,17 +117,17 @@ def zcml_transition_permission(pid, title, roles):
 #
 
 @bungeni_custom_errors
-def load(path_custom_workflows, name):
-    """ (path_custom_workflows:str, name:str) -> Workflow
+def load(type_key, name, path_custom_workflows):
+    """ (type_key:str, name:str, path_custom_workflows:str) -> Workflow
     
     Loads the workflow XML definition file, returning the correspondingly setup 
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (name))
-    return _load(etree.fromstring(open(file_path).read()), name)
+    return _load(type_key, name, etree.fromstring(open(file_path).read()))
 
-def _load(workflow, name):
-    """ (workflow:etree_doc, name:str) -> Workflow
+def _load(type_key, name, workflow):
+    """ (type_key:str, name:str, workflow:etree_doc) -> Workflow
     """
     # !+ @title, @description
     transitions = []
