@@ -21,7 +21,7 @@ from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
-
+from bungeni.utils import naming
 
 # common
 
@@ -135,7 +135,7 @@ def user_may_edit_context_parent(context):
     an Event.
     """
     parent = context.head
-    permission = "bungeni.%s.Edit" % (type(parent).__name__.lower()) # !+polymorphic_identity?
+    permission = "bungeni.%s.Edit" % (naming.polymorphic_identity(type(parent)))
     return checkPermission(permission, parent)
 
 

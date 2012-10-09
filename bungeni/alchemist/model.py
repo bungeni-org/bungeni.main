@@ -13,7 +13,6 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # used directly in bungeni
 __all__ = [
-    "queryModelInterface",      # redefn -> ore.alchemist.model
     "ModelDescriptor",          # redefn -> ore.alchemist.model
     "IModelDescriptorField",    # redefn -> ore.alchemist.interfaces
     
@@ -36,32 +35,6 @@ from bungeni.alchemist.interfaces import (
 from bungeni.ui.utils import common 
 from bungeni.ui.i18n import _
 from bungeni.utils import naming
-
-# ore.alchemist.model
-
-
-def queryModelInterface(cls):
-    """This queries the domain model class for the exclusively alchemist
-    IIModelInterface interface. If cls is already such an interface it itself 
-    is returned.
-    """
-    # !+queryModel(mr, jun-2012) replace with capi.get_type_info().interface?
-    if not IInterface.providedBy(cls):
-        candidates = list(interface.implementedBy(cls))
-        ifaces = filter(IIModelInterface.providedBy, candidates)
-        #import pdb; pdb.set_trace()
-        if not ifaces:
-            for i in candidates:
-                if issubclass(i, IAlchemistContent):
-                    ifaces.append(i)
-        assert ifaces, "No Model Interface on Domain Object [%s]" % (cls)
-        if ifaces:
-            assert len(ifaces)==1, "Multiple Model Interfaces on Domain Object"
-        #import pdb; pdb.set_trace()
-        return ifaces[0]
-    else:
-        assert IIModelInterface.providedBy(cls), "Invalid Interface"
-        return cls
 
 
 # local utils
@@ -612,7 +585,8 @@ class ModelDescriptor(object):
     
     @classproperty
     def display_name(cls):
-        cls_name = naming.cls_name_from_descriptor_cls_name(cls.__name__)
+        cls_name = naming.model_name(
+            naming.type_key("descriptor_class_name", cls.__name__))
         return _(naming.split_camel(cls_name)) # !+unicode
     @classproperty
     def container_name(cls):

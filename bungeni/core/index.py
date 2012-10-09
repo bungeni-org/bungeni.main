@@ -37,7 +37,7 @@ import cStringIO, os, subprocess
 from sqlalchemy import exceptions
 from bungeni.alchemist import Session
 from bungeni.alchemist import container
-from bungeni.alchemist import model
+from bungeni.alchemist import utils
 from ore.xapian import search, queue, interfaces as iindex
 
 from bungeni.models.schema import metadata
@@ -255,7 +255,7 @@ class ContentIndexer(object):
         doesn't allow for changing field definitions without reindexing) ... 
         see sync index script.
         """
-        content_schema = model.queryModelInterface(self.domain_model)
+        content_schema = utils.get_derived_table_schema(self.domain_model)
         if interfaces.ENABLE_LOGGING: log.debug('generating indexing schema %r'%content_schema)
         for field in schema.getFields(content_schema).values():
             if field.__name__ in self.action_fields:

@@ -49,33 +49,33 @@ def setUpFields(domain_model, mode):
     domain_model = removeSecurityProxy(domain_model)
     #import time
     #t = time.time()
-    domain_interface = bungeni.alchemist.model.queryModelInterface(domain_model)
-    descriptor_model = bungeni.alchemist.utils.get_descriptor(domain_interface)
+    table_schema = bungeni.alchemist.utils.get_derived_table_schema(domain_model)
+    descriptor_model = bungeni.alchemist.utils.get_descriptor(table_schema)
     
     search_mode = mode == "search"
     
     if not descriptor_model:
         if search_mode:
-            form_fields = form.Fields(*setUpSearchFields(domain_interface))
+            form_fields = form.Fields(*setUpSearchFields(table_schema))
         else:
-            form_fields = form.Fields(domain_interface)
+            form_fields = form.Fields(table_schema)
         return form_fields
     
     fields = []
     columns = getattr(descriptor_model, "%s_columns" % mode)
     
     for field_info in columns:
-        if not field_info.name in domain_interface:
-            #print "bad field", field_info.name, domain_interface.__name__
+        if not field_info.name in table_schema:
+            #print "bad field", field_info.name, table_schema.__name__
             continue
         custom_widget = getattr(field_info, "%s_widget" % mode)
         if search_mode:
             fields.append(form.Field(
-                    setUpSearchField(domain_interface[field_info.name]),
+                    setUpSearchField(table_schema[field_info.name]),
                     custom_widget=custom_widget))
         else:
             fields.append(form.Field(
-                    domain_interface[field_info.name],
+                    table_schema[field_info.name],
                     custom_widget=custom_widget))
     form_fields = form.Fields(*fields)
     #print "field setup cost", time.time()-t    
@@ -118,22 +118,20 @@ def setUpColumns(domain_model):
     """Use model descriptor on domain model extract columns for table listings
     """
     columns = []
-    domain_interface = bungeni.alchemist.model.queryModelInterface(domain_model)
-    
-    if not domain_interface:
+    table_schema = bungeni.alchemist.utils.get_derived_table_schema(domain_model)
+    if not table_schema:
         raise SyntaxError("Model must have domain interface %r" % (domain_model))
-    
-    descriptor_model = bungeni.alchemist.utils.get_descriptor(domain_interface)
+    descriptor_model = bungeni.alchemist.utils.get_descriptor(table_schema)
     
     field_column_names = \
         descriptor_model and descriptor_model.listing_columns \
-        or schema.getFieldNamesInOrder(domain_interface)
+        or schema.getFieldNamesInOrder(table_schema)
     
     # quick hack for now, dates are last in listings
     remainder = []
     
     for field_name in field_column_names:
-        if not field_name in domain_interface:
+        if not field_name in table_schema:
             # we can specify additional columns for tables that are not present in the
             # the interface, iff they are fully spec'd as columns in the descriptor/annotation
             if (descriptor_model and 
@@ -142,7 +140,7 @@ def setUpColumns(domain_model):
                 ):
                 pass
             else:
-                #print "bad field, container", field_name, domain_interface.__name__
+                #print "bad field, container", field_name, table_schema.__name__
                 continue
         
         info = descriptor_model and descriptor_model.get(field_name) or None
@@ -151,7 +149,7 @@ def setUpColumns(domain_model):
             columns.append(info.listing_column)
             continue
         
-        field = domain_interface[field_name]
+        field = table_schema[field_name]
         
         if isinstance(field, schema.Datetime):
             remainder.append(

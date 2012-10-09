@@ -15,7 +15,6 @@ from zope.securitypolicy.interfaces import IRole
 from zope.configuration import xmlconfig
 
 from bungeni.alchemist.model import (
-    queryModelInterface,
     #ModelDescriptor,
     IModelDescriptor,
     Field,
@@ -82,7 +81,7 @@ def localizable_descriptor_classes(module):
 # Localize descriptors from {bungeni_custom}/forms/ui.xml.
 
 def get_localizable_descriptor_class(module, type_key):
-    descriptor_cls_name = naming.descriptor_cls_name_from_type_key(type_key)
+    descriptor_cls_name = naming.descriptor_class_name(type_key)
     assert hasattr(module, descriptor_cls_name), \
         "Unknown descriptor [%s]" % (descriptor_cls_name)
     cls = getattr(module, descriptor_cls_name) # raises AttributeError
@@ -134,44 +133,45 @@ def localize_descriptors():
     import ore.alchemist.sa2zs
     def reset_zope_schema_properties_on_model_interface(descriptor_cls):
         __module__ = "bungeni.models.interfaces"
-        type_key = naming.type_key_from_descriptor_cls_name(descriptor_cls.__name__)
-        domain_model = capi.get_type_info(type_key).domain_model
+        type_key = naming.type_key("descriptor_class_name", descriptor_cls.__name__)
+        ti = capi.get_type_info(type_key)
+        domain_model = ti.domain_model
         sast = ore.alchemist.sa2zs.SQLAlchemySchemaTranslator()
         domain_table = bungeni.alchemist.utils.get_local_table(domain_model)
         # zope.schema field property map
         zsfp_map = sast.generateFields(domain_table, descriptor_cls)
         # apply manually overridden field properties
         sast.applyProperties(zsfp_map, descriptor_cls)
-        # stuff back onto domain_interface
-        domain_interface = queryModelInterface(domain_model)
-        assert len(domain_interface.names()) == len(zsfp_map)
-        for name in domain_interface.names():
+        # stuff back onto derived_table_schema
+        derived_table_schema = ti.derived_table_schema
+        assert len(derived_table_schema.names(all=False)) == len(zsfp_map)
+        for name in derived_table_schema.names(all=False):
             assert name in zsfp_map
             # !+ zsfp == descriptor_cls.fields_by_name[name].property
             zsfp = zsfp_map[name]
             # !+property.__name__ needed downstream by 
             # zope.formlib.form.FormField __init__() does assert name !?!
             zsfp.__name__ = name
-            # !+ cannot simply set the property directly on domain_interface:
-            #   domain_interface[f.name] = zsfp
+            # !+ cannot simply set the property directly on derived_table_schema:
+            #   derived_table_schema[f.name] = zsfp
             # as this gives: 
             #   *** TypeError: 'InterfaceClass' object does not support item assignment
             # So we have to do workaround it !!
-            domain_interface._InterfaceClass__attrs[name] = zsfp 
-            domain_interface.changed(name)
+            derived_table_schema._InterfaceClass__attrs[name] = zsfp 
+            derived_table_schema.changed(name)
     '''!+ reset_zope_schema_properties_on_model_interface
-    Initially field.property IS domain_interface[f.name], and so if field config
-    changes then the domain_interface has to be "kept ijn sync". 
+    Initially field.property IS derived_table_schema[f.name], and so if field config
+    changes then the derived_table_schema has to be "kept ijn sync". 
     
     Above does it the "alchemist" way, but it could certainly be a lot simpler 
     and faster, at least for "repeat" syncing with changed fields. Examples:
     
     a) (if we ignore the issue of not being able to directly set property on 
-    domain_interface) this could simply be done with something like:
+    derived_table_schema) this could simply be done with something like:
     
         for f in cls.fields:
             if f.property is not None:
-                domain_interface[f.name] = f.property
+                derived_table_schema[f.name] = f.property
     
     b) it may (should!) be possible to make this completely dynamic... that is 
     to give the IIModelInterface interfaces the intelligence to always 
@@ -300,7 +300,7 @@ def serialize_cls(cls, depth=1):
     
     Assumption: cls (subclass of ModelDescriptor) is localizable.
     """
-    type_key = naming.type_key_from_descriptor_cls_name(cls.__name__)
+    type_key = naming.type_key("descriptor_class_name", cls.__name__)
     order = cls.order
     
     _acc = []

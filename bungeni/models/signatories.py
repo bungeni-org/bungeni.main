@@ -20,6 +20,7 @@ from zope.component import getGlobalSiteManager
 from bungeni.alchemist import Session
 from bungeni.models import interfaces, domain
 from bungeni.utils import register
+from bungeni.utils.capi import capi
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
 
 CONFIGURABLE_PARAMS = ("max_signatories", "min_signatories", "submitted_states",
@@ -217,37 +218,37 @@ class SignatoryValidator(object):
         self.updateSignatories()
         
 def createManagerFactory(domain_class, **params):
-    gsm = getGlobalSiteManager()
-    manager_name = "%sSignatoryManager" % domain_class.__name__
-    domain_iface = None
-    #!+TIMING
-    #!+TYPE_INFO(mb, Jun-2012) can't queryModelInterface or type info by the
-    # since workflow is being loaded at this time. Perhaps pass type_info
-    # when firing domain.configurable_domain in bungeni.core.workflows.adapters
-    iface_name = "I%s" % domain_class.__name__
-    domain_iface = getattr(interfaces, iface_name, None)
-    if domain_iface is None:
-        log.error("No such interface %s class %s", iface_name, domain_class)
-        log.error("Signatory Manager for class %s not created", domain_class)
-        return
+    manager_name = "%sSignatoryManager" % domain_class.__name__ #!+naming
     if manager_name in globals().keys():
         log.errror("Signatory manager named %s already exists", manager_name)
         return
+    #!+TIMING
+    #!+TYPE_INFO(mb, Jun-2012) type_info may still not be setup as workflows 
+    # are still loading
+    ti = capi.get_type_info(domain_class)
+    domain_iface = ti.interface
+    if domain_iface is None:
+        log.error("No model interface for class %s", domain_class)
+        log.error("Not creating Signatory Manager for class %s", domain_class)
+        return
+    
     globals()[manager_name] = type(manager_name, (SignatoryValidator,), {})
     manager = globals()[manager_name]
     for config_name, config_value in params.iteritems():
-        assert (config_name in CONFIGURABLE_PARAMS), ("Check your signatory "
+        assert config_name in CONFIGURABLE_PARAMS, ("Check your signatory "
             "feature configuration for %s. Only these parameters may be "
-            " configured %s" % (domain_class.__name__, CONFIGURABLE_PARAMS)
-        )
+            "configured %s" % (domain_class.__name__, CONFIGURABLE_PARAMS))
         config_type = type(getattr(manager, config_name))
         if config_type in (tuple, list):
             config_value = map(str.strip, config_value.split())
         setattr(manager, config_name, config_type(config_value))
-    assert (set.intersection(set(manager.submitted_states), 
-        set(manager.draft_states), set(manager.expire_states))==set()
-    ), "draft, submitted and expired states must be distinct lists"
-
+    assert set.intersection(
+            set(manager.submitted_states), 
+            set(manager.draft_states), 
+            set(manager.expire_states)
+        )==set(), "draft, submitted and expired states must be distinct lists"
+    
+    gsm = getGlobalSiteManager()
     gsm.registerAdapter(manager, (domain_iface,), interfaces.ISignatoryManager)
     domain_class.allow_signatures = _allow_signatures
 

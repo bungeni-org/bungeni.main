@@ -19,7 +19,6 @@ from zope import interface, location
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import ore.xapian.interfaces
 from bungeni import alchemist
-from bungeni.alchemist import utils
 from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import class_mapper, object_mapper
@@ -54,7 +53,7 @@ def get_changes(auditable, *actions):
     return [ c for c in auditable.changes if c.action in actions ]
 
 def get_audit_table_name(kls):
-    return "%s_audit" % (utils.get_local_table(kls).name)
+    return "%s_audit" % (alchemist.utils.get_local_table(kls).name)
 
 def get_mapped_object_id(ob):
     # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
@@ -109,10 +108,10 @@ class Entity(object):
     
     def __init__(self, **kw):
         try:
-            domain_schema = alchemist.model.queryModelInterface(type(self))
-            known_names = [ k for k, d in domain_schema.namesAndDescriptions(1) ]
+            domain_schema = alchemist.utils.get_derived_table_schema(type(self))
+            known_names = [ k for k, d in domain_schema.namesAndDescriptions(all=True) ]
         except Exception, e:
-            log.error("Failed queryModelInterface(%s): %s: %s" % (
+            log.error("Failed table schema lookup for %s: %s: %s" % (
                 type(self), type(e).__name__, e))
             known_names = None
         
@@ -837,7 +836,7 @@ class Audit(HeadParentedMixin, Entity):
         # define a subtype of Audit type
         audit_factory_name = "%sAudit" % (auditable_cls.__name__)
         auditable_pk_column = [ c for c in 
-            utils.get_local_table(auditable_cls).primary_key ][0]
+            alchemist.utils.get_local_table(auditable_cls).primary_key ][0]
         factory = type(audit_factory_name, (cls,), {
             "head_id_column_name": auditable_pk_column.name })
         # define a subtype of Audit type

@@ -14,8 +14,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.utils")
 
-__all__ = ["polymorphic_identity", "camel", "un_camel", "singular", "plural"]
-
 import re
 from zope.interface.interfaces import IInterface
 from zope.dottedname.resolve import resolve
@@ -23,18 +21,13 @@ from zope.dottedname.resolve import resolve
 
 def polymorphic_identity(cls):
     """Formalize convention of determining the polymorphic discriminator value 
-    for a domain class as a function of the class name.
+    for a domain type (a sub-type of models.domain.Entity) as a function of 
+    the class name.
     
-    For convenience, the cls parameter may be a normal type or
-    a zope.interface.Iterface, that is specially handled.
+    The polymorphic_identity(domain_type) *is* the type_key for the domain_type.
     """
+    #assert issubclass(cls, bungeni.models.domain.Entity)
     name = cls.__name__
-    ''' !+ should not be here? type_info get_by_interface?
-    if IInterface.providedBy(cls):
-        assert name.startswith("I"), \
-            'InterfaceClass %s name does not start with "I"' % (cls)
-        name = name[1:]
-    '''
     return un_camel(name)
 
 
@@ -114,38 +107,53 @@ def resolve_relative(dotted_relative, obj):
     return resolve(dotted_relative, obj.__module__)
 
 
-# interface, descriptor
+# model, interfaces, descriptor, container
 
 INTERFACE_PREFIX = "I"
 TABLE_SCHEMA_POSTFIX = "TableSchema"
+DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
+CONTAINER_CLASSNAME_POSTFIX = "Container"
+
+def model_name(type_key):
+    return camel(type_key)
 
 def model_interface_name(type_key):
     return "%s%s" % (INTERFACE_PREFIX, camel(type_key))
-def type_key_from_model_interface_name(model_interface_name):
+def _type_key_from_model_interface_name(model_interface_name):
     assert model_interface_name.startswith(INTERFACE_PREFIX)
     return un_camel(model_interface_name[len(INTERFACE_PREFIX):])
 
 def table_schema_interface_name(type_key):
     return "%s%s%s" % (INTERFACE_PREFIX, camel(type_key), TABLE_SCHEMA_POSTFIX)
-def type_key_from_table_schema_interface_name(table_schema_interface_name):
+def _type_key_from_table_schema_interface_name(table_schema_interface_name):
     assert table_schema_interface_name.startswith(INTERFACE_PREFIX)
     assert table_schema_interface_name.endswith(TABLE_SCHEMA_POSTFIX)
     return un_camel(table_schema_interface_name[
             len(INTERFACE_PREFIX):-len(TABLE_SCHEMA_POSTFIX)])
 
-DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
-
-def descriptor_cls_name_from_type_key(type_key):
+def descriptor_class_name(type_key):
     cls_name = camel(type_key)
     return "%s%s" % (cls_name, DESCRIPTOR_CLASSNAME_POSTFIX)
-
-def type_key_from_descriptor_cls_name(descriptor_cls_name):
-    return un_camel(cls_name_from_descriptor_cls_name(descriptor_cls_name))
-
-def cls_name_from_descriptor_cls_name(descriptor_cls_name):
+def _type_key_from_descriptor_class_name(descriptor_cls_name):
     assert descriptor_cls_name.endswith(DESCRIPTOR_CLASSNAME_POSTFIX)
-    return descriptor_cls_name[0:-len(DESCRIPTOR_CLASSNAME_POSTFIX)]
+    return un_camel(descriptor_cls_name[0:-len(DESCRIPTOR_CLASSNAME_POSTFIX)])
 
+def container_class_name(type_key):
+    return "%sContainer" % model_name(type_key)
+
+def container_interface_name(type_key):
+    return "%s%s" % (INTERFACE_PREFIX, container_class_name(type_key))
+
+# reverse conversions back to type_key
+def type_key(name_type, name):
+    return type_key.reverse_conversions[name_type](name)
+type_key.reverse_conversions = {
+    "model_name": un_camel, # for model cls, prefer polymorphic_identity(cls)
+    # than type_key("model_name", cls.__name__)
+    "model_interface_name": _type_key_from_model_interface_name,
+    "table_schema_interface_name": _type_key_from_table_schema_interface_name,
+    "descriptor_class_name": _type_key_from_descriptor_class_name,
+}
 
 # i18n msgids --
 # set of message ids built dynamically, then dumped as needed for extractor

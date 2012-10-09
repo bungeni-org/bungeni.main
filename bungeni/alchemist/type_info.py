@@ -75,9 +75,9 @@ def _get(discriminator):
     
     # !+IALCHEMISTCONTENT normalize trickier discriminator cases to type_key
     if IIModelInterface.providedBy(discri):
-        discri = naming.type_key_from_table_schema_interface_name(discri.__name__)
+        discri = naming.type_key("table_schema_interface_name", discri.__name__)
     elif IInterface.providedBy(discri):
-        discri = naming.type_key_from_model_interface_name(discri.__name__)
+        discri = naming.type_key("model_interface_name", discri.__name__)
     elif type(discri) is type and issubclass(discri, domain.Entity):
         discri = naming.polymorphic_identity(discri)
     elif isinstance(discri, domain.Entity):
@@ -167,7 +167,9 @@ class TI(object):
             descriptor_model
                 the descriptor model for UI views for the type
             container_class
-                conatiner class for domain_model
+                container class for domain_model
+            container_interface
+                interface for the container class for domain_model
     """
     def __init__(self, workflow_key, iface):
         self.workflow_key = workflow_key
@@ -177,6 +179,7 @@ class TI(object):
         self.domain_model = None
         self.descriptor_model = None
         self.container_class = None
+        self.container_interface = None
         self.custom = False # type loaded from custom configuration
     def __str__(self):
         return str(self.__dict__)

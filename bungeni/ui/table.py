@@ -12,7 +12,7 @@ from bungeni.ui.utils import url
 from bungeni.ui.widgets import text_input_search_widget
 from bungeni.utils.capi import capi
 import bungeni.alchemist
-from bungeni.alchemist import model, utils
+from bungeni.alchemist import utils
 from bungeni.utils import naming
 
 _path = os.path.split(os.path.abspath(__file__))[0]
@@ -86,17 +86,15 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
         script_html = ""
         script_js = ""
         domain_model = proxy.removeSecurityProxy(self.context).domain_model
-        domain_interface = model.queryModelInterface(domain_model)
-        if domain_interface:
-            descriptor = utils.get_descriptor(domain_interface)
-            for field in descriptor.listing_columns:
-                search_widget = descriptor.get(field).search_widget
-                if search_widget:
-                    s_html, s_js = search_widget(self.prefix, field)
-                else:
-                    s_html, s_js = text_input_search_widget(self.prefix, field)
-                script_html += s_html
-                script_js += s_js
+        descriptor = utils.get_descriptor(domain_model)
+        for field in descriptor.listing_columns:
+            search_widget = descriptor.get(field).search_widget
+            if search_widget:
+                s_html, s_js = search_widget(self.prefix, field)
+            else:
+                s_html, s_js = text_input_search_widget(self.prefix, field)
+            script_html += s_html
+            script_js += s_js
         return script_html, script_js
 
     def getDataTableConfig(self):

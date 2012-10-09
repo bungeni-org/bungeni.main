@@ -24,7 +24,7 @@ __all__ = [
 ]
 
 
-from bungeni.alchemist import Session, model, interfaces, utils
+from bungeni.alchemist import Session, interfaces, utils
 
 #
 
@@ -133,7 +133,7 @@ def getFields(context, interface=None, annotation=None):
     """
     if interface is None:
         domain_model = proxy.removeSecurityProxy(context.domain_model)
-        interface = model.queryModelInterface(domain_model)
+        interface = utils.get_derived_table_schema(domain_model)
     if annotation is None:
         annotation = utils.get_descriptor(interface)
     for field_name in annotation.listing_columns:

@@ -12,11 +12,6 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 # List everything from this module intended for package-external use.
 __all__ = [
     "catalyse_descriptors"
-    #"catalyst",     # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
-    #"ApplySecurity",      # redefn -> alchemist.catalyst.domain !+ALCHEMIST_INTERNAL
-    #"GenerateDomainInterface" # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
-    #"GenerateContainer", # redefn -> alchemist.catalyst.container !+ALCHEMIST_INTERNAL
-    #"GenerateCollectionTraversal" # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
     #"sa2zs",        # alias -> ore.alchemist !+ALCHEMIST_INTERNAL
 ]
 from ore.alchemist import sa2zs
@@ -33,28 +28,24 @@ from bungeni.alchemist.container import AlchemistContainer
 from bungeni.alchemist.traversal import CollectionTraverser, ManagedContainerDescriptor
 from bungeni.alchemist import utils
 
-###
-
+#
 
 from zope import interface, component
-from zope.publisher.interfaces import IPublisherRequest, IPublishTraverse
 from zope.app.security.protectclass import (
         protectName, # !+remove
         protectSetAttribute, 
         protectLikeUnto
 )
-
+from zope.publisher.interfaces import IPublisherRequest, IPublishTraverse
 from z3c.traverser.interfaces import ITraverserPlugin
 from z3c.traverser.traverser import PluggableTraverser
 
 from sqlalchemy import orm
-
+from bungeni.utils import naming
 # target modules
 import bungeni.models.interfaces as INTERFACE_MODULE
 import bungeni.models.domain as CONTAINER_MODULE
 #import bungeni.ui.content as UI_MODULE
-
-from bungeni.utils import naming
 
 
 def catalyse_descriptors(module):
@@ -100,21 +91,25 @@ def catalyse_descriptors(module):
             # unmapped class e.g. Address, Version
             return False
     
+    def safe_setattr(obj, name, value):
+        if getattr(obj, name, None) is not None:
+            assert getattr(ti, name) is value
+        else:
+            setattr(obj, name, value)
+    
     for descriptor_model in descriptor_classes():
         descriptor_name = descriptor_model.__name__
-        assert descriptor_name.endswith("Descriptor")
-        domain_model_name = descriptor_name[0:-len("Descriptor")]
+        type_key = naming.type_key("descriptor_class_name", descriptor_name)
         # need a dedicated domain type
-        domain_model = getattr(domain, domain_model_name, None)
+        domain_model = getattr(domain, naming.model_name(type_key), None)
         # only catalyze "mapped domain models"
         if not (domain_model and is_model_mapped(domain_model)):
             log.warn("Not catalysing: %s" % (descriptor_name))
             continue
         # type_info, register descriptor_model, domain_model
-        type_key = naming.type_key_from_descriptor_cls_name(descriptor_name)
         ti = capi.get_type_info(type_key)
-        ti.descriptor_model = descriptor_model
-        ti.domain_model = domain_model
+        safe_setattr(ti, "domain_model", domain_model)
+        safe_setattr(ti, "descriptor_model", descriptor_model)
         # catalyse each (domain_model, descriptor_model) pair
         catalyst(ti)
     
@@ -125,24 +120,18 @@ def catalyse_descriptors(module):
     log.debug(m)
 
 
-# alchemist.catalyst.zcml 
-
 def catalyst(ti):
     log.info("CATALYST: domain_model=%s, descriptor_model=%s" % (
             ti.domain_model, ti.descriptor_model))
-    # create a domain interface if it doesn't already exist 
-    # this also creates an adapter between the interface and desc.
     generate_table_schema_interface(ti)
-    # setup security
-    ApplySecurity(ti)
-    # create a container class 
-    GenerateContainer(ti)
-    # generate collection traversal 
-    GenerateCollectionTraversal(ti)
+    apply_security(ti)
+    generate_container_class(ti)
+    generate_collection_traversal(ti)
     return ti
 
 
 def generate_table_schema_interface(ti):
+    
     def get_domain_interfaces(domain_model):
         """Return the domain bases for an interface as well as a filtered 
         implements only list (base interfaces removed).
@@ -171,7 +160,8 @@ def generate_table_schema_interface(ti):
         interface_name=table_schema_interface_name,
         __module__=INTERFACE_MODULE.__name__,
         bases=bases)
-    # register interface on type_info and set on INTERFACE_MODULE
+    # add derived_table_schema, register on type_info, set on INTERFACE_MODULE
+    implements.insert(0, derived_table_schema)
     ti.derived_table_schema = derived_table_schema
     setattr(INTERFACE_MODULE, table_schema_interface_name, derived_table_schema)
     log.info("generate_table_schema_interface [model=%s] generated [%s.%s]" % (
@@ -186,114 +176,89 @@ def generate_table_schema_interface(ti):
         assert not issubclass(model_interface, derived_table_schema)
         if model_interface not in implements:
             implements.append(model_interface)
-    # add derived_table_schema and apply
-    implements.insert(0, derived_table_schema)
+    # apply implemented interfaces
     interface.classImplementsOnly(ti.domain_model, *implements)
 
 
-def ApplySecurity(ti):
-    for c in ti.domain_model.__bases__:
+def apply_security(ti):
+    domain_model, descriptor_model = ti.domain_model, ti.descriptor_model
+    for c in domain_model.__bases__:
         if c is object:
             continue
-        protectLikeUnto(ti.domain_model, c)
-    attributes = set(
-        [ n for n,d in ti.derived_table_schema.namesAndDescriptions(1) ])
-    attributes = attributes.union(
-        set([ f.get("name") for f in ti.descriptor_model.fields ]))
-    descriptor_model = ti.descriptor_model
-    for n in attributes:
+        protectLikeUnto(domain_model, c)
+    attrs = set(
+        [ n for n, d in ti.derived_table_schema.namesAndDescriptions(all=True) ])
+    attrs = attrs.union(set(
+            [ f.get("name") for f in descriptor_model.fields ]))
+    for n in attrs:
         model_field = descriptor_model.get(n)
-        p = model_field and model_field.view_permission or "zope.Public"
-        protectName(ti.domain_model, n, p)
-    for n in attributes:
-        model_field = descriptor_model.get(n)
-        p = model_field and model_field.edit_permission or "zope.Public" # "zope.ManageContent"
-        protectSetAttribute(ti.domain_model, n, p)
-    for k, v in ti.domain_model.__dict__.items():
+        pv = "zope.Public"
+        pe = "zope.Public"
+        if model_field:
+            pv = model_field.view_permission # always "zope.Public"
+            pe = model_field.edit_permission # always "zope.ManageContent"
+        protectName(domain_model, n, pv)
+        protectSetAttribute(domain_model, n, pe)
+    for k, v in domain_model.__dict__.items():
         if (isinstance(v, ManagedContainerDescriptor) or 
                 isinstance(v, orm.attributes.InstrumentedAttribute)
             ):
-            protectName(ti.domain_model, k, "zope.Public")
+            protectName(domain_model, k, "zope.Public")
 
 
-# alchemist.catalyst.container
-def GenerateContainer(ti, 
-            container_name=None, 
-            container_iname=None,
-            base_interfaces=()
-        ):
-        """Generate a zope3 container class for a domain model.
-        """
-        # create container
-        container_name = container_name or \
-            "%sContainer" % (ti.domain_model.__name__)
-        
-        # logging variables
-        msg = (ti.domain_model.__name__, CONTAINER_MODULE.__name__, container_name)
-        
-        # if we already have a container class, exit                
-        if getattr(CONTAINER_MODULE, container_name, None):
-            log.info("GenerateContainer [model=%s] found container %s.%s, skipping" % msg)
-            ti.container_class = getattr(CONTAINER_MODULE, container_name)
-            return
-        log.info("GenerateContainer [model=%s] generated container %s.%s" % msg)
-        
-        # if we already have a container class, exit
-        container_class = type(container_name,
-            (AlchemistContainer,),
-            dict(_class=ti.domain_model, 
-                __module__=CONTAINER_MODULE.__name__)
+def generate_container_class(ti):
+    """Generate a zope3 container class for a domain model.
+    """
+    type_key = naming.polymorphic_identity(ti.domain_model)
+    container_name = naming.container_class_name(type_key)
+    container_iname = naming.container_interface_name(type_key)
+    base_interfaces = (IAlchemistContainer,)
+    
+    # logging variables
+    msg = (ti.domain_model.__name__, CONTAINER_MODULE.__name__, container_name)
+    
+    # container class - if we already have one, exit                
+    if getattr(CONTAINER_MODULE, container_name, None):
+        log.info("generate_container_class [model=%s] found container %s.%s, skipping" % msg)
+        ti.container_class = getattr(CONTAINER_MODULE, container_name)
+        return
+    
+    container_class = type(container_name,
+        (AlchemistContainer,),
+        dict(_class=ti.domain_model, 
+            __module__=CONTAINER_MODULE.__name__)
+    )
+    # set on CONTAINER_MODULE, register on type_info
+    setattr(CONTAINER_MODULE, container_name, container_class)
+    ti.container_class = container_class
+    log.info("generate_container_class [model=%s] generated container %s.%s" % msg)
+    
+    # container interface - if we already have one, skip creation
+    container_iface = getattr(INTERFACE_MODULE, container_iname, None)
+    msg = (ti.domain_model.__name__, CONTAINER_MODULE.__name__, container_iname)
+    if container_iface is not None:
+        assert issubclass(container_iface, IAlchemistContainer)
+        log.info("generate_container_class [model=%s] skipping container interface %s.%s for" % msg)
+    else:
+        container_iface = interface.interface.InterfaceClass(
+            container_iname,
+            bases=base_interfaces,
+            __module__=INTERFACE_MODULE.__name__
         )
-        setattr(CONTAINER_MODULE, container_name, container_class)
-        
-        # save container class on catalyst context
-        ti.container_class = container_class
-        
-        # interface for container
-        container_iname = container_iname or "I%s" % container_name
-        
-        # if we already have a container interface class, skip creation
-        container_interface = getattr(INTERFACE_MODULE, container_iname, None)
-        msg = (ti.domain_model.__name__, 
-            CONTAINER_MODULE.__name__, container_iname)
-        if container_interface is not None:
-            assert issubclass(container_interface, IAlchemistContainer)
-            log.info("GenerateContainer [model=%s] skipping container interface %s.%s for" % msg)
-        else:
-            log.info("GenerateContainer [model=%s] generated container interface %s.%s" % msg)
-            # ensure that our base interfaces include alchemist container 
-            if base_interfaces:
-                assert isinstance(base_interfaces, tuple)
-                found = False
-                for bi in base_interfaces:
-                    found = issubclass(bi, IAlchemistContainer)
-                    if found: break
-                if not found:
-                    base_interfaces = base_interfaces + (IAlchemistContainer,)
-            else:
-                base_interfaces = (IAlchemistContainer,)
-            
-            # create interface
-            container_interface = interface.interface.InterfaceClass(
-                container_iname,
-                bases=base_interfaces,
-                __module__=INTERFACE_MODULE.__name__
-            )
-            # store container interface for catalyst
-            ti.container_interface = container_interface
-            setattr(INTERFACE_MODULE, container_iname, container_interface)
-        
-        # setup security
-        for n, d in container_interface.namesAndDescriptions(1):
-            protectName(container_class, n, "zope.Public")
-        
-        if not container_interface.implementedBy(container_class):
-            interface.classImplements(container_class, container_interface)
-        ti.container_interface = container_interface
+        # set on INTERFACE_MODULE, register on type_info
+        setattr(INTERFACE_MODULE, container_iname, container_iface)
+        ti.container_interface = container_iface
+        log.info("generate_container_class [model=%s] generated container interface %s.%s" % msg)
+    
+    # setup security
+    for n, d in container_iface.namesAndDescriptions(all=True):
+        protectName(container_class, n, "zope.Public")
+    # apply implementedBy
+    if not container_iface.implementedBy(container_class):
+        interface.classImplements(container_class, container_iface)
 
 
-# alchemist.catalyst.zcml
-def GenerateCollectionTraversal(ti):
+def generate_collection_traversal(ti):
     
     def get_collection_names(domain_model):
         return [ k for k, v in domain_model.__dict__.items()
@@ -304,9 +269,8 @@ def GenerateCollectionTraversal(ti):
         return
     
     # Note: the templated CollectionTraverser TYPE returned by this is
-    # instantiated multiple times in case of inheritance of catalyzed 
-    # descriptors e.g. for Motion, it is instantiated once for 
-    # ParliamentaryItemDescriptor and once for MotionDescriptor.
+    # instantiated per "inherited and catalysed" descriptor e.g. for Motion, 
+    # it is instantiated once for DocDescriptor and once for MotionDescriptor.
     traverser = CollectionTraverser(*collection_names)
     
     # provideSubscriptionAdapter(factory, adapts=None, provides=None)
