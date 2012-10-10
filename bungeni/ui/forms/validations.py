@@ -142,7 +142,20 @@ class AllPoliticalGroupMemberships(object):
 all_political_group_memberships = rdb.join(
     schema.user_group_membership, schema.group).join(schema.political_group)
         
-rdb.orm.mapper(AllPoliticalGroupMemberships, all_political_group_memberships)
+rdb.orm.mapper(AllPoliticalGroupMemberships, all_political_group_memberships,
+    properties={
+        "group_id":[
+            schema.user_group_membership.c.group_id,
+            schema.group.c.group_id,
+            schema.political_group.c.group_id
+            ],
+        "group_status":[schema.group.c.status],
+        "group_status_date":[schema.group.c.status_date],
+        "group_start_date":[schema.group.c.start_date],
+        "group_end_date":[schema.group.c.end_date],
+        "group_language":[schema.group.c.language],
+    }
+)
 
 def validate_political_group_membership(action, data, context, container):
     errors = []
@@ -313,9 +326,8 @@ def validate_group_membership_dates(action, data, context, container):
             errors.append(Invalid(
                     _("The person is a member in (%s) at that date") % overlaps, 
                     "end_date", "user_id"))
-    for r in queries.validate_open_membership(group_membership, 
-                domain.GroupMembership, 
-                user_id, group_id):
+    for r in queries.validate_open_membership(
+        group_membership, domain.GroupMembership, user_id, group_id):
         overlaps = r.group.short_name
         errors.append(Invalid(
                     _("The person is a member in (%s) at that date") % overlaps, 
@@ -327,11 +339,29 @@ class GroupMemberTitle(object):
     """ Titels that may be held by multiple persons of the
     group at the same time"""
 
-group_member_title = rdb.join(schema.user_group_membership, 
-        schema.member_title).join(
-            schema.title_type)
+group_member_title = rdb.join(schema.user_group_membership, schema.member_title
+    ).join(schema.title_type)
 
-rdb.orm.mapper(GroupMemberTitle, group_member_title)
+rdb.orm.mapper(GroupMemberTitle, group_member_title,
+    properties={
+        "membership_id":[
+            schema.user_group_membership.c.membership_id,
+            schema.member_title.c.membership_id
+            ],
+        "title_type_id":[
+            schema.title_type.c.title_type_id,
+            schema.member_title.c.title_type_id
+            ],
+        "group_id":[
+            schema.user_group_membership.c.group_id,
+            schema.title_type.c.group_id
+            ],
+        "membership_start_date":[schema.user_group_membership.c.start_date],
+        "membership_end_date":[schema.user_group_membership.c.end_date],
+        "membership_language":[schema.user_group_membership.c.language],
+        "title_type_language":[schema.title_type.c.language],
+    }
+)
 
 
 def validate_member_titles(action, data, context, container):
@@ -344,9 +374,9 @@ def validate_member_titles(action, data, context, container):
     def get_q_user(date):
         return session.query(GroupMemberTitle).filter(
                 rdb.and_(
-                    schema.user_group_membership.c.group_id == group_id,
-                    schema.user_group_membership.c.membership_id == membership_id,
-                    schema.member_title.c.title_type_id == title_type_id,
+                    GroupMemberTitle.group_id == group_id,
+                    GroupMemberTitle.membership_id == membership_id,
+                    GroupMemberTitle.title_type_id == title_type_id,
                     rdb.or_(
                         rdb.between(
                             date, 
@@ -357,9 +387,9 @@ def validate_member_titles(action, data, context, container):
     def get_q_unique(date):
         return session.query(GroupMemberTitle).filter(
             rdb.and_(
-                schema.user_group_membership.c.group_id == group_id,
+                GroupMemberTitle.group_id == group_id,
                 schema.title_type.c.user_unique == True,
-                schema.member_title.c.title_type_id == title_type_id,
+                GroupMemberTitle.title_type_id == title_type_id,
                 rdb.or_(
                     rdb.between(
                         date, 

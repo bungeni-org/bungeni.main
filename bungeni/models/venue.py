@@ -15,7 +15,13 @@ bookedvenues = schema.venue.join(schema.sitting)
 class BookedVenue(object):
     """ venue booked for a Sitting """
 
-mapper(BookedVenue, bookedvenues)
+mapper(BookedVenue, bookedvenues,
+    properties={
+        "venue_id":[schema.sitting.c.venue_id, schema.venue.c.venue_id],
+        "sitting_short_name":[schema.sitting.c.short_name],
+        "sitting_language":[schema.sitting.c.language],
+    }
+)
 
 
 def get_available_venues( start, end, sitting=None ):

@@ -439,8 +439,7 @@ mapper(domain.Doc, schema.doc,
             ),
             secondary=schema.doc_audit,
             secondaryjoin=rdb.and_(
-                schema.doc_audit.c.audit_id == schema.audit.c.audit_id,
-                schema.audit.c.audit_id == schema.change.c.audit_id,
+                schema.doc_audit.c.audit_id == schema.change.c.audit_id,
                 # !+NO_INHERIT_VERSION needs this
                 schema.change.c.action == "version",
             ),
@@ -629,8 +628,7 @@ mapper(domain.Attachment, schema.attachment,
             ),
             secondary=schema.attachment_audit,
             secondaryjoin=rdb.and_(
-                schema.attachment_audit.c.audit_id == schema.audit.c.audit_id,
-                schema.audit.c.audit_id == schema.change.c.audit_id,
+                schema.attachment_audit.c.audit_id == schema.change.c.audit_id,
                 # !+NO_INHERIT_VERSION needs this
                 schema.change.c.action == "version",
             ),

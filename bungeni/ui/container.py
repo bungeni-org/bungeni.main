@@ -425,7 +425,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             column_name = params[1]
             query = lc_filter_query(query, filter_string, self.sort_dir_func, column_name)
         if sort_on_expressions:
-            query = query.order_by(sort_on_expressions)
+            query = query.order_by(*sort_on_expressions)
         #add optional filters, used by sub classes
         query = self.query_add_filters(query)
         # get total number of items before applying an offset and limit

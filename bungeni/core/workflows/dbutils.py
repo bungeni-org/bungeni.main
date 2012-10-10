@@ -113,14 +113,27 @@ def set_doc_type_number(doc):
 def get_ministry(ministry_id):
     return Session().query(domain.Ministry).get(ministry_id)
 
-class _Minister(object):
+#!+UNUSED(miano, oct 2012)
+'''class _Minister(object):
     pass
 
 ministers = rdb.join(schema.group,schema.user_group_membership, 
         schema.group.c.group_id == schema.user_group_membership.c.group_id
     ).join(schema.user,
         schema.user_group_membership.c.user_id == schema.user.c.user_id)
-mapper(_Minister, ministers)
+mapper(
+    _Minister, ministers,
+    properties={
+        "user_id":[
+            schema.user_group_membership.c.user_id,
+            schema.user.c.user_id
+        ],
+        "group_id":[
+            schema.group.c.group_id,
+            schema.user_group_membership.c.group_id
+        ]
+    }
+)
 
 def get_ministers(ministry):
     """Get comma-seperated list of emails of all persons who are 
@@ -129,7 +142,7 @@ def get_ministers(ministry):
     query = Session().query(_Minister).filter(
         _Minister.group_id == ministry.group_id)
     return [ minister for minister in query.all() ]
-
+'''
 #
 
 def deactivateGroupMembers(group):

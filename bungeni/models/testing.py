@@ -31,7 +31,7 @@ def drop_all(engine):
     Drops all tables and sequences as the metadata.drop_all() is insufficient
     to drop all tables and sequences
     """    
-    from sqlalchemy.exceptions import SQLError
+    from sqlalchemy.exc import SQLError
     
     sequence_sql="""SELECT sequence_name FROM information_schema.sequences
         WHERE sequence_schema='public'

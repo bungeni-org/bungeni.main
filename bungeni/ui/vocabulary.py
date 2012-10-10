@@ -537,7 +537,16 @@ member_of_parliament = rdb.join(schema.user_group_membership,
 ).join(schema.parliament,
     schema.user_group_membership.c.group_id ==
         schema.parliament.c.parliament_id)
-mapper(MemberOfParliament, member_of_parliament)
+
+mapper(MemberOfParliament, member_of_parliament,
+    properties = {
+        "user_id":[
+            schema.user_group_membership.c.user_id, schema.user.c.user_id
+        ],
+        "user_active_p":[schema.user.c.active_p],
+        "user_language":[schema.user.c.language],    
+    }    
+)
 
 class MemberOfParliamentImmutableSource(SpecializedSource):
     """If a user is already assigned to the context 
