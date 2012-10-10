@@ -50,6 +50,8 @@ import bungeni.models.domain as CONTAINER_MODULE
 
 def catalyse_descriptors(module):
     """Catalyze descriptor classes in specified module. 
+    Called when ui.descriptor is initially imported.
+    
     Relate each descriptor to a domain type via naming convention:
     - if no domain type exists with that name, ignore
     !+ this is probably catalyzing some descriptors unnecessarily... 

@@ -18,8 +18,7 @@ from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.utils.capi import capi, bungeni_custom_errors
-from bungeni.utils import naming
-from bungeni.ui.utils import debug
+from bungeni.utils import naming, misc
 from bungeni.utils.misc import strip_none, as_bool
 
 #
@@ -96,7 +95,7 @@ def zcml_check_regenerate():
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
         log.warn("CHANGES to file:\n%s" % (
-            debug.unified_diff(persisted, regenerated, filepath, "NEW")))
+            misc.unified_diff(persisted, regenerated, filepath, "NEW")))
         open(filepath, "w").write(regenerated.encode("utf-8"))
         class ChangedWorkflowsPermissionsZCML(Exception): pass
         raise ChangedWorkflowsPermissionsZCML(

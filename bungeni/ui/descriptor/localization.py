@@ -23,15 +23,13 @@ from bungeni.alchemist.model import (
 )
 from bungeni.ui.descriptor import field
 from bungeni.utils.capi import capi, bungeni_custom_errors
-from bungeni.ui.utils import debug
-from bungeni.utils import naming
-from bungeni.utils.misc import xml_attr_str, xml_attr_bool
+from bungeni.utils import naming, misc
 
 # constants 
 
 from bungeni.ui.descriptor import descriptor as DESCRIPTOR_MODULE
 
-CUSTOM_PATH = capi.get_path_for("forms", "ui.xml")
+PATH_UI_FORMS_SYSTEM = capi.get_path_for("forms", "ui.xml")
 
 ROLES_DEFAULT = " ".join(Field._roles)
 INDENT = " " * 4
@@ -39,20 +37,9 @@ INDENT = " " * 4
 
 # utils
 
-def read_custom():
-    try:
-        return open(CUSTOM_PATH, "r").read().decode("utf-8")
-    except IOError:
-        return '<NO-SUCH-FILE path="%s" />' % (CUSTOM_PATH)
-
-def write_custom(old_content, content):
-    print "*** OVERWRITING localization file: %s" % (CUSTOM_PATH)
-    print debug.unified_diff(old_content, content, CUSTOM_PATH, "NEW")
-    open(CUSTOM_PATH, "w").write(content.encode("utf-8"))
-
 def check_reload_localization(event):
     """Called once_per_request on IBeforeTraverseEvent events (ui.publication)."""
-    if capi.is_modified_since(CUSTOM_PATH):
+    if capi.is_modified_since(PATH_UI_FORMS_SYSTEM):
         localize_descriptors()
 
 def is_descriptor(cls):
@@ -119,10 +106,13 @@ def is_stale_info(bval, cval, message):
 @bungeni_custom_errors
 def localize_descriptors():
     """Localizes descriptors from {bungeni_custom}/forms/ui.xml.
+    
+    Called by check_reload_localization() (that is routinely called by
+    request event handling).
     """
     start_time = time()
     #for d in localizable_descriptor_classes(descriptor_module): ...
-    xml = elementtree.ElementTree.fromstring(read_custom())
+    xml = elementtree.ElementTree.fromstring(misc.read_file(PATH_UI_FORMS_SYSTEM))
     # make the value of <ui.@roles> as *the* bungeni default list of roles
     global ROLES_DEFAULT
     Field._roles[:] = xml.get("roles", ROLES_DEFAULT).split()
@@ -178,8 +168,8 @@ def localize_descriptors():
     dynamically pull the field.property directly!
     '''
     for edescriptor in xml.findall("descriptor"):
-        type_key = xml_attr_str(edescriptor, "name")
-        order = xml_attr_str(edescriptor, "order")
+        type_key = misc.xml_attr_str(edescriptor, "name")
+        order = misc.xml_attr_str(edescriptor, "order")
         # !+capi.get_type_info(type_key).descriptor_model
         cls = get_localizable_descriptor_class(DESCRIPTOR_MODULE, type_key)
         if order is not None:
@@ -192,25 +182,25 @@ def localize_descriptors():
             # custom_localizable_directives
             clocs = []
             for cloc_elem in f_elem.getchildren():
-                modes = xml_attr_str(cloc_elem, "modes")
-                roles = xml_attr_str(cloc_elem, "roles") # ROLES_DEFAULT
+                modes = misc.xml_attr_str(cloc_elem, "modes")
+                roles = misc.xml_attr_str(cloc_elem, "roles") # ROLES_DEFAULT
                 if cloc_elem.tag == "show":
                     clocs.append(show(modes=modes, roles=roles))
                 elif cloc_elem.tag == "hide":
                     clocs.append(hide(modes=modes, roles=roles))
                 else:
                     assert False, "Unknown directive [%s/%s] %s" % (
-                        type_key, xml_attr_str(f_elem, "name"), cloc_elem.tag)
+                        type_key, misc.xml_attr_str(f_elem, "name"), cloc_elem.tag)
             
             fields.append(field.F(
-                    name=xml_attr_str(f_elem, "name"),
-                    label=xml_attr_str(f_elem, "label"),
-                    description=xml_attr_str(f_elem, "description"),
-                    required=xml_attr_bool(f_elem, "required"),
+                    name=misc.xml_attr_str(f_elem, "name"),
+                    label=misc.xml_attr_str(f_elem, "label"),
+                    description=misc.xml_attr_str(f_elem, "description"),
+                    required=misc.xml_attr_bool(f_elem, "required"),
                     localizable=clocs,
-                    value_type=xml_attr_str(f_elem, "value_type"),
-                    render_type=xml_attr_str(f_elem, "render_type"),
-                    vocabulary=xml_attr_str(f_elem, "vocabulary")
+                    value_type=misc.xml_attr_str(f_elem, "value_type"),
+                    render_type=misc.xml_attr_str(f_elem, "render_type"),
+                    vocabulary=misc.xml_attr_str(f_elem, "vocabulary")
                 ))
         
         # replace contents of descriptor cls fields list, retaining list instance
@@ -352,23 +342,20 @@ def dump_i18n_message_ids():
     from os import path
     msgids_py_source_file_path = path.join(
         path.dirname(path.abspath(__file__)), "_dumped_msgids.py")
+    print "Processing UI Field i18n MSGID file: %s" % (msgids_py_source_file_path)
     msgids_py_source_preamble = [
         "# automatically generated: dump_i18n_message_ids",
         "from bungeni.ui.i18n import _", 
         ""]
     msgids_py_source = "\n".join(msgids_py_source_preamble + [
             "_(%r)" % msgid for msgid in sorted(naming.MSGIDS) ])
-    open(msgids_py_source_file_path, "w").write(msgids_py_source.encode("utf-8"))
-    print "Descriptor Field message IDs:", msgids_py_source_file_path
-    print msgids_py_source
+    misc.check_overwrite_file(msgids_py_source_file_path, msgids_py_source)
 
 
 if __name__ == "__main__":
     
-    print "Processing localization file: %s" % (CUSTOM_PATH)
-    persisted = read_custom()
+    print "Processing localization file: %s" % (PATH_UI_FORMS_SYSTEM)
     regenerated = "\n".join(serialize_module(DESCRIPTOR_MODULE))
-    if persisted != regenerated:
-        write_custom(persisted, regenerated)
+    misc.check_overwrite_file(PATH_UI_FORMS_SYSTEM, regenerated)
     dump_i18n_message_ids()
 

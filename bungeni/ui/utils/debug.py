@@ -131,16 +131,4 @@ def log_event(event):
     """Handler to log an event."""
     log.debug(" [log_event] %s" % event)
 
-# string comparison
-
-import difflib
-def unified_diff(old_str, new_str, old_name="OLD", new_name="NEW"):
-    """Return a unified diff of two strings.
-    """
-    return "".join(difflib.unified_diff(
-                old_str.splitlines(1), 
-                new_str.splitlines(1), 
-                fromfile=old_name, 
-                tofile=new_name))
-
 

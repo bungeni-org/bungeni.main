@@ -18,6 +18,7 @@ __all__ = [
     "IDatabaseEngine",      # alias -> ore.alchemist.interfaces
     "IIModelInterface",     # alias -> ore.alchemist.interfaces
     "IModelDescriptor",     # alias -> ore.alchemist.interfaces
+    "IModelDescriptorField", # redefn -> ore.alchemist.interfaces
     
     "IManagedContainer",    # redefn -> alchemist.traversal.interfaces
     "IContentViewManager",  # redefn -> alchemist.ui.interfaces
@@ -27,7 +28,7 @@ __all__ = [
 # ore.alchemist.interfaces
 
 from ore.alchemist.interfaces import (
-    IAlchemistContent, # provides IIModelInterface
+    IAlchemistContent, # provides IIModelInterface, inherits ITableSchema->Interface
     IIModelInterface, # marker interface provided by all "I%TableSchema" interfaces
     IAlchemistContainer,
     
@@ -38,7 +39,7 @@ from ore.alchemist.interfaces import (
 
 #
 
-from zope import interface
+from zope import interface, schema
 from zope.viewlet.interfaces import IViewletManager
 
 # alchemist.security.interfaces
@@ -55,4 +56,57 @@ class IManagedContainer(interface.Interface):
 class IContentViewManager(IViewletManager):
     """Viewlet manager interface."""    
 
+
+class IModelDescriptorField(interface.Interface):
+    # name
+    # label
+    # description
+    modes = schema.ASCIILine(
+        title=u"View Usage Modes for Field",
+        description=u"Whitespace separated string of different modes."
+    )
+    # property
+    listing_column = schema.Object(interface.Interface,
+        title=u"A Custom Column Widget for Listing Views",
+        required=False
+    )
+    listing_column_filter = schema.Object(interface.Interface,
+        title=u"A function that filters a listing column on a value",
+        required=False
+    )
+    # !+LISTING_WIDGET(mr, nov-2010) why inconsistently named "listing_column"?
+    view_widget = schema.Object(interface.Interface,
+        title=u"A Custom Widget Factory for Read Views",
+        required=False
+    )
+    edit_widget = schema.Object(interface.Interface,
+        title=u"A Custom Widget Factory for Write Views",
+        required=False,
+    )
+    add_widget = schema.Object(interface.Interface,
+        title=u"A Custom Widget Factory for Add Views",
+        required=False
+    )
+    search_widget = schema.Object(interface.Interface,
+        title=u"A Custom Search Widget Factory",
+        required=False
+    )
+    ''' !+FIELD_PERMISSIONS(mr, nov-2010) these params are deprecated -- when 
+    applied to any field (that corresponds to an attribute of the domain's 
+    class), the domain.zcml setting for that same class attribute will anyway 
+    take precedence.
+
+    view_permission = schema.ASCIILine(
+        title=u"Read Permission",
+        description=u"If the user does not have this permission this field "
+            "will not appear in read views",
+        required=False
+    )
+    edit_permission = schema.ASCIILine(
+        title=u"Read Permission",
+        description=u"If the user does not have this permission this field "
+            "will not appear in write views",
+        required=False
+    )
+    '''
 

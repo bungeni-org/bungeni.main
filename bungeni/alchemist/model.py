@@ -14,8 +14,6 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 # used directly in bungeni
 __all__ = [
     "ModelDescriptor",          # redefn -> ore.alchemist.model
-    "IModelDescriptorField",    # redefn -> ore.alchemist.interfaces
-    
     "Field",
     "show",
     "hide",
@@ -23,15 +21,11 @@ __all__ = [
 ]
 
 
-from zope import interface, schema
-from zope.interface.interfaces import IInterface
-
+from zope import interface
 from bungeni.alchemist.interfaces import (
-    IAlchemistContent,
-    IIModelInterface,
-    IModelDescriptor
+    IModelDescriptor,
+    IModelDescriptorField
 )
-
 from bungeni.ui.utils import common 
 from bungeni.ui.i18n import _
 from bungeni.utils import naming
@@ -142,60 +136,6 @@ def hide(modes=None, roles=None):
 #
 # required
 # - Field.property.required: by default required=True for all schema.Field
-# - !+Field.required(mr, oct-2010) OBSOLETED.
-
-class IModelDescriptorField(interface.Interface):
-    # name
-    # label
-    # description
-    modes = schema.ASCIILine(
-        title=u"View Usage Modes for Field",
-        description=u"Whitespace separated string of different modes."
-    )
-    # property
-    listing_column = schema.Object(interface.Interface,
-        title=u"A Custom Column Widget for Listing Views",
-        required=False
-    )
-    listing_column_filter = schema.Object(interface.Interface,
-        title=u"A function that filters a listing column on a value",
-        required=False
-    )
-    # !+LISTING_WIDGET(mr, nov-2010) why inconsistently named "listing_column"?
-    view_widget = schema.Object(interface.Interface,
-        title=u"A Custom Widget Factory for Read Views",
-        required=False
-    )
-    edit_widget = schema.Object(interface.Interface,
-        title=u"A Custom Widget Factory for Write Views",
-        required=False,
-    )
-    add_widget = schema.Object(interface.Interface,
-        title=u"A Custom Widget Factory for Add Views",
-        required=False
-    )
-    search_widget = schema.Object(interface.Interface,
-        title=u"A Custom Search Widget Factory",
-        required=False
-    )
-    ''' !+FIELD_PERMISSIONS(mr, nov-2010) these params are deprecated -- when 
-    applied to any field (that corresponds to an attribute of the domain's 
-    class), the domain.zcml setting for that same class attribute will anyway 
-    take precedence.
-
-    view_permission = schema.ASCIILine(
-        title=u"Read Permission",
-        description=u"If the user does not have this permission this field "
-            "will not appear in read views",
-        required=False
-    )
-    edit_permission = schema.ASCIILine(
-        title=u"Read Permission",
-        description=u"If the user does not have this permission this field "
-            "will not appear in write views",
-        required=False
-    )
-    '''
 
 class Field(object):
     interface.implements(IModelDescriptorField)
@@ -464,8 +404,8 @@ class ModelDescriptor(object):
     We use class attribute fields=[Field] directly i.e. Field instances on 
     the class itself, implying there is no instance.fields=[Field] attribute.
     
-    Always retrieve the *same* descriptor *instance* for a model class via:
-        alchemist.utils.get_descriptor(model_interface or ...)
+    Retrieve the descriptor model (class) for a model class via:
+        alchemist.utils.get_descriptor(type_info_discriminator)
     """
     __metaclass__ = MDType
     interface.implements(IModelDescriptor)
@@ -485,8 +425,8 @@ class ModelDescriptor(object):
     # (before Descriptor is localized) by field name, for all fields in 
     # this ModelDescriptor.
     
-    properties = () # !+USED?
-    schema_order = () # !+USED?
+    #properties = () # !+UNUSED
+    schema_order = () # !+UNUSED but needed by ore/alchemist/sa2zs.py
     schema_invariants = ()
     
     # a means to specify relative order to be used as needed by the usage 
