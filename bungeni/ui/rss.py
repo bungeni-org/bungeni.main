@@ -20,6 +20,7 @@ from zope.traversing.browser import absoluteURL
 from bungeni.alchemist import Session
 from bungeni.alchemist import utils
 from bungeni.models.domain import User
+from bungeni.models import interfaces as model_interfaces
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.translation import translate_obj
 from bungeni.core.dc import IDCDescriptiveProperties
@@ -388,15 +389,19 @@ class AkomantosoXMLView(BrowserView):
         body_element.appendChild(article_element)
 
         #Files
-        if len(ob.files) > 0:
-            attachments_element = self.create_element("attachments")
-            bill_element.appendChild(attachments_element)
-            for file in ob.files.values():
-                attachment_element = self.create_element("attachment",
-                    id="att%s" % file.attachment_id,
-                                                         href=self.get_frbr_expression_url(ob) + "/" + file.name,
-                                                         showAs=file.title)
-                attachments_element.appendChild(attachment_element)
+        if model_interfaces.IFeatureAttachment.providedBy(ob):
+            files = [f for f in ob.files.values()]
+            if len(files) > 0:
+                attachments_element = self.create_element("attachments")
+                bill_element.appendChild(attachments_element)
+                for file in files:
+                    attachment_element = self.create_element("attachment",
+                        id="att%s" % file.attachment_id,
+                        href=(self.get_frbr_expression_url(ob) + 
+                            "/" + file.name),
+                        showAs=file.title
+                    )
+                    attachments_element.appendChild(attachment_element)
 
         return bill_element
 
