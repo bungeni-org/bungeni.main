@@ -216,6 +216,11 @@ class AppSetup(object):
             title=_(u"Sittings"),
             description=_(u"Plenary Sittings")
         )
+        workspace["scheduling"]["agendaitems"] = QueryContent(
+            container_getter(get_current_parliament, "agendaitems"),
+            title=_(u"Agenda items"),
+            marker=interfaces.IAgendaItemAddContext,
+            description=_(u"Manage agenda items"))
         
         #!+TIMING
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)

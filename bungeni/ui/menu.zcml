@@ -994,6 +994,15 @@
      order="11"
      />
 
+    <!-- scheduling agenda items -->
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.core.schedule.PrincipalGroupSchedulingContext"
+        title="Add agenda item..."
+        action="./agendaitems/add"
+        permission="bungeni.agenda_item.Add"
+        layer=".interfaces.IWorkspaceSectionLayer"
+    />
+
     <!-- MENU ITEMS -->
     
     <!-- context_add_parliamentary_content sub-menu -->
