@@ -301,6 +301,7 @@ class SerializeThread(Thread):
                     next_delay = delay * 2
                     timer = Timer(delay, init_thread, [], 
                         {"delay": next_delay })
+                    timer.daemon = True
                     timer.start()
                 self.is_running = False
                 del TIMER_DELAYS[self.name]
@@ -374,6 +375,7 @@ def serialization_notifications():
             timer = Timer(TIMER_DELAYS["serialize_setup"],
                 serialization_notifications
             )
+            timer.daemon = True
             timer.start()
             TIMER_DELAYS["serialize_setup"] *= 2
         return
