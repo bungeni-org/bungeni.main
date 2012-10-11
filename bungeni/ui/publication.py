@@ -56,7 +56,8 @@ def on_before_traverse(event):
         id(event.request), event.request.getURL(), event.object))
     apply_request_layer_by_url(event)
     remember_traversed_context(event)
-    check_reload_localization(event)
+    if common.has_feature("devmode"):
+        check_reload_localization(event)
 
 @component.adapter(IEndRequestEvent)
 def on_end_request(event):
