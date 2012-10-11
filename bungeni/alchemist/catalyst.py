@@ -12,9 +12,11 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 # List everything from this module intended for package-external use.
 __all__ = [
     "catalyse_descriptors"
-    #"sa2zs",        # alias -> ore.alchemist !+ALCHEMIST_INTERNAL
+    #"SQLAlchemySchemaTranslator", # alias -> ore.alchemist.sa2zs
+    #"transmute",        # alias -> ore.alchemist.sa2zs !+ALCHEMIST_INTERNAL
 ]
-from ore.alchemist import sa2zs
+from ore.alchemist.sa2zs import SQLAlchemySchemaTranslator
+from ore.alchemist.sa2zs import transmute
 
 # from bungeni.alchemist, used only here
 
@@ -156,7 +158,7 @@ def generate_table_schema_interface(ti):
     table_schema_interface_name = naming.table_schema_interface_name(type_key)
     domain_table = utils.get_local_table(ti.domain_model)
     bases, implements = get_domain_interfaces(ti.domain_model)
-    derived_table_schema = sa2zs.transmute(
+    derived_table_schema = transmute(
         domain_table,
         annotation=ti.descriptor_model,
         interface_name=table_schema_interface_name,
@@ -235,7 +237,8 @@ def generate_container_class(ti):
     ti.container_class = container_class
     log.info("generate_container_class [model=%s] generated container %s.%s" % msg)
     
-    # container interface - if we already have one, skip creation
+    # container interface - if we already have one, skip creation 
+    # !+ should always be newly created?
     container_iface = getattr(INTERFACE_MODULE, container_iname, None)
     msg = (ti.domain_model.__name__, CONTAINER_MODULE.__name__, container_iname)
     if container_iface is not None:

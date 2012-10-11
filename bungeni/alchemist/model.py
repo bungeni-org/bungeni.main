@@ -413,6 +413,13 @@ class ModelDescriptor(object):
     # Is this descriptor exposed for localization? 
     localizable = False
     
+    # descriptor scope:
+    #   system: a support type provided by system
+    #   archetype: an archetype (may base custom types on it) provided by system
+    #   custom: a custom type (also a "custom archetype" as may base other 
+    #       custom types on it) provided by the user
+    scope = "system"
+    
     # editable table listing !+
     #edit_grid = True 
     
@@ -461,11 +468,10 @@ class ModelDescriptor(object):
         """
         cls.fields_by_name.clear()
         for f in cls.fields:
-            name = f["name"]
-            assert name not in cls.fields_by_name, \
+            assert f.name not in cls.fields_by_name, \
                 "[%s] Can't have two fields with same name [%s]" % (
-                    cls.__name__, name)
-            cls.fields_by_name[name] = f
+                    cls.__name__, f.name)
+            cls.fields_by_name[f.name] = f
     
     # we use cls.fields_by_name to define the following methods as this
     # makes the implementation simpler and faster.

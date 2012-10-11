@@ -336,18 +336,18 @@ class AppSetup(object):
             description=_(u"View current parliament members (MPs)"))
         
         alsoProvides(members, interfaces.ISearchableSection)
-
+        
         members[u"political-groups"] = QueryContent(
             container_getter(get_current_parliament, "politicalgroups"),
             title=_(u"Political groups"),
             description=_(u"View current political groups"))
-
+        
         # archive
         records = archive[u"browse"] = Section(
             title=_(u"Browse archives"),
             description=_(u"Browse records from the archive"),
             default_name="browse-archive")
-
+        
         documents = archive["documents"] = Section(
             title=_(u"Documents"),
             description=_(u"Browse documents in the archive"),
@@ -356,7 +356,7 @@ class AppSetup(object):
         # archive/records
         documents[u"bills"] = domain.BillContainer()
         to_locatable_container(domain.Bill, documents[u"bills"])
-
+        
         documents[u"motions"] = domain.MotionContainer()
         to_locatable_container(domain.Motion, documents[u"motions"])
         
@@ -365,7 +365,7 @@ class AppSetup(object):
         
         documents[u"agendaitems"] = domain.AgendaItemContainer()
         to_locatable_container(domain.AgendaItem, documents[u"agendaitems"])
-
+        
         documents[u"tableddocuments"] = domain.TabledDocumentContainer()
         to_locatable_container(domain.TabledDocument, 
             documents[u"tableddocuments"]

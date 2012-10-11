@@ -17,6 +17,12 @@ log = __import__("logging").getLogger("bungeni.utils.misc")
 def xml_attr_bool(elem, attr_name, default=False):
     return as_bool(strip_none(elem.get(attr_name)) or str(default))
 
+def xml_attr_int(elem, attr_name, default=None):
+    value = strip_none(elem.get(attr_name)) or default
+    if value is not None:
+        value = int(value)
+    return value
+
 def xml_attr_str(elem, attr_name, default=None):
     return strip_none(elem.get(attr_name)) or default
 
@@ -79,7 +85,9 @@ def read_file(file_path):
     return open(file_path, "r").read().decode("utf-8")
 
 def check_overwrite_file(file_path, content):
-    # only rewrite file if there are changes, and log a "diff".
+    """Write content to file_path if necessary (that is if there are changes),
+    creating it if does not exist. Log a "diff" to preceding content.
+    """
     try:
         persisted = read_file(file_path)
         exists = True

@@ -271,7 +271,7 @@ def F(name=None, label=None, description=None,
             add_widget=add_widget, 
             search_widget=search_widget,
         )
-    # !+decl remember all declarative attrs *as-is*
+    # !+DECL remember all declarative attrs *as-is*
     f._decl = (
         ("name", name),
         ("label", label),
