@@ -26,11 +26,13 @@ def exceptions_as(exc_kls, include_name=True):
             try: 
                 return f(*args, **kw)
             except Exception, e:
-                log.error("[exceptions_as(%s)]\n%s" % (
+                log.error("%s [exceptions_as(%s)]\n%s" % (
+                    f, 
                     exc_kls.__name__,
                     traceback.format_exc(sys.exc_info()[2])))
                 if include_name:
-                    raise exc_kls("%s: %s" % (e.__class__.__name__, e))
+                    raise exc_kls("%s: %s [in %s.%s]" % (
+                            e.__class__.__name__, e, f.__module__, f.__name__))
                 else:
                     raise exc_kls("%s" % (e))
         return _errorable_f
