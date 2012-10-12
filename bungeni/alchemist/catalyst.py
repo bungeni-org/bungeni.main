@@ -194,15 +194,35 @@ def apply_security(ti):
         [ n for n, d in ti.derived_table_schema.namesAndDescriptions(all=True) ])
     attrs = attrs.union(set(
             [ f.get("name") for f in descriptor_model.fields ]))
+    log.debug("APPLY SECURITY: %s" % (domain_model))
+    type_key = naming.polymorphic_identity(domain_model)
+    # !+DECL permissions here--for CUSTOM types only, and SINCE r9946--override
+    # what is defined in domain.zcml, as opposed to vide-versa (probably 
+    # because CUSTOM types are setup at a later stage). 
+    # So (for CUSTOM types only) we use the parametrized bungeni.{type_key}.Edit as 
+    # the edit permission:
+    if descriptor_model.scope == "custom":
+        pe_type = "bungeni.%s.Edit" % (type_key)
     for n in attrs:
+        # !+DECL special cases, do not override domain.zcml...
+        if n in ("response_text",):
+            continue
         model_field = descriptor_model.get(n)
         pv = "zope.Public"
         pe = "zope.Public"
         if model_field:
             pv = model_field.view_permission # always "zope.Public"
-            pe = model_field.edit_permission # always "zope.ManageContent"
+            # !+DECL
+            if descriptor_model.scope == "custom":
+                pe = pe_type
+            else:
+                # proceed as before for now !+DECL
+                pe = model_field.edit_permission # always "zope.ManageContent"
+        # !+DECL parametrize all permissions by type AND mode, ensure to 
+        # grant to appropriate roles.
         protectName(domain_model, n, pv)
         protectSetAttribute(domain_model, n, pe)
+        log.debug("                %s %s %s" % (n, pe, model_field or "<No-Field />"))
     for k, v in domain_model.__dict__.items():
         if (isinstance(v, ManagedContainerDescriptor) or 
                 isinstance(v, orm.attributes.InstrumentedAttribute)

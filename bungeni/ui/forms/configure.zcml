@@ -60,15 +60,16 @@ Unauthorized exception (EditForm "browserDefault" needs "zope.ManageContent"),
 see this bignei-dev thread:
 https://groups.google.com/forum/?fromgroups=#!topic/bungeni-dev/bdNHXlPLLkU
 
-Commenting out the following <browser:page> directive seems to correct this:
-
+Switching access to the EditForm to "zope.Public" (could be parametrized finer,
+to e.g. "bungeni.{type}.Edit").
+-->
     <browser:page name="edit"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
         class=".common.EditForm"
-        permission="zope.ManageContent"
+        permission="zope.Public"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
--->
+
     <browser:page name="delete"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
         class=".common.DeleteForm"

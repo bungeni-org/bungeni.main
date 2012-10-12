@@ -102,7 +102,7 @@
                 event_date
             "
         />
-        <require permission="bungeni.event.Edit"
+        <!-- !+DECL require permission="bungeni.event.Edit"
             set_attributes="
                 doc_type
                 doc_procedure
@@ -122,7 +122,7 @@
                 geolocation
                 head_id
             "
-        />
+        /-->
     </class>
     
     
@@ -135,7 +135,7 @@
                 publication_date
             "
         />
-        <require permission="bungeni.bill.Edit"
+        <!-- !+DECL require permission="bungeni.bill.Edit"
             set_attributes="
                 doc_type
                 doc_procedure
@@ -156,7 +156,7 @@
                 geolocation
                 head_id
             "
-        />
+        /-->
     </class>
     
     
@@ -173,7 +173,7 @@
         <require permission="bungeni.response.View"
             attributes="response_text"
         />
-        <require permission="bungeni.question.Edit"
+        <!-- !+DECL require permission="bungeni.question.Edit"
             set_attributes="
                 doc_type
                 doc_procedure
@@ -195,11 +195,6 @@
                 
                 response_type
             "
-        />
-        <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) to be reviewed for now we 
-            use the permission used for running transition  -->
-        <!--require permission="bungeni.question.wf.completed.admissible"
-            set_attributes="type_number"
         /-->
         <require permission="bungeni.response.Edit"
             set_attributes="response_text" 
@@ -214,7 +209,7 @@
                 notice_date
             "
         />
-        <require permission="bungeni.motion.Edit"
+        <!-- !+DECL require permission="bungeni.motion.Edit"
             set_attributes="
                 doc_type
                 doc_procedure
@@ -234,11 +229,6 @@
                 geolocation
                 head_id
             "
-        />
-        <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
-            we use instead the permission used in the "approve" transition -->
-        <!--require permission="bungeni.motion.wf.completed.admissible"
-            set_attributes="type_number"
         /-->
     </class>
     
@@ -249,7 +239,7 @@
                 admissible_date
             "
         />
-        <require permission="bungeni.agenda_item.Edit"
+        <!-- !+DECL require permission="bungeni.agenda_item.Edit"
             set_attributes="
                 doc_type
                 doc_procedure
@@ -269,7 +259,7 @@
                 geolocation
                 head_id
             "
-        />
+        /-->
     </class>
     
     <class class=".domain.TabledDocument">
@@ -279,7 +269,7 @@
                 admissible_date
             "
         />
-        <require permission="bungeni.tabled_document.Edit"
+        <!-- !+DECL require permission="bungeni.tabled_document.Edit"
             set_attributes="
                 doc_type
                 doc_procedure
@@ -299,11 +289,6 @@
                 geolocation
                 head_id
             "
-        />
-        <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
-            we use instead the permission used in the transition -->
-        <!-- require permission="bungeni.tabled_document.wf.completed.admissible"
-            set_attributes="tabled_document_number"
         /-->
     </class>
     
