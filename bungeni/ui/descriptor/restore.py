@@ -146,6 +146,7 @@ def serialize_module(module, depth=0):
 
 
 def reset_localization_system_descriptors():
+    print
     print "Processing localization file: %s" % (localization.PATH_UI_FORMS_SYSTEM)
     regenerated = "\n".join(serialize_module(localization.DESCRIPTOR_MODULE))
     misc.check_overwrite_file(localization.PATH_UI_FORMS_SYSTEM, regenerated)
@@ -160,6 +161,7 @@ def dump_i18n_message_ids():
     from os import path
     msgids_py_source_file_path = path.join(
         path.dirname(path.abspath(__file__)), "_dumped_msgids.py")
+    print
     print "Processing UI Field i18n MSGID file: %s" % (msgids_py_source_file_path)
     msgids_py_source_preamble = [
         "# automatically generated: dump_i18n_message_ids",
