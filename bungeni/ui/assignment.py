@@ -164,13 +164,10 @@ class AssignmentEditView(AssignmentView, forms.common.BaseForm):
         return selected
 
     def process_assignment(self):
-        print "################", self.request.form.keys()
         for role_id in self.assignable_roles():
             for user in self.get_users(role_id):
                 key = self.make_id(user.login, role_id)
-                print "XXXXXXXXXXXXXXXXX", key
                 if key in self.request.form.keys():
-                    print "XXXXXXXXXXXXXXXXXX\nXXXXX\nXXXXX\nXXXXX"
                     self.prm.assignRoleToPrincipal(role_id, user.login)
                 else:
                     self.prm.unsetRoleForPrincipal(role_id, user.login)

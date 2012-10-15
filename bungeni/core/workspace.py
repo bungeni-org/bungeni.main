@@ -32,7 +32,8 @@ from bungeni.core.interfaces import (
     IWorkspaceTabsUtility,
     IWorkspaceContainer,
     IWorkspaceUnderConsiderationContainer,
-    IWorkspaceTrackedDocumentsContainer
+    IWorkspaceTrackedDocumentsContainer,
+    IWorkspaceGroupsContainer
 )
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
@@ -55,29 +56,6 @@ TABS = ["draft", "inbox", "pending", "archive"]
 TabCountRecord = namedtuple("TabCountRecord", ["timestamp", "count"])
 
 
-def stringKey(instance):
-    unproxied = removeSecurityProxy(instance)
-    mapper = orm.object_mapper(unproxied)
-    primary_key = mapper.primary_key_from_instance(unproxied)
-    domain_class = instance.__class__
-    workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-    item_type = workspace_tabs.get_type(domain_class)
-    return "%s-%s" % (item_type, str(primary_key[0]))
-
-
-def valueKey(identity_key):
-    """Returns a tuple, (domain_class, primary_key)."""
-    if not isinstance(identity_key, basestring):
-        raise ValueError
-    properties = identity_key.split("-")
-    if len(properties) != 2:
-        raise ValueError
-    workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-    domain_class = workspace_tabs.get_domain(properties[0])
-    primary_key = properties[1]
-    return domain_class, primary_key
-
-
 class WorkspaceBaseContainer(AlchemistContainer):
     __name__ = __parent__ = None
 
@@ -90,6 +68,27 @@ class WorkspaceBaseContainer(AlchemistContainer):
         if marker is not None:
             interface.alsoProvides(self, marker)
         super(WorkspaceBaseContainer, self).__init__()
+
+    def string_key(self, instance):
+        unproxied = removeSecurityProxy(instance)
+        mapper = orm.object_mapper(unproxied)
+        primary_key = mapper.primary_key_from_instance(unproxied)
+        domain_class = instance.__class__
+        workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
+        item_type = workspace_tabs.get_type(domain_class)
+        return "%s-%d" % (item_type, primary_key[0])
+
+    def value_key(self, identity_key):
+        """Returns a tuple, (domain_class, primary_key)"""
+        if not isinstance(identity_key, basestring):
+            raise ValueError
+        properties = identity_key.split("-")
+        if len(properties) != 2:
+            raise ValueError
+        workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
+        domain_class = workspace_tabs.get_domain(properties[0])
+        primary_key = properties[1]
+        return domain_class, primary_key
 
     def domain_status(self, roles, tab):
         """Given a list of roles and tab returns a dictionary containing the
@@ -109,7 +108,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
                         else:
                             domain_status[domain_class] = status
         return domain_status
-    
+
     def item_status_filter(self, kw, roles):
         domain_status = {}
         if kw.get("filter_type", None):
@@ -188,7 +187,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
     
     def items(self, **kw):
         for obj in self._query(kw):
-            name = stringKey(obj)
+            name = self.string_key(obj)
             yield (name, contained(obj, self, name))
     
     def set_tab_count(self, principal_id, count):
@@ -243,8 +242,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
     def get(self, name, default=None):
         try:
-            domain_class, primary_key = valueKey(name)
-        except:
+            domain_class, primary_key = self.value_key(name)
+        except ValueError:
             return default
         session = Session()
         value = session.query(domain_class).get(primary_key)
@@ -609,3 +608,73 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
                          reverse=reverse)
         return (results, count)
 
+class WorkspaceGroupsContainer(WorkspaceBaseContainer):
+
+    interface.implements(IWorkspaceGroupsContainer)
+
+    def __init__(self, name, title, description, marker=None):
+        self.__name__ = name
+        self.title = title
+        self.description = description
+        self.workspace_config = component.getUtility(IWorkspaceTabsUtility)
+        if marker is not None:
+            interface.alsoProvides(self, marker)
+        AlchemistContainer.__init__(self)
+
+    def string_key(self, instance):
+        unproxied = removeSecurityProxy(instance)
+        mapper = orm.object_mapper(unproxied)
+        primary_key = mapper.primary_key_from_instance(unproxied)
+        return "%s-%d" % ("group", primary_key[0])
+
+    def value_key(self, identity_key):
+        if not isinstance(identity_key, basestring):
+            raise ValueError
+        properties = identity_key.split("-")
+        if len(properties) != 2:
+            raise ValueError
+        if properties[0] != "group":
+            raise ValueError
+        primary_key = properties[1]
+        return domain.Group, primary_key
+
+    def title_column(self, domain_class):
+        table = orm.class_mapper(domain_class).mapped_table
+        utk = dict([(table.columns[k].key, k) for k in table.columns.keys()])
+        # TODO : update to support other fields
+        column = table.columns[utk["full_name"]]
+        return column
+
+    def get(self, name, default=None):
+        try:
+            domain_class, primary_key = self.value_key(name)
+        except ValueError:
+            return default
+        session = Session()
+        value = session.query(domain_class).get(primary_key)
+        if value is None:
+            return default
+        return contained(value, self, name)
+
+    def _query(self, **kw):
+        results = []
+        session = Session()
+        user = utils.get_db_user()
+        #status = self.item_status_filter(kw)
+        reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
+        query = session.query(domain.Group).join(
+            domain.GroupMembership).filter(
+            expression.and_(
+                    domain.GroupMembership.user_id == user.user_id,
+                    domain.GroupMembership.active_p == True,
+                    #domain.Group.status.in_(status)
+                    ))
+        query = self.filter_title(query, domain.Group, kw)
+        query = self.filter_status_date(query, domain.Group, kw)
+        query = self.order_query(query, domain.Group, kw, reverse)
+        results = query.all()
+        count = query.count()
+        return (results, count)
+
+    def query(self, **kw):
+        return self._query(**kw)

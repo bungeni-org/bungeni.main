@@ -32,9 +32,10 @@ from bungeni.core.content import Section, AdminSection, AkomaNtosoSection, \
 from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
 from bungeni.core.workspace import (WorkspaceContainer,
-                                    WorkspaceUnderConsiderationContainer,
-                                    WorkspaceTrackedDocumentsContainer,
-                                    load_workspaces)
+    WorkspaceUnderConsiderationContainer,
+    WorkspaceTrackedDocumentsContainer,
+    WorkspaceGroupsContainer,
+    load_workspaces)
 from bungeni.core.notifications import load_notifications
 from bungeni.core.emailnotifications import email_notifications
 from bungeni.core.serialize import serialization_notifications
@@ -222,6 +223,18 @@ class AppSetup(object):
             marker=interfaces.IAgendaItemAddContext,
             description=_(u"Manage agenda items"))
         
+        workspace["groups"] = WorkspaceSection(
+            title=_(u"Groups"),
+            description=_(u"Bungeni Groups"),
+            default_name="my-groups",
+            marker=interfaces.IWorkspaceGroups,
+        )
+        
+        workspace["groups"]["my-groups"] = WorkspaceGroupsContainer(
+            name="my-groups",
+            title=_(u"My Groups"),
+            description=_(u"Groups that the user is a member of"),
+        )
         #!+TIMING
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
         # type_info missing container name

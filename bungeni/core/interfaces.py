@@ -81,6 +81,8 @@ class IWorkspaceUnderConsideration(interface.Interface):
     """Marker inteface for workspace under consideration"""
 class IWorkspaceTrackedDocuments(interface.Interface):
     """Marker inteface for workspace tracked documents"""
+class IWorkspaceGroups(interface.Interface):
+    """Marker interfaces for workspace groups tab"""
 
 ''' !+OBSOLETE_VERSIONING
 #####################
@@ -221,6 +223,9 @@ class IWorkspaceUnderConsiderationContainer(IWorkspaceContainer):
     """
 class IWorkspaceTrackedDocumentsContainer(IWorkspaceContainer):
     """Marker interface for tracked documents container"""
+
+class IWorkspaceGroupsContainer(IWorkspaceContainer):
+    """Marker interfaces for groups container"""
 
 class IWorkspaceTabsUtility(interface.Interface):
     def get_role_domains(role, tab):

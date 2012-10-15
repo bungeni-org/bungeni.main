@@ -94,7 +94,10 @@
     />
     
    <!-- Workspace Adapters -->
-   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" />
+   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
+        for="bungeni.models.interfaces.IBungeniContent"/>
+   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
+        for="bungeni.models.interfaces.IBungeniGroup"/>
    <!-- Login Page restore password links -->
    <browser:viewlet name="bungeni.login.restore.password"
         view="bungeni.ui.login.Login"

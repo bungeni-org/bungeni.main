@@ -18,8 +18,9 @@ from bungeni.core import workspace, translation
 from bungeni.core.content import WorkspaceSection
 from bungeni.core.i18n import _
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
-                                     IWorkspaceContainer,
-                                     IWorkspaceUnderConsiderationContainer)
+    IWorkspaceContainer,
+    IWorkspaceUnderConsiderationContainer,
+    IWorkspaceGroupsContainer)
 from bungeni.models.interfaces import ITranslatable
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
@@ -28,7 +29,6 @@ from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
 from bungeni.core.workspace import OBJECT_ROLES
 from bungeni.core.workflow.interfaces import IWorkflow
-from bungeni.ui.utils import debug
 from bungeni.utils import register
 from bungeni.utils.capi import capi
 from bungeni.ui.widgets import date_input_search_widget
@@ -57,6 +57,8 @@ workspace_fields = [
 @register.view(IWorkspaceContainer, name="jsonlisting",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 @register.view(IWorkspaceUnderConsiderationContainer, name="jsonlisting",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+@register.view(IWorkspaceGroupsContainer, name="jsonlisting",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
@@ -144,7 +146,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
             start=start,
             limit=limit,
         )
-        results = [ contained(ob, self, workspace.stringKey(ob))
+        results = [ contained(ob, self, context.string_key(ob))
             for ob in results ]
         results = self.check_permission(results)
         nodes = results[start:start + limit]
@@ -156,6 +158,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
         start, limit = self.get_offsets()  # ? start=0&limit=25
         lang = self.request.locale.getLocaleID()
         return self.json_batch(start, limit, lang)
+
 
 
 class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):

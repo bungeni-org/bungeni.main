@@ -67,7 +67,8 @@ class IWorkspaceUnderConsiderationSectionLayer(IWorkspaceSectionLayer):
     """Requests for an object within the workspace under consideration"""
 class IWorkspaceSchedulingSectionLayer(IWorkspaceSectionLayer):
     """Requests for an object within the scheduling section."""
-    
+class IWorkspaceGroupsSectionLayer(IWorkspaceSectionLayer):
+    """Requests for an object within the scheduling section."""    
 class IFeedViewletManager(IViewletManager):
     """Viewlet manager for feed links"""
     

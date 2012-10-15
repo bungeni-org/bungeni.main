@@ -1,9 +1,8 @@
 
 from zope import interface
-from zope import component
 from zope.security.proxy import removeSecurityProxy
 from zope.i18n import translate
-from bungeni.models.interfaces import IBungeniContent
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.utils import date
 from bungeni.ui.utils.common import get_request
@@ -13,7 +12,6 @@ from bungeni.alchemist import utils
 
 
 class WorkspaceContentAdapter(object):
-    component.adapts(IBungeniContent)
     interface.implements(IWorkspaceContentAdapter)
 
     def __init__(self, context):
@@ -21,7 +19,7 @@ class WorkspaceContentAdapter(object):
 
     @property
     def title(self):
-        return self.context.title
+        return IDCDescriptiveProperties(self.context).title
 
     @property
     def type(self):
@@ -43,4 +41,3 @@ class WorkspaceContentAdapter(object):
         request = get_request()
         date_formatter = date.getLocaleFormatter(request, "dateTime", "medium")
         return date_formatter.format(value)
-
