@@ -51,15 +51,11 @@ import bungeni.models.domain as CONTAINER_MODULE
 
 
 def catalyse_descriptors(module):
-    """Catalyze descriptor classes in specified module. 
-    Called when ui.descriptor is initially imported.
+    """Catalyze descriptor classes (with by-name-convention associated model 
+    class) in specified module.
     
-    Relate each descriptor to a domain type via naming convention:
-    - if no domain type exists with that name, ignore
-    !+ this is probably catalyzing some descriptors unnecessarily... 
-    !+ if there is a need to be finer grained or for an explicit declaration
-    of what descriptors should be catalysed, a flag may be added e.g. a 
-    catalyse:bool attribute could be added on Descriptor class or xml defn.
+    Called when ui.descriptor is initially imported (so before descriptors for 
+    types have been created).
     """
     import sys
     import inspect
@@ -95,7 +91,9 @@ def catalyse_descriptors(module):
             # unmapped class e.g. Address, Version
             return False
     
-    def safe_setattr(obj, name, value):
+    def inisetattr(obj, name, value):
+        """A once-only setattr (ensure any subsequent attempts to set are to 
+        the same value."""
         if getattr(obj, name, None) is not None:
             assert getattr(ti, name) is value
         else:
@@ -104,16 +102,17 @@ def catalyse_descriptors(module):
     for descriptor_model in descriptor_classes():
         descriptor_name = descriptor_model.__name__
         type_key = naming.type_key("descriptor_class_name", descriptor_name)
-        # need a dedicated domain type
+        # Associate each descriptor to the dedicated domain type via naming 
+        # convention, and only catalysze (descriptor, model) pairs 
+        # for which the domain type is mapped. Otherwise, ignore.
         domain_model = getattr(domain, naming.model_name(type_key), None)
-        # only catalyze "mapped domain models"
         if not (domain_model and is_model_mapped(domain_model)):
             log.warn("Not catalysing: %s" % (descriptor_name))
             continue
         # type_info, register descriptor_model, domain_model
         ti = capi.get_type_info(type_key)
-        safe_setattr(ti, "domain_model", domain_model)
-        safe_setattr(ti, "descriptor_model", descriptor_model)
+        inisetattr(ti, "domain_model", domain_model)
+        inisetattr(ti, "descriptor_model", descriptor_model)
         # catalyse each (domain_model, descriptor_model) pair
         catalyst(ti)
     
@@ -177,8 +176,7 @@ def generate_table_schema_interface(ti):
     model_interface_name = naming.model_interface_name(type_key)
     model_interface = getattr(INTERFACE_MODULE, model_interface_name, None)
     if model_interface is not None:
-        assert not issubclass(model_interface, derived_table_schema)
-        if model_interface not in implements:
+        if model_interface not in bases and model_interface not in implements:
             implements.append(model_interface)
     # apply implemented interfaces
     interface.classImplementsOnly(ti.domain_model, *implements)
@@ -186,48 +184,62 @@ def generate_table_schema_interface(ti):
 
 def apply_security(ti):
     domain_model, descriptor_model = ti.domain_model, ti.descriptor_model
+    log.debug("APPLY SECURITY: %s" % (domain_model))
+    # first, "inherit" security settings of super classes i.e. equivalent of 
+    # something like <require like_class=".domain.Doc" />
     for c in domain_model.__bases__:
         if c is object:
             continue
+        log.debug("    LIKE_CLASS: %s" % (c))
         protectLikeUnto(domain_model, c)
+    
+    # !+DECL permissions here--for CUSTOM types only, and SINCE r9946--override
+    # what is defined in domain.zcml, as opposed to vice-versa (probably 
+    # because CUSTOM types are setup at a later stage). 
+    # So (for CUSTOM types only) we use the parametrized bungeni.{type_key}.Edit as 
+    # the edit permission:
+    pv_type = "zope.Public" # view permission, for type
+    pe_type = "zope.Public" # edit permission, for type
+    if descriptor_model.scope == "custom":
+        type_key = naming.polymorphic_identity(domain_model)
+        pv_type = "bungeni.%s.View" % (type_key)
+        pe_type = "bungeni.%s.Edit" % (type_key)
+    
     attrs = set(
         [ n for n, d in ti.derived_table_schema.namesAndDescriptions(all=True) ])
     attrs = attrs.union(set(
             [ f.get("name") for f in descriptor_model.fields ]))
-    log.debug("APPLY SECURITY: %s" % (domain_model))
-    type_key = naming.polymorphic_identity(domain_model)
-    # !+DECL permissions here--for CUSTOM types only, and SINCE r9946--override
-    # what is defined in domain.zcml, as opposed to vide-versa (probably 
-    # because CUSTOM types are setup at a later stage). 
-    # So (for CUSTOM types only) we use the parametrized bungeni.{type_key}.Edit as 
-    # the edit permission:
-    if descriptor_model.scope == "custom":
-        pe_type = "bungeni.%s.Edit" % (type_key)
     for n in attrs:
         # !+DECL special cases, do not override domain.zcml...
         if n in ("response_text",):
             continue
+        pv = pv_type
+        pe = pe_type
         model_field = descriptor_model.get(n)
-        pv = "zope.Public"
-        pe = "zope.Public"
         if model_field:
-            pv = model_field.view_permission # always "zope.Public"
-            # !+DECL
-            if descriptor_model.scope == "custom":
-                pe = pe_type
-            else:
-                # proceed as before for now !+DECL
+            if descriptor_model.scope != "custom":
+                # !+DECL proceed as before for now
+                pv = model_field.view_permission # always "zope.Public"
                 pe = model_field.edit_permission # always "zope.ManageContent"
-        # !+DECL parametrize all permissions by type AND mode, ensure to 
-        # grant to appropriate roles.
+        # !+DECL parametrize all permissions by type AND mode, ensure to grant 
+        # to appropriate roles. What about non-workflows or non-catalyzed types?
         protectName(domain_model, n, pv)
         protectSetAttribute(domain_model, n, pe)
-        log.debug("                %s %s %s" % (n, pe, model_field or "<No-Field />"))
+        log.debug("                %s view:%s edit:%s %s" % (
+                n, pv, pe, model_field or "<No-Field />"))
+    
+    # container attributes (never a UI Field for these)
     for k, v in domain_model.__dict__.items():
-        if (isinstance(v, ManagedContainerDescriptor) or 
-                isinstance(v, orm.attributes.InstrumentedAttribute)
-            ):
-            protectName(domain_model, k, "zope.Public")
+        # !+ if IManagedContainer.providedBy(v): ?
+        if isinstance(v, ManagedContainerDescriptor):
+            log.debug("    MANAGED_CD: %s view:%s" % (k, "zope.Public"))
+        
+        elif isinstance(v, orm.attributes.InstrumentedAttribute):     
+            log.debug("  INSTRUMENTED: %s view:%s" % (k, "zope.Public"))
+        else:
+            continue
+        protectName(domain_model, k, "zope.Public") #!+pv_type
+        
 
 
 def generate_container_class(ti):
