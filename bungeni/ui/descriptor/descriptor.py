@@ -1361,7 +1361,6 @@ class DocDescriptor(ModelDescriptor):
         #"attachments",
         #"events",
         # head_id
-        "timestamp", # DB_REQUIRED
     ]
     sort_on = ["status_date", "type_number"]
     sort_dir = "desc"
@@ -1530,14 +1529,6 @@ class DocDescriptor(ModelDescriptor):
         #    vocabulary="group",
         #),
         # head_id
-        F(name="timestamp",
-           label = u"", # !+ must have "empty" label... as no value is shown!
-           localizable=[
-                show("edit"),
-            ],
-            value_type="timestamp",
-            render_type="datetime",
-        ),
     ]
 
 

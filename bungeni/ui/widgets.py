@@ -79,17 +79,6 @@ class HiddenTextWidget(zope.formlib.widgets.TextWidget):
         return self.hidden()
 
 
-class HiddenTimestampWidget(zope.formlib.widgets.TextWidget):
-    def __call__(self):
-        return self.hidden()
-    
-    def _toFieldValue(self, value):
-        return date.parseDateTime(value)
-    
-    def _toFormValue(self, value):
-        return str(value)        
-
-
 class MultiDateTextAreaWidget(TextAreaWidget):
     def _toFieldValue(self, value):
         dates = []

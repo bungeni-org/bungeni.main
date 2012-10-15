@@ -23,7 +23,6 @@ VALUETYPE = {
     "text": {},
     "date": {},
     "datetime": {},
-    "timestamp": {}, # !+ is this at all needed? Timestamps should never appear in the UI?
     "duration": {}, # !+ this "consumes" 2 columns, so probably have dedicated widget type? entirely 
     "bool": {"default": True},
     "number": {},
@@ -102,9 +101,6 @@ WIDGETS = {
         (None, widgets.DateTimeWidget, widgets.DateTimeWidget, 
             widgets.date_input_search_widget,
             listing.duration_column, None),
-    # Used in edit mode (doc) to check if form timestamp differs from db timestamp
-    ("timestamp", "datetime"): 
-        (None, widgets.HiddenTimestampWidget, None, None, None, None),
     ("bool", "bool"):
         (None, None, None, None, None, None),
     ("number", "number"):
