@@ -401,6 +401,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                 # expect an interaction to generate values
                                 # todo - update these vocabularies to work 
                                 # with no request e.g. in notification threads
+                                display_name = None
                                 try:
                                     vocabulary = factory(obj)                             
                                     term = vocabulary.getTerm(value)
@@ -425,7 +426,6 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                         factory
                                     )
                                     #try to use dc adapter lookup
-                                    display_name = str(value)
                                     try:
                                         _prop = mapper.get_property_by_column(
                                             property.columns[0])
@@ -442,6 +442,15 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                             " on object %s. Unmapped in orm.",
                                             property.key, obj
                                         )
+                                except Exception, e:
+                                    log.error("Could not instantiate"
+                                        " vocabulary %s. Exception: %s",
+                                        factory, e
+                                    )
+                                finally:
+                                    #fallback we cannot look up vocabularies/dc
+                                    if display_name is None:
+                                        display_name = str(value)
                                 result[property.key] = dict(
                                     name=property.key,
                                     value=value,
