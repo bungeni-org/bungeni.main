@@ -69,7 +69,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
             interface.alsoProvides(self, marker)
         super(WorkspaceBaseContainer, self).__init__()
 
-    def string_key(self, instance):
+    @staticmethod
+    def string_key(instance):
         unproxied = removeSecurityProxy(instance)
         mapper = orm.object_mapper(unproxied)
         primary_key = mapper.primary_key_from_instance(unproxied)
@@ -78,7 +79,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
         item_type = workspace_tabs.get_type(domain_class)
         return "%s-%d" % (item_type, primary_key[0])
 
-    def value_key(self, identity_key):
+    @staticmethod
+    def value_key(identity_key):
         """Returns a tuple, (domain_class, primary_key)"""
         if not isinstance(identity_key, basestring):
             raise ValueError
@@ -621,13 +623,15 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
             interface.alsoProvides(self, marker)
         AlchemistContainer.__init__(self)
 
-    def string_key(self, instance):
+    @staticmethod
+    def string_key(instance):
         unproxied = removeSecurityProxy(instance)
         mapper = orm.object_mapper(unproxied)
         primary_key = mapper.primary_key_from_instance(unproxied)
         return "%s-%d" % ("group", primary_key[0])
 
-    def value_key(self, identity_key):
+    @staticmethod
+    def value_key(identity_key):
         if not isinstance(identity_key, basestring):
             raise ValueError
         properties = identity_key.split("-")

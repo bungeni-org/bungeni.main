@@ -41,7 +41,7 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
             tab = tabs_utility.get_tab(role, domain_class, status)
             if tab:
                 base_url = ui_utils.url.absoluteURL(getSite(), self.request)
-                key = workspace.stringKey(self.context)
+                key = workspace.WorkspaceBaseContainer.string_key(self.context)
                 return '%s/workspace/my-documents/%s/%s' % (base_url, tab, key)
         else:
             return None
