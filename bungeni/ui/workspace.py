@@ -377,7 +377,7 @@ class WorkspaceAddForm(AddForm):
         notify(ObjectCreatedEvent(ob))
         # signal to add form machinery to go to next url
         self._finished_add = True
-        name = workspace.stringKey(ob)
+        name = self.context.string_key(ob)
         return self.context.get(name)
 
     @property
