@@ -16,9 +16,10 @@ import zope.lifecycleevent
 from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.component import getGlobalSiteManager
+from zope.cachedescriptors import property as cached_property
 
 from bungeni.alchemist import Session
-from bungeni.models import interfaces, domain
+from bungeni.models import interfaces, domain, utils as model_utils
 from bungeni.utils import register
 from bungeni.utils.capi import capi
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
@@ -32,12 +33,12 @@ SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
 SIGNATORY_CONSENTED_STATES = [u"consented"]
 SIGNATORY_CONSENTED_STATE = u"consented"
 
-def _allow_signatures(self):
+def _allow_signatures(context):
     """Callable on class to check if document is open for signatures.
     
     Used in bungeni/ui/menu.zcml to filter out 'sign document action'
     """
-    manager =interfaces.ISignatoryManager(self)
+    manager = interfaces.ISignatoryManager(context)
     return manager.autoSign()
 
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
@@ -50,7 +51,8 @@ def doc_workflow(ob, event):
 @register.handler(adapts=(interfaces.ISignatory, 
     zope.lifecycleevent.interfaces.IObjectCreatedEvent))
 def signatory_created(ob, event):
-    if interfaces.ISignatoryManager(ob.head).documentSubmitted():
+    manager = interfaces.ISignatoryManager(ob.head)
+    if manager.documentSubmitted() or manager.autoSign():
         IPrincipalRoleMap(ob).assignRoleToPrincipal(OWNER_ROLE, 
             ob.owner.login
         )
@@ -112,10 +114,10 @@ class SignatoryValidator(object):
     def __init__(self, context):
         self.context = context
         self.object_type = context.type
-        self.wf_status = IWorkflowController(context
-            ).state_controller.get_status()
+        self.wf_status = IWorkflowController(
+            context).state_controller.get_status()
 
-    @property
+    @cached_property.cachedIn("__signatories__")
     def signatories(self):
         #!+VERSIONS(mb, aug-2011) automatic transitions firing for versions?
         # as at r8488 - check whether the context actually has signatories
@@ -123,10 +125,12 @@ class SignatoryValidator(object):
         # signature status. View permission only checked on attribute access
         # from container `values` listing
         if hasattr(self.context, "signatories"):
-            return removeSecurityProxy(self.context.signatories.values())
+            return [ sgn for sgn in 
+                removeSecurityProxy(self.context.signatories).values()
+            ]
         else:
-            log.warning("The object  %s has no signatories. Returning empty"
-                " list of signatories.", 
+            log.warning("The object  %s has no signatories. Returning"
+                " empty list of signatories.", 
                 self.context.__str__()
             )
             return []
@@ -138,6 +142,13 @@ class SignatoryValidator(object):
     @property
     def consented_signatories(self):
         return self.consentedSignatories()
+   
+   
+    def is_signatory(self, user_id=None):
+        user_id = user_id or model_utils.get_db_user_id()
+        if user_id:
+            return user_id in [ sgn.user_id for sgn in self.signatories ] 
+        return False
     
     #!+PLEASE_USE_STANDARD_NAMING_CONVENTIONS(mr, apr-2012)
     
@@ -167,6 +178,15 @@ class SignatoryValidator(object):
 
     def autoSign(self):
         return self.wf_status in self.open_states
+
+    def canSign(self):
+        """Check if the current user can sign a document"""
+        is_owner = ((
+            model_utils.get_prm_owner_principal_id(self.context) ==
+                model_utils.get_principal_id()) or 
+            model_utils.get_db_user() == self.context.owner
+        )
+        return (self.autoSign() and not is_owner and not self.is_signatory())
 
     def signDocument(self, user_id):
         return sign_document(self.context, user_id)

@@ -149,7 +149,7 @@
           <div id="actionsView"> 
             <span class="actionButtons"
                   tal:condition="view/availableActions">
-              <tal:loop tal:repeat="action view/actions"> 
+              <tal:loop tal:repeat="action view/availableActions"> 
                 <input type="submit" class="context"
                        id="" name="" value=""
                        tal:attributes="id action/__name__;

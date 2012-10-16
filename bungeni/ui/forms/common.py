@@ -878,10 +878,27 @@ class SignOpenDocumentForm(PageForm):
     form_template = NamedTemplate("alchemist.form")
     template = ViewPageTemplateFile("templates/sign-open-document.pt")
     form_fields = formlib.form.Fields()
+
+    @property
+    def action_message(self):
+        if self._can_sign_document(None):
+            return _("Please confirm that you wish to sign"
+                " this document")
+        elif self._can_review_signature(None):
+            return _(u"You have already signed this document")
+        else:
+            return _(u"You may not sign this document")
     
     def _can_sign_document(self, action):
         manager = ISignatoryManager(self.context)
-        return manager.autoSign()
+        return manager.canSign()
+
+    def _can_review_signature(self, action):
+        manager = ISignatoryManager(self.context)
+        return manager.is_signatory(get_db_user_id())
+
+    def redirect_to_review(self):
+        self.request.response.redirect("./signatory-review")
 
     def nextURL(self):
         return url.absoluteURL(self.context, self.request)
@@ -893,9 +910,19 @@ class SignOpenDocumentForm(PageForm):
         manager = ISignatoryManager(self.context)
         manager.signDocument(user_id)
         self.request.response.redirect(self.nextURL())
+
+    @formlib.form.action(_(u"Review Signature"), name="review_signature", 
+        condition=_can_review_signature)
+    def handle_review_signature(self, action, data):    
+        self.redirect_to_review()
         
     @formlib.form.action(_(u"Cancel"), name="cancel", 
         validator=ui.null_validator)    
     def handle_cancel(self, action, data):
         self.request.response.redirect(self.nextURL())
     
+    def __call__(self):
+        if self._can_review_signature(None):
+            self.redirect_to_review()
+        return super(SignOpenDocumentForm, self).__call__()
+            

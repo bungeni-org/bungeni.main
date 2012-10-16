@@ -14,9 +14,8 @@ log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from zope.security import checkPermission
 from bungeni.models.interfaces import ISignatoryManager
-from bungeni.models import domain
+#from bungeni.models import domain
 from bungeni.models import utils as model_utils
-from bungeni.core import globalsettings as prefs
 from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
 from bungeni.ui.interfaces import IFormEditLayer
@@ -161,8 +160,7 @@ def signatory_auto_sign(context):
     if user_is_not_context_owner(context.head):
         return True
     #!+(mb, Jul-2012) move all signatory logic to signatory manager
-    validator = ISignatoryManager(context.head)
-    if validator.autoSign():
+    if ISignatoryManager(context.head).autoSign():
         return True
     return False
 
@@ -173,47 +171,51 @@ def user_is_not_parent_document_owner(context):
     return not user_is_parent_document_owner(context)
 
 def pi_has_signatories(context):
-    validator = ISignatoryManager(context, None)
-    if validator is not None:
-        return validator.validateSignatories()
+    manager = ISignatoryManager(context, None)
+    if manager is not None:
+        return manager.validateSignatories()
     return True
 
 def pi_signatories_check(context):
-    validator = ISignatoryManager(context, None)
-    if validator is not None:
-        return validator.validateConsentedSignatories()
+    manager = ISignatoryManager(context, None)
+    if manager is not None:
+        return manager.validateConsentedSignatories()
     return True
 
 def pi_signature_period_expired(context):
     """The document has been submitted"""
-    validator = ISignatoryManager(context.head, None)
-    if validator is not None:
-        return validator.expireSignatures()
+    manager = ISignatoryManager(context.head, None)
+    if manager is not None:
+        return manager.expireSignatures()
     return False
 
 def pi_document_redrafted(context):
     """Parent document has been redrafted"""
-    validator = ISignatoryManager(context.head, None)
-    return validator and validator.documentInDraft()
+    manager = ISignatoryManager(context.head, None)
+    return manager and manager.documentInDraft()
 
 def pi_unsign_signature(context):
-    return (pi_document_redrafted(context) and 
-        user_is_not_parent_document_owner(context))
+    manager = ISignatoryManager(context.head, None)
+    if manager:
+        return ((pi_document_redrafted(context) and 
+            user_is_not_parent_document_owner(context))
+        )
+    return False
 
 def pi_allow_signature(context):
-    validator = ISignatoryManager(context.head, None)
-    if validator is not None:
-        return user_is_context_owner(context) and validator.allowSignature()
+    manager = ISignatoryManager(context.head, None)
+    if manager is not None:
+        return user_is_context_owner(context) and manager.allowSignature()
     return False
 
 def pi_allow_signature_actions(context):
     """allow/disallow other signature actions => such as withdraw and reject
     """
-    validator = ISignatoryManager(context.head, None)
-    if validator is not None:
+    manager = ISignatoryManager(context.head, None)
+    if manager is not None:
         return (user_is_context_owner(context) and
-            validator.documentSubmitted() and
-            user_is_not_parent_document_owner(context))
+            (manager.documentSubmitted() or manager.autoSign()) and
+            user_is_not_parent_document_owner(context)) 
     return False
 
 

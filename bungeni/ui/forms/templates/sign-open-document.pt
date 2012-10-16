@@ -10,9 +10,7 @@
           <dt>
             <p i18:translate="">Sign</p>
           </dt>
-          <dd i18n:translate="">
-            Please confirm that you wish to sign this document
-          </dd>
+          <dd i18n:translate="" tal:content="view/action_message"/>
         </dl>
         <div class="visualClear"><!-- nothing here --></div>
         <p i18n:translate="">Document Details.</p>
