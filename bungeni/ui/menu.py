@@ -23,7 +23,6 @@ from zope.browsermenu.interfaces import IBrowserMenu
 import zope.browsermenu
 from zope.security import proxy, checkPermission
 from zope.i18n import translate
-from zc.resourcelibrary import need
 import z3c.menu.ready2go.item
 
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
