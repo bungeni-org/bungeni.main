@@ -1,5 +1,6 @@
 import os
 import simplejson
+from sqlalchemy import distinct
 from zope import component
 from zope.publisher.browser import BrowserPage
 from zope.app.pagetemplate import ViewPageTemplateFile
@@ -13,8 +14,8 @@ from zope.security import checkPermission
 from zc.resourcelibrary import need
 from bungeni.alchemist.container import contained
 from bungeni.alchemist.ui import createInstance
-from bungeni.alchemist import utils
-from bungeni.core import workspace, translation
+from bungeni.alchemist import utils, Session
+from bungeni.core import translation
 from bungeni.core.content import WorkspaceSection
 from bungeni.core.i18n import _
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
@@ -32,6 +33,7 @@ from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.utils import register
 from bungeni.utils.capi import capi
 from bungeni.ui.widgets import date_input_search_widget
+from bungeni.models import domain
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 
@@ -42,17 +44,24 @@ class WorkspaceField(object):
         self.name = name
         self.title = title
 
-    def query(item):
+    def query(item, formatter):
         return getattr(IWorkspaceContentAdapter(item), name, None)
 
 # These are the columns to be displayed in the workspace
-workspace_fields = [
+workspace_doc_fields = [
     WorkspaceField("title", _("title")),
     WorkspaceField("type", _("item type")),
     WorkspaceField("status", _("status")),
     WorkspaceField("status_date", _("status date"))
     ]
 
+
+workspace_group_fields = [
+    WorkspaceField("title", _("title")),
+    WorkspaceField("type", _("group type")),
+    WorkspaceField("status", _("status")),
+    WorkspaceField("status_date", _("status date"))
+    ]
 
 @register.view(IWorkspaceContainer, name="jsonlisting",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
@@ -64,6 +73,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
     """
     permission = "zope.View"
+    workspace_fields = workspace_doc_fields
 
     def __init__(self, context, request):
         super(WorkspaceContainerJSONListing, self).__init__(context, request)
@@ -105,7 +115,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
         values = []
         for node in nodes:
             d = {}
-            for field in workspace_fields:
+            for field in self.workspace_fields:
                 d[field.name] = getattr(
                     IWorkspaceContentAdapter(node), field.name, None
                     )
@@ -160,9 +170,9 @@ class WorkspaceContainerJSONListing(BrowserPage):
         return self.json_batch(start, limit, lang)
 
 
-
 class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
+    workspace_fields = workspace_doc_fields
 
     js_file = open(_path + "/templates/datatable-workspace.js")
     script = js_file.read()
@@ -184,10 +194,10 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
                     if key not in domains:
                         domains.append(key)
         result = dict([("", "-")])
-        for domain in domains:
-            value = workspace_config.get_type(domain)
+        for d in domains:
+            value = workspace_config.get_type(d)
             if value:
-                descriptor_model = utils.get_descriptor(domain)
+                descriptor_model = utils.get_descriptor(d)
                 name = descriptor_model.display_name if descriptor_model else value
                 result[value] = translate(name, context=self.request)
         return result
@@ -232,7 +242,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     def getFieldColumns(self):
         column_model = []
         field_model = []
-        for field in workspace_fields:
+        for field in self.workspace_fields:
             coldef = {
                 "key": field.name,
                 "label": translate(_(field.title), context=self.request),
@@ -255,11 +265,14 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         return ",".join(column_model), ",".join(field_model)
 
 
+@register.view(IWorkspaceContainer, name="index",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerListing(BrowserPage):
     render = ViewPageTemplateFile("templates/workspace-listing.pt")
     formatter_factory = WorkspaceDataTableFormatter
     columns = []
     prefix = "workspace"
+    workspace_fields = workspace_doc_fields
 
     def __call__(self):
         need("yui-datatable")
@@ -267,7 +280,7 @@ class WorkspaceContainerListing(BrowserPage):
         return self.render()
 
     def update(self):
-        for field in workspace_fields:
+        for field in self.workspace_fields:
             self.columns.append(
                 column.GetterColumn(title=field.name,
                                  getter=Getter(field.query)))
@@ -334,9 +347,44 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
         config["status"] = simplejson.dumps(status)
         return config
 
+
+@register.view(IWorkspaceUnderConsiderationContainer, name="index",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceUnderConsiderationListing(WorkspaceContainerListing):
     formatter_factory = WorkspaceUnderConsiderationFormatter
-    prefix="workspace_under_consideration"
+    prefix = "workspace_under_consideration"
+
+
+class WorkspaceGroupsFormatter(WorkspaceDataTableFormatter):
+
+    workspace_fields = workspace_group_fields
+
+    def get_item_types(self):
+        result = dict([("", "-")])
+        session = Session()
+        group_types = session.query(distinct(domain.Group.type)).all()
+        for group_type in group_types:
+            result[group_type[0]] = translate(
+                group_type[0], context=self.request)
+        return result
+
+    def get_status(self, item_type):
+        return {}
+
+    def getDataTableConfig(self):
+        config = table.ContextDataTableFormatter.getDataTableConfig(self)
+        item_types = self.get_item_types()
+        config["item_types"] = simplejson.dumps(item_types)
+        config["status"] = simplejson.dumps(dict([("", "-")]))
+        return config
+
+
+@register.view(IWorkspaceGroupsContainer, name="index",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+class WorkspaceGroupsListing(WorkspaceContainerListing):
+    formatter_factory = WorkspaceGroupsFormatter
+    prefix = "workspace_groups"
+    workspace_fields = workspace_group_fields
 
 
 @register.view(WorkspaceSection, name="tabcount",

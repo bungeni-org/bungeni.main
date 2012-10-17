@@ -148,14 +148,14 @@ class WorkspaceBaseContainer(AlchemistContainer):
         # !+ update to support other fields
         column = table.columns[utk["title"]]
         return column
-    
+
     def filter_title(self, query, domain_class, kw):
         if kw.get("filter_title", None):
             column = self.title_column(domain_class)
-            return query.filter("""(lower(%s) LIKE "%%%s%%")""" % (
-                    column, kw["filter_title"].lower()))
+            return query.filter(expression.func.lower(column).like(
+                    "%%%s%%" % kw["filter_title"].lower()))
         return query
-    
+
     def order_query(self, query, domain_class, kw, reverse):
         if (kw.get("sort_on", None) and
                 hasattr(domain_class, str(kw.get("sort_on")))
@@ -626,21 +626,19 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
     @staticmethod
     def string_key(instance):
         unproxied = removeSecurityProxy(instance)
-        mapper = orm.object_mapper(unproxied)
-        primary_key = mapper.primary_key_from_instance(unproxied)
-        return "%s-%d" % ("group", primary_key[0])
+        group_principal_id = unproxied.group_principal_id
+        url_id = str(group_principal_id).replace(".", "-")
+        return url_id
 
     @staticmethod
     def value_key(identity_key):
         if not isinstance(identity_key, basestring):
             raise ValueError
         properties = identity_key.split("-")
-        if len(properties) != 2:
+        if len(properties) != 3:
             raise ValueError
-        if properties[0] != "group":
-            raise ValueError
-        primary_key = properties[1]
-        return domain.Group, primary_key
+        group_principal_id = identity_key.replace("-", ".")
+        return domain.Group, group_principal_id
 
     def title_column(self, domain_class):
         table = orm.class_mapper(domain_class).mapped_table
@@ -651,14 +649,21 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
 
     def get(self, name, default=None):
         try:
-            domain_class, primary_key = self.value_key(name)
+            domain_class, group_principal_id = self.value_key(name)
         except ValueError:
             return default
         session = Session()
-        value = session.query(domain_class).get(primary_key)
-        if value is None:
+        try:
+            value = session.query(domain_class).filter(
+                domain_class.group_principal_id == group_principal_id).one()
+        except orm.exc.NoResultFound:
             return default
         return contained(value, self, name)
+
+    def filter_type(self, query, domain_class, kw):
+        if kw.get("filter_type", None):
+            query = query.filter(domain_class.type == kw.get("filter_type"))
+        return query
 
     def _query(self, **kw):
         results = []
@@ -674,6 +679,7 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
                     #domain.Group.status.in_(status)
                     ))
         query = self.filter_title(query, domain.Group, kw)
+        query = self.filter_type(query, domain.Group, kw)
         query = self.filter_status_date(query, domain.Group, kw)
         query = self.order_query(query, domain.Group, kw, reverse)
         results = query.all()
