@@ -9,27 +9,34 @@ from zope import component
 from zope import interface
 from zope.app.component.hooks import getSite
 from zope.pagetemplate.pagetemplatefile import PageTemplateFile
+from zope.cachedescriptors.property import CachedProperty
 from bungeni.alchemist import Session
-from bungeni.core.interfaces import IMessageQueueConfig, IBungeniMailer
+from bungeni.core.interfaces import (IMessageQueueConfig, IBungeniMailer,
+    INotificationEvent
+)
 from bungeni.core.notifications import get_mq_connection
 from bungeni.models import domain
 from bungeni.models.settings import EmailSettings
 from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.utils import register
 
 
 class BungeniSMTPMailer(object):
 
     interface.implements(IBungeniMailer)
 
+    @CachedProperty
+    def settings(self):
+        return EmailSettings(getSite())
+
     def send(self, msg):
-        settings = EmailSettings(getSite())
-        msg["From"] = settings.default_sender
-        hostname = settings.hostname
-        port = settings.port
-        username = settings.username or None
-        password = settings.password or None
+        msg["From"] = self.settings.default_sender
+        hostname = self.settings.hostname
+        port = self.settings.port
+        username = self.settings.username or None
+        password = self.settings.password or None
         connection = smtplib.SMTP(hostname, port)
-        if settings.use_tls:
+        if self.settings.use_tls:
             connection.ehlo()
             connection.starttls()
             connection.ehlo()
@@ -115,3 +122,19 @@ def email_notifications():
         task_thread = Thread(target=email_worker)
         task_thread.daemon = True
         task_thread.start()
+
+@register.handler(adapts=(INotificationEvent,))
+def notify_users(event):
+    """Send an email to recipients set up in event.object
+    See `INotificationEvent` docs
+    """
+    #!+performance(mb, oct-2012) this should run in a thread
+    message = event.object
+    msg = MIMEText(message.get("body"))
+    msg["Subject"] = message.get("subject")
+    msg["To"] = ', '.join(message.get("recipients"))
+    if msg["To"]:
+        component.getUtility(IBungeniMailer).send(msg)
+    else:
+        log.warn("Could not send notification message. No recipient")
+    

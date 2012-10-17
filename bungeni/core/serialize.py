@@ -19,7 +19,9 @@ from tempfile import NamedTemporaryFile as tmp
 import simplejson
 
 import zope.component
+import zope.app.component
 from zope.security.proxy import removeSecurityProxy
+import zope.event
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 
 from sqlalchemy.orm import class_mapper, object_mapper
@@ -31,16 +33,16 @@ from bungeni.alchemist import Session
 from bungeni.core.workflow.states import (get_object_state_rpm, 
     get_head_object_state_rpm
 )
-from bungeni.core.interfaces import IMessageQueueConfig
+from bungeni.core.interfaces import IMessageQueueConfig, NotificationEvent
 from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
     IWorkflowed, IWorkflowController, InvalidStateError
 )
 from bungeni.core.notifications import (get_mq_connection, 
     post_commit_publish
 )
-from bungeni.models import interfaces, domain
+from bungeni.models import interfaces, domain, settings
 from bungeni.models.utils import obj2dict, get_permissions_dict
-from bungeni.utils import register, naming
+from bungeni.utils import register, naming, core
 
 import transaction
 import pika
@@ -239,6 +241,36 @@ SERIALIZE_OUTPUT_QUEUE = "bungeni_serialization_output_queue"
 SERIALIZE_OUTPUT_EXCHANGE = "bungeni_serialization_output_exchange"
 SERIALIZE_OUTPUT_ROUTING_KEY = "bungeni_serialization_output"
 
+SERIALIZE_FAILURE_TEMPLATE = """
+There was an error while serializing a document: 
+
+Object:
+%(obj)s
+
+Original AMQP message: 
+%(message)s
+
+Error:
+%(error)s
+
+- Bungeni
+"""
+
+def notify_serialization_failure(template, **kw):
+    email_settings = settings.EmailSettings(core.get_application())
+    recipients = [ email_settings.default_sender ]    
+    if template:
+        body_text = template % kw
+    else:
+        body_text = kw.get("body")
+    msg_event = NotificationEvent({
+        "recipients" : recipients,
+        "body" : body_text, 
+        "subject" : kw.get("subject", "Serialization Failure")
+    })
+    zope.event.notify(msg_event)
+
+
 def serialization_notifications_callback(channel, method, properties, body):
     obj_data = simplejson.loads(body)
     obj_type = obj_data.get("obj_type")
@@ -248,7 +280,12 @@ def serialization_notifications_callback(channel, method, properties, body):
         session = Session()
         obj = session.query(domain_model).get(obj_key)
         if obj:
-            publish_to_xml(obj)
+            try:
+                publish_to_xml(obj)
+            except Exception, e:
+                notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
+                    obj=obj, message=obj_data, error=e
+                )
             channel.basic_ack(delivery_tag=method.delivery_tag)
         else:
             log.error("Could not query object of type %s with key %s. "
@@ -294,6 +331,11 @@ class SerializeThread(Thread):
                         "worker after %d seconds (%d attempts).", 
                         delay, num_attempts
                     )
+                    notify_serialization_failure(None,
+                        subject="Notice - Bungeni Serialization Workers",
+                        body="""Unable to restart serialization worker.
+                    Please check the Bungeni logs."""
+                    )
                 else:
                     log.info("Attempting to respawn serialization "
                         "consumer in %d seconds", delay
@@ -323,13 +365,30 @@ def queue_object_serialization(obj, event):
         log.warn("Could not get rabbitmq connection. Will not send "
             "AMQP message for this change."
         )
+        log.warn("Publishing XML directly - this will slow things down")
+        try:
+            publish_to_xml(obj)
+        except Exception, e:
+            notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
+                obj=obj, message="", error=e
+            )
+            notify_serialization_failure(None, 
+                body="Failed to find running RabbitMQ",
+                subject="Notice - RabbitMQ"
+            )
+        notify_serialization_failure(None, 
+            body="Failed to find running RabbitMQ",
+            subject="Notice - RabbitMQ"
+        )
         return
     wf_state = None
     try:
         wfc = IWorkflowController(obj)
         wf_state = wfc.state_controller.get_state()
     except InvalidStateError:
-        log.error("Could not get workflow state for object %s.", obj)
+        #this is probably a draft document - skip queueing
+        log.warning("Could not get workflow state for object %s. "
+            "State: %s", obj, wf_state)
         return
     if wf_state and (
         wfc.state_controller.get_status() in 

@@ -25,6 +25,7 @@ import bungeni.alchemist
 from ore.wsgiapp.interfaces import IApplication
 def get_application():
     """Get the bungeni.core.app.BungeniApp instance."""
+    #!+utils(mb, oct-2012) replace usage with bungeni.utils.core.get_application
     return zope.component.getUtility(IApplication)
     # there is of course always ONE obvious way to do it ;-) :
     # return zope.app.component.hooks.getSite()

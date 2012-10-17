@@ -1,4 +1,5 @@
 from zope import interface, schema
+from zope.component.interfaces import IObjectEvent, ObjectEvent
 from zope.location.interfaces import ILocation
 from zope.container.interfaces import IContainer
 from zope.container.interfaces import IContentContainer
@@ -373,3 +374,18 @@ class INotificationsUtility(interface.Interface):
 class IBungeniMailer(interface.Interface):
     """Interface for mailer utility
     """
+
+
+class INotificationEvent(IObjectEvent):
+    """A notification event whose `object` property is a dictionary.
+    
+    Dictionary format:
+        `{
+            "subject": "Message subject",
+            "body": "Message content",
+            "recipients": [] #list of email address,
+        }`
+    """
+
+class NotificationEvent(ObjectEvent):
+    interface.implements(INotificationEvent)
