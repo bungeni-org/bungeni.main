@@ -11,7 +11,7 @@
   <resourceLibrary name="jquery">
     <directory
       source="jquery"
-      include="jquery.js"
+      include="jquery.js jquery.bpopup-0.7.0.min.js"
     />
   </resourceLibrary>
 

@@ -20,3 +20,8 @@ class ProcessingViewlet(object):
 
     def update(self):
         need("bungeni-form-block-ui")
+
+class OverlayViewlet(object):
+    """Popup UI processing message."""
+    
+    render = ViewPageTemplateFile("templates/workflow-overlay.pt")

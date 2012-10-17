@@ -23,6 +23,7 @@ from zope.browsermenu.interfaces import IBrowserMenu
 import zope.browsermenu
 from zope.security import proxy, checkPermission
 from zope.i18n import translate
+from zc.resourcelibrary import need
 import z3c.menu.ready2go.item
 
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
@@ -303,10 +304,11 @@ class WorkflowMenu(BrowserMenu):
         _url = url.absoluteURL(context, request)
         results = []
         for tid in tids:
-            transit_url = ("%s/change_workflow_state?transition_id=%s&"
-                "next_url=./workflow-redirect" % (_url, tid)
+            transit_url = ("%s/popup_change_workflow_state?transition_id=%s"
+                    % (_url, tid)
             )
             extra = {"id": "workflow-transition-%s" % tid,
+                     "rel": "#overlay",
                      "separator": None,
                      "class": ""}
             state_title = translate(wf.get_transition(tid).title,

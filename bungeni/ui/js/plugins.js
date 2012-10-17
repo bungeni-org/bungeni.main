@@ -1,3 +1,14 @@
+$(document).ready(function () {
+    $('a[rel="#overlay"]').bind('click', function(e) {
+        // Prevents the default action to be triggered. 
+        e.preventDefault();
+        $('#popup-load').bPopup({
+            contentContainer:'.content',
+            loadUrl: $(this).attr("href") //Uses jQuery.load()
+        });
+    });
+});
+
 (function ($) {
     $('.workflow-status').css('border', '1px solid black');
 
@@ -16,9 +27,9 @@
             var args = o.split('=');
             var input = $('<input type="hidden" name="' + args[0] + '"/>').
             attr("value", args[1]);
-            input.appendTo(form);
+            form.append(input);
         });
-        form.get(0).submit();
+        //form.get(0).submit();
     }
 
     $.fn.bungeniPostWorkflowActionMenuItem = function () {
