@@ -1,7 +1,7 @@
 # !+ CLEAN OUT THIS FILE PLEASE !
 
 from zope.container.traversal import ContainerTraverser
-from zope.security.checker import ProxyFactory
+#from zope.security.checker import ProxyFactory
 from zope.traversing.browser import AbsoluteURL
 
 from bungeni.core.content import AkomaNtosoSection

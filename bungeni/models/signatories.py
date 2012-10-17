@@ -33,6 +33,12 @@ SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
 SIGNATORY_CONSENTED_STATES = [u"consented"]
 SIGNATORY_CONSENTED_STATE = u"consented"
 
+# !+IFEATURE_SIGNATORY this is logically a class method (signatories may be 
+# allowed or not at the class level, not per instance) not an instance method
+# (that is monkey-patched downstream onto the class).
+# Besides, there was already a more homegenoeous (as well as simpler and more 
+# direct and more efficient) way to do this, namely by checking the signatory 
+# feature settings on the workflow for this model class.
 def _allow_signatures(context):
     """Callable on class to check if document is open for signatures.
     
@@ -270,5 +276,7 @@ def createManagerFactory(domain_class, **params):
     
     gsm = getGlobalSiteManager()
     gsm.registerAdapter(manager, (domain_iface,), interfaces.ISignatoryManager)
+    # !+IFEATURE_SIGNATORY(mr, oct-2012) this should be included in signatory 
+    # feature setup and handling
     domain_class.allow_signatures = _allow_signatures
 

@@ -184,8 +184,7 @@ def register_custom_types():
         log.info("Registering custom type [%s]: %s" % (elem.tag, type_key))
     
     # load XML file
-    file_path = capi.get_path_for("types.xml")
-    etypes = etree.fromstring(open(file_path, "r").read().decode("utf-8"))
+    etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
     # register types
     for edoc in etypes.iterchildren("doc"):
         register_type(edoc)

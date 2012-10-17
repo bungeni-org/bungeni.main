@@ -475,6 +475,8 @@ class MemberOfParliament(GroupMembership):
     """
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
+    # !+MEMBER_ADDRESSES(mr, oct-2012) is it correct to assume that all 
+    # user addresses are also "member" addresses?
     addresses = one2manyindirect("addresses", 
         "bungeni.models.domain.UserAddressContainer", "user_id")
 
@@ -650,14 +652,14 @@ class vp(object):
             # get_default_language() is in core, that *depends* on models!
             self.language = language or "en" # or get_default_language()
 
-#
-#!+(miano, jun 2012) dynamic_features are defined for doc then repeated for
-# every type ?!?
+
 class Doc(Entity):
     """Base class for a workflowed parliamentary document.
     """
+    # allowed dynamic features by this archetype (inherited by sub-types)
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "assignment"]
+        "signatory", "schedule", "workspace", "notification", "download",
+        "assignment"]
     interface.implements(
         interfaces.IBungeniContent, # IOwned
         interfaces.ITranslatable
@@ -889,8 +891,8 @@ class DocVersion(Version):
 class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
-    dynamic_features = ["audit", "version", "attachment", "schedule",
-                        "workspace", "notification", "download", "assignment"]
+    dynamic_features = ["audit", "version", "attachment", #"event", "signatory", 
+        "schedule", "workspace", "notification", "download", "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -905,9 +907,6 @@ class AgendaItem(AdmissibleMixin, Doc):
 class Bill(Doc):
     """Bill domain type.
     """
-    dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download",
-        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -948,9 +947,6 @@ instrument_extended_properties(Bill, "doc")
 class Motion(AdmissibleMixin, Doc):
     """Motion domain type.
     """
-    dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download",
-        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -966,12 +962,11 @@ class Motion(AdmissibleMixin, Doc):
         return self._get_workflow_date("scheduled")
 #MotionAudit
 
+
+
 class Question(AdmissibleMixin, Doc):
     """Question domain type.
     """
-    dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download",
-        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -1024,9 +1019,6 @@ class TabledDocument(AdmissibleMixin, Doc):
     
     It must be possible to schedule a tabled document for a sitting.
     """
-    dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download",
-        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )

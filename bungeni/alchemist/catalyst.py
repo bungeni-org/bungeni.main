@@ -55,7 +55,7 @@ def catalyse_descriptors(module):
     class) in specified module.
     
     Called when ui.descriptor is initially imported (so before descriptors for 
-    types have been created).
+    custom types have been created).
     """
     import sys
     import inspect
@@ -196,8 +196,8 @@ def apply_security(ti):
     # !+DECL permissions here--for CUSTOM types only, and SINCE r9946--override
     # what is defined in domain.zcml, as opposed to vice-versa (probably 
     # because CUSTOM types are setup at a later stage). 
-    # So (for CUSTOM types only) we use the parametrized bungeni.{type_key}.Edit as 
-    # the edit permission:
+    # So (for CUSTOM types only) we use the parametrized 
+    # bungeni.{type_key}.{Mode} as the view/edit permission:
     pv_type = "zope.Public" # view permission, for type
     pe_type = "zope.Public" # edit permission, for type
     if descriptor_model.scope == "custom":
@@ -205,14 +205,25 @@ def apply_security(ti):
         pv_type = "bungeni.%s.View" % (type_key)
         pe_type = "bungeni.%s.Edit" % (type_key)
     
-    attrs = set(
-        [ n for n, d in ti.derived_table_schema.namesAndDescriptions(all=True) ])
-    attrs = attrs.union(set(
-            [ f.get("name") for f in descriptor_model.fields ]))
+    # !+SCHEMA_FIELDS(mr, oct-2012) all this seems superfluous anyway, as is 
+    # (always?) overwritten further down? Switch to base loop on superset of 
+    # names (dir(cls)?) and then decide ONCE on various criteria how to
+    # protect the name.
+    _view_protected = set() # remember names protected for view
+    _edit_protected = set() # remember names protected for edit
+    
+    # sorted (for clearer logging) list of attr names that are BOTH defined
+    # by the db mapped-table schema AND have a dedicated UI Field.
+    dts_attrs = [ n for n in ti.derived_table_schema.names(all=True) ]
+    df_attrs = [ f.get("name") for f in descriptor_model.fields ]
+    attrs = sorted(set(dts_attrs).union(set(df_attrs)))
+    
+    log.debug("    DTS+Fields: %s, %s" % (ti.derived_table_schema, descriptor_model))
     for n in attrs:
         # !+DECL special cases, do not override domain.zcml...
         if n in ("response_text",):
             continue
+        _view_protected.add(n); _edit_protected.add(n)
         pv = pv_type
         pe = pe_type
         model_field = descriptor_model.get(n)
@@ -221,25 +232,51 @@ def apply_security(ti):
                 # !+DECL proceed as before for now
                 pv = model_field.view_permission # always "zope.Public"
                 pe = model_field.edit_permission # always "zope.ManageContent"
-        # !+DECL parametrize all permissions by type AND mode, ensure to grant 
+        # !+DECL parametrize all permissions by type AND mode, ensure to grant
         # to appropriate roles. What about non-workflows or non-catalyzed types?
         protectName(domain_model, n, pv)
         protectSetAttribute(domain_model, n, pe)
-        log.debug("                %s view:%s edit:%s %s" % (
-                n, pv, pe, model_field or "<No-Field />"))
+        DTS = n in dts_attrs and "dts" or "   "
+        DF = n in df_attrs and "df" or "  "
+        log.debug("         %s %s [%s]  view:%s  edit:%s  %x" % (
+                DTS, DF, n, pv, pe, id(model_field)))
+        if n not in domain_model.__dict__:
+            log.debug("           ---- [%s] !+SCHEMA_FIELDS not in %s.__dict__" % (
+                    n, domain_model))
     
     # container attributes (never a UI Field for these)
-    for k, v in domain_model.__dict__.items():
+    log.debug("      __dict__: %s" % (domain_model))
+    for k in sorted(domain_model.__dict__.keys()):
         # !+ if IManagedContainer.providedBy(v): ?
+        v = domain_model.__dict__[k]
         if isinstance(v, ManagedContainerDescriptor):
-            log.debug("    MANAGED_CD: %s view:%s" % (k, "zope.Public"))
-        
+            if k in _view_protected:
+                log.debug("           ---- %s RESETTING..." % (k))
+            _view_protected.add(k)
+            log.debug("        managed %s view:%s" % (k, "zope.Public"))
         elif isinstance(v, orm.attributes.InstrumentedAttribute):     
-            log.debug("  INSTRUMENTED: %s view:%s" % (k, "zope.Public"))
+            if k in _view_protected:
+                log.debug("           ---- %s RESETTING..." % (k))
+            _view_protected.add(k)
+            log.debug("   instrumented [%s]  view:%s" % (k, "zope.Public"))
         else:
+            log.debug("           ---- [%s] !+SCHEMA_FIELD IN __dict__ but NOT "
+                "instrumented OR managed" % (k))
             continue
+        if k not in attrs:
+            log.debug("           ---- [%s] !+SCHEMA_FIELDS not in attrs" % (k))
         protectName(domain_model, k, "zope.Public") #!+pv_type
-        
+    
+    # !+DECL dump permission_id required to getattr/setattr?
+    from zope.security import proxy, checker
+    if descriptor_model.scope == "custom":
+        dmc = checker.getChecker(proxy.ProxyFactory(domain_model()))
+        log.debug("       checker: %s" % (dmc))
+        for n in sorted(_view_protected):
+            g = dmc.get_permissions.get(n)
+            s = dmc.set_permissions.get(n) #dmc.setattr_permission_id(n)
+            log.debug("                [%s]  get:%s  set:%s" % (
+                n, getattr(g, "__name__", g), s))
 
 
 def generate_container_class(ti):
