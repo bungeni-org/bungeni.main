@@ -1041,6 +1041,8 @@ class Event(HeadParentedMixin, Doc):
         interfaces.IEvent,
     )
     
+    #!+delete submission_date
+    
     # !+alchemist properties not inherited, must be re-instrumented on class
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
