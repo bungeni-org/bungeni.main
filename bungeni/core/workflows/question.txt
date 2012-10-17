@@ -233,7 +233,7 @@ PERMISSIONS for member principal for "draft" question.status
   >>> from zope.security import checkPermission
   >>> [ checkPermission("bungeni.question.Edit", question), 
   ...   checkPermission("bungeni.question.Add", question), 
-  ...   checkPermission("zope.View", question), 
+  ...   checkPermission("bungeni.question.View", question), 
   ...   checkPermission("bungeni.question.Delete", question), 
   ...   checkPermission("bungeni.attachment.Add", question), 
   ...   checkPermission("bungeni.attachment.Edit", question),

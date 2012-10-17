@@ -272,7 +272,7 @@ def apply_security(ti):
     if descriptor_model.scope == "custom":
         dmc = checker.getChecker(proxy.ProxyFactory(domain_model()))
         log.debug("       checker: %s" % (dmc))
-        for n in sorted(_view_protected):
+        for n in sorted(_view_protected.union(["response_text"])):
             g = dmc.get_permissions.get(n)
             s = dmc.set_permissions.get(n) #dmc.setattr_permission_id(n)
             log.debug("                [%s]  get:%s  set:%s" % (
