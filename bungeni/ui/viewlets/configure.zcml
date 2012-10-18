@@ -121,12 +121,6 @@
         manager="ploned.ui.interfaces.IPortalHeaderManager"
         class=".enhance.ProcessingViewlet"
     />
-    <browser:viewlet name="bungeni.popup_display"
-        for="*"
-        permission="zope.Public"
-        manager="ploned.ui.interfaces.IPortalHeaderManager"
-        class=".enhance.OverlayViewlet"
-    />
     <browser:viewlet name="bungeni.reports.preview"
         for="bungeni.ui.interfaces.IWorkspaceReportGeneration"
         permission="zope.View"

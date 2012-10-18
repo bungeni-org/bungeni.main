@@ -28,7 +28,6 @@ jQuery.fn.preventDuplicateMenuAction = function(){
         parent_dl = jQuery(this).parents("dl");
         if(typeof(parent_dl.isPushed) != "undefined"){
             event.preventDefault();
-            event.stopPropagation();
         }else{
             parent_dl.isPushed = true;
             jQuery.blockUI({ message:jQuery("#processing_indicatron"),
@@ -40,5 +39,5 @@ jQuery.fn.preventDuplicateMenuAction = function(){
 
 jQuery(document).ready(function(){
         jQuery('form').preventDuplicateSubmission();
-        jQuery("dd.actionMenuContent  a:not([id^='download'],[rel^='#overlay'])").preventDuplicateMenuAction();
+        jQuery("dd.actionMenuContent  a:not([id^='download'])").preventDuplicateMenuAction();
     });

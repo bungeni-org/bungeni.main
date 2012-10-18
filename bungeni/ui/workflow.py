@@ -350,8 +350,3 @@ class WorkflowChangeStateView(WorkflowView):
         template = self.template()
         return template
 
-@register.view(interfaces.IWorkflowed, name="popup_change_workflow_state")
-class PopupWorkflowChangeStateView(WorkflowChangeStateView):
-    """Worklflow popup view
-    """
-    template = ViewPageTemplateFile("templates/workflow-popup.pt")
