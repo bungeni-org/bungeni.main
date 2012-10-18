@@ -203,3 +203,18 @@ function row_marked(id, state, mode, invalid){
     }
     return true;
 }
+
+/**
+ * @function scheduler_resized
+ * @description applies a zIndex to calendar dom element when maximized
+ * ensuring scheduler is rendered above all elements
+ */
+function scheduler_resized(){
+    dom_el = scheduler._obj;
+    if (scheduler.expanded){
+        dom_el.style.zIndex=1000;
+    }else{
+        dom_el.style.zIndex="";
+    }
+    return true;
+}

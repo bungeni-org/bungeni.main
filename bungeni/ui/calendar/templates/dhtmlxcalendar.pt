@@ -100,6 +100,15 @@
                         },
                         { name:"time", height:72, type:"time", map_to:"auto"}
                     ]
+                    
+                //event handlers
+                scheduler.attachEvent("onBeforeViewChange", 
+                    handle_before_change_view
+                );
+                scheduler.attachEvent("onSchedulerResize", 
+                    scheduler_resized
+                );
+
             }
             var setup_editor = function(){
                 scheduler.form_blocks["my_editor"]={
@@ -137,9 +146,6 @@
                 scheduler.config.details_on_dblclick = true;
                 scheduler.config.icons_select=["icon_details","icon_delete"]
                 scheduler.config.readonly = false;
-                scheduler.attachEvent("onBeforeViewChange", 
-                    handle_before_change_view
-                );
                 scheduler.attachEvent("onEventSave", event_save_handler);
                 scheduler.attachEvent("onEventIdChange", re_render_event);
                 scheduler.attachEvent("onEventCollision", 
@@ -163,9 +169,6 @@
                 scheduler.config.drag_move = false;
                 scheduler.config.drag_create = false;
                 scheduler.config.dblclick_create = false;
-                scheduler.attachEvent("onBeforeViewChange", 
-                    handle_before_change_view
-                );
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
                 dp.init(scheduler);
             }
@@ -178,7 +181,7 @@
             <span i18n:translate="">Calendar of </span>
             <span tal:replace="view/title"></span>
           </div>
-          <div id="scheduler_here" class="dhx_cal_container" style="z-index:1000">
+          <div id="scheduler_here" class="dhx_cal_container">
                 <div class="dhx_cal_navline">
                     <div class="dhx_cal_prev_button">&nbsp;</div>
                     <div class="dhx_cal_next_button">&nbsp;</div>

@@ -28,7 +28,6 @@ import z3c.menu.ready2go.item
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
-from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import (
     IVersion, 
     IScheduleContent, 
@@ -372,32 +371,38 @@ class CalendarMenu(BrowserMenu):
         contexts = []
         app = getSite()
         today = datetime.date.today()
+        check_permissions = False
         
         #!+HARDWIRING(mb, Aug-2012) unhardwire committees lookup
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
             committees = app["workspace"]["scheduling"]["committees"].values()
+            check_permissions = True
         elif interfaces.IBusinessSectionLayer.providedBy(request):
             committees = app["business"]["committees"].values()
         else:
             committees = []
 
-        user_id = get_db_user_id()
-        for committee in committees:
-            if user_id:
+        if check_permissions:
+            for committee in committees:
+                    if ((committee.end_date is None
+                         or committee.end_date >= today) and
+                       (committee.start_date is None
+                        or committee.start_date <= today) and
+                       checkPermission("bungeni.agenda_item.Add", 
+                        committee) and
+                       (committee.status == "active")
+                    ):
+                        contexts.append(
+                            schedule.CommitteeSchedulingContext(committee)
+                        )
+        else:
+            for committee in committees:
                 if ((committee.end_date is None
                      or committee.end_date >= today) and
                    (committee.start_date is None
                     or committee.start_date <= today) and
-                   checkPermission("bungeni.agenda_item.Add", committee) and
-                   (committee.status == "active")):
-                    contexts.append(schedule.CommitteeSchedulingContext(
-                            committee))
-            else:
-                if ((committee.end_date is None
-                     or committee.end_date >= today) and
-                   (committee.start_date is None
-                    or committee.start_date <= today) and
-                   (committee.status == "active")):
+                   (committee.status == "active")
+                ):
                     contexts.append(schedule.CommitteeSchedulingContext(
                             committee))
         for context in contexts:
