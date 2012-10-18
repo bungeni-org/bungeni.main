@@ -249,6 +249,9 @@ def translate_i18n(message_id, language=None, domain="bungeni"):
     """
     #!+I18N(murithi, july-2011) should not be used if message ids exist in 
     # translation catalogs and a locale-aware context exists.
-    to_language = language or get_request_language()
+    try:
+        to_language = language or get_request_language()
+    except NoInteraction:
+        to_language = capi.default_language
     return translate(message_id, target_language=to_language, domain=domain)
 
