@@ -181,6 +181,7 @@ class TI(object):
         self.container_class = None
         self.container_interface = None
         self.custom = False # type loaded from custom configuration
+        #if self.custom: assert self.domain_model.scope == "custom"
     def __str__(self):
         return str(self.__dict__)
 

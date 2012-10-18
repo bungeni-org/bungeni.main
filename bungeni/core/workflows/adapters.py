@@ -19,6 +19,7 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
 from bungeni.core.workflow.states import StateController, WorkflowController, \
     get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
+from bungeni.alchemist import utils
 from bungeni.utils import naming, misc
 from bungeni.utils.capi import capi, bungeni_custom_errors
 
@@ -51,7 +52,7 @@ def provideAdapterWorkflow(factory, adapts_kls):
     component.provideAdapter(factory, (adapts_kls,), IWorkflow)
 
 
-def load_workflow(type_key, name, 
+def load_workflow(type_key, workflow_key,
         path_custom_workflows=capi.get_path_for("workflows")
     ):
     """Setup (once) and return the Workflow instance, from XML definition, 
@@ -60,65 +61,73 @@ def load_workflow(type_key, name,
     # load / register as utility / retrieve
     #
     #if not component.queryUtility(IWorkflow, name): !+BREAKS_DOCTESTS
-    if not get_workflow._WORKFLOWS.has_key(name):
-        wf = xmlimport.load(type_key, name, path_custom_workflows)
-        log.debug("Loading WORKFLOW: %s %s" % (name, wf))
+    if not get_workflow._WORKFLOWS.has_key(workflow_key):
+        wf = xmlimport.load(type_key, workflow_key, path_custom_workflows)
+        log.debug("Loading WORKFLOW: %s %s" % (workflow_key, wf))
         # debug info
         for state_key, state in wf.states.items():
             log.debug("   STATE: %s %s" % (state_key, state))
             for p in state.permissions:
                 log.debug("          %s" % (p,))
         # register Workflow instance as a named utility
-        provideUtilityWorkflow(wf, name)
+        provideUtilityWorkflow(wf, workflow_key)
     else:
-        wf = get_workflow(name)
-        log.warn("Already Loaded WORKFLOW : %s %s" % (name, wf))
+        wf = get_workflow(workflow_key)
+        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, wf))
     return wf
 
-
-def apply_customization_workflow(name, ti):
+def apply_customization_workflow(type_key, ti):
     """Apply customizations, features as per configuration from a workflow. 
     Must (currently) be run after db setup.
     """
-    from bungeni.models import domain, orm
-    def get_domain_kls(type_key):
-        """Infer the target domain kls from the type key, following underscore 
-        naming to camel case convention, and retrieve the kls from domain.
-        Raise Attribute error if kls not defined on domain.
-        """
-        return getattr(domain, naming.camel(type_key))
-    
-    # get the domain class, and associate with type
-    kls = get_domain_kls(name)
-    ti.domain_model = kls
-    
+    domain_model = ti.domain_model
     # We "mark" the domain class with IWorkflowed, to be able to 
     # register/lookup adapters generically on this single interface.
-    classImplements(kls, IWorkflowed)
+    #assert not IWorkflowed.implementedBy(domain_model), domain_model
+    if not IWorkflowed.implementedBy(domain_model):
+        classImplements(domain_model, IWorkflowed)
     
     # dynamic features from workflow
     wf = ti.workflow
     # decorate/modify domain/schema/mapping as needed
-    kls = domain.configurable_domain(kls, wf)
-    orm.configurable_mappings(kls)
+    from bungeni.models import domain, orm
+    domain_model = domain.configurable_domain(domain_model, wf)
+    orm.configurable_mappings(domain_model)
     
-    # !+ following should be part of the domain.feature_audit(kls) logic
+    # !+ following should be part of the domain.feature_audit(domain_model) logic
     if wf.has_feature("audit"):
-        # create/set module-level dedicated auditor singleton for auditable kls
-        bungeni.core.audit.set_auditor(kls)
+        # create/set module-level dedicated auditor singleton for auditable domain_model
+        bungeni.core.audit.set_auditor(domain_model)
 
 
-def load_workflows():
+def get_domain_model(type_key):
+    """Infer and retrieve the target domain model class from the type key.
+    Raise Attribute error if not defined on domain.
+    """
+    from bungeni.models import domain
+    return getattr(domain, naming.model_name(type_key))
+
+def load_workflows(type_info_iterator):
     # workflow instances (+ adapter *factories*)
-    for type_key, ti in capi.iter_type_info():
+    for type_key, ti in type_info_iterator:
+        # get the domain class, and associate with type
+        utils.inisetattr(ti, "domain_model", get_domain_model(type_key))
+        # load/get workflow instance (if any) and associate with type
         if ti.workflow_key is not None:
-            # load/get Workflow instance for this key, and associate with type
             ti.workflow = load_workflow(type_key, ti.workflow_key)
             # adjust domain_model as per workflow, register/associate domain_model
             apply_customization_workflow(type_key, ti)
+            register_specific_workflow_adapter(ti)
 
 
-def register_workflow_adapters():
+def register_specific_workflow_adapter(ti):
+    # Specific adapter on specific iface per workflow.
+    # Workflows are also the factory of own AdaptedWorkflows
+    assert ti.workflow, ti.workflow
+    assert ti.interface, ti.interface
+    provideAdapterWorkflow(ti.workflow, ti.interface)
+
+def register_generic_workflow_adapters():
     """Register general and specific worklfow-related adapters.
     
     Note: as the registry is cleared when placelessetup.tearDown() is called,
@@ -154,9 +163,9 @@ def register_workflow_adapters():
         WorkflowController, (IWorkflowed,), IWorkflowController)
     
     # Specific adapters, a specific iface per workflow.
-    
-    for name, ti in capi.iter_type_info():
+    for type_key, ti in capi.iter_type_info():
         # Workflows are also the factory of own AdaptedWorkflows
+        print "provideAdapterWorkflow:", type_key, ti.workflow, ti.interface
         provideAdapterWorkflow(ti.workflow, ti.interface)
 
 
@@ -166,10 +175,6 @@ def register_custom_types():
     """
     from zope.dottedname.resolve import resolve
     from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
-    def class_name(type_key):
-        return naming.camel(type_key)
-    def interface_name(type_key):
-        return "I%s" % (class_name(type_key))
     def register_type(elem):
         if not misc.xml_attr_bool(elem, "enabled", default=True):
             # not enabled, ignore
@@ -177,7 +182,7 @@ def register_custom_types():
         type_key = misc.xml_attr_str(elem, "name")
         workflow_key = misc.xml_attr_str(elem, "workflow", default=type_key)
         interface = resolve("bungeni.models.interfaces.%s" % (
-                interface_name(type_key)))
+                naming.model_interface_name(type_key)))
         ti = TI(workflow_key, interface)
         ti.custom = True
         TYPE_REGISTRY.append((type_key, ti))
@@ -197,16 +202,21 @@ def register_custom_types():
 def _setup_all():
     """Do all workflow related setup.
     """
+    log.info("adapters._setup_all() ------------------------------------------")
+    # cleared by each call to zope.app.testing.placelesssetup.tearDown()
+    register_generic_workflow_adapters()
+    
+    # load workflows for system/registered types
+    load_workflows(capi.iter_type_info())
+    
     # extend type registry with custom types
     register_custom_types()
-    # load the workflows
-    load_workflows()
+    load_workflows(capi.iter_type_info(scope="custom"))
+    
     # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
     # when *all* workflows are loaded.
     # check/regenerate zcml directives for workflows
     xmlimport.zcml_check_regenerate()
-    # cleared by each call to zope.app.testing.placelesssetup.tearDown()
-    register_workflow_adapters()
 
 # do it (when this module is loaded)
 _setup_all()

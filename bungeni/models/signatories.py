@@ -246,7 +246,7 @@ class SignatoryValidator(object):
 def createManagerFactory(domain_class, **params):
     manager_name = "%sSignatoryManager" % domain_class.__name__ #!+naming
     if manager_name in globals().keys():
-        log.errror("Signatory manager named %s already exists", manager_name)
+        log.error("Signatory manager named %s already exists", manager_name)
         return
     #!+TIMING
     #!+TYPE_INFO(mb, Jun-2012) type_info may still not be setup as workflows 

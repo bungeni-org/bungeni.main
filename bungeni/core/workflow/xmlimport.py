@@ -170,7 +170,6 @@ def _load(type_key, name, workflow):
             if perm in like_permissions:
                 like_permissions.remove(perm)
         permissions.append((assignment, p, r))
-    
     def assert_valid_attr_names(elem, allowed_attr_names):
         for key in elem.keys():
             assert key in allowed_attr_names, \
@@ -211,23 +210,22 @@ def _load(type_key, name, workflow):
         ))
     
     # global grants
-    _permission_role_mixes = {}
+    _global_permission_role_mixes = {} # {pid: [role]}
     for p in workflow.iterchildren("grant"):
         pid = strip_none(p.get("permission"))
         role = strip_none(p.get("role"))
         # for each global permission, build list of roles it is set to
-        _permission_role_mixes.setdefault(pid, []).append(role)
+        _global_permission_role_mixes.setdefault(pid, []).append(role)
         assert pid and role, "Global grant must specify valid permission/role" 
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
         # no real need to check that the permission and role of a global grant 
         # are properly registered in the system -- an error should be raised 
         # by the zcml if either is not defined. 
-    for perm, roles in _permission_role_mixes.items():
+    for perm, roles in _global_permission_role_mixes.items():
         # assert roles mix limitations for state permissions
         assert_distinct_permission_scopes(perm, roles, name, "global grants")
-
-
+    
     # states
     for s in workflow.iterchildren("state"):
         assert_valid_attr_names(s, STATE_ATTRS)
@@ -241,8 +239,8 @@ def _load(type_key, name, workflow):
         if strip_none(s.get("version")) is not None:
             make_version = as_bool(strip_none(s.get("version")))
             if make_version is None:
-                raise ValueError("Invalid state value "
-                    '[version="%s"]' % s.get("version"))
+                raise ValueError('Invalid state value [version="%s"]' % (
+                        s.get("version")))
             if make_version:
                 actions.append(ACTIONS_MODULE.create_version)
         # state-id-inferred action - if "actions" module defines an action for
@@ -274,6 +272,9 @@ def _load(type_key, name, workflow):
                 role = strip_none(p.get("role"))
                 check_add_permission(permissions, like_permissions, 
                     ASSIGNMENTS[i], permission, role)
+                # ensure global and local assignments are distinct
+                #global_proles = _global_permission_role_mixes.get(permission, "")
+                #assert role not in global_proles, (name, permission, role)
         if like_state:
             # splice any remaining like_permissions at beginning of permissions
             permissions[0:0] = like_permissions

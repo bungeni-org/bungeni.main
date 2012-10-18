@@ -91,14 +91,6 @@ def catalyse_descriptors(module):
             # unmapped class e.g. Address, Version
             return False
     
-    def inisetattr(obj, name, value):
-        """A once-only setattr (ensure any subsequent attempts to set are to 
-        the same value."""
-        if getattr(obj, name, None) is not None:
-            assert getattr(ti, name) is value
-        else:
-            setattr(obj, name, value)
-    
     for descriptor_model in descriptor_classes():
         descriptor_name = descriptor_model.__name__
         type_key = naming.type_key("descriptor_class_name", descriptor_name)
@@ -111,8 +103,8 @@ def catalyse_descriptors(module):
             continue
         # type_info, register descriptor_model, domain_model
         ti = capi.get_type_info(type_key)
-        inisetattr(ti, "domain_model", domain_model)
-        inisetattr(ti, "descriptor_model", descriptor_model)
+        utils.inisetattr(ti, "domain_model", domain_model)
+        utils.inisetattr(ti, "descriptor_model", descriptor_model)
         # catalyse each (domain_model, descriptor_model) pair
         catalyst(ti)
     

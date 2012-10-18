@@ -314,11 +314,11 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
         return result
 
     def get_status(self, item_type):
-        from bungeni.core.workflows.adapters import get_workflow
         result = {}
         for type_key, ti in capi.iter_type_info():
+            # !+ why compare workflow_key to item_type ?!
             if (ti.workflow_key == item_type):
-                states = get_workflow(ti.workflow_key).get_state_ids(
+                states = ti.workflow.get_state_ids(
                     tagged=["public"], not_tagged=["terminal"],
                     conjunction="AND")
                 for state in states:
@@ -326,7 +326,7 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
                         ti.workflow.get_state(state).title,
                         domain="bungeni",
                         context=self.request
-                        )
+                    )
                     result[state] = state_title
                 break
         return result

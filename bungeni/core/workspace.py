@@ -524,12 +524,11 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
         AlchemistContainer.__init__(self)
 
     def domain_status(self):
-        from bungeni.core.workflows.adapters import get_workflow
         domain_status_map = {}
         for type_key, ti in capi.iter_type_info():
             workflow = ti.workflow
             if workflow and workflow.has_feature("workspace"):
-                states = get_workflow(ti.workflow_key).get_state_ids(
+                states = workflow.get_state_ids(
                     tagged=["public"], not_tagged=["terminal"],
                     conjunction="AND")
                 domain_status_map[ti.domain_model] = states

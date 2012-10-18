@@ -173,7 +173,7 @@ class _AuditorFactory(object):
         if hasattr(ob, "status_date"):
             ob.status_date = change_data["date_active"] or datetime.now()
         # as a "base" description, use human readable workflow state title
-        #wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
+        #wf = IWorkflow(ob)
         #description = wf.get_state(event.destination).title # misc.get_wf_state
         return self._object_changed("workflow", ob, 
                 date_active=change_data["date_active"],

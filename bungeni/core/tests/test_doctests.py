@@ -27,7 +27,8 @@ def setUp(test):
     xmlconfig.string(zcml_slug)
     metadata.create_all(checkfirst=True)
     # placelesssetup.tearDown() clears the registry
-    adapters.register_workflow_adapters()
+    print "\n---------- register_generic_workflow_adapters -------------", test
+    adapters.register_generic_workflow_adapters()
 
 def tearDown(test):
     print "\n---------- TEARDOWN ----------", test

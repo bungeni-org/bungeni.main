@@ -69,6 +69,14 @@ To be versioned, a question should be in a valid state:
 account richer testing possibilities given the above newly added principal 
 interaction
 
+!+register_specific_workflow_adapter
+    >>> from bungeni.utils.capi import capi
+    >>> ti = capi.get_type_info("question")
+    >>> from bungeni.core.workflows import adapters
+    >>> adapters.register_specific_workflow_adapter(ti)
+    >>> #from bungeni.core.workflow.interfaces import IWorkflow
+    >>> #wf = IWorkflow(question) #!+fails
+    
     >>> from bungeni.core.workflow.interfaces import IWorkflowController
     >>> wfc = IWorkflowController(question)
     >>> wfc

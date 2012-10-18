@@ -204,11 +204,16 @@ class CAPI(object):
         """
         return type_info._get(discriminator)
     
-    def iter_type_info(self):
+    def iter_type_info(self, scope=None):
         """Return iterator on all registered (key, TypeInfo) entries.
+        scope:either(None, "system", "archetype", "custom")
         """
         for type_key, ti in type_info._iter():
-            yield type_key, ti
+            if (scope is None or 
+                    (ti.custom and scope == "custom") or
+                    (ti.descriptor_model is not None and ti.descriptor_model.scope == scope)
+                ):
+                yield type_key, ti
 
 
 # we access all via the singleton instance
