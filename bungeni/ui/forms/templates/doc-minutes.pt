@@ -1,0 +1,32 @@
+<dt id="fieldsetlegend-item-minutes" i18n:translate="">
+  Minutes
+</dt>
+
+<dd id="fieldset-item-minutes">
+  <table class="listing grid" tal:repeat="item view/items"
+    tal:condition="view/items">
+      <thead>
+        <tr>
+            <th>#</th>
+            <th>
+                <span tal:content="item/sitting_name"/> @
+                <span tal:content="item/sitting_venue"/>
+            </th>
+        </tr>
+      </thead>
+    <tbody>
+      <tr tal:repeat="minute item/minutes">
+           <td tal:content="repeat/minute/Roman"></td>
+           <td>
+                <p tal:content="structure minute/text"/>
+           </td>
+      </tr>
+      <tr tal:condition="not:item/minutes">
+          <td>
+              <span i18n:translate="">This sitting has no minutes.</span>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+  <p tal:condition="not:view/items" i18n:translate="">This item has no schedule records</p>
+</dd>

@@ -673,8 +673,7 @@ mapper(domain.Heading, schema.heading,
 
 mapper(domain.ItemSchedule, schema.item_schedule,
     properties={
-        "sitting": relation(domain.Sitting, uselist=False
-        ),
+        "sitting": relation(domain.Sitting, uselist=False, lazy=False),
     }
 )
 

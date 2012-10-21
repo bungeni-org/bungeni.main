@@ -17,6 +17,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.formlib import form
 from zope.security.proxy import removeSecurityProxy
 from zc.resourcelibrary import need
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 import sqlalchemy.sql.expression as sql
 
 #from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
@@ -266,52 +267,53 @@ class PersonInfo(BungeniAttributeDisplay):
         self.context.__parent__ = parent
         super(PersonInfo, self).update()
 
-
-@register.viewlet(interfaces.IBungeniContent, #!+IBungeniParliamentaryContent?
-    layer=IBungeniAuthenticatedSkin, 
+@register.viewlet(interfaces.IFeatureSchedule,
     manager=ISubFormViewletManager,
     name="doc-minutes")
-class DocMinutesViewlet(BungeniAttributeDisplay):
+class DocMinutesViewlet(browser.BungeniItemsViewlet):
+    """Render a tree of schedule discussions
+    """ 
+ 
+    render = ViewPageTemplateFile("templates/doc-minutes.pt")
 
-    mode = "view"
-    for_display = True
-
-    form_name = _(u"Minutes")
-    view_id = "minutes"
-    
-    weight = 10
-    
     def __init__(self, context, request, view, manager):
         self.request = request
         self.context = context
         self.manager = manager
         trusted = removeSecurityProxy(context)
         try:
-            item_id = trusted.doc_id
+            self.item_id = trusted.doc_id
         except AttributeError:
             self.for_display = False
             return
-        self.query = Session().query(domain.ItemScheduleDiscussion).filter(
+
+    def _get_items(self):
+        item_type = capi.get_type_info(self.context).workflow_key
+        query = Session().query(domain.ItemSchedule).filter(
             sql.and_(
-                domain.ItemScheduleDiscussion.schedule_id == \
-                    domain.ItemSchedule.schedule_id,
-                domain.ItemSchedule.item_id == item_id
+                domain.ItemSchedule.item_id == self.item_id,
+                domain.ItemSchedule.item_type == item_type
             )
         )
-        #self.context = self.query.all()[0]
-        self.for_display = self.query.count() > 0
-
+        items = []
+        for item in query.all():
+            items.append(dict(
+                sitting_name=IDCDescriptiveProperties(item.sitting).title,
+                sitting_venue=(
+                    IDCDescriptiveProperties(item.sitting.venue).title
+                    if item.sitting.venue else _(u"Unknown venue")),
+                minutes=[ dict(text=minute.body) 
+                    for minute in item.itemdiscussions
+                ]
+            ))
+        if not items:
+            self.for_display = False
+        return items
+            
+    
     def update(self):
-        parent = self.context.__parent__
-        try:
-            self.context = self.query.all()[0]
-        except IndexError:
-            self.context = None
-            return
-
-        self.context.__parent__ = parent
+        self.items = self._get_items()
         super(DocMinutesViewlet, self).update()
-
 
 class WrittenQuestionResponseViewlet(browser.BungeniViewlet):
 
