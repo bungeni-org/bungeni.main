@@ -12,7 +12,7 @@ import sys
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.component.hooks import getSite
-from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflow
+from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.core.workflow.interfaces import (NoTransitionAvailableError, 
     InvalidStateError
 )
@@ -244,6 +244,8 @@ def dissolveChildGroups(groups, context):
             check_security=False)
 
 # sitting
+SCHEDULED = "scheduled"
+PENDING = "tobescheduled"
 def schedule_sitting_items(context):
     
     # !+fireTransitionToward(mr, dec-2010) sequence of fireTransitionToward 
@@ -254,28 +256,44 @@ def schedule_sitting_items(context):
     # The check/logging should be removed once it is understood whether
     # NoTransitionAvailableError is *always* raised (i.e. fireTransitionToward is
     # broken) or it is indeed raised correctly when it should be.
-    
-    def fireTransitionScheduled(item, check_security=False):
+    def fireTransitionScheduled(item, wfc, check_security=False, 
+        toward=SCHEDULED):
         try:
-            IWorkflowController(item).fireTransitionToward("scheduled", 
-                    check_security=False)
+            wfc.fireTransitionToward(toward, check_security=check_security)
             raise RuntimeWarning(
                 """It has WORKED !!! fireTransitionToward("scheduled")""")
         except (NoTransitionAvailableError, RuntimeWarning):
             debug.log_exc_info(sys.exc_info(), log.error)
     
     for schedule in context.item_schedule:
-        wf = IWorkflow(schedule.item, None)
-        if wf is None: 
+        wfc = IWorkflowController(schedule.item, None)
+        if wfc is None:
             continue
+        wf = wfc.workflow
         try:
-            if wf.get_state("scheduled"):
-                fireTransitionScheduled(schedule.item)
+            if wf.get_state(SCHEDULED):
+                fireTransitionScheduled(schedule.item, wfc)
         except InvalidStateError:
-            pass
+            #try to fire to next logical scheduled state
+            if (wfc.state_controller.get_status() in
+                wfc.workflow.get_state_ids(tagged=[PENDING], 
+                    restrict=False
+                )
+            ):
+                transition_ids = wfc.getFireableTransitionIds()
+                for transition_id in transition_ids:
+                    transition = wf.get_transition(transition_id)
+                    if (transition.destination in 
+                        wfc.workflow.get_state_ids(tagged=[SCHEDULED], 
+                            restrict=False)
+                        ):
+                        fireTransitionScheduled(schedule.item, wfc,
+                            toward=transition.destination
+                        )
+                        break
 
 def check_agenda_finalized(context):
-    unfinalized_tags = ["tobescheduled", "scheduled"]
+    unfinalized_tags = [SCHEDULED]
     def check_finalized(schedule):
         wfc = IWorkflowController(schedule.item, None)
         if wfc is None:
@@ -283,10 +301,6 @@ def check_agenda_finalized(context):
         #!+TYPES(mb, march-2012) There might be a more elegant approach here
         # to filter out 'text records' from the schedule
         if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
-            wfc, wfc.state_controller.get_status(),
-            wfc.workflow.get_state_ids(not_tagged=unfinalized_tags,
-                restrict=False
-            )
             return (wfc.state_controller.get_status() in 
                 wfc.workflow.get_state_ids(not_tagged=unfinalized_tags,
                     restrict=False
