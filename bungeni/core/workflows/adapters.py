@@ -17,39 +17,20 @@ from bungeni.core.workflow import xmlimport
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
     IStateController, IWorkflowController
 from bungeni.core.workflow.states import StateController, WorkflowController, \
-    get_object_state_rpm, get_head_object_state_rpm
+    Workflow, get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
 from bungeni.alchemist import utils
 from bungeni.utils import naming, misc
 from bungeni.utils.capi import capi, bungeni_custom_errors
 
 
-__all__ = ["get_workflow"]
-
-# !+DEPRECATE(mr, jul-2012) replace with ti.workflow
-def get_workflow(name):
-    """Get the named workflow utility.
-    """
-    #return component.getUtility(IWorkflow, name) !+BREAKS_DOCTESTS(mr, apr-2011)
-    log.warn("!+DEPRECATED get_workflow(%r) -> replace with ti.workflow" % (name))
-    try:
-        return capi.get_type_info(name).workflow
-    except KeyError, e:
-        log.error("%s -> trying old get_workflow..." % (e))
-        return get_workflow._WORKFLOWS[name]
-# a mapping of workflow names workflow instances as a supplementary register 
-# of instantiated workflows -- not cleared when componenet registry is cleared
-get_workflow._WORKFLOWS = {} # { name: workflow.states.Workflow }
-
-
-# component.provideUtility(component, provides=None, name=u''):
-def provideUtilityWorkflow(utility, name):
-    #component.provideUtility(utility, IWorkflow, name) !+BREAKS_DOCTESTS
-    get_workflow._WORKFLOWS[name] = utility
-
-# component.provideAdapter(factory, adapts=None, provides=None, name="")
-def provideAdapterWorkflow(factory, adapts_kls):
-    component.provideAdapter(factory, (adapts_kls,), IWorkflow)
+def register_specific_workflow_adapter(ti):
+    # Specific adapter on specific iface per workflow.
+    # Workflows are also the factory of own AdaptedWorkflows
+    assert ti.workflow, ti
+    assert ti.interface, ti
+    # component.provideAdapter(factory, adapts=None, provides=None, name="")
+    component.provideAdapter(ti.workflow, (ti.interface,), IWorkflow)
 
 
 def load_workflow(type_key, workflow_key,
@@ -58,10 +39,11 @@ def load_workflow(type_key, workflow_key,
     """Setup (once) and return the Workflow instance, from XML definition, 
     for named workflow.
     """
-    # load / register as utility / retrieve
-    #
-    #if not component.queryUtility(IWorkflow, name): !+BREAKS_DOCTESTS
-    if not get_workflow._WORKFLOWS.has_key(workflow_key):
+    # retrieve / load
+    try:
+        wf = Workflow.get_singleton(workflow_key)
+        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, wf))
+    except KeyError:
         wf = xmlimport.load(type_key, workflow_key, path_custom_workflows)
         log.debug("Loading WORKFLOW: %s %s" % (workflow_key, wf))
         # debug info
@@ -69,11 +51,6 @@ def load_workflow(type_key, workflow_key,
             log.debug("   STATE: %s %s" % (state_key, state))
             for p in state.permissions:
                 log.debug("          %s" % (p,))
-        # register Workflow instance as a named utility
-        provideUtilityWorkflow(wf, workflow_key)
-    else:
-        wf = get_workflow(workflow_key)
-        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, wf))
     return wf
 
 def apply_customization_workflow(type_key, ti):
@@ -120,13 +97,6 @@ def load_workflows(type_info_iterator):
             register_specific_workflow_adapter(ti)
 
 
-def register_specific_workflow_adapter(ti):
-    # Specific adapter on specific iface per workflow.
-    # Workflows are also the factory of own AdaptedWorkflows
-    assert ti.workflow, ti.workflow
-    assert ti.interface, ti.interface
-    provideAdapterWorkflow(ti.workflow, ti.interface)
-
 def register_generic_workflow_adapters():
     """Register general and specific worklfow-related adapters.
     
@@ -161,14 +131,8 @@ def register_generic_workflow_adapters():
     # IWorkflowController
     component.provideAdapter(
         WorkflowController, (IWorkflowed,), IWorkflowController)
+
     
-    # Specific adapters, a specific iface per workflow.
-    for type_key, ti in capi.iter_type_info():
-        # Workflows are also the factory of own AdaptedWorkflows
-        print "provideAdapterWorkflow:", type_key, ti.workflow, ti.interface
-        provideAdapterWorkflow(ti.workflow, ti.interface)
-
-
 @bungeni_custom_errors
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
@@ -198,6 +162,7 @@ def register_custom_types():
         register_type(egroup)
         for emember in egroup.iterchildren("member"):
             register_type(emember)
+
 
 def _setup_all():
     """Do all workflow related setup.

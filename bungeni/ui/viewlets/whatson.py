@@ -12,7 +12,6 @@ from bungeni.models import domain, schema, interfaces
 from bungeni.models.settings import BungeniSettings
 from bungeni.core.globalsettings import getCurrentParliamentId
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.core.workflows.adapters import get_workflow
 
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import common, misc, url
@@ -55,11 +54,11 @@ class WhatsOnBrowserView(BrowserView):
     
     @property
     def _agenda_public_state_ids(self):
-        return get_workflow("sitting").get_state_ids(tagged=["public"])
+        return utils.get_workflow("sitting").get_state_ids(tagged=["public"])
 
     @property
     def _agenda_private_state_ids(self):
-        return get_workflow("sitting").get_state_ids(
+        return utils.get_workflow("sitting").get_state_ids(
             tagged=["agendaprivate"]
         )
         

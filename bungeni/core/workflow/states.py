@@ -333,9 +333,21 @@ class Workflow(object):
     """
     zope.interface.implements(interfaces.IWorkflow)
     
+    singletons = {} # {workflow_name: workflow}
+    @classmethod
+    def get_singleton(cls, name):
+        return cls.singletons[name]
+    
     initial_state = None
     
     def __init__(self, name, features, tags, states, transitions, note=None):
+        assert not name in self.__class__.singletons, \
+            "A workflow singleton %r exists already." % (name)
+        # this also serves as *the* "registration of the named workflow utility"
+        # (that is not cleared with component registry e.g. when calling 
+        # placelessetup.tearDown() between doctests) i.e. replaces:
+        # component.provideUtility(self, provides=IWorkflow, name=name)
+        self.__class__.singletons[name] = self
         self.name = name
         self.features = features
         self.tags = tags # [str]

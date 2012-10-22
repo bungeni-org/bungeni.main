@@ -167,7 +167,14 @@ that is created via the UI form.
 Set up a security mapping.
 
   >>> qprm = zope.securitypolicy.interfaces.IPrincipalRoleMap(question)
-  
+
+
+!+register_specific_workflow_adapter
+    >>> from bungeni.utils.capi import capi
+    >>> ti = capi.get_type_info("question")
+    >>> from bungeni.core.workflows import adapters
+    >>> adapters.register_specific_workflow_adapter(ti)
+
 !+IRolePermissionMap is different for different workflow status values...
   >>> qrpm = zope.securitypolicy.interfaces.IRolePermissionMap(question)
   

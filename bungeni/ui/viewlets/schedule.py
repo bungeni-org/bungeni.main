@@ -12,7 +12,7 @@ from zope.app.component.hooks import getSite
 
 import sqlalchemy.sql.expression as sql
 
-from bungeni.core.workflows.adapters import get_workflow
+from bungeni.alchemist import utils
 from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
 
@@ -124,7 +124,7 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
 class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
     view_name = "heading"
     view_title = _("Headings")
-    states = (get_workflow("heading").get_state("public").id,)
+    states = (utils.get_workflow("heading").get_state("public").id,)
     model = domain.Heading
     
     def _item_url(self, item):
@@ -157,32 +157,32 @@ class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
 class SchedulableBillsViewlet(SchedulableItemsViewlet):
     view_name = "bill"
     view_title = _("Bills")
-    states = get_workflow("bill").get_state_ids(tagged=["tobescheduled"])
+    states = utils.get_workflow("bill").get_state_ids(tagged=["tobescheduled"])
     model = domain.Bill
 
 class SchedulableQuestionsViewlet(SchedulableItemsViewlet):
     view_name = "question"
     view_title = _("Questions")
-    states = get_workflow("question").get_state_ids(tagged=["tobescheduled"])
+    states = utils.get_workflow("question").get_state_ids(tagged=["tobescheduled"])
     model = domain.Question
 
 class SchedulableMotionsViewlet(SchedulableItemsViewlet):
     view_name = "motion"
     view_title = _("Motions")
-    states = get_workflow("motion").get_state_ids(tagged=["tobescheduled"])
+    states = utils.get_workflow("motion").get_state_ids(tagged=["tobescheduled"])
     model = domain.Motion
 
 class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
     view_name = "tableddocument"
     view_title = _("Tabled documents")
-    states = get_workflow("tabled_document").get_state_ids(tagged=["tobescheduled"])
+    states = utils.get_workflow("tabled_document").get_state_ids(tagged=["tobescheduled"])
     model = domain.TabledDocument
 
 class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
     view_name = "agendaitem"
     view_title = _("Agenda items")
     visible = True
-    states = get_workflow("agenda_item").get_state_ids(tagged=["tobescheduled"])
+    states = utils.get_workflow("agenda_item").get_state_ids(tagged=["tobescheduled"])
     model = domain.AgendaItem
     
     def get_group_id(self):

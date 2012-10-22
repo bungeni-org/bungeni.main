@@ -26,6 +26,10 @@ def get_derived_table_schema(discriminator):
     from bungeni.utils.capi import capi
     return capi.get_type_info(discriminator).derived_table_schema
 
+def get_workflow(discriminator):
+    from bungeni.utils.capi import capi
+    return capi.get_type_info(discriminator).workflow
+
 
 # sqlalchemy 
 

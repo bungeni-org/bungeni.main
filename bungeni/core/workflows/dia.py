@@ -1,6 +1,6 @@
 #
 import sys
-from bungeni.core.workflows.adapters import get_workflow
+#from bungeni.core.workflows import adapters
 from bungeni.core.workflow.dot import dot
 from bungeni.utils.capi import capi
 
