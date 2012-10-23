@@ -54,8 +54,9 @@ def catalyse_descriptors(module):
     """Catalyze descriptor classes (with by-name-convention associated model 
     class) in specified module.
     
-    Called when ui.descriptor is initially imported (so before descriptors for 
-    custom types have been created).
+    Called when ui.descriptor is initially imported, so before descriptors for 
+    custom types have been created (that happens on fist call to 
+    localization.localize_descriptors on application created event).
     """
     import sys
     import inspect
@@ -106,17 +107,18 @@ def catalyse_descriptors(module):
         utils.inisetattr(ti, "domain_model", domain_model)
         utils.inisetattr(ti, "descriptor_model", descriptor_model)
         # catalyse each (domain_model, descriptor_model) pair
-        catalyst(ti)
+        catalyse(ti)
     
-    m = "\n\nDone all setup of types... running with:\n\n%s\n\n" % (
+    # !+remove?
+    m = "\n\nDone all setup of system types... running with:\n\n%s\n\n" % (
             "\n\n".join(sorted(
                 [ "%s: %s" % (key, ti) for key, ti in capi.iter_type_info() ])
             ))
     log.debug(m)
 
 
-def catalyst(ti):
-    log.info("CATALYST: domain_model=%s, descriptor_model=%s" % (
+def catalyse(ti):
+    log.info("CATALYSE: domain_model=%s, descriptor_model=%s" % (
             ti.domain_model, ti.descriptor_model))
     generate_table_schema_interface(ti)
     apply_security(ti)

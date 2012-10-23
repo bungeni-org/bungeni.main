@@ -12,6 +12,7 @@ from lxml import etree
 from zope import component
 from zope.interface import classImplements
 import zope.securitypolicy.interfaces
+from zope.dottedname.resolve import resolve
 from bungeni.models import interfaces
 from bungeni.core.workflow import xmlimport
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
@@ -23,6 +24,55 @@ from bungeni.alchemist import utils
 from bungeni.utils import naming, misc
 from bungeni.utils.capi import capi, bungeni_custom_errors
 
+
+def new_custom_model_interface(type_key, model_iname):
+    import zope.interface
+    from bungeni.alchemist.catalyst import INTERFACE_MODULE
+    from bungeni.models.interfaces import IBungeniContent
+    model_iface = zope.interface.interface.InterfaceClass(
+        model_iname,
+        bases=(IBungeniContent,), # !+archetype?
+        __module__=INTERFACE_MODULE.__name__
+    )
+    # set on INTERFACE_MODULE (register on type_info downstream)
+    setattr(INTERFACE_MODULE, model_iname, model_iface)
+    log.info("new_custom_model_interface [%s] %s.%s" % (
+            type_key, INTERFACE_MODULE.__name__, model_iname))
+    return model_iface
+
+def new_custom_domain_model(type_key):
+    # !+archetype? move to types?
+    def get_elem(type_key):
+        import elementtree.ElementTree
+        file_path = capi.get_path_for("forms", "custom.xml") # !+
+        xml = elementtree.ElementTree.fromstring(misc.read_file(file_path))
+        for elem in xml.findall("descriptor"):
+            if misc.xml_attr_str(elem, "name") == type_key:
+                return elem
+    edescriptor = get_elem(type_key)
+    archetype_key = misc.xml_attr_str(edescriptor, "archetype")
+    domain_model_name = naming.model_name(type_key)
+    assert archetype_key, \
+        "Custom descriptor %r does not specify an archetype" % (type_key)
+    import bungeni.models.domain as MODEL_MODULE
+    archetype = getattr(MODEL_MODULE, naming.model_name(archetype_key))
+    # !+ assert archetype constraints
+    domain_model = type(domain_model_name,
+        (archetype,),
+        dict(__module__=MODEL_MODULE.__name__)
+    )
+    # set on INTERFACE_MODULE (register on type_info downstream)
+    setattr(MODEL_MODULE, domain_model_name, domain_model)
+    # db map custom domain class
+    from sqlalchemy.orm import mapper
+    mapper(domain_model, 
+        inherits=archetype,
+        polymorphic_on=utils.get_local_table(archetype).c.type,
+        polymorphic_identity=type_key, #naming.polymorphic_identity(domain_model),
+    )
+    log.info("new_custom_domain_model [%s] %s.%s" % (
+            type_key, MODEL_MODULE.__name__, domain_model_name))
+    return domain_model
 
 def register_specific_workflow_adapter(ti):
     # Specific adapter on specific iface per workflow.
@@ -81,13 +131,12 @@ def get_domain_model(type_key):
     """Infer and retrieve the target domain model class from the type key.
     Raise Attribute error if not defined on domain.
     """
-    from bungeni.models import domain
-    return getattr(domain, naming.model_name(type_key))
+    return resolve("bungeni.models.domain.%s" % (naming.model_name(type_key)))
 
 def load_workflows(type_info_iterator):
     # workflow instances (+ adapter *factories*)
     for type_key, ti in type_info_iterator:
-        # get the domain class, and associate with type
+        # get the domain class and associate domain class with type
         utils.inisetattr(ti, "domain_model", get_domain_model(type_key))
         # load/get workflow instance (if any) and associate with type
         if ti.workflow_key is not None:
@@ -130,14 +179,12 @@ def register_generic_workflow_adapters():
         StateController, (IWorkflowed,), IStateController)
     # IWorkflowController
     component.provideAdapter(
-        WorkflowController, (IWorkflowed,), IWorkflowController)
-
+        WorkflowController, (IWorkflowed,), IWorkflowController)    
     
 @bungeni_custom_errors
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
     """
-    from zope.dottedname.resolve import resolve
     from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
     def register_type(elem):
         if not misc.xml_attr_bool(elem, "enabled", default=True):
@@ -145,9 +192,22 @@ def register_custom_types():
             return
         type_key = misc.xml_attr_str(elem, "name")
         workflow_key = misc.xml_attr_str(elem, "workflow", default=type_key)
-        interface = resolve("bungeni.models.interfaces.%s" % (
-                naming.model_interface_name(type_key)))
-        ti = TI(workflow_key, interface)
+        # generate custom interface
+        model_iname = naming.model_interface_name(type_key)
+        try: 
+            model_iface = resolve("bungeni.models.interfaces.%s" % (model_iname))
+            log.warn("Custom interface ALREADY EXISTS: %s" % (model_iface))
+        except ImportError:
+            model_iface = new_custom_model_interface(type_key, model_iname)
+        # generate custom domain_model
+        domain_model_name = naming.model_name(type_key)
+        try:
+            domain_model = resolve("bungeni.models.domain.%s" % (domain_model_name))
+            log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
+        except ImportError:
+            domain_model = new_custom_domain_model(type_key)
+        # type_info 
+        ti = TI(workflow_key, model_iface)
         ti.custom = True
         TYPE_REGISTRY.append((type_key, ti))
         log.info("Registering custom type [%s]: %s" % (elem.tag, type_key))

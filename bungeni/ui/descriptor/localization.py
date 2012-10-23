@@ -94,9 +94,10 @@ def check_reload_localization(event):
         if capi.is_modified_since(file_path):
             localize_descriptors(file_path)
 
+
 @bungeni_custom_errors
 def localize_descriptors(file_path):
-    """Localizes descriptors from {bungeni_custom}/forms/ui.xml.
+    """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
     """
     start_time = time()
     xml = elementtree.ElementTree.fromstring(misc.read_file(file_path))
@@ -106,6 +107,7 @@ def localize_descriptors(file_path):
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
     
+    localized = []
     for edescriptor in xml.findall("descriptor"):
         type_key = misc.xml_attr_str(edescriptor, "name")
         ti = capi.get_type_info(type_key)
@@ -124,9 +126,18 @@ def localize_descriptors(file_path):
             # new custom descriptor
             archetype = misc.xml_attr_str(edescriptor, "archetype")
             cls = new_descriptor_cls(type_key, fields, order, archetype)
+        localized.append(type_key)
     
-    log.warn("LOCALIZING DESCRIPTORS from FILE: %s\n   ...DONE [in %s secs]" % (
-        file_path, time()-start_time))
+    m = ("\n\nDone LOCALIZING DESCRIPTORS from FILE: %s\n"
+         "RUNNING WITH:\n\n%s\n\n"
+         "...DONE [in %s secs]") % (
+            file_path, 
+            "\n\n".join(sorted(
+                [ "%s: %s" % (key, capi.get_type_info(key)) for key in localized ]
+            )),
+            time()-start_time)
+    log.debug(m)
+
 
 def new_descriptor_fields(edescriptor):
     """(Re-)build (in desired order) all fields from newly loaded 
@@ -134,6 +145,7 @@ def new_descriptor_fields(edescriptor):
     # !+ what about "removed" fields from a sys-descriptor config?
     """
     xas, xab = misc.xml_attr_str, misc.xml_attr_bool
+    type_key = xas(edescriptor, "name")
     fields = []
     for f_elem in edescriptor.findall("field"):
         # custom_localizable_directives
@@ -183,7 +195,7 @@ def new_descriptor_cls(type_key, fields, order, archetype_key):
     ti = capi.get_type_info(type_key)
     ti.descriptor_model = cls
     # first time around we need to catalyse custom descriptors
-    alchemist.catalyst.catalyst(ti)
+    alchemist.catalyst.catalyse(ti)
     log.info("localize_descriptors [type=%s] generated descriptor %s.%s" % (
             type_key, DESCRIPTOR_MODULE.__name__, descriptor_cls_name))
     return cls
