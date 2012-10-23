@@ -64,11 +64,11 @@ setup(name='bungeni',
                         'plone.i18n',
                         'plone.transforms',
                         'pika',
-            # The followning are used by bungeni.ui
+            # The following are used by bungeni.ui
                         'zope.app.cache',
                         'plone.memoize',
-                        'marginalia',
                         'ore.yui',
+                        #'marginalia',
                         'z3c.menu.ready2go',
                         'zc.displayname',
                         'zope.formlib',
