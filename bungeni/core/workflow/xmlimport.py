@@ -19,9 +19,10 @@ from bungeni.core.workflow.states import Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.utils import naming, misc
-from bungeni.utils.misc import strip_none, as_bool
 
 #
+
+xas, xab = misc.xml_attr_str, misc.xml_attr_bool
 
 ASSIGNMENTS = (GRANT, DENY)
 
@@ -103,7 +104,7 @@ def zcml_check_regenerate():
 
 def is_zcml_permissionable(trans_elem):
     # Automatically triggered transitions may not be permissioned.
-    return not strip_none(trans_elem.get("trigger")) == "automatic"
+    return not xas(trans_elem, "trigger") == "automatic"
 
 def zcml_transition_permission(pid, title, roles):
     ZCML_LINES.append(ZCML_INDENT)
@@ -127,13 +128,14 @@ def load(type_key, name, path_custom_workflows):
 
 def _load(type_key, name, workflow):
     """ (type_key:str, name:str, workflow:etree_doc) -> Workflow
-    """
+    """    
     # !+ @title, @description
     transitions = []
     states = []
     wuids = set() # unique IDs in this XML workflow file
-    note = strip_none(workflow.get("note"))
-    allowed_tags = (strip_none(workflow.get("tags")) or "").split()
+    note = xas(workflow, "note")
+    allowed_tags = xas(workflow, "tags", "").split()
+    modes = xas(workflow, "modes", "").split()
     
     # initial_state, in XML indicated a transition source=""
     initial_state = None
@@ -185,7 +187,8 @@ def _load(type_key, name, workflow):
             continue
         while child.tag != allowed_child_ordering[grouping]:
             grouping += 1
-            assert grouping < 4, "Workflow [%s] element <%s> %s not allowed " \
+            assert grouping < len(allowed_child_ordering), \
+                "Workflow [%s] element <%s> %s not allowed " \
                 "here -- element order must respect: %s" % (
                     name, child.tag, child.items(), allowed_child_ordering)
     
@@ -194,10 +197,10 @@ def _load(type_key, name, workflow):
     for f in workflow.iterchildren("feature"):
         assert_valid_attr_names(f, FEATURE_ATTRS)
         # @name
-        feature_name = strip_none(f.get("name"))
+        feature_name = xas(f, "name")
         assert feature_name, "Workflow Feature must define @name"
         # !+ archetype/feature inter-dep; should be part of feature descriptor
-        feature_enabled = as_bool(strip_none(f.get("enabled")) or "true")
+        feature_enabled = xab(f, "enabled", True)
         if feature_enabled and feature_name == "version": 
             assert "audit" in [ fe.name for fe in features if fe.enabled ], \
                 "Workflow [%s] has version but no audit feature" % (name)
@@ -206,14 +209,22 @@ def _load(type_key, name, workflow):
             f.iterchildren("parameter")
         ])
         features.append(Feature(feature_name, enabled=feature_enabled, 
-                note=strip_none(f.get("note")), **params
+                note=xas(f, "note"), **params
         ))
+    
+    # modes -> permissions for this type
+    for mode in modes:
+        action = naming.camel(mode)
+        pid = "bungeni.%s.%s" % (type_key, action)
+        title = "%s %s" % (action, naming.model_name(type_key))
+        ZCML_LINES.append(
+            '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, pid))
     
     # global grants
     _global_permission_role_mixes = {} # {pid: [role]}
     for p in workflow.iterchildren("grant"):
-        pid = strip_none(p.get("permission"))
-        role = strip_none(p.get("role"))
+        pid = xas(p, "permission")
+        role = xas(p, "role")
         # for each global permission, build list of roles it is set to
         _global_permission_role_mixes.setdefault(pid, []).append(role)
         assert pid and role, "Global grant must specify valid permission/role" 
@@ -230,14 +241,14 @@ def _load(type_key, name, workflow):
     for s in workflow.iterchildren("state"):
         assert_valid_attr_names(s, STATE_ATTRS)
         # @id
-        state_id = strip_none(s.get("id"))
+        state_id = xas(s, "id")
         assert state_id, "Workflow State must define @id"
         validate_id(state_id, "state")
         # actions
         actions = []
         # version (prior to any custom actions)
-        if strip_none(s.get("version")) is not None:
-            make_version = as_bool(strip_none(s.get("version")))
+        if xas(s, "version") is not None:
+            make_version = xab(s, "version")
             if make_version is None:
                 raise ValueError('Invalid state value [version="%s"]' % (
                         s.get("version")))
@@ -251,7 +262,7 @@ def _load(type_key, name, workflow):
             actions.append(getattr(ACTIONS_MODULE, action_name))
 
         # @tags
-        tags = (strip_none(s.get("tags")) or "").split()
+        tags = xas(s, "tags", "").split()
         # @like_state, permissions
         permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
         # state.@like_state : to reduce repetition and enhance maintainibility
@@ -262,14 +273,14 @@ def _load(type_key, name, workflow):
         # downstream execution (a permission should be granted or denied only 
         # once per transition to a state).
         like_permissions = []
-        like_state = get_like_state(strip_none(s.get("like_state")))
+        like_state = get_like_state(xas(s, "like_state"))
         if like_state:
             like_permissions.extend(like_state.permissions)
         # (within same state) a deny is *always* executed after a *grant*
         for i, assign in enumerate(["grant", "deny"]):
             for p in s.iterchildren(assign):
-                permission = strip_none(p.get("permission"))
-                role = strip_none(p.get("role"))
+                permission = xas(p, "permission")
+                role = xas(p, "role")
                 check_add_permission(permissions, like_permissions, 
                     ASSIGNMENTS[i], permission, role)
                 # ensure global and local assignments are distinct
@@ -279,14 +290,14 @@ def _load(type_key, name, workflow):
             # splice any remaining like_permissions at beginning of permissions
             permissions[0:0] = like_permissions
         # states
-        state_title = strip_none(s.get("title"))
+        state_title = xas(s, "title")
         naming.MSGIDS.add(state_title)
         states.append(
             State(state_id, state_title,
-                strip_none(s.get("note")),
+                xas(s, "note"),
                 actions, permissions, tags,
-                as_bool(strip_none(s.get("permissions_from_parent")) or "false"),
-                as_bool(strip_none(s.get("obsolete")) or "false"),
+                xab(s, "permissions_from_parent"),
+                xab(s, "obsolete"),
             )
         )
     
@@ -300,12 +311,12 @@ def _load(type_key, name, workflow):
             if key == "source" and t.get(key) == "":
                 # initial_state, an explicit empty string
                 continue
-            elif strip_none(t.get(key)) is None:
+            elif xas(t, key) is None:
                 raise SyntaxError('No required "%s" attribute in %s' % (
                     key, etree.tostring(t)))
         
         # title
-        title = strip_none(t.get("title"))
+        title = xas(t, "title")
         # sources, empty string -> initial_state
         sources = t.get("source").split() or [initial_state]
         assert len(sources) == len(set(sources)), \
@@ -322,7 +333,7 @@ def _load(type_key, name, workflow):
         # optionals -- only set on kw IFF explicitly defined
         kw = {}
         for i in TRANS_ATTRS_OPTIONALS:
-            val = strip_none(t.get(i))
+            val = xas(t, i)
             if not val:
                 # we let setting of defaults be handled upstream
                 continue
@@ -383,7 +394,7 @@ def _load(type_key, name, workflow):
         # bool
         if "require_confirmation" in kw:
             try:
-                kw["require_confirmation"] = as_bool(kw["require_confirmation"])
+                kw["require_confirmation"] = misc.as_bool(kw["require_confirmation"])
                 assert kw["require_confirmation"] is not None
             except:
                 raise ValueError("Invalid transition value "

@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
 <!-- 
@@ -22,6 +23,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- address -->
+<permission id="bungeni.user_address.View" title="bungeni.user_address.View" />
+<permission id="bungeni.user_address.Edit" title="bungeni.user_address.Edit" />
+<permission id="bungeni.user_address.Add" title="bungeni.user_address.Add" />
+<permission id="bungeni.user_address.Delete" title="bungeni.user_address.Delete" />
 
 <permission id="bungeni.address.wf.draft.attached" title="Publish" />
 <grant permission="bungeni.address.wf.draft.attached" role="bungeni.Owner" />
@@ -43,6 +48,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- attachment -->
+<permission id="bungeni.attachment.View" title="bungeni.attachment.View" />
+<permission id="bungeni.attachment.Edit" title="bungeni.attachment.Edit" />
+<permission id="bungeni.attachment.Add" title="bungeni.attachment.Add" />
+<permission id="bungeni.attachment.Delete" title="bungeni.attachment.Delete" />
 
 <permission id="bungeni.attachment.wf.draft.attached" title="Publish" />
 <grant permission="bungeni.attachment.wf.draft.attached" role="bungeni.Owner" />
@@ -64,6 +73,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- event -->
+<permission id="bungeni.event.View" title="bungeni.event.View" />
+<permission id="bungeni.event.Edit" title="bungeni.event.Edit" />
+<permission id="bungeni.event.Add" title="bungeni.event.Add" />
+<permission id="bungeni.event.Delete" title="bungeni.event.Delete" />
 
 <permission id="bungeni.event.wf.draft.attached" title="Publish" />
 <grant permission="bungeni.event.wf.draft.attached" role="bungeni.Owner" />
@@ -85,6 +98,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- sitting -->
+<permission id="bungeni.sitting.View" title="bungeni.sitting.View" />
+<permission id="bungeni.sitting.Edit" title="bungeni.sitting.Edit" />
+<permission id="bungeni.sitting.Add" title="bungeni.sitting.Add" />
+<permission id="bungeni.sitting.Delete" title="bungeni.sitting.Delete" />
 <grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
@@ -127,6 +144,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- heading -->
+<permission id="bungeni.heading.View" title="bungeni.heading.View" />
+<permission id="bungeni.heading.Edit" title="bungeni.heading.Edit" />
+<permission id="bungeni.heading.Add" title="bungeni.heading.Add" />
+<permission id="bungeni.heading.Delete" title="bungeni.heading.Delete" />
 <grant permission="bungeni.heading.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.heading.Edit" role="bungeni.Speaker" />
 <grant permission="bungeni.heading.Add" role="bungeni.Clerk" />
@@ -142,6 +163,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- user -->
+<permission id="bungeni.user.View" title="bungeni.user.View" />
+<permission id="bungeni.user.Edit" title="bungeni.user.Edit" />
+<permission id="bungeni.user.Add" title="bungeni.user.Add" />
+<permission id="bungeni.user.Delete" title="bungeni.user.Delete" />
 
 <permission id="bungeni.user.wf.A.I" title="Deactivate" />
 <grant permission="bungeni.user.wf.A.I" role="bungeni.Speaker" />
@@ -157,6 +182,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- signatory -->
+<permission id="bungeni.signatory.View" title="bungeni.signatory.View" />
+<permission id="bungeni.signatory.Edit" title="bungeni.signatory.Edit" />
+<permission id="bungeni.signatory.Add" title="bungeni.signatory.Add" />
+<permission id="bungeni.signatory.Delete" title="bungeni.signatory.Delete" />
 <grant permission="bungeni.signatory.View" role="bungeni.Clerk" />
 <grant permission="bungeni.signatory.View" role="bungeni.Speaker" />
 <grant permission="bungeni.signatory.View" role="bungeni.Owner" />
@@ -184,6 +213,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- group -->
+<permission id="bungeni.group.View" title="bungeni.group.View" />
+<permission id="bungeni.group.Edit" title="bungeni.group.Edit" />
+<permission id="bungeni.group.Add" title="bungeni.group.Add" />
+<permission id="bungeni.group.Delete" title="bungeni.group.Delete" />
 
 <permission id="bungeni.group.wf.draft.active" title="Activate" />
 <grant permission="bungeni.group.wf.draft.active" role="bungeni.Clerk" />
@@ -210,6 +243,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- agenda_item -->
+<permission id="bungeni.agenda_item.View" title="bungeni.agenda_item.View" />
+<permission id="bungeni.agenda_item.Edit" title="bungeni.agenda_item.Edit" />
+<permission id="bungeni.agenda_item.Add" title="bungeni.agenda_item.Add" />
+<permission id="bungeni.agenda_item.Delete" title="bungeni.agenda_item.Delete" />
 <grant permission="bungeni.agenda_item.View" role="bungeni.Owner" />
 <grant permission="bungeni.agenda_item.View" role="bungeni.Signatory" />
 <grant permission="bungeni.agenda_item.Edit" role="bungeni.Owner" />
@@ -292,6 +329,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- bill -->
+<permission id="bungeni.bill.View" title="bungeni.bill.View" />
+<permission id="bungeni.bill.Edit" title="bungeni.bill.Edit" />
+<permission id="bungeni.bill.Add" title="bungeni.bill.Add" />
+<permission id="bungeni.bill.Delete" title="bungeni.bill.Delete" />
 <grant permission="bungeni.bill.View" role="bungeni.Clerk" />
 <grant permission="bungeni.bill.View" role="bungeni.Speaker" />
 <grant permission="bungeni.bill.View" role="bungeni.Owner" />
@@ -410,6 +451,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- motion -->
+<permission id="bungeni.motion.View" title="bungeni.motion.View" />
+<permission id="bungeni.motion.Edit" title="bungeni.motion.Edit" />
+<permission id="bungeni.motion.Add" title="bungeni.motion.Add" />
+<permission id="bungeni.motion.Delete" title="bungeni.motion.Delete" />
 <grant permission="bungeni.motion.View" role="bungeni.Owner" />
 <grant permission="bungeni.motion.View" role="bungeni.Signatory" />
 <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
@@ -499,6 +544,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- question -->
+<permission id="bungeni.question.View" title="bungeni.question.View" />
+<permission id="bungeni.question.Edit" title="bungeni.question.Edit" />
+<permission id="bungeni.question.Add" title="bungeni.question.Add" />
+<permission id="bungeni.question.Delete" title="bungeni.question.Delete" />
 <grant permission="bungeni.question.View" role="bungeni.Owner" />
 <grant permission="bungeni.question.View" role="bungeni.Signatory" />
 <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
@@ -591,6 +640,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- tabled_document -->
+<permission id="bungeni.tabled_document.View" title="bungeni.tabled_document.View" />
+<permission id="bungeni.tabled_document.Edit" title="bungeni.tabled_document.Edit" />
+<permission id="bungeni.tabled_document.Add" title="bungeni.tabled_document.Add" />
+<permission id="bungeni.tabled_document.Delete" title="bungeni.tabled_document.Delete" />
 <grant permission="bungeni.tabled_document.View" role="bungeni.Owner" />
 <grant permission="bungeni.tabled_document.View" role="bungeni.Signatory" />
 <grant permission="bungeni.tabled_document.Edit" role="bungeni.Owner" />
@@ -674,6 +727,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- committee -->
+<permission id="bungeni.committee.View" title="bungeni.committee.View" />
+<permission id="bungeni.committee.Edit" title="bungeni.committee.Edit" />
+<permission id="bungeni.committee.Add" title="bungeni.committee.Add" />
+<permission id="bungeni.committee.Delete" title="bungeni.committee.Delete" />
 <grant permission="bungeni.committee.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.committee.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.committee.Delete" role="bungeni.Clerk" />
@@ -692,6 +749,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- parliament -->
+<permission id="bungeni.parliament.View" title="bungeni.parliament.View" />
+<permission id="bungeni.parliament.Edit" title="bungeni.parliament.Edit" />
+<permission id="bungeni.parliament.Add" title="bungeni.parliament.Add" />
+<permission id="bungeni.parliament.Delete" title="bungeni.parliament.Delete" />
 <grant permission="bungeni.parliament.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.parliament.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.parliament.Delete" role="bungeni.Clerk" />

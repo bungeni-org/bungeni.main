@@ -110,14 +110,15 @@ def localize_descriptors(file_path):
     localized = []
     for edescriptor in xml.findall("descriptor"):
         type_key = misc.xml_attr_str(edescriptor, "name")
-        ti = capi.get_type_info(type_key)
-        # !+domain_model is it already set?
-        if ti.domain_model is None:
-            model_name = naming.model_name(type_key)
-            import bungeni.models.domain
-            ti.domain_model = getattr(bungeni.models.domain, model_name)
-            log.warn("localize_descriptors !+ setting [%s] domain model [%s]" % (
-                type_key, ti.domain_model))
+        try:
+            ti = capi.get_type_info(type_key)
+        except KeyError:
+            # unknown type (or no enabled type found) for this descriptor
+            log.warn("No enabled type found for descriptor %r - "
+                "ignoring localization" % (type_key))
+            continue
+        # !+ ensure domain_model has already been set
+        assert ti.domain_model, ti
         order = misc.xml_attr_int(edescriptor, "order")
         fields = new_descriptor_fields(edescriptor)
         try:

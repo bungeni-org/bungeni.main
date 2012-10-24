@@ -24,11 +24,6 @@
   <permission id="bungeni.session.Add" title="Add session" />
   <permission id="bungeni.session.Edit" title="Edit session" />
   <permission id="bungeni.session.Delete" title="Delete session" />
-  <permission id="bungeni.sitting.Add" title="Add sitting" />
-  <permission id="bungeni.sitting.Edit" title="Edit sitting" />
-  <permission id="bungeni.sitting.Delete" title="Delete sitting" />
-  <permission id="bungeni.sitting.View" title="Delete sitting" />
-  <meta:redefinePermission from="bungeni.sitting.View" to="zope.View" />
     
     <permission id="bungeni.sittingschedule.View" 
         title="View the schedule of a sitting" />
@@ -48,31 +43,7 @@
   <permission id="bungeni.sittingattendance.Edit" title="Edit sitting attendance" />
   <permission id="bungeni.sittingattendance.Delete" title="Delete sitting attendance" />
   <meta:redefinePermission from="bungeni.sittingattendance.View" to="zope.View" />
-    
-  <permission id="bungeni.committee.Add" title="Add committee" />
-  <permission id="bungeni.committee.Edit" title="Edit committee" />
-  <permission id="bungeni.committee.Delete" title="Delete committee" />
-  <permission id="bungeni.committee.View" title="View committee" />
-  <meta:redefinePermission from="bungeni.committee.View" to="zope.View" />
-  
-  <permission id="bungeni.question.Add" title="Add Question" />
-  <permission id="bungeni.question.Edit" title="Edit Question" />
-  <permission id="bungeni.question.Delete" title="Delete Question" />
-  <permission id="bungeni.question.View" title="View Question" />
-
-  <!-- Note that if you remove or change the redefinePermission directive
-       you have to adjust the permissions for the workflow states in
-       workflows/question.xml and the field level permissions in 
-       bungeni.models domain.zcml accordingly -->
-  
-  <meta:redefinePermission from="bungeni.question.View" to="zope.View" />
-  
-  <permission id="bungeni.heading.Add" title="Add heading" />
-  <permission id="bungeni.heading.Edit" title="Edit heading" />
-  <permission id="bungeni.heading.Delete" title="Delete heading" />
-  <permission id="bungeni.heading.View" title="View heading" />
-  <meta:redefinePermission from="bungeni.heading.View" to="zope.View" />
-
+        
   <permission id="bungeni.venue.Add" title="Add venue note" />
   <permission id="bungeni.venue.Edit" title="Edit venue note" />
   <permission id="bungeni.venue.Delete" title="Delete venue note" />
@@ -84,47 +55,11 @@
   <permission id="bungeni.editorialnote.Delete" title="Delete editorial note" />
   <permission id="bungeni.editorialnote.View" title="View editorial note" />
   <meta:redefinePermission from="bungeni.editorialnote.View" to="zope.View" />
-  
-  <permission id="bungeni.motion.Add" title="Add Motion" />
-  <permission id="bungeni.motion.Edit" title="Edit Motion" />
-  <permission id="bungeni.motion.Delete" title="Delete Motion" />
-  <permission id="bungeni.motion.View" title="View Motion" />
-  <meta:redefinePermission from="bungeni.motion.View" to="zope.View" />
-
-  <permission id="bungeni.agenda_item.Add" title="Add agenda item" />
-  <permission id="bungeni.agenda_item.Edit" title="Edit agenda item" />
-  <permission id="bungeni.agenda_item.Delete" title="Delete agenda item" />
-  <permission id="bungeni.agenda_item.View" title="View agenda item" />
-  <meta:redefinePermission from="bungeni.agenda_item.View" to="zope.View" />
-  
-  <permission id="bungeni.tabled_document.Add" title="Add tabled document" />
-  <permission id="bungeni.tabled_document.Edit" title="Edit tabled document" />
-  <permission id="bungeni.tabled_document.Delete" title="Delete tabled document" />
-  <permission id="bungeni.tabled_document.View" title="View tabled document" />
-  <meta:redefinePermission from="bungeni.tabled_document.View" to="zope.View" />
-
+    
   <permission id="bungeni.response.Edit" title="Edit Response" />
   <permission id="bungeni.response.View" title="View Response" />
- 
-  <permission id="bungeni.parliament.Add" title="Add Parliament" />
-  <permission id="bungeni.parliament.Edit" title="Edit Parliament" />
-  <permission id="bungeni.parliament.Delete" title="Delete Parliament" />
-  <permission id="bungeni.parliament.View" title="View Parliament" />
-  <meta:redefinePermission from="bungeni.parliament.View" to="zope.View" />
-  
-  <permission id="bungeni.bill.Add" title="Add Bill" />
-  <permission id="bungeni.bill.Edit" title="Edit Bill" />
-  <permission id="bungeni.bill.Delete" title="Delete Bill" />
-  <permission id="bungeni.bill.View" title="View Bill" />
-  <meta:redefinePermission from="bungeni.bill.View" to="zope.View" />
-  
+     
   <permission id="bungeni.user.AdminRecord" title="Admin User Record" />
-  
-  <permission id="bungeni.political_group.Add" title="Add party" />
-  <permission id="bungeni.political_group.Edit" title="Edit party" />
-  <permission id="bungeni.political_group.Delete" title="Delete party" />
-  <permission id="bungeni.political_group.View" title="View party" />
-  <meta:redefinePermission from="bungeni.political_group.View" to="zope.View" />
   
   <permission id="bungeni.government.Add" title="Add government" />
   <permission id="bungeni.government.Edit" title="Edit government" />
@@ -168,12 +103,6 @@
   <meta:redefinePermission from="bungeni.mp.Edit" to="bungeni.groupmember.Edit" />
   <meta:redefinePermission from="bungeni.mp.Delete" to="bungeni.groupmember.Delete" />
   
-  <permission id="bungeni.user.Add" title="Add user" />
-  <permission id="bungeni.user.Edit" title="Edit user" />
-  <permission id="bungeni.user.Delete" title="Delete user" />
-  <permission id="bungeni.user.View" title="View user" />
-  <meta:redefinePermission from="bungeni.user.View" to="zope.View" />
-  
   <permission id="bungeni.minister.Add" title="Add minister" />
   <permission id="bungeni.minister.Edit" title="Edit minister" />
   <permission id="bungeni.minister.Delete" title="Delete minister" />
@@ -201,6 +130,12 @@
   <meta:redefinePermission from="bungeni.committeestaff.Edit" to="bungeni.groupmember.Edit" />
   <meta:redefinePermission from="bungeni.committeestaff.Delete" to="bungeni.groupmember.Delete" />
 
+  <permission id="bungeni.political_group.Add" title="Add party" />
+  <permission id="bungeni.political_group.Edit" title="Edit party" />
+  <permission id="bungeni.political_group.Delete" title="Delete party" />
+  <permission id="bungeni.political_group.View" title="View party" />
+  <meta:redefinePermission from="bungeni.political_group.View" to="zope.View" />
+
   <permission id="bungeni.political_group_member.Add" title="Add political group member" />
   <permission id="bungeni.political_group_member.Edit" title="Edit political group member" />
   <permission id="bungeni.political_group_member.Delete" title="Delete political group member" />
@@ -210,12 +145,13 @@
   <meta:redefinePermission from="bungeni.political_group_member.Edit" to="bungeni.groupmember.Edit" />
   <meta:redefinePermission from="bungeni.political_group_member.Delete" to="bungeni.groupmember.Delete" />
     
+  
   <permission id="bungeni.address.Add" title="Add address" />
   <permission id="bungeni.address.Edit" title="Edit address" />
   <permission id="bungeni.address.Delete" title="Delete address" />
   <permission id="bungeni.address.View" title="View address" />
   <meta:redefinePermission from="bungeni.address.View" to="zope.View" />
-  
+
   <permission id="bungeni.officetitle.Add" title="Add address" />
   <permission id="bungeni.officetitle.Edit" title="Edit address" />
   <permission id="bungeni.officetitle.Delete" title="Delete address" />
@@ -240,12 +176,6 @@
   <permission id="bungeni.groupmemberrole.View" title="View member Role" />
   <meta:redefinePermission from="bungeni.groupmemberrole.View" to="zope.View" />
 
-  <permission id="bungeni.event.Add" title="Add title/event" />
-  <permission id="bungeni.event.Edit" title="Edit title/event" />
-  <permission id="bungeni.event.Delete" title="Delete title/event" />
-  <permission id="bungeni.event.View" title="View title/event" />
-  <meta:redefinePermission from="bungeni.event.View" to="zope.View" />
-
 <!--
      who is able to amend, comment? Actually, here we have two steps
      1) the cleark of a committee/chairperson of a committee decide 
@@ -259,23 +189,12 @@
   <permission id="bungeni.comment.Edit" title="Add and edit comments" />
   <permission id="bungeni.comment.View" title="View comments" />
 
-  <permission id="bungeni.signatory.Add" title="Add a signatory" />
   <permission id="bungeni.signatory.Act" title="Consent or reject signature request" />
-  <permission id="bungeni.signatory.Delete" title="Delete a signatory" />
-  <permission id="bungeni.signatory.Edit" title="Edit a signatory" />
   <permission id="bungeni.signatory.Append" title="Append signature to a document" />
-  <permission id="bungeni.signatory.View" title="View a signatory" />
-  <meta:redefinePermission from="bungeni.signatory.View" to="zope.View" />
 
   
   <permission id="bungeni.reports.Edit" title="Permission to generate report" />
-  
-  <permission id="bungeni.attachment.Add" title="add an attached file" />
-  <permission id="bungeni.attachment.Edit" title="edit an attached file" />
-  <permission id="bungeni.attachment.View" title="view an attached file" />
-  <permission id="bungeni.attachment.Delete" title="delete an attached file" />
-  <meta:redefinePermission from="bungeni.attachment.View" to="zope.View" />
-   
+    
   <permission id="bungeni.translation.Add" title="add translation" />
   
   <permission id="bungeni.assignment.View" title="View Assignment" />
