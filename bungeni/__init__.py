@@ -81,6 +81,17 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
             for role, setting in prin_roles.items():
                 if setting and (role in roles):
                     return True
+            assigned_prin_roles = {}
+            group_assignments = getattr(object, "group_assignment", list())
+            for group_assignment in group_assignments:
+                assigned_prin_roles = self.cached_principal_roles(
+                    group_assignment.group, principal)
+                if groups:
+                    assigned_prin_roles = self.cached_principal_roles_w_groups(
+                        group_assignment.group, principal, groups, prin_roles)
+            for role, setting in assigned_prin_roles.items():
+                if setting and (role in roles):
+                    return True
         return False
 
 

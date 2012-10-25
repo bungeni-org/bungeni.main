@@ -247,6 +247,7 @@ TYPE_REGISTRY = [
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
     ("report4_sitting", TI(None, interfaces.IReport4Sitting)),
     ("group_membership_role", TI(None, interfaces.IGroupMembershipRole)),
+    ("group_document_assignment", TI(None, interfaces.IGroupDocumentAssignment)),
     ## custom types -- loaded dynamically from bungeni_custom/types.xml
 ]
 

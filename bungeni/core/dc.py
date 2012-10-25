@@ -304,6 +304,16 @@ class GroupDescriptiveProperties(DescriptiveProperties):
             self.translate(context, "short_name"),
             self.translate(context, "full_name"))
 
+@register.adapter()
+class GroupDocumentAssignmentDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IGroupDocumentAssignment)
+
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return "%s" % ( self.translate(context.group, "short_name"))
+
 
 @register.adapter()
 class ContainerDescriptiveProperties(DescriptiveProperties):

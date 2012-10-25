@@ -1149,7 +1149,7 @@
         title="Assignment"
         action="context_assignment"
         order="1"
-        permission="bungeni.assignment.View"
+        permission="zope.View"
         submenu="context_assignment"
     />
     <!-- NOTE: action value on a subMenuItem becomes the id of the HTML
@@ -1488,23 +1488,56 @@
      order="30"
       /-->
     <browser:menuItem menu="context_assignment"
-        for="bungeni.models.interfaces.IFeatureAssignment"
-        action="assignment"
+        for="bungeni.models.interfaces.IFeatureUserAssignment"
+        action="user-assignment"
         title="View Assignment"
-        permission="bungeni.assignment.View"
+        permission="bungeni.user_assignment.View"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="1"
     />
 
    <browser:menuItem menu="context_assignment"
-        for="bungeni.models.interfaces.IFeatureAssignment"
-        action="edit-assignment"
+        for="bungeni.models.interfaces.IFeatureUserAssignment"
+        action="edit-user-assignment"
         title="Edit Assignment"
-        permission="bungeni.assignment.Edit"
+        permission="bungeni.user_assignment.Edit"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="2"
     />
-
+    
+   <browser:menuItem menu="context_assignment"
+        for="bungeni.models.interfaces.IFeatureGroupAssignment"
+        action="group_assignments"
+        title="Group Assignment"
+        permission="bungeni.group_assignment.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="3"
+    />
+    <!-- group assignment -->
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        action="view"
+        title="View"
+        order="0"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.group_assignment.View"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        action="edit"
+        title="Edit group assignment"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.group_assignment.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        action="delete"
+        title="Delete group assignment"
+        order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.group_assignment.Delete"
+    />
    <browser:viewlet
      name="login"
      for="*"

@@ -332,7 +332,20 @@
             "
         />
     </class>
-    
+    <class class=".domain.GroupDocumentAssignment">
+        <require permission="zope.View"
+            attributes="
+                group_id
+                doc_id
+            "
+        />
+        <require permission="bungeni.group_assignment.Edit"
+            set_attributes="
+                group_id
+                doc_id
+            "
+        />
+    </class>
     <!-- group memberships -->
     
     <class class=".domain.GroupMembership">

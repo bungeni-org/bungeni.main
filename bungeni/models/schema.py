@@ -416,11 +416,20 @@ title_type = rdb.Table("title_type", metadata,
 # sub roles to be granted when a document is assigned to a user
 group_membership_role = rdb.Table("group_membership_role", metadata,
     rdb.Column("membership_id", rdb.Integer,
-               rdb.ForeignKey("user_group_membership.membership_id"),
-               primary_key=True),
+        rdb.ForeignKey("user_group_membership.membership_id"),
+        primary_key=True),
     rdb.Column("role_id", rdb.Unicode(256), nullable=False,
-               primary_key=True),
+        primary_key=True),
     rdb.Column("is_global", rdb.Boolean, default=False),
+)
+
+group_document_assignment = rdb.Table("group_document_assignment", metadata,
+    rdb.Column("group_id", rdb.Integer,
+        rdb.ForeignKey("group.group_id"),
+        primary_key=True),
+    rdb.Column("doc_id", rdb.Integer,
+        rdb.ForeignKey("doc.doc_id"),
+        primary_key=True),
 )
 
 #

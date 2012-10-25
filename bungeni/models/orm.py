@@ -454,7 +454,22 @@ mapper(domain.Doc, schema.doc,
             #backref="agenda_items",
             lazy=False,
             uselist=False,
+        ),
+        "group_assignment": relation(domain.GroupDocumentAssignment,
+            primaryjoin=schema.doc.c.doc_id == schema.group_document_assignment.c.doc_id,
+            lazy=False,
+            uselist=True,
         )
+    }
+)
+
+mapper(domain.GroupDocumentAssignment, schema.group_document_assignment,
+    properties={
+        "group": relation(domain.Group,
+            primaryjoin=schema.group_document_assignment.c.group_id ==
+                schema.group.c.group_id,
+            uselist=False,
+            lazy=False),
     }
 )
 

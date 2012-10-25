@@ -427,5 +427,26 @@
         permission="bungeni.event.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-
+    
+    <!-- group assignment-->
+    <browser:page name="add" for="bungeni.models.interfaces.IGroupDocumentAssignmentContainer"
+        class=".common.AddForm"
+        permission="bungeni.government.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="edit" for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        class=".common.EditForm"
+        permission="bungeni.government.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="delete" for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        class=".common.DeleteForm"
+        permission="bungeni.government.Delete"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="view" for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        class=".common.DisplayForm"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
 </configure>

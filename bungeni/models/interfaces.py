@@ -101,6 +101,11 @@ class IGroupMembershipRole(interface.Interface):
     """
 class IGroupMembershipRoleContainer(IBungeniContainer): pass
 
+class IGroupDocumentAssignment(interface.Interface):
+    """Group document assigment.
+    """
+class IGroupDocumentAssignmentContainer(IBungeniContainer): pass
+
 class IMemberOfParliament(IBungeniGroupMembership): pass
 class IMemberOfParliamentContainer(IBungeniGroupMembershipContainer): pass
 
@@ -464,8 +469,11 @@ class IFeatureNotification(IFeature):
 class IFeatureDownload(IFeature):
     """Marker for classes supporting "download" feature".
     """
-class IFeatureAssignment(IFeature):
-    """Marks support for "assignment" feature
+class IFeatureUserAssignment(IFeature):
+    """Marks support for "user assignment" feature
+    """
+class IFeatureGroupAssignment(IFeature):
+    """Marks support for "group assignment" feature
     """
 #
 

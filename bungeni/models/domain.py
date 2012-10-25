@@ -244,12 +244,20 @@ def feature_download(kls):
     interface.classImplements(kls, interfaces.IFeatureDownload)
     return kls
 
-def feature_assignment(kls, **params):
-    """Decorator for domain types that support "assignable" feature.
+def feature_user_assignment(kls, **params):
+    """Decorator for domain types that support "user_assignment" feature.
     """
-    interface.classImplements(kls, interfaces.IFeatureAssignment)
+    interface.classImplements(kls, interfaces.IFeatureUserAssignment)
     return kls
 
+def feature_group_assignment(kls, **params):
+    """Decorator for domain types that support "group_assignment" feature.
+    """
+    interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
+    kls.group_assignments = one2many("group_assignments",
+        "bungeni.models.domain.GroupDocumentAssignmentContainer", "doc_id")
+    return kls
+    
 def configurable_domain(kls, workflow):
     """Executed on adapters.load_workflow().
     """
@@ -415,6 +423,10 @@ class GroupMembershipRole(Entity):
        that are granted when a document is assigned to a user
     """
     interface.implements(interfaces.IGroupMembershipRole)
+
+class GroupDocumentAssignment(Entity):
+    """Association between a doc and groups it's been assigned to
+    """
 
 # auditable (by default), but not a Doc
 class Sitting(Entity):
@@ -659,7 +671,7 @@ class Doc(Entity):
     # allowed dynamic features by this archetype (inherited by sub-types)
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule", "workspace", "notification", "download",
-        "assignment"]
+        "user_assignment", "group_assignment"]
     interface.implements(
         interfaces.IBungeniContent, # IOwned
         interfaces.ITranslatable
@@ -902,6 +914,7 @@ class AgendaItem(AdmissibleMixin, Doc):
     # !+events on AgendaItems?
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
+    
 #AgendaItemAudit
 
 class Bill(Doc):
@@ -915,7 +928,6 @@ class Bill(Doc):
         "bungeni.models.domain.AttachmentContainer", "head_id")
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
-    
     #!+doc_type: default="government", nullable=False,
     
     # !+BILL_MINISTRY(fz, oct-2011) the ministry field here logically means the 
@@ -956,7 +968,6 @@ class Motion(AdmissibleMixin, Doc):
 
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
-    
     @property
     def notice_date(self):
         return self._get_workflow_date("scheduled")
@@ -975,7 +986,6 @@ class Question(AdmissibleMixin, Doc):
         "bungeni.models.domain.AttachmentContainer", "head_id")
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
-    
     #!+doc_type: default="ordinary", nullable=False,
     #!+response_type: default="oral", nullable=False,
     

@@ -606,16 +606,16 @@
      /> 
 
    <browser:page
-      for="bungeni.models.interfaces.IFeatureAssignment"
-      name="assignment"
+      for="bungeni.models.interfaces.IFeatureUserAssignment"
+      name="user-assignment"
       class=".assignment.AssignmentView"
-      permission="bungeni.assignment.View"
+      permission="bungeni.user_assignment.View"
       />
 
    <browser:page
-      for="bungeni.models.interfaces.IFeatureAssignment"
-      name="edit-assignment"
+      for="bungeni.models.interfaces.IFeatureUserAssignment"
+      name="edit-user-assignment"
       class=".assignment.AssignmentEditView"
-      permission="bungeni.assignment.Edit"
+      permission="bungeni.user_assignment.Edit"
       />
 </configure>

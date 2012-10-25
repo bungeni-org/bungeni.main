@@ -862,6 +862,24 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
     ])
 
 
+class GroupDocumentAssignmentDescriptor(ModelDescriptor):
+    localizable = False
+    display_name = "Group document assignment" # !+
+    container_name = "Group document assignment" # !+
+    fields = [
+        F(name="group_id",
+            label="Group",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="group",
+        ),
+    ]
+
 class AddressDescriptor(ModelDescriptor):
     localizable = False
     display_name = "Address" # !+
