@@ -249,7 +249,7 @@
     />
     <browser:page
      for="*"
-     permission="bungeni.sitting.Edit"
+     permission="bungeni.sitting.Add"
      name="dhtmlxcalendaredit"
      class=".calendar.browser.DhtmlxCalendarSittingsEdit"
     />
