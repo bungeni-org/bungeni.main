@@ -1539,6 +1539,13 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.group_assignment.Delete"
     />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IGroupDocumentAssignmentContainer"
+        title="Add group assignment..."
+        action="./add"
+        permission="bungeni.group_assignment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+    />
    <browser:viewlet
      name="login"
      for="*"
