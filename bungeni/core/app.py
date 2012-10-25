@@ -35,6 +35,7 @@ from bungeni.core.workspace import (WorkspaceContainer,
     WorkspaceUnderConsiderationContainer,
     WorkspaceTrackedDocumentsContainer,
     WorkspaceGroupsContainer,
+    WorkspaceSchedulableContainer,
     load_workspaces)
 from bungeni.core.notifications import load_notifications
 from bungeni.core.emailnotifications import email_notifications
@@ -212,6 +213,11 @@ class AppSetup(object):
             marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules")
         )
+        workspace["scheduling"]["documents"] = WorkspaceSchedulableContainer(
+            name=_(u"schedulable items"),
+            title=_(u"schedulable items"),
+            description=_(u"documents available for scheduling")
+        )
         workspace["scheduling"]["sittings"] = QueryContent(
             container_getter(get_current_parliament, "sittings"),
             title=_(u"Sittings"),
@@ -246,6 +252,7 @@ class AppSetup(object):
                 to_locatable_container(info.domain_model, 
                     workspace["scheduling"][container_name]
                 )
+        
         
         # Proof-of-concept: support for selective inclusion in breadcrumb trail:
         # a view marked with an attribute __crumb__=False is NOT included in 

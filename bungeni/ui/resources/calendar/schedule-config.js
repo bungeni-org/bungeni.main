@@ -21,7 +21,7 @@ window.onbeforeunload = function(ev){
 
 YAHOO.bungeni.Utils = function(){
     /**
-     * @function wrapText
+     * @function _wrapText
      * @description returns text as html wrapped in el tags
      */
     var wrapText = function(text, el, attrs){
@@ -31,7 +31,7 @@ YAHOO.bungeni.Utils = function(){
     }
 
     /**
-     * @function slugify
+     * @function _slugify
      * @description generate string with just alphanumeric values, hyphens 
      * and underscores
      **/
@@ -39,9 +39,19 @@ YAHOO.bungeni.Utils = function(){
          return string.replace( /[^0-9a-zA-Z\-_]/g, "-");
      }
 
+    /**
+     * @function _makeURI
+     * @description generate a uri linking to available scheduling items
+     * container
+     **/
+     var _makeURI = function (suffix){
+         return "/workspace/scheduling/documents/" + suffix;
+     }
+
     return {
         wrapText: wrapText,
-        slugify: _slugify
+        slugify: _slugify,
+        makeURI: _makeURI,
     }
 }();
 
@@ -372,12 +382,12 @@ YAHOO.bungeni.config = function(){
                  }else if(rec_data.item_type == SGlobals.types.EDITORIAL_NOTE){
                      el.innerHTML = BungeniUtils.wrapText(rec_data.item_title);
                  }else{
-                     if (rec_data.item_uri){
+                     if (rec_data[Columns.URI]){
                         el.innerHTML = (rec_data.item_title + 
                             "<em style='display:block;'><span>" +
                             SGlobals.text_moved_by + " : " + 
                             rec_data.item_mover + "</span>&nbsp;&nbsp;" +
-                            "<a href='" + rec_data.item_uri + "' target='blank'>" + 
+                            "<a href='" + BungeniUtils.makeURI(rec_data[Columns.URI]) + "' target='blank'>" + 
                             SGlobals.text_action_view + "</a>"
                         );
                     }else{
@@ -414,8 +424,8 @@ YAHOO.bungeni.config = function(){
                           tHTML = tHTML + BungeniUtils.wrapText(text, "span");
                       }
                  }
-                 if (rec_data.item_uri){
-                    tHTML = tHTML + ("<a href='" + rec_data[Columns.URI] + 
+                 if (rec_data[Columns.URI]){
+                    tHTML = tHTML + ("<a href='" + BungeniUtils.makeURI(rec_data[Columns.URI]) + 
                         "' target='blank'>" + SGlobals.text_action_view + "</a>"
                     );
                 }

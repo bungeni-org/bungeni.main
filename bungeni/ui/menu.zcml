@@ -118,6 +118,7 @@
     <!-- CONTENT SUBMENUS -->
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.core.interfaces.IWorkspaceContainer"
+        layer=".interfaces.IWorkspaceMyDocumentsSectionLayer"
         title="Add parliamentary content..."
         action="workspace_add_content"
         permission="zope.View"

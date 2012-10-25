@@ -21,6 +21,9 @@ from zope.publisher.interfaces.browser import IHTTPRequest
 from zope.publisher.interfaces import IPublishTraverse
 from zope.location.interfaces import ILocation
 from zope.app.publication.traversers import SimpleComponentTraverser
+
+from sqlalchemy import sql
+
 from bungeni.models.interfaces import (IBungeniApplication, IParliament, 
     ICommittee, ISittingContainer
 )
@@ -34,7 +37,7 @@ from bungeni.core.i18n import _
 from bungeni.core.proxy import LocationProxy
 from bungeni.ui.calendar import utils
 from bungeni.alchemist import Session
-from sqlalchemy import sql
+
 
 def format_date(date):
     return time.strftime("%Y-%m-%d %H:%M:%S", date.timetuple())
@@ -151,7 +154,7 @@ class CommitteeSchedulingContext(PrincipalGroupSchedulingContext):
     def get_group(self, name=None):
         assert name is None
         return self.__parent__
-
+    
 class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ISittingContainer)
 

@@ -33,7 +33,8 @@ from bungeni.core.interfaces import (
     IWorkspaceContainer,
     IWorkspaceUnderConsiderationContainer,
     IWorkspaceTrackedDocumentsContainer,
-    IWorkspaceGroupsContainer
+    IWorkspaceGroupsContainer,
+    ISchedulingContext,
 )
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
@@ -372,7 +373,6 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
             self.object_type = None
             self.oid = None
 
-
 class WorkspaceContainerTraverser(SimpleComponentTraverser):
     """Traverser for workspace containers"""
     
@@ -687,3 +687,17 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
 
     def query(self, **kw):
         return self._query(**kw)
+
+
+class WorkspaceSchedulableContainer(WorkspaceUnderConsiderationContainer):
+    """Contains documents availbale for scheduling
+    """
+    
+    def domain_status(self):
+        domain_status_map = {}
+        for type_key, ti in capi.iter_type_info():
+            workflow = ti.workflow
+            if workflow and workflow.has_feature("schedule"):
+                states = workflow.get_state_ids(tagged=["tobescheduled"])
+                domain_status_map[ti.domain_model] = states
+        return domain_status_map

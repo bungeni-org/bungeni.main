@@ -74,10 +74,10 @@ def get_next_prog(context):
     return connection.execute(sequence)
 '''
 
-def is_pi_scheduled(doc_id):
-    return len(getActiveItemSchedule(doc_id)) >= 1
+def is_pi_scheduled(doc):
+    return len(getActiveItemSchedule(doc)) >= 1
     
-def getActiveItemSchedule(doc_id):
+def getActiveItemSchedule(doc):
     """Get active itemSchedule instances for parliamentary item.
     
     Use may also be to get scheduled dates e.g.
@@ -88,8 +88,9 @@ def getActiveItemSchedule(doc_id):
     """
     session = Session()
     active_filter = rdb.and_(
-        schema.item_schedule.c.item_id == doc_id,
-        schema.item_schedule.c.active == True
+        schema.item_schedule.c.item_id == doc.doc_id,
+        schema.item_schedule.c.active == True,
+        schema.item_schedule.c.item_type == doc.type,
     )
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()

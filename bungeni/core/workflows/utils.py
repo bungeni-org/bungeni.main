@@ -167,26 +167,6 @@ def assign_role_minister_question(context):
 
 unschedule_doc = dbutils.unschedule_doc
 
-''' !+UNUSUED (and incorrect) :
-def getQuestionSchedule(context):
-    question_id = context.question_id
-    return dbutils.is_pi_scheduled(question_id)
-
-def getMotionSchedule(context):
-    motion_id = context.motion_id
-    return dbutils.is_pi_scheduled(motion_id)
-
-def getQuestionSubmissionAllowed(context):
-    return prefs.getQuestionSubmissionAllowed()
-'''
-
-'''
-# question, motion, bill, agenda_item, tabled_document
-# !+setParliamentId(mr, mar-2011) this is used in "create" transitions... 
-def setParliamentId(context):
-    if not context.parliament_id:
-         context.parliament_id = prefs.getCurrentParliamentId()
-'''
 
 # tabled_document
 def setTabledDocumentHistory(context):

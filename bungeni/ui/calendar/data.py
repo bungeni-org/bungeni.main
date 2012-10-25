@@ -110,7 +110,7 @@ class SchedulableItemsGetter(object):
                 return group_id
             else:
                 parent = parent.__parent__
-        raise ValueError("Unable to determine group.")
+        return None
     
     def query(self):
         items_query = Session().query(self.domain_class).filter(
@@ -167,7 +167,9 @@ class SchedulableItemsGetter(object):
                 item_mover = ( IDCDescriptiveProperties(item.owner).title if
                     hasattr(item, "owner") else None
                 ),
-                item_uri = IDCDescriptiveProperties(item).uri
+                item_uri = "%s-%d" % (self.item_type,
+                    orm.object_mapper(item).primary_key_from_instance(item)[0]
+                )
             )
             for item in self.query()
         ]
