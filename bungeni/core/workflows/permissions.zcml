@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
-    xmlns:meta="http://namespaces.zope.org/meta"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
 <!-- 
@@ -103,7 +102,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.sitting.Add" title="bungeni.sitting.Add" />
 <permission id="bungeni.sitting.Delete" title="bungeni.sitting.Delete" />
 <grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingschedule.View" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
@@ -186,12 +184,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.signatory.Edit" title="bungeni.signatory.Edit" />
 <permission id="bungeni.signatory.Add" title="bungeni.signatory.Add" />
 <permission id="bungeni.signatory.Delete" title="bungeni.signatory.Delete" />
-<grant permission="bungeni.signatory.View" role="bungeni.Clerk" />
-<grant permission="bungeni.signatory.View" role="bungeni.Speaker" />
-<grant permission="bungeni.signatory.View" role="bungeni.Owner" />
-<grant permission="bungeni.signatory.View" role="bungeni.MP" />
-<grant permission="bungeni.signatory.View" role="bungeni.Minister" />
-<grant permission="bungeni.signatory.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.signatory.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.signatory.Add" role="bungeni.Owner" />
 <grant permission="bungeni.signatory.Delete" role="bungeni.Clerk" />
@@ -247,11 +239,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agenda_item.Edit" title="bungeni.agenda_item.Edit" />
 <permission id="bungeni.agenda_item.Add" title="bungeni.agenda_item.Add" />
 <permission id="bungeni.agenda_item.Delete" title="bungeni.agenda_item.Delete" />
-<grant permission="bungeni.agenda_item.View" role="bungeni.Owner" />
-<grant permission="bungeni.agenda_item.View" role="bungeni.Signatory" />
-<grant permission="bungeni.agenda_item.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.agenda_item.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.agenda_item.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.agenda_item.wf.draft.submitted" title="Submit" />
 <grant permission="bungeni.agenda_item.wf.draft.submitted" role="bungeni.Owner" />
@@ -333,16 +321,9 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.Edit" title="bungeni.bill.Edit" />
 <permission id="bungeni.bill.Add" title="bungeni.bill.Add" />
 <permission id="bungeni.bill.Delete" title="bungeni.bill.Delete" />
-<grant permission="bungeni.bill.View" role="bungeni.Clerk" />
-<grant permission="bungeni.bill.View" role="bungeni.Speaker" />
-<grant permission="bungeni.bill.View" role="bungeni.Owner" />
-<grant permission="bungeni.bill.View" role="bungeni.Signatory" />
-<grant permission="bungeni.bill.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.bill.Edit" role="bungeni.Speaker" />
-<grant permission="bungeni.bill.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.bill.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.bill.Add" role="bungeni.MP" />
-<grant permission="bungeni.bill.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.bill.wf.draft.submitted" title="Submit" />
 <grant permission="bungeni.bill.wf.draft.submitted" role="bungeni.Owner" />
@@ -455,12 +436,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.Edit" title="bungeni.motion.Edit" />
 <permission id="bungeni.motion.Add" title="bungeni.motion.Add" />
 <permission id="bungeni.motion.Delete" title="bungeni.motion.Delete" />
-<grant permission="bungeni.motion.View" role="bungeni.Owner" />
-<grant permission="bungeni.motion.View" role="bungeni.Signatory" />
-<grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.motion.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.motion.Add" role="bungeni.MP" />
-<grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.motion.wf.draft.submitted" title="Submit" />
 <grant permission="bungeni.motion.wf.draft.submitted" role="bungeni.Owner" />
@@ -548,12 +525,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.question.Edit" title="bungeni.question.Edit" />
 <permission id="bungeni.question.Add" title="bungeni.question.Add" />
 <permission id="bungeni.question.Delete" title="bungeni.question.Delete" />
-<grant permission="bungeni.question.View" role="bungeni.Owner" />
-<grant permission="bungeni.question.View" role="bungeni.Signatory" />
-<grant permission="bungeni.question.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.question.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.question.Add" role="bungeni.MP" />
-<grant permission="bungeni.question.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.draft.submitted" title="Submit" />
 <grant permission="bungeni.question.wf.draft.submitted" role="bungeni.Owner" />
@@ -644,12 +617,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tabled_document.Edit" title="bungeni.tabled_document.Edit" />
 <permission id="bungeni.tabled_document.Add" title="bungeni.tabled_document.Add" />
 <permission id="bungeni.tabled_document.Delete" title="bungeni.tabled_document.Delete" />
-<grant permission="bungeni.tabled_document.View" role="bungeni.Owner" />
-<grant permission="bungeni.tabled_document.View" role="bungeni.Signatory" />
-<grant permission="bungeni.tabled_document.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.tabled_document.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.tabled_document.Add" role="bungeni.MP" />
-<grant permission="bungeni.tabled_document.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.tabled_document.wf.redraft.submitted" title="Submit" />
 <grant permission="bungeni.tabled_document.wf.redraft.submitted" role="bungeni.Owner" />

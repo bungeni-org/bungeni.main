@@ -24,14 +24,16 @@ from bungeni.alchemist import utils
 from bungeni.utils import naming, misc
 from bungeni.utils.capi import capi, bungeni_custom_errors
 
+from bungeni.alchemist.catalyst import (
+    INTERFACE_MODULE, 
+    MODEL_MODULE
+)
 
 def new_custom_model_interface(type_key, model_iname):
     import zope.interface
-    from bungeni.alchemist.catalyst import INTERFACE_MODULE
-    from bungeni.models.interfaces import IBungeniContent
     model_iface = zope.interface.interface.InterfaceClass(
         model_iname,
-        bases=(IBungeniContent,), # !+archetype?
+        bases=(interfaces.IBungeniContent,), # !+archetype?
         __module__=INTERFACE_MODULE.__name__
     )
     # set on INTERFACE_MODULE (register on type_info downstream)
@@ -41,7 +43,7 @@ def new_custom_model_interface(type_key, model_iname):
     return model_iface
 
 def new_custom_domain_model(type_key):
-    # !+archetype? move to types?
+    # !+archetype? move to types? what about extended/derived/container attrs?
     def get_elem(type_key):
         import elementtree.ElementTree
         file_path = capi.get_path_for("forms", "custom.xml") # !+
@@ -54,7 +56,6 @@ def new_custom_domain_model(type_key):
     domain_model_name = naming.model_name(type_key)
     assert archetype_key, \
         "Custom descriptor %r does not specify an archetype" % (type_key)
-    import bungeni.models.domain as MODEL_MODULE
     archetype = getattr(MODEL_MODULE, naming.model_name(archetype_key))
     # !+ assert archetype constraints
     domain_model = type(domain_model_name,
@@ -95,7 +96,7 @@ def load_workflow(type_key, workflow_key,
         log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, wf))
     except KeyError:
         wf = xmlimport.load(type_key, workflow_key, path_custom_workflows)
-        log.debug("Loading WORKFLOW: %s %s" % (workflow_key, wf))
+        log.info("Loaded WORKFLOW: %s %s" % (workflow_key, wf))
         # debug info
         for state_key, state in wf.states.items():
             log.debug("   STATE: %s %s" % (state_key, state))
@@ -127,21 +128,21 @@ def apply_customization_workflow(type_key, ti):
         bungeni.core.audit.set_auditor(domain_model)
 
 
-def get_domain_model(type_key):
-    """Infer and retrieve the target domain model class from the type key.
-    Raise Attribute error if not defined on domain.
-    """
-    return resolve("bungeni.models.domain.%s" % (naming.model_name(type_key)))
-
-def load_workflows(type_info_iterator):
+def load_setup_workflows(type_info_iterator):
+    def get_domain_model(type_key):
+        """Infer and retrieve the target domain model class from the type key.
+        Raise Attribute error if not defined on domain.
+        """
+        return resolve("bungeni.models.domain.%s" % (naming.model_name(type_key)))
     # workflow instances (+ adapter *factories*)
     for type_key, ti in type_info_iterator:
-        # get the domain class and associate domain class with type
-        utils.inisetattr(ti, "domain_model", get_domain_model(type_key))
+        if not ti.custom:
+            # get the domain class and associate domain class with type
+            utils.inisetattr(ti, "domain_model", get_domain_model(type_key))
         # load/get workflow instance (if any) and associate with type
         if ti.workflow_key is not None:
             ti.workflow = load_workflow(type_key, ti.workflow_key)
-            # adjust domain_model as per workflow, register/associate domain_model
+            # adjust domain_model as per workflow
             apply_customization_workflow(type_key, ti)
             register_specific_workflow_adapter(ti)
 
@@ -206,8 +207,8 @@ def register_custom_types():
             log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
         except ImportError:
             domain_model = new_custom_domain_model(type_key)
-        # type_info 
-        ti = TI(workflow_key, model_iface)
+        # type_info
+        ti = TI(workflow_key, model_iface, domain_model)
         ti.custom = True
         TYPE_REGISTRY.append((type_key, ti))
         log.info("Registering custom type [%s]: %s" % (elem.tag, type_key))
@@ -232,11 +233,11 @@ def _setup_all():
     register_generic_workflow_adapters()
     
     # load workflows for system/registered types
-    load_workflows(capi.iter_type_info())
+    load_setup_workflows(capi.iter_type_info())
     
     # extend type registry with custom types
     register_custom_types()
-    load_workflows(capi.iter_type_info(scope="custom"))
+    load_setup_workflows(capi.iter_type_info(scope="custom"))
     
     # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
     # when *all* workflows are loaded.

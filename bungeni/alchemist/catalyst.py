@@ -46,6 +46,7 @@ from sqlalchemy import orm
 from bungeni.utils import naming
 # target modules
 import bungeni.models.interfaces as INTERFACE_MODULE
+import bungeni.models.domain as MODEL_MODULE
 import bungeni.models.domain as CONTAINER_MODULE
 #import bungeni.ui.content as UI_MODULE
 

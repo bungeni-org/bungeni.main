@@ -171,17 +171,18 @@ class TI(object):
             container_interface
                 interface for the container class for domain_model
     """
-    def __init__(self, workflow_key, iface):
+    def __init__(self, workflow_key, iface, domain_model=None):
         self.workflow_key = workflow_key
         self.interface = iface
         self.derived_table_schema = None # provides IIModelInterface
         self.workflow = None
-        self.domain_model = None
+        self.domain_model = domain_model
         self.descriptor_model = None
         self.container_class = None
         self.container_interface = None
         self.custom = False # type loaded from custom configuration
         #if self.custom: assert self.domain_model.scope == "custom"
+        # !+ archetype_key?
     def __str__(self):
         return str(self.__dict__)
 
