@@ -1,12 +1,25 @@
 import json
 import zope.interface
+from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
+import zope.cachedescriptors.property
 from bungeni.utils.capi import capi
 from bungeni.ui.i18n import _
+from bungeni.ui.utils import url, common
 from bungeni.core.translation import (translate_i18n as i18n, 
     get_request_language
 )
 from bungeni.ui.calendar import data
+
+class CachedProperties(object):
+    @zope.cachedescriptors.property.cachedIn("__available_docs_container__")
+    def items_container(self):
+        """The URL to a container listing documents available for scheduling
+        """
+        site =  getSite()
+        container = site["workspace"]["scheduling"]["documents"]
+        return url.absoluteURL(container, common.get_request())
+cached_props = CachedProperties()
 
 RESOURCE_MAPPING = {
     "scheduler-globals.js": "scheduler_globals",
@@ -28,6 +41,8 @@ EDIT = _(u"Edit")
 DELETE = _(u"Delete")
 WARNING = _(u"Warning")
 
+
+
 def get_globals(group_name, **kwargs):
     language = kwargs.get("language", "en")
     type_names = {
@@ -41,6 +56,7 @@ def get_globals(group_name, **kwargs):
     ])
     globals_map = {
         "SCHEDULER_GLOBALS" : {
+            "items_container_uri": cached_props.items_container,
             "schedulable_types": [ 
                 dict(name=name, title=i18n(info.get("title"), language)) 
                 for (name, info) in 

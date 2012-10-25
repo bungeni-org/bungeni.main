@@ -45,7 +45,7 @@ YAHOO.bungeni.Utils = function(){
      * container
      **/
      var _makeURI = function (suffix){
-         return "/workspace/scheduling/documents/" + suffix;
+         return SGlobals.items_container_uri + "/" + suffix;
      }
 
     return {
