@@ -418,34 +418,6 @@
         class=".table.AjaxContainerListing"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <!-- Workspace Add views -->
-    <!-- CONVENTION - view names must follow the following convention
-    the word "add", then an undescore(_) then the item type as registered in the
-    workspace configuration in  bungeni.core.workspace-->
-    <browser:page name="add_question"
-        for="bungeni.core.interfaces.IWorkspaceDraft"
-        class=".workspace.WorkspaceAddForm"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        permission="bungeni.question.Add"
-    />
-    <browser:page name="add_motion"
-        for="bungeni.core.interfaces.IWorkspaceDraft"
-        class=".workspace.WorkspaceAddForm"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        permission="bungeni.motion.Add"
-    />
-    <browser:page name="add_tabled_document"
-        for="bungeni.core.interfaces.IWorkspaceDraft"
-        class=".workspace.WorkspaceAddForm"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        permission="bungeni.tabled_document.Add"
-    />
-    <browser:page name="add_bill"
-        for="bungeni.core.interfaces.IWorkspaceDraft"
-        class=".workspace.WorkspaceAddForm"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        permission="bungeni.bill.Add"
-    />
   <!-- RSS/XML views -->
 
   <!-- RSS views for html content -->

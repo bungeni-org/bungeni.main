@@ -24,7 +24,11 @@ def on_wsgi_application_created_event(application, event):
     # ensure register version views
     import bungeni.ui.versions
     
+    import bungeni.ui.feature
+    bungeni.ui.feature.apply_customization_ui()
+    
     # load and apply-back UI descriptor customizations
     from bungeni.ui.descriptor import localization
     localization.check_reload_localization(None)
+
 

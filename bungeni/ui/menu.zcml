@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:z3c="http://namespaces.zope.org/z3c"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
     
@@ -1037,34 +1036,6 @@
         action="tableddocuments/add"
         permission="bungeni.tabled_document.Add"
     />
-    
-    <!-- Workspace add menu items -->
-    <!-- !+should be only one menu item and parametrized by type_key -->
-    <browser:menuItem menu="workspace_add_parliamentary_content"
-        for="*"
-        title="Bill"
-        action="../../draft/add_bill"
-        permission="bungeni.bill.Add"
-    />
-    <browser:menuItem menu="workspace_add_parliamentary_content"
-        for="*"
-        title="Motion"
-        action="../../draft/add_motion"
-        permission="bungeni.motion.Add"
-    />
-    <browser:menuItem menu="workspace_add_parliamentary_content"
-        for="*"
-        title="Question"
-        action="../../draft/add_question"
-        permission="bungeni.question.Add"
-    />
-    <browser:menuItem menu="workspace_add_parliamentary_content"
-        for="*"
-        title="Tabled document"
-        action="../../draft/add_tabled_document"
-        permission="bungeni.tabled_document.Add"
-    />
-    
     
     <!--browser:menuItem
      for="bungeni.alchemist.interfaces.IAlchemistContainer"
