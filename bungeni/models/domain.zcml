@@ -84,14 +84,11 @@
         all other non-base attributes (properties or xtended attributes defined
             by specific sub-types) must be declared by each sub-type as needed.
         -->
-        <require permission="zope.View"
-            set_attributes="timestamp"
-        /><!-- !+TIMESTAMP(mr, jul-2011) granting edit on timestamp to anyone 
-        with view privilege, as an item, while not essentially being editable 
-        may still be affected by the user's action e.g transited to another 
-        state without "any modifications". Previous to circa r8460, this was 
-        not an issue, and the user was being allowed to set timestamp even if
-        no edit permission on the item.
+        <!-- !+TIMESTAMP(mr, jul-2011) we do not set-protect timestamp - it 
+        is a system-managed field so we let the "system" take care to set it 
+        as necessary i.e. whenever this needs to be set, the application code 
+        must do what is necessary to set it (irrespective of security protection
+        of this field).
         -->
     </class>
     

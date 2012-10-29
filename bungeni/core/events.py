@@ -61,6 +61,6 @@ def group_created(ob, event):
 def timestamp(ob, event):
     """Set the timestamp for the item.
     """
-    ob.timestamp = datetime.datetime.now()
+    removeSecurityProxy(ob).timestamp = datetime.datetime.now()
 
 
