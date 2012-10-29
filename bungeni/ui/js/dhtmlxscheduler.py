@@ -3,7 +3,17 @@ from zope.viewlet.viewlet import JavaScriptViewlet
 from zope.traversing import api
 from zope.location.interfaces import LocationError
 
-JSViewlet = JavaScriptViewlet("")
+class JSViewlet(JavaScriptViewlet("")):
+    """We override the render method here to handle a case where
+    we cant find a resource, gracefully.
+    """
+    def render(self, *args, **kw):
+        if self._path:
+            return super(JSViewlet, self).render(*args, **kw)
+        log.warn("JavaScript viewlet %s has no path",
+            self.__class__
+        )
+        return ""
 
 class DhtmlxSchedulerMainLanguage(JSViewlet):
     language = None    
@@ -16,7 +26,7 @@ class DhtmlxSchedulerMainLanguage(JSViewlet):
     
     def setPath(self):
         if self.language:
-            path = "dhtmlxscheduler/sources/locale_%s.js" % self.language
+            path = "dhtmlxscheduler/sources/locale/locale_%s.js" % self.language
             try:
                 resource = api.traverse(self.context, '++resource++' + path,
                                 request=self.request)
@@ -24,23 +34,21 @@ class DhtmlxSchedulerMainLanguage(JSViewlet):
                 log.exception("Translation for requested language does not exist")
                 path = "dhtmlxscheduler/sources/locale.js"
         else:
-            path = "dhtmlxscheduler/sources/locale.js"
+            path = "dhtmlxscheduler/sources/locale/locale.js"
         return path
     
             
 class DhtmlxSchedulerRecurringLanguage(DhtmlxSchedulerMainLanguage):
     def setPath(self):
+        path = None
         if self.language:
             if self.request.get("I18N_LANGUAGE"):
                 self.language = self.request.get("I18N_LANGUAGE")
-            path = "dhtmlxscheduler/sources/locale_recurring_%s.js" % \
+            path = "dhtmlxscheduler/sources/locale/recurring/locale_recurring_%s.js" % \
                                                                    self.language   
             try:
                 resource = api.traverse(self.context, '++resource++' + path,
                                 request=self.request)
             except LocationError:
                 log.exception("Translation for requested language does not exist")
-                path = "dhtmlxscheduler/sources/locale_recurring.js"
-        else:
-            path = "dhtmlxscheduler/sources/locale_recurring.js"
         return path
