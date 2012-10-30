@@ -61,6 +61,9 @@ def group_created(ob, event):
 def timestamp(ob, event):
     """Set the timestamp for the item.
     """
+    # !+ADD_SUB_OBJECT_MODIFIES_HEAD(mr, oct-2012) adding an event/attachment 
+    # causes an ObjectMofiedEvent on head doc to be caught here... thus
+    # updating its timestamp. Is this the desired behaviour?
     removeSecurityProxy(ob).timestamp = datetime.datetime.now()
 
 

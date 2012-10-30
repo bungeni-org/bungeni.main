@@ -347,22 +347,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
-    <browser:menuItem menu="context_actions" 
-        for="bungeni.models.interfaces.IEvent"
-        action="delete"
-        title="Delete event"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.event.Delete"
-    />
-    <browser:menuItem menu="context_actions" 
-        for="bungeni.models.interfaces.IEvent"
-        action="edit"
-        title="Edit event"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.event.Edit"
-    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IHeading"
         title="Edit heading"
@@ -1187,18 +1171,6 @@
         order="21"
     />
     
-    <!-- bill context actions -->
-    <browser:menuItems menu="context_actions"
-        for="bungeni.models.interfaces.IBill"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer">
-        <browser:menuItem action="edit" title="Edit bill" order="10"
-            permission="bungeni.bill.Edit"
-        />
-        <browser:menuItem action="delete" title="Delete bill" order="99"
-            permission="bungeni.bill.Delete"
-        />
-    </browser:menuItems>
-    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IBungeniUser"
         action="delete"
@@ -1229,68 +1201,6 @@
         />
     </browser:menuItems>
 
-    <!-- question context actions -->
-    <browser:menuItems menu="context_actions"
-        for="bungeni.models.interfaces.IQuestion"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer">
-        <browser:menuItem action="edit" title="Edit question" order="10"
-            permission="bungeni.question.Edit"
-        />
-        <browser:menuItem action="delete" title="Delete question" order="99"
-            permission="bungeni.question.Delete"
-        />
-        <browser:menuItem action="respond" title="Respond to question" order="11"
-            permission="bungeni.response.Edit"
-        />
-    </browser:menuItems>
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMotion"
-        action="edit"
-        title="Edit motion"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.motion.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMotion"
-        action="delete"
-        title="Delete motion"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.motion.Delete"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ITabledDocument"
-        action="edit"
-        title="Edit tabled document"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.tabled_document.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ITabledDocument"
-        action="delete"
-        title="Delete tabled document"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.tabled_document.Delete"
-     />
-     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IAgendaItem"
-        action="edit"
-        title="Edit agenda item"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.agenda_item.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IAgendaItem"
-        action="delete"
-        title="Delete agenda item"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.agenda_item.Delete"
-    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IParliament"
         action="edit"
