@@ -39,13 +39,19 @@ SIGNATORY_CONSENTED_STATE = u"consented"
 # Besides, there was already a more homegenoeous (as well as simpler and more 
 # direct and more efficient) way to do this, namely by checking the signatory 
 # feature settings on the workflow for this model class.
-def _allow_signatures(context):
+def _allow_signature_add(context):
     """Callable on class to check if document is open for signatures.
     
     Used in bungeni/ui/menu.zcml to filter out 'sign document action'
     """
     manager = interfaces.ISignatoryManager(context)
-    return manager.autoSign()
+    return manager.canSign()
+
+def _allow_signature_review(context):
+    """Callable on class to check if current user is a signatory
+    """
+    manager = interfaces.ISignatoryManager(context)
+    return manager.is_signatory()
 
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
 def doc_workflow(ob, event):
@@ -278,5 +284,6 @@ def createManagerFactory(domain_class, **params):
     gsm.registerAdapter(manager, (domain_iface,), interfaces.ISignatoryManager)
     # !+IFEATURE_SIGNATORY(mr, oct-2012) this should be included in signatory 
     # feature setup and handling
-    domain_class.allow_signatures = _allow_signatures
+    domain_class.allow_signature_add = _allow_signature_add
+    domain_class.allow_signature_review = _allow_signature_review
 
