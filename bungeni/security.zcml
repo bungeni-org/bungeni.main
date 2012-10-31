@@ -22,7 +22,7 @@
     - how UI components are to be protected must be reviewed.
     - every protection of a UI component with "zope.View" must be reviewed.
     -->
-    <grant permission="zope.View" role="bungeni.Anonymous" />
+    <!--grant permission="zope.View" role="bungeni.Anonymous" /-->
     <!-- !+UI_VIEWS all authenticated users may view UI components -->
     <grant permission="bungeni.ui.View" role="bungeni.Authenticated" />
     <grant permission="bungeni.ui.audit.View" role="bungeni.Authenticated" />

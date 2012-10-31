@@ -10,7 +10,6 @@ from zope.formlib import form
 from zope.i18n import translate
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
-from zope.security import checkPermission
 from zc.resourcelibrary import need
 from bungeni.alchemist.container import contained
 from bungeni.alchemist.ui import createInstance
@@ -133,13 +132,6 @@ class WorkspaceContainerJSONListing(BrowserPage):
                 nodes[index] = translation.translate_obj(node, lang)
         return nodes
     
-    def check_permission(self, results):
-        viewable = []
-        for item in results:
-            if checkPermission(self.permission, item):
-                viewable.append(item)
-        return viewable
-    
     def get_batch(self, start=0, limit=25, lang=None):
         context = removeSecurityProxy(self.context)
         filter_title = self.request.get("filter_title", None)
@@ -158,7 +150,6 @@ class WorkspaceContainerJSONListing(BrowserPage):
         )
         results = [ contained(ob, self, context.string_key(ob))
             for ob in results ]
-        results = self.check_permission(results)
         nodes = results[start:start + limit]
         nodes = self.translate_objects(nodes, lang)
         batch = self._json_values(nodes)

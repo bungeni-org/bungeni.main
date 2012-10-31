@@ -23,6 +23,7 @@ from zope.publisher.interfaces import NotFound
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.security.settings import Allow
 from zope.securitypolicy.interfaces import IRole
+from zope.security import checkPermission
 from bungeni.alchemist import Session
 from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
@@ -34,7 +35,6 @@ from bungeni.core.interfaces import (
     IWorkspaceUnderConsiderationContainer,
     IWorkspaceTrackedDocumentsContainer,
     IWorkspaceGroupsContainer,
-    ISchedulingContext,
 )
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
@@ -142,7 +142,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
             if not domain_status[domain_class]:
                 del domain_status[domain_class]
         return domain_status
-    
+
     def title_column(self, domain_class):
         table = orm.class_mapper(domain_class).mapped_table
         utk = dict([(table.columns[k].key, k) for k in table.columns.keys()])
@@ -168,7 +168,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
                 return query.order_by(expression.asc(
                     getattr(domain_class, str(kw.get("sort_on")))))
         return query
-    
+
     def filter_status_date(self, query, domain_class, kw):
         #filter on status_date
         attr = getattr(domain_class, "status_date")
@@ -181,58 +181,23 @@ class WorkspaceBaseContainer(AlchemistContainer):
         if end_date:
             query = query.filter(cast(attr, Date) <= end_date)
         return query
-    
+
     def _query(self, **kw):
         raise NotImplementedError("Inheriting class must implement this")
-    
+
     def query(self, **kw):
         return self._query(**kw)
-    
+
+    def count(self, read_from_cache=True):
+        raise NotImplementedError("Inheriting class must implement this")
+
     def items(self, **kw):
         for obj in self._query(kw):
             name = self.string_key(obj)
             yield (name, contained(obj, self, name))
-    
+
     def set_tab_count(self, principal_id, count):
         self.tab_count_cache[principal_id] = TabCountRecord(time.time(), count)
-    
-    def count(self, read_from_cache=True):
-        """Count of items in a container
-        """
-        kw = {}
-        results = []
-        principal = utils.get_principal()
-        if (read_from_cache and principal.id in self.tab_count_cache.keys() and
-                (self.tab_count_cache[principal.id].timestamp +
-                    capi.workspace_tab_count_cache_refresh_time) > time.time()
-            ):
-            return self.tab_count_cache[principal.id].count
-        roles = get_workspace_roles()
-        group_roles_domain_status = self.item_status_filter(kw, roles)
-        session = Session()
-        count = 0
-        for domain_class, status in group_roles_domain_status.iteritems():
-            query = session.query(domain_class).filter(
-                domain_class.status.in_(status)).enable_eagerloads(False)
-            results.extend(query.all())
-            count = count + query.count()
-        object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
-        for domain_class, status in object_roles_domain_status.iteritems():
-            object_roles_results = []
-            query = session.query(domain_class).filter(
-                domain_class.status.in_(status)).enable_eagerloads(False)
-            for obj in query.all():
-                if obj in results:
-                    break
-                prm = IPrincipalRoleMap(obj)
-                for obj_role in OBJECT_ROLES:
-                    if (prm.getSetting(obj_role, principal.id) == Allow):
-                        object_roles_results.append(obj)
-                        break
-            count = count + len(object_roles_results)
-            results.extend(object_roles_results)
-        self.set_tab_count(principal.id, count)
-        return count
 
     def check_item(self, domain_class, status):
         roles = get_workspace_roles() + OBJECT_ROLES
@@ -242,6 +207,14 @@ class WorkspaceBaseContainer(AlchemistContainer):
             if statuses and status in statuses:
                 return True
         return False
+
+    def check_permission(self, item):
+        item_type = self.workspace_config.get_type(item.__class__)
+        permission = "bungeni.%s.View" % item_type
+        if checkPermission(permission, item):
+            return True
+        else:
+            return False
 
     def get(self, name, default=None):
         try:
@@ -259,7 +232,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
             return value
         else:
             return default
-    
+
     @property
     def parliament_id(self):
         """Vocabularies in the forms get the parliament id from the context,
@@ -267,7 +240,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         the workspace is meant only for adding current documents
         """
         return utils.get_current_parliament().group_id
-    
+
     def __getitem__(self, name):
         value = self.get(name)
         if value is None:
@@ -283,7 +256,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
     # The add forms in the workspace are only to add documents to the
     # current parliament.
     # This sets the foreign key of the doc to the current parliament.
-    
+
     def __setitem__(self, name, item):
         session = Session()
         current_parliament = utils.get_current_parliament()
@@ -293,7 +266,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
 class WorkspaceContainer(WorkspaceBaseContainer):
     interface.implements(IWorkspaceContainer)
-    
+
     def _query(self, **kw):
         principal = utils.get_principal()
         roles = get_workspace_roles()
@@ -301,7 +274,6 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         session = Session()
         results = []
         count = 0
-        first_page = not kw.get("start", 0)
         reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
@@ -312,12 +284,6 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             query = self.filter_status_date(query, domain_class, kw)
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
-            # The first page of the results is loaded the most number of times
-            # The limit on the query below optimises for when no filter has
-            # been applied by limiting the number of results returned.
-            if first_page:
-                count = count + query.count()
-                query = query.limit(kw.get("limit", 25))
             results.extend(query.all())
         object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
         for domain_class, status in object_roles_domain_status.iteritems():
@@ -338,15 +304,13 @@ class WorkspaceContainer(WorkspaceBaseContainer):
                     if (prm.getSetting(obj_role, principal.id) == Allow):
                         object_roles_results.append(obj)
                         break
-            if first_page:
-                count = count + len(object_roles_results)
             results.extend(object_roles_results)
         # Sort items
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                 reverse=reverse)
-        if not first_page:
-            count = len(results)
+        results = [item for item in results if self.check_permission(item)]
+        count = len(results)
         if not (kw.get("filter_title", None) or
                 kw.get("filter_type", None) or
                 kw.get("filter_status", None) or
@@ -354,6 +318,19 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             ):
             self.set_tab_count(principal.id, count)
         return (results, count)
+
+    def count(self, read_from_cache=True):
+        """Count of items in a container
+        """
+        kw = {}
+        principal = utils.get_principal()
+        if (read_from_cache and principal.id in self.tab_count_cache.keys() and
+                (self.tab_count_cache[principal.id].timestamp +
+                    capi.workspace_tab_count_cache_refresh_time) > time.time()
+            ):
+            return self.tab_count_cache[principal.id].count
+        results, count = self._query()
+        return count
 
 # !+SECURITY(miano, july 2011) This factory adapts the workspaces to
 # zope.securitypolicy.interface.IPrincipalRoleMap and is equivalent to the
@@ -684,9 +661,6 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
         results = query.all()
         count = query.count()
         return (results, count)
-
-    def query(self, **kw):
-        return self._query(**kw)
 
 
 class WorkspaceSchedulableContainer(WorkspaceUnderConsiderationContainer):

@@ -8,6 +8,6 @@ $(document).ready(
     $("select[id=form.parliament]").bungeniTimeRangeSelect(false, false);
     
     // run workspace_count on workspace tab
-    $("dl.workspace-documents").workspace_count();
+    //$("dl.workspace-documents").workspace_count();
   }
 );

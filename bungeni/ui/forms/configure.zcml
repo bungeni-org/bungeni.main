@@ -40,10 +40,11 @@
         for="*"
         factory=".forms.SubFormTemplate"
     />
-
+  <!-- !+PERMISSIONS(miano, Oct 2012)Commenting out these two declarations 
+  as they conflict with the object type specific declarations --> 
   <!-- Generic forms -->
 
-    <browser:page name="view"
+    <!--browser:page name="view"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
         class=".common.DisplayForm"
         permission="zope.View"
@@ -54,7 +55,7 @@
         class=".common.AddForm"
         permission="zope.ManageContent"
         layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
+    /-->
 <!-- !+ since r9936, attempt to load edit view of a document is giving an 
 Unauthorized exception (EditForm "browserDefault" needs "zope.ManageContent"),
 see this bignei-dev thread:

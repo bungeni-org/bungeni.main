@@ -20,7 +20,8 @@
     <permission id="bungeni.ui.workspace.View" title="View workspace UI" />
     
     
-    <!-- types --> 
+    <!-- types -->
+  <permission id="bungeni.session.View" title="View session" />
   <permission id="bungeni.session.Add" title="Add session" />
   <permission id="bungeni.session.Edit" title="Edit session" />
   <permission id="bungeni.session.Delete" title="Delete session" />
