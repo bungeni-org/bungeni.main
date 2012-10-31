@@ -59,16 +59,36 @@ def apply_customization_ui():
     )
     
     VIEW_TMPL = """
-            <browser:page name="add_{type_key}"
+            <browser:page name="{name}"
                 for="{for_}"
                 class="{class_}"
                 permission="bungeni.{type_key}.{privilege}"
                 layer="bungeni.ui.interfaces.IBungeniSkin"
             />"""
-    view_vars_Add = dict(
+    workspace_view_vars_Add = dict(
         for_="bungeni.core.interfaces.IWorkspaceDraft",
         class_="bungeni.ui.workspace.WorkspaceAddForm",
         privilege="Add",
+    )
+    forms_view_vars_Add = dict(
+        name="add",
+        class_="bungeni.ui.forms.common.AddForm",
+        privilege="Add",
+    )
+    forms_view_vars_View = dict(
+        name="view",
+        class_="bungeni.ui.forms.common.DisplayForm",
+        privilege="View",
+    )
+    forms_view_vars_Edit = dict(
+        name="edit",
+        class_="bungeni.ui.forms.forms.DiffEditForm",
+        privilege="Edit",
+    )
+    forms_view_vars_Delete = dict(
+        name="delete",
+        class_="bungeni.ui.forms.common.DeleteForm",
+        privilege="Delete",
     )
     
     _decls = []
@@ -79,9 +99,27 @@ def apply_customization_ui():
             <!-- {type_key} -->""".format(type_key=type_key))
         
         type_title = naming.split_camel(naming.model_name(type_key))
-        model_interface_qualname = "bungeni.models.interfaces.%s" % (
-                naming.model_interface_name(type_key))
+        # model interface is defined, but container interface is not yet
+        model_interface_qualname = naming.qualname(ti.interface)
+        container_interface_qualname = "bungeni.models.interfaces.%s" % (
+                naming.container_interface_name(type_key))
         
+        # generic forms (independent of any feature)
+        _decls.append(VIEW_TMPL.format(
+                type_key=type_key,
+                for_=container_interface_qualname,
+                **forms_view_vars_Add))
+        for form_view_vars in (
+                forms_view_vars_View, 
+                forms_view_vars_Edit, 
+                forms_view_vars_Delete
+            ):
+            _decls.append(VIEW_TMPL.format(
+                    type_key=type_key,
+                    for_=model_interface_qualname,
+                    **form_view_vars))
+        
+        # workspace
         if ti.workflow.has_feature("workspace"):
             log.debug("Setting up workspace UI for type [%s]" % (type_key))
             # add menu item
@@ -95,22 +133,23 @@ def apply_customization_ui():
                     **menu_item_vars_Add))
             # edit menu item
             _decls.append(MENU_ITEM_TMPL.format(
-                    type_key=type_key, 
+                    type_key=type_key,
                     title="Edit {t}".format(t=type_title),
                     for_=model_interface_qualname,
                     action="edit",
                     **menu_item_vars_Edit))
             # delete menu item
             _decls.append(MENU_ITEM_TMPL.format(
-                    type_key=type_key, 
+                    type_key=type_key,
                     title="Delete {t}".format(t=type_title),
                     for_=model_interface_qualname,
                     action="delete",
                     **menu_item_vars_Delete))
-            # add view
+            # workspace add view
             _decls.append(VIEW_TMPL.format(
-                    type_key=type_key, 
-                    **view_vars_Add))
+                    type_key=type_key,
+                    name="add_{type_key}".format(type_key=type_key),
+                    **workspace_view_vars_Add))
     
     # combine config string and execute it
     zcml = ZCML_SLUG.format(zcml_decls="".join([ zd for zd in _decls ]))

@@ -103,8 +103,12 @@ def resolve_relative(dotted_relative, obj):
     Raises AttributeError if obj does not define a __module__ or __name__ attr.
     """
     # (instance, type) or (module)
-    module_path = getattr(obj, "__module__", None) or getattr(obj, "__name__")
+    #module_path = getattr(obj, "__module__", None) or getattr(obj, "__name__")
     return resolve(dotted_relative, obj.__module__)
+
+def qualname(obj):
+    """Return qualified name for obj."""
+    return "%s.%s" % (obj.__module__, obj.__name__)
 
 
 # model, interfaces, descriptor, container

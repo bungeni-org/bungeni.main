@@ -128,7 +128,7 @@ def apply_customization_workflow(type_key, ti):
         bungeni.core.audit.set_auditor(domain_model)
 
 
-def load_setup_workflows(type_info_iterator):
+def load_workflows(type_info_iterator):
     def get_domain_model(type_key):
         """Infer and retrieve the target domain model class from the type key.
         Raise Attribute error if not defined on domain.
@@ -142,6 +142,10 @@ def load_setup_workflows(type_info_iterator):
         # load/get workflow instance (if any) and associate with type
         if ti.workflow_key is not None:
             ti.workflow = load_workflow(type_key, ti.workflow_key)
+
+def setup_workflows(type_info_iterator):
+    for type_key, ti in type_info_iterator:
+        if ti.workflow:
             # adjust domain_model as per workflow
             apply_customization_workflow(type_key, ti)
             register_specific_workflow_adapter(ti)
@@ -233,16 +237,13 @@ def _setup_all():
     register_generic_workflow_adapters()
     
     # load workflows for system/registered types
-    load_setup_workflows(capi.iter_type_info())
+    load_workflows(capi.iter_type_info())
+    setup_workflows(capi.iter_type_info())
     
     # extend type registry with custom types
     register_custom_types()
-    load_setup_workflows(capi.iter_type_info(scope="custom"))
-    
-    # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
-    # when *all* workflows are loaded.
-    # check/regenerate zcml directives for workflows
-    xmlimport.zcml_check_regenerate()
+    load_workflows(capi.iter_type_info(scope="custom"))
+    setup_workflows(capi.iter_type_info(scope="custom"))
 
 # do it (when this module is loaded)
 _setup_all()
