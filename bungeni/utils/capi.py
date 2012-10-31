@@ -210,8 +210,9 @@ class CAPI(object):
         """
         for type_key, ti in type_info._iter():
             if (scope is None or 
-                    (ti.custom and scope == "custom") or
-                    (ti.descriptor_model is not None and ti.descriptor_model.scope == scope)
+                    ti.custom and scope == "custom" or
+                    (ti.descriptor_model is not None and 
+                        ti.descriptor_model.scope == scope)
                 ):
                 yield type_key, ti
 

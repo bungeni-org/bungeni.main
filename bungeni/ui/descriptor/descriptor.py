@@ -1549,6 +1549,56 @@ class DocDescriptor(ModelDescriptor):
         # head_id
     ]
 
+class EventDescriptor(DocDescriptor):
+    localizable = True
+    scope = "archetype"
+    
+    # !+ phase out default_field_order...
+    fields = deepcopy(DocDescriptor.fields)
+    insert_field_after(fields, "owner_id",
+    F(name="group_id",
+        label="Group",
+        localizable=[
+            show("view edit add listing"),
+        ],
+        value_type="text",
+        render_type="single_select",
+        vocabulary="group",
+    ))
+    default_field_order = DocDescriptor.default_field_order[:]
+    default_field_order.insert(
+        default_field_order.index("owner_id") + 1, "group_id")
+    replace_field(fields,
+        # "non-legal" parliamentary documents may be added by any user
+        # !+GROUP_AS_OWNER(mr, apr-2012) for Event, a common case would be
+        # to be able to set a group (of the office/group member creating the
+        # event) as the owner (but Group is not yet polymorphic with User).
+        # For now we limit the owner of an Event to be simply the current
+        # logged in user:
+        F(name="owner_id",
+            label="Owner",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("edit"), # !+ displayed in view-mode... how to control this from config?
+                hide("view listing", "bungeni.Anonymous"),
+            ],
+            value_type="user", # !+user: constrained by "parent group" OR vocabulary
+            render_type="single_select",
+            vocabulary="owner_or_login",
+        ))
+    replace_field(fields,
+        F(name="doc_type",
+            label="Event Type",
+            required=True,
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="event_type",
+        ))
+
 
 # !+AuditLogView(mr, nov-2011) change listings do not respect this
 class ChangeDescriptor(ModelDescriptor):

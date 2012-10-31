@@ -347,6 +347,24 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
+    
+    <browser:menuItem menu="context_actions" 
+        for="bungeni.models.interfaces.IEvent"
+        action="edit"
+        title="Edit Event"
+        order="10"
+        permission="bungeni.event.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:menuItem menu="context_actions" 
+        for="bungeni.models.interfaces.IEvent"
+        action="delete"
+        title="Delete Event"
+        order="99"
+        permission="bungeni.event.Delete"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IHeading"
         title="Edit heading"

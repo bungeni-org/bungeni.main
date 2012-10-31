@@ -101,7 +101,7 @@ def catalyse_descriptors(module):
         # for which the domain type is mapped. Otherwise, ignore.
         domain_model = getattr(domain, naming.model_name(type_key), None)
         if not (domain_model and is_model_mapped(domain_model)):
-            log.warn("Not catalysing: %s" % (descriptor_name))
+            log.warn("Not catalysing: %s", descriptor_name)
             continue
         # type_info, register descriptor_model, domain_model
         ti = capi.get_type_info(type_key)
@@ -119,8 +119,9 @@ def catalyse_descriptors(module):
 
 
 def catalyse(ti):
-    log.info("CATALYSE: domain_model=%s, descriptor_model=%s" % (
-            ti.domain_model, ti.descriptor_model))
+    type_key = naming.polymorphic_identity(ti.domain_model)
+    log.info(" ----- CATALYSE: %s -----", type_key) 
+    log.debug("ti = %s", ti)
     generate_table_schema_interface(ti)
     apply_security(ti)
     generate_container_class(ti)
@@ -162,9 +163,7 @@ def generate_table_schema_interface(ti):
     implements.insert(0, derived_table_schema)
     ti.derived_table_schema = derived_table_schema
     setattr(INTERFACE_MODULE, table_schema_interface_name, derived_table_schema)
-    log.info("generate_table_schema_interface [model=%s] generated [%s.%s]" % (
-            ti.domain_model.__name__, INTERFACE_MODULE.__name__, 
-            table_schema_interface_name))
+    log.info("generate_table_schema_interface: %s", derived_table_schema)
     
     # if a conventionally-named domain interface exists, ensure that 
     # domain model implements it
@@ -179,13 +178,14 @@ def generate_table_schema_interface(ti):
 
 def apply_security(ti):
     domain_model, descriptor_model = ti.domain_model, ti.descriptor_model
-    log.debug("APPLY SECURITY: %s" % (domain_model))
+    type_key = naming.polymorphic_identity(domain_model)
+    log.debug("APPLY SECURITY: %s %s", type_key, domain_model)
     # first, "inherit" security settings of super classes i.e. equivalent of 
     # something like <require like_class=".domain.Doc" />
     for c in domain_model.__bases__:
         if c is object:
             continue
-        log.debug("    LIKE_CLASS: %s" % (c))
+        log.debug("    LIKE_CLASS: %s", c)
         protectLikeUnto(domain_model, c)
     
     # !+DECL permissions here--for CUSTOM types only, and SINCE r9946--override
@@ -196,7 +196,6 @@ def apply_security(ti):
     pv_type = "zope.Public" # view permission, for type
     pe_type = "zope.Public" # edit permission, for type
     if descriptor_model.scope == "custom":
-        type_key = naming.polymorphic_identity(domain_model)
         pv_type = "bungeni.%s.View" % (type_key)
         pe_type = "bungeni.%s.Edit" % (type_key)
     
@@ -213,7 +212,8 @@ def apply_security(ti):
     df_attrs = [ f.get("name") for f in descriptor_model.fields ]
     attrs = sorted(set(dts_attrs).union(set(df_attrs)))
     
-    log.debug("    DTS+Fields: %s, %s" % (ti.derived_table_schema, descriptor_model))
+    log.debug("    DTS+Fields: %s, %s", 
+        ti.derived_table_schema.__name__, descriptor_model.__name__)
     for n in attrs:
         # !+DECL special cases, do not override domain.zcml...
         if n in ("response_text",):
@@ -233,11 +233,11 @@ def apply_security(ti):
         protectSetAttribute(domain_model, n, pe)
         DTS = n in dts_attrs and "dts" or "   "
         DF = n in df_attrs and "df" or "  "
-        log.debug("         %s %s [%s]  view:%s  edit:%s  %x" % (
-                DTS, DF, n, pv, pe, id(model_field)))
+        log.debug("         %s %s [%s]  view:%s  edit:%s  %x",
+                DTS, DF, n, pv, pe, id(model_field))
         if n not in domain_model.__dict__:
-            log.debug("           ---- [%s] !+SCHEMA_FIELDS not in %s.__dict__" % (
-                    n, domain_model))
+            log.debug("           ---- [%s] !+SCHEMA_FIELDS not in %s.__dict__",
+                    n, domain_model)
     
     # container attributes (never a UI Field for these)
     log.debug("      __dict__: %s" % (domain_model))
@@ -246,32 +246,36 @@ def apply_security(ti):
         v = domain_model.__dict__[k]
         if isinstance(v, ManagedContainerDescriptor):
             if k in _view_protected:
-                log.debug("           ---- %s RESETTING..." % (k))
+                log.debug("           ---- %s RESETTING...", k)
             _view_protected.add(k)
             log.debug("        managed %s view:%s" % (k, "zope.Public"))
         elif isinstance(v, orm.attributes.InstrumentedAttribute):     
             if k in _view_protected:
-                log.debug("           ---- %s RESETTING..." % (k))
+                log.debug("           ---- %s RESETTING...", k)
             _view_protected.add(k)
-            log.debug("   instrumented [%s]  view:%s" % (k, "zope.Public"))
+            log.debug("   instrumented [%s]  view:%s", k, "zope.Public")
         else:
             log.debug("           ---- [%s] !+SCHEMA_FIELD IN __dict__ but NOT "
-                "instrumented OR managed" % (k))
+                "instrumented OR managed", k)
             continue
         if k not in attrs:
-            log.debug("           ---- [%s] !+SCHEMA_FIELDS not in attrs" % (k))
+            log.debug("           ---- [%s] !+SCHEMA_FIELDS not in attrs", k)
         protectName(domain_model, k, "zope.Public") #!+pv_type
     
-    # !+DECL dump permission_id required to getattr/setattr?
-    from zope.security import proxy, checker
+    # Dump permission_id required to getattr/setattr for "custom" types.
+    # We only dump the security settings for "custom" types as it only these 
+    # are processed AFTER that domain.zcml has been executed (for other types,
+    # loaded earlier during app startup, it is the settings in domain.zcml 
+    # (executed later during app startup) that ends up applying.
     if descriptor_model.scope == "custom":
+        from zope.security import proxy, checker
         dmc = checker.getChecker(proxy.ProxyFactory(domain_model()))
-        log.debug("       checker: %s" % (dmc))
+        log.debug("       checker: %s", dmc)
         for n in sorted(_view_protected.union(["response_text"])):
             g = dmc.get_permissions.get(n)
             s = dmc.set_permissions.get(n) #dmc.setattr_permission_id(n)
-            log.debug("                [%s]  get:%s  set:%s" % (
-                n, getattr(g, "__name__", g), s))
+            log.debug("                [%s]  get:%s  set:%s",
+                    n, getattr(g, "__name__", g), s)
 
 
 def generate_container_class(ti):

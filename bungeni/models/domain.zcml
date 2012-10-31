@@ -92,6 +92,36 @@
         -->
     </class>
     
+    <class class=".domain.Event">
+        <require like_class=".domain.Doc" />
+        <require permission="zope.View"
+            attributes="
+                event_date
+            "
+        />
+        <require permission="bungeni.event.Edit"
+            set_attributes="
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
+                title
+                description
+                language
+                body
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
+            "
+        />
+    </class>
+    
     <!-- !+DECL tmp special case -->
     <class class=".domain.Question">
         <require like_class=".domain.Doc" />

@@ -12,13 +12,11 @@ from zope.app.component.hooks import getSite
 
 import sqlalchemy.sql.expression as sql
 
+from bungeni.alchemist import Session
 from bungeni.alchemist import utils
 from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
-
-from bungeni.alchemist import Session
 from bungeni.core.workflow.interfaces import IWorkflow
-
 from bungeni.ui import browser
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
@@ -124,8 +122,11 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
 class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
     view_name = "heading"
     view_title = _("Headings")
-    states = (utils.get_workflow("heading").get_state("public").id,)
     model = domain.Heading
+    
+    @property
+    def states(self):
+        return (utils.get_workflow("heading").get_state("public").id,)
     
     def _item_url(self, item):
         return ""
@@ -152,38 +153,57 @@ class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
             )
         )
 
+
 # !+Schedulable{TYPE}Viewlets (and their registration) should be just one, 
 # parametrized on type_key
 class SchedulableBillsViewlet(SchedulableItemsViewlet):
     view_name = "bill"
     view_title = _("Bills")
-    states = utils.get_workflow("bill").get_state_ids(tagged=["tobescheduled"])
     model = domain.Bill
+    
+    @property
+    def states(self):
+        return utils.get_workflow("bill").get_state_ids(tagged=["tobescheduled"])
 
 class SchedulableQuestionsViewlet(SchedulableItemsViewlet):
     view_name = "question"
     view_title = _("Questions")
-    states = utils.get_workflow("question").get_state_ids(tagged=["tobescheduled"])
     model = domain.Question
+    
+    @property
+    def states(self):
+        return utils.get_workflow("question").get_state_ids(tagged=["tobescheduled"])
+
 
 class SchedulableMotionsViewlet(SchedulableItemsViewlet):
     view_name = "motion"
     view_title = _("Motions")
-    states = utils.get_workflow("motion").get_state_ids(tagged=["tobescheduled"])
     model = domain.Motion
+    
+    @property
+    def states(self):
+        return utils.get_workflow("motion").get_state_ids(tagged=["tobescheduled"])
+
 
 class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
     view_name = "tableddocument"
     view_title = _("Tabled documents")
-    states = utils.get_workflow("tabled_document").get_state_ids(tagged=["tobescheduled"])
     model = domain.TabledDocument
+    
+    @property
+    def states(self):
+        return utils.get_workflow("tabled_document").get_state_ids(tagged=["tobescheduled"])
+
 
 class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
     view_name = "agendaitem"
     view_title = _("Agenda items")
     visible = True
-    states = utils.get_workflow("agenda_item").get_state_ids(tagged=["tobescheduled"])
     model = domain.AgendaItem
+    
+    @property
+    def states(self):
+        return utils.get_workflow("agenda_item").get_state_ids(tagged=["tobescheduled"])
     
     def get_group_id(self):
         parent=self.context

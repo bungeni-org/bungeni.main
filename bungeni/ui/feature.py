@@ -74,6 +74,9 @@ def apply_customization_ui():
     _decls = []
     # we assume that non-custom types have already been set up as needed
     for type_key, ti in capi.iter_type_info(scope="custom"):
+        _decls.append("""
+            
+            <!-- {type_key} -->""".format(type_key=type_key))
         
         type_title = naming.split_camel(naming.model_name(type_key))
         model_interface_qualname = "bungeni.models.interfaces.%s" % (
@@ -113,4 +116,5 @@ def apply_customization_ui():
     zcml = ZCML_SLUG.format(zcml_decls="".join([ zd for zd in _decls ]))
     log.debug("Executing UI feature configuration:\n%s" % (zcml))
     xmlconfig.string(zcml)
+
 
