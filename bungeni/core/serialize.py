@@ -189,6 +189,12 @@ def publish_to_xml(context):
             delivery_mode=2
         )
     )
+    
+    #clean up - remove any files if zip was created
+    if files:
+        prev_xml_file = "%s.%s" %(file_path, "xml")
+        if os.path.exists(prev_xml_file):
+            os.remove(prev_xml_file)
 
 
 def serialize(data, name="object"):
