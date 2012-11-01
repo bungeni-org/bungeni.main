@@ -26,7 +26,32 @@ from bungeni.core import audit
 from bungeni.utils import naming
 
 
+# utils
+
+def set_one2many_attr(kls, name, container_qualname, rel_attr):
+    """Add an alchemist container attribute to kls. 
+    These attributes are only catalysed (re-instrumented on kls) if defined 
+    directly on kls i.e. are not inherited, must be defined on each class.
+    """
+    assert not kls.__dict__.has_key(name), \
+        "type %s already has a %r attribute %r" % (kls, name, kls.__dict__[name])
+    setattr(kls, name, one2many(name, container_qualname, rel_attr))
+    assert kls.__dict__.has_key(name)
+
+
 # domain models
+
+def configurable_domain(kls, workflow):
+    """Executed on adapters.load_workflow().
+    """
+    for feature in workflow.features:
+        if feature.enabled:
+            assert feature.name in kls.available_dynamic_features, \
+                "Class [%s] does not allow dynamic feature [%s]" % (
+                    kls, feature.name)
+            feature_decorator = globals()["feature_%s" % (feature.name)]
+            kls = feature_decorator(kls, **feature.params)
+    return kls
 
 def feature_audit(kls, **params):
     """Decorator for domain types to support "audit" feature.
@@ -52,8 +77,8 @@ def feature_audit(kls, **params):
             return domain.Audit
         audit_kls = base_audit_class(kls).auditFactory(kls)
         setattr(domain, audit_kls.__name__, audit_kls)
-        # set_auditor
-        audit.set_auditor(kls)
+    # set_auditor
+    audit.set_auditor(kls)
     return kls
 # keep track of domain classes for which an audit class was created dynamically
 feature_audit.CREATED_AUDIT_CLASS_FOR = set()
@@ -76,6 +101,8 @@ def feature_attachment(kls, **params):
     # domain.Attachment itself may NOT support attachments
     assert not interfaces.IAttachment.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureAttachment)
+    set_one2many_attr(kls, "files", 
+        "bungeni.models.domain.AttachmentContainer", "head_id")
     return kls
 
 def feature_event(kls, **params):
@@ -85,6 +112,8 @@ def feature_event(kls, **params):
     # domain.Event itself may NOT support events
     assert not interfaces.IEvent.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureEvent)
+    set_one2many_attr(kls, "events", 
+        "bungeni.models.domain.EventContainer", "head_id")
     return kls
 
 def feature_signatory(kls, **params):
@@ -93,7 +122,7 @@ def feature_signatory(kls, **params):
     """
     from bungeni.models.signatories import createManagerFactory
     interface.classImplements(kls, interfaces.IFeatureSignatory)
-    kls.signatories = one2many("signatories", 
+    set_one2many_attr(kls, "signatories", 
         "bungeni.models.domain.SignatoryContainer", "head_id")
     createManagerFactory(kls, **params)
     return kls
@@ -110,6 +139,12 @@ def feature_address(kls, **params):
     For User and Group types, means support for possibility to have addresses.
     """
     interface.classImplements(kls, interfaces.IFeatureAddress)
+    if issubclass(kls, domain.Group):
+        set_one2many_attr(kls, "addresses",
+            "bungeni.models.domain.GroupAddressContainer", "group_id")
+    elif issubclass(kls, domain.User):
+        set_one2many_attr(kls, "addresses",
+            "bungeni.models.domain.UserAddressContainer", "user_id")
     return kls
 
 def feature_workspace(kls):
@@ -141,20 +176,8 @@ def feature_group_assignment(kls, **params):
     """Decorator for domain types that support "group_assignment" feature.
     """
     interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
-    kls.group_assignments = one2many("group_assignments",
+    set_one2many_attr(kls, "group_assignments",
         "bungeni.models.domain.GroupDocumentAssignmentContainer", "doc_id")
-    return kls
-
-def configurable_domain(kls, workflow):
-    """Executed on adapters.load_workflow().
-    """
-    for feature in workflow.features:
-        if feature.enabled:
-            assert feature.name in kls.dynamic_features, \
-                "Class [%s] does not allow dynamic feature [%s]" % (
-                    kls, feature.name)
-            feature_decorator = globals()["feature_%s" % (feature.name)]
-            kls = feature_decorator(kls, **feature.params)
     return kls
 
 

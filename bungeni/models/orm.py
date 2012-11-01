@@ -729,7 +729,7 @@ mapper(domain.ObjectTranslation, schema.translation)
 
 
 # !+IChange-vertical-properties special case: 
-# class is NOT workflowed, and in any case has no dynamic_features
+# class is NOT workflowed, and in any case has no available_dynamic_features
 mapper_add_relation_vertical_properties(domain.Change)
 
 
