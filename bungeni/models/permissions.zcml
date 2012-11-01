@@ -191,8 +191,6 @@
   <permission id="bungeni.signatory.Append" title="Append signature to a document" />
 
   
-  <permission id="bungeni.reports.Edit" title="Permission to generate report" />
-    
   <permission id="bungeni.translation.Add" title="add translation" />
   
   <permission id="bungeni.user_assignment.View" title="View User Assignment" />

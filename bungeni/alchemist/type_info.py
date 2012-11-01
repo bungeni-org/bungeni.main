@@ -225,7 +225,6 @@ TYPE_REGISTRY = [
     ("heading", TI("heading", interfaces.IHeading)),
     ("user", TI("user", interfaces.IBungeniUser)),
     ("signatory", TI("signatory", interfaces.ISignatory)),
-    ("report", TI("report", interfaces.IReport)),
     
     # !+NAMING: member-related -> Group name + "Member" (no + "ship")
     ("group", TI("group", interfaces.IBungeniGroup)),

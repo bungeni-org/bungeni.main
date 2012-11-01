@@ -199,11 +199,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.signatory.wf.consented.withdrawn" role="bungeni.Owner" />
 
 
-<!-- report -->
-<grant permission="bungeni.reports.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.reports.Edit" role="bungeni.Speaker" />
-
-
 <!-- group -->
 <permission id="bungeni.group.View" title="bungeni.group.View" />
 <permission id="bungeni.group.Edit" title="bungeni.group.Edit" />
@@ -693,6 +688,15 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tabled_document.wf.admissible.withdrawn" title="Withdraw" />
 <grant permission="bungeni.tabled_document.wf.admissible.withdrawn" role="bungeni.Clerk" />
 <grant permission="bungeni.tabled_document.wf.admissible.withdrawn" role="bungeni.Owner" />
+
+
+<!-- report -->
+<permission id="bungeni.report.View" title="bungeni.report.View" />
+<permission id="bungeni.report.Edit" title="bungeni.report.Edit" />
+<permission id="bungeni.report.Add" title="bungeni.report.Add" />
+<permission id="bungeni.report.Delete" title="bungeni.report.Delete" />
+<grant permission="bungeni.report.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.report.Edit" role="bungeni.Speaker" />
 
 
 <!-- committee -->

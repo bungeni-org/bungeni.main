@@ -750,8 +750,6 @@ class DocVersion(Version):
 class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
-    available_dynamic_features = ["audit", "version", "attachment", "event", "signatory", 
-        "schedule", "workspace", "notification", "download", "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -1093,14 +1091,15 @@ class Report(Doc):
     """
     available_dynamic_features = ["audit", "version", "download"]
     interface.implements(interfaces.ITranslatable)
-    
+
 
 class SittingReport(Entity):
     """Which reports are created for this sitting.
     """
 
 # !+Report4Sitting((mr, apr-2012) naming!
-class Report4Sitting(Report):
+# !+Report4Sitting why was this inheriting from Report ?!
+class Report4Sitting(SittingReport):
     """Display reports for a sitting.
     """
 

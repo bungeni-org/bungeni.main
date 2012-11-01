@@ -1385,7 +1385,7 @@
         for="bungeni.core.interfaces.ISchedulingContext"
         action="create-report"
         title="Create reports"
-        permission="bungeni.reports.Edit"
+        permission="bungeni.report.Edit"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         order="40"
     />

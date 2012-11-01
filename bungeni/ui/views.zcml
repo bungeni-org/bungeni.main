@@ -196,7 +196,7 @@
      <!-- !+Reports(mb, 09-2011) To use one interface for registration. -->
      <browser:page name="create-report"
         for="*"
-        permission="bungeni.reports.Edit"
+        permission="bungeni.report.Edit"
         class=".reports.ReportBuilder"
     />
   <!-- Calendar -->

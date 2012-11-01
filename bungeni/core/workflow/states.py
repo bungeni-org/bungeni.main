@@ -543,7 +543,8 @@ class Workflow(object):
         if tagged:
             wf_tagged = [ t for t in tagged if t in self.tags ]
             if restrict:
-                assert wf_tagged==tagged
+                assert wf_tagged==tagged, \
+                    "workflow_tagged %s != tagged %s" % (wf_tagged, tagged)
             # for tagged, we only need to consider known tags
             _tagged = set()
             if wf_tagged:
