@@ -377,9 +377,4 @@ def set_auditor(kls):
     # /debug check of repeat calls
     globals()[auditor_name] = _AuditorFactory(audit_tbl, audit_kls)
 
-# !+ITER_TYPE_INFO
-for kls in domain.feature_audit.DECORATED:
-    set_auditor(kls)
-
-#
 

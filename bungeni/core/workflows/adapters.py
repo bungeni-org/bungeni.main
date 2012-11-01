@@ -118,9 +118,9 @@ def apply_customization_workflow(type_key, ti):
     # dynamic features from workflow
     wf = ti.workflow
     # decorate/modify domain/schema/mapping as needed
-    from bungeni.models import domain, orm
-    domain_model = domain.configurable_domain(domain_model, wf)
-    orm.configurable_mappings(domain_model)
+    from bungeni.models import feature
+    domain_model = feature.configurable_domain(domain_model, wf)
+    feature.configurable_mappings(domain_model)
     
     # !+ following should be part of the domain.feature_audit(domain_model) logic
     if wf.has_feature("audit"):

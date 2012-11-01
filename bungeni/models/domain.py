@@ -21,7 +21,7 @@ import ore.xapian.interfaces
 from bungeni import alchemist
 from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
-from sqlalchemy.orm import class_mapper, object_mapper
+from sqlalchemy.orm import object_mapper
 
 from bungeni.models import interfaces
 
@@ -129,148 +129,6 @@ class Entity(object):
         """
         return [ (c.name, getattr(self, c.name))
              for c in object_mapper(self).primary_key ]
-
-# Features (as per a deployment's configuration) - decorators for domain types
-# to support a "feature", to collect in one place all that is needed for the 
-# domain type to support that "feature".
-# 
-# The quality of a domain type to support a specific feature is externalized 
-# as a localization parameter, and its implementation must thus be completely 
-# isolated, depending only on that one declaration.
-
-def feature_audit(kls, **params):
-    """Decorator for domain types to support "audit" feature.
-    """
-    interface.classImplements(kls, interfaces.IFeatureAudit)
-    # If a domain class is explicitly defined, then it is assumed that all 
-    # necessary setup is also taken care of. Typically, only the sub-classes
-    # of an archetype (mapped to a same table) need dynamic creation/setup.
-    def audit_cls_exists_for(auditable_cls):
-        audit_cls_name = "%sAudit" % (auditable_cls.__name__)
-        return bool(globals().get(audit_cls_name))
-    if not audit_cls_exists_for(kls):
-        # define {kls}Audit class
-        feature_audit.CREATED_AUDIT_CLASS_FOR.add(kls)
-        def base_audit_class(kls):
-            """Identify what should be the BASE audit class for a 
-            {kls}Audit class to inherit from, and return it.
-            """
-            # !+ may have a deeper inheritance
-            # !+ other archetypes
-            if kls is not Doc and issubclass(kls, Doc):
-                return DocAudit
-            return Audit
-        audit_kls = base_audit_class(kls).auditFactory(kls)
-        globals()[audit_kls.__name__] = audit_kls
-    # !+ITER_TYPE_INFO remember decorated classes, for audit.set_auditor(kls), 
-    # that is called quite early, and capi.iter_type_info() is not yet ready...
-    feature_audit.DECORATED.add(kls)
-    return kls
-# keep track of decorated domain classes
-feature_audit.DECORATED = set()
-# keep track of domain classes for which an audit class was created dynamically
-feature_audit.CREATED_AUDIT_CLASS_FOR = set()
-
-def feature_version(kls, **params):
-    """Decorator for domain types to support "version" feature.
-    """
-    # domain.Version itself may NOT support versions
-    assert not interfaces.IVersion.implementedBy(kls)
-    # !+ @version requires @audit
-    assert interfaces.IFeatureAudit.implementedBy(kls)
-    interface.classImplements(kls, interfaces.IFeatureVersion)
-    return kls
-
-def feature_attachment(kls, **params):
-    """Decorator for domain types to support "attachment" feature.
-    !+ currently assumes that kls is versionable.
-    """
-    # !+ domain.Attachment is versionable
-    # domain.Attachment itself may NOT support attachments
-    assert not interfaces.IAttachment.implementedBy(kls)
-    interface.classImplements(kls, interfaces.IFeatureAttachment)
-    return kls
-
-def feature_event(kls, **params):
-    """Decorator for domain types to support "event" feature.
-    For Doc types (other than Event itself).
-    """
-    # domain.Event itself may NOT support events
-    assert not interfaces.IEvent.implementedBy(kls)
-    interface.classImplements(kls, interfaces.IFeatureEvent)
-    return kls
-
-def feature_signatory(kls, **params):
-    """Decorator for domain types to support "signatory" feature.
-    For Doc types.
-    """
-    from bungeni.models.signatories import createManagerFactory
-    interface.classImplements(kls, interfaces.IFeatureSignatory)
-    kls.signatories = one2many("signatories", 
-        "bungeni.models.domain.SignatoryContainer", "head_id")
-    createManagerFactory(kls, **params)
-    return kls
-
-def feature_schedule(kls, **params):
-    """Decorator for domain types to support "schedule" feature.
-    For Doc types, means support for being scheduled in a group sitting.
-    """
-    interface.classImplements(kls, interfaces.IFeatureSchedule)
-    return kls
-
-def feature_address(kls, **params):
-    """Decorator for domain types to support "address" feature.
-    For User and Group types, means support for possibility to have addresses.
-    """
-    interface.classImplements(kls, interfaces.IFeatureAddress)
-    return kls
-
-def feature_workspace(kls):
-    """Decorator for domain types that support "workspace" feature.
-    """
-    interface.classImplements(kls, interfaces.IFeatureWorkspace)
-    return kls
-
-def feature_notification(kls):
-    """Decorator for domain types to support "notification" feature.
-    """
-    interface.classImplements(kls, interfaces.IFeatureNotification)
-    return kls
-
-def feature_download(kls):
-    """Decorator for domain types that support downloading as 
-    pdf/odt/rss/akomanoto
-    """
-    interface.classImplements(kls, interfaces.IFeatureDownload)
-    return kls
-
-def feature_user_assignment(kls, **params):
-    """Decorator for domain types that support "user_assignment" feature.
-    """
-    interface.classImplements(kls, interfaces.IFeatureUserAssignment)
-    return kls
-
-def feature_group_assignment(kls, **params):
-    """Decorator for domain types that support "group_assignment" feature.
-    """
-    interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
-    kls.group_assignments = one2many("group_assignments",
-        "bungeni.models.domain.GroupDocumentAssignmentContainer", "doc_id")
-    return kls
-    
-def configurable_domain(kls, workflow):
-    """Executed on adapters.load_workflow().
-    """
-    for feature in workflow.features:
-        if feature.enabled:
-            assert feature.name in kls.dynamic_features, \
-                "Class [%s] does not allow dynamic feature [%s]" % (
-                    kls, feature.name)
-            feature_decorator = globals()["feature_%s" % (feature.name)]
-            kls = feature_decorator(kls, **feature.params)
-    return kls
-
-# /Features
 
 
 class User(Entity):
@@ -598,6 +456,7 @@ class GroupAddress(Address):
 # !+could be a class decorator 
 def instrument_extended_properties(cls, object_type, from_class=None):
     # !+class not yet mapped
+    #from sqlalchemy.orm import class_mapper
     #object_type = class_mapper(cls).local_table.name 
     if from_class is None:
         from_class = cls
