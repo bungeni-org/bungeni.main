@@ -39,6 +39,12 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
 class WorkspaceDocumentNavigation(WorkspaceContextNavigation):
     css_class = "workspace-documents"
 
+class WorkspaceDocMarker(StructureAwareViewlet):
+    """Adds a hidden div in the doc view that marks
+    that the workspace count should be loaded
+    """
+    render = ViewPageTemplateFile("templates/workspace-doc-marker.pt")
+
 
 class WorkspaceUnderConsiderationNavigation(WorkspaceContextNavigation):
    

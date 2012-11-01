@@ -10,6 +10,14 @@
         class=".workspace.WorkspaceDocumentNavigation"
         weight="1"
     />
+    <browser:viewlet name="bungeni.workspace_document_marker"
+        for="bungeni.models.interfaces.IDoc"
+        layer="..interfaces.IWorkspaceMyDocumentsSectionLayer"
+        permission="bungeni.ui.workspace.View"
+        manager="ploned.ui.interfaces.ILeftColumnManager"
+        class=".workspace.WorkspaceDocMarker"
+        weight="2"
+    />
     <browser:viewlet name="bungeni.workspace_under_consideration_navigation"
         layer="..interfaces.IWorkspaceUnderConsiderationSectionLayer"
         permission="bungeni.ui.workspace.View"

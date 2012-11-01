@@ -122,11 +122,14 @@ class WorkspaceBaseContainer(AlchemistContainer):
                     statuses = self.workspace_config.get_status(
                         role, domain_class, self.__name__)
                     if kw.get("filter_status", None):
-                        if kw["filter_status"] in statuses:
+                        if (kw["filter_status"] in statuses and
+                            kw["filter_status"] not in
+                            domain_status[domain_class]):
                             domain_status[domain_class].append(
                                 kw["filter_status"])
                     else:
-                        domain_status[domain_class].extend(statuses)
+                        domain_status[domain_class] = list(set(
+                                domain_status[domain_class] + statuses))
         else:
             domain_status = self.domain_status(roles, self.__name__)
             if kw.get("filter_status", None):
@@ -298,7 +301,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             query = self.order_query(query, domain_class, kw, reverse)
             for obj in query.all():
                 if obj in results:
-                    break
+                    continue
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
                     if (prm.getSetting(obj_role, principal.id) == Allow):
@@ -322,7 +325,6 @@ class WorkspaceContainer(WorkspaceBaseContainer):
     def count(self, read_from_cache=True):
         """Count of items in a container
         """
-        kw = {}
         principal = utils.get_principal()
         if (read_from_cache and principal.id in self.tab_count_cache.keys() and
                 (self.tab_count_cache[principal.id].timestamp +
@@ -352,11 +354,11 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
 
 class WorkspaceContainerTraverser(SimpleComponentTraverser):
     """Traverser for workspace containers"""
-    
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
-    
+
     def publishTraverse(self, request, name):
         """First checks if the name refers to a view of this container,
         then checks if the name refers to an item in this container,
