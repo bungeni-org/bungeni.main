@@ -171,7 +171,7 @@ def generate_table_schema_interface(ti):
     model_interface = getattr(INTERFACE_MODULE, model_interface_name, None)
     if model_interface is not None:
         if model_interface not in bases and model_interface not in implements:
-            implements.append(model_interface)
+            implements.insert(0, model_interface)
     # apply implemented interfaces
     interface.classImplementsOnly(ti.domain_model, *implements)
 
