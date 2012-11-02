@@ -346,6 +346,7 @@ class _AuditorFactory(object):
 
 
 # module-level dedicated auditor singleton instance per auditable class
+# !+type_info should we add audit_model and auditor?
 
 def get_auditor(ob):
     """Get the module-level dedicated auditor singleton instance for the 
@@ -360,7 +361,8 @@ def set_auditor(kls):
     name = kls.__name__
     auditor_name = "%sAuditor" % (name)
     log.debug("Setting AUDITOR %s [for type %s]" % (auditor_name, name))
-    audit_kls = getattr(domain, "%sAudit" % (name))
+    from bungeni.alchemist.catalyst import MODEL_MODULE
+    audit_kls = getattr(MODEL_MODULE, "%sAudit" % (name))
     audit_tbl = getattr(schema, domain.get_audit_table_name(kls))
     # !+debug check of repeat calls
     auditor = globals().get(auditor_name)

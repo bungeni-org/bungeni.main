@@ -56,12 +56,6 @@ def on_wsgi_application_created_event(application, event):
         if ti.workflow:
             ti.workflow.validate_permissions_roles()
     
-    # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
-    # when *all* workflows are loaded.
-    # check/regenerate zcml directives for workflows
-    from bungeni.core.workflow import xmlimport
-    xmlimport.zcml_check_regenerate()
-    
     # import events module, registering handlers
     import bungeni.core.workflows.events
     

@@ -104,28 +104,22 @@ def load_workflow(type_key, workflow_key,
                 log.debug("          %s" % (p,))
     return wf
 
+
 def apply_customization_workflow(type_key, ti):
     """Apply customizations, features as per configuration from a workflow. 
     Must (currently) be run after db setup.
     """
-    domain_model = ti.domain_model
+    domain_model, workflow = ti.domain_model, ti.workflow
+    assert domain_model and workflow, ti
     # We "mark" the domain class with IWorkflowed, to be able to 
     # register/lookup adapters generically on this single interface.
-    #assert not IWorkflowed.implementedBy(domain_model), domain_model
+    #!+directlyImplementedBy? assert not IWorkflowed.implementedBy(domain_model), domain_model
     if not IWorkflowed.implementedBy(domain_model):
         classImplements(domain_model, IWorkflowed)
-    
-    # dynamic features from workflow
-    wf = ti.workflow
-    # decorate/modify domain/schema/mapping as needed
+    # dynamic features from workflow - setup domain/mapping as needed
     from bungeni.models import feature
-    domain_model = feature.configurable_domain(domain_model, wf)
+    feature.configurable_domain(domain_model, workflow)
     feature.configurable_mappings(domain_model)
-    
-    # !+ following should be part of the domain.feature_audit(domain_model) logic
-    if wf.has_feature("audit"):
-        # create/set module-level dedicated auditor singleton for auditable domain_model
-        bungeni.core.audit.set_auditor(domain_model)
 
 
 def load_workflows(type_info_iterator):
@@ -244,6 +238,12 @@ def _setup_all():
     register_custom_types()
     load_workflows(capi.iter_type_info(scope="custom"))
     setup_workflows(capi.iter_type_info(scope="custom"))
+    
+    # check/regenerate zcml directives for workflows - needs to be when and 
+    # right-after *all* workflows are loaded (to pre-empt further application 
+    # loading with possibly stale permission configuration).
+    from bungeni.core.workflow import xmlimport
+    xmlimport.zcml_check_regenerate()
 
 # do it (when this module is loaded)
 _setup_all()
