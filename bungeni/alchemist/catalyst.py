@@ -11,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # List everything from this module intended for package-external use.
 __all__ = [
-    "catalyse_descriptors"
+    "catalyse_system_descriptors"
     #"SQLAlchemySchemaTranslator", # alias -> ore.alchemist.sa2zs
     #"transmute",        # alias -> ore.alchemist.sa2zs !+ALCHEMIST_INTERNAL
 ]
@@ -51,12 +51,12 @@ import bungeni.models.domain as CONTAINER_MODULE
 #import bungeni.ui.content as UI_MODULE
 
 
-def catalyse_descriptors(module):
-    """Catalyze descriptor classes (with by-name-convention associated model 
-    class) in specified module.
+def catalyse_system_descriptors(module):
+    """Catalyze system descriptor classes (with by-name-convention associated 
+    model class) in specified module.
     
     Called when ui.descriptor is initially imported, so before descriptors for 
-    custom types have been created (that happens on fist call to 
+    custom types have been created (that happens on first call to 
     localization.localize_descriptors on application created event).
     """
     import sys
@@ -119,6 +119,9 @@ def catalyse_descriptors(module):
 
 
 def catalyse(ti):
+    """Called from catalyse_system_descriptors here (for system descriptors) 
+    AND from ui.descriptor.localization.new_descriptor_cls for custom types.
+    """
     type_key = naming.polymorphic_identity(ti.domain_model)
     log.info(" ----- CATALYSE: %s -----", type_key) 
     log.debug("ti = %s", ti)
@@ -130,10 +133,17 @@ def catalyse(ti):
 
 
 def generate_table_schema_interface(ti):
-    
+    '''!+DO_NOT_REORDER_USER_APPLIED_INTERFACES
     def get_domain_interfaces(domain_model):
         """Return the domain bases for an interface as well as a filtered 
         implements only list (base interfaces removed).
+        
+        Note that for 2nd level (mapped) domain classes i.e. those that inherit
+        from another domain class e.g. Event(Doc), Office(Group), 
+        OfficeMember(GroupMembership), an IIModelInterface-providing 
+        I*TableSchema interface had already been created (for base class) and 
+        assigned to the super class--and that interface will match as one of 
+        the domain_base interfaces here.
         """
         domain_bases = []
         domain_implements = []
@@ -144,38 +154,57 @@ def generate_table_schema_interface(ti):
                 domain_implements.append(iface)
         domain_bases = tuple(domain_bases) or (IAlchemistContent,)
         return domain_bases, domain_implements
+    bases, implements = get_domain_interfaces(ti.domain_model)
+    '''
     
     # derived_table_schema:
     # - ALWAYS dynamically generated
-    # - directlyProvides IIModelInterface
+    # - directlyProvides IIModelInterface (by virtue of IAlchemistContent)
     type_key = naming.polymorphic_identity(ti.domain_model)
     # use the class's mapper select table as input for the transformation
     table_schema_interface_name = naming.table_schema_interface_name(type_key)
     domain_table = utils.get_local_table(ti.domain_model)
-    bases, implements = get_domain_interfaces(ti.domain_model)
+    
     derived_table_schema = transmute(
         domain_table,
         annotation=ti.descriptor_model,
         interface_name=table_schema_interface_name,
         __module__=INTERFACE_MODULE.__name__,
-        bases=bases)
-    # add derived_table_schema, register on type_info, set on INTERFACE_MODULE
-    implements.insert(0, derived_table_schema)
-    ti.derived_table_schema = derived_table_schema
+        #_generated_by="bungeni.alchemist.catalyst.generate_table_schema_interface"
+        #bases=bases)
+        bases=(IAlchemistContent,))
+    
+    # apply, register on type_info, set on module
+    interface.classImplements(ti.domain_model, derived_table_schema)
+    utils.inisetattr(ti, "derived_table_schema", derived_table_schema)
     setattr(INTERFACE_MODULE, table_schema_interface_name, derived_table_schema)
     log.info("generate_table_schema_interface: %s", derived_table_schema)
     
-    # if a conventionally-named domain interface exists, ensure that 
-    # domain model implements it
+    # defensive sanity check - that derived_table_schema is precisely the FIRST
+    # resolving IIModelInterface-providing interface implemented by domain_model
+    # !+ this failing does not necessarily mean an incorrectness
+    for iface in interface.implementedBy(ti.domain_model):
+        if IIModelInterface.providedBy(iface):
+            assert iface is derived_table_schema, (ti.domain_model, 
+                iface, id(iface), 
+                derived_table_schema, id(derived_table_schema))
+            break
+    
+    '''!+DO_NOT_REORDER_USER_APPLIED_INTERFACES
+    # prepend derived_table_schema, register on type_info, set on INTERFACE_MODULE
+    implements.insert(0, derived_table_schema)
+
+    # if a conventionally-named domain interface exists, domain model must implement it
     model_interface_name = naming.model_interface_name(type_key)
     model_interface = getattr(INTERFACE_MODULE, model_interface_name, None)
     if model_interface is not None:
-        if model_interface not in bases and model_interface not in implements:
-            implements.insert(0, model_interface)
+        assert model_interface in implements, model_interface        
+    
     # apply implemented interfaces
     interface.classImplementsOnly(ti.domain_model, *implements)
+    '''
 
-
+    
 def apply_security(ti):
     domain_model, descriptor_model = ti.domain_model, ti.descriptor_model
     type_key = naming.polymorphic_identity(domain_model)
@@ -191,7 +220,7 @@ def apply_security(ti):
     # !+DECL permissions here--for CUSTOM types only, and SINCE r9946--override
     # what is defined in domain.zcml, as opposed to vice-versa (probably 
     # because CUSTOM types are setup at a later stage). 
-    # So (for CUSTOM types only) we use the parametrized 
+    # So (for CUSTOM types only?) we use the parametrized 
     # bungeni.{type_key}.{Mode} as the view/edit permission:
     pv_type = "zope.Public" # view permission, for type
     pe_type = "zope.Public" # edit permission, for type

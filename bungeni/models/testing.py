@@ -87,15 +87,3 @@ def get_audit_count_for_type(type_key):
             domain.Audit.audit_type==type_key) ])
 
 
-def catalyse_descriptors():
-    # !+CATALYSE_DESCRIPTORS(mr, jun-2012) this should not be necessary here
-    # (in addition to making UI a CORE dependency!), but without this trying 
-    # IWorkflow(question) in the tests resyults in a could-not-adapt error. 
-    # Note: prior to r9413 the equivalent of the following was being executed 
-    # on import of bungeni.ui.descriptor.
-    from bungeni.alchemist import catalyst 
-    from bungeni.ui.descriptor import descriptor
-    catalyst.catalyse_descriptors(descriptor)
-# do once for all core tests
-catalyse_descriptors()
-

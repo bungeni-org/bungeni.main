@@ -192,9 +192,10 @@ class AdminUser(Entity):
     """An admin user"""
 
 class UserDelegation(Entity):
-    """ Delgate rights to act on behalf of a user 
-    to another user """
-    
+    """Delgate rights to act on behalf of a user to another user .
+    """
+    interface.implements(interfaces.IUserDelegation)
+
 class CurrentlyEditingDocument(object):
     """The document (parliamentary item) 
     that the user is currently being editing"""
@@ -265,6 +266,7 @@ class OfficesHeld(Entity):
 class CommitteeStaff(GroupMembership):
     """Committee Staff.
     """
+    interface.implements(interfaces.ICommitteeStaff)
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
     subroles = one2many(
@@ -280,6 +282,7 @@ class GroupMembershipRole(Entity):
 class GroupDocumentAssignment(Entity):
     """Association between a doc and groups it's been assigned to
     """
+    interface.implements(interfaces.IGroupDocumentAssignment)
 
 # auditable (by default), but not a Doc
 class Sitting(Entity):
@@ -287,6 +290,7 @@ class Sitting(Entity):
     """
     available_dynamic_features = ["audit", "version", "attachment"]
     interface.implements(
+        interfaces.ISitting,
         interfaces.ITranslatable,
     )
     attendance = one2many("attendance",
@@ -299,6 +303,9 @@ class Sitting(Entity):
 class SittingAttendance(Entity):
     """A record of attendance at a meeting .
     """
+    interface.implements(
+        interfaces.ISittingAttendance,
+    )
 
 
 #############
@@ -306,6 +313,7 @@ class SittingAttendance(Entity):
 class Parliament(Group):
     """A parliament.
     """
+    interface.implements(interfaces.IParliament)
     sessions = one2many("sessions",
         "bungeni.models.domain.SessionContainer", "parliament_id")
     committees = one2many("committees",
@@ -336,6 +344,7 @@ class Parliament(Group):
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
     """
+    interface.implements(interfaces.IMemberOfParliament)
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
     # !+MEMBER_ADDRESSES(mr, oct-2012) is it correct to assume that all 
@@ -346,7 +355,10 @@ class MemberOfParliament(GroupMembership):
 class PoliticalGroup(Group):
     """A political group in a parliament.
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(
+        interfaces.IPoliticalGroup,
+        interfaces.ITranslatable
+    )
     group_members = one2many("group_members",
         "bungeni.models.domain.PoliticalGroupMemberContainer", "group_id")
     title_types = one2many("title_types",
@@ -354,18 +366,27 @@ class PoliticalGroup(Group):
 class PoliticalGroupMember(GroupMembership):
     """Member of a political group, defined by its group membership.
     """
+    interface.implements(
+        interfaces.IPoliticalGroupMember,
+    )
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 class Government(Group):
     """A government.
     """
+    interface.implements(
+        interfaces.IGovernment,
+    )
     ministries = one2many("ministries",
         "bungeni.models.domain.MinistryContainer", "parent_group_id")
 
 class Ministry(Group):
     """A government ministry.
     """
+    interface.implements(
+        interfaces.IMinistry,
+    )
     ministers = one2many("ministers",
         "bungeni.models.domain.MinisterContainer", "group_id")
     # !+MINISTRY_ID(mr, jun-2012) alchemist does not want target attribute to 
@@ -381,6 +402,9 @@ class Ministry(Group):
 class Minister(GroupMembership):
     """A Minister defined by its user_group_membership in a ministry (group).
     """
+    interface.implements(
+        interfaces.IMinister,
+    )
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
@@ -388,6 +412,7 @@ class Minister(GroupMembership):
 class Committee(Group):
     """A parliamentary committee of MPs.
     """
+    interface.implements(interfaces.ICommittee)
     # !+ManagedContainer(mr, oct-2010) why do all these Managed container 
     # attributes return a list of processed-id-derived strings instead of the 
     # list of actual objects in question? 
@@ -407,6 +432,7 @@ class Committee(Group):
 class CommitteeMember(GroupMembership):
     """A Member of a committee defined by its membership to a committee (group).
     """
+    interface.implements(interfaces.ICommitteeMember)
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
@@ -414,6 +440,9 @@ class Office(Group):
     """Parliamentary Office like speakers office, clerks office etc. 
     Internal only.
     """
+    interface.implements(
+        interfaces.IOffice,
+    )
     officemembers = one2many("officemembers",
         "bungeni.models.domain.OfficeMemberContainer", "group_id")
     title_types = one2many("title_types",
@@ -422,6 +451,9 @@ class Office(Group):
 class OfficeMember(GroupMembership):
     """Clerks, .... 
     """
+    interface.implements(
+        interfaces.IOfficeMember,
+    )
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
     subroles = one2many(
@@ -438,9 +470,11 @@ class Address(HeadParentedMixin, Entity):
 class UserAddress(Address):
     """User address (personal)
     """
+    interface.implements(interfaces.IUserAddress)
 class GroupAddress(Address):
     """Group address (official)
     """
+    interface.implements(interfaces.IGroupAddress)
 
 
 # extended attributes - vertical properties
@@ -526,6 +560,7 @@ class Doc(Entity):
         "user_assignment", "group_assignment"]
     interface.implements(
         interfaces.IBungeniContent, # IOwned
+        interfaces.IDoc,
         interfaces.ITranslatable
     )
     
@@ -752,6 +787,7 @@ class AgendaItem(AdmissibleMixin, Doc):
     """
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
+        interfaces.IAgendaItem,
     )
 #AgendaItemAudit
 
@@ -760,6 +796,7 @@ class Bill(Doc):
     """
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
+        interfaces.IBill,
     )
     
     #!+doc_type: default="government", nullable=False,
@@ -795,6 +832,7 @@ class Motion(AdmissibleMixin, Doc):
     """
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
+        interfaces.IMotion,
     )
     
     @property
@@ -809,6 +847,7 @@ class Question(AdmissibleMixin, Doc):
     """
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
+        interfaces.IQuestion,
     )
     
     #!+doc_type: default="ordinary", nullable=False,
@@ -856,6 +895,7 @@ class TabledDocument(AdmissibleMixin, Doc):
     """
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
+        interfaces.ITabledDocument,
     )
 #TabledDocumentAudit
 
@@ -908,8 +948,11 @@ class AttachmentVersion(Version):
 class Heading(Entity):
     """A heading in a report.
     """
-    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText,
-        interfaces.IScheduleContent
+    interface.implements(
+        interfaces.IHeading,
+        interfaces.IScheduleText,
+        interfaces.IScheduleContent,
+        interfaces.ITranslatable, 
     )
     
     type = "heading"
@@ -925,6 +968,7 @@ class Signatory(Entity):
     available_dynamic_features = ["audit", "version", "attachment"]
     interface.implements(
         interfaces.IBungeniContent, # IOwned
+        interfaces.ISignatory,
     )
     
     @property
@@ -953,7 +997,10 @@ class SignatoryAudit(Audit):
 class Session(Entity):
     """
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(
+        interfaces.ISession,
+        interfaces.ITranslatable,
+    )
 
 ''' !+SUBSCRIPTIONS(mr, jun-2012) unused
 class ObjectSubscriptions(object):
@@ -966,7 +1013,9 @@ class ObjectSubscriptions(object):
 class Country(Entity):
     """Country.
     """
-    pass
+    interface.implements(
+        interfaces.ICountry,
+    )
 
 
 # ##########
@@ -981,7 +1030,10 @@ class MemberTitle(Entity):
     """The role title a member has in a specific context and one 
     official address for a official role.
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(
+        interfaces.IMemberTitle,
+        interfaces.ITranslatable
+    )
 
 
 class MinistryInParliament(object):
@@ -993,14 +1045,20 @@ class EditorialNote(Entity):
     """Arbitrary text inserted into schedule
     """
     type = u"editorial_note"
-    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText,
-        interfaces.IScheduleContent
+    interface.implements(
+        interfaces.IEditorialNote,
+        interfaces.IScheduleText,
+        interfaces.IScheduleContent,
+        interfaces.ITranslatable,
     )
 
 
 class ItemSchedule(Entity):
     """For which sitting was a parliamentary item scheduled.
     """
+    interface.implements(
+        interfaces.IItemSchedule,
+    )
     discussions = one2many("discussions",
         "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
     
@@ -1057,7 +1115,10 @@ class ItemSchedule(Entity):
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(
+        interfaces.IItemScheduleDiscussion,
+        interfaces.ITranslatable,
+    )
 
 
 class Holiday(object):
@@ -1090,7 +1151,10 @@ class Report(Doc):
     """Agendas and minutes.
     """
     available_dynamic_features = ["audit", "version", "download"]
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(
+        interfaces.IReport,
+        interfaces.ITranslatable,
+    )
 
 
 class SittingReport(Entity):
@@ -1102,6 +1166,9 @@ class SittingReport(Entity):
 class Report4Sitting(SittingReport):
     """Display reports for a sitting.
     """
+    interface.implements(
+        interfaces.IReport4Sitting,
+    )
 
 
 class ObjectTranslation(object):

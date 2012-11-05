@@ -25,13 +25,14 @@ def interfaces(obj):
         interfaces_implementedBy(obj), # type(obj) may itself be <type 'type'>
         interfaces_providedBy(obj),
         interfaces_directlyProvidedBy(obj),
+        interfaces_iro(obj)
     ])
 def interfaces_implementedBy(cls):
     """Dump out list of interfaces implementedBy cls.
     """
     try: 
         return """  interfaces implementedBy %s:
-        %s""" % (cls, 
+    %s""" % (cls, 
             "\n    ".join([
                     "%s %s" % (i, id(i)) 
                     for i in interface.implementedBy(cls) ] or 
@@ -58,6 +59,21 @@ def interfaces_directlyProvidedBy(obj):
         "\n    ".join([
                 "%s %s" % (i, id(i)) 
                 for i in interface.directlyProvidedBy(obj) ] or 
+            ["</>"] ))
+def interfaces_iro(obj):
+    if isinstance(type(obj), type):
+        # we have a class... iro is calculated on instances, try get one:
+        try: 
+            obj = obj()
+        except:
+            import sys
+            return """  interfaces iro %s: ***ERROR*** %s""" % (
+                obj, sys.exc_info())
+    return """  interfaces iro %s:
+    %s""" % (repr(obj),
+        "\n    ".join([
+                "%s %s" % (i, id(i)) 
+                for i in obj.__provides__.__iro__ ] or 
             ["</>"] ))
 
 

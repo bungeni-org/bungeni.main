@@ -1,3 +1,22 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""The Bungeni domain model interfaces
+
+Bungeni-specific model interfaces, exclusively dedicated for Bungeni use, 
+and applying to any target arget type is the sole responsibility of Bungeni.
+
+A domain model may define a dedicated conventionally-named interface and then
+use that interface as desired by the bungeni application e.g. for registering 
+components.
+
+Each interface here should never be modified by 3rd party code or other 
+processes in any way e.g. by catalyst.
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.models.interfaces")
 
 from zope import interface, schema
 from zope.app.container.interfaces import IContainer

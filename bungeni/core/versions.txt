@@ -77,6 +77,8 @@ interaction
     >>> #from bungeni.core.workflow.interfaces import IWorkflow
     >>> #wf = IWorkflow(question) #!+fails
     
+!+ running this test file alone "test -c bungeni.core -t versions.txt" fails with:
+TypeError: ('Could not adapt', <bungeni.models.domain.Question object at 0x4f48e10>, <InterfaceClass zope.securitypolicy.interfaces.IPrincipalRoleMap>
     >>> from bungeni.core.workflow.interfaces import IWorkflowController
     >>> wfc = IWorkflowController(question)
     >>> wfc

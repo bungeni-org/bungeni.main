@@ -4,9 +4,9 @@
 
 """The Bungeni Application - Feature handling for domain models
 
-Features (as per a deployment's configuration) - decorators for domain types
-to support a "feature", to collect in one place all that is needed for the 
-domain type to support that "feature".
+Decorator utilities for a domain types to support a "feature" (as per a 
+deployment's configuration); to collect in one place all that is needed for 
+the domain type to support that "feature".
  
 The quality of a domain type to support a specific feature is externalized 
 to localization and its implementation must thus be completely isolated, 
@@ -44,13 +44,14 @@ def set_one2many_attr(kls, name, container_qualname, rel_attr):
 
 def configurable_domain(kls, workflow):
     """Setup/decorate domain class from feature configurations in the workflow.
-    Executed on adapters.load_workflow().
+    Executed on adapters.setup_workflows().
     """
     for feature in workflow.features:
+        assert feature.name in kls.available_dynamic_features, \
+            "Feature %r not one that is available %s for this type %s" % (
+                feature.name, kls.available_dynamic_features, kls)
         if feature.enabled:
-            assert feature.name in kls.available_dynamic_features, \
-                "Class [%s] does not allow dynamic feature [%s]" % (
-                    kls, feature.name)
+            # !+ break decorators up also by archetype?
             feature_decorator = globals()["feature_%s" % (feature.name)]
             feature_decorator(kls, **feature.params)
 
@@ -88,6 +89,8 @@ def feature_audit(kls, **params):
             inherits=base_audit_kls,
             polymorphic_identity=naming.polymorphic_identity(kls)
         )
+        log.info("GENERATED new_audit_class %s(%s) for type %s",
+            audit_kls, base_audit_kls, kls)
         return audit_kls
     
     interface.classImplements(kls, interfaces.IFeatureAudit)
@@ -176,7 +179,7 @@ def feature_notification(kls):
 
 def feature_download(kls):
     """Decorator for domain types that support downloading as 
-    pdf/odt/rss/akomanoto
+    pdf/odt/rss/akomantoso.
     """
     interface.classImplements(kls, interfaces.IFeatureDownload)
 
@@ -238,6 +241,7 @@ def configurable_mappings(kls):
                 # get tbl PK column
                 assert len(tbl.primary_key) == 1
                 # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
+                # !+PrimaryKeyConstraint object does not support indexing
                 pk_col = [ c for c in tbl.primary_key ][0]
                 mapper_properties["changes"] = relation(domain.Change,
                     primaryjoin=rdb.and_(
