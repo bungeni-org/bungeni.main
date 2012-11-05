@@ -3,6 +3,7 @@ import zope.publisher.interfaces
 import zope.security.management
 import zope.security.testing
 
+# used by some core doctests
 from bungeni.models.testing import setup_db
 
 

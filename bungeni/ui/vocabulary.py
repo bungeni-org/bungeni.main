@@ -784,8 +784,8 @@ class MinistrySource(SpecializedSource):
                 ob = session.query(domain.Group).get(ministry_id)
                 terms.append(
                     vocabulary.SimpleTerm(
-                        value = getattr(obj, "group_id"), 
-                        token = getattr(obj, "group_id"),
+                        value = getattr(ob, "group_id"), 
+                        token = getattr(ob, "group_id"),
                         title = get_translated_group_label(ob)
                 ))
         return vocabulary.SimpleVocabulary(terms)

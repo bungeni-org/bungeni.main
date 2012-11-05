@@ -472,8 +472,8 @@ class ChangeDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class UserAddressDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IUserAddress)
+class AddressDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IAddress)
     
     @property
     def title(self):
