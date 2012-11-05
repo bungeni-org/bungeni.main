@@ -1,9 +1,4 @@
-<dl id="portletArchiveDates" class="portlet inlinePortlet">
-<!--
-$Id$
-$URL$
--->
-  
+<dl id="portletArchiveDates" class="portlet inlinePortlet">  
   <dt class="portletHeader" i18n:domain="bungeni" >
     <span class="portletTopLeft"></span>
     <!-- !+ARCHIVE_FILTER_TITLE(mr, sep-2010) parematrize,

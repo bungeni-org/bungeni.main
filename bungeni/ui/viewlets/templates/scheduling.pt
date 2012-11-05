@@ -1,9 +1,4 @@
-<dl class="portlet portletNavigationTree">
-<!--
-$Id$
-$URL$
--->
-  
+<dl class="portlet portletNavigationTree">  
   <dt class="portletHeader">
     <span class="portletTopLeft"></span>
     <span class="tile">Scheduling</span>

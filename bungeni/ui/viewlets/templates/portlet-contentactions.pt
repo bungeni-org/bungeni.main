@@ -1,11 +1,6 @@
 <dl class="portlet"
     i18n:domain="bungeni"
     tal:condition="python: len(view.context_actions) > 1">
-<!--
-$Id$
-$URL$
--->
-
     <dt class="portletHeader">
         <span class="portletTopLeft"></span>
         <span i18n:translate="">View</span>
