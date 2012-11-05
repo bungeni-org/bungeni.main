@@ -16,7 +16,6 @@ from zope import interface
 from zope import schema
 from zope import formlib
 
-from zope.i18n import translate
 from zope.security.proxy import removeSecurityProxy
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
@@ -47,7 +46,7 @@ from bungeni.models.utils import get_db_user_id
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
     IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer
-from bungeni.ui.i18n import _
+from bungeni.ui.i18n import _, translate
 from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
@@ -369,7 +368,7 @@ class AddForm(BaseForm, ui.AddForm):
     @property
     def form_name(self):
         return _(u"add_item_legend", default=u"Add $name", mapping={
-            "name": translate(self.type_name.lower(), context=self.request)})
+            "name": translate(self.type_name, context=self.request)})
     
     @property
     def title(self):
