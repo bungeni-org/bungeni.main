@@ -21,6 +21,7 @@ from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
 
 from bungeni.core.workflow.interfaces import IWorkflowed
+from bungeni.core.workflows.utils import check_view_permission
 from bungeni.core import translation
 
 from bungeni.ui import interfaces as ufaces
@@ -32,18 +33,13 @@ from bungeni.utils.capi import capi
 from bungeni.utils.naming import polymorphic_identity
 
 
-def query_iterator(query, parent, permission=None):
+def query_iterator(query, parent):
     """Generator of the items in a query.
     
-    If a permission is specified, then checkPermission() is called.
-    Note that -- in some cases -- NOT calling checkPermission() on an item
-    has resulted in SQLAlchemy-related data errors downstream.
-    """
+    Checks if the user has view permission on the objects """
     for item in query:
         item.__parent__ = parent
-        if (permission is None or 
-                checkPermission(permission, proxy.ProxyFactory(item))
-            ):
+        if check_view_permission(item):
             yield item
 
 
@@ -203,7 +199,7 @@ class ContainerJSONTableHeaders(ContainerJSONBrowserView):
 class ContainerJSONListing(ContainerJSONBrowserView):
     """Paging, batching, sorting, json contents of a container.
     """
-    permission = "zope.View"
+
     filter_property_fields = []
 
     def string_listing_filter(self, query, filter_string, sort_dir_func,
@@ -436,7 +432,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         # nodes: [<bungeni.models.domain.Question]
         return [
             container.contained(ob, self, container.stringKey(ob))
-            for ob in query_iterator(query, self.context, self.permission)
+            for ob in query_iterator(query, self.context)
         ]
 
 

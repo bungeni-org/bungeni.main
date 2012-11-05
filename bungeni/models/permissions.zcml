@@ -17,6 +17,7 @@
     <permission id="bungeni.ui.View" title="View UI page, view, viewlet, menu item" />
     <!-- !+ should feature UI permissions be per type? -->
     <permission id="bungeni.ui.audit.View" title="View audit/timeline UI" />
+    <permission id="bungeni.ui.version.View" title="View version UI" />
     <permission id="bungeni.ui.workspace.View" title="View workspace UI" />
     
     
@@ -43,8 +44,8 @@
   <permission id="bungeni.sittingattendance.Add" title="Add sitting attendance" />
   <permission id="bungeni.sittingattendance.Edit" title="Edit sitting attendance" />
   <permission id="bungeni.sittingattendance.Delete" title="Delete sitting attendance" />
-  <meta:redefinePermission from="bungeni.sittingattendance.View" to="zope.View" />
-        
+  <meta:redefinePermission from="bungeni.sittingattendance.View" to="zope.View" /> 
+ 
   <permission id="bungeni.venue.Add" title="Add venue note" />
   <permission id="bungeni.venue.Edit" title="Edit venue note" />
   <permission id="bungeni.venue.Delete" title="Delete venue note" />
@@ -59,8 +60,6 @@
     
   <permission id="bungeni.response.Edit" title="Edit Response" />
   <permission id="bungeni.response.View" title="View Response" />
-     
-  <permission id="bungeni.user.AdminRecord" title="Admin User Record" />
   
   <permission id="bungeni.government.Add" title="Add government" />
   <permission id="bungeni.government.Edit" title="Edit government" />

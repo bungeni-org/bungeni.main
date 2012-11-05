@@ -33,12 +33,12 @@
     <!-- Session -->
     <browser:page name="view" for="bungeni.models.interfaces.ISession"
         class=".common.DisplayForm"
-        permission="zope.View"
+        permission="bungeni.session.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <!--browser:page name="view" for="bungeni.models.interfaces.IReport"
         class=".viewlets.SittingReportDisplay"
-        permission="zope.View"
+        permission="bungeni.report.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     /--> 
     <browser:page name="add"
@@ -91,7 +91,7 @@
     
     <browser:page name="view" for="bungeni.models.interfaces.IUserAddress"
         class=".forms.UserAddressDisplayForm"
-        permission="zope.View"
+        permission="bungeni.user_address.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     
@@ -99,7 +99,7 @@
     <browser:page name="view"
         for="bungeni.models.interfaces.IUserDelegation"
         class=".common.DisplayForm"
-        permission="zope.View"
+        permission="bungeni.delegation.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="add" for="bungeni.models.interfaces.IUserDelegationContainer"
@@ -122,7 +122,7 @@
     <!-- sitting attendance -->
     <browser:page name="view" for="bungeni.models.interfaces.ISittingAttendance"
         class=".common.DisplayForm"
-        permission="zope.View"
+        permission="bungeni.sittingattendance.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="add" 
@@ -184,17 +184,17 @@
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IGroupDocumentAssignment"
         class=".common.EditForm"
-        permission="bungeni.government.Edit"
+        permission="bungeni.group_assignment.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete" for="bungeni.models.interfaces.IGroupDocumentAssignment"
         class=".common.DeleteForm"
-        permission="bungeni.government.Delete"
+        permission="bungeni.group_assignment.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="view" for="bungeni.models.interfaces.IGroupDocumentAssignment"
         class=".common.DisplayForm"
-        permission="zope.View"
+        permission="bungeni.group_assignment.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
 </configure>

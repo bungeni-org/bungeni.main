@@ -20,6 +20,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow
+from bungeni.core.workflows.utils import check_view_permission
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import listing
@@ -51,11 +52,9 @@ class ChangeDataProvider(object):
         changes = []
         def append_visible_changes_on_item(item):
             for c in domain.get_changes(item, *self.include_change_actions):
-                if interaction.checkPermission("zope.View", c):
+                if check_view_permission(c):
                     changes.append(c)
-        
-        # !+ align checkPermission zope.View with listings of sub item types...
-        
+    
         # changes direct on head item
         if "head" in self.include_change_types:
             append_visible_changes_on_item(self.head)
@@ -67,7 +66,7 @@ class ChangeDataProvider(object):
             # changes on item signatories
             if "signatory" in self.include_change_types:
                 signatories = [ s for s in self.head.item_signatories
-                    if interaction.checkPermission("zope.View", s)
+                    if interaction.checkPermission("bungeni.signatory.View", s)
                 ]
                 for s in signatories:
                     append_visible_changes_on_item(s)
@@ -77,7 +76,7 @@ class ChangeDataProvider(object):
                     and hwf.has_feature("attachment") #!+IFeatureAttachment?
                 ):
                 attachments = [ f for f in self.head.attachments
-                    if interaction.checkPermission("zope.View", f)
+                    if interaction.checkPermission("bungeni.attachment.View", f)
                 ]
                 for f in attachments:
                     append_visible_changes_on_item(f)
@@ -89,7 +88,7 @@ class ChangeDataProvider(object):
                     and not interfaces.IEvent.providedBy(self.head)
                 ):
                 events = [ e for e in self.head.sa_events
-                    if interaction.checkPermission("zope.View", e)
+                    if interaction.checkPermission("bungeni.event.View", e)
                 ]
                 for e in events:
                     append_visible_changes_on_item(e)
@@ -519,7 +518,7 @@ class ChangeDataTableFormatter(table.ContextDataTableFormatter):
 class ChangeDataTableJSONListingBase(container.ContainerJSONListing):
     """JSON data callback for batching/paging.
     """
-    permission = "zope.View"
+    permission = "!+VIEW_PERMISSION"
     
     def __init__(self, context, request):
         self.context = context
@@ -581,10 +580,10 @@ class ChangeDataTableJSONListingViewlet(ChangeDataTableJSONListingBase, TimeLine
 
 
     <class class=".audit.ChangeDataTableJSONListingView">
-        <require permission="zope.View" attributes="browserDefault __call__" />
+        <require permission="!+VIEW_PERMISSION" attributes="browserDefault __call__" />
     </class>
     <class class=".audit.ChangeDataTableJSONListingViewlet">
-        <require permission="zope.View" attributes="browserDefault __call__" />
+        <require permission="!+VIEW_PERMISSION" attributes="browserDefault __call__" />
     </class>
 '''
 

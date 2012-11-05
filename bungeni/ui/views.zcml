@@ -53,34 +53,34 @@
     />
     <browser:page name="workflow-redirect"
         for="bungeni.core.workflow.interfaces.IWorkflowed"
-        permission="zope.View"
+        permission="bungeni.ui.workspace.View"
         layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
         class=".redirect.WorkflowRedirect"
     />
     <browser:page name="workflow-redirect"
         for="bungeni.models.interfaces.ISitting"
-        permission="zope.View"
+        permission="bungeni.ui.workspace.View"
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         class=".redirect.WorkflowRedirectSitting"
     />
     
     <!-- file and attachment views -->
     <browser:view for="bungeni.alchemist.interfaces.IAlchemistContent"
-        permission="zope.View"
+        permission="zope.Public"
         name="file-image"
         class=".file.RawView"
     />
 
   <browser:view
      for="bungeni.models.interfaces.IAttachment"
-     permission="zope.View"
+     permission="bungeni.attachment.View"
      name="download"
      class=".file.FileDownload"
      />
 
   <browser:view
      for="bungeni.models.interfaces.IAttachedFileVersion"
-     permission="zope.View"
+     permission="bungeni.attachment.View"
      name="download"
      class=".file.FileDownload"
      />
@@ -140,19 +140,19 @@
 
     <!--<browser:page name="search"
         for="bungeni.core.interfaces.ISection"
-        permission="zope.View"
+        permission="!+VIEW_PERMISSION"
         class=".search.PagedSearch"
     />-->
     
     <browser:page name="search"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.View"
+        permission="zope.Public"
         class=".search.PagedSearch"
     />
     
     <browser:page name="search"
         for="bungeni.core.interfaces.ISearchableSection"
-        permission="zope.View"
+        permission="zope.Public"
         class=".search.PagedSearch"
     />
 
@@ -160,35 +160,35 @@
     <!-- Advanced search form -->
     <browser:page name="advanced-search"
         for="bungeni.core.interfaces.ISearchableSection"
-        permission="zope.View"
+        permission="zope.Public"
         class=".search.AdvancedPagedSearch"
     />
 
     <browser:page
      for="*"
      name="ajax_get_class_statuses"
-     permission="zope.View"
+     permission="zope.Public"
      class=".search.AjaxGetClassStatuses"
     />
 
     <!-- signatories -->
     <browser:page name="signatory-review"
         for="bungeni.models.interfaces.IFeatureSignatory"
-        permission="zope.View"
+        permission="bungeni.signatory.View"
         class=".redirect.SignatoryReview"
     />
 
     <browser:page
      for="*"
      name="ajax_get_class_fields"
-     permission="zope.View"
+     permission="zope.Public"
      class=".search.AjaxGetClassFields"
     />
 
     <!-- View for item in search results -->
     <browser:page name="searchresult"
         for="ore.xapian.interfaces.IIndexable"
-        permission="zope.View"
+        permission="zope.Public"
         class=".search.SearchResultItem"
     />
 
@@ -204,7 +204,7 @@
   <browser:page
      name="view"
      for="bungeni.core.interfaces.IDailySchedulingContext"
-     permission="zope.View"
+     permission="zope.Public"
      class=".calendar.browser.DailyCalendarView"
      />
 
@@ -256,19 +256,19 @@
 
   <browser:page
      for="bungeni.models.interfaces.IParliament"
-     permission="zope.View"
+     permission="bungeni.parliament.View"
      name="schedule"
      class=".calendar.browser.CalendarView"
     />
   <browser:page
      for="bungeni.models.interfaces.ICommittee"
-     permission="zope.View"
+     permission="bungeni.committee.View"
      name="schedule"
      class=".calendar.browser.CommitteeCalendarView"
     />
     <browser:page
      for="bungeni.core.interfaces.ISchedulingContext"
-     permission="zope.View"
+     permission="bungeni.sittingschedule.View"
      name="schedule"
      class=".calendar.browser.CalendarView"
     />
@@ -277,7 +277,7 @@
         for="bungeni.core.interfaces.IWorkspaceScheduling"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         class=".calendar.browser.CalendarView"
-        permission="zope.View"
+        permission="bungeni.ui.workspace.View"
     />
     <browser:page name="schedule"
         for="bungeni.models.interfaces.ISitting"
@@ -309,7 +309,7 @@
      name="preview"
      for="bungeni.models.interfaces.ISitting"
      class=".calendar.browser.AgendaPreview"
-     permission="zope.View"
+     permission="bungeni.sitting.View"
      />
      <browser:page
      name="st-attendance"
@@ -322,7 +322,7 @@
 
   <browser:page
     for="bungeni.models.interfaces.IBungeniContent"
-    permission="zope.View"
+    permission="zope.Public"
     name="similar"
     class=".search.Similar"
     />
@@ -380,7 +380,7 @@
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         class=".redirect.AdminIndexRedirect"
-        permission="zope.View"
+        permission="zope.ManageContent"
     />
     <browser:page name="browse-admin"
         for="bungeni.core.interfaces.ISection"
@@ -392,13 +392,13 @@
     <!-- container UI -->
     <browser:page name="index"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.View"
+        permission="zope.Public"
         template="templates/generic-container.pt"
         class="bungeni.alchemist.container.ContainerListing"
     />
     <browser:page name="json"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.View"
+        permission="zope.Public"
         class=".container.ContainerJSONListing"
     />
     <browser:defaultView name="index"
@@ -426,7 +426,7 @@
       name="feed.rss"
       for="bungeni.alchemist.interfaces.IAlchemistContainer"
       class=".rss.RSSView"
-      permission="zope.View"
+      permission="zope.Public"
     layer=".interfaces.IRSSRepresentationLayer"
    />
 
@@ -434,7 +434,7 @@
       name="feed.rss"
     for="bungeni.models.interfaces.IFeatureAudit"
     class=".rss.TimelineRSSView"
-    permission="zope.View"
+    permission="zope.Public"
     layer=".interfaces.IRSSRepresentationLayer"
    />
 
@@ -444,7 +444,7 @@
         name="feed.akomantoso"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
         class=".rss.AkomantosoRSSView"
-        permission="zope.View"
+        permission="zope.Public"
         layer=".interfaces.IRSSRepresentationLayer"
      />
 
@@ -454,14 +454,14 @@
       name="feed.akomantoso"
     for="bungeni.models.interfaces.IBungeniContent"
     class=".rss.AkomantosoXMLView"
-    permission="zope.View"
+    permission="zope.Public"
     layer=".interfaces.IRSSRepresentationLayer"
    />
 
    <browser:pages
       for="bungeni.models.interfaces.IBungeniParliamentaryContent"
         class=".rss.SubscriptionView"
-        permission="zope.View"
+        permission="zope.Public"
         layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
           <browser:page
          name="subscribe"
@@ -477,7 +477,7 @@
         name="filter"
         for=".widgets.IAutoCompleteWidget"
         class=".widgets.AutoCompleteAjax"
-        permission="zope.View"
+        permission="zope.Public"
      />
 
     <!-- error pages -->
@@ -550,7 +550,7 @@
    		name="nowediting"
    		class=".views.StoreNowEditView"
    		layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
-   		permission="zope.View"
+   		permission="zope.Public"
    		/>
    		
    <adapter
@@ -574,7 +574,7 @@
      name="bungeni-ui-calendar"
      class=".macros.BungeniCalendarMacros"
      layer=".interfaces.IBungeniSkin"
-     permission="zope.View"
+     permission="bungeni.ui.workspace.View"
      /> 
 
    <browser:page

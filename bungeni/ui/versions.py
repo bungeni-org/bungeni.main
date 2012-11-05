@@ -16,7 +16,6 @@ from zope import formlib
 from zope.security.proxy import removeSecurityProxy
 from zope.security import canWrite
 from zope.security.interfaces import ForbiddenAttribute
-from zope.security.management import getInteraction
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
@@ -29,6 +28,7 @@ from bungeni.alchemist.interfaces import IIModelInterface
 from bungeni.alchemist.ui import getSelected
 
 from bungeni.core import version
+from bungeni.core.workflows.utils import check_view_permission
 from bungeni.models.interfaces import IFeatureVersion
 from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
 from bungeni.ui.i18n import _
@@ -135,11 +135,10 @@ class VersionLogMixin(object):
         # objects) i.e. only own "version changes"; as "data_provider" we 
         # simply use the versions attribute on context:
         if self._data_items is None:
-            interaction = getInteraction()
             # sorted desc by sqlalchemy, so following sorting not necessary:
             self._data_items = [
                 removeSecurityProxy(v) for v in removeSecurityProxy(self.context).versions
-                if interaction.checkPermission("zope.View", v) ]
+                if check_view_permission(v) ]
         return self._data_items
     
     @property

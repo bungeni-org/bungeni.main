@@ -94,7 +94,7 @@
     
     <class class=".domain.Event">
         <require like_class=".domain.Doc" />
-        <require permission="zope.View"
+        <require permission="bungeni.event.View"
             attributes="
                 event_date
             "
@@ -151,7 +151,7 @@
     
     <class class=".domain.Group">
         <!-- domain / orm / schema -->
-        <require permission="zope.View"
+        <require permission="bungeni.group.View"
             attributes="
                 addresses
                 
@@ -184,7 +184,7 @@
     
     <class class=".domain.Parliament">
         <require like_class=".domain.Group" />
-        <require permission="zope.View"
+        <require permission="bungeni.parliament.View"
             attributes="
                 sessions
                 committees
@@ -237,7 +237,7 @@
     
     <class class=".domain.Ministry">
         <require like_class=".domain.Group" />
-        <require permission="zope.View"
+        <require permission="bungeni.ministry.View"
             attributes="
                 ministers
                 questions
@@ -261,7 +261,7 @@
     
     <class class=".domain.Office">
         <require like_class=".domain.Group" />
-        <require permission="zope.View"
+        <require permission="bungeni.office.View"
             attributes="
                 officemembers
                 title_types
@@ -286,7 +286,7 @@
     
     <class class=".domain.Committee">
         <require like_class=".domain.Group" />
-        <require permission="zope.View"
+        <require permission="bungeni.committee.View"
             attributes="
                 committeemembers
                 committeestaff
@@ -335,7 +335,7 @@
     
     <class class=".domain.PoliticalGroup">
         <require like_class=".domain.Group" />
-        <require permission="zope.View"
+        <require permission="bungeni.political_group.View"
             attributes="
                 members
                 
@@ -360,7 +360,7 @@
         />
     </class>
     <class class=".domain.GroupDocumentAssignment">
-        <require permission="zope.View"
+        <require permission="bungeni.group_assignment.View"
             attributes="
                 group_id
                 doc_id
@@ -376,7 +376,7 @@
     <!-- group memberships -->
     
     <class class=".domain.GroupMembership">
-        <require permission="zope.View"
+        <require permission="bungeni.groupmember.View"
             attributes="
                 user
                 group
@@ -413,7 +413,7 @@
     
     <class class=".domain.MemberOfParliament">
         <require like_class=".domain.GroupMembership" />
-        <require permission="zope.View"
+        <require permission="bungeni.groupmember.View"
             attributes="
                 titles
                 addresses
@@ -452,7 +452,7 @@
     
     <!-- other -->
     <class class=".domain.Sitting">
-        <require permission="zope.View"
+        <require permission="bungeni.sitting.View"
             attributes="
                 sitting_id
                 group_id
@@ -491,7 +491,7 @@
     </class>
     
     <class class=".domain.SittingAttendance">
-        <require permission="zope.View"
+        <require permission="bungeni.sittingattendance.View"
             attributes="
                 sitting_id
                 member_id
@@ -508,7 +508,7 @@
     </class>
     
     <class class=".domain.ItemSchedule">
-        <require permission="zope.View"
+        <require permission="bungeni.sittingschedule.View"
             attributes="
                 schedule_id
                 item_id
@@ -537,7 +537,7 @@
     </class>
     
     <class class=".domain.Venue">
-        <require permission="zope.View"
+        <require permission="bungeni.venue.View"
             attributes="
                 venue_id
                 short_name
@@ -556,7 +556,7 @@
     </class>
     
     <class class=".domain.EditorialNote">
-        <require permission="zope.View"
+        <require permission="bungeni.sittingschedule.View"
             attributes="
                 editorial_note_id
                 text
@@ -573,7 +573,7 @@
     </class>
     
     <class class=".domain.ItemScheduleDiscussion">
-        <require permission="zope.View"
+        <require permission="bungeni.sittingschedule.itemdiscussion.View"
             attributes="
                 discussion_id
                 schedule_id
@@ -592,7 +592,7 @@
     </class>
     
     <class class=".domain.Signatory">
-        <require permission="zope.View"
+        <require permission="bungeni.signatory.View"
             attributes="
                 signatory_id
                 user_id
@@ -612,7 +612,7 @@
     
     
     <class class=".domain.User">
-        <require permission="zope.View"
+        <require permission="bungeni.user.View"
             attributes="
                 user_id
                 status
@@ -636,7 +636,7 @@
                 receive_notification
                 language
             "
-        /><!-- !+ date_of_death: bungeni.user.AdminRecord? -->
+        />
         <require permission="bungeni.user.Edit"
             set_attributes="
                 titles
@@ -655,11 +655,11 @@
                 receive_notification
                 language
             "
-        /><!-- !+ date_of_death: bungeni.user.AdminRecord? -->
+        />
     </class>
     
     <class class=".domain.UserAddress">
-        <require permission="zope.View"
+        <require permission="bungeni.user_address.View"
             attributes="
                 logical_address_type
                 postal_address_type

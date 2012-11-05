@@ -225,7 +225,7 @@ def create_sittings_map(sittings, request):
         else:
             link = url.absoluteURL(sitting, request)
         
-        if checkPermission("zope.View", proxied):
+        if checkPermission("bungeni.sitting.View", proxied):
             mapping[day, hour] = {
                 "url": link,
                 "record": sitting,
@@ -919,7 +919,7 @@ class DhtmlxCalendarSittings(BrowserView):
     def get_sessions(self):
         sessions = [ removeSecurityProxy(session) for key, session in 
             self.context.get_group().sessions.items()
-            if checkPermission("zope.View", session)
+            if checkPermission("bungeni.session.View", session)
         ]
         colours = utils.generate_event_colours(len(sessions))
         for (index, sess) in enumerate(sessions):
@@ -970,7 +970,7 @@ class DhtmlxCalendarSittings(BrowserView):
             end_date = days[-1]
         sittings = self.context.get_sittings(start_date, end_date)
         for sitting in sittings.values():
-            if checkPermission("zope.View", sitting):
+            if checkPermission("bungeni.sitting.View", sitting):
                 trusted = removeSecurityProxy(sitting)
                 trusted.text = dict(
                     sitting_status = _(

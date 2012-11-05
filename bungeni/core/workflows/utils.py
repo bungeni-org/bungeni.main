@@ -12,6 +12,7 @@ import sys
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.component.hooks import getSite
+from zope.security import checkPermission
 from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.core.workflow.interfaces import (NoTransitionAvailableError, 
     InvalidStateError
@@ -291,3 +292,11 @@ def check_agenda_finalized(context):
     check_list = map(check_finalized, context.items.values())
     return  (False not in check_list)
 
+
+def check_view_permission(item):
+    type_info = capi.get_type_info(item.__class__)
+    permission = "bungeni.%s.View" % type_info.workflow_key
+    if checkPermission(permission, item):
+        return True
+    else:
+        return False

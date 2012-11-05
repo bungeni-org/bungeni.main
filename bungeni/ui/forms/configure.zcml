@@ -201,7 +201,7 @@ to e.g. "bungeni.{type}.Edit").
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".fields.BungeniAttributeDisplay"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
-        permission="zope.View"
+        permission="zope.Public"
         allowed_interface="zope.formlib.interfaces.ISubPageForm"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
@@ -213,7 +213,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="ploned.ui.interfaces.IAboveContentManager"
      class=".viewlets.UserIdViewlet"
      for="bungeni.models.interfaces.IGroupMembership"
-     permission="zope.View"
+     permission="!+VIEW_PERMISSION"
      weight="10"
      />
   for some reasons committee memberships need to be treated explicitly
@@ -222,7 +222,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="ploned.ui.interfaces.IAboveContentManager"
      class=".viewlets.UserIdViewlet"
      for="bungeni.models.interfaces.ICommitteeMember"
-     permission="zope.View"
+     permission="!+VIEW_PERMISSION"
      weight="10"
      />
 -->
@@ -232,7 +232,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="ploned.ui.interfaces.IAboveContentManager"
      class=".viewlets.UserIdViewlet"
      for="bungeni.ui.workspace.WorkspaceView"
-     permission="zope.View"
+     permission="!+VIEW_PERMISSION"
      weight="10"
      /-->
 
@@ -242,7 +242,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="ploned.ui.interfaces.IAboveContentManager"
      class=".viewlets.GroupIdViewlet"
      for="bungeni.models.interfaces.ICommittee"
-     permission="zope.View"
+     permission="!+VIEW_PERMISSION"
      weight="10"
      /-->
 
@@ -252,7 +252,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="ploned.ui.interfaces.IAboveContentManager"
      class=".viewlets.GroupIdViewlet"
      for="bungeni.models.interfaces.IGroup"
-     permission="zope.View"
+     permission="!+VIEW_PERMISSION"
      weight="10"
      />
 -->
@@ -265,7 +265,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.SittingAttendanceViewlet"
      for="bungeni.models.interfaces.ISitting"
-     permission="zope.View"
+     permission="zope.Public"
      weight="20"
      />
 
@@ -274,7 +274,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.SittingReportsViewlet"
      for="bungeni.models.interfaces.ISitting"
-     permission="zope.View"
+     permission="zope.Public"
      weight="10"
      />
 
@@ -283,7 +283,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.SittingReportDisplay"
      for="bungeni.models.interfaces.IReport"
-     permission="zope.View"
+     permission="!+VIEW_PERMISSION"
      weight="10"
      /-->
 
@@ -293,14 +293,14 @@ to e.g. "bungeni.{type}.Edit").
      manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.SchedulingMinutesViewlet"
      for="bungeni.models.interfaces.IItemSchedule"
-     permission="zope.View"
+     permission="zope.Public"
      weight="10"
      />
     <browser:viewlet name="bungeni.viewlet.pi-signatories"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.SignatoriesViewlet"
         for="bungeni.models.interfaces.IFeatureSignatory"
-        permission="zope.View"
+        permission="zope.Public"
         weight="10"
     />
     <browser:viewlet
@@ -308,7 +308,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.WrittenQuestionResponseViewlet"
      for="bungeni.models.interfaces.IQuestion"
-     permission="zope.View"
+     permission="zope.Public"
      weight="10"
      />
   <browser:viewlet
@@ -316,7 +316,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.PersonInfo"
      for="bungeni.models.interfaces.IMemberOfParliament"
-     permission="zope.View"
+     permission="zope.Public"
      weight="20"
      />
 
@@ -324,7 +324,7 @@ to e.g. "bungeni.{type}.Edit").
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.ParliamentMembershipInfo"
         for="bungeni.models.interfaces.IPartyMember"
-        permission="zope.View"
+        permission="!+VIEW_PERMISSION"
         weight="30"
     /-->
 
@@ -332,14 +332,14 @@ to e.g. "bungeni.{type}.Edit").
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"
         for="bungeni.models.interfaces.IMemberOfParliament"
-        permission="zope.View"
+        permission="zope.Public"
         weight="30"
     />
     <browser:viewlet name="bungeni.viewlet.mp-items"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.MemberItemsViewlet"
         for="bungeni.models.interfaces.IMemberOfParliament"
-        permission="zope.View"
+        permission="zope.Public"
         weight="40"
     />
 
@@ -347,7 +347,7 @@ to e.g. "bungeni.{type}.Edit").
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.CommitteeMembersViewlet"
         for="bungeni.models.interfaces.ICommittee"
-        permission="zope.View"
+        permission="zope.Public"
         weight="10"
     />
 
@@ -356,7 +356,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.CommitteeStaffViewlet"
      for="bungeni.models.interfaces.ICommittee"
-     permission="zope.View"
+     permission="zope.Public"
      weight="60"
      />
 
@@ -365,7 +365,7 @@ to e.g. "bungeni.{type}.Edit").
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.SittingsViewlet"
         for="bungeni.models.interfaces.ICommittee"
-        permission="zope.View"
+        permission="zope.Public"
         weight="50"
     />
 
@@ -373,7 +373,7 @@ to e.g. "bungeni.{type}.Edit").
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"
         for="bungeni.models.interfaces.ICommitteeMember"
-        permission="zope.View"
+        permission="zope.Public"
         weight="10"
     />
 
@@ -382,7 +382,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.PersonInfo"
      for="bungeni.models.interfaces.ICommitteeMember"
-     permission="zope.View"
+     permission="zope.Public"
      weight="20"
      />
 
@@ -391,7 +391,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.PersonInfo"
      for="bungeni.models.interfaces.IPoliticalGroupMember"
-     permission="zope.View"
+     permission="zope.Public"
      weight="20"
      />
 
@@ -399,14 +399,14 @@ to e.g. "bungeni.{type}.Edit").
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"
         for="bungeni.models.interfaces.ICommitteeStaff"
-        permission="zope.View"
+        permission="zope.Public"
         weight="10"
     />
     <browser:viewlet name="bungeni.viewlet.office-member-titles"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"
         for="bungeni.models.interfaces.IOfficeMember"
-        permission="zope.View"
+        permission="zope.Public"
         weight="10"
     />
 
@@ -415,7 +415,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.OfficeMembersViewlet"
      for="bungeni.models.interfaces.IOffice"
-     permission="zope.View"
+     permission="zope.Public"
      weight="10"
      />
 
@@ -425,7 +425,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.MinistriesViewlet"
      for="bungeni.models.interfaces.IGovernment"
-     permission="zope.View"
+     permission="zope.Public"
      weight="10"
      />
 
@@ -436,7 +436,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.MinistersViewlet"
      for="bungeni.models.interfaces.IMinistry"
-     permission="zope.View"
+     permission="zope.Public"
      weight="20"
      />
 
@@ -445,7 +445,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.BillsViewlet"
      for="bungeni.models.interfaces.IMinistry"
-     permission="zope.View"
+     permission="zope.Public"
      weight="30"
      />
 
@@ -454,7 +454,7 @@ to e.g. "bungeni.{type}.Edit").
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.QuestionsViewlet"
      for="bungeni.models.interfaces.IMinistry"
-     permission="zope.View"
+     permission="zope.Public"
      weight="40"
      />
 
@@ -462,7 +462,7 @@ to e.g. "bungeni.{type}.Edit").
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.OfficesHeldViewlet"
         for="bungeni.models.interfaces.IMinister"
-        permission="zope.View"
+        permission="zope.Public"
         weight="10"
     />
 
@@ -471,7 +471,7 @@ to e.g. "bungeni.{type}.Edit").
      manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.PersonInfo"
      for="bungeni.models.interfaces.IMinister"
-     permission="zope.View"
+     permission="zope.Public"
      weight="20"
      />
     
@@ -491,7 +491,7 @@ to e.g. "bungeni.{type}.Edit").
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"
         for="bungeni.models.interfaces.IPoliticalGroup"
-        permission="zope.View"
+        permission="!+VIEW_PERMISSION"
         weight="10"
     />
     -->
@@ -499,7 +499,7 @@ to e.g. "bungeni.{type}.Edit").
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.PoliticalGroupMembersViewlet"
         for="bungeni.models.interfaces.IPoliticalGroup"
-        permission="zope.View"
+        permission="zope.Public"
         weight="10"
     />
 
@@ -507,7 +507,7 @@ to e.g. "bungeni.{type}.Edit").
      name="event-rss.xml"
      for="bungeni.models.interfaces.IBill"
      class=".forms.BungeniRSSEventView"
-     permission="zope.View"
+     permission="!+VIEW_PERMISSION"
      /-->
 
   <!-- Partymembership -->

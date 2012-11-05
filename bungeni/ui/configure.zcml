@@ -84,7 +84,7 @@
     <browser:viewletManager name="alchemist.content.view"
         provides="bungeni.alchemist.interfaces.IContentViewManager"
         class="bungeni.alchemist.ui.ContentViewletManager"
-        permission="zope.ManageContent"
+        permission="zope.Public"
     />
     
     <adapter name="widget"
@@ -101,7 +101,7 @@
    <!-- Login Page restore password links -->
    <browser:viewlet name="bungeni.login.restore.password"
         view="bungeni.ui.login.Login"
-        permission="zope.View"
+        permission="zope.Public"
         manager="ploned.ui.interfaces.IBelowContentManager"
         template="templates/restore-password.pt"
     />

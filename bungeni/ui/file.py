@@ -132,7 +132,7 @@ class FileListingMixin(object):
             interaction = getInteraction() # slight performance optimization
             self._data_items = [ f
                 for f in removeSecurityProxy(self.context).attachments
-                if interaction.checkPermission("zope.View", f) 
+                if interaction.checkPermission("bungeni.attachment.View", f) 
             ]
         return self._data_items
     

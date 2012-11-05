@@ -30,7 +30,7 @@
         layer="..interfaces.IWorkspaceSectionLayer"
         class=".workspace.SignatoriesStatus"
         manager="ploned.ui.interfaces.IAboveContentManager"
-        permission="zope.View"
+        permission="bungeni.signatory.View"
         weight="99"
     />
 </configure>

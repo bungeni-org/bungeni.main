@@ -23,7 +23,6 @@ from zope.publisher.interfaces import NotFound
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.security.settings import Allow
 from zope.securitypolicy.interfaces import IRole
-from zope.security import checkPermission
 from bungeni.alchemist import Session
 from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
@@ -38,7 +37,7 @@ from bungeni.core.interfaces import (
 )
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
-
+from bungeni.core.workflows.utils import check_view_permission
 
 #!+WORKSPACE(miano, jul 2011)
 # Roles can be divided into two, roles that a principal gets by virtue
@@ -211,14 +210,6 @@ class WorkspaceBaseContainer(AlchemistContainer):
                 return True
         return False
 
-    def check_permission(self, item):
-        item_type = self.workspace_config.get_type(item.__class__)
-        permission = "bungeni.%s.View" % item_type
-        if checkPermission(permission, item):
-            return True
-        else:
-            return False
-
     def get(self, name, default=None):
         try:
             domain_class, primary_key = self.value_key(name)
@@ -312,7 +303,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                 reverse=reverse)
-        results = [item for item in results if self.check_permission(item)]
+        results = [item for item in results if check_view_permission(item)]
         count = len(results)
         if not (kw.get("filter_title", None) or
                 kw.get("filter_type", None) or

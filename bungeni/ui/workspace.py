@@ -71,7 +71,6 @@ workspace_group_fields = [
 class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
     """
-    permission = "zope.View"
     workspace_fields = workspace_doc_fields
 
     def __init__(self, context, request):

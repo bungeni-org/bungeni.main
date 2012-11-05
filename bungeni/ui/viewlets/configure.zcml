@@ -12,7 +12,7 @@
         name="bungeni.content-actions-portlet"
         for="*"
         layer="..interfaces.IBungeniAuthenticatedSkin"
-        permission="zope.View"
+        permission="zope.Public"
         manager="ploned.ui.interfaces.ILeftColumnManager"
         class="ploned.ui.viewlet.ContentViewsViewlet"
         weight="5"
@@ -21,7 +21,7 @@
         name="bungeni.content-actions-portlet"
         for="*"
         layer="..interfaces.IArchiveSectionLayer"
-        permission="zope.View"
+        permission="zope.Public"
         manager="ploned.ui.interfaces.ILeftColumnManager"
         class="ploned.ui.viewlet.ContentViewsViewlet"
         weight="5"
@@ -123,7 +123,7 @@
     />
     <browser:viewlet name="bungeni.reports.preview"
         for="bungeni.ui.interfaces.IWorkspaceReportGeneration"
-        permission="zope.View"
+        permission="bungeni.report.View"
         manager="ploned.ui.interfaces.IBelowContentManager"
         class=".reports.ReportPreview"
     />

@@ -31,14 +31,6 @@
          sub-sections, see SecondaryNavigationViewlet: -->
     
     <browser:menu id="workspace_navigation" title="Actions Workspace" />
-    <!-- browser:menuItem menu="workspace_navigation"
-        for="*"
-        title="Scheduling"
-        action="scheduling/plenary/schedule"
-        order="10"
-        permission="zope.View"
-    / -->
-    
     
     <browser:menu id="admin_navigation" title="Actions Admin" />
     <!--
@@ -120,14 +112,14 @@
         layer=".interfaces.IWorkspaceMyDocumentsSectionLayer"
         title="Add parliamentary content..."
         action="workspace_add_content"
-        permission="zope.View"
+        permission="bungeni.ui.workspace.View"
         submenu="workspace_add_parliamentary_content"
     />
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IParliament"
         title="Add parliamentary content..."
         action="add_content"
-        permission="zope.View"
+        permission="bungeni.parliament.View"
         layer=".interfaces.IAdminSectionLayer"
         submenu="context_add_parliamentary_content"
     />
@@ -142,7 +134,7 @@
         title="Add..."
         action="add_content"
         order="10"
-        permission="zope.View"
+        permission="zope.Public"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="additems"
     />
@@ -921,7 +913,7 @@
         action="view"
         title="View"
         order="0"
-        permission="zope.View"
+        permission="bungeni.sittingschedule.View"
     />
 
   <browser:menuItem
@@ -1057,7 +1049,7 @@
         layer=".interfaces.IBungeniAuthenticatedSkin"
         action="/"
         title="Workspace"
-        permission="zope.View"
+        permission="bungeni.ui.workspace.View"
     />
     <browser:menuItem menu="site_actions"
         for="*"
@@ -1065,15 +1057,7 @@
         action="/"
         title="Home"
         permission="zope.Public"
-    /><!-- Notes on "/" action: 
-    a) when authenticated, Home "/" is actually Workspace. It would be better 
-        to have the workspace action be "/workspace/pi" (as per CONVENTION 
-        above) as opposed to be the same as for not-authenticated Home 
-        BUT giving it a different action value will cause the Home menuItem 
-        to be displayed even when the user *is* authenticated.
-    b) the zope.View "/" menuItem is first because the first matched menuItem 
-        is used.
-    -->
+    />
     <browser:menuItem menu="site_actions"
         for="*"
         action="/business/whats-on"
@@ -1107,7 +1091,7 @@
         title="Actions..."
         action="context_actions"
         order="1"
-        permission="zope.View"
+        permission="zope.Public"
         submenu="context_actions"
     />
     <browser:subMenuItem menu="plone_contentmenu"
@@ -1115,7 +1099,7 @@
         title="Actions..."
         action="context_actions"
         order="1"
-        permission="zope.View"
+        permission="zope.Public"
         submenu="context_actions"
     />
     <browser:subMenuItem menu="plone_contentmenu"
@@ -1123,7 +1107,7 @@
         title="Assignment"
         action="context_assignment"
         order="1"
-        permission="zope.View"
+        permission="zope.Public"
         submenu="context_assignment"
     />
     <!-- NOTE: action value on a subMenuItem becomes the id of the HTML
@@ -1152,7 +1136,7 @@
         action="files" 
         title="attachments"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="zope.View"
+        permission="bungeni.attachment.View"
         order="30"
     />
     <browser:menuItem menu="context_actions"
@@ -1195,7 +1179,7 @@
         action="version-log"
         title="Versions"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="zope.View"
+        permission="bungeni.ui.version.View"
         order="21"
     />
     
@@ -1225,7 +1209,7 @@
             permission="bungeni.attachment.Delete"
         />
         <browser:menuItem action="download" title="Download attached file" order="40"
-            permission="zope.View"
+            permission="bungeni.attachment.View"
         />
     </browser:menuItems>
 

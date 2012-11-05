@@ -53,7 +53,7 @@
      for="bungeni.models.interfaces.IBillContainer"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -62,7 +62,7 @@
      for="bungeni.models.interfaces.ICommitteeContainer"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -71,7 +71,7 @@
      for="bungeni.models.interfaces.IQuestionContainer"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -80,7 +80,7 @@
      for="bungeni.models.interfaces.IMotionContainer"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -89,7 +89,7 @@
      for="bungeni.models.interfaces.ITabledDocumentContainer"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -98,7 +98,7 @@
      for="bungeni.models.interfaces.IAgendaItemContainer"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -106,7 +106,7 @@
         for="bungeni.models.interfaces.ISittingContainer"
         class=".viewlets.feedresource.RSSFeedViewlet"
         manager=".interfaces.IFeedViewletManager"
-        permission="zope.View"
+        permission="zope.Public"
         weight="5"
         layer=".interfaces.IRSSRepresentationLayer"
     />
@@ -115,7 +115,7 @@
      for="bungeni.models.interfaces.IReportContainer"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -124,7 +124,7 @@
      for="bungeni.models.interfaces.IQuestion"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -133,7 +133,7 @@
      for="bungeni.models.interfaces.IMotion"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -142,7 +142,7 @@
      for="bungeni.models.interfaces.ITabledDocument"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
@@ -151,7 +151,7 @@
      for="bungeni.models.interfaces.IAgendaItem"
      class=".viewlets.feedresource.RSSFeedViewlet"
      manager=".interfaces.IFeedViewletManager"
-     permission="zope.View"
+     permission="zope.Public"
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
