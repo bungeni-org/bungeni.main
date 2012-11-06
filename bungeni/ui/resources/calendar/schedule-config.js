@@ -356,7 +356,6 @@ YAHOO.bungeni.config = function(){
         formatters : function(){
              var BungeniUtils = YAHOO.bungeni.Utils;
              var Columns = scheduling_columns;
-
             /**
              * @method itemTypeFormatter
              * @description renders internationalized record type
@@ -588,12 +587,17 @@ YAHOO.bungeni.config = function(){
                 }
             }            
             
-            var linkFormatter = function(el, oRecord, oColumn, oData, oDataTable) {
-                if(lang.isString(oData) && (oData > "")) {
-                    el.innerHTML = ("<a href=\"" + oData + 
+            var descriptionFormatter = function(el, oRecord, oColumn, oData, oDataTable) {
+                rec_data = oRecord.getData();
+                //oRecord.getTrEl(index).className += " row-"+rec_data.item_type;
+                if(lang.isString(oData) && (rec_data.item_type != SGlobals.types.HEADING)) {
+                    el.innerHTML = ( oData + "&nbsp;<a href=\"" + 
+                        BungeniUtils.makeURI(rec_data[Columns.URI]) + 
                         "\" target=\"blank\"\">" + 
                         SGlobals.text_action_view + "</a>"
                     );
+                } else if(lang.isString(oData) && rec_data.item_type == SGlobals.types.HEADING) {
+                    el.innerHTML = ( oData );
                 }
                 else {
                     el.innerHTML = lang.isValue(oData) ? oData : "";
@@ -753,7 +757,7 @@ YAHOO.bungeni.config = function(){
                 editButton: editButtonFormatter,
                 deleteButton: deleteButtonFormatter,
                 noteEditButton: noteEditButtonFormatter,
-                link: linkFormatter,
+                description: descriptionFormatter,
                 availableItemSelect: availableItemSelectFormatter,
                 rowControls: rowControlsFormatter
             }

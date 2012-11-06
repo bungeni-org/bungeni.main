@@ -94,11 +94,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                 {
                     key : Columns.TITLE, 
                     label : SGlobals.column_title,
-                },
-                {
-                    key : Columns.URI, 
-                    label : "",
-                    formatter: formatters.link
+                    formatter: formatters.description
                 },
             ];
             var dataSource = new YAHOO.util.DataSource(
@@ -125,6 +121,16 @@ YAHOO.bungeni.schedulingpreview = function(){
                     width:"100%"
                 }
             );
+            var addRowClass = function(args){
+                var sSize = dataTable.getRecordSet().getLength();
+                for (index=0; index<sSize; index++){
+                    row_type = dataTable.getRecordSet()._records[index]._oData.item_type;
+                    dataTable.getTrEl(index).className += " row-"+row_type;
+                }
+                console.log(sSize);
+            };
+            
+            dataTable.subscribe("initEvent", addRowClass);
             dataTable.subscribe("rowClickEvent", dataTable.onEventSelectRow);
             dataTable.subscribe("rowMouseoverEvent", dataTable.onEventHighlightRow);
             dataTable.subscribe("rowMouseoutEvent", dataTable.onEventUnhighlightRow);

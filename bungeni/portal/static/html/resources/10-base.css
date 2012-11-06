@@ -28,6 +28,14 @@ body {
 }
 table {
     font-size: 100%;
+    width:100%;
+}
+table th select#input_type,
+table th select#input_status { 
+    width: 200px !important; 
+}
+table th:first-child { 
+    width: 100% !important; 
 }
 a {
     color: #436976;
