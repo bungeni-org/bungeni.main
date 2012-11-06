@@ -175,5 +175,7 @@ def dump_i18n_message_ids():
 if __name__ == "__main__":
     
     reset_localization_system_descriptors()
+    from bungeni.ui import feature
+    feature.setup_customization_ui()
     dump_i18n_message_ids()
 

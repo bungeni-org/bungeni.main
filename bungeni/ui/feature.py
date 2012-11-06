@@ -36,7 +36,12 @@ def setup_customization_ui():
     creation of specific menus such as "context_actions".
     """
     
-    MENU_ITEM_TMPL = """
+    def register_menu_item(type_key, privilege, title, for_, action,
+            menu="context_actions", order=10
+        ):
+        naming.MSGIDS.add(title) # for i18n extraction
+        UI_ZC_DECLS.append(register_menu_item.TMPL.format(**locals()))
+    register_menu_item.TMPL = """
             <browser:menuItem menu="{menu}"
                 for="{for_}"
                 action="{action}"
@@ -45,55 +50,16 @@ def setup_customization_ui():
                 permission="bungeni.{type_key}.{privilege}"
                 layer="bungeni.ui.interfaces.IBungeniSkin"
             />"""
-    menu_item_vars_Add = dict(
-        menu="workspace_add_parliamentary_content",
-        privilege="Add",
-        order=7,
-    )
-    # !+ edit/delete used to be on layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
-    menu_item_vars_Edit = dict(
-        menu="context_actions",
-        privilege="Edit",
-        order=10,
-    )
-    menu_item_vars_Delete = dict(
-        menu="context_actions",
-        privilege="Delete",
-        order=99,
-    )
     
-    VIEW_TMPL = """
+    def register_form_view(type_key, privilege, name, for_, class_):
+        UI_ZC_DECLS.append(register_form_view.TMPL.format(**locals()))
+    register_form_view.TMPL = """
             <browser:page name="{name}"
                 for="{for_}"
                 class="{class_}"
                 permission="bungeni.{type_key}.{privilege}"
                 layer="bungeni.ui.interfaces.IBungeniSkin"
             />"""
-    workspace_view_vars_Add = dict(
-        for_="bungeni.core.interfaces.IWorkspaceDraft",
-        class_="bungeni.ui.workspace.WorkspaceAddForm",
-        privilege="Add",
-    )
-    forms_view_vars_Add = dict(
-        name="add",
-        class_="bungeni.ui.forms.common.AddForm",
-        privilege="Add",
-    )
-    forms_view_vars_View = dict(
-        name="view",
-        class_="bungeni.ui.forms.common.DisplayForm",
-        privilege="View",
-    )
-    forms_view_vars_Edit = dict(
-        name="edit",
-        class_="bungeni.ui.forms.forms.DiffEditForm",
-        privilege="Edit",
-    )
-    forms_view_vars_Delete = dict(
-        name="delete",
-        class_="bungeni.ui.forms.common.DeleteForm",
-        privilege="Delete",
-    )
     
     UI_ZC_DECLS[:] = []
     # we assume that non-custom types have already been set up as needed
@@ -109,19 +75,14 @@ def setup_customization_ui():
                 naming.container_interface_name(type_key))
         
         # generic forms (independent of any feature)
-        UI_ZC_DECLS.append(VIEW_TMPL.format(
-                type_key=type_key,
-                for_=container_interface_qualname,
-                **forms_view_vars_Add))
-        for form_view_vars in (
-                forms_view_vars_View, 
-                forms_view_vars_Edit, 
-                forms_view_vars_Delete
-            ):
-            UI_ZC_DECLS.append(VIEW_TMPL.format(
-                    type_key=type_key,
-                    for_=model_interface_qualname,
-                    **form_view_vars))
+        register_form_view(type_key, "Add", "add", container_interface_qualname,
+            "bungeni.ui.forms.common.AddForm")
+        register_form_view(type_key, "View", "view", model_interface_qualname,
+            "bungeni.ui.forms.common.DisplayForm")
+        register_form_view(type_key, "Edit", "edit", model_interface_qualname,
+            "bungeni.ui.forms.forms.DiffEditForm")
+        register_form_view(type_key, "Delete", "delete", model_interface_qualname,
+            "bungeni.ui.forms.common.DeleteForm")
         
         # workspace
         if ti.workflow.has_feature("workspace"):
@@ -129,31 +90,23 @@ def setup_customization_ui():
             # add menu item
             # !+workspace_feature_add(mr, oct-2012) note that an enabled
             # workspace feature also implies "add" functionality for the type
-            UI_ZC_DECLS.append(MENU_ITEM_TMPL.format(
-                    type_key=type_key, 
-                    title=type_title,
-                    for_="*",
-                    action="../../draft/add_{k}".format(k=type_key),
-                    **menu_item_vars_Add))
+            action = "../../draft/add_{k}".format(k=type_key)
+            register_menu_item(type_key, "Add", type_title, "*", action,
+                menu="workspace_add_parliamentary_content", order=7)
             # edit menu item
-            UI_ZC_DECLS.append(MENU_ITEM_TMPL.format(
-                    type_key=type_key,
-                    title="Edit {t}".format(t=type_title),
-                    for_=model_interface_qualname,
-                    action="edit",
-                    **menu_item_vars_Edit))
+            # !+ edit/delete used to be on layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
+            title = "Edit {t}".format(t=type_title)
+            register_menu_item(type_key, "Edit", title, model_interface_qualname, "edit",
+                menu="context_actions", order=10)
             # delete menu item
-            UI_ZC_DECLS.append(MENU_ITEM_TMPL.format(
-                    type_key=type_key,
-                    title="Delete {t}".format(t=type_title),
-                    for_=model_interface_qualname,
-                    action="delete",
-                    **menu_item_vars_Delete))
+            title = "Delete {t}".format(t=type_title)
+            register_menu_item(type_key, "Delete", title, model_interface_qualname, "delete",
+                menu="context_actions", order=99)
             # workspace add view
-            UI_ZC_DECLS.append(VIEW_TMPL.format(
-                    type_key=type_key,
-                    name="add_{type_key}".format(type_key=type_key),
-                    **workspace_view_vars_Add))
+            name = "add_{type_key}".format(type_key=type_key)
+            register_form_view(type_key, "Add", name,
+                "bungeni.core.interfaces.IWorkspaceDraft",
+                "bungeni.ui.workspace.WorkspaceAddForm")
 
 
 def apply_customization_ui():
