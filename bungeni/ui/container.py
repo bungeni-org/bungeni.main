@@ -185,8 +185,14 @@ class ContainerJSONBrowserView(BrowserPage):
         _sort_dir_funcs = dict(asc=sql.asc, desc=sql.desc)
         self.sort_dir_func = _sort_dir_funcs.get(self.sort_dir, sql.desc)
 
+# !+VIEW_PERMISSION(miano, nov 2012) These two views are defined to be public
+# but they only list items that the user has permission to view
+# ideally the should not be registered on IAlchemistContainer but
+# per container type with the appropriate permissions
 
-@register.view(IAlchemistContainer, name="jsontableheaders")
+
+@register.view(IAlchemistContainer, name="jsontableheaders",
+    protect=register.PROTECT_VIEW_PUBLIC)
 class ContainerJSONTableHeaders(ContainerJSONBrowserView):
     def __call__(self):
         return simplejson.dumps([
@@ -195,7 +201,8 @@ class ContainerJSONTableHeaders(ContainerJSONBrowserView):
         ])
 
 
-@register.view(IAlchemistContainer, name="jsonlisting")
+@register.view(IAlchemistContainer, name="jsonlisting",
+    protect=register.PROTECT_VIEW_PUBLIC)
 class ContainerJSONListing(ContainerJSONBrowserView):
     """Paging, batching, sorting, json contents of a container.
     """
@@ -457,7 +464,11 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         lang = translation.get_request_language(request=self.request)
         return self.json_batch(start, limit, lang)
 
-@register.view(IAlchemistContainer, name="jsonlisting-raw")
+
+@register.view(mfaces.IItemScheduleContainer,
+    name="jsonlisting-raw",
+    protect={"bungeni.sittingschedule.itemdiscussion.View":
+        register.VIEW_DEFAULT_ATTRS})
 class ContainerJSONListingRaw(ContainerJSONListing):
     """JSON listing for a container with no formatting.
     Skip passing through descriptor listing column renderers.

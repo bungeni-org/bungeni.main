@@ -296,14 +296,16 @@ class WorkspaceContainer(WorkspaceBaseContainer):
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
                     if (prm.getSetting(obj_role, principal.id) == Allow):
-                        object_roles_results.append(obj)
+                        object_roles_results.append(
+                            contained(obj, self, self.string_key(obj)))
                         break
             results.extend(object_roles_results)
         # Sort items
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                 reverse=reverse)
-        results = [item for item in results if check_view_permission(item)]
+        results = [item for item in results if check_view_permission(
+            contained(item, self, self.string_key(item)))]
         count = len(results)
         if not (kw.get("filter_title", None) or
                 kw.get("filter_type", None) or

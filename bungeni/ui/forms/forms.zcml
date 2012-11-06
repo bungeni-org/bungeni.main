@@ -14,19 +14,19 @@
     <browser:page name="add"
         for="bungeni.models.interfaces.IBungeniGroupMembershipContainer"
         class=".common.AddForm"
-        permission="bungeni.groupmember.Add"
+        permission="bungeni.group_membership.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit"
         for="bungeni.models.interfaces.IBungeniGroupMembership"
         class=".common.EditForm"
-        permission="bungeni.groupmember.Edit"
+        permission="bungeni.group_membership.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete"
         for="bungeni.models.interfaces.IBungeniGroupMembership"
         class=".common.DeleteForm"
-        permission="bungeni.groupmember.Delete"
+        permission="bungeni.group_membership.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     

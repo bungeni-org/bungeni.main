@@ -183,9 +183,34 @@
     </class>
     
     <class class=".domain.Parliament">
-        <require like_class=".domain.Group" />
         <require permission="bungeni.parliament.View"
             attributes="
+                addresses
+                
+                members
+                group_principal_id
+                contained_groups
+                group_addresses
+                
+                group_id
+                short_name
+                full_name
+                acronym
+                identifier
+                description
+                status
+                status_date
+                start_date
+                end_date
+                type
+                sub_type
+                parent_group_id
+                language
+                custom1
+                custom2
+                custom3
+                custom4
+
                 sessions
                 committees
                 governments
@@ -220,25 +245,66 @@
     </class>
     
     <class class=".domain.Government">
-        <require like_class=".domain.Group" />
         <require permission="bungeni.government.Edit"
             set_attributes="
+                addresses
+                
+                members
+                group_principal_id
+                contained_groups
+                group_addresses
+                
+                group_id
                 short_name
                 full_name
                 acronym
                 identifier
-                sub_type
                 description
+                status
+                status_date
                 start_date
                 end_date
+                type
+                sub_type
+                parent_group_id
+                language
+                custom1
+                custom2
+                custom3
+                custom4
             "
         />
     </class>
     
     <class class=".domain.Ministry">
-        <require like_class=".domain.Group" />
         <require permission="bungeni.ministry.View"
             attributes="
+                addresses
+                
+                members
+                group_principal_id
+                contained_groups
+                group_addresses
+                
+                group_id
+                short_name
+                full_name
+                acronym
+                identifier
+                description
+                status
+                status_date
+                start_date
+                end_date
+                type
+                sub_type
+                parent_group_id
+                language
+                custom1
+                custom2
+                custom3
+                custom4
+
                 ministers
                 questions
                 bills
@@ -260,9 +326,34 @@
     </class>
     
     <class class=".domain.Office">
-        <require like_class=".domain.Group" />
         <require permission="bungeni.office.View"
             attributes="
+                addresses
+                
+                members
+                group_principal_id
+                contained_groups
+                group_addresses
+                
+                group_id
+                short_name
+                full_name
+                acronym
+                identifier
+                description
+                status
+                status_date
+                start_date
+                end_date
+                type
+                sub_type
+                parent_group_id
+                language
+                custom1
+                custom2
+                custom3
+                custom4
+
                 officemembers
                 title_types
                 
@@ -285,9 +376,34 @@
     </class>
     
     <class class=".domain.Committee">
-        <require like_class=".domain.Group" />
         <require permission="bungeni.committee.View"
             attributes="
+                addresses
+                
+                members
+                group_principal_id
+                contained_groups
+                group_addresses
+                
+                group_id
+                short_name
+                full_name
+                acronym
+                identifier
+                description
+                status
+                status_date
+                start_date
+                end_date
+                type
+                sub_type
+                parent_group_id
+                language
+                custom1
+                custom2
+                custom3
+                custom4
+
                 committeemembers
                 committeestaff
                 agendaitems
@@ -334,12 +450,34 @@
     </class>
     
     <class class=".domain.PoliticalGroup">
-        <require like_class=".domain.Group" />
         <require permission="bungeni.political_group.View"
             attributes="
+                addresses
+                
                 members
+                group_principal_id
+                contained_groups
+                group_addresses
                 
                 group_id
+                short_name
+                full_name
+                acronym
+                identifier
+                description
+                status
+                status_date
+                start_date
+                end_date
+                type
+                sub_type
+                parent_group_id
+                language
+                custom1
+                custom2
+                custom3
+                custom4
+                
                 logo_data
                 logo_name
                 logo_mimetype
@@ -376,7 +514,7 @@
     <!-- group memberships -->
     
     <class class=".domain.GroupMembership">
-        <require permission="bungeni.groupmember.View"
+        <require permission="bungeni.group_membership.View"
             attributes="
                 user
                 group
@@ -396,7 +534,7 @@
                 language
             "
         />
-        <require permission="bungeni.groupmember.Edit"
+        <require permission="bungeni.group_membership.Edit"
             set_attributes="membership_id
                 user_id
                 group_id
@@ -413,7 +551,7 @@
     
     <class class=".domain.MemberOfParliament">
         <require like_class=".domain.GroupMembership" />
-        <require permission="bungeni.groupmember.View"
+        <require permission="bungeni.group_membership.View"
             attributes="
                 titles
                 addresses
@@ -429,7 +567,7 @@
                 leave_reason
             "
         />
-        <require permission="bungeni.groupmember.Edit"
+        <require permission="bungeni.group_membership.Edit"
             set_attributes="
                 membership_id
                 user_id

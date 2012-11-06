@@ -66,11 +66,11 @@
   <permission id="bungeni.government.Delete" title="Delete government" />
   <permission id="bungeni.government.View" title="View government" />
   
-  <permission id="bungeni.groupmember.Add" title="Add group member" />
-  <permission id="bungeni.groupmember.Edit" title="Edit group member" />
-  <permission id="bungeni.groupmember.Delete" title="Delete group member" />
-  <permission id="bungeni.groupmember.View" title="View group member" />
-  <meta:redefinePermission from="bungeni.groupmember.View" to="zope.View" />
+  <permission id="bungeni.group_membership.Add" title="Add group member" />
+  <permission id="bungeni.group_membership.Edit" title="Edit group member" />
+  <permission id="bungeni.group_membership.Delete" title="Delete group member" />
+  <permission id="bungeni.group_membership.View" title="View group member" />
+  <meta:redefinePermission from="bungeni.group_membership.View" to="zope.View" />
   
   <permission id="bungeni.office.Add" title="Add office" />
   <permission id="bungeni.office.Edit" title="Edit office" />
@@ -81,19 +81,19 @@
   <permission id="bungeni.office_member.Edit" title="Edit office member" />
   <permission id="bungeni.office_member.Delete" title="Delete office member" />
   <permission id="bungeni.office_member.View" title="View office member" />
-  <meta:redefinePermission from="bungeni.office_member.View" to="bungeni.groupmember.View" />
-  <meta:redefinePermission from="bungeni.office_member.Add" to="bungeni.groupmember.Add" />
-  <meta:redefinePermission from="bungeni.office_member.Edit" to="bungeni.groupmember.Edit" />
-  <meta:redefinePermission from="bungeni.office_member.Delete" to="bungeni.groupmember.Delete" />
+  <meta:redefinePermission from="bungeni.office_member.View" to="bungeni.group_membership.View" />
+  <meta:redefinePermission from="bungeni.office_member.Add" to="bungeni.group_membership.Add" />
+  <meta:redefinePermission from="bungeni.office_member.Edit" to="bungeni.group_membership.Edit" />
+  <meta:redefinePermission from="bungeni.office_member.Delete" to="bungeni.group_membership.Delete" />
   
     <permission id="bungeni.member_of_parliament.Add" title="Add mp" />
     <permission id="bungeni.member_of_parliament.Edit" title="Edit mp" />
     <permission id="bungeni.member_of_parliament.Delete" title="Delete mp" />
     <permission id="bungeni.member_of_parliament.View" title="View mp" />
-    <meta:redefinePermission from="bungeni.member_of_parliament.View" to="bungeni.groupmember.View" />
-    <meta:redefinePermission from="bungeni.member_of_parliament.Add" to="bungeni.groupmember.Add" />
-    <meta:redefinePermission from="bungeni.member_of_parliament.Edit" to="bungeni.groupmember.Edit" />
-    <meta:redefinePermission from="bungeni.member_of_parliament.Delete" to="bungeni.groupmember.Delete" />
+    <meta:redefinePermission from="bungeni.member_of_parliament.View" to="bungeni.group_membership.View" />
+    <meta:redefinePermission from="bungeni.member_of_parliament.Add" to="bungeni.group_membership.Add" />
+    <meta:redefinePermission from="bungeni.member_of_parliament.Edit" to="bungeni.group_membership.Edit" />
+    <meta:redefinePermission from="bungeni.member_of_parliament.Delete" to="bungeni.group_membership.Delete" />
 
   <permission id="bungeni.ministry.Add" title="Add ministry" />
   <permission id="bungeni.ministry.Edit" title="Edit ministry" />
@@ -105,28 +105,28 @@
   <permission id="bungeni.minister.Edit" title="Edit minister" />
   <permission id="bungeni.minister.Delete" title="Delete minister" />
   <permission id="bungeni.minister.View" title="View minister" />
-  <meta:redefinePermission from="bungeni.minister.View" to="bungeni.groupmember.View" />
-  <meta:redefinePermission from="bungeni.minister.Add" to="bungeni.groupmember.Add" />
-  <meta:redefinePermission from="bungeni.minister.Edit" to="bungeni.groupmember.Edit" />
-  <meta:redefinePermission from="bungeni.minister.Delete" to="bungeni.groupmember.Delete" />
+  <meta:redefinePermission from="bungeni.minister.View" to="bungeni.group_membership.View" />
+  <meta:redefinePermission from="bungeni.minister.Add" to="bungeni.group_membership.Add" />
+  <meta:redefinePermission from="bungeni.minister.Edit" to="bungeni.group_membership.Edit" />
+  <meta:redefinePermission from="bungeni.minister.Delete" to="bungeni.group_membership.Delete" />
   
   <permission id="bungeni.committee_member.Add" title="Add committee member" />
   <permission id="bungeni.committee_member.Edit" title="Edit committee member" />
   <permission id="bungeni.committee_member.Delete" title="Delete committee member" />
   <permission id="bungeni.committee_member.View" title="View committee member" />
-  <meta:redefinePermission from="bungeni.committee_member.View" to="bungeni.groupmember.View" />
-  <meta:redefinePermission from="bungeni.committee_member.Add" to="bungeni.groupmember.Add" />
-  <meta:redefinePermission from="bungeni.committee_member.Edit" to="bungeni.groupmember.Edit" />
-  <meta:redefinePermission from="bungeni.committee_member.Delete" to="bungeni.groupmember.Delete" />
+  <meta:redefinePermission from="bungeni.committee_member.View" to="bungeni.group_membership.View" />
+  <meta:redefinePermission from="bungeni.committee_member.Add" to="bungeni.group_membership.Add" />
+  <meta:redefinePermission from="bungeni.committee_member.Edit" to="bungeni.group_membership.Edit" />
+  <meta:redefinePermission from="bungeni.committee_member.Delete" to="bungeni.group_membership.Delete" />
 
   <permission id="bungeni.committee_staff.Add" title="Add committee staff" />
   <permission id="bungeni.committee_staff.Edit" title="Edit committee staff" />
   <permission id="bungeni.committee_staff.Delete" title="Delete committee staff" />
   <permission id="bungeni.committee_staff.View" title="View committee staff" />
-  <meta:redefinePermission from="bungeni.committee_staff.View" to="bungeni.groupmember.View" />
-  <meta:redefinePermission from="bungeni.committee_staff.Add" to="bungeni.groupmember.Add" />
-  <meta:redefinePermission from="bungeni.committee_staff.Edit" to="bungeni.groupmember.Edit" />
-  <meta:redefinePermission from="bungeni.committee_staff.Delete" to="bungeni.groupmember.Delete" />
+  <meta:redefinePermission from="bungeni.committee_staff.View" to="bungeni.group_membership.View" />
+  <meta:redefinePermission from="bungeni.committee_staff.Add" to="bungeni.group_membership.Add" />
+  <meta:redefinePermission from="bungeni.committee_staff.Edit" to="bungeni.group_membership.Edit" />
+  <meta:redefinePermission from="bungeni.committee_staff.Delete" to="bungeni.group_membership.Delete" />
 
   <permission id="bungeni.political_group.Add" title="Add party" />
   <permission id="bungeni.political_group.Edit" title="Edit party" />
@@ -137,10 +137,10 @@
   <permission id="bungeni.political_group_member.Edit" title="Edit political group member" />
   <permission id="bungeni.political_group_member.Delete" title="Delete political group member" />
   <permission id="bungeni.political_group_member.View" title="View political group member" />
-  <meta:redefinePermission from="bungeni.political_group_member.View" to="bungeni.groupmember.View" />
-  <meta:redefinePermission from="bungeni.political_group_member.Add" to="bungeni.groupmember.Add" />
-  <meta:redefinePermission from="bungeni.political_group_member.Edit" to="bungeni.groupmember.Edit" />
-  <meta:redefinePermission from="bungeni.political_group_member.Delete" to="bungeni.groupmember.Delete" />
+  <meta:redefinePermission from="bungeni.political_group_member.View" to="bungeni.group_membership.View" />
+  <meta:redefinePermission from="bungeni.political_group_member.Add" to="bungeni.group_membership.Add" />
+  <meta:redefinePermission from="bungeni.political_group_member.Edit" to="bungeni.group_membership.Edit" />
+  <meta:redefinePermission from="bungeni.political_group_member.Delete" to="bungeni.group_membership.Delete" />
     
   
   <permission id="bungeni.address.Add" title="Add address" />
@@ -200,5 +200,4 @@
   <permission id="bungeni.group_assignment.Add" title="Add Assignment"/>
   <permission id="bungeni.group_assignment.Delete" title="Delete Assignment"/>
   <include package="bungeni_custom.sys.acl" file="permissions.zcml" />
-   
 </configure>

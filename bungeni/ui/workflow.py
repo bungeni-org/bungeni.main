@@ -261,7 +261,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             transition_ids = (transition_id,)
         self.actions = bindTransitions(self, transition_ids, wfc.workflow)
 
-
+# !+VIEW_PERMISSION(miano, nov 2012) This view and the one below should 
+# NOT be public.
 @register.view(interfaces.IWorkflowed, name="workflow", 
     protect=register.PROTECT_VIEW_PUBLIC)
 class WorkflowView(browser.BungeniBrowserView):
@@ -289,7 +290,8 @@ class WorkflowView(browser.BungeniBrowserView):
         return template
 
 
-@register.view(interfaces.IWorkflowed, name="change_workflow_state")
+@register.view(interfaces.IWorkflowed, name="change_workflow_state",
+    protect=register.PROTECT_VIEW_PUBLIC)
 class WorkflowChangeStateView(WorkflowView):
     """This gets called on selection of a transition from the menu i.e. NOT:
     a) when clicking on one of the transition buttons in the workflow form.

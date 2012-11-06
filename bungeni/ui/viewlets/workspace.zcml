@@ -11,7 +11,7 @@
         weight="1"
     />
     <browser:viewlet name="bungeni.workspace_document_marker"
-        for="bungeni.models.interfaces.IDoc"
+        for="*"
         layer="..interfaces.IWorkspaceMyDocumentsSectionLayer"
         permission="bungeni.ui.workspace.View"
         manager="ploned.ui.interfaces.ILeftColumnManager"

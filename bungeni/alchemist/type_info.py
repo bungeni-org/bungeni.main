@@ -228,7 +228,7 @@ TYPE_REGISTRY = [
     
     # !+NAMING: member-related -> Group name + "Member" (no + "ship")
     ("group", TI("group", interfaces.IBungeniGroup)),
-    ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
+    ("group_membership", TI("group_membership", interfaces.IBungeniGroupMembership)),
     
     # non-workflowed
     ("user_delegation", TI(None, interfaces.IUserDelegation)),

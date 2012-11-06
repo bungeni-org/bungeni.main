@@ -40,10 +40,11 @@
         for="*"
         factory=".forms.SubFormTemplate"
     />
+    <!-- VIEW_PERMISSION (miano, nov 2012) -->
     <browser:page name="view"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
         class=".common.DisplayForm"
-        permission="zope.View"
+        permission="zope.Public"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="add"
@@ -146,6 +147,12 @@ to e.g. "bungeni.{type}.Edit").
         for="bungeni.models.interfaces.ISittingContainer"
         class=".common.AddForm"
         permission="bungeni.sitting.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="view"
+        for="bungeni.models.interfaces.ISitting"
+        class=".common.DisplayForm"
+        permission="bungeni.sitting.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit"
