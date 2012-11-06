@@ -51,6 +51,8 @@ def new_custom_domain_model(type_key):
         for elem in xml.findall("descriptor"):
             if misc.xml_attr_str(elem, "name") == type_key:
                 return elem
+        else:
+            raise KeyError("No configuration for custom descriptor %r." % (type_key))
     edescriptor = get_elem(type_key)
     archetype_key = misc.xml_attr_str(edescriptor, "archetype")
     domain_model_name = naming.model_name(type_key)

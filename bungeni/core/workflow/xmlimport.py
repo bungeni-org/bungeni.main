@@ -285,7 +285,9 @@ def _load(type_key, name, workflow):
                     ASSIGNMENTS[i], permission, role)
                 # ensure global and local assignments are distinct
                 global_proles = _global_permission_role_mixes.get(permission, "")
-                assert role not in global_proles, (name, permission, role)
+                assert role not in global_proles, ("Workflow [%s] may not mix "
+                    "global and local granting of a same permission [%s] to a "
+                    "same role [%s].") % (name, permission, role)
         if like_state:
             # splice any remaining like_permissions at beginning of permissions
             permissions[0:0] = like_permissions

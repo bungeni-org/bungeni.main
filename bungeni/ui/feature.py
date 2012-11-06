@@ -14,23 +14,27 @@ from bungeni.utils.capi import capi
 from bungeni.utils import naming
 
 
-def apply_customization_ui():
+ZCML_SLUG = """
+    <configure xmlns="http://namespaces.zope.org/zope"
+        xmlns:browser="http://namespaces.zope.org/browser"
+        xmlns:i18n="http://namespaces.zope.org/i18n"
+        i18n_domain="bungeni"
+        >
+        <include package="zope.browsermenu" file="meta.zcml" />
+        <include package="zope.browserpage" file="meta.zcml" />
+{ui_zcml_decls}
+    </configure>
+    """
+
+UI_ZC_DECLS = []
+
+
+def setup_customization_ui():
     """Called from ui.app.on_wsgi_application_created_event -- must be called
     late, at least as long as there other ui zcml directives (always executed 
     very late) that need to have been executed prior to this e.g. 
     creation of specific menus such as "context_actions".
     """
-    ZCML_SLUG = """
-        <configure xmlns="http://namespaces.zope.org/zope"
-            xmlns:browser="http://namespaces.zope.org/browser"
-            xmlns:i18n="http://namespaces.zope.org/i18n"
-            i18n_domain="bungeni"
-            >
-            <include package="zope.browsermenu" file="meta.zcml" />
-            <include package="zope.browserpage" file="meta.zcml" />
-{zcml_decls}
-        </configure>
-        """
     
     MENU_ITEM_TMPL = """
             <browser:menuItem menu="{menu}"
@@ -91,10 +95,10 @@ def apply_customization_ui():
         privilege="Delete",
     )
     
-    _decls = []
+    UI_ZC_DECLS[:] = []
     # we assume that non-custom types have already been set up as needed
     for type_key, ti in capi.iter_type_info(scope="custom"):
-        _decls.append("""
+        UI_ZC_DECLS.append("""
             
             <!-- {type_key} -->""".format(type_key=type_key))
         
@@ -105,7 +109,7 @@ def apply_customization_ui():
                 naming.container_interface_name(type_key))
         
         # generic forms (independent of any feature)
-        _decls.append(VIEW_TMPL.format(
+        UI_ZC_DECLS.append(VIEW_TMPL.format(
                 type_key=type_key,
                 for_=container_interface_qualname,
                 **forms_view_vars_Add))
@@ -114,7 +118,7 @@ def apply_customization_ui():
                 forms_view_vars_Edit, 
                 forms_view_vars_Delete
             ):
-            _decls.append(VIEW_TMPL.format(
+            UI_ZC_DECLS.append(VIEW_TMPL.format(
                     type_key=type_key,
                     for_=model_interface_qualname,
                     **form_view_vars))
@@ -125,35 +129,39 @@ def apply_customization_ui():
             # add menu item
             # !+workspace_feature_add(mr, oct-2012) note that an enabled
             # workspace feature also implies "add" functionality for the type
-            _decls.append(MENU_ITEM_TMPL.format(
+            UI_ZC_DECLS.append(MENU_ITEM_TMPL.format(
                     type_key=type_key, 
                     title=type_title,
                     for_="*",
                     action="../../draft/add_{k}".format(k=type_key),
                     **menu_item_vars_Add))
             # edit menu item
-            _decls.append(MENU_ITEM_TMPL.format(
+            UI_ZC_DECLS.append(MENU_ITEM_TMPL.format(
                     type_key=type_key,
                     title="Edit {t}".format(t=type_title),
                     for_=model_interface_qualname,
                     action="edit",
                     **menu_item_vars_Edit))
             # delete menu item
-            _decls.append(MENU_ITEM_TMPL.format(
+            UI_ZC_DECLS.append(MENU_ITEM_TMPL.format(
                     type_key=type_key,
                     title="Delete {t}".format(t=type_title),
                     for_=model_interface_qualname,
                     action="delete",
                     **menu_item_vars_Delete))
             # workspace add view
-            _decls.append(VIEW_TMPL.format(
+            UI_ZC_DECLS.append(VIEW_TMPL.format(
                     type_key=type_key,
                     name="add_{type_key}".format(type_key=type_key),
                     **workspace_view_vars_Add))
-    
+
+
+def apply_customization_ui():
+    """Called from ui.app.on_wsgi_application_created_event -- must be called
+    AFTER custom types have been catalysed.
+    """
     # combine config string and execute it
-    zcml = ZCML_SLUG.format(zcml_decls="".join([ zd for zd in _decls ]))
+    zcml = ZCML_SLUG.format(ui_zcml_decls="".join([ zd for zd in UI_ZC_DECLS ]))
     log.debug("Executing UI feature configuration:\n%s" % (zcml))
     xmlconfig.string(zcml)
-
 
