@@ -503,11 +503,13 @@ YAHOO.bungeni.config = function(){
                                             YAHOO.bungeni.agendaconfig.handlers.editMinute
                                         );
                                     }
+                                    // "add new record" row
+                                    nHTML = renderAddMinute(record_index, nHTML, mAttrs, 
+                                            SGlobals.add_minutes_record);
                                 }else{
-                                    nHTML = nHTML + BungeniUtils.wrapText(
-                                        SGlobals.minutes_no_records,
-                                        "span", eAttrs
-                                    );
+                                    // "add new record" row on none
+                                    nHTML = renderAddMinute(record_index, nHTML, mAttrs, 
+                                            SGlobals.minutes_no_records);
                                 }
                                 minutesContainer.innerHTML = nHTML;
                             }
@@ -545,6 +547,28 @@ YAHOO.bungeni.config = function(){
                       el.innerHTML = cHTML ;
                   }
               }
+            
+            var renderAddMinute = function(record_index, nHTML, mAttrs, txtLabel) {
+                idAttr = " rel='rec-NEW'";
+                addId = "minute-edit_" + record_index;
+                var addAttrs = (
+                    "class='minute-add' " + 
+                    "id='" + addId + "'"
+                );
+                nHTML = nHTML + BungeniUtils.wrapText(
+                    (txtLabel +
+                        BungeniUtils.wrapText(
+                            "&nbsp;",
+                            "span", addAttrs
+                        )
+                    ), 
+                    "span", mAttrs + " " + idAttr
+                );
+                Event.addListener(addId, "click",
+                    YAHOO.bungeni.agendaconfig.handlers.addMinute
+                );
+                return nHTML;
+            }
             
             var countFormatter = function(el, record, column, data){
                 el.innerHTML = this.getTrIndex(record)+1;
@@ -649,15 +673,6 @@ YAHOO.bungeni.config = function(){
                         value: SGlobals.types.EDITORIAL_NOTE
                     },
                 ]
-                if(YAHOO.bungeni.agendaconfig.minuteEditor!=undefined && 
-                    rdata.item_type != 'heading'){
-                    menu.push(
-                        {
-                            text: SGlobals.minute_button_text,
-                            value: SGlobals.types.MINUTE
-                        }
-                    );
-                }
 
                 var button = new YAHOO.widget.Button({
                     type: "menu",

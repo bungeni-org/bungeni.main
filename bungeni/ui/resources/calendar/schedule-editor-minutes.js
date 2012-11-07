@@ -18,9 +18,14 @@ YAHOO.bungeni.agendaconfig = function(){
 
     var _minuteEditor = function(){
         init = function(){
-           this.dialog = new YAHOO.widget.SimpleDialog("minute-editor",
-                DialogConfig.default
-            );
+           this.dialog = new YAHOO.widget.SimpleDialog("minute-editor", {
+                modal: true,
+                visible: false,
+                width: "90em",
+                draggable: true,
+                fixedcenter: true,
+                constraintoviewport: true
+            });
             this.dialog._parent = this
             var dialogButtons = [
                 {
@@ -53,12 +58,9 @@ YAHOO.bungeni.agendaconfig = function(){
                     handler: function(){ this.hide(); }
                 },
             ]
-            this.dialog.cfg.queueProperty("width", "500px");
-            this.dialog.cfg.queueProperty("height", "400px");
             this.dialog.cfg.queueProperty("buttons", dialogButtons);
             this.dialog.setBody("<div><textarea name='minutestext' id='minutestext'></textarea></div>");
             this.dialog.setHeader(SGlobals.schedule_discussions_title);
-            this.dialog.render(document.body);
             Event.onAvailable("minutestext", function(e){
                 var editor = new YAHOO.widget.Editor("minutestext",
                     { width:"100%", height:"150px" , autoHeight:false }
@@ -77,6 +79,7 @@ YAHOO.bungeni.agendaconfig = function(){
                     editor.setEditorHTML(cdata[minute][Columns.BODY]);
                 }
             });
+            this.dialog.render(document.body);
         }
         render = function(row, minute){
             this.row = Number(row);
@@ -86,6 +89,7 @@ YAHOO.bungeni.agendaconfig = function(){
             }else{
                 this.dialog.show();
                 this.dialog.bringToTop();
+                this.dialog.center();
                 this.setText(this.row, this.minute);
             }
         }
@@ -107,6 +111,9 @@ YAHOO.bungeni.agendaconfig = function(){
             var row = indices[0];
             var minute = indices[1];
             YAHOO.bungeni.agendaconfig.minuteEditor.render(row, minute); 
+        }
+        var _addMinute  = function(args){
+            YAHOO.bungeni.config.dialogs.textrecords.show(SGlobals.types.MINUTE);
         }
         var _saveMinutes = function(row){
             var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
@@ -147,6 +154,7 @@ YAHOO.bungeni.agendaconfig = function(){
         }
         return {
             editMinute: _editMinute,
+            addMinute: _addMinute,
             saveMinutes: _saveMinutes
         }
     }();

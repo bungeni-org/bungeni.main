@@ -104,6 +104,7 @@ span.dt_title_unit{
     border-left: 3px solid #ddd;
 }
 
+#minute-editor_c,
 #text-records-dialog_c {
   left: 10% !important;
 }
@@ -151,6 +152,19 @@ span.dt_title_unit{
     border: none;
 }
 
+/* minutes add */
+#yui-gen0 span.minute-add {
+    position:absolute;
+    top:0;
+    left:0;
+    padding:1px;
+    background-color:#fff;
+    border:1px solid #CCC dotted;
+    color:#545450;
+    width:14px;
+    height:14px;
+    background:url("/@@/portal/images/plus_16.png") right center no-repeat;
+}
 /* edit/add */
 #yui-gen0 .yui-button.schedule_edit button {
     background-image: url(/@@/portal/images/plus_16.png);

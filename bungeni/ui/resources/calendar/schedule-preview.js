@@ -127,7 +127,6 @@ YAHOO.bungeni.schedulingpreview = function(){
                     row_type = dataTable.getRecordSet()._records[index]._oData.item_type;
                     dataTable.getTrEl(index).className += " row-"+row_type;
                 }
-                console.log(sSize);
             };
             
             dataTable.subscribe("initEvent", addRowClass);

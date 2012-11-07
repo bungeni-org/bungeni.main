@@ -197,6 +197,9 @@ def get_globals(group_name, **kwargs):
             "minutes_no_records": i18n(_(u"No minute records"),
                 language
             ),
+            "add_minutes_record": i18n(_(u"add minutes record"),
+                language
+            ),
             "minutes_edit": i18n(_(u"Edit"), language),
             "minutes_loading": i18n(_(u"Loading minutes..."),
                 language
