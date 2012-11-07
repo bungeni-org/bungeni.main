@@ -75,17 +75,18 @@ def get_db_user_id(context=None):
     if db_user is not None:
         return db_user.user_id
 
-def is_current_or_delegated_user(user):
+def is_current_or_delegated_user(user_id):
     """Is this user (a delegation of) the currently logged user?
     """
     current_user = get_db_user()
     # Only if there is a user logged in!
     if current_user:
-        if current_user == user:
+        if current_user.user_id == user_id:
             return True
         for d in delegation.get_user_delegations(current_user.user_id):
-            if d == user:
+            if d.user_id == user_id:
                 return True
+    return False
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 def get_prm_owner_principal_id(context):

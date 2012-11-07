@@ -38,7 +38,7 @@ def user_is_context_owner(context):
     
     A delegate is considered to be an owner of the object.
     """
-    return model_utils.is_current_or_delegated_user(context.owner)
+    return model_utils.is_current_or_delegated_user(context.owner_id)
 
 def context_is_public(context):
     """Is the context public i.e. can Anonymous see it?
