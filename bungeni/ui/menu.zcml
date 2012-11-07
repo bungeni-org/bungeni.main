@@ -171,7 +171,7 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IPoliticalGroup"
-        title="Add address..."
+        title="Add political group address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -227,7 +227,7 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ICommittee"
-        title="Add address..."
+        title="Add committee address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -236,7 +236,7 @@
     
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IParliament"
-        title="Add address..."
+        title="Add parliament address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -260,7 +260,7 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IGovernment"
-        title="Add address..."
+        title="Add government address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -292,7 +292,7 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IMinistry"
-        title="Add address..."
+        title="Add ministry address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -325,7 +325,7 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IMemberOfParliament"
-        title="Add address..."
+        title="Add MP address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -456,7 +456,7 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IOffice"
-        title="Add address..."
+        title="Add office address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"

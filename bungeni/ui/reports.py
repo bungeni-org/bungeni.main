@@ -60,7 +60,8 @@ class IReportBuilder(interface.Interface):
         description=_(u"Choose template to use in generating Report"),
         vocabulary=vocabulary.report_xhtml_template_factory
     )
-    start_date = schema.Date(title=_(u"Start Date"),
+    start_date = schema.Date(
+        title=_("report_builder_start_date", default=u"Start Date"),
         description=_(u"Start date for this Report")
     )
     publication_number = schema.TextLine(title=_(u"Publication Number"),
@@ -130,7 +131,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         self.status = _(u"See the preview of the report below")
         return self.template()
 
-    @form.action(_(u"Publish"), name="publish")
+    @form.action(_("publish_report", default=u"Publish"), name="publish")
     def handle_publish(self, action, data):
         self.generated_content = self.generateContent(data)
         
@@ -163,11 +164,11 @@ class SaveReportView(form.PageForm):
 
     class ISaveReportForm(interface.Interface):
         start_date = schema.Date(
-            title=_(u"Date"),
+            title=_("report_start_date, default="u"Date"),
             description=_(u"Choose a starting date for this report"),
             required=True)
         end_date = schema.Date(
-            title=_(u"Date"),
+            title=_("report_end_date", default=u"Date"),
             description=_(u"Choose an end date for this report"),
             required=True)
         note = schema.TextLine(title=u"Note",
@@ -179,8 +180,8 @@ class SaveReportView(form.PageForm):
         body = schema.Text(title=u"Report Text",
             description=u"Report Type",
             required=True)
-        sittings = schema.TextLine(title=_(u"Sittings included in this report"),
-            description=_(u"Sittings included in this report"),
+        sittings = schema.TextLine(title=_(u"Sittings in Report"),
+            description=_(u"List of sittings included in this report"),
             required=False)
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.Fields(ISaveReportForm)
@@ -203,7 +204,7 @@ class SaveReportView(form.PageForm):
             ignore_request=ignore_request
         )
     
-    @form.action(_(u"Save"), name="save")
+    @form.action(_(u"Save Report"), name="save")
     def handle_save(self, action, data):
         report = domain.Report()
         session = Session()
@@ -253,10 +254,12 @@ def default_reports(sitting, event):
     if sitting.status in wf.get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)
         report_type = "sitting_agenda"
-        report_title = _(u"Sitting Agenda")
+        report_title = _("report_title_sitting_agenda", 
+            default=u"Sitting Agenda")
         if sitting.status in wf.get_state_ids(tagged=["publishedminutes"]):
             report_type = "sitting_minutes"
-            report_title =  _(u"Sitting Votes and Proceedings")
+            report_title =  _("report_title_votes_and_proceedings", 
+                default=u"Sitting Votes and Proceedings")
         sittings = [ExpandedSitting(sitting)]
         report_context = ReportContext(sittings=sittings)
         report = domain.Report()

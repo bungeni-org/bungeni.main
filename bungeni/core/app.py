@@ -146,33 +146,34 @@ class AppSetup(object):
         
         # top-level sections
         workspace = self.context["workspace"] = WorkspaceSection(
-            title=_(u"Workspace"),
+            title=_("section_workspace", default=u"Workspace"),
             description=_(u"Current parliamentary activity"),
             default_name="my-documents",
         )
         
         alsoProvides(workspace, interfaces.ISearchableSection)
         workspace["my-documents"] = WorkspaceSection(
-            title=_(u"my documents"),
-            description=_(u"my documents"),
+            title=_("section_workspace_documents", 
+                default=u"my documents"),
+            description=_(u"my documents workspace section"),
             default_name="inbox",
             marker=interfaces.IWorkspaceDocuments,
         )
         workspace["my-documents"]["draft"] = WorkspaceContainer(
             tab_type="draft",
-            title=_("draft"),
+            title=_("section_workspace_draft", default="draft"),
             description=_("draft documents"),
             marker=interfaces.IWorkspaceDraft
         )
         workspace["my-documents"]["inbox"] = WorkspaceContainer(
             tab_type="inbox",
-            title=_("inbox"),
+            title=_("section_workspace_inbox", default="inbox"),
             description=_("incoming documents"),
             marker=interfaces.IWorkspaceInbox
         )
         workspace["my-documents"]["pending"] = WorkspaceContainer(
             tab_type="pending",
-            title=_("pending"),
+            title=_("section_workspace_pending", default="pending"),
             description=_("pending documents"),
             marker=interfaces.IWorkspacePending
         )
@@ -202,14 +203,14 @@ class AppSetup(object):
            )
 
         workspace["scheduling"] = Section(
-            title=_(u"Scheduling"),
-            description=_(u"Scheduling"),
+            title=_("section_scheduling", default=u"Scheduling"),
+            description=_(u"Workspace Scheduling"),
             default_name="index",
             marker=interfaces.IWorkspaceScheduling,
         )
         workspace["scheduling"]["committees"] = QueryContent(
             container_getter(get_current_parliament, "committees"),
-            title=_(u"Committees"),
+            title=_("section_scheduling_committees", default=u"Committees"),
             #!+marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules")
         )
@@ -220,17 +221,18 @@ class AppSetup(object):
         )
         workspace["scheduling"]["sittings"] = QueryContent(
             container_getter(get_current_parliament, "sittings"),
-            title=_(u"Sittings"),
+            title=_("section_scheduling_sittings", default=u"Sittings"),
             description=_(u"Plenary Sittings")
         )
         workspace["scheduling"]["agendaitems"] = QueryContent(
             container_getter(get_current_parliament, "agendaitems"),
-            title=_(u"Agenda items"),
+            title=_("section_scheduling_agenda_items", 
+                default=u"Agenda items"),
             #marker=interfaces.IAgendaItemAddContext,
             description=_(u"Manage agenda items"))
         
         workspace["groups"] = WorkspaceSection(
-            title=_(u"Groups"),
+            title=_("section_groups", default=u"Groups"),
             description=_(u"Bungeni Groups"),
             default_name="my-groups",
             marker=interfaces.IWorkspaceGroups,

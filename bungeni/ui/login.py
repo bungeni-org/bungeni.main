@@ -33,14 +33,16 @@ SECRET_KEY = "bungeni"
 
 
 class ILoginForm(interface.Interface):
-    login = schema.TextLine(title=_(u"Username"))
-    password = schema.Password(title=_(u"Password"))
+    login = schema.TextLine(title=_("label_login_form_username",
+        default=u"Username"))
+    password = schema.Password(title=_("label_login_form_password", 
+        default=u"Password"))
 
 
 class Login(form.FormBase):
     form_fields = form.Fields(ILoginForm)
     prefix = ""
-    form_name = _(u"Login")
+    form_name = _("login_form_title", default=u"Login")
     template = NamedTemplate("alchemist.form")
     
     def __call__(self):
@@ -51,7 +53,8 @@ class Login(form.FormBase):
                         ui_utils.url.absoluteURL(workspace, self.request))
         return super(Login, self).__call__()
             
-    @form.action(_(u"Login"), name="login")
+    @form.action(_("label_login_form_login", default=u"Login"), 
+        name="login")
     def handle_login(self, action, data):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):
             self.status = _(u"Invalid account credentials")
@@ -70,7 +73,8 @@ class Logout(BrowserView):
 
 
 class IRestoreLoginForm(interface.Interface):
-    email = schema.TextLine(title=_(u"Email"))        
+    email = schema.TextLine(
+        title=_("label_restore_login_email", default=u"Email"))        
 
 class RestoreLogin(form.FormBase):
     form_fields = form.Fields(IRestoreLoginForm)
@@ -113,8 +117,14 @@ class RestoreLogin(form.FormBase):
 
 
 class IRestorePasswordForm(interface.Interface):
-    login = schema.TextLine(title=_(u"Username"), required=False)
-    email = schema.TextLine(title=_(u"Email"), required=False)
+    login = schema.TextLine(
+        title=_("label_restore_password_username", default=u"Username"), 
+        required=False
+    )
+    email = schema.TextLine(
+        title=_("label_restore_password_email", default=u"Email"), 
+        required=False
+    )
     
 class RestorePassword(form.FormBase):
     form_fields = form.Fields(IRestorePasswordForm)
@@ -237,7 +247,10 @@ class IProfileForm(interface.Interface):
     first_name = schema.TextLine(title=_(u"First name"))
     last_name = schema.TextLine(title=_(u"Last name"))
     middle_name = schema.TextLine(title=_(u"Middle name"), required=False)
-    email = schema.TextLine(title=_(u"Email"), constraint=check_email)
+    email = schema.TextLine(
+        title=_("label_profile_email", default=u"Email"), 
+        constraint=check_email
+    )
     description = schema.Text(title=_(u"Biographical notes"), required=False)
     gender = schema.Choice(title=_("Gender"), vocabulary=vocabulary.gender)
     date_of_birth = schema.Date(title=_("Date of Birth"))
@@ -256,10 +269,11 @@ class IProfileForm(interface.Interface):
     def checkEmail(self):
         session = Session()
         users = session.query(User).filter(User.email==self.email)
+        message = _("error_profile_email_taken", "Email already taken!")
         if users.count() > 1:
-            raise interface.Invalid(_("Email already taken!"),"email")
+            raise interface.Invalid(message,"email")
         if users.count() == 1 and users.first().user_id != get_db_user().user_id:
-            raise interface.Invalid(_("Email already taken!"),"email")
+            raise interface.Invalid(message,"email")
         
 
 class Profile(BaseForm):
@@ -351,16 +365,14 @@ class Profile(BaseForm):
                 
         self.status = _("Profile data updated")
         
-    @form.action(_(u"Save"), name="save",
+    @form.action(_(u"Save Profile"), name="save",
                  condition=form.haveInputWidgets)
     def handle_edit_save(self, action, data):
-        """Saves the document and goes back to edit page"""
         self._do_save(data)
 
-    @form.action(_(u"Save and view"), name="save_and_view",
+    @form.action(_(u"Save profile and view"), name="save_and_view",
                  condition=form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
-        """Saves the  document and redirects to its view page"""
         self._do_save(data)
         if not self._next_url:
             self._next_url = ui_utils.url.absoluteURL(self.context, self.request) + \
@@ -370,7 +382,6 @@ class Profile(BaseForm):
     @form.action(_(u"Cancel"), name="cancel",
                  validator=ui.null_validator)
     def handle_edit_cancel(self, action, data):
-        """Cancelling redirects to the listing."""
         if not self._next_url:
             self._next_url = ui_utils.url.absoluteURL(self.context, self.request)
         self.request.response.redirect(self._next_url)
@@ -378,8 +389,8 @@ class Profile(BaseForm):
 
 class IChangePasswordForm(interface.Interface):
     old_password = schema.Password(title=_(u"Old password"), required=True)
-    pswd = schema.Password(title=_(u"Password"), required=True)
-    confirm_password = schema.Password(title=_(u"Confirm password"),
+    pswd = schema.Password(title=_(u"New password"), required=True)
+    confirm_password = schema.Password(title=_(u"Confirm new password"),
                                        required=True)
     
     @invariant
@@ -393,7 +404,8 @@ class ChangePasswordForm(BaseForm):
     form_fields = form.Fields(IChangePasswordForm)
     
     prefix = ""
-    form_name = _(u"Change password")
+    form_name = _("change_password_form_title", 
+        default=u"Change password")
     
     # !+ only used here [ bungeni.ui.login.Login ] ?
     template = NamedTemplate("alchemist.form")
@@ -411,7 +423,8 @@ class ChangePasswordForm(BaseForm):
                         )
         return super(ChangePasswordForm, self).__call__()
     
-    @form.action(_(u"Change password"), name="change_password")
+    @form.action(_("label_change_password", default=u"Change password"), 
+        name="change_password")
     def save_password(self, action, data):
         password = data.get("pswd","")
         confirm_password= data.get("confirm_password","")
