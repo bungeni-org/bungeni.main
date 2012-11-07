@@ -42,7 +42,7 @@ def new_custom_model_interface(type_key, model_iname):
             type_key, INTERFACE_MODULE.__name__, model_iname))
     return model_iface
 
-def new_custom_domain_model(type_key):
+def new_custom_domain_model(type_key, model_interface):
     # !+archetype? move to types? what about extended/derived/container attrs?
     def get_elem(type_key):
         import elementtree.ElementTree
@@ -64,6 +64,8 @@ def new_custom_domain_model(type_key):
         (archetype,),
         dict(__module__=MODEL_MODULE.__name__)
     )
+    # apply model_interface
+    classImplements(domain_model, model_interface)
     # set on INTERFACE_MODULE (register on type_info downstream)
     setattr(MODEL_MODULE, domain_model_name, domain_model)
     # db map custom domain class
@@ -142,9 +144,13 @@ def load_workflows(type_info_iterator):
 def setup_workflows(type_info_iterator):
     for type_key, ti in type_info_iterator:
         if ti.workflow:
+            # debug: ensure that setup is done only once
+            #assert type_key not in setup_workflows.DONE, type_key
+            #setup_workflows.DONE.add(type_key)
             # adjust domain_model as per workflow
             apply_customization_workflow(type_key, ti)
             register_specific_workflow_adapter(ti)
+#setup_workflows.DONE = set()
 
 
 def register_generic_workflow_adapters():
@@ -206,7 +212,7 @@ def register_custom_types():
             domain_model = resolve("bungeni.models.domain.%s" % (domain_model_name))
             log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
         except ImportError:
-            domain_model = new_custom_domain_model(type_key)
+            domain_model = new_custom_domain_model(type_key, model_iface)
         # type_info
         ti = TI(workflow_key, model_iface, domain_model)
         ti.custom = True

@@ -544,15 +544,19 @@
         />
         
    
-   <!-- View to store and retreive the document that the user is being editing -->
-   <browser:page
-   		for="bungeni.models.interfaces.IBungeniParliamentaryContent"
-   		name="nowediting"
+    <!-- View to store and retreive the document that the user is being editing -->
+    <!-- !+ was for="bungeni.models.interfaces.IBungeniParliamentaryContent" but 
+    that fails for custom types that are simply inheriting from Doc/IDoc.
+    Should be for IDoc? Should we qualify in configuration whether a 
+    custom type should be considered as ParliamentaryContent?
+    -->
+    <browser:page name="nowediting"
+        for="bungeni.models.interfaces.IFeatureWorkspace"
    		class=".views.StoreNowEditView"
    		layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
    		permission="zope.Public"
-   		/>
-   		
+    />
+    
    <adapter
       for="zope.schema.interfaces.IText
            zope.publisher.interfaces.browser.IBrowserRequest"

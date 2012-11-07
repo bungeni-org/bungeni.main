@@ -218,15 +218,15 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.group.wf.active.draft" role="bungeni.Speaker" />
 
 
-<!-- membership -->
+<!-- group_membership -->
 
-<permission id="bungeni.membership.wf.attached.internal" title="Publish Internal" />
-<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Clerk" />
-<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Owner" />
+<permission id="bungeni.group_membership.wf.attached.internal" title="Publish Internal" />
+<grant permission="bungeni.group_membership.wf.attached.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.group_membership.wf.attached.internal" role="bungeni.Owner" />
 
-<permission id="bungeni.membership.wf.internal.attached" title="Re-publish" />
-<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Clerk" />
-<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Owner" />
+<permission id="bungeni.group_membership.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.group_membership.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.group_membership.wf.internal.attached" role="bungeni.Owner" />
 
 
 <!-- agenda_item -->

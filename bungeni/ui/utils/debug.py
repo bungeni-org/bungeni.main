@@ -61,7 +61,7 @@ def interfaces_directlyProvidedBy(obj):
                 for i in interface.directlyProvidedBy(obj) ] or 
             ["</>"] ))
 def interfaces_iro(obj):
-    if isinstance(type(obj), type):
+    if isinstance(obj, type):
         # we have a class... iro is calculated on instances, try get one:
         try: 
             obj = obj()
@@ -69,6 +69,12 @@ def interfaces_iro(obj):
             import sys
             return """  interfaces iro %s: ***ERROR*** %s""" % (
                 obj, sys.exc_info())
+    try:
+        iro = obj.__provides__.__iro__
+    except:
+        import sys
+        return """  interfaces iro %s: ***ERROR*** %s""" % (
+            obj, sys.exc_info())
     return """  interfaces iro %s:
     %s""" % (repr(obj),
         "\n    ".join([

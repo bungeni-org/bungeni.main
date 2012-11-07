@@ -103,7 +103,14 @@ class DescriptiveProperties(object):
                         return translation[0].field_text
         return getattr(context, name)
 
-class DocumentDescriptiveProperties(DescriptiveProperties):
+
+@register.adapter()
+class DocDescriptiveProperties(DescriptiveProperties):
+    """A base DC adapter for Doc instances.
+    !+ all DC adapters for custom docs and groups must go away / to configuration
+    """
+    component.adapts(interfaces.IDoc)
+    
     @property
     def mover(self):
         session = Session()
@@ -111,12 +118,21 @@ class DocumentDescriptiveProperties(DescriptiveProperties):
         # !+TRANSLATE_MESS(mr, oct-2012) this is content data and NOT a UI msgid?
         # Should then be using translate_obj ?!
         return translate_i18n(
-            IDCDescriptiveProperties(context.owner).title_member
-        )
+            IDCDescriptiveProperties(context.owner).title_member)
+    
+    @property
+    def title(self):
+        doc = Session().merge(removeSecurityProxy(self.context))
+        return self.translate(doc, "title")
+
+    @property
+    def description(self):
+        doc = Session().merge(removeSecurityProxy(self.context))
+        return self.translate(doc, "description")
 
 
 @register.adapter()
-class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
+class QuestionDescriptiveProperties(DocDescriptiveProperties):
     component.adapts(interfaces.IQuestion)
     
     @property
@@ -144,7 +160,7 @@ class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
 
 
 @register.adapter()
-class BillDescriptiveProperties(DocumentDescriptiveProperties):
+class BillDescriptiveProperties(DocDescriptiveProperties):
     component.adapts(interfaces.IBill)
 
     @property
@@ -170,7 +186,7 @@ class BillDescriptiveProperties(DocumentDescriptiveProperties):
 
 
 @register.adapter()
-class MotionDescriptiveProperties(DocumentDescriptiveProperties):
+class MotionDescriptiveProperties(DocDescriptiveProperties):
     component.adapts(interfaces.IMotion)
     
     @property
@@ -481,7 +497,7 @@ class AddressDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class AgendaItemDescriptiveProperties(DocumentDescriptiveProperties):
+class AgendaItemDescriptiveProperties(DocDescriptiveProperties):
     component.adapts(interfaces.IAgendaItem)
     
     @property
@@ -494,7 +510,7 @@ class AgendaItemDescriptiveProperties(DocumentDescriptiveProperties):
 
 
 @register.adapter()
-class TabledDocumentDescriptiveProperties(DocumentDescriptiveProperties):
+class TabledDocDescriptiveProperties(DocDescriptiveProperties):
     component.adapts(interfaces.ITabledDocument)
     
     @property
