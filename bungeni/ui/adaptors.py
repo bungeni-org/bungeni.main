@@ -10,9 +10,9 @@ log = __import__("logging").getLogger("bungeni.ui.adapters")
 
 # !+SPELLING(mr, jan-2012) why does name for this file use "adaptor" spelling 
 # and not "adapter" like everywhere else thoughout the application?
-
+from zope.security import checkPermission
 from bungeni.core.interfaces import IRSSValues
-from bungeni.core.workflows.utils import check_view_permission
+from bungeni.core.workflows.utils import view_permission
 from bungeni.models import domain
 from bungeni.models.interfaces import (IFeatureAudit, \
     IAlchemistContainer
@@ -64,7 +64,7 @@ class RSSValues(object):
         public_wfstates = workflow.get_state_ids(tagged=["public"],
             restrict=False)
         return [ x for x in self.context.values()
-            if check_view_permission(x) and x.status in public_wfstates ]
+            if checkPermission(view_permission(x), x) and x.status in public_wfstates ]
 
 
 @register.adapter(adapts=(IFeatureAudit,), provides=IRSSValues)

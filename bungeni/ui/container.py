@@ -7,8 +7,7 @@ from sqlalchemy import types, orm, Date, cast
 
 from ore import yuiwidget
 
-from zope.security import proxy
-from zope.security import checkPermission
+from zope.security import proxy, checkPermission
 from zope.publisher.browser import BrowserPage
 from zope.schema.interfaces import IText, IDate, IDatetime
 from zc.resourcelibrary import need
@@ -21,7 +20,7 @@ from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
 
 from bungeni.core.workflow.interfaces import IWorkflowed
-from bungeni.core.workflows.utils import check_view_permission
+from bungeni.core.workflows.utils import view_permission
 from bungeni.core import translation
 
 from bungeni.ui import interfaces as ufaces
@@ -39,7 +38,7 @@ def query_iterator(query, parent):
     Checks if the user has view permission on the objects """
     for item in query:
         item.__parent__ = parent
-        if check_view_permission(item):
+        if checkPermission(view_permission(item), item):
             yield item
 
 

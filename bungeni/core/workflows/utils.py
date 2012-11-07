@@ -24,7 +24,7 @@ from bungeni.models.utils import get_principal_id
 import bungeni.core.version
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
-
+from bungeni.utils import naming
 import re
 import dbutils
 
@@ -293,10 +293,8 @@ def check_agenda_finalized(context):
     return  (False not in check_list)
 
 
-def check_view_permission(item):
+def view_permission(item):
     type_info = capi.get_type_info(item.__class__)
-    permission = "bungeni.%s.View" % type_info.workflow_key
-    if checkPermission(permission, item):
-        return True
-    else:
-        return False
+    if type_info.workflow_key:
+        return "bungeni.%s.View" % type_info.workflow_key
+    return "zope.View"

@@ -16,11 +16,12 @@ from zc.table import column
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
+from zope.security import checkPermission
 
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow
-from bungeni.core.workflows.utils import check_view_permission
+from bungeni.core.workflows.utils import view_permission
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import listing
@@ -48,11 +49,13 @@ class ChangeDataProvider(object):
     def change_data_items(self):
         """Get change data items, reverse-sorted by date (most recent first).
         """
-        interaction = getInteraction() # slight performance optimization
+        interaction = getInteraction()
         changes = []
+
         def append_visible_changes_on_item(item):
+            permission = view_permission(item)
             for c in domain.get_changes(item, *self.include_change_actions):
-                if check_view_permission(c):
+                if checkPermission(permission, c):
                     changes.append(c)
     
         # changes direct on head item

@@ -26,6 +26,7 @@
     <!-- !+UI_VIEWS all authenticated users may view UI components -->
     <grant permission="bungeni.ui.View" role="bungeni.Authenticated" />
     <grant permission="bungeni.ui.audit.View" role="bungeni.Authenticated" />
+    <grant permission="bungeni.ui.version.View" role="bungeni.Authenticated" />
     <grant permission="bungeni.ui.workspace.View" role="bungeni.Authenticated"/>
     
     <!-- manager grants -->

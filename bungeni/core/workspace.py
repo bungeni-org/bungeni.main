@@ -19,6 +19,7 @@ from zope import interface
 from zope import component
 from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.security.proxy import removeSecurityProxy
+from zope.security import checkPermission
 from zope.publisher.interfaces import NotFound
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.security.settings import Allow
@@ -37,7 +38,7 @@ from bungeni.core.interfaces import (
 )
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
-from bungeni.core.workflows.utils import check_view_permission
+from bungeni.core.workflows.utils import view_permission
 
 #!+WORKSPACE(miano, jul 2011)
 # Roles can be divided into two, roles that a principal gets by virtue
@@ -304,8 +305,8 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                 reverse=reverse)
-        results = [item for item in results if check_view_permission(
-            contained(item, self, self.string_key(item)))]
+        results = [item for item in results if checkPermission(view_permission(
+            contained(item, self, self.string_key(item))), item)]
         count = len(results)
         if not (kw.get("filter_title", None) or
                 kw.get("filter_type", None) or

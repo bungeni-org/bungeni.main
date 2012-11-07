@@ -14,7 +14,7 @@ from zope import schema
 from zope import formlib
 
 from zope.security.proxy import removeSecurityProxy
-from zope.security import canWrite
+from zope.security import canWrite, checkPermission
 from zope.security.interfaces import ForbiddenAttribute
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.i18n import translate
@@ -28,7 +28,7 @@ from bungeni.alchemist.interfaces import IIModelInterface
 from bungeni.alchemist.ui import getSelected
 
 from bungeni.core import version
-from bungeni.core.workflows.utils import check_view_permission
+from bungeni.core.workflows.utils import view_permission
 from bungeni.models.interfaces import IFeatureVersion
 from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
 from bungeni.ui.i18n import _
@@ -135,10 +135,12 @@ class VersionLogMixin(object):
         # objects) i.e. only own "version changes"; as "data_provider" we 
         # simply use the versions attribute on context:
         if self._data_items is None:
+            self._data_items = []
             # sorted desc by sqlalchemy, so following sorting not necessary:
-            self._data_items = [
-                removeSecurityProxy(v) for v in removeSecurityProxy(self.context).versions
-                if check_view_permission(v) ]
+            permission = view_permission(self.context)
+            for v in removeSecurityProxy(self.context).versions:
+                if checkPermission(permission, v):
+                    self._data_items.append(v)
         return self._data_items
     
     @property
@@ -159,7 +161,7 @@ class VersionLogMixin(object):
 
 @register.view(IFeatureVersion, layer=IWorkspaceOrAdminSectionLayer, 
     name="version-log", 
-    protect={"zope.Public": 
+    protect={"bungeni.ui.version.View": 
         dict(attributes=["publishTraverse", "browserDefault", "__call__"])})
 class VersionLogView(VersionLogMixin, 
         browser.BungeniBrowserView, 

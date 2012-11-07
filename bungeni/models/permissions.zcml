@@ -26,7 +26,8 @@
   <permission id="bungeni.session.Add" title="Add session" />
   <permission id="bungeni.session.Edit" title="Edit session" />
   <permission id="bungeni.session.Delete" title="Delete session" />
-    
+  <meta:redefinePermission from="bungeni.session.View" to="zope.View" />  
+
     <permission id="bungeni.sittingschedule.View" 
         title="View the schedule of a sitting" />
     <permission id="bungeni.sittingschedule.Edit" 
@@ -39,6 +40,7 @@
         title="View item scheduling discussion" />
     <permission id="bungeni.sittingschedule.itemdiscussion.Edit"
         title="Edit item scheduling discussion" />
+  <meta:redefinePermission from="bungeni.sittingschedule.View" to="zope.View" /> 
     
   <permission id="bungeni.sittingattendance.View" title="View sitting attendance" />
   <permission id="bungeni.sittingattendance.Add" title="Add sitting attendance" />
@@ -76,6 +78,7 @@
   <permission id="bungeni.office.Edit" title="Edit office" />
   <permission id="bungeni.office.Delete" title="Delete office" />
   <permission id="bungeni.office.View" title="View office" />
+  <meta:redefinePermission from="bungeni.office.View" to="zope.View" /> 
 
   <permission id="bungeni.office_member.Add" title="Add office member" />
   <permission id="bungeni.office_member.Edit" title="Edit office member" />
@@ -132,6 +135,7 @@
   <permission id="bungeni.political_group.Edit" title="Edit party" />
   <permission id="bungeni.political_group.Delete" title="Delete party" />
   <permission id="bungeni.political_group.View" title="View party" />
+  <meta:redefinePermission from="bungeni.political_group.View" to="zope.View" />
 
   <permission id="bungeni.political_group_member.Add" title="Add political group member" />
   <permission id="bungeni.political_group_member.Edit" title="Edit political group member" />

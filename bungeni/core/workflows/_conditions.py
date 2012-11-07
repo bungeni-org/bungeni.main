@@ -30,7 +30,7 @@ from bungeni.utils import naming
 def user_is_not_context_owner(context):
     return not user_is_context_owner(context)
 
-def user_is_context_owner(context):
+def user_is_context_owner(context, owner_id=None):
     """Test if current user is the context owner e.g. to check if someone 
     manipulating the context object is other than the owner of the object.
     
@@ -38,6 +38,8 @@ def user_is_context_owner(context):
     
     A delegate is considered to be an owner of the object.
     """
+    if owner_id:
+        return model_utils.is_current_or_delegated_user(owner_id)
     return model_utils.is_current_or_delegated_user(context.owner_id)
 
 def context_is_public(context):
@@ -205,7 +207,8 @@ def pi_unsign_signature(context):
 def pi_allow_signature(context):
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return user_is_context_owner(context) and manager.allowSignature()
+        return (user_is_context_owner(context, context.owner.user_id) and
+            manager.allowSignature())
     return False
 
 def pi_allow_signature_actions(context):
@@ -213,9 +216,9 @@ def pi_allow_signature_actions(context):
     """
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return (user_is_context_owner(context) and
+        return (user_is_context_owner(context, context.owner.user_id) and
             (manager.documentSubmitted() or manager.autoSign()) and
-            user_is_not_parent_document_owner(context)) 
+            user_is_not_parent_document_owner(context))
     return False
 
 
