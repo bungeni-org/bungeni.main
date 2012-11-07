@@ -210,7 +210,7 @@ class AppSetup(object):
         workspace["scheduling"]["committees"] = QueryContent(
             container_getter(get_current_parliament, "committees"),
             title=_(u"Committees"),
-            marker=interfaces.ICommitteeAddContext,
+            #!+marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules")
         )
         workspace["scheduling"]["documents"] = WorkspaceSchedulableContainer(
@@ -226,7 +226,7 @@ class AppSetup(object):
         workspace["scheduling"]["agendaitems"] = QueryContent(
             container_getter(get_current_parliament, "agendaitems"),
             title=_(u"Agenda items"),
-            marker=interfaces.IAgendaItemAddContext,
+            #marker=interfaces.IAgendaItemAddContext,
             description=_(u"Manage agenda items"))
         
         workspace["groups"] = WorkspaceSection(
@@ -293,36 +293,36 @@ class AppSetup(object):
             default_name="whats-on")
         
         alsoProvides(business, interfaces.ISearchableSection)
-
+        
         business[u"committees"] = QueryContent(
             container_getter(get_current_parliament, "committees"),
             title=_(u"Committees"),
-            marker=interfaces.ICommitteeAddContext,
+            #!+marker=interfaces.ICommitteeAddContext,
             description=_(u"View committees created by the current parliament"))
         
         business[u"bills"] = QueryContent(
             container_getter(get_current_parliament, "bills"),
             title=_(u"Bills"),
-            marker=interfaces.IBillAddContext,
+            #!+marker=interfaces.IBillAddContext,
             description=_(u"View bills introduced in the current parliament"))
 
         business[u"questions"] = QueryContent(
             container_getter(get_current_parliament, "questions"),
             title=_(u"Questions"),
-            marker=interfaces.IQuestionAddContext,
+            #!+marker=interfaces.IQuestionAddContext,
             description=_(u"View questions tabled in the current parliament"))
 
         business[u"motions"] = QueryContent(
             container_getter(get_current_parliament, "motions"),
             title=_(u"Motions"),
-            marker=interfaces.IMotionAddContext,
+            #!+marker=interfaces.IMotionAddContext,
             description=_(u"View motions moved in the current parliament"))
 
 
         business[u"tableddocuments"] = QueryContent(
             container_getter(get_current_parliament, "tableddocuments"),
             title=_(u"Tabled documents"),
-            marker=interfaces.ITabledDocumentAddContext,
+            #!+marker=interfaces.ITabledDocumentAddContext,
             description=\
                 _(u"View the documents tabled in the current parliament")
         )
@@ -330,7 +330,7 @@ class AppSetup(object):
         business[u"agendaitems"] = QueryContent(
             container_getter(get_current_parliament, "agendaitems"),
             title=_(u"Agenda items"),
-            marker=interfaces.IAgendaItemAddContext,
+            #!+marker=interfaces.IAgendaItemAddContext,
             description=_(u"View the agenda items of the current parliament"))
 
        # sessions = business[u"sessions"] = QueryContent(
@@ -338,7 +338,7 @@ class AppSetup(object):
        #     title=_(u"Sessions"),
        #     marker=interfaces.ISessionAddContext,
        #     description=_(u"View the sessions of the current parliament."))
-
+        
         business[u"sittings"] = QueryContent(
             container_getter(get_current_parliament, "sittings"),
             title=_(u"Sittings"),
@@ -348,7 +348,7 @@ class AppSetup(object):
         business[u"preports"] = QueryContent(
             container_getter(get_current_parliament, "preports"),
             title=_(u"Publications"),
-            marker=interfaces.IReportAddContext,
+            #!+marker=interfaces.IReportAddContext,
             description=\
                 _(u"browse and download parliamentary publications")
         )

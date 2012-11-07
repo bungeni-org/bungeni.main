@@ -774,6 +774,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     
+    <!-- !+ADD_CONTEXT
   <browser:menuItem
      menu="plone_contentmenu"
      for="bungeni.core.interfaces.ISessionAddContext"
@@ -782,6 +783,7 @@
      permission="bungeni.session.Add"
      order="100"
      />
+     -->
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ISession"
         title="Edit session"

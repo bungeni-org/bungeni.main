@@ -33,6 +33,7 @@ class IContainerLocation(interface.Interface):
     container = interface.Attribute(
         """Container object for this location type.""")
 
+''' !+ADD_CONTEXT
 class IAddContext(IContainer):
     """Marks that a container should get a user interface to add new
     objects.
@@ -65,6 +66,7 @@ class IAgendaItemAddContext(IAddContext):
 
 class IReportAddContext(IAddContext):
     """Add-context for report items."""
+'''
 
 class IWorkspaceScheduling(interface.Interface):
     """Marker inteface for workspace scheduling"""
