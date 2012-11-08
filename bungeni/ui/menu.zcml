@@ -135,7 +135,7 @@
         action="add_content"
         order="10"
         permission="zope.Public"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        layer=".interfaces.IBungeniSkin"
         submenu="additems"
     />
     <browser:menuItem menu="context_actions"

@@ -17,15 +17,12 @@
 <span tal:replace="s/short_name"/>
 </tal:activity>
 <tal:noactivity tal:condition="not:s/short_name">
-<span i18n:translate="">Sitting</span>
+<span i18n:translate="scheduler_label_sitting">Sitting</span>
 </tal:noactivity>
 <tal:withvenue tal:condition="s/venue|nothing">
 <b><span tal:omit-tag="">&nbsp;&ndash;&nbsp;</span></b>
 <span tal:replace="s/venue/dc:title"/><br/>
 </tal:withvenue>
-<tal:novenue tal:condition="not:s/venue|nothing">
-<span i18n:translate="">Sitting</span>
-</tal:novenue>
 <span tal:replace="structure python:']]&gt;'"/>
 </text>
 <venue><span tal:condition="s/venue | nothing" tal:replace="structure python:str(s.venue.venue_id)"/></venue>

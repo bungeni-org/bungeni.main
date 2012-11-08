@@ -74,6 +74,15 @@ FILTER_PREFIX = "filter_"
 
 DT_FORMAT = "%Y-%m-%d %H:%M"
 
+#i18n messages
+TITLE_VENUES_VIEW = _("scheduler_title_venues_view", default="Venues")
+FIELD_GROUP = _("scheduler_field_group", default="Group")
+FIELD_START_DATE = _("scheduler_field_start_date", default="Start Date")
+FIELD_END_DATE = _("scheduler_field_end_date", default="End Date")
+FIELD_VENUE = _("scheduler_field_venue", default="Venue")
+TITLE_SITTING = _("scheduler_title_sitting", default="Sitting")
+ACTION_VIEW_SITTING = _("scheduler_action_view_sitting", default="View")
+
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -332,16 +341,16 @@ class CalendarView(BungeniBrowserView):
         cal_globals = dict(
             ical_url=self.ical_url,
             view_url=self.url,
-            venues_view_title=translate_i18n(_(u"Venues")),
-            text_group=translate_i18n(_(u"Group")),
-            text_start_date=translate_i18n(_(u"Start Date")),
-            text_end_date=translate_i18n(_(u"End Date")),
-            text_venue=translate_i18n(_(u"Venue")),
+            venues_view_title=translate_i18n(TITLE_VENUES_VIEW),
+            text_group=translate_i18n(FIELD_GROUP),
+            text_start_date=translate_i18n(FIELD_START_DATE),
+            text_end_date=translate_i18n(FIELD_END_DATE),
+            text_venue=translate_i18n(FIELD_VENUE),
             text_activity_type=translate_i18n(_(u"Activity Type")),
             text_meeting_type=translate_i18n(_(u"Meeting Type")),
             text_convocation_type=translate_i18n(_(u"Convocation Type")),
-            text_sitting=translate_i18n(_(u"Sitting")),
-            text_view=translate_i18n(_(u"View")),
+            text_sitting=translate_i18n(TITLE_SITTING),
+            text_view=translate_i18n(ACTION_VIEW_SITTING),
             error_messages=dict(
                 default=_(u"Please check the highlighted sittings. " 
                     "Failed to apply changes"),

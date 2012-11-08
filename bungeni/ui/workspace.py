@@ -48,18 +48,25 @@ class WorkspaceField(object):
 
 # These are the columns to be displayed in the workspace
 workspace_doc_fields = [
-    WorkspaceField("title", _("title")),
-    WorkspaceField("type", _("item type")),
-    WorkspaceField("status", _("status")),
-    WorkspaceField("status_date", _("status date"))
+    WorkspaceField("title", _("workspace_column_title", default="title")),
+    WorkspaceField("type", 
+        _("workspace_column_type", default="item type")),
+    WorkspaceField("status", 
+        _("workspace_column_status", default="status")),
+    WorkspaceField("status_date", 
+        _("workspace_column_status_date", default="status date"))
     ]
 
 
 workspace_group_fields = [
-    WorkspaceField("title", _("title")),
-    WorkspaceField("type", _("group type")),
-    WorkspaceField("status", _("status")),
-    WorkspaceField("status_date", _("status date"))
+    WorkspaceField("title", 
+        _("workspace_column_group_title", default="title")),
+    WorkspaceField("type", 
+        _("workspace_column_group_type", default="group type")),
+    WorkspaceField("status", 
+        _("workspace_column_group_status", default="status")),
+    WorkspaceField("status_date", 
+        _("workspace_column_group_status_date", default="status date"))
     ]
 
 @register.view(IWorkspaceContainer, name="jsonlisting",

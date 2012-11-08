@@ -29,25 +29,62 @@ RESOURCE_MAPPING = {
 RESOURCE_HEADERS = {}
 
 ## some global strings to i18n ##
-YES = _(u"Yes")
-NO = _(u"No")
-OKAY = _(u"Okay")
-DONE = _(u"Done")
-NOTICE = _(u"Notice")
-WORKING = _(u"Working")
-CANCEL = _(u"Cancel")
-VIEW = _(u"View")
-EDIT = _(u"Edit")
-DELETE = _(u"Delete")
-WARNING = _(u"Warning")
+YES = _("scheduling_message_yes", default=u"Yes")
+NO = _("scheduling_message_no", default=u"No")
+OKAY = _("scheduling_message_okay", default=u"Okay")
+DONE = _("scheduling_message_done", default=u"Done")
+NOTICE = _("scheduling_message_notice", default=u"Notice")
+WORKING = _("scheduling_message_working", default=u"Working")
+CANCEL = _("scheduling_message_cancel", default=u"Cancel")
+VIEW = _("scheduling_message_view", default=u"View")
+EDIT = _("scheduling_message_edit", default=u"Edit")
+DELETE = _("scheduling_message_delete", default=u"Delete")
+WARNING = _("scheduling_message_warning", default=u"Warning")
+MINUTES = _("scheduling_text_minutes", default=u"Minutes")
+START_DATE = _("scheduling_filters_start_date", default=u"Start Date")
+END_DATE = _("scheduling_filters_end_date", default=u"End Date")
 
+#columns
+COLUMN_TYPE = _("scheduling_column_type", default="Type")
+COLUMN_MOVER = _("scheduling_column_mover", default="Moved by")
+COLUMN_STATUS = _("scheduling_column_status", default="Status")
+COLUMN_STATUS_DATE = _("scheduling_column_status_date", default="Date")
+COLUMN_REGISTRY_NUMBER = _("scheduling_column_registry_no", default="No.")
+COLUMN_DESCRIPTION = _("scheduling_column_description", 
+    default="Description")
+COLUMN_MINUTE_TEXT = _("scheduling_column_minute_text", 
+    default="Minute Text")
 
+#titles
+TITLE_AGENDA = _("scheduling_title_agenda", default="Agenda")
+TITLE_SCHEDULED_ITEMS = _("scheduling_title_scheduled_items", 
+    default="Scheduled Items")
+TITLE_AVAILABLE_ITEMS = _("scheduling_title_available_items", 
+    default="Available Items")
+TITLE_DISCUSSIONS = _("scheduling_title_discussions", 
+    default="Agenda and Minutes")
+
+#types
+TYPE_HEADING = _("scheduling_type_heading", default="Heading")
+TYPE_MINUTE = _("scheduling_type_minute", default="Minute Record")
+TYPE_EDITORIAL_NOTE = _("scheduling_type_editorial_note", 
+    default="Editorial Note")
+
+#actions
+REMOVE_ITEM = _("scheduling_action_remove_item", default="Remove Item")
+ADD_MINUTE = _("scheduling_action_add_minute", default="Add Minute")
+SAVE_AND_PREVIEW = _("scheduling_action_save_preview", 
+    default="Save and preview")
+SAVE_CHANGES = _("scheduling_action_save_changes", 
+    default="Save Changes")
+DISCARD_CHANGES = _("scheduling_action_discard_changes", 
+    default="Discard Changes")
 
 def get_globals(group_name, **kwargs):
     language = kwargs.get("language", "en")
     type_names = {
         "heading":i18n(_(u"heading"), language),
-        "editorial_note":i18n(_(u"editorial note"), language),
+        "editorial_note":i18n(TYPE_EDITORIAL_NOTE, language),
         "minute":i18n(_(u"minute record"), language),
     }
     type_names.update([
@@ -70,10 +107,10 @@ def get_globals(group_name, **kwargs):
                 "MINUTE": "minute",
             },
             "type_names": type_names,
-            "current_schedule_title": i18n(_(u"Agenda"), language),
-            "current_schedule_items": i18n(_(u"Scheduled Items"), language),
-            "available_items_title": i18n(_(u"Available Items"), language),
-            "schedule_discussions_title": i18n(_(u"Agenda and minutes"), language),
+            "current_schedule_title": i18n(TITLE_AGENDA, language),
+            "current_schedule_items": i18n(TITLE_SCHEDULED_ITEMS, language),
+            "available_items_title": i18n(TITLE_AVAILABLE_ITEMS, language),
+            "schedule_discussions_title": i18n(TITLE_DISCUSSIONS, language),
             "scheduled_item_context_menu_header": i18n(_(u"Modify Item"), 
                 language
             ),
@@ -83,43 +120,41 @@ def get_globals(group_name, **kwargs):
             "discussions_save_url": "discussions/save-discussions",
             "discussion_items_json_url" : "discussions/jsonlisting-raw",
             "schedulable_items_json_url" : "./schedulable-items-json",
-            "column_title": i18n(_(u"Description"), language),
-            "column_discussion_text": i18n(_(u"minute text"), language),
-            "column_discussion_text_missing": i18n(_(u"NO TEXT RECORD FOUND"), 
-                language
-            ),
+            "column_title": i18n(COLUMN_DESCRIPTION, language),
+            "column_discussion_text": i18n(COLUMN_MINUTE_TEXT, language),
+            "column_discussion_text_missing": i18n(
+                _(u"NO TEXT RECORD FOUND"), language),
             "column_discussion_edit_button": i18n(EDIT, language),
-            "column_discussions_edit_button": i18n(_(u"Minutes"), language),
+            "column_discussions_edit_button": i18n(MINUTES, language),
             "column_discussion_delete_button": i18n(DELETE, language),
             "column_available_headings_title": i18n(
                 _(u"Select existing heading"), 
                 language
             ),
-            "column_type": i18n(_(u"Type"), language),
-            "column_mover": i18n(_(u"Moved by"), language),
-            "column_status": i18n(_(u"Status"), language),
-            "column_status_date": i18n(_(u"Date"), language),
-            "column_registry_number": i18n(_(u"No."), language),
-            "column_mover": i18n(_(u"Mover"), language),
+            "column_type": i18n(COLUMN_TYPE, language),
+            "column_mover": i18n(COLUMN_MOVER, language),
+            "column_status": i18n(COLUMN_STATUS, language),
+            "column_status_date": i18n(COLUMN_STATUS_DATE, language),
+            "column_registry_number": i18n(COLUMN_REGISTRY_NUMBER, language),
             "empty_agenda_message": i18n(_(u"the agenda is empty. "
                 "add items from below from from the available documents to the"
                 " right"
             ),
                 language
             ),
-            "text_button_text": i18n(_(u"editorial note"), language),
+            "text_button_text": i18n(TYPE_EDITORIAL_NOTE, language),
             "text_records_title": i18n(_(u"add text records"), language),
-            "heading_button_text": i18n(_(u"heading"), language),
-            "minute_button_text": i18n(_(u"minute record"), language),
+            "heading_button_text": i18n(TYPE_HEADING, language),
+            "minute_button_text": i18n(TYPE_MINUTE, language),
             "new_heading_text": i18n(_(u"custom heading"), language),
             "text_action_view": i18n(VIEW, language),
-            "text_moved_by": i18n(_(u"Moved By"), language),
-            "remove_button_text": i18n(_(u"remove item"), language),
-            "save_button_text": i18n(_(u"save changes"), language),
-            "save_and_preview_button_text": i18n(_(u"save and preview"), language),
-            "discard_button_text": i18n(_(u"discard changes"), language),
-            "add_discussion_button_text": i18n(_(u"add minute"), language),
-            "save_discussion_button_text": i18n(_(u"add minute"), language),
+            "text_moved_by": i18n(COLUMN_MOVER, language),
+            "remove_button_text": i18n(REMOVE_ITEM, language),
+            "save_button_text": i18n(SAVE_CHANGES, language),
+            "save_and_preview_button_text": i18n(SAVE_AND_PREVIEW, language),
+            "discard_button_text": i18n(DISCARD_CHANGES, language),
+            "add_discussion_button_text": i18n(ADD_MINUTE, language),
+            "save_discussion_button_text": i18n(ADD_MINUTE, language),
             "initial_editor_text": i18n(
                 _(u"change this text"), language
             ),
@@ -159,8 +194,8 @@ def get_globals(group_name, **kwargs):
                 ), 
                 language
             ),
-            "filters_start_date_label": i18n(_(u"start date"), language),
-            "filters_end_date_label": i18n(_(u"end date"), language),
+            "filters_start_date_label": i18n(START_DATE, language),
+            "filters_end_date_label": i18n(END_DATE, language),
             "filters_clear_label": i18n(_(u"clear filters"), language),
             "filter_config": data.get_filter_config(),
             "filter_apply_label": i18n(_(u"apply filters"), language),
@@ -190,7 +225,7 @@ def get_globals(group_name, **kwargs):
                 ),
                 language
             ),
-            "minutes_header": i18n(_(u"Minutes:"), language),
+            "minutes_header": i18n(MINUTES, language),
             "minutes_unsaved_agenda": i18n(_(u"*Unsaved item. No minute records."),
                 language
             ),

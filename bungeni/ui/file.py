@@ -102,13 +102,16 @@ class FileListingMixin(object):
     @property
     def columns(self):
         return [
-            column.GetterColumn(title=_("file"),
+            column.GetterColumn(
+                title=_("file_column_file_link", default="file"),
                 getter=lambda i,f: "%s" % (i.title),
                 cell_formatter=lambda g,i,f: '<a href="%s/files/obj-%d">%s</a>' 
                     % (f.url, i.attachment_id, g)),
-            column.GetterColumn(title=_("status"), 
+            column.GetterColumn(
+                title=_("file_column_status", default="status"), 
                 getter=lambda i,f: i.status),
-            column.GetterColumn(title=_("modified"), 
+            column.GetterColumn(
+                title=_("file_column_last_modified", default="modified"), 
                 getter=lambda i,f: self.date_formatter.format(i.status_date)),
         ]
     
@@ -203,13 +206,16 @@ class VersionFileListingViewlet(FileListingViewlet):
             # !+ bungeni.models.domain.Version
             return "obj-%d/version-log/%s" % (i.attachment_id, i.__name__)            
         return [
-            column.GetterColumn(title=_("file"),
+            column.GetterColumn(
+                title=_("file_version_filename", default="file"),
                 getter=lambda i,f:"%s" % (i.title),
                 cell_formatter=lambda g,i,f:'<a href="%s/files/%s">%s</a>' 
                     % (f.url, attachment_version_uri(i), g)),
-            column.GetterColumn(title=_("status"), 
+            column.GetterColumn(
+                title=_("file_version_status", default="status"),
                 getter=lambda i,f:i.status),
-            column.GetterColumn(title=_("modified"), 
+            column.GetterColumn(
+                title=_("file_version_last_modified", default="modified"),
                 getter=lambda i,f:self.date_formatter.format(i.status_date)),
         ]
 
