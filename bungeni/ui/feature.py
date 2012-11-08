@@ -118,7 +118,7 @@ def setup_customization_ui():
             title = "Add {t} event".format(t=type_title)
             register_menu_item("event", "Add", title, model_interface_qualname, 
                 "./events/add", menu="additems", order=21,
-                layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+                layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
             )
 
 def apply_customization_ui():
