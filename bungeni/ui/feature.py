@@ -10,6 +10,7 @@ log = __import__("logging").getLogger("bungeni.ui.feature")
 
 
 from zope.configuration import xmlconfig
+from bungeni.models import domain
 from bungeni.utils.capi import capi
 from bungeni.utils import naming
 
@@ -90,36 +91,56 @@ def setup_customization_ui():
         
         # workspace
         if ti.workflow.has_feature("workspace"):
-            log.debug("Setting up workspace UI for type [%s]" % (type_key))
+            log.debug("Setting up UI for feature %r for type %r", "workspace", type_key)
+            
             # add menu item
             # !+workspace_feature_add(mr, oct-2012) note that an enabled
             # workspace feature also implies "add" functionality for the type
             action = "../../draft/add_{k}".format(k=type_key)
             register_menu_item(type_key, "Add", type_title, "*", action,
                 menu="workspace_add_parliamentary_content", order=7)
+            
             # edit menu item
             # !+ edit/delete used to be on layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
             title = "Edit {t}".format(t=type_title)
             register_menu_item(type_key, "Edit", title, model_interface_qualname, "edit",
                 menu="context_actions", order=10)
+            
             # delete menu item
             title = "Delete {t}".format(t=type_title)
             register_menu_item(type_key, "Delete", title, model_interface_qualname, "delete",
                 menu="context_actions", order=99)
-            # workspace add view
+            
+            # add view
             name = "add_{type_key}".format(type_key=type_key)
             register_form_view(type_key, "Add", name,
                 "bungeni.core.interfaces.IWorkspaceDraft",
                 "bungeni.ui.workspace.WorkspaceAddForm")
-
-        #events
+        
+        # events
         if ti.workflow.has_feature("event"):
-            log.debug("Setting up events add menu for type %s", type_key)
-            title = "Add {t} event".format(t=type_title)
+            log.debug("Setting up UI for feature %r for type %r", "event", type_key)
+            title = "Add {t} Event".format(t=type_title)
             register_menu_item("event", "Add", title, model_interface_qualname, 
                 "./events/add", menu="additems", order=21,
-                layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
-            )
+                layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+        
+        # address
+        if ti.workflow.has_feature("address"):
+            log.debug("Setting up UI for feature %r for type %r", "address", type_key)
+            if issubclass(ti.domain_model, domain.Group):
+                title = "Add {t} Address".format(t=type_title)
+                #layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
+                # add address in the "add items..." menu
+                register_menu_item("address", "Add", title, model_interface_qualname, 
+                    "./addresses/add", menu="additems", order=80)
+                # add address for the container view
+                register_menu_item("address", "Add", title, container_interface_qualname,
+                    "./add", menu="plone_contentmenu")
+            elif issubclass(ti.domain_model, domain.User):
+                # !+ User not a custom type (so should never pass here)
+                assert False, "Type %s may not be a custom type" % (ti.domain_model)
+
 
 def apply_customization_ui():
     """Called from ui.app.on_wsgi_application_created_event -- must be called

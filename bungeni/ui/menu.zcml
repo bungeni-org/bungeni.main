@@ -170,14 +170,6 @@
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IPoliticalGroup"
-        title="Add political group address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="80"
-    />
-    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ICommittee"
         title="Add committee member..."
         action="./committeemembers/add"
@@ -226,23 +218,6 @@
         order="40"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ICommittee"
-        title="Add committee address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="80"
-    />
-    
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IParliament"
-        title="Add parliament address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="80"
-    />
-    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ISittingContainer"
         title="Add sitting..."
         action="./add"
@@ -257,14 +232,6 @@
         permission="bungeni.ministry.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="70"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IGovernment"
-        title="Add government address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="80"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IMinistry"
@@ -289,14 +256,6 @@
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.minister.Delete"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IMinistry"
-        title="Add ministry address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="80"
     />
     
     <browser:menuItem menu="additems"
@@ -323,6 +282,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
+    <!-- !+FeatureAddress membership type -->
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IMemberOfParliament"
         title="Add MP address..."
@@ -429,14 +389,6 @@
         permission="bungeni.office_member.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="63"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IOffice"
-        title="Add office address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="80"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IOffice"
@@ -636,15 +588,6 @@
         permission="bungeni.office.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
-    <!-- !+ZCML(mr, nov-2010) How to parametrize title for sub-group type?
-    -->
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IGroupAddressContainer"
-        title="Add address..."
-        action="./add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
     <!-- !+ZCML(mr, nov-2010) Individual menu items are declared specific per 
             view of an IBungeniGroup subtype
     <browser:menuItem menu="plone_contentmenu"
@@ -655,6 +598,8 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     -->
+    
+    <!-- !+FeatureAddress - User is a non-custom type -->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IUserAddressContainer"
         title="Add user address..."
@@ -669,7 +614,8 @@
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
-     
+    <!-- !+/FeatureAddress -->
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IUser"
         title="Edit user"
