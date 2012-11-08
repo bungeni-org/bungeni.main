@@ -413,22 +413,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="zope.ManageContent"
     />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IBill"
-        title="Add event..."
-        action="./events/add"
-        permission="bungeni.event.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="21"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IMotion"
-        title="Add event..."
-        action="./events/add"
-        permission="bungeni.event.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="21"
-    />
     
     <!--Title types menus-->
     <browser:menuItem menu="plone_contentmenu"
@@ -437,22 +421,6 @@
         action="./add"
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IQuestion"
-        title="Add event..."
-        action="./events/add"
-        permission="bungeni.event.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="21"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ITabledDocument"
-        title="Add event..."
-        action="./events/add"
-        permission="bungeni.event.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="21"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IOffice"

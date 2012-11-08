@@ -37,7 +37,9 @@ def setup_customization_ui():
     """
     
     def register_menu_item(type_key, privilege, title, for_, action,
-            menu="context_actions", order=10
+            menu="context_actions", 
+            order=10,
+            layer="bungeni.ui.interfaces.IBungeniSkin"
         ):
         naming.MSGIDS.add(title) # for i18n extraction
         UI_ZC_DECLS.append(register_menu_item.TMPL.format(**locals()))
@@ -48,17 +50,19 @@ def setup_customization_ui():
                 title="{title}"
                 order="{order}"
                 permission="bungeni.{type_key}.{privilege}"
-                layer="bungeni.ui.interfaces.IBungeniSkin"
+                layer="{layer}"
             />"""
     
-    def register_form_view(type_key, privilege, name, for_, class_):
+    def register_form_view(type_key, privilege, name, for_, class_,
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    ):
         UI_ZC_DECLS.append(register_form_view.TMPL.format(**locals()))
     register_form_view.TMPL = """
             <browser:page name="{name}"
                 for="{for_}"
                 class="{class_}"
                 permission="bungeni.{type_key}.{privilege}"
-                layer="bungeni.ui.interfaces.IBungeniSkin"
+                layer="{layer}"
             />"""
     
     UI_ZC_DECLS[:] = []
@@ -108,6 +112,14 @@ def setup_customization_ui():
                 "bungeni.core.interfaces.IWorkspaceDraft",
                 "bungeni.ui.workspace.WorkspaceAddForm")
 
+        #events
+        if ti.workflow.has_feature("event"):
+            log.debug("Setting up events add menu for type %s", type_key)
+            title = "Add {t} event".format(t=type_title)
+            register_menu_item("event", "Add", title, model_interface_qualname, 
+                "./events/add", menu="additems", order=21,
+                layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+            )
 
 def apply_customization_ui():
     """Called from ui.app.on_wsgi_application_created_event -- must be called
