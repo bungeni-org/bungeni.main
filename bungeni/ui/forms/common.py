@@ -183,7 +183,6 @@ class BaseForm(formlib.form.FormBase):
         print "XXX Order of Form Submit Buttons:", [ (a.name, a.label)
                                                 for a in self.actions.actions ]
         call = super(BaseForm, self).__call__()
-        #session.close()
         return call
     
     @property

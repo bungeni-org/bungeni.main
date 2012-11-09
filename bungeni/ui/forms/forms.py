@@ -15,7 +15,7 @@ from zope.formlib import form, namedtemplate
 from zope import schema, interface
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
-import zope.security.management
+#import zope.security.management
 
 from sqlalchemy import sql
 
@@ -50,6 +50,7 @@ ContentTemplate = namedtemplate.NamedTemplateImplementation(
     ViewPageTemplateFile("templates/content.pt")
 )
 
+''' !+UNUSED(mr, nov-2012)
 def hasDeletePermission(context):
     """Generic check if the user has rights to delete the object. The
     permission must follow the convention:
@@ -60,6 +61,7 @@ def hasDeletePermission(context):
     class_name = context.__class__.__name__ 
     permission_name = "bungeni.%s.Delete" % class_name.lower()
     return interaction.checkPermission(permission_name, context)
+'''
 
 def set_widget_errors(widgets, errors):
     """Display invariant errors / custom validation errors in the
@@ -72,6 +74,7 @@ def set_widget_errors(widgets, errors):
                 if widget._error is None:
                     widget._error = error
 
+''' !+UNUSED(mr, nov-2012)
 def flag_changed_widgets(widgets, context, data):
     for widget in widgets:
         name = widget.context.getName()
@@ -84,7 +87,9 @@ def flag_changed_widgets(widgets, context, data):
         else:
             widget.changed = True
     return []
+'''
 
+''' !+UNUSED(mr, nov-2012)
 class ResponseEditForm(EditForm):
     """ Answer a Question
     UI for ministry to input response
@@ -92,7 +97,6 @@ class ResponseEditForm(EditForm):
     """
     CustomValidations = validations.null_validator
 
-    
 class ResponseAddForm(AddForm):
     """
     Answer a Question
@@ -100,8 +104,8 @@ class ResponseAddForm(AddForm):
     Display the question when adding the answer.
     """
     CustomValidation = validations.null_validator
+'''
 
-    
 class ItemScheduleContainerReorderForm(ReorderForm):
     """Specialization of the general reorder form for item
     schedulings."""
@@ -208,7 +212,6 @@ class DiffEditForm(EditForm):
         self.last_timestamp = None
         super(DiffEditForm, self).__init__(context, request)
         need("diff-form")
-        
     
     def update(self):
         """ Checks if we have Modified errors and renders split view 

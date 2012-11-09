@@ -80,12 +80,22 @@ def setup_customization_ui():
                 naming.container_interface_name(type_key))
         
         # generic forms (independent of any feature)
+        # add
         register_form_view(type_key, "Add", "add", container_interface_qualname,
             "bungeni.ui.forms.common.AddForm")
+        # view
         register_form_view(type_key, "View", "view", model_interface_qualname,
             "bungeni.ui.forms.common.DisplayForm")
-        register_form_view(type_key, "Edit", "edit", model_interface_qualname,
-            "bungeni.ui.forms.forms.DiffEditForm")
+        # edit
+        if issubclass(ti.domain_model, domain.Doc):
+            # doc-archetyped types use forms.DiffEditForm
+            register_form_view(type_key, "Edit", "edit", model_interface_qualname,
+                "bungeni.ui.forms.forms.DiffEditForm")
+        else:
+            # group-archetyped and other types use common.EditForm
+            register_form_view(type_key, "Edit", "edit", model_interface_qualname,
+                "bungeni.ui.forms.common.EditForm")
+        # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")
         
