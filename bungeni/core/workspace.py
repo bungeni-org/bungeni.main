@@ -101,13 +101,16 @@ class WorkspaceBaseContainer(AlchemistContainer):
         domain_status = {}
         for role in roles:
             domain_classes = self.workspace_config.get_role_domains(role, tab)
+            
             if domain_classes:
                 for domain_class in domain_classes:
                     status = self.workspace_config.get_status(
                         role, domain_class, tab)
                     if status:
                         if domain_class in domain_status.keys():
-                            domain_status[domain_class].extend(status)
+                            for st in status:
+                                if st not in domain_status[domain_class]:
+                                    domain_status[domain_class].append(st)
                         else:
                             domain_status[domain_class] = status
         return domain_status
@@ -280,27 +283,25 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
             results.extend(query.all())
-        object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
-        for domain_class, status in object_roles_domain_status.iteritems():
-            object_roles_results = []
-            query = session.query(domain_class).filter(
-                domain_class.status.in_(status)).enable_eagerloads(False)
-            #filter on title
-            query = self.filter_title(query, domain_class, kw)
-            #filter on status_date
-            query = self.filter_status_date(query, domain_class, kw)
-            # Order results
-            query = self.order_query(query, domain_class, kw, reverse)
-            for obj in query.all():
-                if obj in results:
-                    continue
-                prm = IPrincipalRoleMap(obj)
-                for obj_role in OBJECT_ROLES:
+        for obj_role in OBJECT_ROLES:
+            object_roles_domain_status = self.item_status_filter(
+                kw, [obj_role])
+            for domain_class, status in object_roles_domain_status.iteritems():
+                query = session.query(domain_class).filter(
+                    domain_class.status.in_(status)).enable_eagerloads(False)
+                #filter on title
+                query = self.filter_title(query, domain_class, kw)
+                #filter on status_date
+                query = self.filter_status_date(query, domain_class, kw)
+                # Order results
+                query = self.order_query(query, domain_class, kw, reverse)
+                for obj in query.all():
+                    if obj in results:
+                        continue
+                    prm = IPrincipalRoleMap(obj)
                     if (prm.getSetting(obj_role, principal.id) == Allow):
-                        object_roles_results.append(
+                        results.append(
                             contained(obj, self, self.string_key(obj)))
-                        break
-            results.extend(object_roles_results)
         # Sort items
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
@@ -386,7 +387,8 @@ class WorkspaceTabsUtility(object):
             self.workspaces[role][tab] = {}
         if domain_class not in self.workspaces[role][tab]:
             self.workspaces[role][tab][domain_class] = []
-        self.workspaces[role][tab][domain_class].append(status)
+        if status not in self.workspaces[role][tab][domain_class]:
+            self.workspaces[role][tab][domain_class].append(status)
 
     def register_item_type(self, domain_class, item_type):
         """ Stores domain_class -> item_type and vice versa in a dictionary eg.

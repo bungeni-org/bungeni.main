@@ -25,7 +25,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
 from bungeni.core.workflows import utils
 from bungeni.core.workflows import dbutils
-
+from bungeni.models.utils import get_db_user
 
 # specially handled actions - executed on transition to a given state (set 
 # when workflow is loaded) 
@@ -40,10 +40,17 @@ create_version = utils.create_version
 # parliamentary item, utils
 
 def __create(context):
+    """Assigns bungeni.Owner role to the current user on the object if
+    the current user is the same as the owner_id of the document. 
+    If a user creates a document on behalf of someone else they will not 
+    in that case get bungeni.Owner on the object
+    """
     # !+utils.setParliamentId(context)
     # !+OWNERSHIP(mr, may-2012) should not this be part of the actual 
     # *creation* logic of the item?
-    utils.assign_role_owner_to_login(context)
+    current_user = get_db_user()
+    if current_user.user_id == context.owner_id:
+        utils.assign_role("bungeni.Owner", current_user.login_id, context)
 
 
 # !+NUMBER_GENERATION(ah, nov-2011) - used for parliamentary item transitions
