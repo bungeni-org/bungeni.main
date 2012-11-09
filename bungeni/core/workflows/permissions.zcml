@@ -76,6 +76,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.event.Edit" title="bungeni.event.Edit" />
 <permission id="bungeni.event.Add" title="bungeni.event.Add" />
 <permission id="bungeni.event.Delete" title="bungeni.event.Delete" />
+<grant permission="bungeni.event.View" role="bungeni.Owner" />
 
 <permission id="bungeni.event.wf.draft.attached" title="Publish" />
 <grant permission="bungeni.event.wf.draft.attached" role="bungeni.Owner" />
