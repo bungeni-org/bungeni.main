@@ -24,7 +24,7 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models import schema as model_schema
 from bungeni.core.i18n import _
-from bungeni.ui.forms import validations
+#from bungeni.ui.forms import validations
 from bungeni.ui.forms.common import ReorderForm
 from bungeni.ui.forms.common import PageForm
 from bungeni.ui.forms.common import AddForm
@@ -199,6 +199,9 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
             session.delete(i)
         self.request.response.redirect(self.next_url)
 
+''' !+DiffEditForm(mr, nov-2102) prior to r10032, doc-archetyped types were 
+being **ZCML declared** to use bungeni.ui.forms.forms.DiffEditForm, but this
+is not the edit view tht was actually being used!
 
 class DiffEditForm(EditForm):
     """ Form to display diff view if timestamp was changes.
@@ -261,7 +264,8 @@ class DiffEditForm(EditForm):
                 display_widget.name = widget.name + ".diff.display"
                 # Add display - input widgets pair to list of diff widgets
                 self.diff_widgets.append((widget, display_widget))
-                
+'''
+
 class UserAddressDisplayForm(DisplayForm):
     
     @property

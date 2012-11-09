@@ -624,6 +624,7 @@ def validate_sub_role_unique(action, data, context, container):
                             sub_role_id)))
     return logged_errors(errors, "validate_sub_role_unique")
 
+''' !+DiffEditForm(mr, nov-2102)
 def diff_validator(form, context, data):
     """Custom validator that checks if form timestamp differs from timestamp in db.
     Returns list of Modified errors for fields which differs from db values.
@@ -635,10 +636,12 @@ def diff_validator(form, context, data):
     current_timestamp = str(data.get("timestamp", ""))
     db_timestamp = str(context.timestamp)
     # if we're in diff mode we don't care if form.timestamp equals db timestamp    
-    if (current_timestamp != db_timestamp and diff!="True") or\
+    if (current_timestamp != db_timestamp and diff!="True") or \
        (last_timestamp!=db_timestamp and last_timestamp):
             for name, value in data.items():
-                if context.__dict__[name] != value:
+                # note: name may be an extended_property (so no entry in context.__dict__)
+                if getattr(context, name) != value:
                     errors.append(Modified(_(u"Value was changed!"), name))
     return logged_errors(errors, "diff_validator")
+'''
 

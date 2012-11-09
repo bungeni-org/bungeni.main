@@ -86,15 +86,11 @@ def setup_customization_ui():
         # view
         register_form_view(type_key, "View", "view", model_interface_qualname,
             "bungeni.ui.forms.common.DisplayForm")
-        # edit
-        if issubclass(ti.domain_model, domain.Doc):
-            # doc-archetyped types use forms.DiffEditForm
-            register_form_view(type_key, "Edit", "edit", model_interface_qualname,
-                "bungeni.ui.forms.forms.DiffEditForm")
-        else:
-            # group-archetyped and other types use common.EditForm
-            register_form_view(type_key, "Edit", "edit", model_interface_qualname,
-                "bungeni.ui.forms.common.EditForm")
+        # edit !+DiffEditForm prior to r10032, doc-archetyped types were being
+        # *declared* to use bungeni.ui.forms.forms.DiffEditForm, but this
+        # is not the edit view tht was actually being used!
+        register_form_view(type_key, "Edit", "edit", model_interface_qualname,
+            "bungeni.ui.forms.common.EditForm")
         # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")

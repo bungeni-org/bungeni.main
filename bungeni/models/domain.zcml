@@ -25,7 +25,7 @@
                 audits
                 versions
                 group
-
+                
                 doc_id
                 parliament_id
                 owner_id
@@ -92,10 +92,50 @@
         -->
     </class>
     
+    <!-- !+ almost identical to Doc, except for get/set permission ids! 
+        Factor out to catalysation... 
+    -->
     <class class=".domain.Event">
         <require like_class=".domain.Doc" />
         <require permission="bungeni.event.View"
             attributes="
+                files
+                signatories
+                events
+                submission_date
+                
+                owner
+                item_signatories
+                attachments
+                sa_events
+                audits
+                versions
+                group
+                
+                doc_id
+                parliament_id
+                owner_id
+                type
+                
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
+                title
+                description
+                language
+                body
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
+                timestamp
+                
                 event_date
             "
         />
