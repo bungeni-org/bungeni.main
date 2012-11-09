@@ -51,9 +51,7 @@ def drop_all(engine):
 '''
 
 def setup_db():
-    db = create_engine("postgres://localhost/bungeni-test", echo=False)
-    component.provideUtility(db, IDatabaseEngine, "bungeni-db")
-    schema.metadata.bind = db
+    schema.metadata.bind = db = component.getUtility(IDatabaseEngine, "bungeni-db")
     # !+DROP_ALL(ah,sep-2011)
     #drop_all(db)
     schema.metadata.drop_all()

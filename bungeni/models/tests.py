@@ -22,9 +22,9 @@ zcml_slug = """
     >
     <include package="bungeni.alchemist" file="meta.zcml"/>
     <!-- Setup Database Connection -->
-    <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />
-    <db:bind engine="bungeni-db" metadata="bungeni.models.schema.metadata" />
-    <db:bind engine="bungeni-db" metadata="bungeni.alchemist.security.metadata" />
+    <include package="bungeni_custom.sys" file="db.zcml" />
+    <db:bind engine="bungeni-test" metadata="bungeni.models.schema.metadata" />
+    <db:bind engine="bungeni-test" metadata="bungeni.alchemist.security.metadata" />
 </configure>
 """
 
