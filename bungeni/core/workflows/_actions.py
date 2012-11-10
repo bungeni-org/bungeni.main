@@ -50,7 +50,7 @@ def __create(context):
     # *creation* logic of the item?
     current_user = get_db_user()
     if current_user.user_id == context.owner_id:
-        utils.assign_role("bungeni.Owner", current_user.login_id, context)
+        utils.assign_role("bungeni.Owner", current_user.login, context)
 
 
 # !+NUMBER_GENERATION(ah, nov-2011) - used for parliamentary item transitions
