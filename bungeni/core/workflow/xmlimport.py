@@ -135,7 +135,7 @@ def _load(type_key, name, workflow):
     wuids = set() # unique IDs in this XML workflow file
     note = xas(workflow, "note")
     allowed_tags = xas(workflow, "tags", "").split()
-    modes = xas(workflow, "modes", "").split()
+    permission_actions = xas(workflow, "permission_actions", "").split()
     
     # initial_state, in XML indicated a transition source=""
     initial_state = None
@@ -212,13 +212,14 @@ def _load(type_key, name, workflow):
                 note=xas(f, "note"), **params
         ))
     
-    # modes -> permissions for this type
-    for mode in modes:
-        action = naming.camel(mode)
-        pid = "bungeni.%s.%s" % (type_key, action)
-        title = "%s %s" % (action, naming.model_name(type_key))
+    # permission_actions -> permissions for this type
+    for permission_action in permission_actions:
+        # !+back-compatibility - update any previous lowercase-specified actions 
+        #action = naming.camel(pa)
+        pid = "bungeni.%s.%s" % (type_key, permission_action)
+        title = "%s %s" % (permission_action, naming.model_name(type_key))
         ZCML_LINES.append(
-            '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, pid))
+            '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, title))
     
     # global grants
     _global_permission_role_mixes = {} # {pid: [role]}
@@ -244,8 +245,8 @@ def _load(type_key, name, workflow):
         state_id = xas(s, "id")
         assert state_id, "Workflow State must define @id"
         validate_id(state_id, "state")
-        # actions
-        actions = []
+        # state actions
+        state_actions = []
         # version (prior to any custom actions)
         if xas(s, "version") is not None:
             make_version = xab(s, "version")
@@ -253,13 +254,13 @@ def _load(type_key, name, workflow):
                 raise ValueError('Invalid state value [version="%s"]' % (
                         s.get("version")))
             if make_version:
-                actions.append(ACTIONS_MODULE.create_version)
+                state_actions.append(ACTIONS_MODULE.create_version)
         # state-id-inferred action - if "actions" module defines an action for
         # this state (associated via a naming convention), then use it.
-        # !+ tmp, until actions are user-exposed as part of <state>
+        # !+ tmp, until state_actions are user-exposed as part of <state>
         action_name = "_%s_%s" % (name, state_id)
         if hasattr(ACTIONS_MODULE, action_name):
-            actions.append(getattr(ACTIONS_MODULE, action_name))
+            state_actions.append(getattr(ACTIONS_MODULE, action_name))
 
         # @tags
         tags = xas(s, "tags", "").split()
@@ -297,7 +298,7 @@ def _load(type_key, name, workflow):
         states.append(
             State(state_id, state_title,
                 xas(s, "note"),
-                actions, permissions, tags,
+                state_actions, permissions, tags,
                 xab(s, "permissions_from_parent"),
                 xab(s, "obsolete"),
             )
@@ -319,6 +320,7 @@ def _load(type_key, name, workflow):
         
         # title
         title = xas(t, "title")
+        naming.MSGIDS.add(title)
         # sources, empty string -> initial_state
         sources = t.get("source").split() or [initial_state]
         assert len(sources) == len(set(sources)), \
@@ -337,7 +339,7 @@ def _load(type_key, name, workflow):
         for i in TRANS_ATTRS_OPTIONALS:
             val = xas(t, i)
             if not val:
-                # we let setting of defaults be handled upstream
+                # we let setting of defaults be handled downstream
                 continue
             kw[i] = val
         
@@ -404,7 +406,6 @@ def _load(type_key, name, workflow):
                         t.get("require_confirmation")))
         # multiple-source transitions are really multiple "transition paths"
         for source in sources:
-            naming.MSGIDS.add(title)
             args = (title, source, destination)
             transitions.append(Transition(*args, **kw))
             log.debug("[%s] adding transition [%s-%s] [%s]" % (

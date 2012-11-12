@@ -58,7 +58,7 @@ def new_custom_domain_model(type_key, model_interface):
     domain_model_name = naming.model_name(type_key)
     assert archetype_key, \
         "Custom descriptor %r does not specify an archetype" % (type_key)
-    archetype = getattr(MODEL_MODULE, naming.model_name(archetype_key))
+    archetype = getattr(MODEL_MODULE, naming.model_name(archetype_key)) # AttributeError
     # !+ assert archetype constraints
     domain_model = type(domain_model_name,
         (archetype,),
@@ -79,34 +79,21 @@ def new_custom_domain_model(type_key, model_interface):
             type_key, MODEL_MODULE.__name__, domain_model_name))
     return domain_model
 
-def register_specific_workflow_adapter(ti):
-    # Specific adapter on specific iface per workflow.
-    # Workflows are also the factory of own AdaptedWorkflows
-    assert ti.workflow, ti
-    assert ti.interface, ti
-    # component.provideAdapter(factory, adapts=None, provides=None, name="")
-    component.provideAdapter(ti.workflow, (ti.interface,), IWorkflow)
 
-
-def load_workflow(type_key, workflow_key,
-        path_custom_workflows=capi.get_path_for("workflows")
-    ):
-    """Setup (once) and return the Workflow instance, from XML definition, 
-    for named workflow.
-    """
-    # retrieve / load
-    try:
-        wf = Workflow.get_singleton(workflow_key)
-        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, wf))
-    except KeyError:
-        wf = xmlimport.load(type_key, workflow_key, path_custom_workflows)
-        log.info("Loaded WORKFLOW: %s %s" % (workflow_key, wf))
-        # debug info
-        for state_key, state in wf.states.items():
-            log.debug("   STATE: %s %s" % (state_key, state))
-            for p in state.permissions:
-                log.debug("          %s" % (p,))
-    return wf
+def load_workflows(type_info_iterator):
+    def get_domain_model(type_key):
+        """Infer and retrieve the target domain model class from the type key.
+        Raise Attribute error if not defined on domain.
+        """
+        return resolve("%s.%s" % (MODEL_MODULE.__name__, naming.model_name(type_key)))
+    # workflow instances (+ adapter *factories*)
+    for type_key, ti in type_info_iterator:
+        if not ti.custom:
+            # get the domain class and associate domain class with type
+            utils.inisetattr(ti, "domain_model", get_domain_model(type_key))
+        # load/get workflow instance (if any) and associate with type
+        if ti.workflow_key is not None:
+            ti.workflow = load_workflow(type_key, ti.workflow_key)
 
 
 def apply_customization_workflow(type_key, ti):
@@ -125,33 +112,14 @@ def apply_customization_workflow(type_key, ti):
     feature.configurable_domain(domain_model, workflow)
     feature.configurable_mappings(domain_model)
 
-
-def load_workflows(type_info_iterator):
-    def get_domain_model(type_key):
-        """Infer and retrieve the target domain model class from the type key.
-        Raise Attribute error if not defined on domain.
-        """
-        return resolve("bungeni.models.domain.%s" % (naming.model_name(type_key)))
-    # workflow instances (+ adapter *factories*)
-    for type_key, ti in type_info_iterator:
-        if not ti.custom:
-            # get the domain class and associate domain class with type
-            utils.inisetattr(ti, "domain_model", get_domain_model(type_key))
-        # load/get workflow instance (if any) and associate with type
-        if ti.workflow_key is not None:
-            ti.workflow = load_workflow(type_key, ti.workflow_key)
-
-def setup_workflows(type_info_iterator):
-    for type_key, ti in type_info_iterator:
-        if ti.workflow:
-            # debug: ensure that setup is done only once
-            #assert type_key not in setup_workflows.DONE, type_key
-            #setup_workflows.DONE.add(type_key)
-            # adjust domain_model as per workflow
-            apply_customization_workflow(type_key, ti)
-            register_specific_workflow_adapter(ti)
-#setup_workflows.DONE = set()
-
+def register_specific_workflow_adapter(ti):
+    # Specific adapter on specific iface per workflow.
+    # Workflows are also the factory of own AdaptedWorkflows.
+    # Note: cleared by each call to zope.app.testing.placelesssetup.tearDown()
+    assert ti.workflow, ti
+    assert ti.interface, ti
+    # component.provideAdapter(factory, adapts=None, provides=None, name="")
+    component.provideAdapter(ti.workflow, (ti.interface,), IWorkflow)
 
 def register_generic_workflow_adapters():
     """Register general and specific worklfow-related adapters.
@@ -188,9 +156,23 @@ def register_generic_workflow_adapters():
     component.provideAdapter(
         WorkflowController, (IWorkflowed,), IWorkflowController)    
     
+
+def setup_workflows(type_info_iterator):
+    for type_key, ti in type_info_iterator:
+        if ti.workflow:
+            # debug: ensure that setup is done only once
+            #assert type_key not in setup_workflows.DONE, type_key
+            #setup_workflows.DONE.add(type_key)
+            # adjust domain_model as per workflow
+            apply_customization_workflow(type_key, ti)
+            register_specific_workflow_adapter(ti)
+#setup_workflows.DONE = set()
+
+
 @bungeni_custom_errors
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
+    This is called prior to loading of the workflows for these custom types.
     """
     from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
     def register_type(elem):
@@ -202,14 +184,14 @@ def register_custom_types():
         # generate custom interface
         model_iname = naming.model_interface_name(type_key)
         try: 
-            model_iface = resolve("bungeni.models.interfaces.%s" % (model_iname))
+            model_iface = resolve("%s.%s" % (INTERFACE_MODULE.__name__, model_iname))
             log.warn("Custom interface ALREADY EXISTS: %s" % (model_iface))
         except ImportError:
             model_iface = new_custom_model_interface(type_key, model_iname)
         # generate custom domain_model
         domain_model_name = naming.model_name(type_key)
         try:
-            domain_model = resolve("bungeni.models.domain.%s" % (domain_model_name))
+            domain_model = resolve("%s.%s" % (MODEL_MODULE.__name__, domain_model_name))
             log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
         except ImportError:
             domain_model = new_custom_domain_model(type_key, model_iface)
@@ -229,6 +211,27 @@ def register_custom_types():
         register_type(egroup)
         for emember in egroup.iterchildren("member"):
             register_type(emember)
+
+
+def load_workflow(type_key, workflow_key,
+        path_custom_workflows=capi.get_path_for("workflows")
+    ):
+    """Setup (once) and return the Workflow instance, from XML definition, 
+    for named workflow.
+    """
+    # retrieve / load
+    try:
+        wf = Workflow.get_singleton(workflow_key)
+        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, wf))
+    except KeyError:
+        wf = xmlimport.load(type_key, workflow_key, path_custom_workflows)
+        log.info("Loaded WORKFLOW: %s %s" % (workflow_key, wf))
+        # debug info
+        for state_key, state in wf.states.items():
+            log.debug("   STATE: %s %s" % (state_key, state))
+            for p in state.permissions:
+                log.debug("          %s" % (p,))
+    return wf
 
 
 def _setup_all():
