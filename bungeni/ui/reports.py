@@ -164,7 +164,7 @@ class SaveReportView(form.PageForm):
 
     class ISaveReportForm(interface.Interface):
         start_date = schema.Date(
-            title=_("report_start_date, default="u"Date"),
+            title=_("report_start_date", default=u"Date"),
             description=_(u"Choose a starting date for this report"),
             required=True)
         end_date = schema.Date(
