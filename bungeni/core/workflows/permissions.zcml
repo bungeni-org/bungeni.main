@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
 <!-- 
@@ -22,10 +23,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- address -->
-<permission id="bungeni.user_address.View" title="View UserAddress" />
-<permission id="bungeni.user_address.Edit" title="Edit UserAddress" />
-<permission id="bungeni.user_address.Add" title="Add UserAddress" />
-<permission id="bungeni.user_address.Delete" title="Delete UserAddress" />
+<permission id="bungeni.user_address.View" title="View User Address" />
+<permission id="bungeni.user_address.Edit" title="Edit User Address" />
+<permission id="bungeni.user_address.Add" title="Add User Address" />
+<permission id="bungeni.user_address.Delete" title="Delete User Address" />
 
 <permission id="bungeni.address.wf.draft.attached" title="Publish" />
 <grant permission="bungeni.address.wf.draft.attached" role="bungeni.Owner" />
@@ -185,10 +186,13 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.signatory.Edit" title="Edit Signatory" />
 <permission id="bungeni.signatory.Add" title="Add Signatory" />
 <permission id="bungeni.signatory.Delete" title="Delete Signatory" />
+<permission id="bungeni.signatory.Act" title="Act Signatory" />
+<permission id="bungeni.signatory.Append" title="Append Signatory" />
 <grant permission="bungeni.signatory.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.signatory.Add" role="bungeni.Owner" />
 <grant permission="bungeni.signatory.Delete" role="bungeni.Clerk" />
 <grant permission="bungeni.signatory.Act" role="bungeni.Signatory" />
+<grant permission="bungeni.signatory.Append" role="bungeni.MP" />
 
 <permission id="bungeni.signatory.wf.awaiting_consent.consented" title="consent" />
 <grant permission="bungeni.signatory.wf.awaiting_consent.consented" role="bungeni.Owner" />
@@ -205,6 +209,38 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.group.Edit" title="Edit Group" />
 <permission id="bungeni.group.Add" title="Add Group" />
 <permission id="bungeni.group.Delete" title="Delete Group" />
+<permission id="bungeni.government.View" title="View Government" />
+<meta:redefinePermission from="bungeni.government.View" to="bungeni.group.View" />
+<permission id="bungeni.government.Edit" title="Edit Government" />
+<permission id="bungeni.government.Add" title="Add Government" />
+<permission id="bungeni.government.Delete" title="Delete Government" />
+<permission id="bungeni.ministry.View" title="View Ministry" />
+<meta:redefinePermission from="bungeni.ministry.View" to="bungeni.group.View" />
+<permission id="bungeni.ministry.Edit" title="Edit Ministry" />
+<permission id="bungeni.ministry.Add" title="Add Ministry" />
+<permission id="bungeni.ministry.Delete" title="Delete Ministry" />
+<permission id="bungeni.office.View" title="View Office" />
+<meta:redefinePermission from="bungeni.office.View" to="bungeni.group.View" />
+<permission id="bungeni.office.Edit" title="Edit Office" />
+<permission id="bungeni.office.Add" title="Add Office" />
+<permission id="bungeni.office.Delete" title="Delete Office" />
+<permission id="bungeni.political_group.View" title="View Political Group" />
+<meta:redefinePermission from="bungeni.political_group.View" to="bungeni.group.View" />
+<permission id="bungeni.political_group.Edit" title="Edit Political Group" />
+<permission id="bungeni.political_group.Add" title="Add Political Group" />
+<permission id="bungeni.political_group.Delete" title="Delete Political Group" />
+<grant permission="bungeni.government.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.government.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.government.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.ministry.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.ministry.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.ministry.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.office.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.office.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.office.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.political_group.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.political_group.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.political_group.Delete" role="bungeni.Clerk" />
 
 <permission id="bungeni.group.wf.draft.active" title="Activate" />
 <grant permission="bungeni.group.wf.draft.active" role="bungeni.Clerk" />
@@ -231,10 +267,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- agenda_item -->
-<permission id="bungeni.agenda_item.View" title="View AgendaItem" />
-<permission id="bungeni.agenda_item.Edit" title="Edit AgendaItem" />
-<permission id="bungeni.agenda_item.Add" title="Add AgendaItem" />
-<permission id="bungeni.agenda_item.Delete" title="Delete AgendaItem" />
+<permission id="bungeni.agenda_item.View" title="View Agenda Item" />
+<permission id="bungeni.agenda_item.Edit" title="Edit Agenda Item" />
+<permission id="bungeni.agenda_item.Add" title="Add Agenda Item" />
+<permission id="bungeni.agenda_item.Delete" title="Delete Agenda Item" />
 <grant permission="bungeni.agenda_item.Add" role="bungeni.Clerk" />
 
 <permission id="bungeni.agenda_item.wf.draft.submitted" title="Submit" />
@@ -609,10 +645,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- tabled_document -->
-<permission id="bungeni.tabled_document.View" title="View TabledDocument" />
-<permission id="bungeni.tabled_document.Edit" title="Edit TabledDocument" />
-<permission id="bungeni.tabled_document.Add" title="Add TabledDocument" />
-<permission id="bungeni.tabled_document.Delete" title="Delete TabledDocument" />
+<permission id="bungeni.tabled_document.View" title="View Tabled Document" />
+<permission id="bungeni.tabled_document.Edit" title="Edit Tabled Document" />
+<permission id="bungeni.tabled_document.Add" title="Add Tabled Document" />
+<permission id="bungeni.tabled_document.Delete" title="Delete Tabled Document" />
 <grant permission="bungeni.tabled_document.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.tabled_document.Add" role="bungeni.MP" />
 

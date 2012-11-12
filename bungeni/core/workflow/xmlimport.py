@@ -55,6 +55,7 @@ ZCML_LINES = [] # Accumulation of ZCML content
 ZCML_INDENT = ""
 ZCML_BOILERPLATE = """<?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
 <!-- 
@@ -135,7 +136,6 @@ def _load(type_key, name, workflow):
     wuids = set() # unique IDs in this XML workflow file
     note = xas(workflow, "note")
     allowed_tags = xas(workflow, "tags", "").split()
-    permission_actions = xas(workflow, "permission_actions", "").split()
     
     # initial_state, in XML indicated a transition source=""
     initial_state = None
@@ -178,6 +178,18 @@ def _load(type_key, name, workflow):
                 "Workflow [%s]: unknown attribute %s in %s" % (
                     name, key, etree.tostring(elem))
     
+    def qualified_permission_actions(type_key, permission_actions):
+        """[str] -> [(type_key, permission_action)]
+        where string may be: ".Action" or "type_key.Action"
+        """
+        qpas = []
+        for pa in permission_actions:
+            qpa = pa.split(".", 1)
+            assert len(qpa) == 2, \
+                "No dot in workflow %r permission action %r" % (name, pa)
+            qpas.append( (qpa[0] or type_key, qpa[1]) )
+        return qpas
+    
     # top-level child ordering
     grouping, allowed_child_ordering = 0, (
         "feature", "grant", "state", "transition")
@@ -213,13 +225,19 @@ def _load(type_key, name, workflow):
         ))
     
     # permission_actions -> permissions for this type
-    for permission_action in permission_actions:
-        # !+back-compatibility - update any previous lowercase-specified actions 
-        #action = naming.camel(pa)
-        pid = "bungeni.%s.%s" % (type_key, permission_action)
-        title = "%s %s" % (permission_action, naming.model_name(type_key))
+    for (key, permission_action) in qualified_permission_actions(
+            type_key, xas(workflow, "permission_actions", "").split()
+        ):
+        pid = "bungeni.%s.%s" % (key, permission_action)
+        title = "%s %s" % (
+            permission_action, naming.split_camel(naming.model_name(key)))
         ZCML_LINES.append(
             '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, title))
+        # !+shared_workflow tmp for types "sharing" a workflow...
+        if permission_action == "View" and not key == type_key:
+            ZCML_LINES.append(
+                '%s<meta:redefinePermission from="%s" to="bungeni.%s.View" />' % (
+                    ZCML_INDENT, pid, type_key))
     
     # global grants
     _global_permission_role_mixes = {} # {pid: [role]}
