@@ -67,7 +67,18 @@ def set_widget_errors(widgets, errors):
 
 
 def cascade_modifications(obj):
-    """cascade modify events on an object to the direct parent"""
+    """Cascade modify events on an object to the direct parent.
+    !+NAMING(mr, nov-2012) why cascade (implies down?!) instead of bubble (up, usually)?
+    Plus, we are not cascading *modifications* anyway, we are just notifying of such... !
+    !+EVENT_CONSUMER_ISSUE(mr, nov-2012) why fire new events off the ancestor if 
+    the descendent has presumably already fired off its own modified event? 
+    If anything it should be a new specialized type of event, with a pointer to 
+    the original trigger object (descendent that was modified), so that the 
+    consumer can know it is a "derived" event and maybe act accordingly... as
+    it is, all modified event handlers registerd will execute, e.g. auditing of 
+    the change if the ancestor is auditable, but the change had already been 
+    audited on the originator modified descendent object.
+    """
     if not ILocation.providedBy(obj):
         return
     if IAlchemistContainer.providedBy(obj.__parent__):
@@ -282,7 +293,7 @@ class PageForm(BaseForm, formlib.form.PageForm, browser.BungeniBrowserView):
 #    protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})
 class AddForm(BaseForm, ui.AddForm):
     """Custom add-form for Bungeni content.
-
+    
     Additional actions are set up to allow users to continue editing
     an object, or add another of the same kind.
     """
@@ -386,6 +397,8 @@ class AddForm(BaseForm, ui.AddForm):
     def createAndAdd(self, data):
         ob = super(AddForm, self).createAndAdd(data)
         self.created_object = ob
+        # execute domain.Entity on create hook
+        removeSecurityProxy(ob).on_create()
         cascade_modifications(ob)
         return ob
     

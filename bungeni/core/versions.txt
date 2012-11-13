@@ -35,15 +35,6 @@ Adding a question.
   >>> session.add(mp_1)
   >>> session.flush()
 
-
-  >>> question = add_content(
-  ...     domain.Question,
-  ...     title="A question",
-  ...     type="question",
-  ...     owner_id=mp_1.user_id,
-  ...     language="en")
-
-
 In order to create a participation, we need a principal:
 
   >>> from bungeni.core.testing import set_interaction
@@ -56,6 +47,13 @@ In order to create a participation, we need a principal:
   >>> from bungeni.models.utils import get_principal_id
   >>> get_principal_id()
   'mp_1'
+
+    >>> question = add_content(
+    ...     domain.Question,
+    ...     title="A question",
+    ...     type="question",
+    ...     owner_id=mp_1.user_id,
+    ...     language="en")
 
 
 Verify that no versions exist yet (assuming questions are IFeatureVersion):

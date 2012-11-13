@@ -123,6 +123,13 @@ class Entity(object):
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
     
+    def on_create(self):
+        """Hook to call on creation of an instance, to handle any business 
+        setup/logic that the application MUST (i.e. not subject to any user
+        configuration) take care of.
+        """
+        pass
+    
     @property
     def pk(self):
         """ () -> [(pk_name, pk_value)] -- intended primarily as debug utility.
@@ -214,7 +221,7 @@ class UserSubscription(Entity):
 ######
 
 class Group(Entity):
-    """ an abstract collection of users
+    """An abstract collection of users.
     """
     available_dynamic_features = ["address"]
     interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
@@ -231,6 +238,15 @@ class Group(Entity):
         "bungeni.models.domain.EditorialNoteContainer",
         "group_id"
     )
+    
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        # requires self db id to have been updated
+        from bungeni.core.workflows import utils
+        utils.assign_role_owner_to_login(self)
+        utils.unset_group_local_role(self)
+    
     def active_membership(self, user_id):
         session = alchemist.Session()
         query = session.query(GroupMembership).filter(
@@ -463,10 +479,18 @@ class OfficeMember(GroupMembership):
 
 class Address(HeadParentedMixin, Entity):
     """Address base class
+    !+ note corresponding tbls exist only for subclasses
     """
     available_dynamic_features = []
     interface.implements(interfaces.IAddress)
-    # !+ note corresponding tbls exist only for subclasses
+    
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        # requires self db id to have been updated
+        from bungeni.core.workflows import utils
+        utils.assign_role_owner_to_login(self)
+
 class UserAddress(Address):
     """User address (personal)
     """
@@ -563,6 +587,14 @@ class Doc(Entity):
         interfaces.IDoc,
         interfaces.ITranslatable
     )
+    
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        # requires self db id to have been updated
+        from bungeni.core.workflows import utils
+        utils.assign_role_owner_to_login(self)
+        # !+utils.setParliamentId(self)
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id
@@ -935,6 +967,13 @@ class Attachment(HeadParentedMixin, Entity):
         from bungeni.models import utils # !+domain should not depend on utils
         principal_id = utils.get_prm_owner_principal_id(self)
         return utils.get_user_for_principal_id(principal_id)
+
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        # requires self db id to have been updated
+        from bungeni.core.workflows import utils
+        utils.assign_role_owner_to_login(self)
 
 class AttachmentAudit(Audit):
     """An audit record for an attachment.

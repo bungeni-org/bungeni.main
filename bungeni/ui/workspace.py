@@ -414,8 +414,8 @@ class WorkspaceTabCount(BrowserPage):
         return simplejson.dumps(data)
 
 class WorkspaceAddForm(AddForm):
-
-    #from alchemist.ui.content
+    
+    # from alchemist.ui.content (assumes all responsibility, does NOT call super)
     def createAndAdd(self, data):
         domain_model = removeSecurityProxy(self.domain_model)
         # create the object, inspect data for constructor args
@@ -434,14 +434,17 @@ class WorkspaceAddForm(AddForm):
         # signal to add form machinery to go to next url
         self._finished_add = True
         name = self.context.string_key(ob)
+        # execute domain.Entity on create hook -- doc_id must have been set
+        ob.on_create()
         return self.context.get(name)
-
+    
     @property
     def domain_model(self):
         item_type = self.__name__.split("_", 1)[1]
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         domain = workspace_config.get_domain(item_type)
         return domain
-
+    
     def getDomainModel(self):
         return getattr(self, "domain_model", self.context.__class__)
+

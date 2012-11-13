@@ -25,7 +25,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
 from bungeni.core.workflows import utils
 from bungeni.core.workflows import dbutils
-from bungeni.models.utils import get_db_user
+
 
 # specially handled actions - executed on transition to a given state (set 
 # when workflow is loaded) 
@@ -37,32 +37,10 @@ create_version = utils.create_version
 # /specially handled actions
 
 
-# parliamentary item, utils
-
-def __create(context):
-    """Assigns bungeni.Owner role to the current user on the object if
-    the current user is the same as the owner_id of the document. 
-    If a user creates a document on behalf of someone else they will not 
-    in that case get bungeni.Owner on the object
-    """
-    # !+utils.setParliamentId(context)
-    # !+OWNERSHIP(mr, may-2012) should not this be part of the actual 
-    # *creation* logic of the item?
-    current_user = get_db_user()
-    if current_user.user_id == context.owner_id:
-        utils.assign_role("bungeni.Owner", current_user.login, context)
-
-
 # !+NUMBER_GENERATION(ah, nov-2011) - used for parliamentary item transitions
 # to recieved state
 def __pi_received(context):
     utils.set_doc_registry_number(context)
-
-# sub-item types
-
-_event_draft = __create
-_attachment_draft = __create
-_address_private = __create
 
 
 # !+NUMBER_GENERATION (ah,nov-2011) - generate the number on receiving an item
@@ -73,23 +51,7 @@ _agenda_item_received = __pi_received
 _tabled_document_received = __pi_received
 
 
-# agenda_item
-
-_agenda_item_draft = _agenda_item_working_draft = __create
-
-
-# bill
-
-_bill_draft = _bill_working_draft = __create
-
-
 # group
-
-def _group_draft(context):
-    utils.assign_role_owner_to_login(context)
-    def _deactivate(context):
-        utils.unset_group_local_role(context)
-    _deactivate(context)
 
 def _group_active(context):
     utils.set_group_local_role(context)
@@ -107,14 +69,12 @@ def _group_dissolved(context):
 
 # committee
 
-_committee_draft = _group_draft
 _committee_active = _group_active
 _committee_dissolved = _group_dissolved
 
 
 # parliament
 
-_parliament_draft = _group_draft
 _parliament_active = _group_active
 _parliament_dissolved = _group_dissolved
 
@@ -130,8 +90,6 @@ def _sitting_published_agenda(context):
 
 # motion
 
-_motion_draft = _motion_working_draft = __create
-
 def _motion_admissible(motion):
     dbutils.set_doc_type_number(motion)
 
@@ -139,7 +97,6 @@ def _motion_admissible(motion):
 # question
 
 def __question_create(context):
-    __create(context)
     utils.assign_role_minister_question(context)
     
 _question_draft = _question_working_draft = __question_create
@@ -163,8 +120,6 @@ def _question_admissible(question):
 
 
 # tabled_document
-
-_tabled_document_draft = _tabled_document_working_draft = __create
 
 def _tabled_document_adjourned(context):
     utils.setTabledDocumentHistory(context)

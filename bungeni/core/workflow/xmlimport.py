@@ -53,9 +53,9 @@ ZCML_FILENAME = "permissions.zcml"
 ZCML_WORKFLOWS_PROCESSED = set() # Process workflows once only
 ZCML_LINES = [] # Accumulation of ZCML content
 ZCML_INDENT = ""
+#!+shared_workflow xmlns:meta="http://namespaces.zope.org/meta"
 ZCML_BOILERPLATE = """<?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
-    xmlns:meta="http://namespaces.zope.org/meta"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
 <!-- 
@@ -234,10 +234,10 @@ def _load(type_key, name, workflow):
         ZCML_LINES.append(
             '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, title))
         # !+shared_workflow tmp for types "sharing" a workflow...
-        if permission_action == "View" and not key == type_key:
-            ZCML_LINES.append(
-                '%s<meta:redefinePermission from="%s" to="bungeni.%s.View" />' % (
-                    ZCML_INDENT, pid, type_key))
+        #if permission_action == "View" and not key == type_key:
+        #    ZCML_LINES.append(
+        #        '%s<meta:redefinePermission from="%s" to="bungeni.%s.View" />' % (
+        #            ZCML_INDENT, pid, type_key))
     
     # global grants
     _global_permission_role_mixes = {} # {pid: [role]}

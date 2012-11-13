@@ -11,13 +11,12 @@ from bungeni.alchemist import Session
 def add_content(kls, *args, **kwargs):
     session = Session()
     instance = kls(*args)
-
     for name, value in kwargs.items():
         setattr(instance, name, value)
-        
     session.add(instance)
     session.flush()
-
+    # execute domain.Entity on create hook -- db id must have been set
+    instance.on_create()
     return instance
 
 '''

@@ -56,6 +56,7 @@ Assign roles.
 Content creation
 ----------------
 
+    >>> set_interaction(clerk)
   >>> from bungeni.models.testing import add_content
 
   >>> parliament = add_content(
@@ -148,7 +149,9 @@ send the question notifications.
 remove the call to setParliamentId() when creating the question -- the 
 parliament_id is automatically set on a question (when saved to the db) 
 that is created via the UI form. 
-  
+    
+    >>> set_interaction(member)
+
   >>> question = add_content(
   ...     domain.Question,
   ...     title=u"My subject",
@@ -203,7 +206,6 @@ Questions transitions
 
 PRINCIPAL: member
 
-  >>> set_interaction(member)
   >>> from bungeni.models.utils import get_principal_id
   >>> get_principal_id()
   'member'
