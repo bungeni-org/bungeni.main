@@ -129,7 +129,9 @@ class SubformRssSubscriptionViewletManager(manager.WeightOrderedViewletManager):
 @register.viewlet(interfaces.IBungeniParliamentaryContent, 
     layer=IBungeniAuthenticatedSkin, 
     manager=ISubformRssSubscriptionViewletManager,
-    name="keep-zca-happy-rsslink")
+    name="keep-zca-happy-rsslink",
+    protect=register.PROTECT_VIEWLET_PUBLIC
+    )
 class RssLinkViewlet(viewlet.ViewletBase):
     """Simply renders link for users to subscribe to current paliamentary item.
     """
@@ -151,7 +153,8 @@ class RssLinkViewlet(viewlet.ViewletBase):
 
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,
-    name="bungeni.viewlet.session")
+    name="bungeni.viewlet.session",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class SessionViewlet(SubformViewlet):
     sub_attr_name = "sessions"
     weight = 50
@@ -161,7 +164,8 @@ class SignatoriesViewlet(SubformViewlet):
 
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,
-    name="bungeni.viewlet.government")
+    name="bungeni.viewlet.government",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class GovernmentViewlet(SubformViewlet):
     sub_attr_name = "governments"
     weight = 40
@@ -169,7 +173,8 @@ class GovernmentViewlet(SubformViewlet):
 
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,
-    name="bungeni.viewlet.member-of-parliament")
+    name="bungeni.viewlet.member-of-parliament",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class MemberOfParliamentViewlet(SubformViewlet):
     sub_attr_name = "parliamentmembers"
     weight = 20
@@ -198,7 +203,8 @@ class MinistriesViewlet(SubformViewlet):
 
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,
-    name="bungeni.viewlet.committees")
+    name="bungeni.viewlet.committees",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class CommitteesViewlet(SubformViewlet):
     sub_attr_name = "committees"
     weight = 10
@@ -209,11 +215,18 @@ class CommitteeStaffViewlet(SubformViewlet):
 class CommitteeMembersViewlet(SubformViewlet):
     sub_attr_name = "committeemembers"
 
-
-@register.viewlet(interfaces.IMemberOfParliament, 
-    manager=ISubFormViewletManager, name="keep-zca-happy-addresses")
+# !+REGISTER_VIEWLET(miano, nov 2012) Chaining decorators
+# doesn't work as it should, the permissions on one
+# registration leak to the other.
+#@register.viewlet(interfaces.IMemberOfParliament, 
+#    manager=ISubFormViewletManager,
+#    name="keep-zca-happy-addresses",
+#    protect=register.PROTECT_VIEWLET_PUBLIC
+#    )
 @register.viewlet(interfaces.IBungeniGroup, 
-    manager=ISubFormViewletManager, name="keep-zca-happy-addresses")
+    manager=ISubFormViewletManager,
+    name="keep-zca-happy-addresses",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class AddressesViewlet(SubformViewlet):
     sub_attr_name = "addresses"
     weight = 99
@@ -223,7 +236,8 @@ class AddressesViewlet(SubformViewlet):
 
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,
-    name="bungeni.viewlet.political-groups")
+    name="bungeni.viewlet.political-groups",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class PoliticalGroupsViewlet(SubformViewlet):
     sub_attr_name = "politicalgroups"
     weight = 30
@@ -269,7 +283,8 @@ class PersonInfo(BungeniAttributeDisplay):
 
 @register.viewlet(interfaces.IFeatureSchedule,
     manager=ISubFormViewletManager,
-    name="doc-minutes")
+    name="doc-minutes",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class DocMinutesViewlet(browser.BungeniItemsViewlet):
     """Render a tree of schedule discussions
     """ 
@@ -535,7 +550,8 @@ class SchedulingMinutesViewlet(DisplayViewlet):
 
 @register.viewlet(interfaces.ISession,
     manager=IContentViewManager,
-    name="bungeni.viewlet.session-sitting-calendar")
+    name="bungeni.viewlet.session-sitting-calendar",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class SessionCalendarViewlet(browser.BungeniItemsViewlet):
     """Display a monthly calendar with all sittings for a session.
     """

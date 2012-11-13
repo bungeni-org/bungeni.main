@@ -281,7 +281,7 @@ class VersionLogView(VersionLogMixin,
                         source, target, self.diff_view))
     
     def get_version_change(self, audit_id):
-        for c in self.context.versions:
+        for c in removeSecurityProxy(self.context).versions:
             c = removeSecurityProxy(c)
             if c.audit_id == audit_id:
                 return c

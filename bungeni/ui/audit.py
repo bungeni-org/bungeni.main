@@ -414,7 +414,7 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
             )
 
 @register.viewlet(interfaces.IFeatureAudit, manager=ISubFormViewletManager, 
-    name="keep-zca-happy-timeline")
+    name="keep-zca-happy-timeline", protect=register.PROTECT_VIEWLET_PUBLIC)
 class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     view_title = "Timeline"
     view_id = "timeline"

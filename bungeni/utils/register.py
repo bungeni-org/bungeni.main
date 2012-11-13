@@ -26,7 +26,7 @@ __all__ = [
     "handler",
     "subscription_adapter",
     "viewlet_manager",
-    "viewlet", "PROTECT_VIEWLET_PUBLIC"
+    "viewlet", "PROTECT_VIEWLET_PUBLIC",
     "view", "PROTECT_VIEW_PUBLIC",
     "protect",
 ]
