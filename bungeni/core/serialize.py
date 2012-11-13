@@ -42,7 +42,7 @@ from bungeni.core.notifications import (get_mq_connection,
 )
 from bungeni.models import interfaces, domain, settings
 from bungeni.models.utils import obj2dict, get_permissions_dict
-from bungeni.utils import register, naming, core
+from bungeni.utils import register, naming, core, capi
 
 import transaction
 import pika
@@ -360,10 +360,39 @@ def init_thread(*args, **kw):
     task_thread = SerializeThread(target=serialization_worker)
     task_thread.start()
     TIMER_DELAYS[task_thread.name] = delay
+    
+
+def batch_serialize(type_key="*"):
+    """Serialize all objects of `type_key` or all types if with a
+    wildcard(*) as the type key.
+    """
+    #keep count of serialized objects for feedback
+    serialized_count = 0
+    #list of domain classes to be serialized
+    domain_models = []
+    if type_key == "*":
+        for (type_key, info) in capi.capi.iter_type_info():
+            if info.workflow:
+                domain_models.append(info.domain_model)
+    else:
+        info = capi.capi.get_type_info(type_key)
+        if info.workflow:
+            domain_models.append(info.domain_model)
+    session = Session()
+    for domain_model in domain_models:
+        objects = session.query(domain_model).all()
+        map(queue_object_serialization, objects)
+        serialized_count += len(objects)
+    return serialized_count
+    
 
 @register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
 @register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
-def queue_object_serialization(obj, event):
+def serialization_event_handler(obj, event):
+    """queues workflowed objects when created or modified"""
+    queue_object_serialization(obj)
+
+def queue_object_serialization(obj):
     """Send a message to the serialization queue for non-draft documents
     """
     connection = get_mq_connection()

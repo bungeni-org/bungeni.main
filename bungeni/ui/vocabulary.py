@@ -1391,3 +1391,21 @@ class DocumentXHTMLTemplateFactory(ReportXHTMLTemplateFactory):
 document_xhtml_template_factory = DocumentXHTMLTemplateFactory()
 
 
+class WorkflowedTypesVocabulary(BaseVocabularyFactory):
+    """A vocabulary of workflowed types
+    """
+    def __call__(self, context=None):
+        terms = [vocabulary.SimpleTerm(value="*", token="*",
+                title=_("* All types *")
+        )]
+        for (type_key, info) in capi.iter_type_info():
+            terms.append(
+                vocabulary.SimpleTerm(
+                    value=type_key, 
+                    token=type_key,
+                    title=info.descriptor_model.display_name
+                ))
+        return vocabulary.SimpleVocabulary(terms)
+workflowed_types_factory = WorkflowedTypesVocabulary()
+component.provideUtility(workflowed_types_factory, IVocabularyFactory, 
+    "workflowed_types")

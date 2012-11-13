@@ -451,6 +451,12 @@ class AppSetup(object):
             description=_(u"manage registry settings"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="registry-settings")
+
+        admin["serialization-manager"] = Section(
+            title=_(u"serialization manager"),
+            description=_(u"batch serialization of content"),
+            marker=model_interfaces.IBungeniAdmin,
+            default_name="serialization-manager")
         
         content[u"parliaments"] = domain.ParliamentContainer()
         to_locatable_container(domain.Parliament, content[u"parliaments"])

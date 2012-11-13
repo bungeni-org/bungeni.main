@@ -9,6 +9,7 @@ from bungeni.rest.interfaces import IRESTLayer
 from zope.configuration import fields
 from zope import schema
 from zope.viewlet.interfaces import IViewletManager
+from bungeni.ui.i18n import _
 
 class IBungeniSkin(IPlonedSkin, IYUILayer):
     """Bungeni application skin."""
@@ -131,3 +132,11 @@ class IWorkspaceContentAdapter(interface.Interface):
     """
     
 
+class ISerializationManager(interface.Interface):
+    """Schema for batch serialization manager form"""
+    object_type = schema.Choice(
+        title=_(u"Object type"),
+        description=_(u"Choose the type of object to be serialized."),
+        required=True,
+        vocabulary="workflowed_types"
+    )
