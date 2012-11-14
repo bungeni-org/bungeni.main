@@ -1,6 +1,10 @@
 #
 import sys
-#from bungeni.core.workflows import adapters
+# !+DIAGRAMMER(AH, 14-11-2012)
+# the below import of bungeni.core.workflows.adpaters is neccessary to 
+# set the adapter interfaces for the types correctly, otherwise the custom types
+# are not loaded and other types have workflow set to None
+from bungeni.core.workflows import adapters
 from bungeni.core.workflow.dot import dot
 from bungeni.utils.capi import capi
 
