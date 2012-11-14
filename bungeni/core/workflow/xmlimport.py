@@ -117,7 +117,7 @@ def zcml_transition_permission(pid, title, roles):
 
 #
 
-@bungeni_custom_errors
+#@bungeni_custom_errors
 def load(type_key, name, path_custom_workflows):
     """ (type_key:str, name:str, path_custom_workflows:str) -> Workflow
     
@@ -179,20 +179,44 @@ def _load(type_key, name, workflow):
                     name, key, etree.tostring(elem))
     
     def qualified_permission_actions(type_key, permission_actions):
-        """[str] -> [(type_key, permission_action)]
+        """[space-separated-str] -> [(type_key, permission_action)]
+        """
+        return [ qualified_permission_action(type_key, pa) 
+            for pa in permission_actions ]
+    def qualified_permission_action(type_key, pa):
+        """str -> (type_key, permission_action)
         where string may be: ".Action" or "type_key.Action"
         """
-        qpas = []
-        for pa in permission_actions:
-            qpa = pa.split(".", 1)
-            assert len(qpa) == 2, \
-                "No dot in workflow %r permission action %r" % (name, pa)
-            qpas.append( (qpa[0] or type_key, qpa[1]) )
-        return qpas
+        # !+do not allow a preceeding "bungeni."?
+        if pa.startswith("bungeni."):
+            pa = pa[len("bungeni."):]
+        qpa = pa.split(".", 1)
+        assert len(qpa) == 2, \
+            "No dot in workflow %r permission action %r" % (name, pa)
+        return (qpa[0] or type_key, qpa[1])
+    def qualified_pid(type_key, pa):
+        return "bungeni.%s.%s" % qualified_permission_action(type_key, pa)
+
+    def qualified_roles(roles):
+        """space-separated-str -> [role_id]
+        Parse space separated string into a list of qualified role ids where 
+        each role word-str may be: "Role" or ".Role" or "bungeni.Role"
+        """
+        qrs = []
+        for r in roles.split():
+            if r.startswith("bungeni."):
+                qrs.append(r)
+            elif r.startswith("."):
+                qrs.append("bungeni%s" % (r))
+            else:
+                qrs.append("bungeni.%s" % (r))
+        # !+alchemist.model.validated_set
+        # !+alchemist.model.norm_sorted
+        return sorted(qrs)
     
     # top-level child ordering
     grouping, allowed_child_ordering = 0, (
-        "feature", "grant", "state", "transition")
+        "feature", "allow", "state", "transition")
     for child in workflow.iterchildren():
         if not isinstance(child.tag, basestring):
             # ignore comments
@@ -241,14 +265,15 @@ def _load(type_key, name, workflow):
     
     # global grants
     _global_permission_role_mixes = {} # {pid: [role]}
-    for p in workflow.iterchildren("grant"):
-        pid = xas(p, "permission")
-        role = xas(p, "role")
-        # for each global permission, build list of roles it is set to
-        _global_permission_role_mixes.setdefault(pid, []).append(role)
-        assert pid and role, "Global grant must specify valid permission/role" 
-        ZCML_LINES.append(
-            '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
+    for p in workflow.iterchildren("allow"):
+        pid = qualified_pid(type_key, xas(p, "permission"))
+        roles = qualified_roles(xas(p, "roles"))
+        for role in roles:
+            # for each global permission, build list of roles it is set to
+            _global_permission_role_mixes.setdefault(pid, []).append(role)
+            assert pid and role, "Global grant must specify valid permission/role" 
+            ZCML_LINES.append(
+                '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
         # no real need to check that the permission and role of a global grant 
         # are properly registered in the system -- an error should be raised 
         # by the zcml if either is not defined. 
@@ -296,17 +321,18 @@ def _load(type_key, name, workflow):
         if like_state:
             like_permissions.extend(like_state.permissions)
         # (within same state) a deny is *always* executed after a *grant*
-        for i, assign in enumerate(["grant", "deny"]):
+        for i, assign in enumerate(["allow", "deny"]):
             for p in s.iterchildren(assign):
-                permission = xas(p, "permission")
-                role = xas(p, "role")
-                check_add_permission(permissions, like_permissions, 
-                    ASSIGNMENTS[i], permission, role)
-                # ensure global and local assignments are distinct
-                global_proles = _global_permission_role_mixes.get(permission, "")
-                assert role not in global_proles, ("Workflow [%s] may not mix "
-                    "global and local granting of a same permission [%s] to a "
-                    "same role [%s].") % (name, permission, role)
+                pid = qualified_pid(type_key, xas(p, "permission"))
+                roles = qualified_roles(xas(p, "roles"))
+                for role in roles:
+                    check_add_permission(permissions, like_permissions, 
+                        ASSIGNMENTS[i], pid, role)
+                    # ensure global and local assignments are distinct
+                    global_proles = _global_permission_role_mixes.get(pid, "")
+                    assert role not in global_proles, ("Workflow [%s] may not mix "
+                        "global and local granting of a same permission [%s] to a "
+                        "same role [%s].") % (name, pid, role)
         if like_state:
             # splice any remaining like_permissions at beginning of permissions
             permissions[0:0] = like_permissions
@@ -367,7 +393,7 @@ def _load(type_key, name, workflow):
         if "trigger" in kw:
             kw["trigger"] = trigger_value_map[kw["trigger"]]
         # roles -> permission - one-to-one per transition
-        roles = kw.pop("roles", None) # space separated str
+        roles = qualified_roles(kw.pop("roles", ""))
         if not is_zcml_permissionable(t):
             assert not roles, "Workflow [%s] - non-permissionable transition " \
                 "does not allow @roles [%s]." % (name, roles)
@@ -402,7 +428,6 @@ def _load(type_key, name, workflow):
             tid = "%s.%s" % (sources[0] or "", destination)
             pid = "bungeni.%s.wf.%s" % (name, tid)
             if not ZCML_PROCESSED:
-                roles = roles.split()
                 zcml_transition_permission(pid, title, roles)
                 # remember list of roles from xml
                 kw["_roles"] = roles

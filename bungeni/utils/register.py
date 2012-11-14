@@ -258,7 +258,7 @@ def _protect(cls, protect=None, like_class=None):
                     previous_permission = checker.get_permissions.get(attr)
                 # (re-)apply the protection for this attr
                 protectclass.protectName(cls, attr, permission)
-                # compare the new value (AFTER being applied, as that value is 
+                # compare the new value (AFTER being applied, as that value
                 # CHANGES by being applied!) with previous (if any)
                 if previous_permission is not None:
                     current_permission = checker.get_permissions.get(attr)

@@ -703,15 +703,15 @@ See the Bungeni Source Code Style Guide for further details.
 
 <permission id="bungeni.tabled_document.wf.working_draft.tabled" title="Table" />
 <grant permission="bungeni.tabled_document.wf.working_draft.tabled" role="bungeni.Clerk" />
-<grant permission="bungeni.tabled_document.wf.working_draft.tabled" role="bungeni.Speaker" />
 <grant permission="bungeni.tabled_document.wf.working_draft.tabled" role="bungeni.MP" />
 <grant permission="bungeni.tabled_document.wf.working_draft.tabled" role="bungeni.Minister" />
+<grant permission="bungeni.tabled_document.wf.working_draft.tabled" role="bungeni.Speaker" />
 
 <permission id="bungeni.tabled_document.wf.scheduled.tabled" title="Table" />
 <grant permission="bungeni.tabled_document.wf.scheduled.tabled" role="bungeni.Clerk" />
-<grant permission="bungeni.tabled_document.wf.scheduled.tabled" role="bungeni.Speaker" />
 <grant permission="bungeni.tabled_document.wf.scheduled.tabled" role="bungeni.MP" />
 <grant permission="bungeni.tabled_document.wf.scheduled.tabled" role="bungeni.Minister" />
+<grant permission="bungeni.tabled_document.wf.scheduled.tabled" role="bungeni.Speaker" />
 
 <permission id="bungeni.tabled_document.wf.submitted.withdrawn_internal" title="Withdraw" />
 <grant permission="bungeni.tabled_document.wf.submitted.withdrawn_internal" role="bungeni.Clerk" />
