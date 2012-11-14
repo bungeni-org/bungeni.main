@@ -252,15 +252,20 @@ def _protect(cls, protect=None, like_class=None):
             for attr in attributes:
                 # retrieve cls checker on each attr (may not be defined on first)
                 checker = protectclass.getCheckerForInstancesOf(cls)
+                # rememeber the (applied) previous protection for this attr
+                previous_permission = None
                 if checker is not None:
                     previous_permission = checker.get_permissions.get(attr)
-                    if previous_permission is not None:
-                        assert previous_permission == permission, \
-                            "Cannot change protection of class [%s] " \
-                            "attribute [%s] from [%s] to [%s]" % (
-                                cls, attr, previous_permission, permission)
-                        continue
+                # (re-)apply the protection for this attr
                 protectclass.protectName(cls, attr, permission)
+                # compare the new value (AFTER being applied, as that value is 
+                # CHANGES by being applied!) with previous (if any)
+                if previous_permission is not None:
+                    current_permission = checker.get_permissions.get(attr)
+                    assert previous_permission == current_permission, \
+                        "Cannot change protection of class [%s] " \
+                        "attribute [%s] from [%s] to [%s]" % (
+                            cls, attr, previous_permission, current_permission)
         
         #if set_attributes:
         #if set_schema:

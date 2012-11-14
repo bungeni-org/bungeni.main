@@ -215,14 +215,11 @@ class CommitteeStaffViewlet(SubformViewlet):
 class CommitteeMembersViewlet(SubformViewlet):
     sub_attr_name = "committeemembers"
 
-# !+REGISTER_VIEWLET(miano, nov 2012) Chaining decorators
-# doesn't work as it should, the permissions on one
-# registration leak to the other.
-#@register.viewlet(interfaces.IMemberOfParliament, 
-#    manager=ISubFormViewletManager,
-#    name="keep-zca-happy-addresses",
-#    protect=register.PROTECT_VIEWLET_PUBLIC
-#    )
+
+@register.viewlet(interfaces.IMemberOfParliament, 
+    manager=ISubFormViewletManager,
+    name="keep-zca-happy-addresses",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 @register.viewlet(interfaces.IBungeniGroup, 
     manager=ISubFormViewletManager,
     name="keep-zca-happy-addresses",
@@ -233,6 +230,7 @@ class AddressesViewlet(SubformViewlet):
     @property
     def form_name(self):
         return _(u"Contacts")
+
 
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,
