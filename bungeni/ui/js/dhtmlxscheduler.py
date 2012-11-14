@@ -1,4 +1,14 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Javascript viewlets used in dhtmlxscheduler interface
+
+$Id$
+"""
+
 log = __import__("logging").getLogger("bungeni.ui")
+
 from zope.viewlet.viewlet import JavaScriptViewlet
 from zope.traversing import api
 from zope.location.interfaces import LocationError
@@ -16,39 +26,47 @@ class JSViewlet(JavaScriptViewlet("")):
         return ""
 
 class DhtmlxSchedulerMainLanguage(JSViewlet):
-    language = None    
+    """Loads the locale strings for the dhtmlxscheduler UI
+    """
+
+    language = None
+    default_path = "dhtmlxscheduler/sources/locale/locale.js"
     
     def __init__(self, *args, **kwargs):
         super(DhtmlxSchedulerMainLanguage, self).__init__(*args, **kwargs)
         if self.request.get("I18N_LANGUAGE"):
             self.language = self.request.get("I18N_LANGUAGE")
         self._path = self.setPath()
-    
-    def setPath(self):
+
+    def getPath(self):
+        path = self.default_path
         if self.language:
-            path = "dhtmlxscheduler/sources/locale/locale_%s.js" % self.language
-            try:
-                resource = api.traverse(self.context, '++resource++' + path,
-                                request=self.request)
-            except LocationError:
-                log.exception("Translation for requested language does not exist")
-                path = "dhtmlxscheduler/sources/locale.js"
-        else:
-            path = "dhtmlxscheduler/sources/locale/locale.js"
+            path = "dhtmlxscheduler/sources/locale/locale_%s.js" % (
+                self.language)
         return path
+
+    def setPath(self):
+        test_path = self.getPath()
+        if test_path:
+            try:
+                api.traverse(self.context, 
+                    '++resource++' + test_path, request=self.request)
+            except LocationError:
+                log.exception("Translation for requested language does "
+                    "not exist")
+                test_path = None
+        return test_path or self.default_path
     
             
 class DhtmlxSchedulerRecurringLanguage(DhtmlxSchedulerMainLanguage):
-    def setPath(self):
-        path = None
+    """Loads the locale strings for the dhtmlxscheduler recurring
+    events UI
+    """
+    default_path = None
+    
+    def getPath(self):
+        test_path = None
         if self.language:
-            if self.request.get("I18N_LANGUAGE"):
-                self.language = self.request.get("I18N_LANGUAGE")
-            path = "dhtmlxscheduler/sources/locale/recurring/locale_recurring_%s.js" % \
-                                                                   self.language   
-            try:
-                resource = api.traverse(self.context, '++resource++' + path,
-                                request=self.request)
-            except LocationError:
-                log.exception("Translation for requested language does not exist")
-        return path
+            test_path = ("dhtmlxscheduler/sources/locale/recurring/"
+                "locale_recurring_%s.js") % self.language
+        return test_path

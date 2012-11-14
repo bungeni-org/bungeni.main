@@ -157,6 +157,8 @@ def dump_i18n_message_ids():
     for internationalization.
     """
     # ensure localization files are loaded (and naming.MSGIDS correctly primed)
+    from bungeni.ui import feature
+    feature.setup_customization_ui()
     localization.check_reload_localization(None)
     from os import path
     msgids_py_source_file_path = path.join(
@@ -172,10 +174,6 @@ def dump_i18n_message_ids():
     misc.check_overwrite_file(msgids_py_source_file_path, msgids_py_source)
 
 
-if __name__ == "__main__":
-    
+if __name__ == "__main__":    
     reset_localization_system_descriptors()
-    from bungeni.ui import feature
-    feature.setup_customization_ui()
     dump_i18n_message_ids()
-
