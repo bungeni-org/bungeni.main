@@ -352,9 +352,17 @@ def diff(source, target, *interfaces):
     if not len(interfaces):
         interfaces = interface.providedBy(source)
     results = []
+    seen_field_names = []
     for iface in interfaces:
         # the order is locked on the order returned by of interface.names()
         for name in iface.names():
+            #!+VERSIONS(miano, nov 2012) documents now implement two 
+            # table schema interfaces with identical fields
+            # eg. bungeni.models.interfaces.IDocTableSchema and
+            # bungeni.models.interfaces.IQuestionTableSchema. 
+            if name in seen_field_names:
+                continue
+            seen_field_names.append(name)
             #!+VERSIONS(miano, 2 may 2012) something changed in the last couple
             # of weeks that makes removeSecurityPolicy below required yet
             # it wasn't before.
