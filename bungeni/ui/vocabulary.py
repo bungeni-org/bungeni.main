@@ -1390,7 +1390,7 @@ class DocumentXHTMLTemplateFactory(ReportXHTMLTemplateFactory):
 
 document_xhtml_template_factory = DocumentXHTMLTemplateFactory()
 
-
+_i18n_message_factory = _
 class WorkflowedTypesVocabulary(BaseVocabularyFactory):
     """A vocabulary of workflowed types
     """
@@ -1403,7 +1403,11 @@ class WorkflowedTypesVocabulary(BaseVocabularyFactory):
                 vocabulary.SimpleTerm(
                     value=type_key, 
                     token=type_key,
-                    title=info.descriptor_model.display_name
+                    #!+I18N(mb, Nov-2012) some display names aren't i18n msgids
+                    # wrap them here so formlib translates from bungeni catalog
+                    title=_i18n_message_factory(
+                        info.descriptor_model.display_name
+                    )
                 ))
         return vocabulary.SimpleVocabulary(terms)
 workflowed_types_factory = WorkflowedTypesVocabulary()
