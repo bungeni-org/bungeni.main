@@ -180,11 +180,20 @@ class TI(object):
         self.descriptor_model = None
         self.container_class = None
         self.container_interface = None
-        self.custom = False # type loaded from custom configuration
-        #if self.custom: assert self.domain_model.scope == "custom"
+        self.custom = False # type loaded from custom configuration 
+        # NOTE: only needed temporarily (until descriptor_model is set), 
+        # then ti.custom not be inconsistent descriptor_model.scope i.e.
+        #if self.custom: assert self.descriptor_model.scope == "custom"
         # !+ archetype_key?
     def __str__(self):
         return str(self.__dict__)
+    
+    @property
+    def scope(self):
+        if self.descriptor_model is not None:
+            return self.descriptor_model.scope
+        elif self.custom:
+            return "custom"
 
 '''
 !+TYPE_REGISTRY externalize further to bungeni_custom, currently:

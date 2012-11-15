@@ -61,24 +61,22 @@ def on_wsgi_application_created_event(application, event):
     
     # load workspaces
     load_workspaces()
-
-    #load notifications
-    load_notifications()
     
-    #load email notifications
+    # load notifications
+    load_notifications()
+    # load email notifications
     email_notifications()
-
-    #set up serialization notifications
+    # set up serialization notifications
     serialization_notifications()
-
+    
     # import events modules, registering handlers
     import bungeni.core.events
     
     initializer = model_interfaces.IBungeniSetup(application)
     initializer.setUp()
+    
     log.debug("on_wsgi_application_created_event: _features: %s" % (
         getConfigContext()._features))
-
 
 def to_locatable_container(domain_class, *domain_containers):
     component.provideAdapter(location.ContainerLocation(*domain_containers),

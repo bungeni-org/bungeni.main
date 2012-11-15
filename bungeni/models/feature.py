@@ -44,7 +44,7 @@ def set_one2many_attr(kls, name, container_qualname, rel_attr):
 
 def configurable_domain(kls, workflow):
     """Setup/decorate domain class from feature configurations in the workflow.
-    Executed on adapters.setup_workflows().
+    Executed on adapters.load_workflow().
     """
     for feature in workflow.features:
         assert feature.name in kls.available_dynamic_features, \

@@ -80,22 +80,6 @@ def new_custom_domain_model(type_key, model_interface):
     return domain_model
 
 
-def load_workflows(type_info_iterator):
-    def get_domain_model(type_key):
-        """Infer and retrieve the target domain model class from the type key.
-        Raise Attribute error if not defined on domain.
-        """
-        return resolve("%s.%s" % (MODEL_MODULE.__name__, naming.model_name(type_key)))
-    # workflow instances (+ adapter *factories*)
-    for type_key, ti in type_info_iterator:
-        if not ti.custom:
-            # get the domain class and associate domain class with type
-            utils.inisetattr(ti, "domain_model", get_domain_model(type_key))
-        # load/get workflow instance (if any) and associate with type
-        if ti.workflow_key is not None:
-            ti.workflow = load_workflow(type_key, ti.workflow_key)
-
-
 def apply_customization_workflow(type_key, ti):
     """Apply customizations, features as per configuration from a workflow. 
     Must (currently) be run after db setup.
@@ -157,18 +141,6 @@ def register_generic_workflow_adapters():
         WorkflowController, (IWorkflowed,), IWorkflowController)    
     
 
-def setup_workflows(type_info_iterator):
-    for type_key, ti in type_info_iterator:
-        if ti.workflow:
-            # debug: ensure that setup is done only once
-            #assert type_key not in setup_workflows.DONE, type_key
-            #setup_workflows.DONE.add(type_key)
-            # adjust domain_model as per workflow
-            apply_customization_workflow(type_key, ti)
-            register_specific_workflow_adapter(ti)
-#setup_workflows.DONE = set()
-
-
 @bungeni_custom_errors
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
@@ -213,26 +185,49 @@ def register_custom_types():
             register_type(emember)
 
 
-def load_workflow(type_key, workflow_key,
-        path_custom_workflows=capi.get_path_for("workflows")
-    ):
-    """Setup (once) and return the Workflow instance, from XML definition, 
-    for named workflow.
+def load_workflow(type_key, ti):
+    """Load (from XML definition), set the workflow instance, and setup (once).
     """
-    # retrieve / load
+    if ti.workflow_key is None:
+        return
+    assert ti.workflow is None
+    workflow_key = ti.workflow_key
+    workflow_key_as_type_key = False
+    
+    # retrieve
     try:
-        wf = Workflow.get_singleton(workflow_key)
-        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, wf))
+        ti.workflow = Workflow.get_singleton(workflow_key)
+        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, ti.workflow))
     except KeyError:
-        wf = xmlimport.load(type_key, workflow_key, path_custom_workflows)
-        log.info("Loaded WORKFLOW: %s %s" % (workflow_key, wf))
+        pass
+    else:
+        # ok, for custom types we need to reload the specified workflow but 
+        # "re-evaluated" for any type-relative permissions, so we unset...
+        if ti.custom and not type_key == workflow_key:
+            ti.workflow = None
+            workflow_key_as_type_key = True
+    
+    # load
+    if not ti.workflow:
+        ti.workflow = xmlimport.load(type_key, workflow_key, workflow_key_as_type_key)
+        log.info("Loaded WORKFLOW: %s %s" % (workflow_key, ti.workflow))
         # debug info
-        for state_key, state in wf.states.items():
+        for state_key, state in ti.workflow.states.items():
             log.debug("   STATE: %s %s" % (state_key, state))
             for p in state.permissions:
                 log.debug("          %s" % (p,))
-    return wf
+    
+    # setup
+    if ti.workflow:
+        apply_customization_workflow(type_key, ti)
+        register_specific_workflow_adapter(ti)
 
+
+def retrieve_domain_model(type_key):
+    """Infer and retrieve the target domain model class from the type key.
+    Raise Attribute error if not defined on domain.
+    """
+    return resolve("%s.%s" % (MODEL_MODULE.__name__, naming.model_name(type_key)))
 
 def _setup_all():
     """Do all workflow related setup.
@@ -241,14 +236,18 @@ def _setup_all():
     # cleared by each call to zope.app.testing.placelesssetup.tearDown()
     register_generic_workflow_adapters()
     
-    # load workflows for system/registered types
-    load_workflows(capi.iter_type_info())
-    setup_workflows(capi.iter_type_info())
+    # system and archetypes
+    for type_key, ti in capi.iter_type_info():
+        # retrieve the domain class and associate domain class with this type
+        utils.inisetattr(ti, "domain_model", retrieve_domain_model(type_key))
+        # load/get workflow instance (if any) and associate with type
+        load_workflow(type_key, ti)
     
-    # extend type registry with custom types
+    # custom types
     register_custom_types()
-    load_workflows(capi.iter_type_info(scope="custom"))
-    setup_workflows(capi.iter_type_info(scope="custom"))
+    for type_key, ti in capi.iter_type_info(scope="custom"):
+        # load/get workflow instance (if any) and associate with type
+        load_workflow(type_key, ti)
     
     # check/regenerate zcml directives for workflows - needs to be when and 
     # right-after *all* workflows are loaded (to pre-empt further application 

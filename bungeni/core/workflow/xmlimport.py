@@ -53,7 +53,6 @@ ZCML_FILENAME = "permissions.zcml"
 ZCML_WORKFLOWS_PROCESSED = set() # Process workflows once only
 ZCML_LINES = [] # Accumulation of ZCML content
 ZCML_INDENT = ""
-#!+shared_workflow xmlns:meta="http://namespaces.zope.org/meta"
 ZCML_BOILERPLATE = """<?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
@@ -117,15 +116,20 @@ def zcml_transition_permission(pid, title, roles):
 
 #
 
-#@bungeni_custom_errors
-def load(type_key, name, path_custom_workflows):
-    """ (type_key:str, name:str, path_custom_workflows:str) -> Workflow
+@bungeni_custom_errors
+def load(type_key, file_key, 
+        workflow_key_as_type_key=False,
+        path_custom_workflows=capi.get_path_for("workflows")
+    ):
+    """ (type_key:str, file_key:str, path_custom_workflows:str) -> Workflow
     
     Loads the workflow XML definition file, returning the correspondingly setup 
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
-    file_path = os.path.join(path_custom_workflows, "%s.xml" % (name))
-    return _load(type_key, name, etree.fromstring(open(file_path).read()))
+    # !+ for system types, only "address" wf is multi-used by user_address/group_address
+    workflow_key = workflow_key_as_type_key and type_key or file_key
+    file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
+    return _load(type_key, workflow_key, etree.fromstring(open(file_path).read()))
 
 def _load(type_key, name, workflow):
     """ (type_key:str, name:str, workflow:etree_doc) -> Workflow
@@ -257,11 +261,6 @@ def _load(type_key, name, workflow):
             permission_action, naming.split_camel(naming.model_name(key)))
         ZCML_LINES.append(
             '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, title))
-        # !+shared_workflow tmp for types "sharing" a workflow...
-        #if permission_action == "View" and not key == type_key:
-        #    ZCML_LINES.append(
-        #        '%s<meta:redefinePermission from="%s" to="bungeni.%s.View" />' % (
-        #            ZCML_INDENT, pid, type_key))
     
     # global grants
     _global_permission_role_mixes = {} # {pid: [role]}
