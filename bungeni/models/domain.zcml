@@ -590,24 +590,36 @@
     </class>
     
     <class class=".domain.MemberOfParliament">
-        <require like_class=".domain.GroupMembership" />
-        <require permission="bungeni.group_membership.View"
+        <require permission="bungeni.member_of_parliament.View"
             attributes="
+                user
+                group
+                replaced
+                member_titles
+                
+                membership_id
+                user_id
+                group_id
+                start_date
+                end_date
+                notes
+                active_p
+                replaced_id
+                substitution_type
+                membership_type
+                language
                 titles
                 addresses
                 
                 representation
                 party
-                start_date
-                end_date
                 member_election_type
                 
-                membership_id
                 election_nomination_date
                 leave_reason
             "
         />
-        <require permission="bungeni.group_membership.Edit"
+        <require permission="bungeni.member_of_parliament.Edit"
             set_attributes="
                 membership_id
                 user_id
