@@ -464,10 +464,8 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         return self.json_batch(start, limit, lang)
 
 
-@register.view(mfaces.IItemScheduleContainer,
-    name="jsonlisting-raw",
-    protect={"bungeni.sittingschedule.itemdiscussion.View":
-        register.VIEW_DEFAULT_ATTRS})
+@register.view(IAlchemistContainer, name="jsonlisting-raw",
+    protect=register.PROTECT_VIEW_PUBLIC)
 class ContainerJSONListingRaw(ContainerJSONListing):
     """JSON listing for a container with no formatting.
     Skip passing through descriptor listing column renderers.

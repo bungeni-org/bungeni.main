@@ -268,7 +268,7 @@
     />
     <browser:page
      for="bungeni.core.interfaces.ISchedulingContext"
-     permission="bungeni.sittingschedule.View"
+     permission="bungeni.sitting.View"
      name="schedule"
      class=".calendar.browser.CalendarView"
     />
@@ -281,30 +281,24 @@
     />
     <browser:page name="schedule"
         for="bungeni.models.interfaces.ISitting"
-        permission="bungeni.sittingschedule.View"
+        permission="bungeni.sitting.View"
         class=".calendar.browser.SittingScheduleView"
     />
     <browser:page name="save-schedule"
         for="bungeni.models.interfaces.IItemScheduleContainer"
-        permission="bungeni.sittingschedule.Edit"
+        permission="bungeni.item_schedule.Edit"
         class=".calendar.browser.ScheduleAddView"
     />
     <browser:page name="save-discussions"
         for="bungeni.models.interfaces.IItemScheduleDiscussionContainer"
-        permission="bungeni.sittingschedule.itemdiscussion.Edit"
+        permission="bungeni.item_schedule_discussion.Edit"
         class=".calendar.browser.DiscussionAddView"
     />
     <browser:page name="schedulable-items-json"
         for="bungeni.models.interfaces.ISitting"
-        permission="bungeni.sittingschedule.Edit"
+        permission="bungeni.item_schedule.Add"
         class=".calendar.browser.SchedulableItemsJSON"
     />
-      <browser:page
-     name="schedule_order"
-     for="bungeni.models.interfaces.ISitting"
-     class=".calendar.browser.ItemScheduleOrder"
-     permission="bungeni.sittingschedule.Edit"
-     />
       <browser:page
      name="preview"
      for="bungeni.models.interfaces.ISitting"
@@ -315,7 +309,7 @@
      name="st-attendance"
      for="bungeni.models.interfaces.ISitting"
      class=".attendance.AttendanceEditor"
-     permission="bungeni.sittingattendance.Edit"
+     permission="bungeni.sitting_attendance.Edit"
      />
      
   <!-- Similar Content -->

@@ -2,7 +2,6 @@
 # Bungeni Parliamentary Information System - http://www.bungeni.org/
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
-from __future__ import with_statement
 """Setup for some bungeni menus
 
 $Id$
@@ -46,7 +45,7 @@ from bungeni.ui.utils import url, misc
 from bungeni.ui import interfaces
 
 from bungeni.utils.capi import capi
-
+from bungeni.utils import naming
 
 class BrowserMenu(zope.browsermenu.menu.BrowserMenu):
     pass
@@ -610,6 +609,12 @@ class CalendarContentMenu(BrowserMenu):
         for key, item in items:
             if not IAlchemistContainer.providedBy(item): continue
             if not IScheduleContent.implementedBy(item.domain_model): continue
+            type_info = capi.get_type_info(item.domain_model)
+            permission = "bungeni.%s.Add" % (
+                type_info.workflow_key or 
+                naming.type_key("model_name", item.domain_model.__name__)
+            )
+            if not checkPermission(permission, context): continue
             dc_adapter = IDCDescriptiveProperties(item, None)
             if dc_adapter:
                 _title = dc_adapter.title

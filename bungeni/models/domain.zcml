@@ -669,14 +669,14 @@
     </class>
     
     <class class=".domain.SittingAttendance">
-        <require permission="bungeni.sittingattendance.View"
+        <require permission="bungeni.sitting_attendance.View"
             attributes="
                 sitting_id
                 member_id
                 attendance_type_id
             "
         />
-        <require permission="bungeni.sittingattendance.Edit"
+        <require permission="bungeni.sitting_attendance.Edit"
             set_attributes="
                 sitting_id
                 member_id
@@ -686,7 +686,7 @@
     </class>
     
     <class class=".domain.ItemSchedule">
-        <require permission="bungeni.sittingschedule.View"
+        <require permission="bungeni.item_schedule.View"
             attributes="
                 schedule_id
                 item_id
@@ -700,7 +700,7 @@
                 item_status
             "
         />
-        <require permission="bungeni.sittingschedule.Edit"
+        <require permission="bungeni.item_schedule.Edit"
             set_attributes="
                 item_id
                 item_type
@@ -734,14 +734,14 @@
     </class>
     
     <class class=".domain.EditorialNote">
-        <require permission="bungeni.sittingschedule.View"
+        <require permission="bungeni.sitting.View"
             attributes="
                 editorial_note_id
                 text
                 group_id
             "
         />
-        <require permission="bungeni.sittingschedule.Edit"
+        <require permission="bungeni.sitting.Edit"
             set_attributes="
                 editorial_note_id
                 text
@@ -751,7 +751,7 @@
     </class>
     
     <class class=".domain.ItemScheduleDiscussion">
-        <require permission="bungeni.sittingschedule.itemdiscussion.View"
+        <require permission="bungeni.item_schedule_discussion.View"
             attributes="
                 discussion_id
                 schedule_id
@@ -759,7 +759,7 @@
                 language
             "
         />
-        <require permission="bungeni.sittingschedule.itemdiscussion.Edit"
+        <require permission="bungeni.item_schedule_discussion.Edit"
             set_attributes="
                 item_id
                 body

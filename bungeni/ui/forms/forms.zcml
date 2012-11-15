@@ -122,23 +122,23 @@
     <!-- sitting attendance -->
     <browser:page name="view" for="bungeni.models.interfaces.ISittingAttendance"
         class=".common.DisplayForm"
-        permission="bungeni.sittingattendance.View"
+        permission="bungeni.sitting_attendance.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="add" 
         for="bungeni.models.interfaces.ISittingAttendanceContainer"
         class=".common.AddForm"
-        permission="bungeni.sittingattendance.Add"
+        permission="bungeni.sitting_attendance.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.ISittingAttendance"
         class=".common.EditForm"
-        permission="bungeni.sittingattendance.Edit"
+        permission="bungeni.sitting_attendance.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete" for="bungeni.models.interfaces.ISittingAttendance"
         class=".common.DeleteForm"
-        permission="bungeni.sittingattendance.Delete"
+        permission="bungeni.sitting_attendance.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     

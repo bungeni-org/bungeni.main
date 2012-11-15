@@ -451,7 +451,7 @@
         for="bungeni.models.interfaces.ISitting"
         title="Edit attendance"
         action="./st-attendance"
-        permission="bungeni.sittingattendance.Edit"
+        permission="bungeni.sitting_attendance.Edit"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="98"
     />
@@ -837,7 +837,7 @@
         action="view"
         title="View"
         order="0"
-        permission="bungeni.sittingschedule.View"
+        permission="bungeni.sitting.View"
     />
 
   <browser:menuItem
@@ -845,7 +845,7 @@
      for="bungeni.models.interfaces.IItemScheduleDiscussion"
      title="Edit discussion"
      action="./edit"
-     permission="bungeni.sittingschedule.itemdiscussion.Edit"
+     permission="bungeni.item_schedule_discussion.Edit"
      />
 
   <browser:menuItem
@@ -853,7 +853,7 @@
      for="bungeni.models.interfaces.ISitting"
      title="Schedule item"
      action="./items/add"
-     permission="bungeni.sittingschedule.item.Add"
+     permission="bungeni.item_schedule.Add"
      />
 
   <browser:menuItem
@@ -861,23 +861,16 @@
      for="bungeni.models.interfaces.ISitting"
      title="Remove scheduled item"
      action="./items/delete"
-     permission="bungeni.sittingschedule.item.Delete"
+     permission="bungeni.item_schedule.Delete"
      />
 
-  <browser:menuItem
-     menu="sitting_actions"
-     for="bungeni.models.interfaces.ISitting"
-     title="Reorder scheduling"
-     action="./items/reorder"
-     permission="bungeni.sittingschedule.Edit"
-     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IBungeniGroup"
         action="schedule"
         title="schedule"
         order="41"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.sittingschedule.View"
+        permission="bungeni.sitting.View"
      />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ISitting"
@@ -885,32 +878,15 @@
         title="Edit agenda and minutes"
         order="41"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.sittingschedule.View"
+        permission="bungeni.sitting.View"
      />     
     <browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
         title="Delete scheduling"
         action="./delete?next_url=..."
         order="41"
-        permission="bungeni.sittingschedule.item.Delete"
+        permission="bungeni.item_schedule.Delete"
     />
-  <browser:menuItem
-     menu="scheduling_actions"
-     for="bungeni.models.interfaces.IItemSchedule"
-     title="Move scheduling up"
-     action="../reorder"
-     permission="bungeni.sittingschedule.Edit"
-     order="10"
-     />
-
-  <browser:menuItem
-     menu="scheduling_actions"
-     for="bungeni.models.interfaces.IItemSchedule"
-     title="Move scheduling down"
-     action="../reorder"
-     permission="bungeni.sittingschedule.Edit"
-     order="11"
-     />
 
     <!-- scheduling agenda items -->
     <browser:menuItem menu="plone_contentmenu"

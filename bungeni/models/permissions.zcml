@@ -28,25 +28,25 @@
   <permission id="bungeni.session.Delete" title="Delete session" />
   <meta:redefinePermission from="bungeni.session.View" to="zope.View" />  
 
-    <permission id="bungeni.sittingschedule.View" 
-        title="View the schedule of a sitting" />
-    <permission id="bungeni.sittingschedule.Edit" 
-        title="Reorder items in the schedule of a sitting" />
-    <permission id="bungeni.sittingschedule.item.Add" 
+    <permission id="bungeni.item_schedule.View" 
+        title="View item in schedule" />
+    <permission id="bungeni.item_schedule.Add" 
         title="Add an item to a schedule" />
-    <permission id="bungeni.sittingschedule.item.Delete" 
+    <permission id="bungeni.item_schedule.Edit" 
+        title="Edit item in schedule" />
+    <permission id="bungeni.item_schedule.Delete" 
         title="Delete an item from a schedule" />
-    <permission id="bungeni.sittingschedule.itemdiscussion.View"
+    <permission id="bungeni.item_schedule_discussion.View"
         title="View item scheduling discussion" />
-    <permission id="bungeni.sittingschedule.itemdiscussion.Edit"
+    <permission id="bungeni.item_schedule_discussion.Edit"
         title="Edit item scheduling discussion" />
-  <meta:redefinePermission from="bungeni.sittingschedule.View" to="zope.View" /> 
+  <meta:redefinePermission from="bungeni.item_schedule.View" to="zope.View" />
     
-  <permission id="bungeni.sittingattendance.View" title="View sitting attendance" />
-  <permission id="bungeni.sittingattendance.Add" title="Add sitting attendance" />
-  <permission id="bungeni.sittingattendance.Edit" title="Edit sitting attendance" />
-  <permission id="bungeni.sittingattendance.Delete" title="Delete sitting attendance" />
-  <meta:redefinePermission from="bungeni.sittingattendance.View" to="zope.View" /> 
+  <permission id="bungeni.sitting_attendance.View" title="View sitting attendance" />
+  <permission id="bungeni.sitting_attendance.Add" title="Add sitting attendance" />
+  <permission id="bungeni.sitting_attendance.Edit" title="Edit sitting attendance" />
+  <permission id="bungeni.sitting_attendance.Delete" title="Delete sitting attendance" />
+  <meta:redefinePermission from="bungeni.sitting_attendance.View" to="zope.View" />
  
   <permission id="bungeni.venue.Add" title="Add venue note" />
   <permission id="bungeni.venue.Edit" title="Edit venue note" />

@@ -431,27 +431,12 @@ class DailyCalendarView(CalendarView):
             sittings_map = create_sittings_map(sittings, self.request),
             )
 
-class ItemScheduleOrder(BrowserView):
-    "Stores new order of schedule items"
-    def __call__(self):
-        obj = self.request.form["obj[]"]
-        session = Session()
-        if self.context.status == "draft_agenda":
-            for i in range(0,len(obj)):
-                sch = session.query(domain.ItemSchedule).get(obj[i])
-                setattr(sch, "planned_order", i+1)
-        elif self.context.status == "draft_minutes":
-            for i in range(0,len(obj)):
-                sch = session.query(domain.ItemSchedule).get(obj[i])
-                setattr(sch, "real_order", i+1)
-        session.flush()
-
 #
 # Group Scheduler New YUI based Stack UI
 #
 RESOURCE_PERMISSION_MAP = (
-    (["bungeni-schedule-minutes"], "bungeni.sittingschedule.itemdiscussion.Edit"),
-    (["bungeni-schedule-editor"], "bungeni.sittingschedule.Edit"),
+    (["bungeni-schedule-minutes"], "bungeni.item_schedule_discussion.Edit"),
+    (["bungeni-schedule-editor"], "bungeni.item_schedule.Edit"),
     (["bungeni-schedule-preview"], "bungeni.sitting.View"),
 )
 class SittingScheduleView(BrowserView):
@@ -512,7 +497,7 @@ class SittingScheduleView(BrowserView):
 
 @register.view(model_interfaces.IItemScheduleContainer, 
     name="jsonlisting-schedule",
-    protect={"bungeni.sittingschedule.itemdiscussion.Edit": 
+    protect={"bungeni.item_schedule_discussion.Edit": 
         register.VIEW_DEFAULT_ATTRS})
 class ScheduleJSONListing(ContainerJSONListingRaw):
     """Returns JSON listing with expanded unlisted properties used in

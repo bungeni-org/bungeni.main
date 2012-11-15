@@ -1209,7 +1209,6 @@ class Report4Sitting(SittingReport):
         interfaces.IReport4Sitting,
     )
 
-
 class ObjectTranslation(object):
     """Get the translations for an Object.
     """
