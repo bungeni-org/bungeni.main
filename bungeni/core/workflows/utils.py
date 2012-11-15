@@ -292,10 +292,7 @@ def check_agenda_finalized(context):
     return  (False not in check_list)
 
 def view_permission(item):
-    type_info = capi.get_type_info(item.__class__)
-    if type_info.workflow_key:
-        return "bungeni.%s.View" % type_info.workflow_key
-    else:
-        type_key = naming.type_key("model_name", item.__class__.__name__)
+    type_key = naming.type_key("model_name", item.__class__.__name__)
+    if type_key:
         return "bungeni.%s.View" % type_key
     return "zope.View"
