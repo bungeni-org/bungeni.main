@@ -47,6 +47,12 @@
   <permission id="bungeni.sitting_attendance.Edit" title="Edit sitting attendance" />
   <permission id="bungeni.sitting_attendance.Delete" title="Delete sitting attendance" />
   <meta:redefinePermission from="bungeni.sitting_attendance.View" to="zope.View" />
+
+  <permission id="bungeni.sitting_report.View" title="View sitting report" />
+  <permission id="bungeni.sitting_report.Add" title="Add sitting report" />
+  <permission id="bungeni.sitting_report.Edit" title="Edit sitting report" />
+  <permission id="bungeni.sitting_report.Delete" title="Delete sitting report" />
+  <meta:redefinePermission from="bungeni.sitting_report.View" to="zope.View" />
  
   <permission id="bungeni.venue.Add" title="Add venue note" />
   <permission id="bungeni.venue.Edit" title="Edit venue note" />

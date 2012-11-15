@@ -526,9 +526,9 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
             #!+WORKFLOWS(mb, July-2012) skip filter states if no workflow
             # type_info lookup of workflows will fail if no wf is explicitly
             # registered. DISCREPANCY
-            # inheriting classes e.g. Report4Sitting implement IWorkflowed
-            # but lookup here fails. TODO rework/review Report4Sitting
-            # also type_info lookup should mirror zope registry lookup
+            # inheriting may implement IWorkflowed if base class does but
+            # lookup will fail. 
+            # type_info lookup should mirror zope registry lookup
             if workflow:
                 public_wfstates = workflow.get_state_ids(tagged=["public"], 
                     restrict=False)

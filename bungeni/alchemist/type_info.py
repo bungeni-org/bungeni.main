@@ -254,7 +254,7 @@ TYPE_REGISTRY = [
     ("item_schedule", TI(None, interfaces.IItemSchedule)),
     ("item_schedule_discussion", TI(None, interfaces.IItemScheduleDiscussion)),
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
-    ("report4_sitting", TI(None, interfaces.IReport4Sitting)),
+    ("sitting_report", TI(None, interfaces.ISittingReport)),
     ("group_membership_role", TI(None, interfaces.IGroupMembershipRole)),
     ("group_document_assignment", TI(None, interfaces.IGroupDocumentAssignment)),
     ## custom types -- loaded dynamically from bungeni_custom/types.xml

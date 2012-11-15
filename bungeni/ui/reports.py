@@ -31,7 +31,7 @@ from bungeni.core.language import get_default_language
 
 from bungeni.ui import widgets
 from bungeni.ui import vocabulary
-from bungeni.ui.i18n import _
+from bungeni.ui.i18n import _, translate
 from bungeni.ui.utils import date
 from bungeni.ui.interfaces import IWorkspaceReportGeneration
 from bungeni.ui.reporting import generators
@@ -263,7 +263,6 @@ def default_reports(sitting, event):
         sittings = [ExpandedSitting(sitting)]
         report_context = ReportContext(sittings=sittings)
         report = domain.Report()
-        report.title = report_title
         session = Session()
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
         # the report is the currently logged in user.
@@ -277,6 +276,8 @@ def default_reports(sitting, event):
         generator = generators.ReportGeneratorXHTML(doc_template)
         generator.title = report_title
         generator.context = report_context
+        report.title = translate(report_title, 
+            target_language=generator.language)
         report.language = generator.language
         report.body = generator.generateReport()
         session.add(report)

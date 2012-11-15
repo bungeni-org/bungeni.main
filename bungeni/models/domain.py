@@ -314,7 +314,7 @@ class Sitting(Entity):
     items = one2many("items",
         "bungeni.models.domain.ItemScheduleContainer", "sitting_id")
     sreports = one2many("sreports",
-        "bungeni.models.domain.Report4SittingContainer", "sitting_id")
+        "bungeni.models.domain.SittingReportContainer", "sitting_id")
 
 class SittingAttendance(Entity):
     """A record of attendance at a meeting .
@@ -1195,19 +1195,22 @@ class Report(Doc):
         interfaces.ITranslatable,
     )
 
-
 class SittingReport(Entity):
     """Which reports are created for this sitting.
     """
-
-# !+Report4Sitting((mr, apr-2012) naming!
-# !+Report4Sitting why was this inheriting from Report ?!
-class Report4Sitting(SittingReport):
-    """Display reports for a sitting.
-    """
     interface.implements(
-        interfaces.IReport4Sitting,
+        interfaces.ISittingReport,
     )
+    
+    def __getattr__(self, name):
+        """Look up values in either report or sitting"""
+        try:
+            return super(SittingReport, self).__getattr__(name)
+        except AttributeError:
+            try:
+                return getattr(self.report, name)
+            except AttributeError:
+                return getattr(self.sitting, name)
 
 class ObjectTranslation(object):
     """Get the translations for an Object.

@@ -221,8 +221,8 @@ class IMotionContainer(IBungeniContainer): pass
 #!+OBSOLETE_VERSIONING class IMotionVersionContainer(IVersionContainer): pass
 
 
-class ISitting(interface.Interface):
-    pass
+class ISitting(interface.Interface): pass
+class ISittingReport(interface.Interface): pass
 
 class ISittingAttendance(interface.Interface): pass
 class ISittingAttendanceContainer(IAlchemistContainer): pass
@@ -535,8 +535,6 @@ class IUserAddressContainer(IAlchemistContainer): pass
 
 class IReport(IBungeniContent): pass
 class IReportContainer(IAlchemistContainer): pass
-
-class IReport4Sitting(IBungeniContent): pass
 
 class IUserDelegation(interface.Interface): pass
 class IUserDelegationContainer(IAlchemistContainer): pass

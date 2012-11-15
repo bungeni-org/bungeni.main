@@ -107,6 +107,10 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.sitting_attendance.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting_attendance.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting_attendance.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting_report.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting_report.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting_report.View" role="bungeni.Anonymous" />
+<grant permission="bungeni.sitting_report.Delete" role="bungeni.Clerk" />
 
 <permission id="bungeni.sitting.wf.sitting.draft_agenda" title="Draft Agenda" />
 <grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />

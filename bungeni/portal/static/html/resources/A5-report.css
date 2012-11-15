@@ -62,15 +62,6 @@
     display:inline;
     float:left;
 }
-.Report4Sitting div.content-left-column
-{
-    display:none;
-}
-.Report4Sitting div.content-right-column
-{
-    width:100%;
-    line-height:normal;
-}
 
 dd.Report div.content-left-column
 {

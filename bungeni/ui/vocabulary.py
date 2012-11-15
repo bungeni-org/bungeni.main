@@ -426,6 +426,17 @@ country_factory = DatabaseSource(
 )
 component.provideUtility(country_factory, IVocabularyFactory, "country")
 
+report_factory = DatabaseSource(
+    domain.Report, "doc_id", "doc_id",
+    title_getter=lambda ob: IDCDescriptiveProperties(ob).title
+)
+component.provideUtility(report_factory, IVocabularyFactory, "report")
+
+sitting_factory = DatabaseSource(
+    domain.Sitting, "sitting_id", "sitting_id",
+    title_getter=lambda ob: IDCDescriptiveProperties(ob).title
+)
+component.provideUtility(sitting_factory, IVocabularyFactory, "sitting")
 
 
 class SpecializedSource(BaseVocabularyFactory):

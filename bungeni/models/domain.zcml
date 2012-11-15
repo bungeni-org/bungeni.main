@@ -646,6 +646,7 @@
                 activity_type
                 meeting_type
                 convocation_type
+                sreports
             "
         />
         <require permission="bungeni.sitting.Edit"

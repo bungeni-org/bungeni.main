@@ -1817,6 +1817,51 @@ class SittingDescriptor(ModelDescriptor):
     ]
 
 
+class SittingReportDescriptor(ModelDescriptor):
+    localizable = True
+    fields = [
+        F(name="sitting_id",
+            label="Sitting",
+            required=True,
+            localizable=[
+                show("view listing"),
+                hide("add")
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="sitting"
+        ),
+        F(name="report_id",
+            label="Report",
+            required=True,
+            localizable=[
+                show("view listing"),
+                hide("add")
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="report"
+        ),
+        F(name="body",
+            label="Body",
+            localizable=[
+                show("view"),
+                hide("edit add listing")
+            ],
+            value_type="text",
+            render_type="rich_text",
+        ),
+        F(name="status_date",
+            label="Status Date",
+            localizable=[
+                show("view listing"),
+                hide("edit add")
+            ],
+            value_type="date",
+            render_type="date",
+        ),
+    ]
+
 class SessionDescriptor(ModelDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("sessions")
     localizable = True
