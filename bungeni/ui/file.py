@@ -167,7 +167,8 @@ class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 
 # for_, layer, view, manager
 @register.viewlet(IFeatureAttachment, manager=ISubFormViewletManager, 
-    name="keep-zca-happy-attachments")
+    name="keep-zca-happy-attachments",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
     """Viewlet to list attachments of a given document (head).
     """
@@ -186,7 +187,8 @@ class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
 
 
 @register.viewlet(IVersion, manager=ISubFormViewletManager, 
-    name="keep-zca-happy-attachments")
+    name="keep-zca-happy-attachments",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class VersionFileListingViewlet(FileListingViewlet):
     """Viewlet to list attachments of a given version of a document.
     """
