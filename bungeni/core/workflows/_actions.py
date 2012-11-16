@@ -66,6 +66,9 @@ def _group_dissolved(context):
     utils.dissolveChildGroups(groups, context)
     utils.unset_group_local_role(context)
 
+# office
+_office_active = _group_active
+
 
 # committee
 
