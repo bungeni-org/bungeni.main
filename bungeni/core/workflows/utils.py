@@ -254,22 +254,19 @@ def schedule_sitting_items(context):
             if wf.get_state(SCHEDULED):
                 fireTransitionScheduled(schedule.item, wfc)
         except InvalidStateError:
-            #try to fire to next logical scheduled state
+            # try to fire to next logical scheduled state
             if (wfc.state_controller.get_status() in
-                wfc.workflow.get_state_ids(tagged=[PENDING], 
-                    restrict=False
-                )
-            ):
+                    wfc.workflow.get_state_ids(tagged=[PENDING], restrict=False)
+                ):
                 transition_ids = wfc.getFireableTransitionIds()
                 for transition_id in transition_ids:
                     transition = wf.get_transition(transition_id)
                     if (transition.destination in 
-                        wfc.workflow.get_state_ids(tagged=[SCHEDULED], 
-                            restrict=False)
+                            wfc.workflow.get_state_ids(tagged=[SCHEDULED], 
+                                restrict=False)
                         ):
                         fireTransitionScheduled(schedule.item, wfc,
-                            toward=transition.destination
-                        )
+                            toward=transition.destination)
                         break
 
 
@@ -283,9 +280,8 @@ def check_agenda_finalized(context):
         # to filter out 'text records' from the schedule
         if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
             return (wfc.state_controller.get_status() in 
-                wfc.workflow.get_state_ids(not_tagged=unfinalized_tags,
-                    restrict=False
-                )
+                wfc.workflow.get_state_ids(not_tagged=unfinalized_tags, 
+                    restrict=False)
             )
         else:
             return True

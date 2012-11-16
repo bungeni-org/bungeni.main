@@ -241,7 +241,7 @@ def _load(type_key, name, workflow):
         if feature_enabled and feature_name == "version": 
             assert "audit" in [ fe.name for fe in features if fe.enabled ], \
                 "Workflow [%s] has version but no audit feature" % (name)
-        config = [ cfg for cfg in f.iterchildren("config") ]
+        # feature.parameter
         params = dict([ (param.get("name"), param.get("value")) for param in 
             f.iterchildren("parameter")
         ])
