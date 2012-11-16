@@ -140,9 +140,6 @@ def setup_customization_ui():
                 # add address in the "add items..." menu
                 register_menu_item("address", "Add", title, model_interface_qualname, 
                     "./addresses/add", menu="additems", order=80)
-                # add address for the container view
-                register_menu_item("address", "Add", title, container_interface_qualname,
-                    "./add", menu="plone_contentmenu")
             elif issubclass(ti.domain_model, domain.User):
                 # !+ User not a custom type (so should never pass here)
                 assert False, "Type %s may not be a custom type" % (ti.domain_model)

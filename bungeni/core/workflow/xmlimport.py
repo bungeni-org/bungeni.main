@@ -71,7 +71,7 @@ or added, a condition that is checked for and flagged automatically.
 Defines a DEDICATED permission per workflow XML-TRANSITION, and grants it 
 to the various Roles, as specified in same transition definition.
 
-See the Bungeni Source Code Style Guide for further details. 
+See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 -->
 %s
@@ -117,8 +117,7 @@ def zcml_transition_permission(pid, title, roles):
 #
 
 @bungeni_custom_errors
-def load(type_key, file_key, 
-        workflow_key_as_type_key=False,
+def load(type_key, file_key, workflow_name,
         path_custom_workflows=capi.get_path_for("workflows")
     ):
     """ (type_key:str, file_key:str, path_custom_workflows:str) -> Workflow
@@ -126,14 +125,12 @@ def load(type_key, file_key,
     Loads the workflow XML definition file, returning the correspondingly setup 
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
-    # !+ for system types, only "address" wf is multi-used by user_address/group_address
-    workflow_key = workflow_key_as_type_key and type_key or file_key
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
-    return _load(type_key, workflow_key, etree.fromstring(open(file_path).read()))
+    return _load(type_key, workflow_name, etree.fromstring(open(file_path).read()))
 
 def _load(type_key, name, workflow):
     """ (type_key:str, name:str, workflow:etree_doc) -> Workflow
-    """    
+    """
     # !+ @title, @description
     transitions = []
     states = []
@@ -182,13 +179,13 @@ def _load(type_key, name, workflow):
                 "Workflow [%s]: unknown attribute %s in %s" % (
                     name, key, etree.tostring(elem))
     
-    def qualified_permission_actions(type_key, permission_actions):
-        """[space-separated-str] -> [(type_key, permission_action)]
+    def qualified_permission_actions(workflow_name, permission_actions):
+        """[space-separated-str] -> [(permission_type_key, permission_action)]
         """
-        return [ qualified_permission_action(type_key, pa) 
+        return [ qualified_permission_action(workflow_name, pa) 
             for pa in permission_actions ]
-    def qualified_permission_action(type_key, pa):
-        """str -> (type_key, permission_action)
+    def qualified_permission_action(workflow_name, pa):
+        """str -> (workflow_name, permission_action)
         where string may be: ".Action" or "type_key.Action"
         """
         # !+do not allow a preceeding "bungeni."?
@@ -196,10 +193,10 @@ def _load(type_key, name, workflow):
             pa = pa[len("bungeni."):]
         qpa = pa.split(".", 1)
         assert len(qpa) == 2, \
-            "No dot in workflow %r permission action %r" % (name, pa)
-        return (qpa[0] or type_key, qpa[1])
-    def qualified_pid(type_key, pa):
-        return "bungeni.%s.%s" % qualified_permission_action(type_key, pa)
+            "No dot in workflow %r permission action %r" % (workflow_name, pa)
+        return (qpa[0] or workflow_name, qpa[1])
+    def qualified_pid(workflow_name, pa):
+        return "bungeni.%s.%s" % qualified_permission_action(workflow_name, pa)
 
     def qualified_roles(roles):
         """space-separated-str -> [role_id]
@@ -254,7 +251,7 @@ def _load(type_key, name, workflow):
     
     # permission_actions -> permissions for this type
     for (key, permission_action) in qualified_permission_actions(
-            type_key, xas(workflow, "permission_actions", "").split()
+            name, xas(workflow, "permission_actions", "").split()
         ):
         pid = "bungeni.%s.%s" % (key, permission_action)
         title = "%s %s" % (
@@ -265,7 +262,7 @@ def _load(type_key, name, workflow):
     # global grants
     _global_permission_role_mixes = {} # {pid: [role]}
     for p in workflow.iterchildren("allow"):
-        pid = qualified_pid(type_key, xas(p, "permission"))
+        pid = qualified_pid(name, xas(p, "permission"))
         roles = qualified_roles(xas(p, "roles"))
         for role in roles:
             # for each global permission, build list of roles it is set to
@@ -322,7 +319,7 @@ def _load(type_key, name, workflow):
         # (within same state) a deny is *always* executed after a *grant*
         for i, assign in enumerate(["allow", "deny"]):
             for p in s.iterchildren(assign):
-                pid = qualified_pid(type_key, xas(p, "permission"))
+                pid = qualified_pid(name, xas(p, "permission"))
                 roles = qualified_roles(xas(p, "roles"))
                 for role in roles:
                     check_add_permission(permissions, like_permissions, 

@@ -191,26 +191,24 @@ def load_workflow(type_key, ti):
     if ti.workflow_key is None:
         return
     assert ti.workflow is None
-    workflow_key = ti.workflow_key
-    workflow_key_as_type_key = False
+    workflow_file_key = ti.workflow_key # workflow file name
     
-    # retrieve
+    # workflow_name -> what becomes workflow.name (and ti.permissions_type_key)
+    workflow_name = workflow_file_key 
+    if ti.custom and type_key != workflow_file_key:
+        workflow_name = type_key         
+    # !+ only (non-custom type) "address" wf is multi-used by user_address/group_address
+    
     try:
-        ti.workflow = Workflow.get_singleton(workflow_key)
-        log.warn("Already Loaded WORKFLOW : %s %s" % (workflow_key, ti.workflow))
+        # retrieve
+        ti.workflow = Workflow.get_singleton(workflow_name)
+        log.warn("Already Loaded WORKFLOW: %s.xml as %r - %s" % (
+            workflow_file_key, workflow_name, ti.workflow))
     except KeyError:
-        pass
-    else:
-        # ok, for custom types we need to reload the specified workflow but 
-        # "re-evaluated" for any type-relative permissions, so we unset...
-        if ti.custom and not type_key == workflow_key:
-            ti.workflow = None
-            workflow_key_as_type_key = True
-    
-    # load
-    if not ti.workflow:
-        ti.workflow = xmlimport.load(type_key, workflow_key, workflow_key_as_type_key)
-        log.info("Loaded WORKFLOW: %s %s" % (workflow_key, ti.workflow))
+        # load
+        ti.workflow = xmlimport.load(type_key, workflow_file_key, workflow_name)
+        log.info("Loaded WORKFLOW: %s.xml as %r - %s" % (
+            workflow_file_key, workflow_name, ti.workflow))
         # debug info
         for state_key, state in ti.workflow.states.items():
             log.debug("   STATE: %s %s" % (state_key, state))

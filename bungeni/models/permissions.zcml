@@ -130,12 +130,6 @@
   <meta:redefinePermission from="bungeni.political_group_member.Delete" to="bungeni.group_membership.Delete" />
     
   
-  <permission id="bungeni.address.Add" title="Add address" />
-  <permission id="bungeni.address.Edit" title="Edit address" />
-  <permission id="bungeni.address.Delete" title="Delete address" />
-  <permission id="bungeni.address.View" title="View address" />
-  <meta:redefinePermission from="bungeni.address.View" to="zope.View" />
-
   <permission id="bungeni.officetitle.Add" title="Add address" />
   <permission id="bungeni.officetitle.Edit" title="Edit address" />
   <permission id="bungeni.officetitle.Delete" title="Delete address" />

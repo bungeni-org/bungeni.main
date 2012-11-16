@@ -59,20 +59,13 @@
         permission="bungeni.session.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-
-	<!-- User -->
-    <browser:page name="edit-profile" for="bungeni.models.interfaces.IUser"
-        class="bungeni.ui.login.Profile"
-        permission="bungeni.user.Edit"
-        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
-    />
     
-    <browser:page name="change-password" for="bungeni.models.interfaces.IUser"
-        class="bungeni.ui.login.ChangePasswordForm"
-        permission="bungeni.user.Edit"
+    <!-- Address -->
+    <browser:page name="add" for="bungeni.models.interfaces.IGroupAddressContainer"
+        class=".common.AddForm"
+        permission="bungeni.address.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    
     <browser:page name="add" for="bungeni.models.interfaces.IUserAddressContainer"
         class=".common.AddForm"
         permission="bungeni.address.Add"
@@ -88,10 +81,21 @@
         permission="bungeni.address.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    
     <browser:page name="view" for="bungeni.models.interfaces.IUserAddress"
         class=".forms.UserAddressDisplayForm"
-        permission="bungeni.user_address.View"
+        permission="bungeni.address.View"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
+	<!-- User -->
+    <browser:page name="edit-profile" for="bungeni.models.interfaces.IUser"
+        class="bungeni.ui.login.Profile"
+        permission="bungeni.user.Edit"
+        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
+    />
+    <browser:page name="change-password" for="bungeni.models.interfaces.IUser"
+        class="bungeni.ui.login.ChangePasswordForm"
+        permission="bungeni.user.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     

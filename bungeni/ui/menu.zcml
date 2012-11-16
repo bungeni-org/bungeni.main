@@ -599,6 +599,13 @@
     />
     -->
     
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IGroupAddressContainer"
+        title="Add Group Address..."
+        action="./add"
+        permission="bungeni.address.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+    />
     <!-- !+FeatureAddress - User is a non-custom type -->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IUserAddressContainer"

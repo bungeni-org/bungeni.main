@@ -850,7 +850,7 @@
     </class>
     
     <class class=".domain.UserAddress">
-        <require permission="bungeni.user_address.View"
+        <require permission="bungeni.address.View"
             attributes="
                 logical_address_type
                 postal_address_type

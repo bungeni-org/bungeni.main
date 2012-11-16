@@ -16,16 +16,16 @@ or added, a condition that is checked for and flagged automatically.
 Defines a DEDICATED permission per workflow XML-TRANSITION, and grants it 
 to the various Roles, as specified in same transition definition.
 
-See the Bungeni Source Code Style Guide for further details. 
+See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 -->
 
 
 <!-- address -->
-<permission id="bungeni.user_address.View" title="View User Address" />
-<permission id="bungeni.user_address.Edit" title="Edit User Address" />
-<permission id="bungeni.user_address.Add" title="Add User Address" />
-<permission id="bungeni.user_address.Delete" title="Delete User Address" />
+<permission id="bungeni.address.View" title="View Address" />
+<permission id="bungeni.address.Edit" title="Edit Address" />
+<permission id="bungeni.address.Add" title="Add Address" />
+<permission id="bungeni.address.Delete" title="Delete Address" />
 
 <permission id="bungeni.address.wf.draft.attached" title="Publish" />
 <grant permission="bungeni.address.wf.draft.attached" role="bungeni.Owner" />

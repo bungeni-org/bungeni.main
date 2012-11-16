@@ -272,6 +272,7 @@ def schedule_sitting_items(context):
                         )
                         break
 
+
 def check_agenda_finalized(context):
     unfinalized_tags = [SCHEDULED]
     def check_finalized(schedule):
@@ -291,8 +292,8 @@ def check_agenda_finalized(context):
     check_list = map(check_finalized, context.items.values())
     return  (False not in check_list)
 
+
 def view_permission(item):
-    type_key = naming.type_key("model_name", item.__class__.__name__)
-    if type_key:
-        return "bungeni.%s.View" % type_key
-    return "zope.View"
+    ti = capi.get_type_info(item)
+    return "bungeni.%s.View" % (ti.permission_type_key)
+
