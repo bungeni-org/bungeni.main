@@ -257,14 +257,22 @@ def is_admin(context):
     return zope.security.management.getInteraction().checkPermission(
         "zope.ManageSite", context)
 
-def list_container_items(container_instance, permission="zope.View"):
+def list_container_items(container_instance, permission=None):
     """Generate list of container items with permission check
+    Note that we first try to generate the permission name or fall
+    back to zope.View
     """
+    from bungeni.core.workflows.utils import view_permission
     trusted = proxy.removeSecurityProxy(container_instance)
-    for contained in trusted.values():
-        if checkPermission(permission, contained):
-            yield bungeni.alchemist.container.contained(contained,
+    for item in trusted.values():
+        if permission is None:
+            if trusted.domain_model:
+                permission = view_permission(item)
+            else:
+                permission = "zope.View"
+        if checkPermission(permission, item):
+            yield bungeni.alchemist.container.contained(item,
                 container_instance, 
-                bungeni.alchemist.container.stringKey(contained)
+                bungeni.alchemist.container.stringKey(item)
             )
 

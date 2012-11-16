@@ -34,36 +34,13 @@ from bungeni.models.utils import get_parliament_for_group_id
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.ui import table
-from bungeni.ui.utils import common, url, misc, date
+from bungeni.ui.utils import url, misc, date
 from fields import BungeniAttributeDisplay
 from interfaces import (ISubFormViewletManager,
                         ISubformRssSubscriptionViewletManager)
 from bungeni.ui.interfaces import IBungeniAuthenticatedSkin
 from bungeni.utils import register
 from bungeni.utils.capi import capi
-
-def load_formatted_container_items(container, out_format={}, extra_params={}):
-    """Load container items and return as a list of formatted dictionary
-    items.
-    params:
-    extra_params: a dictionary of extra parameters to include in dict
-    out_format: property titles and getters getters based acting on item
-    """
-    formatted_items = []
-    if interfaces.IAlchemistContainer.providedBy(container):
-        item_list = common.list_container_items(container)
-    else:
-        item_list = [ removeSecurityProxy(item) for item in container ]
-    for item in item_list:
-        item_dict = {}
-        item_dict.update(extra_params)
-        map(
-            lambda fmt:item_dict.update([ ( fmt[0], fmt[1](item) ) ]), 
-            out_format.iteritems()
-        )
-        formatted_items.append(item_dict)
-    return formatted_items
-
 
 # !+SubformViewlet(mr, oct-2010) in this usage case this this should really
 # be made to inherit from browser.BungeniViewlet (but, note that
