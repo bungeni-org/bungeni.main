@@ -1039,6 +1039,7 @@ class Session(Entity):
     interface.implements(
         interfaces.ISession,
         interfaces.ITranslatable,
+        interfaces.IScheduleContent
     )
 
 ''' !+SUBSCRIPTIONS(mr, jun-2012) unused
