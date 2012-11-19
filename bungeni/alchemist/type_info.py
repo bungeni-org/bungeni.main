@@ -209,8 +209,13 @@ class TI(object):
             # "office" workflow instance.
             return self.workflow.name
         # system types ALWAYS use workflow_key - even if multiple types use the 
-        # same workflow e.g. UserAddress & GroupADdress.
-        return self.workflow_key
+        # same workflow e.g. UserAddress & GroupAddress. 
+        # if no workflow, compute type_key from domain_model
+        # #!+REDUNDANT(mb, 2012) This type key is already known during type
+        # setup i.e. TYPE_REGISTRY
+        return (self.workflow_key or 
+            naming.type_key("model_name", self.domain_model.__name__)
+        )
 
 '''
 !+TYPE_REGISTRY externalize further to bungeni_custom, currently:
