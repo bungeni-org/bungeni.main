@@ -15,7 +15,7 @@ from lxml import etree
 from zope.dottedname.resolve import resolve
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
-from bungeni.core.workflow.states import Feature, State, Transition, Workflow
+from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.utils import naming, misc
@@ -120,7 +120,8 @@ def zcml_transition_permission(pid, title, roles):
 def load(type_key, file_key, workflow_name,
         path_custom_workflows=capi.get_path_for("workflows")
     ):
-    """ (type_key:str, file_key:str, path_custom_workflows:str) -> Workflow
+    """ (type_key:str, file_key:str, workflow_name:str, 
+            path_custom_workflows:str) -> Workflow
     
     Loads the workflow XML definition file, returning the correspondingly setup 
     Workflow instance. Called by workflows.adapters.load_workflow.
@@ -128,8 +129,8 @@ def load(type_key, file_key, workflow_name,
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
     return _load(type_key, workflow_name, etree.fromstring(open(file_path).read()))
 
-def _load(type_key, name, workflow):
-    """ (type_key:str, name:str, workflow:etree_doc) -> Workflow
+def _load(type_key, workflow_name, workflow):
+    """ (type_key:str, workflow_name:str, workflow:etree_doc) -> Workflow
     """
     # !+ @title, @description
     transitions = []
@@ -141,17 +142,17 @@ def _load(type_key, name, workflow):
     # initial_state, in XML indicated a transition source=""
     initial_state = None
     
-    ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
+    ZCML_PROCESSED = bool(workflow_name in ZCML_WORKFLOWS_PROCESSED)
     if not ZCML_PROCESSED:
-        ZCML_WORKFLOWS_PROCESSED.add(name)
+        ZCML_WORKFLOWS_PROCESSED.add(workflow_name)
         ZCML_LINES.append(ZCML_INDENT)
         ZCML_LINES.append(ZCML_INDENT)
-        ZCML_LINES.append("%s<!-- %s -->" % (ZCML_INDENT, name))
+        ZCML_LINES.append("%s<!-- %s -->" % (ZCML_INDENT, workflow_name))
     
     def validate_id(id, tag):
         """Ensure that ID values are unique within the same XML doc scope.
         """
-        m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, name)
+        m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, workflow_name)
         assert id is not None, "%s -- id may not be None" % (m)
         assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
         assert id not in wuids, "%s -- id not unique in workflow document" % (m)
@@ -163,29 +164,37 @@ def _load(type_key, name, workflow):
         for state in states:
             if state.id == state_id:
                 return state
-        raise ValueError('Invalid value: like_state="%s"' % (state_id))
+        raise ValueError("Invalid value: like_state=%r" % (state_id))
     
-    def check_add_permission(permissions, like_permissions, assignment, p, r):
+    # !+ drop like_permissions
+    def check_add_permission(permissions, like_permissions, (assignment, p, r)):
         for perm in [(GRANT, p, r), (DENY, p, r)]:
             assert perm not in permissions, "Workflow [%s] state [%s] " \
                 "duplicated or conflicting state permission: (%s, %s, %s)" % (
-                    name, state_id, assignment, p, r)
+                    workflow_name, state_id, assignment, p, r)
             if perm in like_permissions:
                 like_permissions.remove(perm)
+            # ensure global and local assignments are distinct
+            # (global: _global_perms_role_mixes, workflow_name)
+            global_proles = _global_perms_role_mixes.get(p, "")
+            assert r not in global_proles, ("Workflow [%s] may not mix "
+                "global and local granting of a same permission [%s] to a "
+                "same role [%s].") % (workflow_name, p, r)
         permissions.append((assignment, p, r))
+    
     def assert_valid_attr_names(elem, allowed_attr_names):
         for key in elem.keys():
             assert key in allowed_attr_names, \
                 "Workflow [%s]: unknown attribute %s in %s" % (
-                    name, key, etree.tostring(elem))
+                    workflow_name, key, etree.tostring(elem))
     
-    def qualified_permission_actions(workflow_name, permission_actions):
+    def qualified_permission_actions(permission_type_key, permission_actions):
         """[space-separated-str] -> [(permission_type_key, permission_action)]
         """
-        return [ qualified_permission_action(workflow_name, pa) 
+        return [ qualified_permission_action(permission_type_key, pa) 
             for pa in permission_actions ]
-    def qualified_permission_action(workflow_name, pa):
-        """str -> (workflow_name, permission_action)
+    def qualified_permission_action(permission_type_key, pa):
+        """str -> (permission_type_key, permission_action)
         where string may be: ".Action" or "type_key.Action"
         """
         # !+do not allow a preceeding "bungeni."?
@@ -193,11 +202,11 @@ def _load(type_key, name, workflow):
             pa = pa[len("bungeni."):]
         qpa = pa.split(".", 1)
         assert len(qpa) == 2, \
-            "No dot in workflow %r permission action %r" % (workflow_name, pa)
-        return (qpa[0] or workflow_name, qpa[1])
-    def qualified_pid(workflow_name, pa):
-        return "bungeni.%s.%s" % qualified_permission_action(workflow_name, pa)
-
+            "No dot in workflow %r permission action %r" % (permission_type_key, pa)
+        return (qpa[0] or permission_type_key, qpa[1])
+    def qualified_pid(permission_type_key, pa):
+        return "bungeni.%s.%s" % qualified_permission_action(permission_type_key, pa)
+    
     def qualified_roles(roles):
         """space-separated-str -> [role_id]
         Parse space separated string into a list of qualified role ids where 
@@ -215,9 +224,40 @@ def _load(type_key, name, workflow):
         # !+alchemist.model.norm_sorted
         return sorted(qrs)
     
-    # top-level child ordering
+    def get_named(name, seq):
+        for s in seq:
+            if s.name == name:
+                return s
+    
+    def get_permissions_from_allows(allow_iterator, like_permissions=[]):
+        def gen_allow_permissions(allow_elem):
+            pid = qualified_pid(workflow_name, xas(allow_elem, "permission"))
+            for role in qualified_roles(xas(allow_elem, "roles")):
+                yield (GRANT, pid, role)
+        perms = []
+        for allow in allow_iterator:
+            for allow_perm in gen_allow_permissions(allow):
+                check_add_permission(perms, like_permissions, allow_perm)
+        return perms
+    
+    def get_facets(facet_iterator, feature_name=None):
+        facets = []
+        for facet in facet_iterator:
+            facet_name = xas(facet, "name")
+            assert facet_name, \
+                "Workflow %r [%s] facet must define a name" % (workflow_name, feature_name)
+            assert get_named(facet_name, facets) is None, \
+                "Duplicate feature %r facet %r" % (feature_name, facet_name)
+            facet_is_default = xab(facet, "default", False)
+            facet_note = xas(facet, "note")
+            facet_perms = get_permissions_from_allows(facet.iterchildren("allow"))
+            facets.append(
+                Facet(facet_name, facet_note, facet_perms, default=facet_is_default))
+        return facets
+    
+    # top-level child ordering !+ move "allow" to before "features"
     grouping, allowed_child_ordering = 0, (
-        "feature", "allow", "state", "transition")
+        "feature", "allow", "facet", "state", "transition")
     for child in workflow.iterchildren():
         if not isinstance(child.tag, basestring):
             # ignore comments
@@ -227,31 +267,12 @@ def _load(type_key, name, workflow):
             assert grouping < len(allowed_child_ordering), \
                 "Workflow [%s] element <%s> %s not allowed " \
                 "here -- element order must respect: %s" % (
-                    name, child.tag, child.items(), allowed_child_ordering)
+                    workflow_name, child.tag, child.items(), allowed_child_ordering)
     
-    # features
-    features = []
-    for f in workflow.iterchildren("feature"):
-        assert_valid_attr_names(f, FEATURE_ATTRS)
-        # @name
-        feature_name = xas(f, "name")
-        assert feature_name, "Workflow Feature must define @name"
-        # !+ archetype/feature inter-dep; should be part of feature descriptor
-        feature_enabled = xab(f, "enabled", True)
-        if feature_enabled and feature_name == "version": 
-            assert "audit" in [ fe.name for fe in features if fe.enabled ], \
-                "Workflow [%s] has version but no audit feature" % (name)
-        # feature.parameter
-        params = dict([ (param.get("name"), param.get("value")) for param in 
-            f.iterchildren("parameter")
-        ])
-        features.append(Feature(feature_name, enabled=feature_enabled, 
-                note=xas(f, "note"), **params
-        ))
     
     # permission_actions -> permissions for this type
     for (key, permission_action) in qualified_permission_actions(
-            name, xas(workflow, "permission_actions", "").split()
+            workflow_name, xas(workflow, "permission_actions", "").split()
         ):
         pid = "bungeni.%s.%s" % (key, permission_action)
         title = "%s %s" % (
@@ -260,22 +281,55 @@ def _load(type_key, name, workflow):
             '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, title))
     
     # global grants
-    _global_permission_role_mixes = {} # {pid: [role]}
-    for p in workflow.iterchildren("allow"):
-        pid = qualified_pid(name, xas(p, "permission"))
-        roles = qualified_roles(xas(p, "roles"))
-        for role in roles:
-            # for each global permission, build list of roles it is set to
-            _global_permission_role_mixes.setdefault(pid, []).append(role)
-            assert pid and role, "Global grant must specify valid permission/role" 
-            ZCML_LINES.append(
-                '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
+    _global_perms_role_mixes = {} # {pid: [role]}
+    _global_perms = get_permissions_from_allows(workflow.iterchildren("allow"))
+    for (setting, pid, role) in _global_perms:
+        # for each global permission, build list of roles it is set to
+        _global_perms_role_mixes.setdefault(pid, []).append(role)
+        assert setting and pid and role, \
+            "Global grant must specify valid permission/role" 
+        ZCML_LINES.append(
+            '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
         # no real need to check that the permission and role of a global grant 
         # are properly registered in the system -- an error should be raised 
         # by the zcml if either is not defined. 
-    for perm, roles in _global_permission_role_mixes.items():
+    for perm, roles in _global_perms_role_mixes.items():
         # assert roles mix limitations for state permissions
-        assert_distinct_permission_scopes(perm, roles, name, "global grants")
+        assert_distinct_permission_scopes(perm, roles, workflow_name, "global grants")
+    
+    
+    # features
+    features = []
+    for f in workflow.iterchildren("feature"):
+        assert_valid_attr_names(f, FEATURE_ATTRS)
+        # @name
+        feature_name = xas(f, "name")
+        assert feature_name, "Workflow %r feature must define @name" % (workflow_name)
+        # @enabled
+        feature_enabled = xab(f, "enabled", True)
+        # !+ archetype/feature inter-dep; should be part of feature descriptor
+        if feature_enabled and feature_name == "version":
+            assert "audit" in [ fe.name for fe in features if fe.enabled ], \
+                "Workflow [%s] has version but no audit feature" % (workflow_name)
+        # feature.parameter !+constraints, in models.feature_* ?
+        params = []
+        for param in f.iterchildren("parameter"):
+            name_value = param.get("name"), param.get("value")
+            assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value)
+            params.append(name_value)
+        num_params, params = len(params), dict(params)
+        assert num_params == len(params), \
+            "Repeated parameters in feature %r" % (feature_name)
+        # feature.facet
+        facets = get_facets(f.iterchildren("facet"), feature_name)
+        features.append(Feature(feature_name, 
+                enabled=feature_enabled,
+                note=xas(f, "note"), 
+                facets=facets,
+                **params))
+    # top level (workflow, feature_name==None) facets
+    workflow_facets = get_facets(workflow.iterchildren("facet"), None)
+    none_feature = Feature(None, enabled=True, facets=workflow_facets)
     
     # states
     for s in workflow.iterchildren("state"):
@@ -297,10 +351,10 @@ def _load(type_key, name, workflow):
         # state-id-inferred action - if "actions" module defines an action for
         # this state (associated via a naming convention), then use it.
         # !+ tmp, until state_actions are user-exposed as part of <state>
-        action_name = "_%s_%s" % (name, state_id)
+        action_name = "_%s_%s" % (workflow_name, state_id)
         if hasattr(ACTIONS_MODULE, action_name):
             state_actions.append(getattr(ACTIONS_MODULE, action_name))
-
+        
         # @tags
         tags = xas(s, "tags", "").split()
         # @like_state, permissions
@@ -316,19 +370,55 @@ def _load(type_key, name, workflow):
         like_state = get_like_state(xas(s, "like_state"))
         if like_state:
             like_permissions.extend(like_state.permissions)
+        
+        # !+!+NO_LIKE_STATE
         # (within same state) a deny is *always* executed after a *grant*
         for i, assign in enumerate(["allow", "deny"]):
             for p in s.iterchildren(assign):
-                pid = qualified_pid(name, xas(p, "permission"))
+                pid = qualified_pid(workflow_name, xas(p, "permission"))
                 roles = qualified_roles(xas(p, "roles"))
                 for role in roles:
                     check_add_permission(permissions, like_permissions, 
-                        ASSIGNMENTS[i], pid, role)
-                    # ensure global and local assignments are distinct
-                    global_proles = _global_permission_role_mixes.get(pid, "")
-                    assert role not in global_proles, ("Workflow [%s] may not mix "
-                        "global and local granting of a same permission [%s] to a "
-                        "same role [%s].") % (name, pid, role)
+                        (ASSIGNMENTS[i], pid, role))
+        
+        # use permissions from facets
+        used_facets_by_feature = {}
+        for facet in s.iterchildren("facet"):
+            feature_name, facet_name = xas(facet, "ref").split(".", 1)
+            feature_name = feature_name if feature_name else None # "" -> None
+            # feature_name is None -> "workflow" facets
+            assert feature_name not in used_facets_by_feature, \
+                "Duplicate feature %r facet %r in state %r" % (feature_name, facet_name, state_id)
+            assert facet_name, \
+                "Facet %r in state %r must specify a name" % (facet_name, state_id)
+            if feature_name is None:
+                facet_seq = workflow_facets
+            else:
+                facet_seq = get_named(feature_name, features).facets
+            used_facets_by_feature[feature_name] = get_named(facet_name, facet_seq)
+        
+        def add_facet_permissions(used_facets_by_feature, feature):
+            if feature.name in used_facets_by_feature:
+                facet = used_facets_by_feature[feature.name]
+                perms_to_add = facet.permissions
+            else:
+                default_facet = feature.get_default_facet()
+                perms_to_add = []
+                if default_facet is not None:
+                    perms_to_add = default_facet.permissions
+            for perm in perms_to_add:
+                check_add_permission(permissions, like_permissions, perm)
+        # first, assimilate permissions workflow facets (the None feature)
+        add_facet_permissions(used_facets_by_feature, none_feature)
+        # then from facets from all enabled features
+        for feature in features:
+            if feature.enabled:
+                add_facet_permissions(used_facets_by_feature, feature)
+            else:
+                if feature.name in used_facets_by_feature:
+                    log.warn("State %r specifies facet for disabled feature %r", 
+                        state_id, feature.name)
+        
         if like_state:
             # splice any remaining like_permissions at beginning of permissions
             permissions[0:0] = like_permissions
@@ -392,7 +482,7 @@ def _load(type_key, name, workflow):
         roles = qualified_roles(kw.pop("roles", ""))
         if not is_zcml_permissionable(t):
             assert not roles, "Workflow [%s] - non-permissionable transition " \
-                "does not allow @roles [%s]." % (name, roles)
+                "does not allow @roles [%s]." % (workflow_name, roles)
             kw["permission"] = None # None -> CheckerPublic
         # !+CAN_EDIT_AS_DEFAULT_TRANSITION_PERMISSION(mr, oct-2011) this feature
         # is functional (uncomment following elif clause) but as yet not enabled. 
@@ -409,7 +499,7 @@ def _load(type_key, name, workflow):
         #
         #elif not roles:
         #    # then as fallback transition permission use can modify object
-        #    kw["permission"] = "bungeni.%s.Edit" % (name) # fallback permission
+        #    kw["permission"] = "bungeni.%s.Edit" % (workflow_name) # fallback permission
         else:
             # Dedicated permission for XML multi-source transition.
             # Given that, irrespective of how sources are grouped into 
@@ -422,7 +512,7 @@ def _load(type_key, name, workflow):
             # (so we use "." also here).
             #
             tid = "%s.%s" % (sources[0] or "", destination)
-            pid = "bungeni.%s.wf.%s" % (name, tid)
+            pid = "bungeni.%s.wf.%s" % (workflow_name, tid)
             if not ZCML_PROCESSED:
                 zcml_transition_permission(pid, title, roles)
                 # remember list of roles from xml
@@ -448,7 +538,7 @@ def _load(type_key, name, workflow):
             args = (title, source, destination)
             transitions.append(Transition(*args, **kw))
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
-                name, source or "", destination, kw))
+                workflow_name, source or "", destination, kw))
     
-    return Workflow(name, features, allowed_tags, states, transitions, note)
+    return Workflow(workflow_name, features, allowed_tags, states, transitions, note)
 

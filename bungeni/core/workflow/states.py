@@ -52,15 +52,36 @@ def wrapped_condition(condition, parent):
     return test
 
 
+class Facet(object):
+    """A workflow/feature facet encapsulating a set of allowed permissions.
+    """
+    def __init__(self, name, note, permissions, default=False):
+        """ (name:str, note:either(str, None), permissions:[(qpid, qrole)], default:bool)
+        default: if True (only 1 may be True), use this facet by default
+        """
+        self.name = name
+        self.note = note
+        self.default = default
+        self.permissions = permissions
+        assert len(permissions) == len(set(permissions)), \
+            "Facet %r duplicates permissions: %s" % (self.name, permissions)
+
 class Feature(object):
     """Status/settings of an optional feature on a workflowed type.
     """
-    def __init__(self, name, enabled=True, note=None, **kws):
+    def __init__(self, name, enabled=True, note=None, facets=None, **kws):
         self.name = name
         self.enabled = enabled
         self.note = note
+        self.facets = facets or []
         self.params = kws
-
+        assert len([ f for f in facets if f.default ]) <= 1, \
+            "Feature %r may only have set 1 default facet" % (self.name)
+    
+    def get_default_facet(self):
+        for facet in self.facets:
+            if facet.default:
+                return facet
 
 class State(object):
     """A workflow state instance. 
