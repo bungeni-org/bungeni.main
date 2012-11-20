@@ -80,6 +80,7 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 """
 
 
+class ChangedWorkflowsPermissionsZCML(Exception): pass
 def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py).
     """
@@ -98,7 +99,6 @@ def zcml_check_regenerate():
         log.warn("CHANGES to file:\n%s" % (
             misc.unified_diff(persisted, regenerated, filepath, "NEW")))
         open(filepath, "w").write(regenerated.encode("utf-8"))
-        class ChangedWorkflowsPermissionsZCML(Exception): pass
         raise ChangedWorkflowsPermissionsZCML(
             "Must restart system with updated file: %s" % (filepath))
 
@@ -257,7 +257,7 @@ def _load(type_key, workflow_name, workflow):
     
     # top-level child ordering !+ move "allow" to before "features"
     grouping, allowed_child_ordering = 0, (
-        "feature", "allow", "facet", "state", "transition")
+        "allow", "feature", "facet", "state", "transition")
     for child in workflow.iterchildren():
         if not isinstance(child.tag, basestring):
             # ignore comments
@@ -370,8 +370,10 @@ def _load(type_key, workflow_name, workflow):
         like_state = get_like_state(xas(s, "like_state"))
         if like_state:
             like_permissions.extend(like_state.permissions)
+        # !+PERMISSIONS_FROM_STATE rename and change meaning of like_state to 
+        # not allow ANY overrides
         
-        # !+!+NO_LIKE_STATE
+        # !+NO_LIKE_STATE 
         # (within same state) a deny is *always* executed after a *grant*
         for i, assign in enumerate(["allow", "deny"]):
             for p in s.iterchildren(assign):
@@ -384,13 +386,15 @@ def _load(type_key, workflow_name, workflow):
         # use permissions from facets
         used_facets_by_feature = {}
         for facet in s.iterchildren("facet"):
-            feature_name, facet_name = xas(facet, "ref").split(".", 1)
+            ref = xas(facet, "ref")
+            assert ref is not None, "State %r facet must specify a ref" % (state_id)
+            feature_name, facet_name = ref.split(".", 1)
             feature_name = feature_name if feature_name else None # "" -> None
             # feature_name is None -> "workflow" facets
             assert feature_name not in used_facets_by_feature, \
                 "Duplicate feature %r facet %r in state %r" % (feature_name, facet_name, state_id)
             assert facet_name, \
-                "Facet %r in state %r must specify a name" % (facet_name, state_id)
+                "Facet %r in state %r must specify a valid facet name" % (facet_name, state_id)
             if feature_name is None:
                 facet_seq = workflow_facets
             else:
