@@ -13,9 +13,6 @@ bungeni.core.workflow.xmlimport.zcml_check_regenerate()
 It would need to be regenerated when any workflow transition is modified 
 or added, a condition that is checked for and flagged automatically.
 
-Defines a DEDICATED permission per workflow XML-TRANSITION, and grants it 
-to the various Roles, as specified in same transition definition.
-
 See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 -->
