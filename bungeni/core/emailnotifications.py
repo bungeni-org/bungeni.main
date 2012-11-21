@@ -5,10 +5,11 @@ import simplejson
 import smtplib
 from email.mime.text import MIMEText
 from threading import Thread
+from lxml import etree
 from zope import component
 from zope import interface
 from zope.app.component.hooks import getSite
-from zope.pagetemplate.pagetemplatefile import PageTemplateFile
+from zope.pagetemplate.pagetemplatefile import PageTemplate
 from zope.cachedescriptors.property import CachedProperty
 from bungeni.alchemist import Session
 from bungeni.core.interfaces import (IMessageQueueConfig, IBungeniMailer,
@@ -19,7 +20,12 @@ from bungeni.models import domain
 from bungeni.models.settings import EmailSettings
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.utils import register
+from bungeni.ui.reporting.generators import get_attr
 
+
+class EmailException(Exception):
+    """Raised when there is a problem with the email configuration
+    """
 
 class BungeniSMTPMailer(object):
 
@@ -71,31 +77,95 @@ def get_recipients(principal_ids):
 def get_template(file_name):
     path = capi.get_path_for("email", "templates")
     file_path = os.path.join(path, file_name)
-    return PageTemplateFile(file_path)
+    if os.path.exists(file_path):
+        template_file = open(file_path)
+        file_string = template_file.read()
+        template = etree.fromstring(file_string)
+        template_file.close()
+        return template
+    else:
+        raise EmailException("Email template %s does not exist" % file_name)
 
 
-def get_email_body_text(template, message):
-    body_macro = template.macros[message["status"]["value"] + "-body"]
-    body_template = get_template("body.pt")
-    return body_template(body_macro=body_macro, **message)
+def is_html(template):
+    html = get_attr(template, "html")
+    if not html or html.lower() == "true":
+        return True
+    else:
+        return False
 
 
-def get_email_subject_text(template, message):
-    subject_macro = template.macros[message["status"]["value"] + "-subject"]
-    subject_template = get_template("subject.pt")
-    return subject_template(subject_macro=subject_macro, **message)
+class EmailTemplate(PageTemplate):
+    def pt_getContext(self, args=(), options={}, **kw):
+        rval = PageTemplate.pt_getContext(self, args=args)
+        options.update(rval)
+        return options
+
+
+class Item:
+    def __init__(self, message):
+        self.message = message
+
+    def __getitem__(self, name):
+        if name in self.message.keys():
+            return self.message[name]
+        else:
+            log.warning()
+            return "None"
+
+
+class EmailBlock(object):
+    def __init__(self, template, message):
+        self.template = template
+        self.message = message
+        self.status = message["status"]["value"]
+
+    def get_email(self):
+        subject, body = None, None
+
+        def get_node_content(element):
+            return (element.text +
+                    "".join(map(etree.tostring, element))).strip()
+
+        for _, element in etree.iterwalk(self.template, tag="block"):
+            if element.attrib["state"] == self.status:
+                subject = get_node_content(element.find("subject"))
+                body = get_node_content(element.find("body"))
+            element.clear()
+        # get defaults
+        if not subject:
+            subject = "Item Notification: <span tal:replace=item/title/>"
+            log.warn("Missing subject template for %s:%s. Using default" % (
+                    self.message["type"], self.message["status"]))
+        if not body:
+            body = "Item <span tal:replace=item/title/>, status :" \
+                "<span tal:replace=item/title/>"
+            log.warn("Missing body template for %s:%s. Using default" % (
+                    self.message["type"], self.message["status"]))
+        subject_template = EmailTemplate()
+        body_template = EmailTemplate()
+        subject_template.write(subject)
+        body_template.write(body)
+        return (subject_template(item=Item(self.message)),
+                body_template(item=Item(self.message)))
 
 
 @bungeni_custom_errors
 def email_notifications_callback(channel, method, properties, body):
     message = simplejson.loads(body)
     recipients = get_recipients(message.get("principal_ids", None))
-    template = get_template(message["type"] + ".pt")
-    msg = MIMEText(get_email_body_text(template, message))
-    msg["Subject"] = get_email_subject_text(template, message)
+    template = get_template(message["type"] + ".xml")
+    email_block = EmailBlock(template, message)
+    subject, body = email_block.get_email()
+    if is_html(template):
+        msg = MIMEText(body, "html")
+    else:
+        msg = MIMEText(body, "text")
+    msg["Subject"] = subject
     msg["To"] = ', '.join(recipients)
     component.getUtility(IBungeniMailer).send(msg)
     channel.basic_ack(delivery_tag=method.delivery_tag)
+
 
 def email_worker():
     connection = get_mq_connection()
