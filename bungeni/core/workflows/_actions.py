@@ -68,7 +68,22 @@ def _group_dissolved(context):
 
 # office
 _office_active = _group_active
+_office_dissolved = _group_dissolved
 
+# ministry
+
+_ministry_active = _group_active
+_ministry_dissolved = _group_dissolved
+
+# political_group
+
+_political_group_active = _group_active
+_political_group_dissolved = _group_dissolved
+
+# government
+
+_government_active = _group_active
+_government_dissolved = _group_dissolved
 
 # committee
 
@@ -80,6 +95,7 @@ _committee_dissolved = _group_dissolved
 
 _parliament_active = _group_active
 _parliament_dissolved = _group_dissolved
+
 
 
 # sitting
