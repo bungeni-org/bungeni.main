@@ -23,6 +23,8 @@ from bungeni.alchemist import Session
 
 from bungeni.models import domain
 from bungeni.models import schema as model_schema
+from bungeni.models import utils as model_utils
+from bungeni.models.interfaces import ISessionContainer
 from bungeni.core.i18n import _
 #from bungeni.ui.forms import validations
 from bungeni.ui.forms.common import ReorderForm
@@ -31,6 +33,7 @@ from bungeni.ui.forms.common import AddForm
 from bungeni.ui.forms.common import EditForm
 from bungeni.ui.forms.common import DeleteForm
 from bungeni.ui.forms.common import DisplayForm
+from bungeni.ui.interfaces import IBungeniSkin
 
 from interfaces import Modified
 from zope import component
@@ -38,6 +41,8 @@ from zope.formlib.interfaces import IDisplayWidget
 from zope.schema.interfaces import IText, ITextLine
 from bungeni.ui.widgets import IDiffDisplayWidget
 from bungeni.ui.htmldiff import htmldiff
+
+from bungeni.utils import register
 
 
 FormTemplate = namedtemplate.NamedTemplateImplementation(
@@ -272,3 +277,15 @@ class UserAddressDisplayForm(DisplayForm):
     def page_title(self):
         return "%s address" % self.context.logical_address_type.title()
 
+
+@register.view(ISessionContainer, layer=IBungeniSkin, name="add",
+    protect={"bungeni.session.Add": register.VIEW_DEFAULT_ATTRS})
+class SessionAddForm(AddForm):
+    def finishConstruction(self, ob):
+        """We add the parliament ID if adding a session in contexts
+        not bound to the the parliament in traversal hierarchy
+        """
+        super(SessionAddForm, self).finishConstruction(ob)
+        if ob.parliament_id is None:
+            ob.parliament_id = model_utils.get_current_parliament(
+                ).parliament_id

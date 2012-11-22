@@ -41,12 +41,6 @@
         permission="bungeni.report.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     /--> 
-    <browser:page name="add"
-        for="bungeni.models.interfaces.ISessionContainer"
-        class=".common.AddForm"
-        permission="bungeni.session.Add"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
     <browser:page name="edit"
         for="bungeni.models.interfaces.ISession"
         class=".common.EditForm"
