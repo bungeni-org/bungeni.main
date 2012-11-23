@@ -7,7 +7,7 @@
 # 
 # Note: Always modify the RNC file - the RNG version is auto-derived from it:
 # one way to auto-derive workflow.rng from this file is:
-#   java -jar trang.jar -I rnc -O rng workflow.rnc workflow.rng
+#   java -jar trang.jar -I rnc -O rng workflow.rnc generated/workflow.rng
 # 
 # $Id$
 
@@ -17,9 +17,9 @@ grammar {
     WORKFLOW = element workflow {
         attribute title { text },
         attribute description { text },
-        attribute tags { SSV_symbol }?,  # declare any (system-defined) tags used in workflow
+        attribute tags { SSV_symbol }?, # declare any (system-defined) tags used in workflow
         attribute note { text }?,
-        attribute permission_actions { SSV }?,  # type-relative permission actions
+        attribute permission_actions { SSV }?, # type-relative permission actions
         # i.e. each included action allowed to be in the form [type_key].{Action}, 
         # with the optional type_key defaulting to the type_key of the type 
         # "owning" this workflow.
@@ -49,17 +49,17 @@ grammar {
     
     FACET = element facet {
         attribute name { SYMBOL_NAME },
-        attribute default { xsd:boolean }?,  # default:false, may be true only once
+        attribute default { xsd:boolean }?, # default:false, may be true only once
         ALLOW*
     }
     
     STATE = element state {
         attribute id { SYMBOL_NAME },
         attribute title { text },
-        attribute version { xsd:boolean }?,  # default:false
+        attribute version { xsd:boolean }?, # default:false
         attribute tags { SSV_symbol }?,
         attribute note { text }?,
-        attribute obsolete { xsd:boolean }?,  # default:false
+        attribute obsolete { xsd:boolean }?, # default:false
         
         ( # if (permissions_from state | permissions_from_parent) -> then NO facets
             ( # may have EITHER permissions_from_state OR permissions_from_parent
@@ -67,7 +67,7 @@ grammar {
                     | attribute permissions_from_parent { xsd:boolean }  # default:false
             )?
             | element facet {
-                attribute ref { token }  # [ {feature.@name} ].{facet.@name}
+                attribute ref { token } # [ {feature.@name} ].{facet.@name}
             }*
         )
     }
@@ -75,12 +75,12 @@ grammar {
     TRANSITION = element transition {
         attribute title { text },
         attribute source { SSV_symbol | empty }, # space separated list of state ids
-        attribute destination { SYMBOL_NAME },  # state.id
-        attribute grouping_unique_sources { token }?,  # a transition grouping id
-        attribute condition { token }?,  # callable
+        attribute destination { SYMBOL_NAME }, # state.id
+        attribute grouping_unique_sources { token }?, # a transition grouping id
+        attribute condition { SYMBOL_NAME | empty }?, # callable
         attribute trigger { "automatic" | "system" | "manual" },
         attribute roles { SSV }?,
-        attribute order { xsd:integer }?,  # default:0
+        attribute order { xsd:integer }?, # default:0
         attribute require_confirmation { xsd:boolean }?,  # default:false
         attribute note { text }?
     }
