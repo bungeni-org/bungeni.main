@@ -34,12 +34,9 @@ trigger_value_map = {
     "system": interfaces.SYSTEM
 }
 
-# only letters, numbers and "_" char i.e. no whitespace or "-"
-ID_RE = re.compile("^[\w\d_]+$")
-
 FEATURE_ATTRS = ("name", "enabled", "note")
 
-STATE_ATTRS = ("id", "title", "version", "like_state", "tags", 
+STATE_ATTRS = ("id", "title", "version", "permissions_from_state", "tags", 
     "note", "permissions_from_parent", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
@@ -180,7 +177,7 @@ def get_facets(workflow_name, feature_name, elem):
             Facet(facet_name, facet_note, facet_perms, default=facet_is_default))
     return facets
 
-def get_permissions_from_allows(workflow_name, elem, like_permissions=[]):
+def get_permissions_from_allows(workflow_name, elem):
     def gen_allow_permissions(allow_elem):
         pid = qualified_pid(workflow_name, xas(allow_elem, "permission"))
         for role in qualified_roles(xas(allow_elem, "roles")):
@@ -188,31 +185,28 @@ def get_permissions_from_allows(workflow_name, elem, like_permissions=[]):
     perms = []
     for allow in elem.iterchildren("allow"):
         for allow_perm in gen_allow_permissions(allow):
-            check_add_assign_permission(workflow_name, perms, like_permissions, allow_perm)
+            check_add_assign_permission(workflow_name, perms, allow_perm)
     return perms
 
-# !+ drop like_permissions
-def check_add_assign_permission(workflow_name, permissions, like_permissions, (assignment, p, r)):
+def check_add_assign_permission(workflow_name, permissions, (assignment, p, r)):
     """Check that permission (assignment==GRANT) may be added to list of 
     permissions (assignments) -- a permission assignment should not be 
     duplicated i.e. may be granted or denied ONCE, and adher to permission 
     mixing constraints. A permission assignment may be both global or local.
     """
-    # we only GRANT permissions
-    #!+NO_LIKE_STATE_NO_DENIES_r10140 assert assignment == GRANT, (assignment, p, r)
+    # we only "allow" permissions
+    assert assignment == GRANT, (assignment, p, r)
     # check that current permissions list do not GRANT/DENY same pid->role.
     for perm in [(GRANT, p, r), (DENY, p, r)]:
         assert perm not in permissions, "Workflow [%s] state [%s] " \
             "duplicated or conflicting state permission: (%s, %s, %s)" % (
                 workflow_name, state_id, assignment, p, r)
-        if perm in like_permissions:
-            like_permissions.remove(perm)
     permissions.append((assignment, p, r))
 
 #
 
 @bungeni_custom_errors
-def load(type_key, file_key, workflow_name,
+def load(file_key, workflow_name,
         path_custom_workflows=capi.get_path_for("workflows")
     ):
     """ (type_key:str, file_key:str, workflow_name:str, 
@@ -222,15 +216,15 @@ def load(type_key, file_key, workflow_name,
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
-    return _load(type_key, workflow_name, etree.fromstring(open(file_path).read()))
+    workflow_doc = etree.fromstring(open(file_path).read())
+    return _load(workflow_name, workflow_doc)
 
-def _load(type_key, workflow_name, workflow):
-    """ (type_key:str, workflow_name:str, workflow:etree_doc) -> Workflow
+def _load(workflow_name, workflow):
+    """ (workflow_name:str, workflow:etree_doc) -> Workflow
     """
     # !+ @title, @description
     transitions = []
     states = []
-    wuids = set() # unique IDs in this XML workflow file
     note = xas(workflow, "note")
     allowed_tags = xas(workflow, "tags", "").split()
     
@@ -248,18 +242,22 @@ def _load(type_key, workflow_name, workflow):
         """Ensure that ID values are unique within the same XML doc scope.
         """
         m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, workflow_name)
-        assert id is not None, "%s -- id may not be None" % (m)
-        assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
-        assert id not in wuids, "%s -- id not unique in workflow document" % (m)
-        wuids.add(id)
+        #!+RNC 
+        #assert id is not None, "%s -- id may not be None" % (m)
+        # only letters, numbers and "_" char i.e. no whitespace or "-"
+        #ID_RE = re.compile("^[\w\d_]+$")
+        #assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
+        assert id not in validate_id.wuids, "%s -- id not unique in workflow document" % (m)
+        validate_id.wuids.add(id)
+    validate_id.wuids = set() # unique IDs in this XML workflow file
     
-    def get_like_state(state_id):
+    def get_from_state(state_id):
         if state_id is None:
             return
         for state in states:
             if state.id == state_id:
                 return state
-        raise ValueError("Invalid value: like_state=%r" % (state_id))
+        raise ValueError("Invalid value: permissions_from_state=%r" % (state_id))
     
     def check_not_global_grant(pid, role):
         # ensure global and local assignments are distinct
@@ -321,7 +319,7 @@ def _load(type_key, workflow_name, workflow):
         feature_name = xas(f, "name")
         assert feature_name, "Workflow %r feature must define @name" % (workflow_name)
         # @enabled
-        feature_enabled = xab(f, "enabled", True)
+        feature_enabled = xab(f, "enabled")
         # !+ archetype/feature inter-dep; should be part of feature descriptor
         if feature_enabled and feature_name == "version":
             assert "audit" in [ fe.name for fe in features if fe.enabled ], \
@@ -372,81 +370,60 @@ def _load(type_key, workflow_name, workflow):
         
         # @tags
         tags = xas(s, "tags", "").split()
-        # @like_state, permissions
+        # @permissions_from_state
         permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
-        # state.@like_state : to reduce repetition and enhance maintainibility
-        # of workflow XML files, a state may specify a @like_state attribute to 
-        # inherit all permissions defined by the specified like_state; further
-        # permissions specific to this state may be added, but as these may 
-        # also override inherited permissions we streamline those out so that 
-        # downstream execution (a permission should be granted or denied only 
-        # once per transition to a state).
-        like_permissions = []
-        like_state = get_like_state(xas(s, "like_state"))
-        if like_state:
-            like_permissions.extend(like_state.permissions)
-        # !+PERMISSIONS_FROM_STATE rename and change meaning of like_state to 
-        # not allow ANY overrides
-        
-        # !+NO_LIKE_STATE 
-        # (within same state) a deny is *always* executed after a *grant*
-        for i, assign in enumerate(["allow", "deny"]):
-            for p in s.iterchildren(assign):
-                pid = qualified_pid(workflow_name, xas(p, "permission"))
-                roles = qualified_roles(xas(p, "roles"))
-                for role in roles:
-                    check_add_assign_permission(workflow_name, permissions, like_permissions, 
-                        (ASSIGNMENTS[i], pid, role))
-                    check_not_global_grant(pid, role)
-        
-        # use permissions from facets
-        used_facets_by_feature = {}
-        for facet in s.iterchildren("facet"):
-            ref = xas(facet, "ref")
-            assert ref is not None, "State %r facet must specify a ref" % (state_id)
-            feature_name, facet_name = ref.split(".", 1)
-            feature_name = feature_name if feature_name else None # "" -> None
-            # feature_name is None -> "workflow" facets
-            assert feature_name not in used_facets_by_feature, \
-                "Duplicate facet %r for feature %r in state %r" % (facet_name, feature_name, state_id)
-            assert facet_name, \
-                "Facet %r in state %r must specify a valid facet name" % (facet_name, state_id)
-            if feature_name is None:
-                facet_seq = workflow_facets
-            else:
-                facet_seq = get_named(feature_name, features).facets
-            used_facets_by_feature[feature_name] = get_named(facet_name, facet_seq)
-            assert used_facets_by_feature[feature_name] is not None, \
-                "No facet %r found (used in state %r)" % (facet_name, state_id)
-        
-        
-        def add_facet_permissions(used_facets_by_feature, feature):
-            if feature.name in used_facets_by_feature:
-                facet = used_facets_by_feature[feature.name]
-                perms_to_add = facet.permissions
-            else:
-                default_facet = feature.get_default_facet()
-                perms_to_add = []
-                if default_facet is not None:
-                    perms_to_add = default_facet.permissions
-            for perm in perms_to_add:
-                check_add_assign_permission(workflow_name, permissions, like_permissions, perm)
-                check_not_global_grant(perm[1], perm[2])
-        
-        # first, assimilate permissions workflow facets (the None feature)
-        add_facet_permissions(used_facets_by_feature, none_feature)
-        # then from facets from all enabled features
-        for feature in features:
-            if feature.enabled:
-                add_facet_permissions(used_facets_by_feature, feature)
-            else:
+        # state.@permissions_from_state : to reduce repetition and enhance 
+        # maintainibility of workflow XML files, a state may inherit ALL 
+        # permissions defined by the specified state. NO other permissions 
+        # may be specified by this state. 
+        from_state = get_from_state(xas(s, "permissions_from_state"))
+        if from_state:
+            permissions.extend(from_state.permissions)
+        else:
+            # use permissions from facets
+            used_facets_by_feature = {}
+            for facet in s.iterchildren("facet"):
+                ref = xas(facet, "ref")
+                assert ref is not None, "State %r facet must specify a ref" % (state_id)
+                feature_name, facet_name = ref.split(".", 1)
+                feature_name = feature_name if feature_name else None # "" -> None
+                # feature_name is None -> "workflow" facets
+                assert feature_name not in used_facets_by_feature, \
+                    "Duplicate facet %r for feature %r in state %r" % (facet_name, feature_name, state_id)
+                assert facet_name, \
+                    "Facet %r in state %r must specify a valid facet name" % (facet_name, state_id)
+                if feature_name is None:
+                    facet_seq = workflow_facets
+                else:
+                    facet_seq = get_named(feature_name, features).facets
+                used_facets_by_feature[feature_name] = get_named(facet_name, facet_seq)
+                assert used_facets_by_feature[feature_name] is not None, \
+                    "No facet %r found (used in state %r)" % (facet_name, state_id)
+            
+            def add_facet_permissions(used_facets_by_feature, feature):
                 if feature.name in used_facets_by_feature:
-                    log.warn("State %r specifies facet for disabled feature %r", 
-                        state_id, feature.name)
+                    facet = used_facets_by_feature[feature.name]
+                    perms_to_add = facet.permissions
+                else:
+                    default_facet = feature.get_default_facet()
+                    perms_to_add = []
+                    if default_facet is not None:
+                        perms_to_add = default_facet.permissions
+                for perm in perms_to_add:
+                    check_add_assign_permission(workflow_name, permissions, perm)
+                    check_not_global_grant(perm[1], perm[2])
+            
+            # first, assimilate permissions workflow facets (the None feature)
+            add_facet_permissions(used_facets_by_feature, none_feature)
+            # then from facets from all enabled features
+            for feature in features:
+                if feature.enabled:
+                    add_facet_permissions(used_facets_by_feature, feature)
+                else:
+                    if feature.name in used_facets_by_feature:
+                        log.warn("State %r specifies facet for disabled feature %r", 
+                            state_id, feature.name)
         
-        if like_state:
-            # splice any remaining like_permissions at beginning of permissions
-            permissions[0:0] = like_permissions
         # states
         state_title = xas(s, "title")
         naming.MSGIDS.add(state_title)
@@ -458,7 +435,6 @@ def _load(type_key, workflow_name, workflow):
                 xab(s, "obsolete"),
             )
         )
-    
     
     STATE_IDS = [ s.id for s in states ]
     

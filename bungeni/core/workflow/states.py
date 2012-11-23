@@ -431,25 +431,11 @@ class Workflow(object):
                     "with permissions_from_parent may not specify any own " \
                     "permissions" % (self.name, s.id)
                 continue
-            '''!+NO_LIKE_STATE
-            assert len(s.permissions) == num_prs, \
-                "Workflow state [%s -> %s] does not explicitly set same " \
-                "permissions used across other states... " \
-                "\nTHIS:\n  %s\nOTHER:\n  %s" % (self.name, s.id, 
-                    "\n  ".join([str(p) for p in s.permissions]),
-                    "\n  ".join([str(p) for p in states[0].permissions])
-                )
-            '''
             _permission_role_mixes = {}
             for p in s.permissions:
                 perm, role = p[1], p[2]
                 # for each perm, build list of roles it is set to
                 _permission_role_mixes.setdefault(perm, []).append(role)
-                '''!+NO_LIKE_STATE
-                assert (perm, role) in prs, \
-                    "Workflow state [%s -> %s] defines an unexpected " \
-                    "permission: %s" % (self.name, s.id, p)
-                '''
             for perm, roles in _permission_role_mixes.items():
                 # ensure no duplicates (also checked when reading xml)
                 assert len(roles) == len(set(roles)), "Workflow [%s] " \
