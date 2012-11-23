@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Bungeni Parliamentary Information System - http://www.bungeni.org/
+  Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+  Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+  
+  RNC Schema for Bungeni Workflow XML Format
+  Created: Mario Ruggier, 22-nov-2012
+  
+  Note: Always modify the RNC file - the RNG version is auto-derived from it:
+  one way to auto-derive workflow.rng from this file is:
+    java -jar trang.jar -I rnc -O rng workflow.rnc workflow.rng
+  
+  $Id$
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <ref name="WORKFLOW"/>
+  </start>
+  <define name="WORKFLOW">
+    <element name="workflow">
+      <attribute name="title"/>
+      <attribute name="description"/>
+      <optional>
+        <attribute name="tags">
+          <ref name="SSV_symbol"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- declare any (system-defined) tags used in workflow -->
+        <attribute name="note"/>
+      </optional>
+      <optional>
+        <attribute name="permission_actions">
+          <ref name="SSV"/>
+        </attribute>
+      </optional>
+      <zeroOrMore>
+        <!--
+          type-relative permission actions
+          i.e. each included action allowed to be in the form [type_key].{Action}, 
+          with the optional type_key defaulting to the type_key of the type 
+          "owning" this workflow.
+        -->
+        <ref name="ALLOW"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="FEATURE"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="FACET"/>
+      </zeroOrMore>
+      <oneOrMore>
+        <ref name="STATE"/>
+      </oneOrMore>
+      <oneOrMore>
+        <ref name="TRANSITION"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="ALLOW">
+    <element name="allow">
+      <attribute name="permission"/>
+      <optional>
+        <attribute name="roles">
+          <ref name="SSV"/>
+        </attribute>
+      </optional>
+    </element>
+  </define>
+  <define name="FEATURE">
+    <element name="feature">
+      <attribute name="name">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <attribute name="enabled">
+        <data type="boolean"/>
+      </attribute>
+      <zeroOrMore>
+        <element name="parameter">
+          <!-- !+ name by feature -->
+          <attribute name="name">
+            <ref name="SYMBOL_NAME"/>
+          </attribute>
+          <attribute name="value"/>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="FACET"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="FACET">
+    <element name="facet">
+      <attribute name="name">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <optional>
+        <attribute name="default">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <zeroOrMore>
+        <!-- default:false, may be true only once -->
+        <ref name="ALLOW"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="STATE">
+    <element name="state">
+      <attribute name="id">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <attribute name="title"/>
+      <optional>
+        <attribute name="version">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- default:false -->
+        <attribute name="tags">
+          <ref name="SSV_symbol"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="note"/>
+      </optional>
+      <optional>
+        <attribute name="obsolete">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <!-- default:false -->
+      <choice>
+        <optional>
+          <!-- if (permissions_from state | permissions_from_parent) -> then NO facets -->
+          <choice>
+            <!-- may have EITHER permissions_from_state OR permissions_from_parent -->
+            <attribute name="permissions_from_state">
+              <ref name="SYMBOL_NAME"/>
+            </attribute>
+            <!-- state.id -->
+            <attribute name="permissions_from_parent">
+              <data type="boolean"/>
+            </attribute>
+          </choice>
+          <!-- default:false -->
+        </optional>
+        <zeroOrMore>
+          <element name="facet">
+            <attribute name="ref">
+              <data type="token" datatypeLibrary=""/>
+            </attribute>
+            <!-- [ {feature.@name} ].{facet.@name} -->
+          </element>
+        </zeroOrMore>
+      </choice>
+    </element>
+  </define>
+  <define name="TRANSITION">
+    <element name="transition">
+      <attribute name="title"/>
+      <attribute name="source">
+        <choice>
+          <ref name="SSV_symbol"/>
+          <empty/>
+        </choice>
+      </attribute>
+      <!-- space separated list of state ids -->
+      <attribute name="destination">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <optional>
+        <!-- state.id -->
+        <attribute name="grouping_unique_sources">
+          <data type="token" datatypeLibrary=""/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- a transition grouping id -->
+        <attribute name="condition">
+          <data type="token" datatypeLibrary=""/>
+        </attribute>
+      </optional>
+      <!-- callable -->
+      <attribute name="trigger">
+        <choice>
+          <value>automatic</value>
+          <value>system</value>
+          <value>manual</value>
+        </choice>
+      </attribute>
+      <optional>
+        <attribute name="roles">
+          <ref name="SSV"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="order">
+          <data type="integer"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- default:0 -->
+        <attribute name="require_confirmation">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- default:false -->
+        <attribute name="note"/>
+      </optional>
+    </element>
+  </define>
+  <!-- a space-separated string value !+pattern for un/qualified permission_actions, roles -->
+  <define name="SSV">
+    <list>
+      <oneOrMore>
+        <data type="token" datatypeLibrary=""/>
+      </oneOrMore>
+    </list>
+  </define>
+  <!-- a space-separated VALID SYMBOLs value -->
+  <define name="SSV_symbol">
+    <list>
+      <oneOrMore>
+        <ref name="SYMBOL_NAME"/>
+      </oneOrMore>
+    </list>
+  </define>
+  <!--
+    a valid symbol name e.g. in python - "^[\w\d_]+$"
+    only letters, numbers and "_" char i.e. no whitespace or "-" or "." etc.
+  -->
+  <define name="SYMBOL_NAME">
+    <data type="string">
+      <param name="pattern">[\w\d_]+</param>
+    </data>
+  </define>
+</grammar>

@@ -18,6 +18,7 @@ from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.schema import WORKFLOW_SCHEMA
 from bungeni.utils import naming, misc
 
 #
@@ -33,11 +34,6 @@ trigger_value_map = {
     "automatic": interfaces.AUTOMATIC,
     "system": interfaces.SYSTEM
 }
-
-FEATURE_ATTRS = ("name", "enabled", "note")
-
-STATE_ATTRS = ("id", "title", "version", "permissions_from_state", "tags", 
-    "note", "permissions_from_parent", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
 TRANS_ATTRS_OPTIONALS = ("grouping_unique_sources", "condition", "trigger", 
@@ -114,13 +110,6 @@ def get_named(name, seq):
     for s in seq:
         if s.name == name:
             return s
-
-def assert_valid_attr_names(workflow_name, elem, allowed_attr_names):
-    for key in elem.keys():
-        assert key in allowed_attr_names, \
-            "Workflow [%s]: unknown attribute %s in %s" % (
-                workflow_name, key, etree.tostring(elem))
-
 
 def qualified_permission_actions(permission_type_key, permission_actions):
     """[space-separated-str] -> [(permission_type_key, permission_action)]
@@ -217,6 +206,7 @@ def load(file_key, workflow_name,
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
     workflow_doc = etree.fromstring(open(file_path).read())
+    WORKFLOW_SCHEMA.assertValid(workflow_doc) # raises etree.DocumentInvalid
     return _load(workflow_name, workflow_doc)
 
 def _load(workflow_name, workflow):
@@ -242,11 +232,6 @@ def _load(workflow_name, workflow):
         """Ensure that ID values are unique within the same XML doc scope.
         """
         m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, workflow_name)
-        #!+RNC 
-        #assert id is not None, "%s -- id may not be None" % (m)
-        # only letters, numbers and "_" char i.e. no whitespace or "-"
-        #ID_RE = re.compile("^[\w\d_]+$")
-        #assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
         assert id not in validate_id.wuids, "%s -- id not unique in workflow document" % (m)
         validate_id.wuids.add(id)
     validate_id.wuids = set() # unique IDs in this XML workflow file
@@ -266,22 +251,6 @@ def _load(workflow_name, workflow):
         assert role not in global_proles, ("Workflow [%s] may not mix "
             "global and local granting of a same permission [%s] to a "
             "same role [%s].") % (workflow_name, pid, role)
-
-
-    # top-level child ordering !+ move "allow" to before "features"
-    grouping, allowed_child_ordering = 0, (
-        "allow", "feature", "facet", "state", "transition")
-    for child in workflow.iterchildren():
-        if not isinstance(child.tag, basestring):
-            # ignore comments
-            continue
-        while child.tag != allowed_child_ordering[grouping]:
-            grouping += 1
-            assert grouping < len(allowed_child_ordering), \
-                "Workflow [%s] element <%s> %s not allowed " \
-                "here -- element order must respect: %s" % (
-                    workflow_name, child.tag, child.items(), allowed_child_ordering)
-    
     
     # permission_actions -> permissions for this type
     for (key, permission_action) in qualified_permission_actions(
@@ -290,6 +259,7 @@ def _load(workflow_name, workflow):
         pid = "bungeni.%s.%s" % (key, permission_action)
         title = "%s %s" % (
             permission_action, naming.split_camel(naming.model_name(key)))
+        # !+ add to a Workflow.defines_permissions list
         ZCML_LINES.append(
             '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, title))
     
@@ -301,6 +271,7 @@ def _load(workflow_name, workflow):
         global_pid_roles.setdefault(pid, []).append(role)
         assert setting and pid and role, \
             "Global grant must specify valid permission/role"
+        # !+ add to a Workflow.global_grants list
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
         # no real need to check that the permission and role of a global grant 
@@ -314,7 +285,6 @@ def _load(workflow_name, workflow):
     # features
     features = []
     for f in workflow.iterchildren("feature"):
-        assert_valid_attr_names(workflow_name, f, FEATURE_ATTRS)
         # @name
         feature_name = xas(f, "name")
         assert feature_name, "Workflow %r feature must define @name" % (workflow_name)
@@ -346,7 +316,6 @@ def _load(workflow_name, workflow):
     
     # states
     for s in workflow.iterchildren("state"):
-        assert_valid_attr_names(workflow_name, s, STATE_ATTRS)
         # @id
         state_id = xas(s, "id")
         assert state_id, "Workflow State must define @id"
@@ -357,8 +326,8 @@ def _load(workflow_name, workflow):
         if xas(s, "version") is not None:
             make_version = xab(s, "version")
             if make_version is None:
-                raise ValueError('Invalid state value [version="%s"]' % (
-                        s.get("version")))
+                raise ValueError("Invalid state value [version=%r]" % (
+                    s.get("version")))
             if make_version:
                 state_actions.append(ACTIONS_MODULE.create_version)
         # state-id-inferred action - if "actions" module defines an action for
@@ -413,7 +382,7 @@ def _load(workflow_name, workflow):
                     check_add_assign_permission(workflow_name, permissions, perm)
                     check_not_global_grant(perm[1], perm[2])
             
-            # first, assimilate permissions workflow facets (the None feature)
+            # first, assimilate permissions from workflow-level facets (the None feature)
             add_facet_permissions(used_facets_by_feature, none_feature)
             # then from facets from all enabled features
             for feature in features:
@@ -440,16 +409,6 @@ def _load(workflow_name, workflow):
     
     # transitions
     for t in workflow.iterchildren("transition"):
-        assert_valid_attr_names(workflow_name, t, TRANS_ATTRS)
-        for key in TRANS_ATTRS_REQUIREDS:
-            if key == "source" and t.get(key) == "":
-                # initial_state, an explicit empty string
-                continue
-            elif xas(t, key) is None:
-                raise SyntaxError('No required "%s" attribute in %s' % (
-                    key, etree.tostring(t)))
-        
-        # title
         title = xas(t, "title")
         naming.MSGIDS.add(title)
         # sources, empty string -> initial_state
