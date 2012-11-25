@@ -41,7 +41,7 @@ grammar {
         attribute enabled { xsd:boolean },
         
         element parameter { # !+ name by feature
-            attribute name { SYMBOL_NAME }, 
+            attribute name { SYMBOL_NAME }, # !+ unique name per feature
             attribute value { text }
         }*,
         FACET*
@@ -92,9 +92,10 @@ grammar {
     # a space-separated VALID SYMBOLs value
     SSV_symbol = list { SYMBOL_NAME+ }
     
-    # a valid symbol name e.g. in python - "^[\w\d_]+$"
-    # only letters, numbers and "_" char i.e. no whitespace or "-" or "." etc.
-    SYMBOL_NAME = xsd:string { pattern="[\w\d_]+" }
+    # a valid programming language symbol name e.g. in python this means must 
+    # start a letter or "_" char, and then contain zeror or more of letters, 
+    # numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
+    SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][\w_]*" }
 
 }
 

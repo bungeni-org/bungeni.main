@@ -206,6 +206,7 @@ def load(file_key, workflow_name,
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
     workflow_doc = etree.fromstring(open(file_path).read())
+    log.info("WORKFLOW_SCHEMA validating file: %s", file_path)
     WORKFLOW_SCHEMA.assertValid(workflow_doc) # raises etree.DocumentInvalid
     return _load(workflow_name, workflow_doc)
 

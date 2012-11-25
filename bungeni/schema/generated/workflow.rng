@@ -80,6 +80,7 @@
           <attribute name="name">
             <ref name="SYMBOL_NAME"/>
           </attribute>
+          <!-- !+ unique name per feature -->
           <attribute name="value"/>
         </element>
       </zeroOrMore>
@@ -231,12 +232,13 @@
     </list>
   </define>
   <!--
-    a valid symbol name e.g. in python - "^[\w\d_]+$"
-    only letters, numbers and "_" char i.e. no whitespace or "-" or "." etc.
+    a valid programming language symbol name e.g. in python this means must 
+    start a letter or "_" char, and then contain zeror or more of letters, 
+    numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
   -->
   <define name="SYMBOL_NAME">
     <data type="string">
-      <param name="pattern">[\w\d_]+</param>
+      <param name="pattern">[a-zA-Z_][\w_]*</param>
     </data>
   </define>
 </grammar>
