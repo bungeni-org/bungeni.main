@@ -33,7 +33,7 @@ grammar {
     
     ALLOW = element allow {
         attribute permission { text }, 
-        attribute roles { SSV }?
+        attribute roles { SSV }
     }
     
     FEATURE = element feature {

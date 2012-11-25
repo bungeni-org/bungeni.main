@@ -61,11 +61,9 @@
   <define name="ALLOW">
     <element name="allow">
       <attribute name="permission"/>
-      <optional>
-        <attribute name="roles">
-          <ref name="SSV"/>
-        </attribute>
-      </optional>
+      <attribute name="roles">
+        <ref name="SSV"/>
+      </attribute>
     </element>
   </define>
   <define name="FEATURE">
