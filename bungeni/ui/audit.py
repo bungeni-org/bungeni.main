@@ -298,15 +298,20 @@ class ChangeDataDescriptor(object):
     def columns(self):
         return [
             listing.related_user_name_column("user_id", _("user")),
-            column.GetterColumn(title="date_active",
+            column.GetterColumn(name="date_active",
+                title=_("audit_column_date_active", "date active"),
                 getter=lambda i,f: self.date_formatter.format(i.date_active)),
-            column.GetterColumn(title="object", 
+            column.GetterColumn(name="object",
+                title=_("audit_column_object", "object"), 
                 getter=lambda i,f: get_auditable_type_key(i)),
-            GetterColumn(title="description", 
+            GetterColumn(name="description",
+                title=_("audit_column_description", "description"), 
                 getter=lambda i,f: format_description(i, self.head)),
-            column.GetterColumn(title="note",
+            column.GetterColumn(name="note",
+                title=_("audit_column_note", "note"),
                 getter=lambda i,f: i.note and translate(i.note) or ""),
-            column.GetterColumn(title="date_audit",
+            column.GetterColumn(name="date_audit",
+                title=_("audit_column_date_audit", "date audit"),
                 getter=lambda i,f: self.date_formatter.format(i.date_audit)),
         ]
 
