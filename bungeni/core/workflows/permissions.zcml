@@ -702,6 +702,7 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <permission id="bungeni.report.Edit" title="Edit Report" />
 <permission id="bungeni.report.Add" title="Add Report" />
 <permission id="bungeni.report.Delete" title="Delete Report" />
+<grant permission="bungeni.report.View" role="bungeni.Authenticated" />
 <grant permission="bungeni.report.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.report.Edit" role="bungeni.Speaker" />
 
