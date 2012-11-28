@@ -1417,7 +1417,7 @@ class DocumentXHTMLTemplateFactory(ReportXHTMLTemplateFactory):
 document_xhtml_template_factory = DocumentXHTMLTemplateFactory()
 
 _i18n_message_factory = _
-class WorkflowedTypesVocabulary(BaseVocabularyFactory):
+class WorkflowedTypeVocabulary(BaseVocabularyFactory):
     """A vocabulary of workflowed types
     """
     def __call__(self, context=None):
@@ -1436,6 +1436,6 @@ class WorkflowedTypesVocabulary(BaseVocabularyFactory):
                     )
                 ))
         return vocabulary.SimpleVocabulary(terms)
-workflowed_types_factory = WorkflowedTypesVocabulary()
-component.provideUtility(workflowed_types_factory, IVocabularyFactory, 
-    "workflowed_types")
+workflowed_type_factory = WorkflowedTypeVocabulary()
+component.provideUtility(workflowed_type_factory, IVocabularyFactory, "workflowed_type")
+

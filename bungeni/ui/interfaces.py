@@ -138,5 +138,5 @@ class ISerializationManager(interface.Interface):
         title=_(u"Object type"),
         description=_(u"Choose the type of object to be serialized."),
         required=True,
-        vocabulary="workflowed_types"
+        vocabulary="workflowed_type"
     )

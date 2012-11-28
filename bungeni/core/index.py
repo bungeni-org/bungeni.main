@@ -68,7 +68,7 @@ def readPDF(buffer):
     return ''
 
 def languages():
-    return getUtility(IVocabularyFactory, "language_vocabulary")(None)
+    return getUtility(IVocabularyFactory, "language")(None)
 
 def date_value(s):
     " date encode a value 20071131"

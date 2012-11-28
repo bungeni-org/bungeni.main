@@ -18,6 +18,7 @@ from bungeni.alchemist.model import (
     show, hide,
     #norm_sorted,
 )
+from bungeni.core.workflow.xmlimport import qualified_roles
 from bungeni.ui.descriptor import field
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.utils import naming, misc
@@ -103,7 +104,7 @@ def localize_descriptors(file_path):
     xml = elementtree.ElementTree.fromstring(misc.read_file(file_path))
     # make the value of <ui.@roles> as *the* bungeni default list of roles
     global ROLES_DEFAULT
-    Field._roles[:] = xml.get("roles", ROLES_DEFAULT).split()
+    Field._roles[:] = qualified_roles(xml.get("roles", ROLES_DEFAULT))
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
     
@@ -153,7 +154,7 @@ def new_descriptor_fields(edescriptor):
         clocs = []
         for cloc_elem in f_elem.getchildren():
             modes = xas(cloc_elem, "modes")
-            roles = xas(cloc_elem, "roles") # ROLES_DEFAULT
+            roles = qualified_roles(xas(cloc_elem, "roles", ROLES_DEFAULT))
             if cloc_elem.tag == "show":
                 clocs.append(show(modes=modes, roles=roles))
             elif cloc_elem.tag == "hide":

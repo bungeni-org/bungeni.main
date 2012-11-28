@@ -178,7 +178,7 @@ def F(name=None, label=None, description=None,
             localizable=[ show("view edit add"), hide("listing"), ]
             value_type="language",
             render_type="single_select",
-            vocabulary="language_vocabulary"
+            vocabulary="language"
         )
     
     will be the "user-oriented" equivalent way to define the following Field:
@@ -191,7 +191,7 @@ def F(name=None, label=None, description=None,
                 hide("listing"), 
             ]
             property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary"
+                vocabulary="language"
             ),
             add_widget=widgets.LanguageLookupWidget,
         )

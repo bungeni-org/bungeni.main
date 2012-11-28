@@ -41,7 +41,7 @@ class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
     )
     language = zope.schema.Choice(title=_(u"Language"),
         description=_(u"Language"),
-        vocabulary="language_vocabulary",
+        vocabulary="language",
         default=get_default_language(),
         required = True
     )

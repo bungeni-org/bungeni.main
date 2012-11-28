@@ -87,8 +87,7 @@ class LanguageVocabulary(object):
         return SimpleVocabulary(items)
 
 language_vocabulary_factory = LanguageVocabulary()
-component.provideUtility(language_vocabulary_factory, IVocabularyFactory, 
-    "language_vocabulary")
+component.provideUtility(language_vocabulary_factory, IVocabularyFactory, "language")
 
 class CurrentLanguageVocabulary(LanguageVocabulary):
     def __call__(self, context):

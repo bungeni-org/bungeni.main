@@ -61,7 +61,7 @@ def LanguageField(name="language",
         localizable=localizable,
         value_type="language",
         render_type="single_select",
-        vocabulary="language_vocabulary",
+        vocabulary="language",
     )
     return f
 

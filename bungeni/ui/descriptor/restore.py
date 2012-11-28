@@ -32,6 +32,19 @@ def get_defined_roles():
     return [ name for name, role in getUtilitiesFor(IRole)
         if name not in system_roles ]
 
+def serialize_roles(roles):
+    """(roles:[qualified_role_id] -> space-separated-str of names
+    Reduce each "bungeni.Role" or ".Role" to "Role".
+    """
+    names = []
+    for name in roles:
+        if name.startswith("bungeni."):
+            name = name[8:]
+        elif name.startswith("."):
+            name = name[1:]
+        names.append(name)
+    return " ".join(names)
+
 
 def localizable_descriptor_classes(module):
     """A generator of localizable descriptor classes contained in module.
@@ -57,7 +70,7 @@ def serialize_loc(loc, depth=3, localizable_modes=[]):
         acc.append("""%s<%s modes="%s" />""" % (ind, tag, modes))
     else:
         acc.append("""%s<%s modes="%s" roles="%s" />""" % (
-            ind, tag, modes, roles))
+            ind, tag, modes, serialize_roles(roles.split())))
     return acc
 
 def serialize_field(f, depth=2):
@@ -132,14 +145,14 @@ def serialize_module(module, depth=0):
     
     acc = []
     ind = INDENT * depth
-    roles = " ".join(get_defined_roles())
+    roles = get_defined_roles()
     if _acc:
-        acc.append('%s<ui roles="%s">' % (ind, roles))
+        acc.append('%s<ui roles="%s">' % (ind, serialize_roles(roles)))
         acc.extend(_acc)
         acc.append("")
         acc.append("%s</ui>" % (ind))
     else:
-        acc.append('%s<ui roles="%s" />' % (ind, roles))
+        acc.append('%s<ui roles="%s" />' % (ind, serialize_roles(roles)))
     acc.append("") # blank line at end of file
     acc.append("")
     return acc
