@@ -325,6 +325,7 @@ class OfficeRoleFactory(BaseVocabularyFactory):
         roles = getUtilitiesFor(IRole, app)
         for name, role in roles:
             # Roles that must not be assigned to users in an office
+            # !+ need better role qualifiers, to make this dynamic from conf
             if name in ["bungeni.Anonymous",
                         "bungeni.Authenticated",
                         "bungeni.Owner",
@@ -336,7 +337,7 @@ class OfficeRoleFactory(BaseVocabularyFactory):
                         "bungeni.PoliticalGroupMember",
                         "bungeni.Government",
                         "bungeni.CommitteeMember",
-                        ]:
+                ]:
                 continue
             if not ISubRoleAnnotations(role).is_sub_role:
                 terms.append(vocabulary.SimpleTerm(name, name, name))
@@ -675,21 +676,34 @@ class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
 parliament_member = MemberOfParliamentSource("user_id")
 component.provideUtility(parliament_member, IVocabularyFactory, "parliament_member")
 
-
+# !+rename MemberOfParliamentOrMPDelegatorSource ?
 class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
-    """A logged in User will only be able to choose himself if he is a member
+    """MemberOfParliamentSource filtered down to either:
+    a) EITHER only include only those MPs who have delegated to current logged 
+       in user if any (and, current user, if an MP, must also be included as
+       one of the delegators)
+    b) OR, if no-one has delegated to current logged in user, then include all MPs !
+    
+    !+DELEGATION_TO_CLERK consequence of above logic is that if an MP delegates 
+    to the Clerk, the Clerk "loses" the full list of MPs!
+    
+    A logged in User will only be able to choose himself if he is a member
     of parliament or those Persons who gave him rights to act on his behalf.
     """
     def constructQuery(self, context):
         mp_query = super(MemberOfParliamentDelegationSource, 
-                self).constructQuery(context)
+            self).constructQuery(context)
         user_id = utils.get_db_user_id()
         if user_id:
-            user_ids = [user_id]
-            for result in delegation.get_user_delegations(user_id):
-                user_ids.append(result.user_id)
+            user_ids = [ ud.user_id 
+                for ud in delegation.get_user_delegations(user_id) ]
+            # current user must also be considered as (a potential MP) delegator
+            if user_id not in user_ids:
+                user_ids.append(user_id)
+            # the filtered list of MP delegators
             query = mp_query.filter(
                 domain.MemberOfParliament.user_id.in_(user_ids))
+            # !+DELEGATION_TO_CLERK in this case query.all() will not be empty!
             if len(query.all()) > 0:
                 return query
         return mp_query
@@ -993,7 +1007,8 @@ class UserNotStaffSource(SpecializedSource):
     """ all users that are NOT staff """
 
 class SittingAttendanceSource(SpecializedSource):
-    """ all members of the group which do not have an attendance record yet"""
+    """All members of this group who do not have an attendance record yet.
+    """
     def constructQuery(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)

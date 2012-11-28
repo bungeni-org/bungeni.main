@@ -93,7 +93,7 @@ grammar {
     SSV_symbol = list { SYMBOL_NAME+ }
     
     # a valid programming language symbol name e.g. in python this means must 
-    # start a letter or "_" char, and then contain zeror or more of letters, 
+    # start a letter or "_" char, and then contain zero or more of letters, 
     # numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
     SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][\w_]*" }
 
