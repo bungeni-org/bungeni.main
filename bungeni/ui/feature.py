@@ -95,6 +95,17 @@ def setup_customization_ui():
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")
         
+        # plone content menu (for custom types)
+        # !+ doc-types were previously being layered on IWorkspaceOrAdminSectionLayer
+        # !+ there was previously no reg for IReportConatiner and one of the member
+        # containers, plus there was inconsistency in permission for 
+        # IOfficeMemberContainer (was bungeni.office.Add).
+        register_menu_item(type_key, "Add", "Add %s..." % (type_title), 
+            container_interface_qualname,
+            "./add",
+            menu="plone_contentmenu",
+            layer="bungeni.ui.interfaces.IAdminSectionLayer")
+        
         # workspace
         if ti.workflow.has_feature("workspace"):
             log.debug("Setting up UI for feature %r for type %r", "workspace", type_key)
@@ -105,6 +116,16 @@ def setup_customization_ui():
             action = "../../draft/add_{k}".format(k=type_key)
             register_menu_item(type_key, "Add", type_title, "*", action,
                 menu="workspace_add_parliamentary_content", order=7)
+            
+            # add menu item -> for admin ?!
+            # !+ why a duplicated (almost identical) menu item for admin?
+            # !+ criteria here is having workspace enabled... but, cirterion 
+            # should be simply that of being "parliamentary"? Do we need to 
+            # formalize this distinction?
+            # !+ need a formal "container attribute" naming convention!
+            action = "{k}/add".format(k=naming.plural(type_key)) 
+            register_menu_item(type_key, "Add", type_title, "*", action,
+                menu="context_add_parliamentary_content", order=7)
             
             # edit menu item
             # !+ edit/delete used to be on layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"

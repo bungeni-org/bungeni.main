@@ -69,7 +69,7 @@
         class=".menu.CalendarContentMenu"
     />
     <browser:menu id="context_add_parliamentary_content"
-        title="The 'Add' menu - allows user to add content"
+        title="The 'Add' menu - allows user to add content !+ for ADMIN only?"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
     <browser:menu id="context_translate"
@@ -115,6 +115,7 @@
         permission="bungeni.ui.workspace.View"
         submenu="workspace_add_parliamentary_content"
     />
+    <!-- !+BUNGENI_CUSTOM -->
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IParliament"
         title="Add parliamentary content..."
@@ -161,13 +162,6 @@
         permission="bungeni.political_group_member.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="61"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IPoliticalGroupMemberContainer"
-        title="Add political group member..."
-        action="./add"
-        permission="bungeni.political_group_member.Add"
-        layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ICommittee"
@@ -465,40 +459,12 @@
     />
     
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IParliamentContainer"
-        title="Add parliament..."
-        action="./add"
-        permission="bungeni.parliament.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.ICommitteeContainer"
-        title="Add committee..."
-        action="./add"
-        permission="bungeni.committee.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.ISessionContainer"
         title="Add session..."
         action="./add"
         permission="bungeni.session.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IGovernmentContainer"
-        title="Add government..."
-        action="./add"
-        permission="bungeni.government.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IMemberOfParliamentContainer"
-        title="Add MP..."
-        action="./add"
-        permission="bungeni.member_of_parliament.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IMemberOfParliament"
         action="edit"
@@ -517,39 +483,11 @@
     />
       
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IOfficeContainer"
-        title="Add office..."
-        action="./add"
-        permission="bungeni.office.Add"
-        layer=".interfaces.IAdminSectionLayer"
-     />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IPoliticalGroupContainer"
-        title="Add political group..."
-        action="./add"
-        permission="bungeni.political_group.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IMinistryContainer"
-        title="Add ministry..."
-        action="./add"
-        permission="bungeni.ministry.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IUserContainer"
         title="Add user..."
         action="./add"
         permission="bungeni.user.Add"
         layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.ICommitteeMemberContainer"
-        title="Add committee member..."
-        action="./add"
-        permission="bungeni.committee_member.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ICommitteeMember"
@@ -566,27 +504,6 @@
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.member_of_parliament.Delete"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.ICommitteeStaffContainer"
-        title="Add committee staff..."
-        action="./add"
-        permission="bungeni.committee_staff.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IMinisterContainer"
-        title="Add minister..."
-        action="./add"
-        permission="bungeni.minister.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IOfficeMemberContainer"
-        title="Add office member..."
-        action="./add"
-        permission="bungeni.office.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <!-- !+ZCML(mr, nov-2010) Individual menu items are declared specific per 
             view of an IBungeniGroup subtype
@@ -688,21 +605,6 @@
         permission="bungeni.signatory.Delete"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.ITabledDocumentContainer"
-        title="Add tabled document..."
-        action="./add"
-        permission="bungeni.tabled_document.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IAgendaItemContainer"
-        title="Add agenda item..."
-        action="./add"
-        permission="bungeni.agenda_item.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    
     <!-- !+ADD_CONTEXT
   <browser:menuItem
      menu="plone_contentmenu"
@@ -734,20 +636,6 @@
          cannot use browser:menuItems and specify only layer in the sub items !
     -->
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IQuestionContainer"
-        permission="bungeni.question.Add"
-        title="Add question..."
-        action="./add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IMotionContainer"
-        title="Add motion..."
-        action="./add"
-        permission="bungeni.motion.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IHeadingContainer"
         title="Add heading..."
         action="./add"
@@ -761,14 +649,6 @@
         permission="bungeni.venue.Add"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
      />
-     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IBillContainer"
-        title="Add bill..."
-        action="./add"
-        permission="bungeni.bill.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IFeatureAttachment"
         title="Add file..."
@@ -905,38 +785,6 @@
     />
 
     <!-- MENU ITEMS -->
-    
-    <!-- context_add_parliamentary_content sub-menu -->
-    <browser:menuItem menu="context_add_parliamentary_content"
-        for="*"
-        title="Bill"
-        action="bills/add"
-        permission="bungeni.bill.Add"
-    />
-    <browser:menuItem menu="context_add_parliamentary_content"
-        for="*"
-        title="Motion"
-        action="motions/add"
-        permission="bungeni.motion.Add"
-    />
-    <browser:menuItem menu="context_add_parliamentary_content"
-        for="*"
-        title="Question"
-        action="questions/add"
-        permission="bungeni.question.Add"
-    /><!-- this is the one appearing in /workspace/pi -->
-    <browser:menuItem menu="context_add_parliamentary_content"
-        for="*"
-        title="Agenda item"
-        action="agendaitems/add"
-        permission="bungeni.agenda_item.Add"
-    />
-    <browser:menuItem menu="context_add_parliamentary_content"
-        for="*"
-        title="Tabled document"
-        action="tableddocuments/add"
-        permission="bungeni.tabled_document.Add"
-    />
     
     <!--browser:menuItem
      for="bungeni.alchemist.interfaces.IAlchemistContainer"
