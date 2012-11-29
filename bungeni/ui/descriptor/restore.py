@@ -147,6 +147,7 @@ def serialize_module(module, depth=0):
     ind = INDENT * depth
     roles = get_defined_roles()
     if _acc:
+        acc.append('%s<?xml version="1.0" encoding="UTF-8"?>' % (ind))
         acc.append('%s<ui roles="%s">' % (ind, serialize_roles(roles)))
         acc.extend(_acc)
         acc.append("")

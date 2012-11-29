@@ -118,7 +118,7 @@
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IParliament"
         title="Add parliamentary content..."
-        action="add_content"
+        action="add_parliamentary_content"
         permission="bungeni.parliament.View"
         layer=".interfaces.IAdminSectionLayer"
         submenu="context_add_parliamentary_content"
