@@ -8,7 +8,7 @@ from threading import Thread
 from lxml import etree
 from zope import component
 from zope import interface
-from zope.app.component.hooks import getSite
+from bungeni.ui.utils.common import get_application
 from zope.pagetemplate.pagetemplatefile import PageTemplate
 from zope.cachedescriptors.property import CachedProperty
 from bungeni.alchemist import Session
@@ -33,7 +33,7 @@ class BungeniSMTPMailer(object):
 
     @CachedProperty
     def settings(self):
-        return EmailSettings(getSite())
+        return EmailSettings(get_application())
 
     def send(self, msg):
         msg["From"] = self.settings.default_sender
@@ -53,11 +53,12 @@ class BungeniSMTPMailer(object):
         connection.quit()
 
 
-class BungeniDummySMTPMailer(object):
+class BungeniDummySMTPMailer(BungeniSMTPMailer):
 
     interface.implements(IBungeniMailer)
 
     def send(self, msg):
+        msg["From"] = self.settings.default_sender
         log.info("%s -> %s: %s." % (msg["From"], msg["To"], msg.as_string()))
 
 
@@ -134,12 +135,12 @@ class EmailBlock(object):
             element.clear()
         # get defaults
         if not subject:
-            subject = "Item Notification: <span tal:replace=item/title/>"
+            subject = "Item Notification: <span tal:replace='item/title'/>"
             log.warn("Missing subject template for %s:%s. Using default" % (
                     self.message["type"], self.message["status"]))
         if not body:
-            body = "Item <span tal:replace=item/title/>, status :" \
-                "<span tal:replace=item/title/>"
+            body = "Item <span tal:replace='item/title'/>, status :" \
+                "<span tal:replace='item/status'/>"
             log.warn("Missing body template for %s:%s. Using default" % (
                     self.message["type"], self.message["status"]))
         subject_template = EmailTemplate()
@@ -192,6 +193,7 @@ def email_notifications():
         task_thread = Thread(target=email_worker)
         task_thread.daemon = True
         task_thread.start()
+
 
 @register.handler(adapts=(INotificationEvent,))
 def notify_users(event):

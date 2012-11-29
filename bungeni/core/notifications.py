@@ -17,12 +17,14 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap, IRole
 from zope.component.zcml import handler
 from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.utils import core
 from bungeni.core.interfaces import INotificationsUtility, IMessageQueueConfig
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.alchemist import Session
-from bungeni.alchemist.container import contained
-from bungeni.models.utils import get_current_parliament, obj2dict
+from bungeni.models.utils import obj2dict
+from bungeni.models import domain
 import transaction
+
 
 class MessageQueueConfig(object):
 
@@ -123,6 +125,7 @@ def get_mq_connection():
                   "Notifications will not be sent")
         return None
 
+
 def post_commit_publish(status, **kwargs):
     """This is a post-transaction commit hook which sends a message
     to rabbitmq (only if the transaction commits successfully).
@@ -137,7 +140,7 @@ def post_commit_publish(status, **kwargs):
     else:
         log.error("Transaction did not commit successfully. "
             "AMQP message will not be sent"
-        )   
+        )
 
 
 def queue_transition_based_notification(document, event):
@@ -173,6 +176,17 @@ def worker():
     if not connection:
         return
     channel = connection.channel()
+    site_prm = IPrincipalRoleMap(core.get_application())
+
+    def get_prms(document):
+        prms = []
+        prms.append(IPrincipalRoleMap(document))
+        prms.append(site_prm)
+        assigned_groups = getattr(document, "group_assignment", list())
+        if assigned_groups:
+            for group in assigned_groups:
+                prms.append(IPrincipalRoleMap(group))
+        return prms
 
     def callback(channel, method, properties, body):
         notifications_utility = component.getUtility(INotificationsUtility)
@@ -186,14 +200,22 @@ def worker():
         document = session.query(domain_class).get(message["document_id"])
         principal_ids = set()
         if document:
-            prm = IPrincipalRoleMap(contained(
-                    document, get_current_parliament()))
+            prms = get_prms(document)
             for role in roles:
-                principals = prm.getPrincipalsForRole(role)
-                for principal in principals:
-                    principal_ids.add(principal[0])
-        else:
-            pass
+                for prm in prms:
+                    principals = prm.getPrincipalsForRole(role)
+                    for principal in principals:
+                        principal_ids.add(principal[0])
+        group_member_ids = set()
+        for principal_id in principal_ids:
+            if principal_id.startswith("group"):
+                group = session.query(
+                    domain.Group).filter(
+                    domain.Group.group_principal_id == principal_id).one()
+                if group:
+                    for member in group.members:
+                        group_member_ids.add(member.user.login)
+        principal_ids = principal_ids.union(group_member_ids)
         exchange = str(mq_utility.get_message_exchange())
         if principal_ids:
             # create message and send to exchange
@@ -267,7 +289,7 @@ class NotificationsUtility(object):
         self.transition_based[domain_class][state].extend(roles)
 
     def get_transition_based_roles(self, domain_class, state):
-        if domain_class in self.transition_based:
+        if domain_class in self.transition_based.keys():
             if state in self.transition_based[domain_class]:
                 return self.transition_based[domain_class][state]
         return []
@@ -354,4 +376,3 @@ def load_notifications():
         workflow = ti.workflow
         if workflow and workflow.has_feature("notification"):
             load_notification_config("%s.xml" % type_key, ti.domain_model)
-
