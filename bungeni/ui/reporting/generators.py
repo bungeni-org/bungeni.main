@@ -17,6 +17,7 @@ import zope.interface
 from lxml import etree
 from lxml import html
 from tidylib import tidy_fragment
+from datetime import datetime
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 
@@ -30,6 +31,13 @@ from bungeni.ui.reporting.interfaces import IReportGenerator, ReportException
 from bungeni.ui.calendar.data import ExpandedSitting
 
 BUNGENI_REPORTS_NS="http://bungeni.org/reports"
+
+def value_repr(val):
+    #!+REPORTING(mb, Nov-2012) Representation should reuse descriptor
+    #field rendering utilities
+    if type(val) == datetime:
+        return val.isoformat()
+    return unicode(val.__repr__())
 
 def get_element_value(context, name, default=None):
     if name.startswith("dc:"):
@@ -152,7 +160,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
         def process_single_node(node, context, typ, src):
             clean_element(node)
             if typ=="text":
-                node.text = get_element_value(context, src)
+                node.text = value_repr(get_element_value(context, src))
             elif typ=="html":
                 raw_value = get_element_value(context, src, "")
                 if raw_value:
