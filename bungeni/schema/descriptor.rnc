@@ -1,0 +1,154 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+#
+# RNC Schema for Bungeni Descriptor XML Format
+# Created: Mario Ruggier, 28-nov-2012
+# 
+# Note: Always modify the RNC file - the RNG version is auto-derived from it:
+# one way to auto-derive descriptor.rng from this file is:
+#   java -jar trang.jar -I rnc -O rng descriptor.rnc generated/descriptor.rng
+# 
+# $Id$
+
+grammar {
+    include "common.rnc"
+    
+    start = UI
+    
+    UI = element ui {
+        attribute roles { SPACE_SEPARATED_TOKENS }, # (un/qualified) roles
+        
+        DESCRIPTOR+
+    }
+    
+    DESCRIPTOR = element descriptor {
+        attribute name { SYMBOL_NAME }, # type_key
+        attribute archetype { SYMBOL_NAME }?, # an archetype key, custom types MUST specify this
+        attribute order { xsd:integer }?,
+        
+        FIELD*
+    }
+    
+    FIELD = element field {
+        attribute name { SYMBOL_NAME },
+        attribute label { text }?, # !+ should really be required in *UI* fields
+        attribute description { text }?,
+        attribute required { xsd:boolean }?, # default:false
+        attribute value_type { FIELD_VALUE_TYPE }?,
+        attribute render_type { FIELD_RENDER_TYPE }?,
+        attribute vocabulary { VACABULARY_NAME }?, # required for some render_types
+        
+        # each mode token may appear only ONCE in sum of all show/hide elements
+        (
+            element show {
+                attribute modes { list { FORM_MODE+ } },
+                # (un/qualified) roles, not present implies ALL ui.@roles
+                attribute roles { SPACE_SEPARATED_TOKENS }? 
+            }* & 
+            element hide {
+                attribute modes { list { FORM_MODE+ } },
+                # (un/qualified) roles, not present implies ALL ui.@roles
+                attribute roles { SPACE_SEPARATED_TOKENS }? 
+            }*
+        )
+    }
+    
+    
+    # enums
+    
+    FORM_MODE = ("view" | "edit" | "add" | "listing")
+    
+    FIELD_VALUE_TYPE = (
+        "text" |
+        "date" | 
+        "datetime" |
+        "duration" | # !+ this "consumes" 2 columns, so probably have dedicated widget type? entirely 
+        "bool"  | # default: True
+        "number" |
+        "status" |
+        "language" |
+        "vocabulary" |
+        "email" | # "constraint": constraints.check_email
+        "login" | # "min_length": 3, "max_length": 20, "constraint": constraints.check_login
+        "password" |
+        "image" | 
+        "file" | 
+        "user" | 
+        "member" | # !+ should be "archetype generic" e.g. should not assume "member of parliament"
+        "signatory" | # !+
+        "combined_name" | # !+
+        "group"
+    )
+    
+    FIELD_RENDER_TYPE = (
+        "text_line" |
+        "text_box" |
+        "rich_text" |
+        "date" |
+        "datetime" |
+        "bool" |
+        "number" |
+        "image" |
+        "file" |
+        # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
+        "single_select" | # vocabulary
+        "radio" | # vocabulary
+        "tree_text" | # VocabularyTextField,
+        "no_input" # !+
+    )
+    
+    
+    VACABULARY_NAME = (
+        
+        # static 
+        "attachment_type" |
+        "attendance_type" |
+        "doc_type" | # !+ dummy
+        "bill_type" |
+        "change_procedure" |
+        "committee_continuity" |
+        "committee_type" |
+        "event_type" |
+        "gender" |
+        "logical_address_type" |
+        "marital_status" |
+        "member_election_type" |
+        "party" |
+        "postal_address_type" |
+        "question_type" |
+        "representation" |
+        "response_type" |
+        "sitting_activity_types" |
+        "sitting_convocation_types" |
+        "sitting_meeting_types" |
+        "subject_terms" |
+        "yes_no" |
+        
+        # dynamic
+        "language" |
+        "workflow_states" |
+        "workflowed_type" |
+        "user" |
+        "group" |
+        "group_sub_role" |
+        "group_title_types" |
+        "ministry" |
+        "member" |
+        "office_role" |
+        "owner_or_login" |
+        "parliament_member" |
+        "parliament_member_delegation" |
+        "sitting_attendance" |
+        "user_not_mp" |
+        "substitution" |
+        "signatory" |
+        "country" |
+        "parliament" |
+        "report" |
+        "sitting" |
+        "venue"
+    )
+
+}
+

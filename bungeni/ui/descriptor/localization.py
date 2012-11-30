@@ -9,7 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 
 from time import time
-import elementtree.ElementTree
+from lxml import etree
 from bungeni import alchemist
 from bungeni.alchemist.model import (
     #ModelDescriptor,
@@ -21,6 +21,7 @@ from bungeni.alchemist.model import (
 from bungeni.core.workflow.xmlimport import qualified_roles
 from bungeni.ui.descriptor import field
 from bungeni.utils.capi import capi, bungeni_custom_errors
+import bungeni.schema
 from bungeni.utils import naming, misc
 
 # constants 
@@ -101,15 +102,15 @@ def localize_descriptors(file_path):
     """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
     """
     start_time = time()
-    xml = elementtree.ElementTree.fromstring(misc.read_file(file_path))
+    descriptor_doc = bungeni.schema.validate_file_rng("descriptor", file_path)
     # make the value of <ui.@roles> as *the* bungeni default list of roles
     global ROLES_DEFAULT
-    Field._roles[:] = qualified_roles(xml.get("roles", ROLES_DEFAULT))
+    Field._roles[:] = qualified_roles(descriptor_doc.get("roles", ROLES_DEFAULT))
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
     
     localized = []
-    for edescriptor in xml.findall("descriptor"):
+    for edescriptor in descriptor_doc.findall("descriptor"):
         type_key = misc.xml_attr_str(edescriptor, "name")
         try:
             ti = capi.get_type_info(type_key)
@@ -155,14 +156,17 @@ def new_descriptor_fields(edescriptor):
         for cloc_elem in f_elem.getchildren():
             modes = xas(cloc_elem, "modes")
             roles = qualified_roles(xas(cloc_elem, "roles", ROLES_DEFAULT))
-            if cloc_elem.tag == "show":
+            tag = cloc_elem.tag
+            if tag == "show":
                 clocs.append(show(modes=modes, roles=roles))
-            elif cloc_elem.tag == "hide":
+            elif tag == "hide":
                 clocs.append(hide(modes=modes, roles=roles))
-            else:
+            elif isinstance(tag, basestring):
                 raise ValueError(
                     "Unknown directive %r in field %r in descriptor %r" % (
                         cloc_elem.tag, xas(f_elem, "name"), type_key))
+            else:
+                pass # comment, ....
         fields.append(field.F(
                 name=xas(f_elem, "name"),
                 label=xas(f_elem, "label"),

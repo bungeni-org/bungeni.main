@@ -18,7 +18,7 @@ from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.utils.capi import capi, bungeni_custom_errors
-from bungeni.schema import WORKFLOW_SCHEMA
+import bungeni.schema
 from bungeni.utils import naming, misc
 
 #
@@ -205,9 +205,7 @@ def load(file_key, workflow_name,
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
-    workflow_doc = etree.fromstring(open(file_path).read())
-    log.info("WORKFLOW_SCHEMA validating file: %s", file_path)
-    WORKFLOW_SCHEMA.assertValid(workflow_doc) # raises etree.DocumentInvalid
+    workflow_doc = bungeni.schema.validate_file_rng("workflow", file_path)
     return _load(workflow_name, workflow_doc)
 
 def _load(workflow_name, workflow):

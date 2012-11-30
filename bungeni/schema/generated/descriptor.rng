@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Bungeni Parliamentary Information System - http://www.bungeni.org/
+  Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+  Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+  
+  RNC Schema for Bungeni Descriptor XML Format
+  Created: Mario Ruggier, 28-nov-2012
+  
+  Note: Always modify the RNC file - the RNG version is auto-derived from it:
+  one way to auto-derive descriptor.rng from this file is:
+    java -jar trang.jar -I rnc -O rng descriptor.rnc generated/descriptor.rng
+  
+  $Id$
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <include href="common.rng"/>
+  <start>
+    <ref name="UI"/>
+  </start>
+  <define name="UI">
+    <element name="ui">
+      <attribute name="roles">
+        <ref name="SPACE_SEPARATED_TOKENS"/>
+      </attribute>
+      <oneOrMore>
+        <!-- (un/qualified) roles -->
+        <ref name="DESCRIPTOR"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="DESCRIPTOR">
+    <element name="descriptor">
+      <attribute name="name">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <optional>
+        <!-- type_key -->
+        <attribute name="archetype">
+          <ref name="SYMBOL_NAME"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- an archetype key, custom types MUST specify this -->
+        <attribute name="order">
+          <data type="integer"/>
+        </attribute>
+      </optional>
+      <zeroOrMore>
+        <ref name="FIELD"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="FIELD">
+    <element name="field">
+      <attribute name="name">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <optional>
+        <attribute name="label"/>
+      </optional>
+      <optional>
+        <!-- !+ should really be required in *UI* fields -->
+        <attribute name="description"/>
+      </optional>
+      <optional>
+        <attribute name="required">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- default:false -->
+        <attribute name="value_type">
+          <ref name="FIELD_VALUE_TYPE"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="render_type">
+          <ref name="FIELD_RENDER_TYPE"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="vocabulary">
+          <ref name="VACABULARY_NAME"/>
+        </attribute>
+      </optional>
+      <!-- required for some render_types -->
+      <!-- each mode token may appear only ONCE in sum of all show/hide elements -->
+      <interleave>
+        <zeroOrMore>
+          <element name="show">
+            <attribute name="modes">
+              <list>
+                <oneOrMore>
+                  <ref name="FORM_MODE"/>
+                </oneOrMore>
+              </list>
+            </attribute>
+            <optional>
+              <!-- (un/qualified) roles, not present implies ALL ui.@roles -->
+              <attribute name="roles">
+                <ref name="SPACE_SEPARATED_TOKENS"/>
+              </attribute>
+            </optional>
+          </element>
+        </zeroOrMore>
+        <zeroOrMore>
+          <element name="hide">
+            <attribute name="modes">
+              <list>
+                <oneOrMore>
+                  <ref name="FORM_MODE"/>
+                </oneOrMore>
+              </list>
+            </attribute>
+            <optional>
+              <!-- (un/qualified) roles, not present implies ALL ui.@roles -->
+              <attribute name="roles">
+                <ref name="SPACE_SEPARATED_TOKENS"/>
+              </attribute>
+            </optional>
+          </element>
+        </zeroOrMore>
+      </interleave>
+    </element>
+  </define>
+  <!-- enums -->
+  <define name="FORM_MODE">
+    <choice>
+      <value>view</value>
+      <value>edit</value>
+      <value>add</value>
+      <value>listing</value>
+    </choice>
+  </define>
+  <define name="FIELD_VALUE_TYPE">
+    <choice>
+      <value>text</value>
+      <value>date</value>
+      <value>datetime</value>
+      <value>duration</value>
+      <!-- !+ this "consumes" 2 columns, so probably have dedicated widget type? entirely -->
+      <value>bool</value>
+      <!-- default: True -->
+      <value>number</value>
+      <value>status</value>
+      <value>language</value>
+      <value>vocabulary</value>
+      <value>email</value>
+      <!-- "constraint": constraints.check_email -->
+      <value>login</value>
+      <!-- "min_length": 3, "max_length": 20, "constraint": constraints.check_login -->
+      <value>password</value>
+      <value>image</value>
+      <value>file</value>
+      <value>user</value>
+      <value>member</value>
+      <!-- !+ should be "archetype generic" e.g. should not assume "member of parliament" -->
+      <value>signatory</value>
+      <!-- !+ -->
+      <value>combined_name</value>
+      <!-- !+ -->
+      <value>group</value>
+    </choice>
+  </define>
+  <define name="FIELD_RENDER_TYPE">
+    <choice>
+      <value>text_line</value>
+      <value>text_box</value>
+      <value>rich_text</value>
+      <value>date</value>
+      <value>datetime</value>
+      <value>bool</value>
+      <value>number</value>
+      <value>image</value>
+      <value>file</value>
+      <!-- special other user-conf params: "vocabulary" -> "type:vocabulary, required:True" -->
+      <value>single_select</value>
+      <!-- vocabulary -->
+      <value>radio</value>
+      <!-- vocabulary -->
+      <value>tree_text</value>
+      <!-- VocabularyTextField, -->
+      <value>no_input</value>
+    </choice>
+    <!-- !+ -->
+  </define>
+  <define name="VACABULARY_NAME">
+    <choice>
+      <!-- static -->
+      <value>attachment_type</value>
+      <value>attendance_type</value>
+      <value>doc_type</value>
+      <!-- !+ dummy -->
+      <value>bill_type</value>
+      <value>change_procedure</value>
+      <value>committee_continuity</value>
+      <value>committee_type</value>
+      <value>event_type</value>
+      <value>gender</value>
+      <value>logical_address_type</value>
+      <value>marital_status</value>
+      <value>member_election_type</value>
+      <value>party</value>
+      <value>postal_address_type</value>
+      <value>question_type</value>
+      <value>representation</value>
+      <value>response_type</value>
+      <value>sitting_activity_types</value>
+      <value>sitting_convocation_types</value>
+      <value>sitting_meeting_types</value>
+      <value>subject_terms</value>
+      <value>yes_no</value>
+      <!-- dynamic -->
+      <value>language</value>
+      <value>workflow_states</value>
+      <value>workflowed_type</value>
+      <value>user</value>
+      <value>group</value>
+      <value>group_sub_role</value>
+      <value>group_title_types</value>
+      <value>ministry</value>
+      <value>member</value>
+      <value>office_role</value>
+      <value>owner_or_login</value>
+      <value>parliament_member</value>
+      <value>parliament_member_delegation</value>
+      <value>sitting_attendance</value>
+      <value>user_not_mp</value>
+      <value>substitution</value>
+      <value>signatory</value>
+      <value>country</value>
+      <value>parliament</value>
+      <value>report</value>
+      <value>sitting</value>
+      <value>venue</value>
+    </choice>
+  </define>
+</grammar>

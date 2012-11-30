@@ -14,20 +14,29 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.schema")
 
-__all__ = ["WORKFLOW_SCHEMA"]
+__all__ = ["validate_file_rng"]
 
 
-WORKFLOW_SCHEMA = None
+from lxml import etree
+from os.path import join, dirname
+from bungeni.utils import misc
 
-#
 
-def set_WORKFLOW_SCHEMA():
-    from lxml import etree
-    from os.path import join, dirname
+def load_rng(name):
     # we use the auto-derived RNG version of the RNC workflow schema, 
     # as this is what is directly supported by lxml.etree.
-    global WORKFLOW_SCHEMA
-    WORKFLOW_SCHEMA = etree.RelaxNG(
-        etree.parse(open(join(dirname(__file__), "generated/workflow.rng"))))
-set_WORKFLOW_SCHEMA()
+    rng_path = join(dirname(__file__), "generated/%s.rng" % (name))
+    return etree.RelaxNG(etree.parse(open(rng_path)))
+
+RNG = {
+    "workflow": load_rng("workflow"),
+    "descriptor": load_rng("descriptor")
+}
+
+def validate_file_rng(name, file_path):
+    """Load and validate XML file at file_patah, against named RNG schema."""
+    xml_doc = etree.fromstring(misc.read_file(file_path))
+    log.info("RNG %r SCHEMA validating file: %s", name, file_path)
+    RNG[name].assertValid(xml_doc) # raises etree.DocumentInvalid
+    return xml_doc
 

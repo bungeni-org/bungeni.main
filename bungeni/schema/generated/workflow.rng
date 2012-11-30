@@ -14,6 +14,7 @@
   $Id$
 -->
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <include href="common.rng"/>
   <start>
     <ref name="WORKFLOW"/>
   </start>
@@ -23,7 +24,7 @@
       <attribute name="description"/>
       <optional>
         <attribute name="tags">
-          <ref name="SSV_symbol"/>
+          <ref name="SPACE_SEPARATED_SYMBOLS"/>
         </attribute>
       </optional>
       <optional>
@@ -32,7 +33,7 @@
       </optional>
       <optional>
         <attribute name="permission_actions">
-          <ref name="SSV"/>
+          <ref name="SPACE_SEPARATED_TOKENS"/>
         </attribute>
       </optional>
       <zeroOrMore>
@@ -62,7 +63,7 @@
     <element name="allow">
       <attribute name="permission"/>
       <attribute name="roles">
-        <ref name="SSV"/>
+        <ref name="SPACE_SEPARATED_TOKENS"/>
       </attribute>
     </element>
   </define>
@@ -119,7 +120,7 @@
       <optional>
         <!-- default:false -->
         <attribute name="tags">
-          <ref name="SSV_symbol"/>
+          <ref name="SPACE_SEPARATED_SYMBOLS"/>
         </attribute>
       </optional>
       <optional>
@@ -131,11 +132,11 @@
         </attribute>
       </optional>
       <!-- default:false -->
+      <!-- if (permissions_from state | permissions_from_parent) -> then NO facets -->
       <choice>
         <optional>
-          <!-- if (permissions_from state | permissions_from_parent) -> then NO facets -->
+          <!-- may have EITHER permissions_from_state OR permissions_from_parent -->
           <choice>
-            <!-- may have EITHER permissions_from_state OR permissions_from_parent -->
             <attribute name="permissions_from_state">
               <ref name="SYMBOL_NAME"/>
             </attribute>
@@ -162,7 +163,7 @@
       <attribute name="title"/>
       <attribute name="source">
         <choice>
-          <ref name="SSV_symbol"/>
+          <ref name="SPACE_SEPARATED_SYMBOLS"/>
           <empty/>
         </choice>
       </attribute>
@@ -195,7 +196,7 @@
       </attribute>
       <optional>
         <attribute name="roles">
-          <ref name="SSV"/>
+          <ref name="SPACE_SEPARATED_TOKENS"/>
         </attribute>
       </optional>
       <optional>
@@ -214,31 +215,5 @@
         <attribute name="note"/>
       </optional>
     </element>
-  </define>
-  <!-- a space-separated string value !+pattern for un/qualified permission_actions, roles -->
-  <define name="SSV">
-    <list>
-      <oneOrMore>
-        <data type="token" datatypeLibrary=""/>
-      </oneOrMore>
-    </list>
-  </define>
-  <!-- a space-separated VALID SYMBOLs value -->
-  <define name="SSV_symbol">
-    <list>
-      <oneOrMore>
-        <ref name="SYMBOL_NAME"/>
-      </oneOrMore>
-    </list>
-  </define>
-  <!--
-    a valid programming language symbol name e.g. in python this means must 
-    start a letter or "_" char, and then contain zero or more of letters, 
-    numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
-  -->
-  <define name="SYMBOL_NAME">
-    <data type="string">
-      <param name="pattern">[a-zA-Z_][\w_]*</param>
-    </data>
   </define>
 </grammar>

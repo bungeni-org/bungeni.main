@@ -11,15 +11,18 @@
 # 
 # $Id$
 
+
 grammar {
+    include "common.rnc"
+    
     start = WORKFLOW
     
     WORKFLOW = element workflow {
         attribute title { text },
         attribute description { text },
-        attribute tags { SSV_symbol }?, # declare any (system-defined) tags used in workflow
+        attribute tags { SPACE_SEPARATED_SYMBOLS }?, # declare any (system-defined) tags used in workflow
         attribute note { text }?,
-        attribute permission_actions { SSV }?, # type-relative permission actions
+        attribute permission_actions { SPACE_SEPARATED_TOKENS }?, # type-relative permission actions
         # i.e. each included action allowed to be in the form [type_key].{Action}, 
         # with the optional type_key defaulting to the type_key of the type 
         # "owning" this workflow.
@@ -33,7 +36,7 @@ grammar {
     
     ALLOW = element allow {
         attribute permission { text }, 
-        attribute roles { SSV }
+        attribute roles { SPACE_SEPARATED_TOKENS }
     }
     
     FEATURE = element feature {
@@ -57,12 +60,14 @@ grammar {
         attribute id { SYMBOL_NAME },
         attribute title { text },
         attribute version { xsd:boolean }?, # default:false
-        attribute tags { SSV_symbol }?,
+        attribute tags { SPACE_SEPARATED_SYMBOLS }?,
         attribute note { text }?,
         attribute obsolete { xsd:boolean }?, # default:false
         
-        ( # if (permissions_from state | permissions_from_parent) -> then NO facets
-            ( # may have EITHER permissions_from_state OR permissions_from_parent
+        # if (permissions_from state | permissions_from_parent) -> then NO facets
+        (
+            # may have EITHER permissions_from_state OR permissions_from_parent
+            (
                 attribute permissions_from_state { SYMBOL_NAME }  # state.id
                     | attribute permissions_from_parent { xsd:boolean }  # default:false
             )?
@@ -74,28 +79,16 @@ grammar {
     
     TRANSITION = element transition {
         attribute title { text },
-        attribute source { SSV_symbol | empty }, # space separated list of state ids
+        attribute source { SPACE_SEPARATED_SYMBOLS | empty }, # space separated list of state ids
         attribute destination { SYMBOL_NAME }, # state.id
         attribute grouping_unique_sources { token }?, # a transition grouping id
         attribute condition { SYMBOL_NAME | empty }?, # callable
         attribute trigger { "automatic" | "system" | "manual" },
-        attribute roles { SSV }?,
+        attribute roles { SPACE_SEPARATED_TOKENS }?,
         attribute order { xsd:integer }?, # default:0
         attribute require_confirmation { xsd:boolean }?,  # default:false
         attribute note { text }?
     }
     
-    
-    # a space-separated string value !+pattern for un/qualified permission_actions, roles
-    SSV = list { token+ }
-    
-    # a space-separated VALID SYMBOLs value
-    SSV_symbol = list { SYMBOL_NAME+ }
-    
-    # a valid programming language symbol name e.g. in python this means must 
-    # start a letter or "_" char, and then contain zero or more of letters, 
-    # numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
-    SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][\w_]*" }
-
 }
 
