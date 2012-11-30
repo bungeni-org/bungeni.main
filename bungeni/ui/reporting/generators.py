@@ -27,12 +27,15 @@ from bungeni.core.translation import translate_i18n
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import common, url, report_tools
 from bungeni.ui.reporting.interfaces import IReportGenerator, ReportException
+from bungeni.ui.calendar.data import ExpandedSitting
 
 BUNGENI_REPORTS_NS="http://bungeni.org/reports"
 
 def get_element_value(context, name, default=None):
     if name.startswith("dc:"):
-        dc_adapter = IDCDescriptiveProperties(context, None)
+        dc_context = (context.sitting 
+            if (type(context)==ExpandedSitting) else context)
+        dc_adapter = IDCDescriptiveProperties(dc_context, None)
         if dc_adapter is None:
             log.error("No dublin core adapter found for object %s", context)
             return default
@@ -232,8 +235,12 @@ class ReportGeneratorXHTML(_BaseGenerator):
                                         iroot = process_document_tree(inner_element, 
                                             item
                                         )
-                                        if iroot:
+                                        if iroot is not None:
                                             child.append(iroot)
+                        elif typ == "block" and src:
+                            block_context = get_element_value(context, src,
+                                default=None)
+                            process_document_tree(child, block_context)
                         else:
                             process_document_tree(child, context)
                     else:
