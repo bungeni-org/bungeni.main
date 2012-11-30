@@ -37,7 +37,7 @@ def value_repr(val):
     #field rendering utilities
     if type(val) == datetime:
         return val.isoformat()
-    return str(val.__repr__())
+    return val.__str__()
 
 def get_element_value(context, name, default=None):
     if name.startswith("dc:"):
