@@ -187,9 +187,9 @@ def check_add_assign_permission(workflow_name, permissions, (assignment, p, r)):
     assert assignment == GRANT, (assignment, p, r)
     # check that current permissions list do not GRANT/DENY same pid->role.
     for perm in [(GRANT, p, r), (DENY, p, r)]:
-        assert perm not in permissions, "Workflow [%s] state [%s] " \
+        assert perm not in permissions, "Workflow [%s] " \
             "duplicated or conflicting state permission: (%s, %s, %s)" % (
-                workflow_name, state_id, assignment, p, r)
+                workflow_name, assignment, p, r)
     permissions.append((assignment, p, r))
 
 #

@@ -226,6 +226,10 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 <!-- group_membership -->
+<permission id="bungeni.group_membership.View" title="View Group Membership" />
+<permission id="bungeni.group_membership.Edit" title="Edit Group Membership" />
+<permission id="bungeni.group_membership.Add" title="Add Group Membership" />
+<permission id="bungeni.group_membership.Delete" title="Delete Group Membership" />
 
 <permission id="bungeni.group_membership.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.group_membership.wf.attached.internal" role="bungeni.Clerk" />
@@ -730,6 +734,10 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 <!-- office_member -->
+<permission id="bungeni.office_member.View" title="View Office Member" />
+<permission id="bungeni.office_member.Edit" title="Edit Office Member" />
+<permission id="bungeni.office_member.Add" title="Add Office Member" />
+<permission id="bungeni.office_member.Delete" title="Delete Office Member" />
 
 <permission id="bungeni.office_member.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.office_member.wf.attached.internal" role="bungeni.Clerk" />
@@ -763,6 +771,10 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 <!-- political_group_member -->
+<permission id="bungeni.political_group_member.View" title="View Political Group Member" />
+<permission id="bungeni.political_group_member.Edit" title="Edit Political Group Member" />
+<permission id="bungeni.political_group_member.Add" title="Add Political Group Member" />
+<permission id="bungeni.political_group_member.Delete" title="Delete Political Group Member" />
 
 <permission id="bungeni.political_group_member.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.political_group_member.wf.attached.internal" role="bungeni.Clerk" />
@@ -796,6 +808,10 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 <!-- minister -->
+<permission id="bungeni.minister.View" title="View Minister" />
+<permission id="bungeni.minister.Edit" title="Edit Minister" />
+<permission id="bungeni.minister.Add" title="Add Minister" />
+<permission id="bungeni.minister.Delete" title="Delete Minister" />
 
 <permission id="bungeni.minister.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.minister.wf.attached.internal" role="bungeni.Clerk" />
@@ -829,6 +845,10 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 <!-- committee_member -->
+<permission id="bungeni.committee_member.View" title="View Committee Member" />
+<permission id="bungeni.committee_member.Edit" title="Edit Committee Member" />
+<permission id="bungeni.committee_member.Add" title="Add Committee Member" />
+<permission id="bungeni.committee_member.Delete" title="Delete Committee Member" />
 
 <permission id="bungeni.committee_member.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.committee_member.wf.attached.internal" role="bungeni.Clerk" />
@@ -840,6 +860,10 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 <!-- committee_staff -->
+<permission id="bungeni.committee_staff.View" title="View Committee Staff" />
+<permission id="bungeni.committee_staff.Edit" title="Edit Committee Staff" />
+<permission id="bungeni.committee_staff.Add" title="Add Committee Staff" />
+<permission id="bungeni.committee_staff.Delete" title="Delete Committee Staff" />
 
 <permission id="bungeni.committee_staff.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.committee_staff.wf.attached.internal" role="bungeni.Clerk" />
@@ -895,6 +919,10 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 <!-- member_of_parliament -->
+<permission id="bungeni.member_of_parliament.View" title="View Member Of Parliament" />
+<permission id="bungeni.member_of_parliament.Edit" title="Edit Member Of Parliament" />
+<permission id="bungeni.member_of_parliament.Add" title="Add Member Of Parliament" />
+<permission id="bungeni.member_of_parliament.Delete" title="Delete Member Of Parliament" />
 
 <permission id="bungeni.member_of_parliament.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.member_of_parliament.wf.attached.internal" role="bungeni.Clerk" />
