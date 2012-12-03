@@ -73,8 +73,8 @@ class SignatoriesStatus(object):
         validator = ISignatoryManager(self.context, None)
         if validator is None:
             return message
-        if validator.requireSignatures():
-            if validator.validateConsentedSignatories():
+        if validator.require_signatures():
+            if validator.validate_consented_signatories():
                 message["message_text"] = _("signature_requirement_met",
                     default=(u"This document has the required number of "
                         u"signatories. ${signed_members} member(s) have signed"

@@ -174,7 +174,7 @@
     <!-- signatories -->
     <browser:page name="signatory-review"
         for="bungeni.models.interfaces.IFeatureSignatory"
-        permission="bungeni.signatory.View"
+        permission="bungeni.signatory.Act"
         class=".redirect.SignatoryReview"
     />
 

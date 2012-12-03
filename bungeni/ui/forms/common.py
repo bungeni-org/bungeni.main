@@ -902,7 +902,7 @@ class SignOpenDocumentForm(PageForm):
     
     def _can_sign_document(self, action):
         manager = ISignatoryManager(self.context)
-        return manager.canSign()
+        return manager.can_sign()
 
     def _can_review_signature(self, action):
         manager = ISignatoryManager(self.context)
@@ -919,7 +919,7 @@ class SignOpenDocumentForm(PageForm):
     def handle_sign_document(self, action, data):
         user_id = get_db_user_id()
         manager = ISignatoryManager(self.context)
-        manager.signDocument(user_id)
+        manager.sign_document(user_id)
         self.request.response.redirect(self.nextURL())
 
     @formlib.form.action(_(u"Review Signature"), name="review_signature", 

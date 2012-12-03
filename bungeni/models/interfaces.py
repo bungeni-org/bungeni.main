@@ -396,43 +396,45 @@ class ISignatoryManager(interface.Interface):
     
     # !+naming(mr, oct-2011) please follow standard python naming conventions!
     
-    def validateSignatories():
+    def validate_signatories():
         """Validate signatories count on parliamentary item i.e. number added
         """
 
-    def requireSignatures():
+    def require_signatures():
         """Does the document or object require signatures
         """
 
-    def validateConsentedSignatories():
+    def validate_consented_signatories():
         """Validate number of consented signatories against min and max
         """
 
-    def allowSignature():
+    def allow_signature():
         """Check that the current user has the right to consent on document 
         """
     
-    def documentSubmitted():
+    def document_submitted():
         """Check that the document has been submitted
         """
     
-    def documentInDraft():
+    def document_is_draft():
         """Check that the document is in draft stage
         """
     
-    def expireSignatures():
+    def expire_signatures():
         """Should pending signatures be archived
         """
     
-    def updateSignatories():
+    def update_signatories():
         """Fire any workflow transitions within current state.
         This should update all signatures depending on parent document state.
         """
-    
-    def updateRoles():
-        """Execute any role changes based on changes to parent document"""
-        
-    def workflowActions():
+
+    def setup_roles():
+        """Set local signatories/owner roles on document and signature
+        objects.
+        """
+
+    def fire_workflow_actions():
         """Fire off any changes after workflow change on parent document"""
 
 class IItemScheduleCategory(interface.Interface):

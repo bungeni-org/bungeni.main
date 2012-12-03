@@ -162,7 +162,7 @@ def signatory_auto_sign(context):
     if user_is_not_context_owner(context.head):
         return True
     #!+(mb, Jul-2012) move all signatory logic to signatory manager
-    if ISignatoryManager(context.head).autoSign():
+    if ISignatoryManager(context.head).auto_sign():
         return True
     return False
 
@@ -175,26 +175,26 @@ def user_is_not_parent_document_owner(context):
 def pi_has_signatories(context):
     manager = ISignatoryManager(context, None)
     if manager is not None:
-        return manager.validateSignatories()
+        return manager.validate_signatories()
     return True
 
 def pi_signatories_check(context):
     manager = ISignatoryManager(context, None)
     if manager is not None:
-        return manager.validateConsentedSignatories()
+        return manager.validate_consented_signatories()
     return True
 
 def pi_signature_period_expired(context):
     """The document has been submitted"""
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return manager.expireSignatures()
+        return manager.expire_signatures()
     return False
 
 def pi_document_redrafted(context):
     """Parent document has been redrafted"""
     manager = ISignatoryManager(context.head, None)
-    return manager and manager.documentInDraft()
+    return manager and manager.document_is_draft()
 
 def pi_unsign_signature(context):
     manager = ISignatoryManager(context.head, None)
@@ -208,7 +208,7 @@ def pi_allow_signature(context):
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
         return (user_is_context_owner(context, context.owner.user_id) and
-            manager.allowSignature())
+            manager.allow_signature())
     return False
 
 def pi_allow_signature_actions(context):
@@ -217,7 +217,7 @@ def pi_allow_signature_actions(context):
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
         return (user_is_context_owner(context, context.owner.user_id) and
-            (manager.documentSubmitted() or manager.autoSign()) and
+            (manager.document_submitted() or manager.auto_sign()) and
             user_is_not_parent_document_owner(context))
     return False
 

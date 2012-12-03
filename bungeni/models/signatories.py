@@ -39,32 +39,36 @@ SIGNATORY_CONSENTED_STATE = u"consented"
 # Besides, there was already a more homegenoeous (as well as simpler and more 
 # direct and more efficient) way to do this, namely by checking the signatory 
 # feature settings on the workflow for this model class.
-def _allow_signature_add(context):
+def _allow_sign_document(context):
     """Callable on class to check if document is open for signatures.
     
     Used in bungeni/ui/menu.zcml to filter out 'sign document action'
     """
     manager = interfaces.ISignatoryManager(context)
-    return manager.canSign()
+    return manager.can_sign() or (
+        manager.is_signatory and not manager.is_consented_signatory())
 
-def _allow_signature_review(context):
-    """Callable on class to check if current user is a signatory
+def _allow_withdraw_signature(context):
+    """Callable on class to check if current user is a signatory.
+    We also check that the document allows signature actions.
+    Used in bungeni/ui/menu.zcml to filter out 'review signature'
+    action.
     """
     manager = interfaces.ISignatoryManager(context)
-    return manager.is_signatory()
+    return manager.is_consented_signatory() and not manager.is_owner()
 
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
 def doc_workflow(ob, event):
     wfc = IWorkflowController(ob, None)
     if wfc:
         manager = interfaces.ISignatoryManager(ob)
-        manager.workflowActions()
+        manager.fire_workflow_actions()
 
 @register.handler(adapts=(interfaces.ISignatory, 
     zope.lifecycleevent.interfaces.IObjectCreatedEvent))
 def signatory_created(ob, event):
     manager = interfaces.ISignatoryManager(ob.head)
-    if manager.documentSubmitted() or manager.autoSign():
+    if manager.document_submitted() or manager.auto_sign():
         IPrincipalRoleMap(ob).assignRoleToPrincipal(OWNER_ROLE, 
             ob.owner.login
         )
@@ -153,29 +157,34 @@ class SignatoryValidator(object):
 
     @property
     def consented_signatories(self):
-        return self.consentedSignatories()
-   
-   
+        return len(
+            filter(lambda cs:cs.status in SIGNATORY_CONSENTED_STATES, 
+                self.signatories)
+        )
+
     def is_signatory(self, user_id=None):
         user_id = user_id or model_utils.get_db_user_id()
         if user_id:
             return user_id in [ sgn.user_id for sgn in self.signatories ] 
         return False
     
-    #!+PLEASE_USE_STANDARD_NAMING_CONVENTIONS(mr, apr-2012)
+    def is_consented_signatory(self, user_id=None):
+        user_id = user_id or model_utils.get_db_user_id()
+        if user_id:
+            return user_id in [ sgn.user_id for sgn in 
+                filter(
+                    lambda cs:cs.status in SIGNATORY_CONSENTED_STATES, 
+                    self.signatories)
+            ] 
+        return False
     
-    def requireSignatures(self):
+    def require_signatures(self):
         return self.min_signatories > 0
 
-    def validateSignatories(self):
+    def validate_signatories(self):
         return self.signatories_count > 0
 
-    def consentedSignatories(self):
-        return len(filter(lambda cs:cs.status in SIGNATORY_CONSENTED_STATES, 
-            self.signatories
-        ))
-    
-    def validateConsentedSignatories(self):
+    def validate_consented_signatories(self):
         return (
             (self.consented_signatories >= self.min_signatories) and
             ((not self.max_signatories) or 
@@ -183,44 +192,47 @@ class SignatoryValidator(object):
             )
         )
 
-    def allowSignature(self):
+    def allow_signature(self):
         return (not self.max_signatories or 
             (self.consented_signatories < self.max_signatories)
-        ) and (self.documentSubmitted() or self.autoSign)
+        ) and (self.document_submitted() or self.auto_sign())
 
-    def autoSign(self):
+    def auto_sign(self):
         return self.wf_status in self.open_states
 
-    def canSign(self):
-        """Check if the current user can sign a document"""
-        is_owner = ((
-            model_utils.get_prm_owner_principal_id(self.context) ==
-                model_utils.get_principal_id()) or 
-            model_utils.get_db_user() == self.context.owner
+    def is_owner(self):
+        return (
+            (model_utils.get_prm_owner_principal_id(self.context) ==
+                model_utils.get_principal_id()
+            ) or model_utils.get_db_user() == self.context.owner
         )
-        return (self.autoSign() and not is_owner and not self.is_signatory())
 
-    def signDocument(self, user_id):
+    def can_sign(self):
+        """Check if the current user can sign a document"""
+        return (self.auto_sign() and not self.is_owner() 
+            and not self.is_signatory())
+
+    def sign_document(self, user_id):
         return sign_document(self.context, user_id)
 
-    def expireSignatures(self):
+    def expire_signatures(self):
         return self.wf_status in self.expire_states
 
-    def documentSubmitted(self):
+    def document_submitted(self):
         return self.wf_status in self.submitted_states
 
-    def documentInDraft(self):
+    def document_is_draft(self):
         """Check that a document is being redrafted
         """
         return self.wf_status == self.draft_states
 
-    def updateSignatories(self):
+    def update_signatories(self):
         for signatory in self.signatories:
             wfc = IWorkflowController(signatory)
             wfc.fireAutomatic()
 
-    def setupRoles(self):
-        if self.documentSubmitted():
+    def setup_roles(self):
+        if self.document_submitted():
             make_owner_signatory(self.context)
             for signatory in self.signatories:
                 login_id = signatory.owner.login
@@ -230,24 +242,25 @@ class SignatoryValidator(object):
                 IPrincipalRoleMap(signatory).assignRoleToPrincipal(
                     OWNER_ROLE, login_id
                 )
-        elif self.documentInDraft():
+        elif self.document_is_draft():
             for signatory in self.signatories:
                 IPrincipalRoleMap(self.context).unsetRoleForPrincipal(
                     SIGNATORY_ROLE, signatory.owner.login
                 )
-        elif self.expireSignatures():
+        elif self.expire_signatures():
             for signatory in self.signatories:
                 wfc = IWorkflowController(signatory)
-                if wfc.state_controller.get_status() in SIGNATORIES_REJECT_STATES:
-                    IPrincipalRoleMap(self.context).unsetRoleForPrincipal(
-                        SIGNATORY_ROLE, signatory.owner.login
-                    )
+                if (wfc.state_controller.get_status() 
+                    in SIGNATORIES_REJECT_STATES):
+                    IPrincipalRoleMap(
+                        self.context).unsetRoleForPrincipal(
+                            SIGNATORY_ROLE, signatory.owner.login)
                 
-    def workflowActions(self):
+    def fire_workflow_actions(self):
         """Perform any workflow related actions on signatories and/or parent
         """
-        self.setupRoles()
-        self.updateSignatories()
+        self.setup_roles()
+        self.update_signatories()
         
 def createManagerFactory(domain_class, **params):
     manager_name = "%sSignatoryManager" % domain_class.__name__ #!+naming
@@ -284,6 +297,6 @@ def createManagerFactory(domain_class, **params):
     gsm.registerAdapter(manager, (domain_iface,), interfaces.ISignatoryManager)
     # !+IFEATURE_SIGNATORY(mr, oct-2012) this should be included in signatory 
     # feature setup and handling
-    domain_class.allow_signature_add = _allow_signature_add
-    domain_class.allow_signature_review = _allow_signature_review
+    domain_class.allow_sign_document = _allow_sign_document
+    domain_class.allow_withdraw_signature = _allow_withdraw_signature
 

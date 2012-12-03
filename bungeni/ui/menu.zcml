@@ -900,16 +900,16 @@
         title="Sign Document"
         layer=".interfaces.IWorkspaceMyDocumentsSectionLayer"
         permission="bungeni.signatory.Act"
-        filter="context/allow_signature_add"
+        filter="context/allow_sign_document"
         order="30"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IFeatureSignatory"
         action="signatory-review" 
-        title="Review signature"
+        title="Withdraw signature"
         layer=".interfaces.IWorkspaceSectionLayer"
         permission="bungeni.signatory.Act"
-        filter="context/allow_signature_review"
+        filter="context/allow_withdraw_signature"
         order="30"
     />
     <browser:menuItem menu="context_actions"
@@ -918,7 +918,7 @@
         title="Sign Document"
         layer=".interfaces.IWorkspaceUnderConsiderationSectionLayer"
         permission="bungeni.signatory.Append"
-        filter="context/allow_signature_add"
+        filter="context/allow_sign_document"
         order="30"
     />
     <browser:menuItem menu="context_actions"
