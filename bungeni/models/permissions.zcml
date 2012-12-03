@@ -130,11 +130,11 @@
   <meta:redefinePermission from="bungeni.political_group_member.Delete" to="bungeni.group_membership.Delete" />
     
   
-  <permission id="bungeni.officetitle.Add" title="Add address" />
-  <permission id="bungeni.officetitle.Edit" title="Edit address" />
-  <permission id="bungeni.officetitle.Delete" title="Delete address" />
-  <permission id="bungeni.officetitle.View" title="View address" />
-  <meta:redefinePermission from="bungeni.officetitle.View" to="zope.View" />
+  <permission id="bungeni.title_type.Add" title="Add title type" />
+  <permission id="bungeni.title_type.Edit" title="Edit title type" />
+  <permission id="bungeni.title_type.Delete" title="Delete title type" />
+  <permission id="bungeni.title_type.View" title="View title type" />
+  <meta:redefinePermission from="bungeni.title_type.View" to="zope.View" />
     
   <permission id="bungeni.delegation.Add" title="Add delegation" />
   <permission id="bungeni.delegation.Edit" title="Edit delegation" />
@@ -142,11 +142,11 @@
   <permission id="bungeni.delegation.View" title="View delegation" />
   <meta:redefinePermission from="bungeni.delegation.View" to="zope.View" />
 
-  <permission id="bungeni.function.Add" title="Add title/function" />
-  <permission id="bungeni.function.Edit" title="Edit title/function" />
-  <permission id="bungeni.function.Delete" title="Delete title/function" />
-  <permission id="bungeni.function.View" title="View title/function" />
-  <meta:redefinePermission from="bungeni.function.View" to="zope.View" />
+  <permission id="bungeni.member_title.Add" title="Add member title" />
+  <permission id="bungeni.member_title.Edit" title="Edit member title" />
+  <permission id="bungeni.member_title.Delete" title="Delete member title" />
+  <permission id="bungeni.member_title.View" title="View member title" />
+  <meta:redefinePermission from="bungeni.member_title.View" to="zope.View" />
 
   <permission id="bungeni.groupmemberrole.Add" title="Add Member Role" />
   <permission id="bungeni.groupmemberrole.Edit" title="Edit Member Role" />

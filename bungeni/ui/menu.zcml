@@ -256,7 +256,7 @@
         for="bungeni.models.interfaces.IBungeniGroupMembership"
         title="Add title..."
         action="./titles/add"
-        permission="bungeni.function.Add"
+        permission="bungeni.member_title.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="30"
     />
@@ -388,7 +388,7 @@
         for="bungeni.models.interfaces.IOffice"
         title="Add title..."
         action="./title_types/add"
-        permission="bungeni.officetitle.Add"
+        permission="bungeni.title_type.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="80"
     />
@@ -587,7 +587,7 @@
         for="bungeni.models.interfaces.IMemberTitleContainer"
         title="Add member title"
         action="./add"
-        permission="bungeni.function.Add"
+        permission="bungeni.member_title.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
