@@ -304,7 +304,8 @@ class GroupDocumentAssignment(Entity):
 class Sitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
-    available_dynamic_features = ["audit", "version", "attachment"]
+    available_dynamic_features = ["audit", "version", "attachment",
+        "notification"]
     interface.implements(
         interfaces.ISitting,
         interfaces.ITranslatable,

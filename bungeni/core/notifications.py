@@ -182,6 +182,9 @@ def worker():
         prms = []
         prms.append(IPrincipalRoleMap(document))
         prms.append(site_prm)
+        parent_group = getattr(document, "group", None)
+        if parent_group:
+            prms.append(IPrincipalRoleMap(parent_group))
         assigned_groups = getattr(document, "group_assignment", list())
         if assigned_groups:
             for group in assigned_groups:
@@ -220,6 +223,8 @@ def worker():
         if principal_ids:
             # create message and send to exchange
             mes = obj2dict(document, 0)
+            if not mes.get("type", None):
+                mes["type"] = message["document_type"]
             mes["principal_ids"] = list(principal_ids)
             dthandler = lambda obj: obj.isoformat() if isinstance(obj,
                                                     datetime.datetime) else obj
