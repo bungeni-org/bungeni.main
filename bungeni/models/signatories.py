@@ -55,7 +55,8 @@ def _allow_withdraw_signature(context):
     action.
     """
     manager = interfaces.ISignatoryManager(context)
-    return manager.is_consented_signatory() and not manager.is_owner()
+    return ((manager.document_submitted() or manager.auto_sign()) and
+        manager.is_consented_signatory() and not manager.is_owner())
 
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
 def doc_workflow(ob, event):
