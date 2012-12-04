@@ -306,6 +306,7 @@ class Sitting(Entity):
     """
     available_dynamic_features = ["audit", "version", "attachment",
         "notification", "emailnotification"]
+    # !+SITTING_AUDIT cannot support audit/version without a sitting_audit db table ?!
     interface.implements(
         interfaces.ISitting,
         interfaces.ITranslatable,
