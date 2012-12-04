@@ -7,6 +7,7 @@ import bungeni.ui.utils as ui_utils
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 from bungeni.models.domain import Doc
+from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 from bungeni.core import workspace
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.core.interfaces import IWorkspaceTabsUtility
@@ -35,7 +36,7 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
         tabs_utility = getUtility(IWorkspaceTabsUtility)
         domain_class = self.context.__class__
         status = self.context.status
-        roles = get_workspace_roles() + workspace.OBJECT_ROLES
+        roles = get_workspace_roles() + ROLES_DIRECTLY_DEFINED_ON_OBJECTS
         tab = None
         for role in roles:
             tab = tabs_utility.get_tab(role, domain_class, status)

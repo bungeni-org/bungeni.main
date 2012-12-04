@@ -305,7 +305,7 @@ class Sitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
     available_dynamic_features = ["audit", "version", "attachment",
-        "notification"]
+        "notification", "emailnotification"]
     interface.implements(
         interfaces.ISitting,
         interfaces.ITranslatable,
@@ -580,11 +580,11 @@ class Doc(Entity):
     """Base class for a workflowed parliamentary document.
     """
     # allowed dynamic features by this archetype (inherited by sub-types)
-    available_dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download",
-        "user_assignment", "group_assignment"]
+    available_dynamic_features = ["audit", "version", "attachment", "event",
+        "signatory", "schedule", "workspace", "notification",
+        "emailnotification", "download", "user_assignment", "group_assignment"]
     interface.implements(
-        interfaces.IBungeniContent, # IOwned
+        interfaces.IBungeniContent,  # IOwned
         interfaces.IDoc,
         interfaces.ITranslatable
     )
@@ -712,7 +712,7 @@ class Version(Change):
         method only gets called when a nonexistent attribute is accessed) off 
         the related audit snapshot record (as every change record is related 
         to a type-dedicated audit record).
-        
+
         !+ should this be on Change i.e. for all change actions?
         !+ possible issue with attribute hiding, if an type has a 
            same-named property as one in in Change type/table, then that one
@@ -939,7 +939,8 @@ class Event(HeadParentedMixin, Doc):
     #!+parliament_id is (has always been) left null for events, how best to 
     # handle this, possible related constraint e.g. head_id must NOT be null, 
     # validation, ... ?
-    available_dynamic_features = ["audit", "version", "attachment"]
+    available_dynamic_features = ["audit", "version", "attachment",
+        "notification", "emailnotification"]
     interface.implements(
         interfaces.IEvent,
     )
@@ -957,7 +958,8 @@ class Event(HeadParentedMixin, Doc):
 class Attachment(HeadParentedMixin, Entity):
     """A file attachment to a document. 
     """
-    available_dynamic_features = ["audit", "version"]
+    available_dynamic_features = ["audit", "version", "notification",
+        "emailnotification"]
     interface.implements(
         interfaces.IAttachment, # IOwned
         ore.xapian.interfaces.IIndexable, # !+bungeni_custom
@@ -1005,7 +1007,8 @@ class Heading(Entity):
 class Signatory(Entity):
     """Signatory for a Bill or Motion or other doc.
     """
-    available_dynamic_features = ["audit", "version", "attachment"]
+    available_dynamic_features = ["audit", "version", "attachment",
+        "notification", "emailnotification"]
     interface.implements(
         interfaces.IBungeniContent, # IOwned
         interfaces.ISignatory,
@@ -1191,7 +1194,8 @@ class Venue(Entity):
 class Report(Doc):
     """Agendas and minutes.
     """
-    available_dynamic_features = ["audit", "version", "download"]
+    available_dynamic_features = ["audit", "version", "download",
+        "notification", "emailnotification"]
     interface.implements(
         interfaces.IReport,
         interfaces.ITranslatable,

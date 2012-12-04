@@ -177,6 +177,12 @@ def feature_notification(kls):
     interface.classImplements(kls, interfaces.IFeatureNotification)
 
 
+def feature_emailnotification(kls):
+    """Decorator for domain types to support "emailnotification" feature.
+    """
+    interface.classImplements(kls, interfaces.IFeatureEmailNotification)
+
+
 def feature_download(kls):
     """Decorator for domain types that support downloading as 
     pdf/odt/rss/akomantoso.

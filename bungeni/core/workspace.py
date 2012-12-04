@@ -28,6 +28,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
 from bungeni.models import utils, domain
+from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.core.interfaces import (
     IWorkspaceTabsUtility,
@@ -39,16 +40,6 @@ from bungeni.core.interfaces import (
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
 from bungeni.core.workflows.utils import view_permission
-
-#!+WORKSPACE(miano, jul 2011)
-# Roles can be divided into two, roles that a principal gets by virtue
-# of his membership to a group and roles that are defined on objects
-# eg. bungeni.Owner and bungeni.Signatory
-# When generating the query for items to be included in the workspace
-# we do not know whether or not the user has any roles defined on any
-# of the objects so we have to query all object states defined for this
-# type of roles.
-OBJECT_ROLES = ["bungeni.Owner", "bungeni.Signatory"]
 
 # Tabs that are available in the workspace
 # All logged in users get a workspace with these tabs
@@ -206,7 +197,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         self.tab_count_cache[principal_id] = TabCountRecord(time.time(), count)
 
     def check_item(self, domain_class, status):
-        roles = get_workspace_roles() + OBJECT_ROLES
+        roles = get_workspace_roles() + ROLES_DIRECTLY_DEFINED_ON_OBJECTS
         for role in roles:
             statuses = self.workspace_config.get_status(
                 role, domain_class, self.__name__)
@@ -283,7 +274,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
             results.extend(query.all())
-        for obj_role in OBJECT_ROLES:
+        for obj_role in ROLES_DIRECTLY_DEFINED_ON_OBJECTS:
             object_roles_domain_status = self.item_status_filter(
                 kw, [obj_role])
             for domain_class, status in object_roles_domain_status.iteritems():

@@ -27,7 +27,7 @@ from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
-from bungeni.core.workspace import OBJECT_ROLES
+from bungeni.core.workspace import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 #from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.utils import register
 from bungeni.utils.capi import capi
@@ -180,7 +180,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
 
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        roles = get_workspace_roles() + OBJECT_ROLES
+        roles = get_workspace_roles() + ROLES_DIRECTLY_DEFINED_ON_OBJECTS
         domains = []
         for role in roles:
             dom = workspace_config.get_role_domains(
@@ -214,7 +214,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         workflow, domain_model = ti.workflow, ti.domain_model
         
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        roles = get_workspace_roles() + OBJECT_ROLES
+        roles = get_workspace_roles() + ROLES_DIRECTLY_DEFINED_ON_OBJECTS
         #domain_class = workspace_config.get_domain(item_type)
         results = set()
         for role in roles:

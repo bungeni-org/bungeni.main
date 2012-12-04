@@ -23,6 +23,7 @@ from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.alchemist import Session
 from bungeni.models.utils import obj2dict
 from bungeni.models import domain
+from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 import transaction
 
 
@@ -119,7 +120,7 @@ def get_mq_parameters():
 
 def get_mq_connection():
     try:
-        return  pika.BlockingConnection(parameters=get_mq_parameters())
+        return pika.BlockingConnection(parameters=get_mq_parameters())
     except socket.error:
         log.error("Unable to connect to AMQP server."
                   "Notifications will not be sent")
@@ -178,9 +179,37 @@ def worker():
     channel = connection.channel()
     site_prm = IPrincipalRoleMap(core.get_application())
 
-    def get_prms(document):
+    def get_principal_ids(document, roles):
+        principal_ids = set()
+        document_prm = IPrincipalRoleMap(document)
+        group_prms = get_group_prms(document)
+        for role in roles:
+            if role in ROLES_DIRECTLY_DEFINED_ON_OBJECTS:
+                principals = document_prm.getPrincipalsForRole(role)
+                for principal in principals:
+                    principal_ids.add(principal[0])
+            else:
+                for group_prm in group_prms:
+                    principals = group_prm.getPrincipalsForRole(role)
+                    for principal in principals:
+                        principal_id = principal[0]
+                        if principal_id.startswith("group"):
+                            group_mbr_ids = get_group_member_ids(principal_id)
+                            for group_mbr in group_mbr_ids:
+                                principal_ids.add(group_mbr)
+        return principal_ids
+
+    def get_group_member_ids(group_id):
+        session = Session()
+        group = session.query(
+            domain.Group).filter(
+            domain.Group.group_principal_id == group_id).one()
+        if group:
+            return [member.user.login for member in group.members]
+        return []
+
+    def get_group_prms(document):
         prms = []
-        prms.append(IPrincipalRoleMap(document))
         prms.append(site_prm)
         parent_group = getattr(document, "group", None)
         if parent_group:
@@ -201,41 +230,25 @@ def worker():
             )
         session = Session()
         document = session.query(domain_class).get(message["document_id"])
-        principal_ids = set()
         if document:
-            prms = get_prms(document)
-            for role in roles:
-                for prm in prms:
-                    principals = prm.getPrincipalsForRole(role)
-                    for principal in principals:
-                        principal_ids.add(principal[0])
-        group_member_ids = set()
-        for principal_id in principal_ids:
-            if principal_id.startswith("group"):
-                group = session.query(
-                    domain.Group).filter(
-                    domain.Group.group_principal_id == principal_id).one()
-                if group:
-                    for member in group.members:
-                        group_member_ids.add(member.user.login)
-        principal_ids = principal_ids.union(group_member_ids)
-        exchange = str(mq_utility.get_message_exchange())
-        if principal_ids:
-            # create message and send to exchange
-            mes = obj2dict(document, 0)
-            if not mes.get("type", None):
-                mes["type"] = message["document_type"]
-            mes["principal_ids"] = list(principal_ids)
-            dthandler = lambda obj: obj.isoformat() if isinstance(obj,
+            principal_ids = get_principal_ids(document, roles)
+            exchange = str(mq_utility.get_message_exchange())
+            if principal_ids:
+                # create message and send to exchange
+                mes = obj2dict(document, 0)
+                if not mes.get("type", None):
+                    mes["type"] = message["document_type"]
+                mes["principal_ids"] = list(principal_ids)
+                dthandler = lambda obj: obj.isoformat() if isinstance(obj,
                                                     datetime.datetime) else obj
-            channel.basic_publish(
-                exchange=exchange,
-                body=simplejson.dumps(mes, default=dthandler),
-                properties=pika.BasicProperties(content_type="text/plain",
+                channel.basic_publish(
+                    exchange=exchange,
+                    body=simplejson.dumps(mes, default=dthandler),
+                    properties=pika.BasicProperties(content_type="text/plain",
                                                 delivery_mode=1
                                                 ),
-                routing_key="")
-        channel.basic_ack(delivery_tag=method.delivery_tag)
+                    routing_key="")
+                channel.basic_ack(delivery_tag=method.delivery_tag)
         session.close()
 
     channel.basic_qos(prefetch_count=1)

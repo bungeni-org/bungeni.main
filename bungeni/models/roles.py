@@ -16,6 +16,14 @@ from zope.securitypolicy.role import Role
 from bungeni.models import interfaces
 
 
+# Roles can be divided into two, roles that a principal gets by virtue
+# of his membership to a group and roles that are defined on objects
+# eg. bungeni.Owner and bungeni.Signatory
+# These are defined here for use in the workspace, notifications
+# or any other code that needs to compute the principals/permissions on objects
+ROLES_DIRECTLY_DEFINED_ON_OBJECTS = ["bungeni.Owner", "bungeni.Signatory"]
+
+
 @zope.annotation.factory
 class SubRoleAnnotations(object):
     implements(interfaces.ISubRoleAnnotations)

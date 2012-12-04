@@ -485,7 +485,10 @@ class IFeatureWorkspace(IFeature):
     """Marks support for "workspace" feature.
     """
 class IFeatureNotification(IFeature):
-    """Marks support for "workspace" feature.
+    """Marks support for "notification" feature.
+    """
+class IFeatureEmailNotification(IFeature):
+    """Marks support for "emailnotification" feature.
     """
 class IFeatureDownload(IFeature):
     """Marker for classes supporting "download" feature".

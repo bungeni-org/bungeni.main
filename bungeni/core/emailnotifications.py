@@ -23,9 +23,10 @@ from bungeni.utils import register
 from bungeni.ui.reporting.generators import get_attr
 
 
-class EmailException(Exception):
+class EmailError(Exception):
     """Raised when there is a problem with the email configuration
     """
+
 
 class BungeniSMTPMailer(object):
 
@@ -85,7 +86,7 @@ def get_template(file_name):
         template_file.close()
         return template
     else:
-        raise EmailException("Email template %s does not exist" % file_name)
+        raise EmailError("Email template %s does not exist" % file_name)
 
 
 def is_html(template):
@@ -154,17 +155,20 @@ class EmailBlock(object):
 @bungeni_custom_errors
 def email_notifications_callback(channel, method, properties, body):
     message = simplejson.loads(body)
-    recipients = get_recipients(message.get("principal_ids", None))
-    template = get_template(message["type"] + ".xml")
-    email_block = EmailBlock(template, message)
-    subject, body = email_block.get_email()
-    if is_html(template):
-        msg = MIMEText(body, "html")
-    else:
-        msg = MIMEText(body, "text")
-    msg["Subject"] = subject
-    msg["To"] = ', '.join(recipients)
-    component.getUtility(IBungeniMailer).send(msg)
+    ti = capi.get_type_info(message["type"])
+    workflow = ti.workflow
+    if workflow and workflow.has_feature("emailnotification"):
+        recipients = get_recipients(message.get("principal_ids", None))
+        template = get_template(message["type"] + ".xml")
+        email_block = EmailBlock(template, message)
+        subject, body = email_block.get_email()
+        if is_html(template):
+            msg = MIMEText(body, "html")
+        else:
+            msg = MIMEText(body, "text")
+        msg["Subject"] = subject
+        msg["To"] = ', '.join(recipients)
+        component.getUtility(IBungeniMailer).send(msg)
     channel.basic_ack(delivery_tag=method.delivery_tag)
 
 
@@ -179,7 +183,15 @@ def email_worker():
     channel.start_consuming()
 
 
+@bungeni_custom_errors
 def email_notifications():
+    for type_key, ti in capi.iter_type_info():
+        workflow = ti.workflow
+        if workflow and workflow.has_feature("emailnotification"):
+            if not workflow.has_feature("notification"):
+                raise EmailError("Email notifications feature cannot"
+                    "be enabled for %s without first enabling the notification"
+                    "feature" % type_key)
     mq_utility = component.getUtility(IMessageQueueConfig)
     connection = get_mq_connection()
     if not connection:

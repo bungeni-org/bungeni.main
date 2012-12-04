@@ -64,8 +64,10 @@ def on_wsgi_application_created_event(application, event):
     
     # load notifications
     load_notifications()
+
     # load email notifications
     email_notifications()
+
     # set up serialization notifications
     serialization_notifications()
     
