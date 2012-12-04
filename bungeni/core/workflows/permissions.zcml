@@ -103,6 +103,9 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting_attendance.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting_attendance.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting_attendance.View" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting_attendance.View" role="bungeni.MP" />
+<grant permission="bungeni.sitting_attendance.View" role="bungeni.Speaker" />
 <grant permission="bungeni.sitting_attendance.Delete" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting_report.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting_report.Edit" role="bungeni.Clerk" />

@@ -6,13 +6,13 @@
     <div id="attendance-record">
       <div metal:use-macro="context/@@standard_macros/form">
         <div metal:fill-slot="pre-fieldset">
-	  <label class="discreet"
-		 for="form.actions.save"
-		 i18n:translate="">
-	    Update member attendance for the sitting
-	  </label>
+      <label class="discreet"
+         for="form.actions.save"
+         i18n:translate="">
+        Update member attendance for the sitting
+      </label>
           <div tal:replace="structure nocall:view/formatted_listing">
-	    </div><div>&nbsp;</div>
+        </div><div>&nbsp;</div>
         </div>
         <div metal:fill-slot="actions">
           <div id="actionsView">
@@ -20,11 +20,11 @@
                   tal:condition="view/availableActions">
               <tal:loop tal:repeat="action view/actions">
                 <input type="submit" class="context"
-		       id="" name="" value=""
-		       tal:attributes="id action/__name__;
-				       name action/__name__;
-				       value python:str(action.label);"
-		       i18n:attributes="value" />
+               id="" name="" value=""
+               tal:attributes="id action/__name__;
+                       name action/__name__;
+                       value python:str(action.label);"
+               i18n:attributes="value" />
               </tal:loop>
             </span>
           </div>
