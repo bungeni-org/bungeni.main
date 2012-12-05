@@ -47,7 +47,7 @@ class LocalPrincipalRoleMap(object):
         # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
         self.oid = rdb.orm.object_mapper(
             context).primary_key_from_instance(context)[0]
-        self.object_type = naming.polymorphic_identity(type(context))
+        self.object_type = naming.polymorphic_identity(context.__class__)
     
     def getPrincipalsForRole(self, role_id):
         """Get the principals that have been granted a role.
