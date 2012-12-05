@@ -83,8 +83,10 @@ grammar {
         attribute destination { SYMBOL_NAME }, # state.id
         attribute grouping_unique_sources { token }?, # a transition grouping id
         attribute condition { SYMBOL_NAME | empty }?, # callable
-        attribute trigger { "automatic" | "system" | "manual" },
-        attribute roles { SPACE_SEPARATED_TOKENS }?,
+        (attribute trigger { "automatic" }
+            | (attribute trigger { "system" | "manual" }, 
+                attribute roles { SPACE_SEPARATED_TOKENS }?)
+        ),
         attribute order { xsd:integer }?, # default:0
         attribute require_confirmation { xsd:boolean }?,  # default:false
         attribute note { text }?

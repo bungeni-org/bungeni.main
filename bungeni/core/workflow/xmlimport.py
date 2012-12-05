@@ -177,20 +177,20 @@ def get_permissions_from_allows(workflow_name, elem):
             check_add_assign_permission(workflow_name, perms, allow_perm)
     return perms
 
-def check_add_assign_permission(workflow_name, permissions, (assignment, p, r)):
-    """Check that permission (assignment==GRANT) may be added to list of 
+def check_add_assign_permission(workflow_name, permissions, (setting, p, r)):
+    """Check that permission (setting==GRANT) may be added to list of 
     permissions (assignments) -- a permission assignment should not be 
     duplicated i.e. may be granted or denied ONCE, and adher to permission 
     mixing constraints. A permission assignment may be both global or local.
     """
     # we only "allow" permissions
-    assert assignment == GRANT, (assignment, p, r)
+    assert setting == GRANT, (setting, p, r)
     # check that current permissions list do not GRANT/DENY same pid->role.
     for perm in [(GRANT, p, r), (DENY, p, r)]:
         assert perm not in permissions, "Workflow [%s] " \
             "duplicated or conflicting state permission: (%s, %s, %s)" % (
-                workflow_name, assignment, p, r)
-    permissions.append((assignment, p, r))
+                workflow_name, setting, p, r)
+    permissions.append((setting, p, r))
 
 #
 
@@ -217,7 +217,7 @@ def _load(workflow_name, workflow):
     note = xas(workflow, "note")
     allowed_tags = xas(workflow, "tags", "").split()
     
-    # initial_state, in XML indicated a transition source=""
+    # initial_state, in XML indicated with a transition.@source=""
     initial_state = None
     
     ZCML_PROCESSED = bool(workflow_name in ZCML_WORKFLOWS_PROCESSED)
@@ -269,7 +269,7 @@ def _load(workflow_name, workflow):
         # for each global permission, build list of roles it is set to
         global_pid_roles.setdefault(pid, []).append(role)
         assert setting and pid and role, \
-            "Global grant must specify valid permission/role"
+            "Global grant must specify valid permission/role" #!+RNC
         # !+ add to a Workflow.global_grants list
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
@@ -286,7 +286,7 @@ def _load(workflow_name, workflow):
     for f in workflow.iterchildren("feature"):
         # @name
         feature_name = xas(f, "name")
-        assert feature_name, "Workflow %r feature must define @name" % (workflow_name)
+        assert feature_name, "Workflow %r feature must define @name" % (workflow_name) #!+RNC
         # @enabled
         feature_enabled = xab(f, "enabled")
         # !+ archetype/feature inter-dep; should be part of feature descriptor
@@ -297,7 +297,7 @@ def _load(workflow_name, workflow):
         params = []
         for param in f.iterchildren("parameter"):
             name_value = param.get("name"), param.get("value")
-            assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value)
+            assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value) #!+RNC
             params.append(name_value)
         num_params, params = len(params), dict(params)
         assert num_params == len(params), \
@@ -317,7 +317,7 @@ def _load(workflow_name, workflow):
     for s in workflow.iterchildren("state"):
         # @id
         state_id = xas(s, "id")
-        assert state_id, "Workflow State must define @id"
+        assert state_id, "Workflow State must define @id" #!+RNC
         validate_id(state_id, "state")
         # state actions
         state_actions = []
@@ -326,7 +326,7 @@ def _load(workflow_name, workflow):
             make_version = xab(s, "version")
             if make_version is None:
                 raise ValueError("Invalid state value [version=%r]" % (
-                    s.get("version")))
+                    s.get("version"))) #!+RNC
             if make_version:
                 state_actions.append(ACTIONS_MODULE.create_version)
         # state-id-inferred action - if "actions" module defines an action for
@@ -345,21 +345,25 @@ def _load(workflow_name, workflow):
         # permissions defined by the specified state. NO other permissions 
         # may be specified by this state. 
         from_state = get_from_state(xas(s, "permissions_from_state"))
-        if from_state:
-            permissions.extend(from_state.permissions)
+        permissions_from_parent = xab(s, "permissions_from_parent")
+        if permissions_from_parent:
+            pass # no own permission definitions allowed
+        elif from_state:
+            # assimilate (no more no less) the state's permissions !+tuple, use same?
+            permissions[:] = from_state.permissions
         else:
             # use permissions from facets
             used_facets_by_feature = {}
             for facet in s.iterchildren("facet"):
                 ref = xas(facet, "ref")
-                assert ref is not None, "State %r facet must specify a ref" % (state_id)
+                assert ref is not None, "State %r facet must specify a ref" % (state_id) #!+RNC
                 feature_name, facet_name = ref.split(".", 1)
                 feature_name = feature_name if feature_name else None # "" -> None
                 # feature_name is None -> "workflow" facets
                 assert feature_name not in used_facets_by_feature, \
                     "Duplicate facet %r for feature %r in state %r" % (facet_name, feature_name, state_id)
                 assert facet_name, \
-                    "Facet %r in state %r must specify a valid facet name" % (facet_name, state_id)
+                    "Facet %r in state %r must specify a valid facet name" % (facet_name, state_id) #!+RNC
                 if feature_name is None:
                     facet_seq = workflow_facets
                 else:
@@ -399,7 +403,7 @@ def _load(workflow_name, workflow):
             State(state_id, state_title,
                 xas(s, "note"),
                 state_actions, permissions, tags,
-                xab(s, "permissions_from_parent"),
+                permissions_from_parent,
                 xab(s, "obsolete"),
             )
         )
@@ -441,7 +445,7 @@ def _load(workflow_name, workflow):
         roles = qualified_roles(kw.pop("roles", ""))
         if not is_zcml_permissionable(t):
             assert not roles, "Workflow [%s] - non-permissionable transition " \
-                "does not allow @roles [%s]." % (workflow_name, roles)
+                "does not allow @roles [%s]." % (workflow_name, roles) #!+RNC
             kw["permission"] = None # None -> CheckerPublic
         # !+CAN_EDIT_AS_DEFAULT_TRANSITION_PERMISSION(mr, oct-2011) this feature
         # is functional (uncomment following elif clause) but as yet not enabled. 
@@ -487,7 +491,7 @@ def _load(workflow_name, workflow):
         if "require_confirmation" in kw:
             try:
                 kw["require_confirmation"] = misc.as_bool(kw["require_confirmation"])
-                assert kw["require_confirmation"] is not None
+                assert kw["require_confirmation"] is not None #!+RNC
             except:
                 raise ValueError("Invalid transition value "
                     '[require_confirmation="%s"]' % (

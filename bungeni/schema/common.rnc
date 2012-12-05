@@ -19,7 +19,7 @@ SPACE_SEPARATED_TOKENS = list { token+ }
 SPACE_SEPARATED_SYMBOLS = list { SYMBOL_NAME+ }
 
 # a valid programming language symbol name e.g. in python this means must 
-# start a letter or "_" char, and then contain zero or more of letters, 
+# start a with letter or "_" char, followed with zero or more of letters, 
 # numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
 SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][\w_]*" }
 

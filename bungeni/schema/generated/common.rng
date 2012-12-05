@@ -32,7 +32,7 @@
   </define>
   <!--
     a valid programming language symbol name e.g. in python this means must 
-    start a letter or "_" char, and then contain zero or more of letters, 
+    start a with letter or "_" char, followed with zero or more of letters, 
     numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
   -->
   <define name="SYMBOL_NAME">

@@ -187,18 +187,24 @@
         </attribute>
       </optional>
       <!-- callable -->
-      <attribute name="trigger">
-        <choice>
+      <choice>
+        <attribute name="trigger">
           <value>automatic</value>
-          <value>system</value>
-          <value>manual</value>
-        </choice>
-      </attribute>
-      <optional>
-        <attribute name="roles">
-          <ref name="SPACE_SEPARATED_TOKENS"/>
         </attribute>
-      </optional>
+        <group>
+          <attribute name="trigger">
+            <choice>
+              <value>system</value>
+              <value>manual</value>
+            </choice>
+          </attribute>
+          <optional>
+            <attribute name="roles">
+              <ref name="SPACE_SEPARATED_TOKENS"/>
+            </attribute>
+          </optional>
+        </group>
+      </choice>
       <optional>
         <attribute name="order">
           <data type="integer"/>
