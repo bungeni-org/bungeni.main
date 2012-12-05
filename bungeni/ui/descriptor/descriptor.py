@@ -1698,8 +1698,7 @@ class HeadingDescriptor(ModelDescriptor):
             required=True,
             localizable=[
                 show("add"), # db-not-null-ui-add
-                show("view edit"),
-                hide("listing"),
+                show("view edit listing"),
             ],
         ),
         LanguageField("language"), # [user-req]

@@ -22,6 +22,9 @@ __all__ = [
 
 
 from zope import interface
+from zope.component import getUtilitiesFor
+from zope.securitypolicy.interfaces import IRole
+import zope.cachedescriptors.property
 from bungeni.alchemist.interfaces import (
     IModelDescriptor,
     IModelDescriptorField
@@ -324,6 +327,11 @@ class Field(object):
                     self.name, loc)
         # !+LOCALIZATION_AND_SCHEMA_INTEGRITY add db-column-validation here?
     
+    @zope.cachedescriptors.property.cachedIn("_registered_roles_")
+    def registered_roles(self):
+        """Returns all registered roles"""
+        return [name for name, util in getUtilitiesFor(IRole)]
+    
     def is_displayable(self, mode, user_roles):
         """Does this field pass localization directives for this mode?
         """
@@ -344,7 +352,7 @@ class Field(object):
         for loc in self.localizable:
             if mode in loc.modes:
                 for role in user_roles:
-                    if role in loc.roles:
+                    if role in loc.roles or role in self.registered_roles:
                         return True
         return False
     
