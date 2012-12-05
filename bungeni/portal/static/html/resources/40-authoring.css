@@ -95,6 +95,7 @@
 }
 .contentActions li.context_actions {
     float: left;
+    position:absolute;
 }
 .contentActions a {
     text-decoration: none;

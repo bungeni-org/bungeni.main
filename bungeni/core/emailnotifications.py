@@ -36,8 +36,9 @@ class BungeniSMTPMailer(object):
     def settings(self):
         return EmailSettings(get_application())
 
-    def send(self, msg):
+    def send(self, msg, recipients):
         msg["From"] = self.settings.default_sender
+        msg["To"] = ",".join(recipients)
         hostname = self.settings.hostname
         port = self.settings.port
         username = self.settings.username or None
@@ -50,7 +51,7 @@ class BungeniSMTPMailer(object):
         # authenticate if needed
         if username is not None and password is not None:
             connection.login(username, password)
-        connection.sendmail(msg["From"], msg["To"], msg.as_string())
+        connection.sendmail(msg["From"], recipients, msg.as_string())
         connection.quit()
 
 
@@ -58,9 +59,11 @@ class BungeniDummySMTPMailer(BungeniSMTPMailer):
 
     interface.implements(IBungeniMailer)
 
-    def send(self, msg):
+    def send(self, msg, recipients):
         msg["From"] = self.settings.default_sender
-        log.info("%s -> %s: %s." % (msg["From"], msg["To"], msg.as_string()))
+        msg["To"] = ",".join(recipients)
+        log.info("%s -> %s: %s." % (
+                msg["From"], msg["To"], msg.as_string()))
 
 
 def get_principals(principal_ids):
@@ -136,12 +139,12 @@ class EmailBlock(object):
             element.clear()
         # get defaults
         if not subject:
-            subject = "Item Notification: <span tal:replace='item/title'/>"
+            subject = "Item Notification: %s" % (self.message["title"])
             log.warn("Missing subject template for %s:%s. Using default" % (
                     self.message["type"], self.message["status"]))
         if not body:
-            body = "Item <span tal:replace='item/title'/>, status :" \
-                "<span tal:replace='item/status'/>"
+            body = "Item, %s, type: %s, status: %s" % (self.message["title"],
+                self.message["type"], self.message["status"])
             log.warn("Missing body template for %s:%s. Using default" % (
                     self.message["type"], self.message["status"]))
         subject_template = EmailTemplate()
@@ -157,7 +160,7 @@ def email_notifications_callback(channel, method, properties, body):
     message = simplejson.loads(body)
     ti = capi.get_type_info(message["type"])
     workflow = ti.workflow
-    if workflow and workflow.has_feature("emailnotification"):
+    if workflow and workflow.has_feature("email"):
         recipients = get_recipients(message.get("principal_ids", None))
         template = get_template(message["type"] + ".xml")
         email_block = EmailBlock(template, message)
@@ -167,8 +170,7 @@ def email_notifications_callback(channel, method, properties, body):
         else:
             msg = MIMEText(body, "text")
         msg["Subject"] = subject
-        msg["To"] = ', '.join(recipients)
-        component.getUtility(IBungeniMailer).send(msg)
+        component.getUtility(IBungeniMailer).send(msg, recipients)
     channel.basic_ack(delivery_tag=method.delivery_tag)
 
 
@@ -184,10 +186,10 @@ def email_worker():
 
 
 @bungeni_custom_errors
-def email_notifications():
+def load_email():
     for type_key, ti in capi.iter_type_info():
         workflow = ti.workflow
-        if workflow and workflow.has_feature("emailnotification"):
+        if workflow and workflow.has_feature("email"):
             if not workflow.has_feature("notification"):
                 raise EmailError("Email notifications feature cannot"
                     "be enabled for %s without first enabling the notification"
@@ -216,9 +218,9 @@ def notify_users(event):
     message = event.object
     msg = MIMEText(message.get("body"))
     msg["Subject"] = message.get("subject")
-    msg["To"] = ', '.join(message.get("recipients"))
-    if msg["To"]:
-        component.getUtility(IBungeniMailer).send(msg)
+    if message.get("recipients"):
+        component.getUtility(IBungeniMailer).send(
+            msg, message.get("recipients"))
     else:
         log.warn("Could not send notification message. No recipient")
     

@@ -111,7 +111,7 @@ class Entity(object):
             domain_schema = alchemist.utils.get_derived_table_schema(type(self))
             known_names = [ k for k, d in domain_schema.namesAndDescriptions(all=True) ]
         except Exception, e:
-            log.error("Failed table schema lookup for %s: %s: %s" % (
+            log.debug("Failed table schema lookup for %s: %s: %s" % (
                 type(self), type(e).__name__, e))
             known_names = None
         
@@ -305,7 +305,7 @@ class Sitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
     available_dynamic_features = ["audit", "version", "attachment",
-        "notification", "emailnotification"]
+        "notification", "email"]
     # !+SITTING_AUDIT cannot support audit/version without a sitting_audit db table ?!
     interface.implements(
         interfaces.ISitting,
@@ -583,7 +583,7 @@ class Doc(Entity):
     # allowed dynamic features by this archetype (inherited by sub-types)
     available_dynamic_features = ["audit", "version", "attachment", "event",
         "signatory", "schedule", "workspace", "notification",
-        "emailnotification", "download", "user_assignment", "group_assignment"]
+        "email", "download", "user_assignment", "group_assignment"]
     interface.implements(
         interfaces.IBungeniContent,  # IOwned
         interfaces.IDoc,
@@ -941,7 +941,7 @@ class Event(HeadParentedMixin, Doc):
     # handle this, possible related constraint e.g. head_id must NOT be null, 
     # validation, ... ?
     available_dynamic_features = ["audit", "version", "attachment",
-        "notification", "emailnotification"]
+        "notification", "email"]
     interface.implements(
         interfaces.IEvent,
     )
@@ -960,7 +960,7 @@ class Attachment(HeadParentedMixin, Entity):
     """A file attachment to a document. 
     """
     available_dynamic_features = ["audit", "version", "notification",
-        "emailnotification"]
+        "email"]
     interface.implements(
         interfaces.IAttachment, # IOwned
         ore.xapian.interfaces.IIndexable, # !+bungeni_custom
@@ -1009,7 +1009,7 @@ class Signatory(Entity):
     """Signatory for a Bill or Motion or other doc.
     """
     available_dynamic_features = ["audit", "version", "attachment",
-        "notification", "emailnotification"]
+        "notification", "email"]
     interface.implements(
         interfaces.IBungeniContent, # IOwned
         interfaces.ISignatory,
@@ -1196,7 +1196,7 @@ class Report(Doc):
     """Agendas and minutes.
     """
     available_dynamic_features = ["audit", "version", "download",
-        "notification", "emailnotification"]
+        "notification", "email"]
     interface.implements(
         interfaces.IReport,
         interfaces.ITranslatable,

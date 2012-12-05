@@ -487,8 +487,8 @@ class IFeatureWorkspace(IFeature):
 class IFeatureNotification(IFeature):
     """Marks support for "notification" feature.
     """
-class IFeatureEmailNotification(IFeature):
-    """Marks support for "emailnotification" feature.
+class IFeatureEmail(IFeature):
+    """Marks support for "email" notifications feature.
     """
 class IFeatureDownload(IFeature):
     """Marker for classes supporting "download" feature".

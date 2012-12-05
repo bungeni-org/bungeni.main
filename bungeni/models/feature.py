@@ -177,10 +177,10 @@ def feature_notification(kls):
     interface.classImplements(kls, interfaces.IFeatureNotification)
 
 
-def feature_emailnotification(kls):
-    """Decorator for domain types to support "emailnotification" feature.
+def feature_email(kls):
+    """Decorator for domain types to support "email" notifications feature.
     """
-    interface.classImplements(kls, interfaces.IFeatureEmailNotification)
+    interface.classImplements(kls, interfaces.IFeatureEmail)
 
 
 def feature_download(kls):

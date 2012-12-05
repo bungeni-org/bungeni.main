@@ -41,6 +41,7 @@ div#portal-globalnav ul.level0 ul.level1 li {
 .contentActions li.context_actions,
 .contentActions li.context_actions li {
    float: right !important;
+   position:absolute;
 }
 
 dl#context_actions.actionMenu .actionMenuContent ul li a#view,

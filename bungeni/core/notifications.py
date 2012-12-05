@@ -229,26 +229,28 @@ def worker():
             domain_class, message["destination"]
             )
         session = Session()
-        document = session.query(domain_class).get(message["document_id"])
-        if document:
-            principal_ids = get_principal_ids(document, roles)
-            exchange = str(mq_utility.get_message_exchange())
-            if principal_ids:
-                # create message and send to exchange
-                mes = obj2dict(document, 0)
-                if not mes.get("type", None):
-                    mes["type"] = message["document_type"]
-                mes["principal_ids"] = list(principal_ids)
-                dthandler = lambda obj: obj.isoformat() if isinstance(obj,
-                                                    datetime.datetime) else obj
-                channel.basic_publish(
-                    exchange=exchange,
-                    body=simplejson.dumps(mes, default=dthandler),
-                    properties=pika.BasicProperties(content_type="text/plain",
-                                                delivery_mode=1
-                                                ),
-                    routing_key="")
-                channel.basic_ack(delivery_tag=method.delivery_tag)
+        if domain_class and message["document_id"]:
+            document = session.query(domain_class).get(message["document_id"])
+            if document:
+                principal_ids = get_principal_ids(document, roles)
+                exchange = str(mq_utility.get_message_exchange())
+                if principal_ids:
+                    # create message and send to exchange
+                    mes = obj2dict(document, 0)
+                    if not mes.get("type", None):
+                        mes["type"] = message["document_type"]
+                    mes["principal_ids"] = list(principal_ids)
+                    dthandler = lambda obj: obj.isoformat() if isinstance(obj,
+                        datetime.datetime) else obj
+                    channel.basic_publish(
+                        exchange=exchange,
+                        body=simplejson.dumps(mes, default=dthandler),
+                        properties=pika.BasicProperties(
+                            content_type="text/plain",
+                            delivery_mode=1
+                        ),
+                        routing_key="")
+        channel.basic_ack(delivery_tag=method.delivery_tag)
         session.close()
 
     channel.basic_qos(prefetch_count=1)
