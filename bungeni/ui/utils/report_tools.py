@@ -112,7 +112,6 @@ def compute_hours(period):
         ]
         return sum(_z_sum)
 
-        return compute_length(period)
     else:
         log.error(u"Provided timespan spec %s does not parse", period)
         return DEFAULT_SPAN_HOURS
