@@ -37,6 +37,7 @@ from zope.security import checkPermission
 from zope.formlib import form
 from zope.schema.interfaces import IChoice
 from zc.resourcelibrary import need
+from sqlalchemy import orm
 from sqlalchemy.sql.expression import or_
 
 from bungeni.core.location import location_wrapped
@@ -66,7 +67,7 @@ from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 from bungeni.ui import vocabulary
 
-from bungeni.utils import register
+from bungeni.utils import register, naming
 from bungeni.utils.capi import capi
 
 # Filter key names prefix - for available items listings
@@ -82,6 +83,20 @@ FIELD_END_DATE = _("scheduler_field_end_date", default="End Date")
 FIELD_VENUE = _("scheduler_field_venue", default="Venue")
 TITLE_SITTING = _("scheduler_title_sitting", default="Sitting")
 ACTION_VIEW_SITTING = _("scheduler_action_view_sitting", default="View")
+
+def create_id(event):
+    """Create an event (sitting or session) identifier of the form <type>-<id>
+    """
+    mapper = orm.object_mapper(event)
+    return "%s-%d" % (naming.polymorphic_identity(event.__class__),
+        mapper.primary_key_from_instance(event)[0])
+
+def get_real_id(scheduler_id):
+    """Get actual sitting id from ID of form <type>-<id>.
+    Resolves primary key of event created using 
+    """
+    return int(scheduler_id.split("-")[-1])
+
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -830,7 +845,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                         "ids": del_sibling.sitting_id
                     })
         else:
-            sitting_id = int(data["ids"])
+            sitting_id = get_real_id(data["ids"])
             parent_id = data["event_pid"]
             sitting = container.get(sitting_id)
             if sitting is None:
@@ -875,7 +890,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             container = removeSecurityProxy(self.context.__parent__).sittings
         else:
             container = self.context.publishTraverse(self.request, "sittings")
-        sitting = container.get(int(data["ids"]))
+        sitting = container.get(get_real_id(data["ids"]))
         self.template_data = []
         if sitting is not None:
             self.request.form["headless"] = "true"
@@ -926,6 +941,11 @@ class DhtmlxCalendarSittings(BrowserView):
     
     def get_event_type(self, event):
         return event.__class__.__name__.lower()
+    
+    def get_event_id(self, event):
+        """This ensures no collission between sessions and sittings
+        """
+        return create_id(event)
     
     @property
     def event_colour(self):

@@ -41,7 +41,7 @@ var Y_PROPERTY_MAPPING = {
     committees: "group_id"
 }
 
-/*
+/**
  *  Handler for scheduler's onBeforeViewChange event
  *  
  *  Determines the scope and render mode of timeline views whenever
@@ -86,7 +86,7 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
     return true;
 }
 
-/*
+/**
  *  Handler for scheduler's onEventSave event
  *  
  *  Perform validation of entered data and determine if the event editor 
@@ -155,17 +155,38 @@ function handle_lightbox(event_id){
 }
 
 /**
+ * Return link to event.
+ */
+function render_event_url(event){
+    url = cal_globals.view_url + "/sittings/obj-" + event.id + "/view";
+    return ("<a class='quick-view' href='" + url + "'>" + 
+        cal_globals.text_view + "</a>");
+}
+
+/**
  * render event text - including link to sitting for sittings with status
  */
 function render_event_text(start, end, event){
     text = event.text;
     var status = event["status"];
     if(status){
-        url = cal_globals.view_url + "/sittings/obj-" + event.id + "/view";
-        text = text + "<br /><a class='quick-view' href='" + url + "'>" + cal_globals.text_view + "</a>";
+        text = text + render_event_url(event)
     }
     return text;
 }
+
+/**
+ * render event bar text - including link to sitting for sittings with status
+ */
+function render_event_bar_text(start, end, event){
+    text = event.text;
+    var status = event["status"];
+    if(status){
+        text = render_event_url(event) + event.text
+    }
+    return text;
+}
+
 
 /**
  * Force re-rendering of an event whose ID has changed
@@ -178,7 +199,8 @@ function re_render_event(old_id, new_id){
     scheduler.render_event(event);
 }
 
-/*
+
+/**
  * @function row_marked
  * @description handler for a 'row marked' event following an update
  * we display a message highlighting sittings(events) on calendar requiring

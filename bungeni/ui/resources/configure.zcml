@@ -68,6 +68,7 @@
   <resourceLibrary name="bungeni-calendar-bundle" 
     require="jquery dhtmlxscheduler-theme-glossy
         dhtmlxscheduler-recurring dhtmlxscheduler-multisource 
+        dhtmlxscheduler-multi-day-visible 
         dhtmlxscheduler-year-view dhtmlxscheduler-week-agenda-view 
         dhtmlxscheduler-expand bungeni-calendar-globals 
         dhtmlxscheduler-timeline dhtmlxscheduler-tooltip 

@@ -1810,7 +1810,7 @@ class SittingDescriptor(ModelDescriptor):
     schema_invariants = [constraints.EndAfterStart]
     custom_validators = [
         validations.validate_date_range_within_parent,
-        validations.validate_start_date_equals_end_date,
+        #validations.validate_start_date_equals_end_date,
         validations.validate_venues,
         #validations.validate_non_overlapping_sitting
     ]

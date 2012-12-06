@@ -44,6 +44,9 @@
                 scheduler.config.show_loading=true;
                 scheduler.config.scroll_hour=8;
                 scheduler.config.details_on_create=true;
+                scheduler.config.all_timed = "short";
+                scheduler.config.multi_day = true;
+
                 
                 //create timeline view for venues
                 scheduler.createTimelineView({
@@ -88,6 +91,7 @@
                         extra_text;
                 };
                 scheduler.templates.event_text = render_event_text;
+                scheduler.templates.event_bar_text = render_event_bar_text;
                 
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");

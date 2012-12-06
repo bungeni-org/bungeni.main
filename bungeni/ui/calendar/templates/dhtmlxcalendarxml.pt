@@ -1,6 +1,6 @@
 <data i18n:domain="bungeni">
 <tal:loop tal:repeat="s python:view.sittings_and_sessions">
-<event tal:define="event_id s/sitting_id|python:id(s);event_type python:view.get_event_type(s); is_recurring python:getattr(s, ' rec_end_date', None)" tal:attributes="id event_id; color python:view.get_colour(s)">
+<event tal:define="event_id python:view.get_event_id(s);event_type python:view.get_event_type(s); is_recurring python:getattr(s, ' rec_end_date', None)" tal:attributes="id event_id; color python:view.get_colour(s)">
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date tal:condition="is_recurring"><span tal:replace="structure python:s.recurring_end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
 <end_date tal:condition="not:is_recurring"><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
