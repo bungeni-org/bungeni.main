@@ -17,6 +17,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.formlib import form
 from zope.security.proxy import removeSecurityProxy
 from zc.resourcelibrary import need
+from zope.publisher.interfaces import NotFound
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import sqlalchemy.sql.expression as sql
 
@@ -24,8 +25,10 @@ import sqlalchemy.sql.expression as sql
 from bungeni.alchemist import Session
 from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IContentViewManager
+from bungeni.alchemist.container import stringKey
 
 import bungeni.core.globalsettings as prefs
+from bungeni.core.interfaces import ISchedulingContext
 
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
@@ -535,9 +538,12 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         super(SessionCalendarViewlet, self).__init__(
             context, request, view, manager)
         self.query = None
-        self.Date = None # !+naming(mr, may-2012)
+        self.date = None
 
-    def _getDisplayDate(self, request):
+    view_name = "session_sittings"
+    viewlet_id = "session_viewlet_sittings"
+
+    def _get_display_date(self, request):
         display_date = date.getDisplayDate(self.request)
         session = self.context
         if display_date:
@@ -575,21 +581,21 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         if the session start date is prior to the current month
         """
         session = self.context
-        if self.Date.month == 1:
+        if self.date.month == 1:
             month = 12
-            year = self.Date.year - 1
+            year = self.date.year - 1
         else:
-            month = self.Date.month - 1
-            year = self.Date.year
+            month = self.date.month - 1
+            year = self.date.year
         try:
-            prevdate = datetime.date(year, month, self.Date.day)
+            prevdate = datetime.date(year, month, self.date.day)
         except:
             # in case we try to move to Feb 31st (or so)
             prevdate = datetime.date(year, month, 15)
         if session.start_date < datetime.date(
-                self.Date.year, self.Date.month, 1):
-            return """<a href="?date=%s"> &lt;&lt; </a>""" % (
-                datetime.date.strftime(prevdate, "%Y-%m-%d"))
+                self.date.year, self.date.month, 1):
+            return """<a href="?date=%s#%s"> &lt;&lt; </a>""" % (
+                datetime.date.strftime(prevdate, "%Y-%m-%d"), self.viewlet_id)
         else:
             return ""
 
@@ -598,14 +604,14 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         if the session is after the 1st of the next month
         """
         session = self.context
-        if self.Date.month == 12:
+        if self.date.month == 12:
             month = 1
-            year = self.Date.year + 1
+            year = self.date.year + 1
         else:
-            month = self.Date.month + 1
-            year = self.Date.year
+            month = self.date.month + 1
+            year = self.date.year
         try:
-            nextdate = datetime.date(year, month, self.Date.day)
+            nextdate = datetime.date(year, month, self.date.day)
         except:
             # if we try to move from 31 of jan to 31 of feb or so
             nextdate = datetime.date(year, month, 15)
@@ -613,14 +619,38 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             if session.end_date:
                 if session.end_date < datetime.date(year, month, 1):
                     return ""
-        return """<a href="?date=%s"> &gt;&gt; </a>""" % (
-            datetime.date.strftime(nextdate, "%Y-%m-%d"))
+        return """<a href="?date=%s#%s"> &gt;&gt; </a>""" % (
+            datetime.date.strftime(nextdate, "%Y-%m-%d"), self.viewlet_id)
+
+    def get_sittings_path(self):
+        """get the url to the context sittings container"""
+        scheduling_context = None
+        context = self.context
+        while scheduling_context is None:
+            scheduling_context = ISchedulingContext(context, None)
+            if not scheduling_context:
+                context = context.__parent__
+        if scheduling_context:
+            try:
+                ctx = scheduling_context.__parent__
+                if hasattr(ctx, "sittings"):
+                    sittings_container = ctx.sittings
+                else:
+                    sittings_container = removeSecurityProxy(ctx).publishTraverse(
+                        self.request, "sittings"
+                    )
+                return url.absoluteURL(sittings_container, self.request)
+            except NotFound:
+                log.error("Could not determine sittings path for context %s",
+                    self.context
+                )
+        return "../sittings"
 
     def _get_items(self):
         """Return the data of the query.
         """
         data_list = []
-        path = "/calendar/group/sittings/"
+        path = self.get_sittings_path()
         formatter = self.get_date_formatter("time", "short")
         for result in self.query.all():
             data = {}
@@ -635,14 +665,13 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data["start_time"] = result.start_date.time()
             data["end_time"] = result.end_date.time()
             data["day"] = result.start_date.date()
-            data["url"] = (path + "obj-" + str(result.sitting_id))
+            data["url"] = "/".join([path, stringKey(result)])
             data["did"] = "dlid_%s" % (
                 datetime.datetime.strftime(result.start_date, "%Y-%m-%d"))
             data_list.append(data)
         return data_list
     
-    # !+naming(mr, may-2012)
-    def getTdId(self, date):
+    def get_td_id(self, date):
         """
         return an Id for that td element:
         consiting of tdid- + date
@@ -650,12 +679,11 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         """
         return "tdid-" + datetime.date.strftime(date, "%Y-%m-%d")
     
-    # !+naming(mr, may-2012)
-    def getDayClass(self, Date):
+    def get_day_class(self, Date):
         """Return the class settings for that calendar day.
         """
         css_class = ""
-        if self.Date.month != Date.month:
+        if self.date.month != Date.month:
             css_class = css_class + "other-month "
         if Date < datetime.date.today():
             css_class = css_class + "past-date "
@@ -670,14 +698,12 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             css_class = css_class + "holyday-date "
         return css_class.strip()
     
-    # !+naming(mr, may-2012)
-    def getWeekNo(self, Date):
+    def get_week_no(self, Date):
         """Return the weeknumber for a given date.
         """
         return Date.isocalendar()[1]
     
-    # !+naming(mr, may-2012)
-    def getSittings4Day(self, Date):
+    def get_sittings_for_day(self, Date):
         """Return the sittings for that day.
         """
         day_data = []
@@ -689,13 +715,13 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
     def update(self):
         """Refresh the query.
         """
-        self.Date = self._getDisplayDate(self.request)
-        if not self.Date:
-            self.Date = datetime.date.today()
-        self.query = self.current_sittings_query(self.Date)
+        self.date = self._get_display_date(self.request)
+        if not self.date:
+            self.date = datetime.date.today()
+        self.query = self.current_sittings_query(self.date)
         self.monthcalendar = calendar.Calendar(prefs.getFirstDayOfWeek()
-            ).monthdatescalendar(self.Date.year, self.Date.month)
-        self.monthname = datetime.date.strftime(self.Date, "%B %Y")
+            ).monthdatescalendar(self.date.year, self.date.month)
+        self.monthname = datetime.date.strftime(self.date, "%B %Y")
         self.items = self._get_items()
     
     render = ViewPageTemplateFile("templates/session-calendar-viewlet.pt")

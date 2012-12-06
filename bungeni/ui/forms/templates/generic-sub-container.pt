@@ -13,17 +13,17 @@
       contents 
     </div>
     <!--div id="actionsView">
-	<span class="actionButtons"
-	tal:condition="view/availableActions">
+    <span class="actionButtons"
+    tal:condition="view/availableActions">
         <tal:loop tal:repeat="action view/actions">
-	<input type="submit" class="context"
-	id="" name="" value=""
-	tal:attributes="id action/__name__;
-	name action/__name__;
-	value python:str(action.label);"
-	i18n:attributes="value" />
-	</tal:loop>						
-	</span>
-	</div-->
+    <input type="submit" class="context"
+    id="" name="" value=""
+    tal:attributes="id action/__name__;
+    name action/__name__;
+    value python:str(action.label);"
+    i18n:attributes="value" />
+    </tal:loop>                        
+    </span>
+    </div-->
   </form>
 </dd>
