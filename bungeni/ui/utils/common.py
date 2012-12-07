@@ -271,11 +271,12 @@ def list_container_items(container_instance, permission=None):
     domain_model = trusted._class
     type_info = capi.get_type_info(domain_model)
     descriptor = type_info.descriptor_model
-    order_func = sort_dir_funcs.get(descriptor.sort_dir, sql.desc)
-    for field in descriptor.sort_on:
-        sort_fields.append(
-            order_func(getattr(domain_model, field)) 
-        )
+    if descriptor.sort_on:
+        order_func = sort_dir_funcs.get(descriptor.sort_dir, sql.desc)
+        for field in descriptor.sort_on:
+            sort_fields.append(
+                order_func(getattr(domain_model, field)) 
+            )
     if not permission:
         permission = view_permission(domain_model)
     for item in trusted.batch(limit=None, order_by=tuple(sort_fields)):
