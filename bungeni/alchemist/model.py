@@ -22,9 +22,6 @@ __all__ = [
 
 
 from zope import interface
-from zope.component import getUtilitiesFor
-from zope.securitypolicy.interfaces import IRole
-import zope.cachedescriptors.property
 from bungeni.alchemist.interfaces import (
     IModelDescriptor,
     IModelDescriptorField
@@ -140,6 +137,15 @@ def hide(modes=None, roles=None):
 # required
 # - Field.property.required: by default required=True for all schema.Field
 
+ 
+# Default list of roles that are guaranteed to always be there in Bungeni 
+SYSTEM_ROLES = (
+    "bungeni.Admin", # parliament, has all privileges
+    "bungeni.Owner", # instance + special objects with no mp context
+    "bungeni.Anonymous", # unauthenticated user, anonymous
+    "bungeni.Signatory",
+)
+
 class Field(object):
     interface.implements(IModelDescriptorField)
     
@@ -148,14 +154,8 @@ class Field(object):
     @classmethod
     def validated_modes(cls, modes, nullable=False):
         return validated_set("modes", cls._modes, modes, nullable=nullable)
+    _roles = list(SYSTEM_ROLES)
     
-    # Default list of roles that are guaranteed to always be there in Bungeni 
-    _roles = [
-        "bungeni.Admin", # parliament, has all privileges
-        "bungeni.Owner", # instance + special objects with no mp context
-        "bungeni.Anonymous", # unauthenticated user, anonymous
-        "bungeni.Signatory",
-    ]
     @classmethod
     def validated_roles(cls, roles, nullable=False):
         return validated_set("roles", cls._roles, roles, nullable=nullable)
@@ -327,11 +327,6 @@ class Field(object):
                     self.name, loc)
         # !+LOCALIZATION_AND_SCHEMA_INTEGRITY add db-column-validation here?
     
-    @zope.cachedescriptors.property.cachedIn("_registered_roles_")
-    def registered_roles(self):
-        """Returns all registered roles"""
-        return [name for name, util in getUtilitiesFor(IRole)]
-    
     def is_displayable(self, mode, user_roles):
         """Does this field pass localization directives for this mode?
         """
@@ -352,8 +347,13 @@ class Field(object):
         for loc in self.localizable:
             if mode in loc.modes:
                 for role in user_roles:
-                    if role in loc.roles or role in self.registered_roles:
+                    if role in loc.roles:
                         return True
+                    elif loc.roles == SYSTEM_ROLES:
+                        #!+FIELDS(mb, Dec-2012) workaround to display fields
+                        # for non-localizable types see thread: http://goo.gl/6B7fo
+                        if not loc._from_hide:
+                            return True
         return False
     
     def get(self, k, default=None):
@@ -545,5 +545,4 @@ class ModelDescriptor(object):
     @classproperty
     def container_name(cls):
         return _(naming.plural(cls.display_name)) # !+unicode
-
 
