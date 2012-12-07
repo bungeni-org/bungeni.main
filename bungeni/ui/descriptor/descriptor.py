@@ -49,8 +49,7 @@ def insert_field_after(fields, name, field):
 
 def LanguageField(name="language", 
         localizable=[
-            show("add"), # db-not-null-ui-add
-            show("view edit"), 
+            show("add view edit"), # db-not-null-ui-add
             hide("listing"), 
         ]
     ):
@@ -126,8 +125,7 @@ class UserDescriptor(ModelDescriptor):
         F(name="first_name",
             label="First Name",
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="middle_name",
@@ -140,8 +138,7 @@ class UserDescriptor(ModelDescriptor):
         F(name="last_name",
             label="Last Name",
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="email",
@@ -149,8 +146,7 @@ class UserDescriptor(ModelDescriptor):
             description="Email address",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="email",
         ),
@@ -160,8 +156,7 @@ class UserDescriptor(ModelDescriptor):
                 "and underscore (_). Should start with a letter and be "
                 "between 3 and 20 characters long",
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view"),
+                show("add view"), # db-not-null-ui-add
                 hide("listing"),
             ],
             value_type="login",
@@ -193,8 +188,7 @@ class UserDescriptor(ModelDescriptor):
         F(name="gender",
             label="Gender",
             localizable=[
-                show("view edit add"),
-                show("listing"),
+                show("view edit add listing"),
             ],
             value_type="text",
             render_type="radio",
@@ -203,8 +197,7 @@ class UserDescriptor(ModelDescriptor):
         F(name="date_of_birth",
             label="Date of Birth",
             localizable=[
-                show("view edit add"),
-                show("listing"),
+                show("view edit add listing"),
             ],
             value_type="date",
             render_type="date",
@@ -302,8 +295,7 @@ class UserDelegationDescriptor(ModelDescriptor):
             label="User",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="user",
             render_type="single_select",
@@ -345,8 +337,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
             label="Start Date",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="date",
             render_type="date",
@@ -445,8 +436,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             label="Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="user",
             render_type="single_select",
@@ -456,8 +446,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             label="Election Type",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -467,8 +456,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             label="Election/Nomination Date",
             required=False,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="date",
             render_type="date",
@@ -480,8 +468,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             label="Representation",
             description="Select Representation",
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit"),
+                show("add view edit"), # db-not-null-ui-add
                 hide("listing"),
             ],
             value_type="text",
@@ -491,8 +478,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
         F(name="party",
             label="Political Party",
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -527,8 +513,7 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
             label="Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="member", # !+user: constrained by "parent group" OR vocabulary
             render_type="single_select",
@@ -575,8 +560,7 @@ class GroupDescriptor(ModelDescriptor):
             label="Short Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="acronym",
@@ -661,8 +645,7 @@ class ParliamentDescriptor(GroupDescriptor):
             description="Shorter name for the parliament",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="identifier",
@@ -686,8 +669,7 @@ class ParliamentDescriptor(GroupDescriptor):
             description="Date of the election",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="date",
             render_type="date",
@@ -697,8 +679,7 @@ class ParliamentDescriptor(GroupDescriptor):
             description="Date of the swearing in",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="date",
             render_type="date",
@@ -755,8 +736,7 @@ class CommitteeDescriptor(GroupDescriptor):
             label="Committee Status Type",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -841,8 +821,7 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
             label="Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="user",
             render_type="single_select",
@@ -871,8 +850,7 @@ class GroupDocumentAssignmentDescriptor(ModelDescriptor):
             label="Group",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -889,8 +867,7 @@ class AddressDescriptor(ModelDescriptor):
             label="Address Type",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -900,8 +877,7 @@ class AddressDescriptor(ModelDescriptor):
             label="Postal Address Type",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -987,8 +963,7 @@ class TitleTypeDescriptor(ModelDescriptor):
             label="Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="user_unique",
@@ -1025,8 +1000,7 @@ class MemberTitleDescriptor(ModelDescriptor):
             label="Title",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -1036,8 +1010,7 @@ class MemberTitleDescriptor(ModelDescriptor):
             label="Start Date",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="date",
             render_type="date",
@@ -1073,8 +1046,7 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
             label="Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="user",
             render_type="single_select",
@@ -1157,8 +1129,7 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
             label="Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="user",
             render_type="single_select",
@@ -1203,8 +1174,7 @@ class MinisterDescriptor(GroupMembershipDescriptor):
             label="Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="user",
             render_type="single_select",
@@ -1262,8 +1232,7 @@ class AttachmentDescriptor(ModelDescriptor):
             label="Attachment Type",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -1272,8 +1241,7 @@ class AttachmentDescriptor(ModelDescriptor):
         F(name="title",
             label="Title",
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="description",
@@ -1417,8 +1385,9 @@ class DocDescriptor(ModelDescriptor):
             description="Select the user who moved the document",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("edit"), # !+ displayed in view-mode... how to control this from config?
+                # for edit !+ displayed in view-mode... how to control 
+                # this from config?
+                show("add edit"), # db-not-null-ui-add 
                 hide("view listing", "bungeni.Anonymous"),
             ],
             value_type="member", # !+user: constrained by "parent group" OR vocabulary
@@ -1471,8 +1440,7 @@ class DocDescriptor(ModelDescriptor):
             label="Title",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="text",
             render_type="text_box",
@@ -1579,8 +1547,8 @@ class EventDescriptor(DocDescriptor):
             label="Owner",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("edit"), # !+ displayed in view-mode... how to control this from config?
+                # !+ for edit mode displayed in view-mode... how to control this from config?
+                show("add edit"), # db-not-null-ui-add
                 hide("view listing", "bungeni.Anonymous"),
             ],
             value_type="user", # !+user: constrained by "parent group" OR vocabulary
@@ -1697,8 +1665,7 @@ class HeadingDescriptor(ModelDescriptor):
             label="Title",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         LanguageField("language"), # [user-req]
@@ -1718,8 +1685,7 @@ class VenueDescriptor(ModelDescriptor):
             label="Title",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="description",
@@ -1873,16 +1839,14 @@ class SessionDescriptor(ModelDescriptor):
             label="Short Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="full_name",
             label="Full Name",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit"),
+                show("add view edit"), # db-not-null-ui-add
                 hide("listing"),
             ],
         ),
@@ -1890,8 +1854,7 @@ class SessionDescriptor(ModelDescriptor):
             label="Start Date",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="date",
             render_type="date",
@@ -1900,8 +1863,7 @@ class SessionDescriptor(ModelDescriptor):
             label="End Date",
             required=True,
             localizable=[
-                show("add"), # "logical" required (even if db allows null)
-                show("view edit listing"),
+                show("add view edit listing"), # add - "logical" required (even if db allows null)
             ],
             value_type="date",
             render_type="date",
@@ -1926,8 +1888,7 @@ class SittingAttendanceDescriptor(ModelDescriptor):
             label="Member of Parliament",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="user",
             render_type="single_select",
@@ -1937,8 +1898,7 @@ class SittingAttendanceDescriptor(ModelDescriptor):
             label="Attendance",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="vocabulary",
             render_type="single_select",
@@ -1965,8 +1925,7 @@ class SignatoryDescriptor(ModelDescriptor):
             label="Signatory",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view listing"),
+                show("add view listing"), # db-not-null-ui-add
             ],
             value_type="member",
             render_type="single_select",
@@ -1991,8 +1950,7 @@ class CountryDescriptor(ModelDescriptor):
             description="Two letter ISO Code for this country e.g. DZ for Algeria",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
         F(name="country_name",
@@ -2000,8 +1958,7 @@ class CountryDescriptor(ModelDescriptor):
             description="Name of the Country",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
     ]
@@ -2022,8 +1979,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
             label="Item",
             required=True,
             localizable=[
-                show("edit add"), # db-not-null-ui-add, pk
-                show("view listing"),
+                show("edit add view listing"), # db-not-null-ui-add, pk
             ],
             value_type="number",
             render_type="number",
@@ -2043,8 +1999,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
         F(name="item_type",
             label="Item Type",
             localizable=[
-                show("edit add"), # db-not-null-ui-add, pk
-                show("view listing"),
+                show("edit add view listing"), # db-not-null-ui-add, pk
             ],
         ),
         F(name="item_uri", # derived @item_uri
@@ -2062,8 +2017,7 @@ class EditorialNoteDescriptor(ModelDescriptor):
             label="Item",
             required=True,
             localizable=[
-                show("edit add"), # db-not-null-ui-add, pk
-                show("view listing"),
+                show("edit add view listing"), # db-not-null-ui-add, pk
             ],
             value_type="number",
             render_type="number",
@@ -2091,8 +2045,7 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
             label="Minutes",
             required=True,
             localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit listing"),
+                show("add view edit listing"), # db-not-null-ui-add
             ],
             value_type="text",
             render_type="rich_text",
