@@ -261,7 +261,6 @@ def default_reports(sitting, event):
             report_title =  _("report_title_votes_and_proceedings", 
                 default=u"Sitting Votes and Proceedings")
         sittings = [ExpandedSitting(sitting)]
-        report_context = ReportContext(sittings=sittings)
         report = domain.Report()
         session = Session()
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
@@ -275,9 +274,12 @@ def default_reports(sitting, event):
         doc_template = term and term.value or vocab.terms[0].value
         generator = generators.ReportGeneratorXHTML(doc_template)
         generator.title = report_title
-        generator.context = report_context
-        report.title = translate(report_title, 
+        report_title_i18n = translate(report_title, 
             target_language=generator.language)
+        report_context = ReportContext(sittings=sittings, 
+            title=report_title_i18n)
+        generator.context = report_context
+        report.title = report_title_i18n
         report.language = generator.language
         report.body = generator.generateReport()
         session.add(report)

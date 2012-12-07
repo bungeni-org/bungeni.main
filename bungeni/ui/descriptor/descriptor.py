@@ -1784,6 +1784,7 @@ class SittingDescriptor(ModelDescriptor):
 
 class SittingReportDescriptor(ModelDescriptor):
     localizable = True
+    sort_on = ["report_id",]
     fields = [
         F(name="sitting_id",
             label="Sitting",

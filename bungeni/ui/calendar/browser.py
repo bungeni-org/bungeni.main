@@ -930,9 +930,6 @@ class DhtmlxCalendarSittings(BrowserView):
             self.context.get_group().sessions.items()
             if checkPermission("bungeni.session.View", session)
         ]
-        colours = utils.generate_event_colours(len(sessions))
-        for (index, sess) in enumerate(sessions):
-            sess.colour = colours[index]
         return sessions
     
     def get_colour(self, event):

@@ -42,8 +42,8 @@ var Y_PROPERTY_MAPPING = {
 }
 
 /**
- *  Handler for scheduler's onBeforeViewChange event
- *  
+ * @function handle_before_change_view
+ * @description Handler for scheduler's onBeforeViewChange event
  *  Determines the scope and render mode of timeline views whenever
  *  there is a switch to a timeline view. Switching to the committees timeline 
  *  view also loads committee events.
@@ -87,8 +87,8 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
 }
 
 /**
- *  Handler for scheduler's onEventSave event
- *  
+ * @function event_save_handler
+ * @description Handler for scheduler's onEventSave event.
  *  Perform validation of entered data and determine if the event editor 
  *  will be closed.
  */
@@ -132,7 +132,9 @@ function event_save_handler(id, data, is_new_event){
 }
 
 /**
- * show event collission notice only if the colliding event is a sitting
+ * @function collission_handler
+ * @description show event collission notice only if the colliding event is 
+ * a sitting
  */
 function collission_handler(ev, evs){
     var collission = false;
@@ -146,6 +148,10 @@ function collission_handler(ev, evs){
     return false;
 }
 
+/**
+ * @function handle_lightbox
+ * @description handle show lightbox event - not displayed for sessions 
+ */
 function handle_lightbox(event_id){
     event = scheduler.getEvent(event_id);
     if (event.event_type=="session"){
@@ -155,16 +161,21 @@ function handle_lightbox(event_id){
 }
 
 /**
- * Return link to event.
+ * @function render_event_url
+ * @description Return link to event.
  */
 function render_event_url(event){
-    url = cal_globals.view_url + "/sittings/obj-" + event.id + "/view";
+    //get actual event id
+    ev_id = event.id.split("-").pop();
+    url = cal_globals.view_url + "/sittings/obj-" + ev_id + "/view";
     return ("<a class='quick-view' href='" + url + "'>" + 
         cal_globals.text_view + "</a>");
 }
 
 /**
- * render event text - including link to sitting for sittings with status
+ * @function render_event_text
+ * @description render event text - including link to sitting for sittings 
+ * with status
  */
 function render_event_text(start, end, event){
     text = event.text;
@@ -176,7 +187,9 @@ function render_event_text(start, end, event){
 }
 
 /**
- * render event bar text - including link to sitting for sittings with status
+ * @function render_event_bar_text
+ * @description render event bar text - including link to sitting for sittings 
+ * with status
  */
 function render_event_bar_text(start, end, event){
     text = event.text;
@@ -189,7 +202,8 @@ function render_event_bar_text(start, end, event){
 
 
 /**
- * Force re-rendering of an event whose ID has changed
+ * @function re_render_event
+ * @description Force re-rendering of an event whose ID has changed
  * Forces re-display of elements.
  */
 function re_render_event(old_id, new_id){
@@ -199,6 +213,13 @@ function re_render_event(old_id, new_id){
     scheduler.render_event(event);
 }
 
+/**
+ * @function event_type_class
+ * @description return custom style for each event type
+ */
+function event_type_class(start, end, event){
+    return "scheduler_event_" + event.event_type;
+}
 
 /**
  * @function row_marked

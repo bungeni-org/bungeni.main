@@ -16,11 +16,13 @@ from zope.annotation.interfaces import IAnnotations
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.security import checkPermission, proxy
+import sqlalchemy.sql.expression as sql
 
 # !+bungeni.models(mr, apr-2011) gives error when executing localization.py
 import bungeni
 import bungeni.ui.interfaces
 import bungeni.alchemist
+from bungeni.utils.capi import capi
 
 from ore.wsgiapp.interfaces import IApplication
 def get_application():
@@ -257,22 +259,26 @@ def is_admin(context):
     return zope.security.management.getInteraction().checkPermission(
         "zope.ManageSite", context)
 
+sort_dir_funcs = dict(asc=sql.asc, desc=sql.desc)
 def list_container_items(container_instance, permission=None):
     """Generate list of container items with permission check
     Note that we first try to generate the permission name or fall
     back to zope.View
     """
+    sort_fields = []
     from bungeni.core.workflows.utils import view_permission
     trusted = proxy.removeSecurityProxy(container_instance)
-    for item in trusted.values():
-        if permission is None:
-            if trusted.domain_model:
-                permission = view_permission(item)
-            else:
-                permission = "zope.View"
+    domain_model = trusted._class
+    type_info = capi.get_type_info(domain_model)
+    descriptor = type_info.descriptor_model
+    order_func = sort_dir_funcs.get(descriptor.sort_dir, sql.desc)
+    for field in descriptor.sort_on:
+        sort_fields.append(
+            order_func(getattr(domain_model, field)) 
+        )
+    if not permission:
+        permission = view_permission(domain_model)
+    for item in trusted.batch(limit=None, order_by=tuple(sort_fields)):
         if checkPermission(permission, item):
-            yield bungeni.alchemist.container.contained(item,
-                container_instance, 
-                bungeni.alchemist.container.stringKey(item)
-            )
+            yield item
 

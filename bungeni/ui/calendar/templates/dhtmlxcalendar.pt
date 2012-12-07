@@ -92,6 +92,7 @@
                 };
                 scheduler.templates.event_text = render_event_text;
                 scheduler.templates.event_bar_text = render_event_bar_text;
+                scheduler.templates.event_class = event_type_class;
                 
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");

@@ -1,110 +1,117 @@
 #scheduling-calendar {
-	width: 58%;
-	height:100%;
-	float: left;
-	position:static;
+    width: 58%;
+    height:100%;
+    float: left;
+    position:static;
 }
+
+.scheduler_event_session{
+    background-color:#BBF536;
+    background-image:url("session-event-bg.png");
+    border:1px solid #AFCE6A;
+}
+
 dl.portlet.portletNavigationTree {
-	position: relative;
-	width: 100%;
+    position: relative;
+    width: 100%;
 }
 dl.portlet.portletNavigationTree dt.portletHeader {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0;
 }
 dl.portlet.portletNavigationTree dd#items-to-be-scheduled-dl {
 }
 
 dd#items-to-be-scheduled-dl{
-	width: 41%;
-	height: 100%;
-	margin-left: 0;
-	margin: .25em 0 0;
-	padding: 0;
-	float: right;
+    width: 41%;
+    height: 100%;
+    margin-left: 0;
+    margin: .25em 0 0;
+    padding: 0;
+    float: right;
 }
 dd#items-to-be-scheduled-dl ul.formTabs {
-	padding: 0;
+    padding: 0;
 }
 dd#items-to-be-scheduled-dl ul.formTabs li {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 dd#items-to-be-scheduled-dl ul.formTabs li a {
-	margin: 0 .15em;
-	padding: .25em .3em;
+    margin: 0 .15em;
+    padding: .25em .3em;
 }
 
 tr.dd-disable {
-	background-color: lightgrey;
+    background-color: lightgrey;
 }
 
 .scheduling.scheduling-drop-target {
-	height: 20em;
-	overflow: auto;
-	margin-top: 3.75em;
-	font-size: 100%;
-	border-right: 1px solid #ccc;
-	padding-right: .5em;
-	position: relative;
+    height: 20em;
+    overflow: auto;
+    margin-top: 3.75em;
+    font-size: 100%;
+    border-right: 1px solid #ccc;
+    padding-right: .5em;
+    position: relative;
 }
 .scheduling.scheduling-drop-target table {
-	font-size: 105%;
+    font-size: 105%;
 }
 .scheduling.scheduling-drop-target.published-agenda  {
-	height: auto;
-	overflow: auto;
+    height: auto;
+    overflow: auto;
 }
 .scheduling.scheduling-drop-target.published-minutes  {
-	height: auto;
-	overflow: auto;
+    height: auto;
+    overflow: auto;
 }
 .scheduling.scheduling-drop-target.draft-minutes{
-	height: auto;
-	overflow: auto;
+    height: auto;
+    overflow: auto;
 }
 p.scheduling-dd-description {
-	text-align: center;
-	font-weight:bold;
+    text-align: center;
+    font-weight:bold;
 }
 table.items-for-scheduling {
-	width: 100%;
+    width: 100%;
 }
 dd.items-for-scheduling {
-	height: 10em;
-	overflow: auto;
+    height: 10em;
+    overflow: auto;
 }
 table.items-for-scheduling .helper {
-	display: block;
-	padding: 10px;
-	background: white;
-	border: 1px solid #8cacbb;
+    display: block;
+    padding: 10px;
+    background: white;
+    border: 1px solid #8cacbb;
 }
  
 table.items-for-scheduling tbody.reorder {
-	cursor: move;
+    cursor: move;
 }
 table.items-for-scheduling tbody tr:hover {
-	background-color: #dee7ec;
+    background-color: #dee7ec;
 }
   
 ul.items-for-scheduling li {
 }
 
 ul.items-for-scheduling ul li a {
-	display: block;
-	background-color: #dee7ec;
-	color: #436976;
-	border: 1px solid #8cacbb;
-	padding: 3px;
+    display: block;
+    background-color: #dee7ec;
+    color: #436976;
+    border: 1px solid #8cacbb;
+    padding: 3px;
 }
 ul.items-for-scheduling ul li { 
-	position:relative;
-	border:4px solid #666;
-	text-align:center;
-	color:#fff;
-	cursor:move;
+    position:relative;
+    border:4px solid #666;
+    text-align:center;
+    color:#fff;
+    cursor:move;
 }
