@@ -124,16 +124,21 @@ class EmailBlock(object):
         self.template = template
         self.message = message
         self.status = message["status"]["value"]
+        self.type = message["notification_type"]
+        self.time_string = message.get("notification_time_string")
 
     def get_email(self):
-        subject, body = None, None
-
         def get_node_content(element):
             return (element.text +
                     "".join(map(etree.tostring, element))).strip()
 
+        subject, body = None, None
         for _, element in etree.iterwalk(self.template, tag="block"):
-            if element.attrib["state"] == self.status:
+            if (element.get("onstate", None) == self.status):
+                subject = get_node_content(element.find("subject"))
+                body = get_node_content(element.find("body"))
+            elif ((element.get("afterstate", None) == self.status) and
+                  (element.get("time", None) == self.time_string)):
                 subject = get_node_content(element.find("subject"))
                 body = get_node_content(element.find("body"))
             element.clear()
@@ -144,7 +149,7 @@ class EmailBlock(object):
                     self.message["type"], self.message["status"]))
         if not body:
             body = "Item, %s, type: %s, status: %s" % (self.message["title"],
-                self.message["type"], self.message["status"])
+                self.message["type"], self.message["status"]["value"])
             log.warn("Missing body template for %s:%s. Using default" % (
                     self.message["type"], self.message["status"]))
         subject_template = EmailTemplate()

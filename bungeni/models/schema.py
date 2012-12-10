@@ -1061,6 +1061,20 @@ translation_lookup_index = rdb.Index("translation_lookup_index",
     translation.c.lang
 )
 
+
+time_based_notification = rdb.Table("time_based_notification", metadata,
+    rdb.Column("notification_id", rdb.Integer, primary_key=True),
+    rdb.Column("object_id", rdb.Integer, primary_key=True, nullable=False),
+    rdb.Column("object_type", rdb.String(50),
+        primary_key=True, nullable=False),
+    rdb.Column("object_status", rdb.Unicode(32)),
+    rdb.Column("time_string", rdb.String(50),
+        primary_key=True, nullable=False),
+    rdb.Column("notification_date_time", rdb.DateTime(timezone=False),
+        nullable=False)
+)
+
+
 #for table_name in metadata.tables.keys():
 #    print metadata.tables[table_name].name
 
@@ -1087,4 +1101,3 @@ if __name__ == "__main__":
         import pdb, traceback, sys
         traceback.print_exc()
         pdb.post_mortem(sys.exc_info()[-1])
-

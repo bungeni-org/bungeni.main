@@ -1223,3 +1223,6 @@ class ObjectTranslation(object):
     """Get the translations for an Object.
     """
 
+class TimeBasedNotication(Entity):
+    """Time based Notifications
+    """

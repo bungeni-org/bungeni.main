@@ -726,4 +726,4 @@ mapper(domain.ObjectTranslation, schema.translation)
 # class is NOT workflowed, and in any case has no available_dynamic_features
 mapper_add_relation_vertical_properties(domain.Change)
 
-
+mapper(domain.TimeBasedNotication, schema.time_based_notification)

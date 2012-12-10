@@ -1,6 +1,3 @@
-
-# !+ !!!! Correct SRC CODE formatting of this module !!!!
-
 log = __import__("logging").getLogger("bungeni.core.notifications")
 
 import os
@@ -24,6 +21,9 @@ from bungeni.alchemist import Session
 from bungeni.models.utils import obj2dict
 from bungeni.models import domain
 from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
+# this module will be moved to bungeni.utils
+from bungeni.ui.utils import report_tools
+from bungeni.core import kronos
 import transaction
 
 
@@ -85,21 +85,18 @@ class MessageQueueConfig(object):
 
 
 def registerMessageQueueConfig(context, message_exchange, task_exchange,
-                               username="", password="",
-                               host="", port=None, virtual_host="",
-                               channel_max=None, frame_max=None,
-                               heartbeat=None, number_of_workers=0,
-                               task_queue=""):
+    username="", password="", host="", port=None, virtual_host="",
+    channel_max=None, frame_max=None, heartbeat=None, number_of_workers=0,
+    task_queue=""):
     context.action(discriminator=('RegisterMessageQueueConfig'),
-                   callable=handler,
-                   args=('registerUtility',
-                         MessageQueueConfig(message_exchange, task_exchange,
-                                            username, password,
-                                            host, port, virtual_host,
-                                            channel_max, frame_max, heartbeat,
-                                            number_of_workers, task_queue),
-                            IMessageQueueConfig)
-                   )
+        callable=handler,
+        args=('registerUtility',
+            MessageQueueConfig(message_exchange, task_exchange,
+                username, password, host, port, virtual_host,
+                channel_max, frame_max, heartbeat, number_of_workers,
+                task_queue),
+            IMessageQueueConfig)
+    )
 
 
 def get_mq_parameters():
@@ -144,7 +141,7 @@ def post_commit_publish(status, **kwargs):
         )
 
 
-def queue_transition_based_notification(document, event):
+def queue_notification(document, event):
     connection = get_mq_connection()
     if not connection:
         return
@@ -152,7 +149,7 @@ def queue_transition_based_notification(document, event):
     domain_class = document.__class__
     unproxied = removeSecurityProxy(document)
     mapper = orm.object_mapper(unproxied)
-    primary_key = mapper.primary_key_from_instance(unproxied)
+    primary_key = mapper.primary_key_from_instance(unproxied)[0]
     notifications_utility = component.getUtility(INotificationsUtility)
     message = {
         "document_id": primary_key,
@@ -172,76 +169,94 @@ def queue_transition_based_notification(document, event):
     txn.addAfterCommitHook(post_commit_publish, (), kwargs)
 
 
+def get_principal_ids(document, roles):
+    principal_ids = set()
+    document_prm = IPrincipalRoleMap(document)
+    group_prms = get_group_prms(document)
+    for role in roles:
+        if role in ROLES_DIRECTLY_DEFINED_ON_OBJECTS:
+            principals = document_prm.getPrincipalsForRole(role)
+            for principal in principals:
+                principal_ids.add(principal[0])
+        else:
+            for group_prm in group_prms:
+                principals = group_prm.getPrincipalsForRole(role)
+                for principal in principals:
+                    principal_id = principal[0]
+                    if principal_id.startswith("group"):
+                        group_mbr_ids = get_group_member_ids(principal_id)
+                        for group_mbr in group_mbr_ids:
+                            principal_ids.add(group_mbr)
+    return principal_ids
+
+
+def get_group_member_ids(group_id):
+    session = Session()
+    group = session.query(
+        domain.Group).filter(
+        domain.Group.group_principal_id == group_id).one()
+    if group:
+        return [member.user.login for member in group.members]
+    return []
+
+
+def get_group_prms(document):
+    prms = []
+    prms.append(IPrincipalRoleMap(core.get_application()))
+    parent_group = getattr(document, "group", None)
+    if parent_group:
+        prms.append(IPrincipalRoleMap(parent_group))
+    assigned_groups = getattr(document, "group_assignment", list())
+    if assigned_groups:
+        for group in assigned_groups:
+            prms.append(IPrincipalRoleMap(group))
+    return prms
+
+
+def notification_time(time_string):
+    """Takes a time config string and computes the notification
+    time
+    """
+    hours = report_tools.compute_hours(time_string)
+    return datetime.datetime.now() + datetime.timedelta(hours=hours)
+
+
+def get_message(document, principal_ids):
+    message = obj2dict(document, 0)
+    if not message.get("type", None):
+        message["type"] = message["document_type"]
+    message["principal_ids"] = list(principal_ids)
+    return message
+
+
 def worker():
     connection = get_mq_connection()
     if not connection:
         return
     channel = connection.channel()
-    site_prm = IPrincipalRoleMap(core.get_application())
-
-    def get_principal_ids(document, roles):
-        principal_ids = set()
-        document_prm = IPrincipalRoleMap(document)
-        group_prms = get_group_prms(document)
-        for role in roles:
-            if role in ROLES_DIRECTLY_DEFINED_ON_OBJECTS:
-                principals = document_prm.getPrincipalsForRole(role)
-                for principal in principals:
-                    principal_ids.add(principal[0])
-            else:
-                for group_prm in group_prms:
-                    principals = group_prm.getPrincipalsForRole(role)
-                    for principal in principals:
-                        principal_id = principal[0]
-                        if principal_id.startswith("group"):
-                            group_mbr_ids = get_group_member_ids(principal_id)
-                            for group_mbr in group_mbr_ids:
-                                principal_ids.add(group_mbr)
-        return principal_ids
-
-    def get_group_member_ids(group_id):
-        session = Session()
-        group = session.query(
-            domain.Group).filter(
-            domain.Group.group_principal_id == group_id).one()
-        if group:
-            return [member.user.login for member in group.members]
-        return []
-
-    def get_group_prms(document):
-        prms = []
-        prms.append(site_prm)
-        parent_group = getattr(document, "group", None)
-        if parent_group:
-            prms.append(IPrincipalRoleMap(parent_group))
-        assigned_groups = getattr(document, "group_assignment", list())
-        if assigned_groups:
-            for group in assigned_groups:
-                prms.append(IPrincipalRoleMap(group))
-        return prms
+    mq_utility = component.getUtility(IMessageQueueConfig)
 
     def callback(channel, method, properties, body):
-        notifications_utility = component.getUtility(INotificationsUtility)
+        notification_utl = component.getUtility(INotificationsUtility)
+        exchange = str(mq_utility.get_message_exchange())
         message = simplejson.loads(body)
-        domain_class = notifications_utility.get_domain(
+        domain_class = notification_utl.get_domain(
             message["document_type"])
-        roles = notifications_utility.get_transition_based_roles(
-            domain_class, message["destination"]
-            )
         session = Session()
         if domain_class and message["document_id"]:
             document = session.query(domain_class).get(message["document_id"])
             if document:
-                principal_ids = get_principal_ids(document, roles)
-                exchange = str(mq_utility.get_message_exchange())
-                if principal_ids:
-                    # create message and send to exchange
-                    mes = obj2dict(document, 0)
-                    if not mes.get("type", None):
-                        mes["type"] = message["document_type"]
-                    mes["principal_ids"] = list(principal_ids)
-                    dthandler = lambda obj: obj.isoformat() if isinstance(obj,
-                        datetime.datetime) else obj
+                # first we handle the transition based notifications
+                transition_roles = notification_utl.get_transition_based_roles(
+                    domain_class, message["destination"]
+                )
+                transition_principal_ids = get_principal_ids(
+                    document, transition_roles)
+                if transition_principal_ids:
+                    mes = get_message(document, transition_principal_ids)
+                    mes["notification_type"] = "onstate"
+                    dthandler = lambda obj: obj.isoformat() if isinstance(
+                        obj, datetime.datetime) else obj
                     channel.basic_publish(
                         exchange=exchange,
                         body=simplejson.dumps(mes, default=dthandler),
@@ -250,13 +265,67 @@ def worker():
                             delivery_mode=1
                         ),
                         routing_key="")
-        channel.basic_ack(delivery_tag=method.delivery_tag)
+                # then we handle the time based notifications
+                time_roles = notification_utl.get_time_based_time_and_roles(
+                    domain_class, message["destination"]
+                )
+                for time_string, roles in time_roles.iteritems():
+                    time_ntf = domain.TimeBasedNotication()
+                    time_ntf.object_id = message["document_id"]
+                    time_ntf.object_type = message["document_type"]
+                    time_ntf.object_status = message["destination"]
+                    time_ntf.time_string = time_string
+                    time_ntf.notification_date_time = notification_time(
+                        time_string)
+                    session.add(time_ntf)
+        # we commit manually here as this code is not executed in a zope
+        # transaction
+        session.commit()
         session.close()
+        channel.basic_ack(delivery_tag=method.delivery_tag)
 
     channel.basic_qos(prefetch_count=1)
-    mq_utility = component.getUtility(IMessageQueueConfig)
     channel.basic_consume(callback, queue=str(mq_utility.get_task_queue()))
     channel.start_consuming()
+
+
+def queue_time_based_notifications():
+    session = Session()
+    notification_utl = component.getUtility(INotificationsUtility)
+    mq_utility = component.getUtility(IMessageQueueConfig)
+    connection = get_mq_connection()
+    if not connection:
+        return
+    channel = connection.channel()
+    exchange = str(mq_utility.get_message_exchange())
+    notifications = session.query(domain.TimeBasedNotication).filter(
+        domain.TimeBasedNotication.notification_date_time <
+        datetime.datetime.now()).all()
+    for notification in notifications:
+        domain_class = notification_utl.get_domain(
+            notification.object_type)
+        item = session.query(domain_class).get(notification.object_id)
+        if item and item.status == notification.object_status:
+            roles = notification_utl.get_time_based_roles(
+                domain_class, notification.object_status,
+                notification.time_string)
+            principal_ids = get_principal_ids(item, roles)
+            if principal_ids:
+                message = get_message(item, principal_ids)
+                message["notification_type"] = "afterstate"
+                message["notification_time_string"] = notification.time_string
+                dthandler = lambda obj: obj.isoformat() if isinstance(
+                    obj, datetime.datetime) else obj
+                channel.basic_publish(
+                    exchange=exchange,
+                    body=simplejson.dumps(message, default=dthandler),
+                    properties=pika.BasicProperties(
+                        content_type="text/plain",
+                        delivery_mode=1
+                    ),
+                    routing_key="")
+        session.delete(notification)
+        session.commit()
 
 
 def setup_task_workers():
@@ -318,12 +387,31 @@ class NotificationsUtility(object):
         if domain_class not in self.time_based:
             self.time_based[domain_class] = {}
         if state not in self.time_based[domain_class]:
-            self.time_based[domain_class][state] = []
+            self.time_based[domain_class][state] = {}
         if time not in self.time_based[domain_class][state]:
             self.time_based[domain_class][state][time] = []
         self.time_based[domain_class][state][time].extend(roles)
 
-    #!+NOTIFICATIONS(miano, feb 2012) Similar bungeni.core.workspace.WorkspaceUtility
+    def get_time_based_time_and_roles(self, domain_class, state):
+        """Returns a ditcionary with time_strings as keys and roles to be
+        notified as roles
+        """
+        if domain_class in self.time_based:
+            if state in self.time_based[domain_class]:
+                    return self.time_based[domain_class][state]
+        return {}
+
+    def get_time_based_roles(self, domain_class, state, time):
+        """Returns a list of roles to be notified
+        """
+        if domain_class in self.time_based:
+            if state in self.time_based[domain_class]:
+                if time in self.time_based[domain_class][state]:
+                    return self.time_based[domain_class][state][time]
+        return []
+
+    #!+NOTIFICATIONS(miano, feb 2012) Similar to
+    # bungeni.core.workspace.WorkspaceUtility
     # TODO - make more generic
     def register_item_type(self, domain_class, item_type):
         """ Stores domain_class -> item_type and vice versa in a dictionary eg.
@@ -384,7 +472,7 @@ def load_notification_config(file_name, domain_class):
         else:
             raise ValueError("Please specify either onstate or afterstate")
     # Register subscriber for domain class
-    component.provideHandler(queue_transition_based_notification,
+    component.provideHandler(queue_notification,
         adapts=(domain_class, IWorkflowTransitionEvent))
 
 
@@ -396,3 +484,7 @@ def load_notifications():
         workflow = ti.workflow
         if workflow and workflow.has_feature("notification"):
             load_notification_config("%s.xml" % type_key, ti.domain_model)
+    s = kronos.ThreadedScheduler()
+    s.add_interval_task(queue_time_based_notifications,
+        "time_based_notifications", 0, 30, kronos.method.threaded, [], None)
+    s.start()
