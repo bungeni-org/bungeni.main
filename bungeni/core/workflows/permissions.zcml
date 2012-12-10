@@ -190,9 +190,6 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <permission id="bungeni.signatory.Delete" title="Delete Signatory" />
 <permission id="bungeni.signatory.Act" title="Act Signatory" />
 <permission id="bungeni.signatory.Append" title="Append Signatory" />
-<grant permission="bungeni.signatory.Edit" role="bungeni.Owner" />
-<grant permission="bungeni.signatory.Add" role="bungeni.Owner" />
-<grant permission="bungeni.signatory.Delete" role="bungeni.Clerk" />
 <grant permission="bungeni.signatory.Act" role="bungeni.Signatory" />
 <grant permission="bungeni.signatory.Append" role="bungeni.MP" />
 
