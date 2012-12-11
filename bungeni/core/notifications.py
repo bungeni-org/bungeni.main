@@ -486,5 +486,5 @@ def load_notifications():
             load_notification_config("%s.xml" % type_key, ti.domain_model)
     s = kronos.ThreadedScheduler()
     s.add_interval_task(queue_time_based_notifications,
-        "time_based_notifications", 0, 30, kronos.method.threaded, [], None)
+        "time_based_notifications", 0, 3600, kronos.method.threaded, [], None)
     s.start()
