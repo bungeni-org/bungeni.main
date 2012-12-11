@@ -189,13 +189,14 @@ def get_workspace_roles():
     principal = bungeni.models.utils.get_principal()
     session = bungeni.alchemist.Session()
     roles = set()
+    user_id = bungeni.models.utils.get_db_user_id()
     groups = session.query(bungeni.models.domain.Group).filter(
         bungeni.models.domain.Group.group_principal_id.in_(
             principal.groups.keys())).all()
     principal_groups = [
         delegate.login for delegate in
         bungeni.models.delegation.get_user_delegations(
-            bungeni.models.utils.get_db_user_id())] + [principal.id]
+            user_id)] + [principal.id]
     pg = []
     Allow = zope.securitypolicy.settings.Allow
     for group in groups:
@@ -209,6 +210,15 @@ def get_workspace_roles():
                 for role in l_roles:
                     if role[1] == Allow:
                         roles.add(role[0])
+    group_memberships = session.query(
+        bungeni.models.domain.GroupMembership).filter(
+        bungeni.models.domain.GroupMembership.user_id == user_id).all()
+    group_membership_roles = []
+    for group_membership in group_memberships:
+        for sub_role in group_membership.sub_roles:
+            group_membership_roles.append(sub_role.role_id)
+    for group_membership_role in group_membership_roles:
+        roles.add(group_membership_role)
     return list(roles)
 
 

@@ -8,6 +8,7 @@ from zc.table import column
 from zope import formlib
 
 from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.core.workflow.xmlimport import qualified_roles
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.i18n import _
 from bungeni.ui.table import TableFormatter
@@ -48,22 +49,23 @@ class AssignmentView(BungeniBrowserView):
         config_assigner_roles = []
         assignable_roles = []
         config_assignable_roles = []
-        if workflow.has_feature("assignment"):
+        if workflow.has_feature("user_assignment"):
             feature = None
             for f in workflow.features:
-                if f.name == "assignment":
+                if f.name == "user_assignment":
                     feature = f
             if feature:
-                config_assigner_roles = feature.params[
-                    "assigner_roles"].split()
-                for role in config_assigner_roles:
-                    if role in self.context_roles:
-                        assigner_roles.append(role)
-                config_assignable_roles = feature.params[
-                    "assignable_roles"].split()
+                config_assigner_roles = qualified_roles(feature.params[
+                    "assigner_roles"])
+                for c_a_role in config_assigner_roles:
+                    role = getUtility(IRole, c_a_role)
+                    if role.id in self.context_roles:
+                        assigner_roles.append(role.id)
+                config_assignable_roles = qualified_roles(feature.params[
+                    "assignable_roles"])
                 for assigner_role in assigner_roles:
                     assigner_role_annt = ISubRoleAnnotations(
-                        getUtility(IRole, role))
+                        getUtility(IRole, assigner_role))
                     if assigner_role_annt.is_sub_role:
                         #find other sub_roles with the same parent
                         for c_assignable_role in config_assignable_roles:

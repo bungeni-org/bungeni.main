@@ -264,7 +264,7 @@
         for="bungeni.models.interfaces.IBungeniGroupMembership"
         title="Add subrole..."
         action="./subroles/add"
-        permission="bungeni.groupmemberrole.Add"
+        permission="bungeni.group_membership_role.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
@@ -272,7 +272,7 @@
         for="bungeni.models.interfaces.IGroupMembershipRoleContainer"
         title="Add member role..."
         action="./add"
-        permission="bungeni.groupmemberrole.Add"
+        permission="bungeni.group_membership_role.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
