@@ -152,7 +152,8 @@ def _get_by_descriptor_model(descriptor_model):
 class TI(object):
     """TypeInfo, associates together the following attributes for a given type:
             workflow_key 
-                the workflow file name, should be same as type_key
+                the workflow file name
+                defaults to the type_key for workflowed types that DO NOT specify
                 is None for non-workflowed types
             workflow 
                 same workflow insatnce may be used by multiple types
@@ -260,6 +261,7 @@ TYPE_REGISTRY = [
     # !+NAMING: member-related -> Group name + "Member" (no + "ship")
     ("group", TI("group", interfaces.IBungeniGroup)),
     ("group_membership", TI("group_membership", interfaces.IBungeniGroupMembership)),
+    ("group_document_assignment", TI("group_assignment", interfaces.IGroupDocumentAssignment)),
     
     # non-workflowed
     ("user_delegation", TI(None, interfaces.IUserDelegation)),
@@ -278,7 +280,7 @@ TYPE_REGISTRY = [
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
     ("sitting_report", TI(None, interfaces.ISittingReport)),
     ("group_membership_role", TI(None, interfaces.IGroupMembershipRole)),
-    ("group_document_assignment", TI(None, interfaces.IGroupDocumentAssignment)),
+    
     ## custom types -- loaded dynamically from bungeni_custom/types.xml
 ]
 

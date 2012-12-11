@@ -211,7 +211,10 @@ def load(file_key, workflow_name,
 def _load(workflow_name, workflow):
     """ (workflow_name:str, workflow:etree_doc) -> Workflow
     """
-    # !+ @title, @description
+    workflow_title = xas(workflow, "title")
+    naming.MSGIDS.add(workflow_title)
+    workflow_description = xas(workflow, "description")
+    naming.MSGIDS.add(workflow_description)
     transitions = []
     states = []
     note = xas(workflow, "note")
@@ -503,5 +506,6 @@ def _load(workflow_name, workflow):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 workflow_name, source or "", destination, kw))
     
-    return Workflow(workflow_name, features, allowed_tags, states, transitions, note)
+    return Workflow(workflow_name, features, allowed_tags, states, transitions, 
+        workflow_title, workflow_description, note)
 

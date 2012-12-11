@@ -145,9 +145,5 @@
   <permission id="bungeni.user_assignment.View" title="View User Assignment" />
   <permission id="bungeni.user_assignment.Edit" title="Edit User Assignment"/>
   
-  <permission id="bungeni.group_assignment.View" title="View Assignment" />
-  <permission id="bungeni.group_assignment.Edit" title="Edit Assignment"/>
-  <permission id="bungeni.group_assignment.Add" title="Add Assignment"/>
-  <permission id="bungeni.group_assignment.Delete" title="Delete Assignment"/>
   <include package="bungeni_custom.sys.acl" file="permissions.zcml" />
 </configure>

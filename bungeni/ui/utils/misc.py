@@ -43,16 +43,18 @@ def pathjoin(basefilepath, filepath):
 
 # workflow 
 
+# !+RENAME(mr, mar-2011) to get_workflow_state_title
 def get_wf_state(context, wf_status=None):
     """Get the human readable title for the context's workflow state
     """
-    # !+RENAME(mr, mar-2011) to get_workflow_state_title
     workflow = interfaces.IWorkflow(context, None)
     if workflow is None:
         log.warn("No workflow exists for %s", context)
         return "" # !+ !!
     if wf_status is None:
+        # retrieve and use current status
         wf_status = interfaces.IStateController(context).get_status()
+    # ok, pick off the current state's title
     return workflow.get_state(wf_status).title
 
 

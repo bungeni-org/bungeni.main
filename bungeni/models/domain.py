@@ -289,16 +289,25 @@ class CommitteeStaff(GroupMembership):
         "subroles", "bungeni.models.domain.GroupMembershipRoleContainer",
         "membership_id"
     )
+
+
 class GroupMembershipRole(Entity):
     """Association between an group member and subroles
        that are granted when a document is assigned to a user
     """
     interface.implements(interfaces.IGroupMembershipRole)
 
+
 class GroupDocumentAssignment(Entity):
     """Association between a doc and groups it's been assigned to
     """
     interface.implements(interfaces.IGroupDocumentAssignment)
+    
+    @property
+    def status(self):
+        """Placeholder getter for workflow status."""
+        return "_"
+
 
 # auditable (by default), but not a Doc
 class Sitting(Entity):

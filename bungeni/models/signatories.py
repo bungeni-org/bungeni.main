@@ -209,7 +209,8 @@ class SignatoryValidator(object):
         )
 
     def can_sign(self):
-        """Check if the current user can sign a document"""
+        """Check if the current user can sign a document.
+        """
         return (self.auto_sign() and not self.is_owner() 
             and not self.is_signatory())
 

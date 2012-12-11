@@ -240,6 +240,13 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <grant permission="bungeni.group_membership.wf.internal.attached" role="bungeni.Owner" />
 
 
+<!-- group_assignment -->
+<permission id="bungeni.group_assignment.View" title="View Group Assignment" />
+<permission id="bungeni.group_assignment.Edit" title="Edit Group Assignment" />
+<permission id="bungeni.group_assignment.Add" title="Add Group Assignment" />
+<permission id="bungeni.group_assignment.Delete" title="Delete Group Assignment" />
+
+
 <!-- agenda_item -->
 <permission id="bungeni.agenda_item.View" title="View Agenda Item" />
 <permission id="bungeni.agenda_item.Edit" title="Edit Agenda Item" />

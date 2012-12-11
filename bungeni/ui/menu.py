@@ -250,31 +250,30 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
         self.context = context
         self.url = url.absoluteURL(context, request)
         self.request = request
-
+    
     @property
     def extra(self):
-        wfc = IWorkflowController(self.context, None)
-        if wfc is None:
+        wf = IWorkflow(self.context, None)
+        if wf is None:
             return {"id": self.id}
-        status = wfc.state_controller.get_status()
-        stateTitle = translate(wfc.workflow.get_state(status).title,
-            domain="bungeni",
-            context=self.request)
+        status = self.context.status
+        state_title = translate(misc.get_wf_state(self.context),
+            domain="bungeni", context=self.request)
         return {
             "id": self.id,
             "class": "state-%s" % status,
             "state": status,
-            "stateTitle": stateTitle
+            "stateTitle": state_title
         }
-
+    
     @property
     def description(self):
         return u""
-
+    
     @property
     def action(self):
         return self.url
-
+    
     def selected(self):
         return False
 

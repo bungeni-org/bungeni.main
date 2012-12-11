@@ -76,7 +76,7 @@ class Feature(object):
         self.facets = facets or []
         self.params = kws
         assert len([ f for f in facets if f.default ]) <= 1, \
-            "Feature %r may only have set 1 default facet" % (self.name)
+            "Feature %r may only have one default facet" % (self.name)
     
     def get_default_facet(self):
         for facet in self.facets:
@@ -252,14 +252,14 @@ def get_object_state(context):
 class _NoneStateRPM(State):
     """A dummy State, as fallback IRolePermissionMap, for when Workflow does 
     not define one for a given status; to easier handle error/edge cases of 
-    State as IRolePermissionMap, and only methods for defined by this
-    interface, e.g. getRolesForPermission(permission), should ever be called!
+    State as IRolePermissionMap, and only methods defined by this interface
+    (e.g. getRolesForPermission(permission)) should ever be called!
     """
     # As a minimal concession, we assume it is OK to only grant View access 
     # to the user who actually owns the target instance.
     # !+ROLES(mr, jan-2012) retrieve list of roles dynamically
     permissions = [
-        (1, "zope.View", "bungeni.Owner"),
+        (1, "zope.View", "bungeni.Owner"), # !+?
     ]
     def __init__(self):
         pass
@@ -361,7 +361,9 @@ class Workflow(object):
     
     initial_state = None
     
-    def __init__(self, name, features, tags, states, transitions, note=None):
+    def __init__(self, name, features, tags, states, transitions, 
+            title=None, description=None, note=None
+        ):
         assert not name in self.__class__.singletons, \
             "A workflow singleton %r exists already." % (name)
         # this also serves as *the* "registration of the named workflow utility"
@@ -372,13 +374,14 @@ class Workflow(object):
         self.name = name
         self.features = features
         self.tags = tags # [str]
+        self.title = title
+        self.description = description
         self.note = note
         self._states_by_id = {} # {id: State}
         self._transitions_by_id = {} # {id: Transition}
         self._transitions_by_source = {} # {source: [Transition]}
         self._transitions_by_destination = {} # {destination: [Transition]}
         self._transitions_by_grouping_unique_sources = {} # {grouping: [Transition]}
-        self._permission_role_pairs = None # set([ (permission, role) ])
         self.refresh(states, transitions)
     
     def refresh(self, states, transitions):
@@ -416,20 +419,14 @@ class Workflow(object):
         """
         assert len(self.tags) == len(set(self.tags)), \
             "Workflow [%s] duplicates tags: %s" % (self.name, self.tags)
-        
         states = self._states_by_id.values()
         # at least one state
-        assert len(states), "Workflow [%s] defines no states" % (self.name)
-        # every state must explicitly set the same set of permissions
-        # prs: set of all (permission, role) pairs assigned in a state
-        self._permission_role_pairs = prs = set([ 
-            (p[1], p[2]) for p in states[0].permissions ])
-        num_prs = len(prs)
+        assert len(states), "Workflow [%s] defines no states" % (self.name) #!+RNC
         for s in states:
             if s.permissions_from_parent:
                 assert not len(s.permissions), "Workflow state [%s -> %s] " \
                     "with permissions_from_parent may not specify any own " \
-                    "permissions" % (self.name, s.id)
+                    "permissions" % (self.name, s.id) #!+RNC
                 continue
             _permission_role_mixes = {}
             for p in s.permissions:
