@@ -69,19 +69,12 @@ class Facet(object):
 class Feature(object):
     """Status/settings of an optional feature on a workflowed type.
     """
-    def __init__(self, name, enabled=True, note=None, facets=None, **kws):
+    def __init__(self, name, enabled=True, note=None, **kws):
         self.name = name
         self.enabled = enabled
         self.note = note
-        self.facets = facets or []
         self.params = kws
-        assert len([ f for f in facets if f.default ]) <= 1, \
-            "Feature %r may only have one default facet" % (self.name)
-    
-    def get_default_facet(self):
-        for facet in self.facets:
-            if facet.default:
-                return facet
+
 
 class State(object):
     """A workflow state instance. 
@@ -361,8 +354,8 @@ class Workflow(object):
     
     initial_state = None
     
-    def __init__(self, name, features, tags, states, transitions, 
-            title=None, description=None, note=None
+    def __init__(self, name, features, facets, states, transitions,
+            tags, title=None, description=None, note=None
         ):
         assert not name in self.__class__.singletons, \
             "A workflow singleton %r exists already." % (name)
@@ -374,6 +367,7 @@ class Workflow(object):
         self.name = name
         self.features = features
         self.tags = tags # [str]
+        self.facets = facets or []
         self.title = title
         self.description = description
         self.note = note
@@ -417,6 +411,8 @@ class Workflow(object):
     def validate(self):
         """Verify initial conditions (that may be checked at init time).
         """
+        assert len([ f for f in self.facets if f.default ]) <= 1, \
+            "Workflow %r may only have one default facet" % (self.name)
         assert len(self.tags) == len(set(self.tags)), \
             "Workflow [%s] duplicates tags: %s" % (self.name, self.tags)
         states = self._states_by_id.values()

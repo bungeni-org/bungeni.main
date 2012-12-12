@@ -196,9 +196,9 @@ def load_email():
         workflow = ti.workflow
         if workflow and workflow.has_feature("email"):
             if not workflow.has_feature("notification"):
-                raise EmailError("Email notifications feature cannot"
-                    "be enabled for %s without first enabling the notification"
-                    "feature" % type_key)
+                raise EmailError("Email notifications feature for %r cannot be "
+                    "enabled without first enabling the notification "
+                    "feature" % (type_key)) # !+FEATURE_DEPENDENCIES
     mq_utility = component.getUtility(IMessageQueueConfig)
     connection = get_mq_connection()
     if not connection:

@@ -85,9 +85,6 @@
           <attribute name="value"/>
         </element>
       </zeroOrMore>
-      <zeroOrMore>
-        <ref name="FACET"/>
-      </zeroOrMore>
     </element>
   </define>
   <define name="FACET">
@@ -152,7 +149,7 @@
             <attribute name="ref">
               <data type="token" datatypeLibrary=""/>
             </attribute>
-            <!-- [ {feature.@name} ].{facet.@name} -->
+            <!-- [ {workflow_feature.@name} ].{facet.@name} -->
           </element>
         </zeroOrMore>
       </choice>

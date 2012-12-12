@@ -46,8 +46,7 @@ grammar {
         element parameter { # !+ name by feature
             attribute name { SYMBOL_NAME }, # !+ unique name per feature
             attribute value { text }
-        }*,
-        FACET*
+        }*
     }
     
     FACET = element facet {
@@ -72,7 +71,7 @@ grammar {
                     | attribute permissions_from_parent { xsd:boolean }  # default:false
             )?
             | element facet {
-                attribute ref { token } # [ {feature.@name} ].{facet.@name}
+                attribute ref { token } # [ {workflow_feature.@name} ].{facet.@name}
             }*
         )
     }

@@ -111,6 +111,11 @@ def get_named(name, seq):
         if s.name == name:
             return s
 
+def get_default_facet(facet_seq):
+    for facet in facet_seq:
+        if facet.default:
+            return facet
+
 def qualified_permission_actions(permission_type_key, permission_actions):
     """[space-separated-str] -> [(permission_type_key, permission_action)]
     """
@@ -151,20 +156,57 @@ def qualified_roles(roles):
     return sorted(qrs)
 
 
-def get_facets(workflow_name, feature_name, elem):
+
+def load_features(workflow_name, workflow_elem):
+    # all workflow features (enabled AND disabled)
+    workflow_features = []
+    for f in workflow_elem.iterchildren("feature"):
+        feature_name = xas(f, "name")
+        assert feature_name, "Workflow %r feature must define @name" % (workflow_name) #!+RNC
+        feature_enabled = xab(f, "enabled")
+        # !+FEATURE_DEPENDENCIES archetype/feature inter-dep; should be part of feature descriptor
+        if feature_enabled and feature_name == "version":
+            assert "audit" in [ fe.name for fe in workflow_features if fe.enabled ], \
+                "Workflow [%s] has version but no audit feature" % (workflow_name)
+        # feature.parameter !+constraints, in models.feature_* ?
+        params = []
+        for param in f.iterchildren("parameter"):
+            name_value = param.get("name"), param.get("value")
+            assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value) #!+RNC
+            params.append(name_value)
+        num_params, params = len(params), dict(params)
+        assert num_params == len(params), \
+            "Repeated parameters in feature %r" % (feature_name)
+        workflow_features.append(Feature(feature_name, 
+                enabled=feature_enabled,
+                note=xas(f, "note"), 
+                **params))
+    return workflow_features
+
+
+def load_facets(workflow_name, workflow_elem):
     facets = []
-    for facet in elem.iterchildren("facet"):
+    for facet in workflow_elem.iterchildren("facet"):
         facet_name = xas(facet, "name")
         assert facet_name, \
-            "Workflow %r [%s] facet must define a name" % (workflow_name, feature_name)
+            "Workflow %r facet must define a name" % (workflow_name)
         assert get_named(facet_name, facets) is None, \
-            "Duplicate feature %r facet %r" % (feature_name, facet_name)
+            "Duplicate workflow %r facet %r" % (workflow_name, facet_name)
         facet_is_default = xab(facet, "default", False)
         facet_note = xas(facet, "note")
         facet_perms = get_permissions_from_allows(workflow_name, facet)
         facets.append(
             Facet(facet_name, facet_note, facet_perms, default=facet_is_default))
     return facets
+
+
+def get_loaded_workflow(workflow_name):
+    """Retrieve the previously loaded workflow."""
+    try:
+        return Workflow.get_singleton(workflow_name)
+    except KeyError:
+        return None # not a "workflowed" feature
+
 
 def get_permissions_from_allows(workflow_name, elem):
     def gen_allow_permissions(allow_elem):
@@ -283,38 +325,13 @@ def _load(workflow_name, workflow):
         # assert roles mix limitations for state permissions
         assert_distinct_permission_scopes(perm, roles, workflow_name, "global grants")
     
-    
-    # features
-    features = []
-    for f in workflow.iterchildren("feature"):
-        # @name
-        feature_name = xas(f, "name")
-        assert feature_name, "Workflow %r feature must define @name" % (workflow_name) #!+RNC
-        # @enabled
-        feature_enabled = xab(f, "enabled")
-        # !+ archetype/feature inter-dep; should be part of feature descriptor
-        if feature_enabled and feature_name == "version":
-            assert "audit" in [ fe.name for fe in features if fe.enabled ], \
-                "Workflow [%s] has version but no audit feature" % (workflow_name)
-        # feature.parameter !+constraints, in models.feature_* ?
-        params = []
-        for param in f.iterchildren("parameter"):
-            name_value = param.get("name"), param.get("value")
-            assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value) #!+RNC
-            params.append(name_value)
-        num_params, params = len(params), dict(params)
-        assert num_params == len(params), \
-            "Repeated parameters in feature %r" % (feature_name)
-        # feature.facet
-        facets = get_facets(workflow_name, feature_name, f)
-        features.append(Feature(feature_name, 
-                enabled=feature_enabled,
-                note=xas(f, "note"), 
-                facets=facets,
-                **params))
-    # top level (workflow, feature_name==None) facets
-    workflow_facets = get_facets(workflow_name, None, workflow)
-    none_feature = Feature(None, enabled=True, facets=workflow_facets)
+    # all workflow features (enabled AND disabled)
+    workflow_features = load_features(workflow_name, workflow)
+    enabled_feature_names = [None] + [ 
+        f.name for f in workflow_features if f.enabled ]
+    # workflow facets
+    workflow_facets = load_facets(workflow_name, workflow)
+    #!+none_feature = Feature(None, enabled=True, facets=workflow_facets)
     
     # states
     for s in workflow.iterchildren("state"):
@@ -355,49 +372,57 @@ def _load(workflow_name, workflow):
             # assimilate (no more no less) the state's permissions !+tuple, use same?
             permissions[:] = from_state.permissions
         else:
-            # use permissions from facets
+            # resolve referenced state facets by feature
             used_facets_by_feature = {}
+            unseen_enabled_features = enabled_feature_names[:]
             for facet in s.iterchildren("facet"):
                 ref = xas(facet, "ref")
                 assert ref is not None, "State %r facet must specify a ref" % (state_id) #!+RNC
                 feature_name, facet_name = ref.split(".", 1)
                 feature_name = feature_name if feature_name else None # "" -> None
-                # feature_name is None -> "workflow" facets
+                # feature_name is None -> this "workflow" facets
                 assert feature_name not in used_facets_by_feature, \
-                    "Duplicate facet %r for feature %r in state %r" % (facet_name, feature_name, state_id)
+                    "Duplicate facet %r for feature %r in state %r" % (
+                        facet_name, feature_name, state_id)
                 assert facet_name, \
-                    "Facet %r in state %r must specify a valid facet name" % (facet_name, state_id) #!+RNC
+                    "Facet %r in state %r must specify a valid facet name" % (
+                        facet_name, state_id) #!+RNC
+                
+                # enabled features only
+                if feature_name not in unseen_enabled_features:
+                    log.warn("State %r specifies facet %r for disabled feature %r", 
+                        state_id, facet_name, feature_name)
+                    continue
+                
                 if feature_name is None:
                     facet_seq = workflow_facets
                 else:
-                    facet_seq = get_named(feature_name, features).facets
+                    feature_wf = get_loaded_workflow(feature_name)
+                    facet_seq = feature_wf and feature_wf.facets or []
                 used_facets_by_feature[feature_name] = get_named(facet_name, facet_seq)
                 assert used_facets_by_feature[feature_name] is not None, \
-                    "No facet %r found (used in state %r)" % (facet_name, state_id)
+                    "No facet %r found (workflow %r state %r, for feature %r)" % (
+                        facet_name, workflow_name, state_id, feature_name)
+                unseen_enabled_features.remove(feature_name)
             
-            def add_facet_permissions(used_facets_by_feature, feature):
-                if feature.name in used_facets_by_feature:
-                    facet = used_facets_by_feature[feature.name]
-                    perms_to_add = facet.permissions
+            # remaining enabled features
+            for feature_name in unseen_enabled_features:
+                if feature_name is None:
+                    facet_seq = workflow_facets
                 else:
-                    default_facet = feature.get_default_facet()
-                    perms_to_add = []
-                    if default_facet is not None:
-                        perms_to_add = default_facet.permissions
-                for perm in perms_to_add:
+                    feature_wf = get_loaded_workflow(feature_name)
+                    facet_seq = feature_wf and feature_wf.facets or []
+                used_facets_by_feature[feature_name] = get_default_facet(facet_seq)
+            
+            # assimilate permissions from facets from None and all enabled features
+            def add_facet_permissions(facet):
+                for perm in facet.permissions:
                     check_add_assign_permission(workflow_name, permissions, perm)
                     check_not_global_grant(perm[1], perm[2])
-            
-            # first, assimilate permissions from workflow-level facets (the None feature)
-            add_facet_permissions(used_facets_by_feature, none_feature)
-            # then from facets from all enabled features
-            for feature in features:
-                if feature.enabled:
-                    add_facet_permissions(used_facets_by_feature, feature)
-                else:
-                    if feature.name in used_facets_by_feature:
-                        log.warn("State %r specifies facet for disabled feature %r", 
-                            state_id, feature.name)
+            for feature_name in enabled_feature_names:
+                facet = used_facets_by_feature[feature_name]
+                if facet is not None:
+                    add_facet_permissions(facet)
         
         # states
         state_title = xas(s, "title")
@@ -506,6 +531,7 @@ def _load(workflow_name, workflow):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 workflow_name, source or "", destination, kw))
     
-    return Workflow(workflow_name, features, allowed_tags, states, transitions, 
-        workflow_title, workflow_description, note)
+    return Workflow(workflow_name,
+        workflow_features, workflow_facets, states, transitions,
+        allowed_tags, workflow_title, workflow_description, note)
 
