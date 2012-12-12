@@ -32,13 +32,23 @@ grammar {
     
     FIELD = element field {
         attribute name { SYMBOL_NAME },
-        attribute label { text }?, # !+ should really be required in *UI* fields
-        attribute description { text }?,
+        attribute label { text }?, # i18n !+ should really be required in *UI* fields
+        attribute description { text }?, # i18n
         attribute required { xsd:boolean }?, # default:false
         attribute value_type { FIELD_VALUE_TYPE }?,
-        attribute render_type { FIELD_RENDER_TYPE }?,
-        attribute vocabulary { VACABULARY_NAME }?, # required for some render_types
         
+        # vocabulary is required for some render_types
+        (
+            (
+                attribute render_type { FIELD_RENDER_TYPE }?,
+                attribute vocabulary { VACABULARY_NAME }?
+            )
+            | (
+                attribute render_type { FIELD_RENDER_TYPE_VOCABULARY }?,
+                attribute vocabulary { VACABULARY_NAME }
+            )
+        )?,
+                
         # each mode token may appear only ONCE in sum of all show/hide elements
         (
             element show {
@@ -91,13 +101,14 @@ grammar {
         "number" |
         "image" |
         "file" |
+        "no_input" # !+
+    )
+    FIELD_RENDER_TYPE_VOCABULARY = (
         # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
         "single_select" | # vocabulary
         "radio" | # vocabulary
-        "tree_text" | # VocabularyTextField,
-        "no_input" # !+
-    )
-    
+        "tree_text" # VocabularyTextField,
+    )    
     
     VACABULARY_NAME = (
         

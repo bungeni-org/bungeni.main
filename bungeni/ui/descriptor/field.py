@@ -78,7 +78,7 @@ WIDGETS = {
             None, None, None),
     ("text", "radio"):
         (None, widgets.CustomRadioWidget, widgets.CustomRadioWidget, None, None, None),
-    ("text", "single_select"):
+    ("text", "single_select"): # !+ merge with ("vocabulary", "single_select")
         (None, None, None, None, None, None),
     ("text", "tree_text"):
         (widgets.TermsDisplayWidget, widgets.TreeVocabularyWidget, 

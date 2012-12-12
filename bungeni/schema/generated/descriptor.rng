@@ -60,10 +60,11 @@
         <attribute name="label"/>
       </optional>
       <optional>
-        <!-- !+ should really be required in *UI* fields -->
+        <!-- i18n !+ should really be required in *UI* fields -->
         <attribute name="description"/>
       </optional>
       <optional>
+        <!-- i18n -->
         <attribute name="required">
           <data type="boolean"/>
         </attribute>
@@ -75,16 +76,32 @@
         </attribute>
       </optional>
       <optional>
-        <attribute name="render_type">
-          <ref name="FIELD_RENDER_TYPE"/>
-        </attribute>
+        <!-- vocabulary is required for some render_types -->
+        <choice>
+          <group>
+            <optional>
+              <attribute name="render_type">
+                <ref name="FIELD_RENDER_TYPE"/>
+              </attribute>
+            </optional>
+            <optional>
+              <attribute name="vocabulary">
+                <ref name="VACABULARY_NAME"/>
+              </attribute>
+            </optional>
+          </group>
+          <group>
+            <optional>
+              <attribute name="render_type">
+                <ref name="FIELD_RENDER_TYPE_VOCABULARY"/>
+              </attribute>
+            </optional>
+            <attribute name="vocabulary">
+              <ref name="VACABULARY_NAME"/>
+            </attribute>
+          </group>
+        </choice>
       </optional>
-      <optional>
-        <attribute name="vocabulary">
-          <ref name="VACABULARY_NAME"/>
-        </attribute>
-      </optional>
-      <!-- required for some render_types -->
       <!-- each mode token may appear only ONCE in sum of all show/hide elements -->
       <interleave>
         <zeroOrMore>
@@ -174,16 +191,20 @@
       <value>number</value>
       <value>image</value>
       <value>file</value>
+      <value>no_input</value>
+    </choice>
+    <!-- !+ -->
+  </define>
+  <define name="FIELD_RENDER_TYPE_VOCABULARY">
+    <choice>
       <!-- special other user-conf params: "vocabulary" -> "type:vocabulary, required:True" -->
       <value>single_select</value>
       <!-- vocabulary -->
       <value>radio</value>
       <!-- vocabulary -->
       <value>tree_text</value>
-      <!-- VocabularyTextField, -->
-      <value>no_input</value>
     </choice>
-    <!-- !+ -->
+    <!-- VocabularyTextField, -->
   </define>
   <define name="VACABULARY_NAME">
     <choice>
