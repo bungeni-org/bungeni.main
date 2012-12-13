@@ -65,6 +65,9 @@
       <attribute name="roles">
         <ref name="SPACE_SEPARATED_TOKENS"/>
       </attribute>
+      <optional>
+        <attribute name="note"/>
+      </optional>
     </element>
   </define>
   <define name="FEATURE">
@@ -75,6 +78,9 @@
       <attribute name="enabled">
         <data type="boolean"/>
       </attribute>
+      <optional>
+        <attribute name="note"/>
+      </optional>
       <zeroOrMore>
         <element name="parameter">
           <!-- !+ name by feature -->
@@ -97,8 +103,11 @@
           <data type="boolean"/>
         </attribute>
       </optional>
-      <zeroOrMore>
+      <optional>
         <!-- default:false, may be true only once -->
+        <attribute name="note"/>
+      </optional>
+      <zeroOrMore>
         <ref name="ALLOW"/>
       </zeroOrMore>
     </element>

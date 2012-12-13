@@ -36,12 +36,14 @@ grammar {
     
     ALLOW = element allow {
         attribute permission { text }, 
-        attribute roles { SPACE_SEPARATED_TOKENS }
+        attribute roles { SPACE_SEPARATED_TOKENS },
+        attribute note { text }?
     }
     
     FEATURE = element feature {
         attribute name { SYMBOL_NAME },
         attribute enabled { xsd:boolean },
+        attribute note { text }?,
         
         element parameter { # !+ name by feature
             attribute name { SYMBOL_NAME }, # !+ unique name per feature
@@ -52,6 +54,7 @@ grammar {
     FACET = element facet {
         attribute name { SYMBOL_NAME },
         attribute default { xsd:boolean }?, # default:false, may be true only once
+        attribute note { text }?,
         ALLOW*
     }
     
