@@ -2,7 +2,7 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Support for xml defined workflows, and security manipulations by state.
+"""Loading and processing of Workflow configuration files.
 
 $Id$
 """
@@ -18,7 +18,12 @@ from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.utils.capi import capi, bungeni_custom_errors
-import bungeni.schema
+from bungeni.schema import (
+    validate_file_rng,
+    qualified_permission_actions,
+    qualified_pid,
+    qualified_roles,
+)
 from bungeni.utils import naming, misc
 
 #
@@ -116,45 +121,12 @@ def get_default_facet(facet_seq):
         if facet.default:
             return facet
 
-def qualified_permission_actions(permission_type_key, permission_actions):
-    """[space-separated-str] -> [(permission_type_key, permission_action)]
-    """
-    return [ qualified_permission_action(permission_type_key, pa) 
-        for pa in permission_actions ]
-
-def qualified_permission_action(permission_type_key, pa):
-    """str -> (permission_type_key, permission_action)
-    where string may be: ".Action" or "type_key.Action"
-    """
-    # !+do not allow a preceeding "bungeni."?
-    if pa.startswith("bungeni."):
-        pa = pa[len("bungeni."):]
-    qpa = pa.split(".", 1)
-    assert len(qpa) == 2, \
-        "No dot in workflow %r permission action %r" % (permission_type_key, pa)
-    return (qpa[0] or permission_type_key, qpa[1])
-
-def qualified_pid(permission_type_key, pa):
-    return "bungeni.%s.%s" % qualified_permission_action(permission_type_key, pa)
-
-
-def qualified_roles(roles):
-    """space-separated-str -> [role_id]
-    Parse space separated string into a list of qualified role ids where 
-    each role word-str may be: "Role" or ".Role" or "bungeni.Role"
-    """
-    qrs = []
-    for r in roles.split():
-        if r.startswith("bungeni."):
-            qrs.append(r)
-        elif r.startswith("."):
-            qrs.append("bungeni%s" % (r))
-        else:
-            qrs.append("bungeni.%s" % (r))
-    # !+alchemist.model.validated_set
-    # !+alchemist.model.norm_sorted
-    return sorted(qrs)
-
+def get_loaded_workflow(workflow_name):
+    """Retrieve the previously loaded workflow."""
+    try:
+        return Workflow.get_singleton(workflow_name)
+    except KeyError:
+        return None # not a "workflowed" feature
 
 
 def load_features(workflow_name, workflow_elem):
@@ -189,7 +161,7 @@ def load_facets(workflow_name, workflow_elem):
     for facet in workflow_elem.iterchildren("facet"):
         facet_name = xas(facet, "name")
         assert facet_name, \
-            "Workflow %r facet must define a name" % (workflow_name)
+            "Workflow %r facet must define a name" % (workflow_name) #!+RNC
         assert get_named(facet_name, facets) is None, \
             "Duplicate workflow %r facet %r" % (workflow_name, facet_name)
         facet_is_default = xab(facet, "default", False)
@@ -198,14 +170,6 @@ def load_facets(workflow_name, workflow_elem):
         facets.append(
             Facet(facet_name, facet_note, facet_perms, default=facet_is_default))
     return facets
-
-
-def get_loaded_workflow(workflow_name):
-    """Retrieve the previously loaded workflow."""
-    try:
-        return Workflow.get_singleton(workflow_name)
-    except KeyError:
-        return None # not a "workflowed" feature
 
 
 def get_permissions_from_allows(workflow_name, elem):
@@ -218,6 +182,52 @@ def get_permissions_from_allows(workflow_name, elem):
         for allow_perm in gen_allow_permissions(allow):
             check_add_assign_permission(workflow_name, perms, allow_perm)
     return perms
+
+
+def resolve_state_facets(workflow_name, workflow_facets, unseen_enabled_features, state_elem):
+    """Resolve referenced state facets by feature 
+        -> {enabled_feature_name: either(facet, None)}
+    """
+    state_id = xas(state_elem, "id")
+    # resolve state facets
+    used_facets_by_feature = {}
+    # first, specified facets by feature
+    for facet in state_elem.iterchildren("facet"):
+        ref = xas(facet, "ref")
+        assert ref is not None, "State %r facet must specify a ref" % (state_id) #!+RNC
+        feature_name, facet_name = ref.split(".", 1)
+        feature_name = feature_name if feature_name else None # "" -> None
+        # feature_name is None -> this "workflow" facets
+        assert feature_name not in used_facets_by_feature, \
+            "Duplicate facet %r for feature %r in state %r" % (
+                facet_name, feature_name, state_id)
+        assert facet_name, \
+            "Facet %r in state %r must specify a valid facet name" % (
+                facet_name, state_id) #!+RNC
+        # enabled features only
+        if feature_name not in unseen_enabled_features:
+            log.warn("State %r specifies facet %r for disabled feature %r", 
+                state_id, facet_name, feature_name)
+            continue
+        if feature_name is None:
+            facet_seq = workflow_facets
+        else:
+            feature_wf = get_loaded_workflow(feature_name)
+            facet_seq = feature_wf and feature_wf.facets or []
+        used_facets_by_feature[feature_name] = get_named(facet_name, facet_seq)
+        assert used_facets_by_feature[feature_name] is not None, \
+            "No facet %r found (workflow %r state %r, for feature %r)" % (
+                facet_name, workflow_name, state_id, feature_name)
+        unseen_enabled_features.remove(feature_name)
+    # second, any remaining enabled features
+    for feature_name in unseen_enabled_features:
+        if feature_name is None:
+            facet_seq = workflow_facets
+        else:
+            feature_wf = get_loaded_workflow(feature_name)
+            facet_seq = feature_wf and feature_wf.facets or []
+        used_facets_by_feature[feature_name] = get_default_facet(facet_seq)
+    return used_facets_by_feature
 
 def check_add_assign_permission(workflow_name, permissions, (setting, p, r)):
     """Check that permission (setting==GRANT) may be added to list of 
@@ -247,7 +257,7 @@ def load(file_key, workflow_name,
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
-    workflow_doc = bungeni.schema.validate_file_rng("workflow", file_path)
+    workflow_doc = validate_file_rng("workflow", file_path)
     return _load(workflow_name, workflow_doc)
 
 def _load(workflow_name, workflow):
@@ -275,7 +285,7 @@ def _load(workflow_name, workflow):
     def validate_id(id, tag):
         """Ensure that ID values are unique within the same XML doc scope.
         """
-        m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, workflow_name)
+        m = "Invalid element <%s> id=%r in workflow %r" % (tag, id, workflow_name)
         assert id not in validate_id.wuids, "%s -- id not unique in workflow document" % (m)
         validate_id.wuids.add(id)
     validate_id.wuids = set() # unique IDs in this XML workflow file
@@ -331,7 +341,6 @@ def _load(workflow_name, workflow):
         f.name for f in workflow_features if f.enabled ]
     # workflow facets
     workflow_facets = load_facets(workflow_name, workflow)
-    #!+none_feature = Feature(None, enabled=True, facets=workflow_facets)
     
     # states
     for s in workflow.iterchildren("state"):
@@ -372,48 +381,8 @@ def _load(workflow_name, workflow):
             # assimilate (no more no less) the state's permissions !+tuple, use same?
             permissions[:] = from_state.permissions
         else:
-            # resolve referenced state facets by feature
-            used_facets_by_feature = {}
-            unseen_enabled_features = enabled_feature_names[:]
-            for facet in s.iterchildren("facet"):
-                ref = xas(facet, "ref")
-                assert ref is not None, "State %r facet must specify a ref" % (state_id) #!+RNC
-                feature_name, facet_name = ref.split(".", 1)
-                feature_name = feature_name if feature_name else None # "" -> None
-                # feature_name is None -> this "workflow" facets
-                assert feature_name not in used_facets_by_feature, \
-                    "Duplicate facet %r for feature %r in state %r" % (
-                        facet_name, feature_name, state_id)
-                assert facet_name, \
-                    "Facet %r in state %r must specify a valid facet name" % (
-                        facet_name, state_id) #!+RNC
-                
-                # enabled features only
-                if feature_name not in unseen_enabled_features:
-                    log.warn("State %r specifies facet %r for disabled feature %r", 
-                        state_id, facet_name, feature_name)
-                    continue
-                
-                if feature_name is None:
-                    facet_seq = workflow_facets
-                else:
-                    feature_wf = get_loaded_workflow(feature_name)
-                    facet_seq = feature_wf and feature_wf.facets or []
-                used_facets_by_feature[feature_name] = get_named(facet_name, facet_seq)
-                assert used_facets_by_feature[feature_name] is not None, \
-                    "No facet %r found (workflow %r state %r, for feature %r)" % (
-                        facet_name, workflow_name, state_id, feature_name)
-                unseen_enabled_features.remove(feature_name)
-            
-            # remaining enabled features
-            for feature_name in unseen_enabled_features:
-                if feature_name is None:
-                    facet_seq = workflow_facets
-                else:
-                    feature_wf = get_loaded_workflow(feature_name)
-                    facet_seq = feature_wf and feature_wf.facets or []
-                used_facets_by_feature[feature_name] = get_default_facet(facet_seq)
-            
+            used_facets_by_feature = resolve_state_facets(
+                workflow_name, workflow_facets, enabled_feature_names[:], s)
             # assimilate permissions from facets from None and all enabled features
             def add_facet_permissions(facet):
                 for perm in facet.permissions:

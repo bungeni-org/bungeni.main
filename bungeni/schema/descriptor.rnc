@@ -26,6 +26,7 @@ grammar {
         attribute name { SYMBOL_NAME }, # type_key
         attribute archetype { SYMBOL_NAME }?, # an archetype key, custom types MUST specify this
         attribute order { xsd:integer }?,
+        attribute note { text }?,
         
         FIELD*
     }
@@ -36,7 +37,6 @@ grammar {
         attribute description { text }?, # i18n
         attribute required { xsd:boolean }?, # default:false
         attribute value_type { FIELD_VALUE_TYPE }?,
-        
         # vocabulary is required for some render_types
         (
             (
@@ -48,18 +48,21 @@ grammar {
                 attribute vocabulary { VACABULARY_NAME }
             )
         )?,
-                
+        attribute note { text }?,
+        
         # each mode token may appear only ONCE in sum of all show/hide elements
         (
             element show {
                 attribute modes { list { FORM_MODE+ } },
                 # (un/qualified) roles, not present implies ALL ui.@roles
-                attribute roles { SPACE_SEPARATED_TOKENS }? 
+                attribute roles { SPACE_SEPARATED_TOKENS }?,
+                attribute note { text }?
             }* & 
             element hide {
                 attribute modes { list { FORM_MODE+ } },
                 # (un/qualified) roles, not present implies ALL ui.@roles
-                attribute roles { SPACE_SEPARATED_TOKENS }? 
+                attribute roles { SPACE_SEPARATED_TOKENS }?,
+                attribute note { text }?
             }*
         )
     }

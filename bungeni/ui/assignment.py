@@ -1,3 +1,14 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""UI for Group and User assignment feature
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.ui.assignment")
+
+
 from sqlalchemy.sql.expression import and_
 from zope.component import getUtility
 from zope.securitypolicy.interfaces import IRole, IPrincipalRoleMap
@@ -8,7 +19,7 @@ from zc.table import column
 from zope import formlib
 
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.core.workflow.xmlimport import qualified_roles
+from bungeni.schema import qualified_roles
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.i18n import _
 from bungeni.ui.table import TableFormatter

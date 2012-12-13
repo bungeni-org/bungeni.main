@@ -46,6 +46,9 @@
           <data type="integer"/>
         </attribute>
       </optional>
+      <optional>
+        <attribute name="note"/>
+      </optional>
       <zeroOrMore>
         <ref name="FIELD"/>
       </zeroOrMore>
@@ -102,6 +105,9 @@
           </group>
         </choice>
       </optional>
+      <optional>
+        <attribute name="note"/>
+      </optional>
       <!-- each mode token may appear only ONCE in sum of all show/hide elements -->
       <interleave>
         <zeroOrMore>
@@ -119,6 +125,9 @@
                 <ref name="SPACE_SEPARATED_TOKENS"/>
               </attribute>
             </optional>
+            <optional>
+              <attribute name="note"/>
+            </optional>
           </element>
         </zeroOrMore>
         <zeroOrMore>
@@ -135,6 +144,9 @@
               <attribute name="roles">
                 <ref name="SPACE_SEPARATED_TOKENS"/>
               </attribute>
+            </optional>
+            <optional>
+              <attribute name="note"/>
             </optional>
           </element>
         </zeroOrMore>

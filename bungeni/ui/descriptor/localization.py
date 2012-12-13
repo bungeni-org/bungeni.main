@@ -18,7 +18,7 @@ from bungeni.alchemist.model import (
     show, hide,
     #norm_sorted,
 )
-from bungeni.core.workflow.xmlimport import qualified_roles
+from bungeni.schema import qualified_roles
 from bungeni.ui.descriptor import field
 from bungeni.utils.capi import capi, bungeni_custom_errors
 import bungeni.schema
