@@ -33,7 +33,11 @@ from bungeni.alchemist import Session
 from bungeni.core.workflow.states import (get_object_state_rpm, 
     get_head_object_state_rpm
 )
-from bungeni.core.interfaces import IMessageQueueConfig, NotificationEvent
+from bungeni.core.interfaces import (
+    IMessageQueueConfig, 
+    NotificationEvent, 
+    IVersionCreatedEvent
+)
 from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
     IWorkflowed, IWorkflowController, InvalidStateError
 )
@@ -270,9 +274,9 @@ def notify_serialization_failure(template, **kw):
     else:
         body_text = kw.get("body")
     msg_event = NotificationEvent({
-        "recipients" : recipients,
-        "body" : body_text, 
-        "subject" : kw.get("subject", "Serialization Failure")
+        "recipients": recipients,
+        "body": body_text, 
+        "subject": kw.get("subject", "Serialization Failure")
     })
     zope.event.notify(msg_event)
 
@@ -386,6 +390,14 @@ def batch_serialize(type_key="*"):
     return serialized_count
     
 
+@register.handler(adapts=(IVersionCreatedEvent,))
+def serialization_version_event_handler(event):
+    """Queues workflowed objects when a version is created.
+    """
+    # we only want to serialize manually created versions
+    if event.object.procedure == "m":
+        queue_object_serialization(event.object.head)
+
 @register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
 @register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
 def serialization_event_handler(obj, event):
@@ -491,3 +503,4 @@ def serialization_notifications():
         routing_key=SERIALIZE_OUTPUT_ROUTING_KEY)
     for i in range(mq_utility.get_number_of_workers()):
         init_thread()
+

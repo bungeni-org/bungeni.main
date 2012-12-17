@@ -1,7 +1,7 @@
 from zope import interface, schema
 from zope.component.interfaces import IObjectEvent, ObjectEvent
 from zope.location.interfaces import ILocation
-from zope.container.interfaces import IContainer
+#from zope.container.interfaces import IContainer
 from zope.container.interfaces import IContentContainer
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.interfaces import IReadContainer
@@ -116,7 +116,6 @@ class IVersionEvent(IObjectEvent):
 
 class VersionEvent(ObjectEvent):
     interface.implements(IVersionEvent)
-    
     def __init__(self, object, versioned, version, msg):
         self.object = object
         self.versioned = versioned
@@ -136,6 +135,19 @@ class VersionReverted(VersionEvent):
     interface.implements(IVersionReverted)
     descriptions = ()
 '''
+
+
+class IVersionCreatedEvent(IObjectEvent):
+    """A new version was created (manually or automatically).
+    """
+class VersionCreatedEvent(ObjectEvent):
+    """
+    - The version_created_event.object is the version (change) instance.
+    - Client code may need to test whether versionCreated.procedure is "m" (manual)
+      or is "a" (automatic) and proceed as desired.
+    - The head doc for the version created is available as versionCreated.head.
+    """
+    interface.implements(IVersionCreatedEvent)
 
 
 class ISchedulingContext(ILocation):
@@ -391,3 +403,4 @@ class INotificationEvent(IObjectEvent):
 
 class NotificationEvent(ObjectEvent):
     interface.implements(INotificationEvent)
+

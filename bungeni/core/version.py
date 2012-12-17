@@ -9,9 +9,11 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.version")
 
 from zope.security.proxy import removeSecurityProxy
+from zope import event
 
 from bungeni.alchemist import Session
 import bungeni.models.interfaces
+import bungeni.core.interfaces
 from bungeni.models import domain
 from bungeni.core import audit
 
@@ -96,20 +98,30 @@ def version_tree(ob, root=False, reversion=False):
     
     return dirty, last_version
 
+def _notify_version_created(ob, dirty, last_version):
+    # sanity cheack !+ comparing with *is* fails
+    assert last_version.head == ob 
+    if dirty:
+        # ok, a version was created, notify of new version creation
+        version_created = bungeni.core.interfaces.VersionCreatedEvent(last_version)
+        event.notify(version_created)
 
 def create_version(ob):
-    """Establish a new version.
+    """Establish a new version of an object tree (with ob as the root).
     """
-    version_tree(removeSecurityProxy(ob), root=True, reversion=False)
+    dirty, last_version = version_tree(removeSecurityProxy(ob), root=True, reversion=False)
+    _notify_version_created(ob, dirty, last_version)
+
 def create_reversion(ob):
-    """Revert to an older version -- ob is the older version to revert to.
+    """Revert to an older version an object tree (with ob as the root).
+       ob is the older version to revert to.
     """
-    version_tree(removeSecurityProxy(ob), root=True, reversion=True)
+    dirty, last_version = version_tree(removeSecurityProxy(ob), root=True, reversion=True)
+    _notify_version_created(ob, dirty, last_version)
 
 
 ''' !+OBSOLETE_VERSIONING
 from zope import interface
-from zope import event
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security import canWrite
 from zope.security.interfaces import Unauthorized, ForbiddenAttribute
