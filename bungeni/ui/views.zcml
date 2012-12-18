@@ -569,15 +569,8 @@
       
    <browser:page
       for="bungeni.models.interfaces.IFeatureUserAssignment"
-      name="user-assignment"
-      class=".assignment.AssignmentView"
+      name="user-assignments"
+      class=".assignment.UserAssignmentView"
       permission="bungeni.user_assignment.View"
-      />
-
-   <browser:page
-      for="bungeni.models.interfaces.IFeatureUserAssignment"
-      name="edit-user-assignment"
-      class=".assignment.AssignmentEditView"
-      permission="bungeni.user_assignment.Edit"
       />
 </configure>

@@ -11,11 +11,14 @@
             <div tal:replace="structure table/table"/>
           </tal:loop>
         </div>
+        <div tal:condition="not:view/tables">
+          <span i18n:translate="">No users available for assignment</span>
+        </div>
         <div metal:fill-slot="actions">
           <div id="actionsView">
             <span class="actionButtons"
                   tal:condition="view/availableActions">
-              <tal:loop tal:repeat="action view/actions">
+              <tal:loop tal:repeat="action view/availableActions">
                 <input type="submit" class="context"
                        id="" name="" value=""
                        tal:attributes="id action/__name__;

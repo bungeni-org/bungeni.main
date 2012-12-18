@@ -80,9 +80,6 @@
         title="The 'Add' menu - allows user to add content while in workspace"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
-    <browser:menu id="context_assignment"
-        title="Assignment Menu"
-    />
     <!-- 
     Translation language options are dynamic, so we define an adapter to 
     determine these at runtime, for all views of ITranslatable objects.
@@ -857,14 +854,6 @@
         permission="zope.Public"
         submenu="context_actions"
     />
-    <browser:subMenuItem menu="plone_contentmenu"
-        for="*"
-        title="Assignment"
-        action="context_assignment"
-        order="1"
-        permission="zope.Public"
-        submenu="context_assignment"
-    />
     <!-- NOTE: action value on a subMenuItem becomes the id of the HTML
            element for the sub-menu --> 
     
@@ -1136,31 +1125,24 @@
      title="Similar"
      order="30"
       /-->
-    <browser:menuItem menu="context_assignment"
+
+   
+    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IFeatureUserAssignment"
-        action="user-assignment"
-        title="View Assignment"
+        action="user-assignments"
+        title="User Assignment"
         permission="bungeni.user_assignment.View"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="1"
     />
-
-   <browser:menuItem menu="context_assignment"
-        for="bungeni.models.interfaces.IFeatureUserAssignment"
-        action="edit-user-assignment"
-        title="Edit Assignment"
-        permission="bungeni.user_assignment.Edit"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="2"
-    />
     
-   <browser:menuItem menu="context_assignment"
+   <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IFeatureGroupAssignment"
         action="group_assignments"
         title="Group Assignment"
         permission="bungeni.group_assignment.View"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="3"
+        order="2"
     />
     <!-- group assignment -->
     <browser:menuItem menu="context_actions"
