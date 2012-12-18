@@ -259,8 +259,8 @@ class RichTextEditor(TextAreaWidget):
     def __call__(self):
         self.cssClass = "tinymce"
         # require tiny-mce
-        need("tiny-mce")
-        need("tiny-mce-config")
+        #need("tiny-mce")
+        #need("tiny-mce-config")
         # render default input widget for text
         input_widget = super(RichTextEditor, self).__call__()
         return input_widget
