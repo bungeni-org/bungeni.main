@@ -236,12 +236,11 @@ def schedule_sitting_items(context):
     # The check/logging should be removed once it is understood whether
     # NoTransitionAvailableError is *always* raised (i.e. fireTransitionToward is
     # broken) or it is indeed raised correctly when it should be.
-    def fireTransitionScheduled(item, wfc, check_security=True, 
-        toward=SCHEDULED):
+    def fireTransitionScheduled(item, wfc, toward=SCHEDULED):
         try:
-            wfc.fireTransitionToward(toward, check_security=check_security)
+            wfc.fireTransitionToward(toward, check_security=True)
             raise RuntimeWarning(
-                """It has WORKED !!! fireTransitionToward("scheduled")""")
+                "It has WORKED !!! fireTransitionToward(%r)" % (toward))
         except (NoTransitionAvailableError, RuntimeWarning):
             debug.log_exc_info(sys.exc_info(), log.error)
     

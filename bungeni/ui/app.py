@@ -18,6 +18,9 @@ from bungeni.utils import register
 def on_wsgi_application_created_event(application, event):
     """Additional UI setup on IWSGIApplicationCreatedEvent.
     """
+    # !+ui.app.on_wsgi_application_created_event ALWAYS called prior to core.app.
+    log.debug("UI ON_WSGI_APPLICATION_CREATED_EVENT: %s, %s", application, event) 
+    
     # ensure register workflow views
     import bungeni.ui.workflow
     

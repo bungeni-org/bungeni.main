@@ -55,8 +55,8 @@ def setup_customization_ui():
             />"""
     
     def register_form_view(type_key, privilege, name, for_, class_,
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    ):
+            layer="bungeni.ui.interfaces.IBungeniSkin"
+        ):
         UI_ZC_DECLS.append(register_form_view.TMPL.format(**locals()))
     register_form_view.TMPL = """
             <browser:page name="{name}"
@@ -174,4 +174,5 @@ def apply_customization_ui():
     zcml = ZCML_SLUG.format(ui_zcml_decls="".join([ zd for zd in UI_ZC_DECLS ]))
     log.debug("Executing UI feature configuration:\n%s" % (zcml))
     xmlconfig.string(zcml)
+    
 
