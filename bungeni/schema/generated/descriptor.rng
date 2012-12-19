@@ -246,26 +246,27 @@
       <value>yes_no</value>
       <!-- dynamic -->
       <value>language</value>
+      <value>country</value>
       <value>workflow_states</value>
       <value>workflowed_type</value>
-      <value>user</value>
       <value>group</value>
+      <value>committee</value>
+      <value>parliament</value>
+      <value>ministry</value>
       <value>group_sub_role</value>
       <value>group_title_types</value>
-      <value>ministry</value>
-      <value>member</value>
       <value>office_role</value>
-      <value>owner_or_login</value>
+      <value>member</value>
       <value>parliament_member</value>
       <value>parliament_member_delegation</value>
-      <value>sitting_attendance</value>
+      <value>user</value>
       <value>user_not_mp</value>
+      <value>owner_or_login</value>
       <value>substitution</value>
       <value>signatory</value>
-      <value>country</value>
-      <value>parliament</value>
-      <value>report</value>
       <value>sitting</value>
+      <value>sitting_attendance</value>
+      <value>report</value>
       <value>venue</value>
     </choice>
   </define>

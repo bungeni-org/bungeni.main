@@ -420,6 +420,12 @@ parliament_factory = DatabaseSource(
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
 component.provideUtility(parliament_factory, IVocabularyFactory, "parliament")
 
+committee_factory = DatabaseSource(
+    domain.Committee, "short_name", "committee_id",
+    title_getter=lambda ob: get_translated_group_label(ob)
+)
+component.provideUtility(committee_factory, IVocabularyFactory, "committee")
+
 
 country_factory = DatabaseSource(
     domain.Country, "country_id", "country_id",

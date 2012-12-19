@@ -141,26 +141,27 @@ grammar {
         
         # dynamic
         "language" |
+        "country" |
         "workflow_states" |
         "workflowed_type" |
-        "user" |
         "group" |
+        "committee" |
+        "parliament" |
+        "ministry" |
         "group_sub_role" |
         "group_title_types" |
-        "ministry" |
-        "member" |
         "office_role" |
-        "owner_or_login" |
+        "member" |
         "parliament_member" |
         "parliament_member_delegation" |
-        "sitting_attendance" |
+        "user" |
         "user_not_mp" |
+        "owner_or_login" |
         "substitution" |
         "signatory" |
-        "country" |
-        "parliament" |
-        "report" |
         "sitting" |
+        "sitting_attendance" |
+        "report" |
         "venue"
     )
 

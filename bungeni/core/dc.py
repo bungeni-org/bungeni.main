@@ -125,13 +125,18 @@ class DocDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         doc = _merged(self.context)
-        t = []
+        doc_title = self.translate(doc, "title")
         if doc.type_number is not None:
-            t.append("#%d: " % (doc.type_number))
-        t.append(self.translate(doc, "title"))
-        if doc.group is not None:
-            t.append(" - %s" % (self.translate(doc.group, "short_name")))
-        return "".join(t)
+            return "#%d: %s" % (doc.type_number, doc_title)
+        # !+AgendaItem_group(mr, dec-2012) am dropping inclusion of group.short_name
+        # in DC title for all docs (previously included only for AgendaItem).
+        # !+Selenium(mr, dec-2012) UI testing sometimes uses this value 
+        # (e.g breadcrumb trail link label) to follow onto the view for a
+        # modified object -- those tests should be using non-language dependent
+        # critria such as the url component for the object identifier. 
+        #if doc.group is not None:
+        #    t.append(" - %s" % (self.translate(doc.group, "short_name")))
+        return doc_title
     
     @property
     def description(self):
@@ -283,19 +288,17 @@ class VersionDescriptiveProperties(DescriptiveProperties):
 @register.adapter()
 class GroupDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBungeniGroup)
-
+    
     @property
     def title(self):
-        context = _merged(self.context)
-        return "%s - %s" % (
-            #self.context.type.capitalize(),
-            self.translate(context, "short_name"),
-            self.translate(context, "full_name"))
+        group = _merged(self.context)
+        return self.translate(group, "full_name")
+
 
 @register.adapter()
 class GroupDocumentAssignmentDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IGroupDocumentAssignment)
-
+    
     @property
     def title(self):
         context = _merged(self.context)
