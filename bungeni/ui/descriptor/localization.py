@@ -11,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 from time import time
 from lxml import etree
 from bungeni import alchemist
-from bungeni.alchemist.model import (
+from bungeni.alchemist.descriptor import (
     #ModelDescriptor,
     IModelDescriptor,
     Field,

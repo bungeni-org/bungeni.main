@@ -10,7 +10,7 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
 
-from bungeni.alchemist.model import ModelDescriptor, show, hide
+from bungeni.alchemist.descriptor import ModelDescriptor, show, hide
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error

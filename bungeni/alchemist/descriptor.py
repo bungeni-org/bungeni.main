@@ -266,7 +266,7 @@ class Field(object):
         if localizable is None:
             localizable = [show(modes=self.__class__._modes[:])]
         modes = [ mode for loc in localizable for mode in loc.modes ]
-        # !+ ensure unique, normalized order
+        # !+ ensure modes unique, in normalized order
         
         # set attribute values
         kw = vars()

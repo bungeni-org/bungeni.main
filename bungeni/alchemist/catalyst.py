@@ -61,7 +61,7 @@ def catalyse_system_descriptors(module):
     """
     import sys
     import inspect
-    from bungeni.alchemist.model import IModelDescriptor
+    from bungeni.alchemist.descriptor import IModelDescriptor
     from bungeni.models import domain
     from bungeni.utils.capi import capi
     from bungeni.ui.utils import debug

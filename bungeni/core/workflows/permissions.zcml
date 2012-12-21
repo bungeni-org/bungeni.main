@@ -538,7 +538,6 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <permission id="bungeni.question.Add" title="Add Question" />
 <permission id="bungeni.question.Delete" title="Delete Question" />
 <grant permission="bungeni.question.Add" role="bungeni.Clerk.HeadClerk" />
-<grant permission="bungeni.question.Add" role="bungeni.Clerk.QuestionClerk" />
 <grant permission="bungeni.question.Add" role="bungeni.MP" />
 
 <permission id="bungeni.question.wf.draft.submitted" title="Submit" />
@@ -560,11 +559,9 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <grant permission="bungeni.question.wf.submitted.received" role="bungeni.Clerk.HeadClerk" />
 
 <permission id="bungeni.question.wf.received.clarification_required" title="Require Clarification to Receive" />
-<grant permission="bungeni.question.wf.received.clarification_required" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.received.clarification_required" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.received.completed" title="Complete" />
-<grant permission="bungeni.question.wf.received.completed" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.received.completed" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.completed.admissible" title="Approve" />
@@ -577,57 +574,45 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <grant permission="bungeni.question.wf.completed.incomplete" role="bungeni.Speaker" />
 
 <permission id="bungeni.question.wf.incomplete.completed" title="Recomplete" />
-<grant permission="bungeni.question.wf.incomplete.completed" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.incomplete.completed" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.clarification_required.submitted" title="Resubmit" />
 <grant permission="bungeni.question.wf.clarification_required.submitted" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.admissible.schedule_pending" title="Make available for scheduling" />
-<grant permission="bungeni.question.wf.admissible.schedule_pending" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.admissible.schedule_pending" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.scheduled.schedule_pending" title="Reschedule" />
-<grant permission="bungeni.question.wf.scheduled.schedule_pending" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.scheduled.schedule_pending" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.schedule_pending.scheduled" title="Schedule" />
-<grant permission="bungeni.question.wf.schedule_pending.scheduled" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.schedule_pending.scheduled" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.admissible.response_pending" title="Send to Ministry" />
-<grant permission="bungeni.question.wf.admissible.response_pending" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.admissible.response_pending" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.response_pending.response_submitted" title="Submit Response" />
 <grant permission="bungeni.question.wf.response_pending.response_submitted" role="bungeni.Minister" />
 
 <permission id="bungeni.question.wf.response_submitted.response_pending" title="Redraft Response" />
-<grant permission="bungeni.question.wf.response_submitted.response_pending" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.response_submitted.response_pending" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.response_submitted.response_completed" title="Complete Response" />
-<grant permission="bungeni.question.wf.response_submitted.response_completed" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.response_submitted.response_completed" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.response_pending.elapsed" title="Elapse" />
-<grant permission="bungeni.question.wf.response_pending.elapsed" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.response_pending.elapsed" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.admissible.deferred" title="Defer" />
-<grant permission="bungeni.question.wf.admissible.deferred" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.admissible.deferred" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.scheduled.dropped" title="Drop" />
-<grant permission="bungeni.question.wf.scheduled.dropped" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.scheduled.dropped" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.scheduled.adjourned" title="Debate adjourned" />
-<grant permission="bungeni.question.wf.scheduled.adjourned" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.scheduled.adjourned" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.scheduled.debated" title="Debated" />
-<grant permission="bungeni.question.wf.scheduled.debated" role="bungeni.Clerk" />
 <grant permission="bungeni.question.wf.scheduled.debated" role="bungeni.Clerk.QuestionClerk" />
 
 <permission id="bungeni.question.wf.submitted.withdrawn_internal" title="Withdraw" />

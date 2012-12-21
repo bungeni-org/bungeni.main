@@ -9,7 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.descriptor.field")
 
 from zope import schema
-from bungeni.alchemist.model import Field
+from bungeni.alchemist.descriptor import Field
 from bungeni.ui import widgets
 from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui.i18n import _
