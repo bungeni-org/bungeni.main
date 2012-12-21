@@ -50,7 +50,7 @@ def new_custom_domain_model(type_key, model_interface, archetype_key):
     )
     # apply model_interface
     classImplements(domain_model, model_interface)
-    # set on INTERFACE_MODULE (register on type_info downstream)
+    # set on MODEL_MODULE (register on type_info downstream)
     setattr(MODEL_MODULE, domain_model_name, domain_model)
     # db map custom domain class
     from sqlalchemy.orm import mapper

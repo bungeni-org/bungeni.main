@@ -151,6 +151,8 @@ def register_custom_types():
                     vp_kls = get_vp_kls(extended_type)
                     domain_model.extended_properties.append((name, vp_kls))
         
+        # !+ add containers, derived
+        
         # type_info
         ti = TI(workflow_key, model_iface, domain_model)
         ti.custom = True
@@ -190,6 +192,9 @@ def register_custom_types():
         set_one2many_attrs_on_domain_models(type_key, ti)
     # group/member types
     for egroup in etypes.iterchildren("group"):
+        if not misc.xml_attr_bool(egroup, "enabled", default=True):
+            # not enabled, ignore
+            continue
         register_type(egroup)
         for emember in egroup.iterchildren("member"):
             register_type(emember)
