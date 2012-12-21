@@ -51,6 +51,9 @@ from bungeni.utils import register
 def on_wsgi_application_created_event(application, event):
     """Additional setup on IWSGIApplicationCreatedEvent.
     """
+    # !+ui.app.on_wsgi_application_created_event ALWAYS gets called prior to this
+    log.debug("CORE ON_WSGI_APPLICATION_CREATED_EVENT: %s, %s", application, event) 
+    
     # additional workflow validation
     for type_key, ti in capi.iter_type_info():
         if ti.workflow:
@@ -74,11 +77,12 @@ def on_wsgi_application_created_event(application, event):
     # import events modules, registering handlers
     import bungeni.core.events
     
-    initializer = model_interfaces.IBungeniSetup(application)
-    initializer.setUp()
+    app_setup = model_interfaces.IBungeniSetup(application)
+    app_setup.setUp()
     
     log.debug("on_wsgi_application_created_event: _features: %s" % (
         getConfigContext()._features))
+
 
 def to_locatable_container(domain_class, *domain_containers):
     component.provideAdapter(location.ContainerLocation(*domain_containers),
@@ -88,13 +92,12 @@ def to_locatable_container(domain_class, *domain_containers):
 class BungeniApp(Application):
     implements(model_interfaces.IBungeniApplication)
 
-
 class AppSetup(object):
     
     implements(model_interfaces.IBungeniSetup)
     
-    def __init__(self, context):
-        self.context = context
+    def __init__(self, application):
+        self.context = application
     
     def setUp(self):
         
@@ -150,15 +153,15 @@ class AppSetup(object):
             description=_(u"Current parliamentary activity"),
             default_name="my-documents",
         )
-        
         alsoProvides(workspace, interfaces.ISearchableSection)
+        
         workspace["my-documents"] = WorkspaceSection(
-            title=_("section_workspace_documents", 
-                default=u"my documents"),
+            title=_("section_workspace_documents", default=u"my documents"),
             description=_(u"my documents workspace section"),
             default_name="inbox",
             marker=interfaces.IWorkspaceDocuments,
         )
+        
         workspace["my-documents"]["draft"] = WorkspaceContainer(
             tab_type="draft",
             title=_("section_workspace_draft", default="draft"),
@@ -183,47 +186,41 @@ class AppSetup(object):
             description=_("archived documents"),
             marker=interfaces.IWorkspaceArchive
         )
+        
         workspace["under-consideration"] = WorkspaceSection(
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),
             default_name="documents",
             marker=interfaces.IWorkspaceUnderConsideration
         )
-
         workspace["under-consideration"]["documents"] = WorkspaceUnderConsiderationContainer(
             name="documents",
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),
-            marker=interfaces.IWorkspaceTrackedDocuments
-           )
+            marker=interfaces.IWorkspaceTrackedDocuments)
         workspace["under-consideration"]["tracked-documents"] = WorkspaceTrackedDocumentsContainer(
             name="tracked documents",
             title=_(u"tracked documents"),
-            description=_(u"tracked documents")
-           )
-
+            description=_(u"tracked documents"))
+        
         workspace["scheduling"] = Section(
             title=_("section_scheduling", default=u"Scheduling"),
             description=_(u"Workspace Scheduling"),
             default_name="index",
-            marker=interfaces.IWorkspaceScheduling,
-        )
+            marker=interfaces.IWorkspaceScheduling)
         workspace["scheduling"]["committees"] = QueryContent(
             container_getter(get_current_parliament, "committees"),
             title=_("section_scheduling_committees", default=u"Committees"),
             #!+marker=interfaces.ICommitteeAddContext,
-            description=_(u"Committee schedules")
-        )
+            description=_(u"Committee schedules"))
         workspace["scheduling"]["documents"] = WorkspaceSchedulableContainer(
             name=_(u"schedulable items"),
             title=_(u"schedulable items"),
-            description=_(u"documents available for scheduling")
-        )
+            description=_(u"documents available for scheduling"))
         workspace["scheduling"]["sittings"] = QueryContent(
             container_getter(get_current_parliament, "sittings"),
             title=_("section_scheduling_sittings", default=u"Sittings"),
-            description=_(u"Plenary Sittings")
-        )
+            description=_(u"Plenary Sittings"))
         workspace["scheduling"]["agendaitems"] = QueryContent(
             container_getter(get_current_parliament, "agendaitems"),
             title=_("section_scheduling_agenda_items", 
@@ -235,14 +232,12 @@ class AppSetup(object):
             title=_("section_groups", default=u"Groups"),
             description=_(u"Bungeni Groups"),
             default_name="my-groups",
-            marker=interfaces.IWorkspaceGroups,
-        )
-        
+            marker=interfaces.IWorkspaceGroups)
         workspace["groups"]["my-groups"] = WorkspaceGroupsContainer(
             name="my-groups",
             title=_(u"My Groups"),
-            description=_(u"Groups that the user is a member of"),
-        )
+            description=_(u"Groups that the user is a member of"))
+        
         #!+TIMING
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
         # type_info missing container name
@@ -254,7 +249,6 @@ class AppSetup(object):
                 to_locatable_container(info.domain_model, 
                     workspace["scheduling"][container_name]
                 )
-        
         
         # Proof-of-concept: support for selective inclusion in breadcrumb trail:
         # a view marked with an attribute __crumb__=False is NOT included in 
@@ -272,20 +266,18 @@ class AppSetup(object):
             title=_(u"Archive"),
             description=_(u"Parliament records and documents"),
             default_name="archive-index")
-        
         alsoProvides(archive, interfaces.ISearchableSection)
-            
+        
         #!+SECURITY(miano. nov-2010) Admin section now uses AdminSection
         # container that is identical to Section, only difference is that
         # traversing though it requires zope.ManageSite permission as defined
         # in core/configure.zcml
-            
+        
         admin = self.context["admin"] = AdminSection(
             title=_(u"Administration"),
             description=_(u"Manage bungeni settings"),
             default_name="admin-index",
             marker=model_interfaces.IBungeniAdmin)
-        
         alsoProvides(admin, interfaces.ISearchableSection)
         
         # business section
@@ -293,7 +285,6 @@ class AppSetup(object):
             title=_(u"What's on"),
             description=_(u"Current parliamentary activity"),
             default_name="whats-on")
-        
         alsoProvides(business, interfaces.ISearchableSection)
         
         business[u"committees"] = QueryContent(
@@ -319,34 +310,19 @@ class AppSetup(object):
             title=_(u"Motions"),
             #!+marker=interfaces.IMotionAddContext,
             description=_(u"View motions moved in the current parliament"))
-
-
-        business[u"tableddocuments"] = QueryContent(
-            container_getter(get_current_parliament, "tableddocuments"),
-            title=_(u"Tabled documents"),
-            #!+marker=interfaces.ITabledDocumentAddContext,
-            description=\
-                _(u"View the documents tabled in the current parliament")
-        )
-
+        
         business[u"agendaitems"] = QueryContent(
             container_getter(get_current_parliament, "agendaitems"),
             title=_(u"Agenda items"),
             #!+marker=interfaces.IAgendaItemAddContext,
             description=_(u"View the agenda items of the current parliament"))
-
-       # sessions = business[u"sessions"] = QueryContent(
-       #     container_getter(get_current_parliament, 'sessions'),
-       #     title=_(u"Sessions"),
-       #     marker=interfaces.ISessionAddContext,
-       #     description=_(u"View the sessions of the current parliament."))
         
         business[u"sittings"] = QueryContent(
             container_getter(get_current_parliament, "sittings"),
             title=_(u"Sittings"),
             description=_(u"View the sittings of the current parliament"))
-            
-        #Parliamentary reports
+        
+        # parliamentary reports
         business[u"preports"] = QueryContent(
             container_getter(get_current_parliament, "preports"),
             title=_(u"Publications"),
@@ -361,7 +337,6 @@ class AppSetup(object):
             container_getter(get_current_parliament, "parliamentmembers"),
             title=_(u"Current"),
             description=_(u"View current parliament members (MPs)"))
-        
         alsoProvides(members, interfaces.ISearchableSection)
         
         members[u"political-groups"] = QueryContent(
@@ -393,15 +368,8 @@ class AppSetup(object):
         documents[u"agendaitems"] = domain.AgendaItemContainer()
         to_locatable_container(domain.AgendaItem, documents[u"agendaitems"])
         
-        documents[u"tableddocuments"] = domain.TabledDocumentContainer()
-        to_locatable_container(domain.TabledDocument, 
-            documents[u"tableddocuments"]
-        )
-        
         documents[u"reports"] = domain.ReportContainer()
         to_locatable_container(domain.Report, documents[u"reports"])
-        #component.provideAdapter(location.ContainerLocation(tableddocuments, documents[u"reports"]),
-        #               (implementedBy(domain.Report), ILocation))
         
         records[u"parliaments"] = domain.ParliamentContainer()
         to_locatable_container(domain.Parliament, records[u"parliaments"])
@@ -413,7 +381,7 @@ class AppSetup(object):
         
         records[u"committees"] = domain.CommitteeContainer()
         to_locatable_container(domain.Committee, records[u"committees"])
-
+        
         #records[u"mps"] = domain.MemberOfParliamentContainer()
         #component.provideAdapter(location.ContainerLocation(records[u"mps"]),
         #               (implementedBy(domain.MemberOfParliament), ILocation))
@@ -427,19 +395,19 @@ class AppSetup(object):
             description=_(u"browse bungeni content"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="browse-admin")
-
+        
         admin["settings"] = Section(
             title=_(u"Settings"),
             description=_(u"settings"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="settings")
-
+        
         admin["email-settings"] = Section(
             title=_(u"email settings"),
             description=_(u"manage email settings"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="email-settings")
-
+        
         admin["xapian-settings"] = Section(
             title=_(u"search index settings"),
             description=_(u"manage search index settings"),
@@ -451,7 +419,7 @@ class AppSetup(object):
             description=_(u"manage registry settings"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="registry-settings")
-
+        
         admin["serialization-manager"] = Section(
             title=_(u"serialization manager"),
             description=_(u"batch serialization of content"),

@@ -108,6 +108,18 @@
       <optional>
         <attribute name="note"/>
       </optional>
+      <optional>
+        <!--
+          A field may NOT be declared extended if it is defined in super 
+          (archetype) descriptor. Value is one of allowed extended types.
+        -->
+        <attribute name="extended">
+          <choice>
+            <value>text</value>
+            <value>translated_text</value>
+          </choice>
+        </attribute>
+      </optional>
       <!-- each mode token may appear only ONCE in sum of all show/hide elements -->
       <interleave>
         <zeroOrMore>

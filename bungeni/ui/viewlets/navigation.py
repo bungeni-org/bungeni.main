@@ -375,10 +375,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 nodes = self.expand(chain)
             else:
                 kls = context.__class__
-                containers = [ (key, getattr(context, key))
-                    for key, value in kls.__dict__.items()
-                    if isinstance(value, ManagedContainerDescriptor)
-                ]
+                containers = self._get_managed_containers(kls, context)
                 nodes = []
                 self.expand_containers(nodes, containers, _url, chain, None)
             
@@ -399,9 +396,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             assert parent is not None
             _url = url.absoluteURL(parent, self.request)
             
-            # append managed containers as child nodes
-            kls = type(proxy.removeSecurityProxy(parent))
-            
+            # append managed containers as child nodes            
             if include_siblings is True:
                 if IApplication.providedBy(parent):
                     containers = [ (name, parent[name])
@@ -411,13 +406,11 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 elif IReadContainer.providedBy(parent):
                     containers = list(parent.items())
                 else:
-                    containers = [ (key, getattr(parent, key))
-                        for key, value in kls.__dict__.items()
-                        if isinstance(value, ManagedContainerDescriptor) ]
+                    kls = type(proxy.removeSecurityProxy(parent))
+                    containers = self._get_managed_containers(kls, parent)
             else:
                 containers = [(context.__name__, context)]
             self.expand_containers(items, containers, _url, chain, context)
-        
         elif ILocation.providedBy(context):
             # e.g. bungeni.core.content.Section
             _url = url.absoluteURL(context, self.request)
@@ -446,8 +439,16 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             items.extend(self.expand(chain))
         return items
     
+    def _get_managed_containers(self, kls, context):
+        """Get the model class managed container properties.
+        """
+        return [ (key, getattr(context, key))
+            for key, value in kls.__dict__.items()
+            if isinstance(value, ManagedContainerDescriptor) ]
+    
     def _sort_containers(self, key_containers):
-        """Sort each container by its domain_model's descriptor order."""
+        """Sort each container by its domain_model's descriptor order.
+        """
         dsu = [
             (utils.get_descriptor(kc[1].domain_model).order, kc)
             for kc in key_containers ]

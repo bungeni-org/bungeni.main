@@ -184,16 +184,6 @@ class User(Entity):
         "bungeni.models.domain.UserDelegationContainer", "user_id")
     _password = property(getPassword, setPassword)
 
-    bills = one2many("bills",
-        "bungeni.models.domain.BillContainer", "owner_id")
-    questions = one2many("questions",
-        "bungeni.models.domain.QuestionContainer", "owner_id")
-    motions = one2many("motions",
-        "bungeni.models.domain.MotionContainer", "owner_id")
-    agendaitems = one2many("agendaitems",
-        "bungeni.models.domain.AgendaItemContainer", "owner_id")
-    tableddocuments = one2many("tableddocuments",
-        "bungeni.models.domain.TabledDocumentContainer", "owner_id")
 
 class AdminUser(Entity):
     """An admin user"""
@@ -351,20 +341,8 @@ class Parliament(Group):
         "bungeni.models.domain.MemberOfParliamentContainer", "group_id")
     politicalgroups = one2many("politicalgroups",
         "bungeni.models.domain.PoliticalGroupContainer", "parent_group_id")
-    bills = one2many("bills",
-        "bungeni.models.domain.BillContainer", "parliament_id")
-    questions = one2many("questions",
-        "bungeni.models.domain.QuestionContainer", "parliament_id")
-    motions = one2many("motions",
-        "bungeni.models.domain.MotionContainer", "parliament_id")
     sittings = one2many("sittings",
         "bungeni.models.domain.SittingContainer", "group_id")
-    agendaitems = one2many("agendaitems",
-        "bungeni.models.domain.AgendaItemContainer", "group_id")
-    tableddocuments = one2many("tableddocuments",
-        "bungeni.models.domain.TabledDocumentContainer", "parliament_id")
-    preports = one2many("preports",
-        "bungeni.models.domain.ReportContainer", "group_id")
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
 
@@ -865,7 +843,7 @@ class Bill(Doc):
         return self._get_workflow_date("gazetted")
     
     extended_properties = [
-        ("short_title", vp.TranslatedText),
+        #("short_title", vp.TranslatedText),
     ]
 instrument_extended_properties(Bill, "doc")
 #BillAudit
@@ -914,8 +892,8 @@ class Question(AdmissibleMixin, Doc):
         return self._get_workflow_date("response_pending")
     
     extended_properties = [
-        ("response_type", vp.Text),
-        ("response_text", vp.TranslatedText),
+        #("response_type", vp.Text),
+        #("response_text", vp.TranslatedText),
     ]
 instrument_extended_properties(Question, "doc")
 #QuestionAudit

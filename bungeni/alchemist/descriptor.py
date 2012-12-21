@@ -8,7 +8,7 @@
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.alchemist")
+log = __import__("logging").getLogger("bungeni.alchemist.descriptor")
 
 
 # used directly in bungeni

@@ -21,63 +21,17 @@ from bungeni.core.workflow.states import StateController, WorkflowController, \
     Workflow, get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
 from bungeni.alchemist import utils
+from bungeni.alchemist.model import (
+    get_vp_kls,
+    new_custom_model_interface,
+    new_custom_domain_model,
+)
 from bungeni.utils import naming, misc
 from bungeni.utils.capi import capi, bungeni_custom_errors
-
 from bungeni.alchemist.catalyst import (
     INTERFACE_MODULE, 
     MODEL_MODULE
 )
-
-def new_custom_model_interface(type_key, model_iname):
-    import zope.interface
-    model_iface = zope.interface.interface.InterfaceClass(
-        model_iname,
-        bases=(interfaces.IBungeniContent,), # !+archetype?
-        __module__=INTERFACE_MODULE.__name__
-    )
-    # set on INTERFACE_MODULE (register on type_info downstream)
-    setattr(INTERFACE_MODULE, model_iname, model_iface)
-    log.info("new_custom_model_interface [%s] %s.%s" % (
-            type_key, INTERFACE_MODULE.__name__, model_iname))
-    return model_iface
-
-def new_custom_domain_model(type_key, model_interface):
-    # !+archetype? move to types? what about extended/derived/container attrs?
-    def get_elem(type_key):
-        import elementtree.ElementTree
-        file_path = capi.get_path_for("forms", "custom.xml") # !+
-        xml = elementtree.ElementTree.fromstring(misc.read_file(file_path))
-        for elem in xml.findall("descriptor"):
-            if misc.xml_attr_str(elem, "name") == type_key:
-                return elem
-        else:
-            raise KeyError("No configuration for custom descriptor %r." % (type_key))
-    edescriptor = get_elem(type_key)
-    archetype_key = misc.xml_attr_str(edescriptor, "archetype")
-    domain_model_name = naming.model_name(type_key)
-    assert archetype_key, \
-        "Custom descriptor %r does not specify an archetype" % (type_key)
-    archetype = getattr(MODEL_MODULE, naming.model_name(archetype_key)) # AttributeError
-    # !+ assert archetype constraints
-    domain_model = type(domain_model_name,
-        (archetype,),
-        dict(__module__=MODEL_MODULE.__name__)
-    )
-    # apply model_interface
-    classImplements(domain_model, model_interface)
-    # set on INTERFACE_MODULE (register on type_info downstream)
-    setattr(MODEL_MODULE, domain_model_name, domain_model)
-    # db map custom domain class
-    from sqlalchemy.orm import mapper
-    mapper(domain_model, 
-        inherits=archetype,
-        polymorphic_on=utils.get_local_table(archetype).c.type,
-        polymorphic_identity=type_key, #naming.polymorphic_identity(domain_model),
-    )
-    log.info("new_custom_domain_model [%s] %s.%s" % (
-            type_key, MODEL_MODULE.__name__, domain_model_name))
-    return domain_model
 
 
 def apply_customization_workflow(type_key, ti):
@@ -145,14 +99,26 @@ def register_generic_workflow_adapters():
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
     This is called prior to loading of the workflows for these custom types.
+    Returns (type_key, TI) for the newly created TI instance.
     """
     from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
-    def register_type(elem):
-        if not misc.xml_attr_bool(elem, "enabled", default=True):
-            # not enabled, ignore
-            return
-        type_key = misc.xml_attr_str(elem, "name")
-        workflow_key = misc.xml_attr_str(elem, "workflow", default=type_key)
+    from bungeni.models import feature
+    
+    # !+archetype? move to types? what about extended/derived/container attrs?
+    def get_descriptor_elem(type_key):
+        import elementtree.ElementTree
+        file_path = capi.get_path_for("forms", "custom.xml") # !+
+        xml = elementtree.ElementTree.fromstring(misc.read_file(file_path))
+        for elem in xml.findall("descriptor"):
+            if misc.xml_attr_str(elem, "name") == type_key:
+                return elem
+        else:
+            #raise KeyError("No configuration for custom descriptor %r." % (type_key))
+            log.warn("No configuration for custom descriptor %r." % (type_key))
+    
+    def register_type(type_elem):
+        type_key = misc.xml_attr_str(type_elem, "name")
+        workflow_key = misc.xml_attr_str(type_elem, "workflow", default=type_key)
         # generate custom interface
         model_iname = naming.model_interface_name(type_key)
         try: 
@@ -166,18 +132,62 @@ def register_custom_types():
             domain_model = resolve("%s.%s" % (MODEL_MODULE.__name__, domain_model_name))
             log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
         except ImportError:
-            domain_model = new_custom_domain_model(type_key, model_iface)
+            archetype_key = type_elem.tag # !+archetype? move to types?
+            domain_model = new_custom_domain_model(type_key, model_iface, archetype_key)
+        
+        # add declarations of any extended properties
+        descriptor_elem = get_descriptor_elem(type_key)
+        if descriptor_elem is not None:
+            archetype_key = misc.xml_attr_str(descriptor_elem, "archetype") # !+archetype? move to types?
+            for f_elem in descriptor_elem.findall("field"):
+                extended_type = misc.xml_attr_str(f_elem, "extended")
+                if extended_type is not None:
+                    name = misc.xml_attr_str(f_elem, "name")
+                    assert not hasattr(domain_model, name), \
+                        "May not extend field %r, already defined in archetype %r" % (
+                            name, archetype_key)
+                    log.info("Adding %r extended field %r to domain model %s",
+                        extended_type, name, domain_model)
+                    vp_kls = get_vp_kls(extended_type)
+                    domain_model.extended_properties.append((name, vp_kls))
+        
         # type_info
         ti = TI(workflow_key, model_iface, domain_model)
         ti.custom = True
         TYPE_REGISTRY.append((type_key, ti))
-        log.info("Registering custom type [%s]: %s" % (elem.tag, type_key))
+        log.info("Registering custom type [%s]: %s" % (type_elem.tag, type_key))
+        return type_key, ti
+    
+    attr_name_inconsistency_map = { # !+ correct incosistency, rel_attr config
+        "agenda_items": ("agendaitems", "group_id"),
+        "tabled_documents": ("tableddocuments", "parliament_id"),
+        "reports": ("preports", "group_id"),
+    }
+    def set_one2many_attrs_on_domain_models(type_key, ti):
+        container_qualname = "bungeni.models.domain.%s" % (
+            naming.container_class_name(type_key))
+        attr_name = naming.plural(type_key)
+        # parliament
+        attr_name, rel_attr = attr_name_inconsistency_map.get(
+            attr_name, (attr_name, "parliament_id")) # !+
+        parliament_model = resolve("%s.%s" % (MODEL_MODULE.__name__, "Parliament"))
+        feature.set_one2many_attr(parliament_model, attr_name, container_qualname, rel_attr)
+        # user
+        user_model = resolve("%s.%s" % (MODEL_MODULE.__name__, "User"))
+        feature.set_one2many_attr(user_model, attr_name, container_qualname, "owner_id")
+        # !+ministry
+        # ("questions", "group_id")
+        # ("bills", "group_id")
     
     # load XML file
     etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
-    # register types
+    # register enabled types
     for edoc in etypes.iterchildren("doc"):
-        register_type(edoc)
+        if not misc.xml_attr_bool(edoc, "enabled", default=True):
+            # not enabled, ignore
+            continue
+        type_key, ti = register_type(edoc)
+        set_one2many_attrs_on_domain_models(type_key, ti)
     # group/member types
     for egroup in etypes.iterchildren("group"):
         register_type(egroup)

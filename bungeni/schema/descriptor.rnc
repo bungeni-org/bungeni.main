@@ -49,6 +49,9 @@ grammar {
             )
         )?,
         attribute note { text }?,
+        # A field may NOT be declared extended if it is defined in super 
+        # (archetype) descriptor. Value is one of allowed extended types.
+        attribute extended { "text" | "translated_text" }?,
         
         # each mode token may appear only ONCE in sum of all show/hide elements
         (
