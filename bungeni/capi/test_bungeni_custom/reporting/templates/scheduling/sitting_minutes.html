@@ -1,0 +1,42 @@
+<html xml:lang="en" xmlns:br="http://bungeni.org/reports">
+  <br:config>
+    <title>Votes and Proceedings</title>
+    <length>1w</length>
+    <language>en</language>
+  </br:config>
+  <head>
+    <title>Votes and Proceedings</title>
+  </head>
+  <body> 
+    <div id="report-content">
+        <h1 class="heading" br:type="text" br:source="title"/>
+        <div id="listing-body">
+            <div br:type="listing" br:source="sittings">
+                <h2 br:type="text" br:source="dc:title"/>
+
+                <h3>Agenda and Minutes</h3>
+                <div class="agendaitems">
+                    <ul br:type="listing" br:source="item_schedule">
+                        <li br:condition="type_heading">
+                            <h4 br:type="text" br:source="dc:title"/>
+                        </li>
+                        <li br:condition="type_document">
+                            <span br:type="text" br:condition="dc:mover" br:source="item_type"/>
+                            <span br:type="text" br:source="dc:title"/>
+                            <ul br:condition="dc:mover">
+                                <li><span>By: <span br:type="text" br:source="dc:mover"/></span></li>
+                            </ul>
+                            <h3 br:condition="itemdiscussions">Minutes</h3>
+                            <ul br:type="listing" br:condition="itemdiscussions" br:source="itemdiscussions">
+                                <li>
+                                    <span br:type="html" br:source="body"/>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+   </body>
+</html>

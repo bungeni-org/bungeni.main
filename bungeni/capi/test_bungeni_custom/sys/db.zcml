@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+Specify the db connection string here
+-->
+
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:db="http://namespaces.objectrealms.net/rdb"
+    >
+    <include package="bungeni.alchemist" file="meta.zcml" />
+    <db:engine name="bungeni-db" 
+        url="postgres://localhost/bungeni"
+        echo="false"
+    />
+    <db:engine name="bungeni-test" 
+        url="postgres://localhost/bungeni-test"
+        echo="false"
+    />
+</configure>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<workflow title="Report Workflow"
+    description="A report"
+    tags="public"
+    permission_actions=".View .Edit .Add .Delete"
+    >
+    
+    <!-- global grants -->
+    <allow permission=".View" roles="Authenticated" />
+    <allow permission=".Edit" roles="Clerk Speaker" />
+    
+    
+    <!-- features -->
+    <feature name="audit" enabled="true" />
+    <feature name="version" enabled="true" />
+    <feature name="download" enabled="true" />
+    
+    
+    <!-- workflow facets -->
+    <facet name="view" default="true">
+        <allow permission=".View" roles="Anonymous" />
+    </facet>
+    
+    <state id="published" title="Published" tags="public"/>
+    
+    
+    <transition title="Create Report"
+        source=""
+        destination="published"
+        trigger="automatic"
+        order="0"
+    />
+
+</workflow>
+

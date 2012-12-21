@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<notifications>
+  <notify roles="bungeni.Clerk " onstate="submitted"/>
+  <notify roles="bungeni.Owner" onstate="received clarification_required"/>
+  <notify roles="bungeni.Owner" afterstate="clarification_required"
+          time="59d"/>
+  <notify roles="bungeni.Owner" onstate="inadmissible debated scheduled deferred"/>
+  <notify roles="bungeni.Owner" onstate="response_pending response_submitted"/>
+</notifications>

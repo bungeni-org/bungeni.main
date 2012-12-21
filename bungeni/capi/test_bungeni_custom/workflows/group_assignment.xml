@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<workflow title="Group Doc Assignment"
+        description="Workflow for group doc assignment"
+        note="placeholder workflow"
+        permission_actions=".View .Edit .Add .Delete"
+    >
+    
+    <facet name="internal">
+        <allow permission=".Add" roles="Clerk" />
+        <allow permission=".View" roles="Clerk" />
+        <allow permission=".Edit" roles="Clerk" />
+        <allow permission=".Delete" roles="Clerk" />
+    </facet>
+    
+    <!-- !+ONE_STATE_TRANSITION placeholder state, transation -->
+    <state id="_" title="" />
+    <transition title="" source="" destination="_" trigger="automatic" />
+
+</workflow>
+

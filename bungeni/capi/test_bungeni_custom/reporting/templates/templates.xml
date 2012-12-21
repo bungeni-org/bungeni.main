@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<templates>
+    <template name="simple" language="en" file="agenda.odt"/>
+    <template name="facile" language="fr" file="agenda-fr.odt"/>
+</templates>

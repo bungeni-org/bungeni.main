@@ -1,0 +1,6374 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: Tue Nov 27 16:29:22 2012\n"
+"PO-Revision-Date: 2010-07-24 11:31+0300\n"
+"Last-Translator: Ashok <ashok@parliaments.info>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Domain: DOMAIN\n"
+"Language-Code: ar\n"
+"Language-Name: العربية\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"X-Generator: Pootle 2.0.4\n"
+
+#: src/bungeni.main/bungeni/alchemist/container.py:89
+msgid "Actions"
+msgstr "الإجراءات"
+
+#: src/bungeni.main/bungeni/alchemist/container.py:114
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:459
+msgid "Add"
+msgstr "إضافة"
+
+#: src/bungeni.main/bungeni/alchemist/ui.py:405
+#: src/bungeni.main/bungeni/alchemist/ui.py:448
+#: src/bungeni.main/bungeni/ui/assignment.py:181
+#: src/bungeni.main/bungeni/ui/attendance.py:143
+#: src/bungeni.main/bungeni/ui/forms/common.py:416
+#: src/bungeni.main/bungeni/ui/forms/common.py:572
+#: src/bungeni.main/bungeni/ui/forms/common.py:877
+#: src/bungeni.main/bungeni/ui/forms/common.py:930
+#: src/bungeni.main/bungeni/ui/login.py:382
+#: src/bungeni.main/bungeni/ui/widgets.py:379
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: src/bungeni.main/bungeni/alchemist/ui.py:410
+#, fuzzy
+msgid "Save and continue editing"
+msgstr "بدء التاريخ والوقت في الجلوس"
+
+#: src/bungeni.main/bungeni/alchemist/ui.py:418
+#: src/bungeni.main/bungeni/ui/forms/common.py:433
+msgid "Save and add another"
+msgstr "حفظ وإضافة أخرى"
+
+#: src/bungeni.main/bungeni/alchemist/ui.py:444
+#: src/bungeni.main/bungeni/ui/assignment.py:175
+#: src/bungeni.main/bungeni/ui/attendance.py:132
+#: src/bungeni.main/bungeni/ui/forms/common.py:424
+#: src/bungeni.main/bungeni/ui/forms/common.py:556
+#: src/bungeni.main/bungeni/ui/forms/common.py:788
+msgid "Save"
+msgstr "حفظ"
+
+#: src/bungeni.main/bungeni/alchemist/ui.py:496
+msgid "Updated on ${date_time}"
+msgstr ""
+
+#: src/bungeni.main/bungeni/alchemist/ui.py:501
+#, fuzzy
+msgid "No changes"
+msgstr "حفظ التغييرات"
+
+#: src/bungeni.main/bungeni/core/app.py:140
+msgid "Bungeni"
+msgstr "Bungeni"
+
+#: src/bungeni.main/bungeni/core/app.py:141
+#: src/bungeni.main/bungeni/core/app.py:148
+#: src/bungeni.main/bungeni/core/app.py:292
+msgid "Current parliamentary activity"
+msgstr "النشاط الحالي البرلمانية"
+
+#. Default: "Workspace"
+#: src/bungeni.main/bungeni/core/app.py:147
+#, fuzzy
+msgid "section_workspace"
+msgstr "إجراءات مساحة عمل"
+
+#. Default: "my documents"
+#: src/bungeni.main/bungeni/core/app.py:154
+#, fuzzy
+msgid "section_workspace_documents"
+msgstr "أرشفة وثائق"
+
+#: src/bungeni.main/bungeni/core/app.py:156
+msgid "my documents workspace section"
+msgstr ""
+
+#. Default: "draft"
+#: src/bungeni.main/bungeni/core/app.py:162
+#, fuzzy
+msgid "section_workspace_draft"
+msgstr "إجراءات مساحة عمل"
+
+#: src/bungeni.main/bungeni/core/app.py:163
+msgid "draft documents"
+msgstr "مسودة وثائق"
+
+#. Default: "inbox"
+#: src/bungeni.main/bungeni/core/app.py:168
+#, fuzzy
+msgid "section_workspace_inbox"
+msgstr "إجراءات مساحة عمل"
+
+#: src/bungeni.main/bungeni/core/app.py:169
+msgid "incoming documents"
+msgstr "وثائق واردة"
+
+#. Default: "pending"
+#: src/bungeni.main/bungeni/core/app.py:174
+#, fuzzy
+msgid "section_workspace_pending"
+msgstr "إجراءات مساحة عمل"
+
+#: src/bungeni.main/bungeni/core/app.py:175
+#, fuzzy
+msgid "pending documents"
+msgstr "وثائق واردة"
+
+#: src/bungeni.main/bungeni/core/app.py:180
+msgid "archive"
+msgstr "الأرشيف"
+
+#: src/bungeni.main/bungeni/core/app.py:181
+msgid "archived documents"
+msgstr "أرشفة وثائق"
+
+#: src/bungeni.main/bungeni/core/app.py:185
+#: src/bungeni.main/bungeni/core/app.py:193
+msgid "under consideration"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/app.py:186
+#: src/bungeni.main/bungeni/core/app.py:194
+msgid "documents under consideration"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/app.py:199
+#: src/bungeni.main/bungeni/core/app.py:200
+#, fuzzy
+msgid "tracked documents"
+msgstr "أرشفة وثائق"
+
+#. Default: "Scheduling"
+#: src/bungeni.main/bungeni/core/app.py:204
+#, fuzzy
+msgid "section_scheduling"
+msgstr "مناقشات في جدولة"
+
+#: src/bungeni.main/bungeni/core/app.py:205
+#, fuzzy
+msgid "Workspace Scheduling"
+msgstr "إعادة ترتيب الجدول الزمني"
+
+#. Default: "Committees"
+#: src/bungeni.main/bungeni/core/app.py:211
+msgid "section_scheduling_committees"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/app.py:213
+msgid "Committee schedules"
+msgstr "لجنة الجداول"
+
+#: src/bungeni.main/bungeni/core/app.py:216
+#: src/bungeni.main/bungeni/core/app.py:217
+#, fuzzy
+msgid "schedulable items"
+msgstr "جدولة البند"
+
+#: src/bungeni.main/bungeni/core/app.py:218
+#, fuzzy
+msgid "documents available for scheduling"
+msgstr "تتيح لجدولة"
+
+#. Default: "Sittings"
+#: src/bungeni.main/bungeni/core/app.py:222
+#, fuzzy
+msgid "section_scheduling_sittings"
+msgstr "إجراءات لجدولة المناقشات"
+
+#: src/bungeni.main/bungeni/core/app.py:223
+msgid "Plenary Sittings"
+msgstr "جلسات عامة"
+
+#. Default: "Agenda items"
+#: src/bungeni.main/bungeni/core/app.py:227
+msgid "section_scheduling_agenda_items"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/app.py:230
+#, fuzzy
+msgid "Manage agenda items"
+msgstr "بنود جدول الأعمال"
+
+#. Default: "Groups"
+#: src/bungeni.main/bungeni/core/app.py:233
+#, fuzzy
+msgid "section_groups"
+msgstr "تعيين مجموعات"
+
+#: src/bungeni.main/bungeni/core/app.py:234
+#, fuzzy
+msgid "Bungeni Groups"
+msgstr "Bungeni"
+
+#: src/bungeni.main/bungeni/core/app.py:241
+msgid "My Groups"
+msgstr "مجموعاتي"
+
+#: src/bungeni.main/bungeni/core/app.py:242
+msgid "Groups that the user is a member of"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/app.py:262
+#: src/bungeni.main/bungeni/ui/menu.zcml:968
+msgid "Business"
+msgstr "عمل"
+
+#: src/bungeni.main/bungeni/core/app.py:263
+msgid "Daily operations of the parliament"
+msgstr "يوميا عمليات البرلمان"
+
+#: src/bungeni.main/bungeni/core/app.py:266
+#: src/bungeni.main/bungeni/ui/menu.zcml:974
+msgid "Members"
+msgstr "الأعضاء"
+
+#: src/bungeni.main/bungeni/core/app.py:267
+msgid "Records of members of parliament"
+msgstr "سجلات أعضاء البرلمان"
+
+#: src/bungeni.main/bungeni/core/app.py:270
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:49
+#: src/bungeni.main/bungeni/ui/menu.zcml:980
+#: src/bungeni.main/bungeni/ui/templates/archive.pt:5
+msgid "Archive"
+msgstr "الأرشيف"
+
+#: src/bungeni.main/bungeni/core/app.py:271
+msgid "Parliament records and documents"
+msgstr "البرلمان السجلات والوثائق"
+
+#: src/bungeni.main/bungeni/core/app.py:282
+#: src/bungeni.main/bungeni/ui/menu.zcml:986
+msgid "Administration"
+msgstr "إدارة"
+
+#: src/bungeni.main/bungeni/core/app.py:283
+msgid "Manage bungeni settings"
+msgstr "إدارة إعدادات bungeni"
+
+#: src/bungeni.main/bungeni/core/app.py:291
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:7
+msgid "What's on"
+msgstr "ما الجديد في"
+
+#: src/bungeni.main/bungeni/core/app.py:299
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:79
+msgid "Committees"
+msgstr "اللجان"
+
+#: src/bungeni.main/bungeni/core/app.py:301
+msgid "View committees created by the current parliament"
+msgstr "عرض اللجان التي أنشأها البرلمان الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:305
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:62
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:64
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:70
+msgid "Bills"
+msgstr "فواتير"
+
+#: src/bungeni.main/bungeni/core/app.py:307
+msgid "View bills introduced in the current parliament"
+msgstr "عرض مشاريع القوانين المقدمة في البرلمان الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:311
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:291
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:117
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:124
+msgid "Questions"
+msgstr "الأسئلة"
+
+#: src/bungeni.main/bungeni/core/app.py:313
+msgid "View questions tabled in the current parliament"
+msgstr "طرحت تساؤلات الرأي في البرلمان الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:317
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:231
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:91
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:97
+msgid "Motions"
+msgstr "الاقتراحات"
+
+#: src/bungeni.main/bungeni/core/app.py:319
+msgid "View motions moved in the current parliament"
+msgstr "انتقل الاقتراحات الرأي في البرلمان الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:324
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:144
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:150
+msgid "Tabled documents"
+msgstr "قدم وثائق"
+
+#: src/bungeni.main/bungeni/core/app.py:327
+msgid "View the documents tabled in the current parliament"
+msgstr "قدم عرض الوثائق في البرلمان الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:332
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:170
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:176
+msgid "Agenda items"
+msgstr "بنود جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/app.py:334
+msgid "View the agenda items of the current parliament"
+msgstr "عرض بنود جدول أعمال مجلس النواب الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:344
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:368
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:18
+msgid "Sittings"
+msgstr "الجلسات"
+
+#: src/bungeni.main/bungeni/core/app.py:345
+msgid "View the sittings of the current parliament"
+msgstr "عرض جلسات مجلس النواب الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:350
+msgid "Publications"
+msgstr "المنشورات"
+
+#: src/bungeni.main/bungeni/core/app.py:353
+msgid "browse and download parliamentary publications"
+msgstr "تصفح وتنزيل المطبوعات البرلمانية"
+
+#: src/bungeni.main/bungeni/core/app.py:360
+msgid "Current"
+msgstr "الحالي"
+
+#: src/bungeni.main/bungeni/core/app.py:361
+msgid "View current parliament members (MPs)"
+msgstr "العرض الحالي اعضاء البرلمان (النواب)"
+
+#: src/bungeni.main/bungeni/core/app.py:367
+msgid "Political groups"
+msgstr "الجماعات السياسية"
+
+#: src/bungeni.main/bungeni/core/app.py:368
+msgid "View current political groups"
+msgstr "عرض المجموعات السياسية الحالية"
+
+#: src/bungeni.main/bungeni/core/app.py:372
+msgid "Browse archives"
+msgstr "تصفح الأرشيف"
+
+#: src/bungeni.main/bungeni/core/app.py:373
+msgid "Browse records from the archive"
+msgstr "استعرض المحاضر من الأرشيف"
+
+#: src/bungeni.main/bungeni/core/app.py:377
+msgid "Documents"
+msgstr "وثائق"
+
+#: src/bungeni.main/bungeni/core/app.py:378
+msgid "Browse documents in the archive"
+msgstr "تصفح الوثائق في الأرشيف"
+
+#: src/bungeni.main/bungeni/core/app.py:424
+#: src/bungeni.main/bungeni/ui/menu.zcml:420
+msgid "Content"
+msgstr "محتوى"
+
+#: src/bungeni.main/bungeni/core/app.py:425
+msgid "browse bungeni content"
+msgstr "تصفح محتوى bungeni"
+
+#: src/bungeni.main/bungeni/core/app.py:430
+#: src/bungeni.main/bungeni/ui/menu.zcml:427
+msgid "Settings"
+msgstr "إعدادات"
+
+#: src/bungeni.main/bungeni/core/app.py:431
+msgid "settings"
+msgstr "إعدادات"
+
+#: src/bungeni.main/bungeni/core/app.py:436
+msgid "email settings"
+msgstr "إعدادات البريد الإلكتروني"
+
+#: src/bungeni.main/bungeni/core/app.py:437
+msgid "manage email settings"
+msgstr "إدارة إعدادات البريد الإلكتروني"
+
+#: src/bungeni.main/bungeni/core/app.py:442
+msgid "search index settings"
+msgstr "بحث ضبط مؤشر"
+
+#: src/bungeni.main/bungeni/core/app.py:443
+msgid "manage search index settings"
+msgstr "إدارة إعدادات فهرس البحث"
+
+#: src/bungeni.main/bungeni/core/app.py:448
+msgid "registry settings"
+msgstr "إعدادات التسجيل"
+
+#: src/bungeni.main/bungeni/core/app.py:449
+msgid "manage registry settings"
+msgstr "إدارة إعدادات التسجيل"
+
+#: src/bungeni.main/bungeni/core/app.py:454
+msgid "serialization manager"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/app.py:455
+msgid "batch serialization of content"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/dc.py:152
+#: src/bungeni.main/bungeni/core/dc.py:180
+#: src/bungeni.main/bungeni/core/dc.py:206
+msgid "Submitted by"
+msgstr "مقدم من"
+
+#: src/bungeni.main/bungeni/core/dc.py:157
+msgid "Approved on"
+msgstr "وافق على"
+
+#: src/bungeni.main/bungeni/core/dc.py:183
+msgid "published on"
+msgstr "نشرت يوم"
+
+#: src/bungeni.main/bungeni/core/dc.py:209
+msgid "notice given on"
+msgstr "على إشعار"
+
+#: src/bungeni.main/bungeni/core/dc.py:222
+msgid "Sitting:"
+msgstr "الجلوس:"
+
+#: src/bungeni.main/bungeni/core/dc.py:225
+#: src/bungeni.main/bungeni/core/dc.py:235
+msgid "to"
+msgstr "إلى"
+
+#: src/bungeni.main/bungeni/core/dc.py:232
+msgid "Sitting scheduled for"
+msgstr "يجلس المقرر عقده في"
+
+#. Default: "Sitting of ${group_name} @ ${sitting_venue}"
+#: src/bungeni.main/bungeni/core/dc.py:242
+msgid "verbose_sitting_title"
+msgstr "يجلس من ${group_name} @ ${sitting_venue}"
+
+#: src/bungeni.main/bungeni/core/dc.py:267
+msgid "Scheduled for sitting ($start to $end)"
+msgstr "المقرر للجلوس ($start ل$end)"
+
+#: src/bungeni.main/bungeni/core/dc.py:286
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:147
+msgid "Editorial Note"
+msgstr "ملاحظة التحرير"
+
+#: src/bungeni.main/bungeni/core/dc.py:300
+msgid "translation"
+msgstr "ترجمة"
+
+#: src/bungeni.main/bungeni/core/dc.py:301
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:420
+msgid "Version"
+msgstr "الإصدار"
+
+#: src/bungeni.main/bungeni/core/dc.py:305
+msgid "Last modified"
+msgstr "آخر تعديل"
+
+#. Default: "Member of Parliament for ${representation} (${member})"
+#: src/bungeni.main/bungeni/core/dc.py:377
+#, fuzzy
+msgid "member_title_with_representation"
+msgstr "عضو البرلمان عن ${representation} (${member})"
+
+#: src/bungeni.main/bungeni/core/dc.py:473
+msgid "Discussion"
+msgstr "مناقشة"
+
+#: src/bungeni.main/bungeni/core/dc.py:496
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:22
+msgid "Address"
+msgstr "عنوان"
+
+#: src/bungeni.main/bungeni/core/schedule.py:91
+msgid "Unknown user group"
+msgstr "غير معروف المستخدم مجموعة"
+
+#: src/bungeni.main/bungeni/core/schedule.py:192
+msgid "$x"
+msgstr "$x"
+
+#. Default: "HTML fragment to OpenDocument format"
+#: src/bungeni.main/bungeni/core/transformation.py:189
+msgid "title_html_fragment_odf_transform"
+msgstr "جزء HTML لتنسيق OpenDocument"
+
+#: src/bungeni.main/bungeni/core/workflows/simple.py:14
+msgid "visible"
+msgstr "مرئي"
+
+#: src/bungeni.main/bungeni/core/workflows/simple.py:15
+msgid "pending"
+msgstr "ريثما"
+
+#: src/bungeni.main/bungeni/core/workflows/simple.py:16
+msgid "scheduled"
+msgstr "من المقرر"
+
+#: src/bungeni.main/bungeni/core/workflows/simple.py:28
+msgid "Submit to Clerk"
+msgstr "يقدم إلى كاتب"
+
+#: src/bungeni.main/bungeni/core/workflows/simple.py:33
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:335
+msgid "Schedule"
+msgstr "جدول"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:273
+msgid "Allow Question Submission"
+msgstr "تسمح تقديم السؤال"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:277
+msgid "Days to Defer Question"
+msgstr "أيام إرجاء السؤال"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:278
+msgid ""
+"number of days after which admissible questions are automatically deferred"
+msgstr "عدد الأيام بعد الأسئلة التي هي مقبولة تلقائيا المؤجلة"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:284
+msgid "Days before question scheduled"
+msgstr "قبل أيام من المقرر السؤال"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:288
+msgid "Days before bill scheduled"
+msgstr "قبل أيام مشروع قانون من المقرر"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:292
+msgid "Maximum Questions Per Sitting"
+msgstr "أقصى أسئلة لكل الجلوس"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:296
+msgid "Maximum Questions Per Sitting Per MP"
+msgstr "أقصى أسئلة لكل الجلوس لكل النائب"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:300
+msgid "Number of sittings to include in what's business section"
+msgstr "عدد من الجلسات لتشمل في ما قسم الأعمال"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:308
+msgid "Reset global registry number"
+msgstr "إعادة عالمي رقم التسجيل"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:312
+msgid "Reset questions registry number"
+msgstr "إعادة الأسئلة رقم التسجيل"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:316
+msgid "Reset motions registry number"
+msgstr "إعادة الاقتراحات رقم التسجيل"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:320
+msgid "Reset agenda items registry number"
+msgstr "إعادة تعيين عدد من جدول الأعمال البنود التسجيل"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:324
+msgid "Reset bills registry number"
+msgstr "إعادة الفواتير رقم التسجيل"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:328
+msgid "Reset reports registry number"
+msgstr "إعادة تقارير عدد التسجيل"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:332
+msgid "Reset tabled documents registry number"
+msgstr "إعادة تقديمه وثائق رقم التسجيل"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:342
+msgid "Email Notifications Enabled?"
+msgstr "تمكين إعلامات البريد الإلكتروني؟"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:348
+msgid "Email server hostname or IP address"
+msgstr "عنوان البريد الإلكتروني الخادم المضيف أو IP"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:352
+msgid "Email server port"
+msgstr "خادم البريد الإلكتروني الميناء"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:356
+msgid "Email server login name"
+msgstr "اسم خادم البريد الإلكتروني لتسجيل الدخول"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:360
+msgid "Email server password"
+msgstr "خادم البريد الإلكتروني كلمة السر"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:364
+msgid "Default sender address"
+msgstr "عنوان المرسل الافتراضي"
+
+#: src/bungeni.main/bungeni/models/interfaces.py:368
+msgid "Connect securely to mail server (using TLS)"
+msgstr "اتصال آمن إلى خادم البريد (باستخدام TLS)"
+
+#: src/bungeni.main/bungeni/ui/admin.py:152
+#, fuzzy
+msgid "Batch Serialization"
+msgstr "مشروع الترجمة"
+
+#: src/bungeni.main/bungeni/ui/admin.py:153
+msgid ""
+"This will serialize all workflowable objects in Bungeni to XML. You can "
+"limit by type below or choose *All types* to serialize everything."
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/admin.py:158
+#, fuzzy
+msgid "Serialize Items"
+msgstr "تتوفر وحدات"
+
+#: src/bungeni.main/bungeni/ui/admin.py:162
+msgid "Sent ${item_count} items for serialization"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/assignment.py:94
+#, fuzzy
+msgid "user name"
+msgstr "اسم المستخدم"
+
+#: src/bungeni.main/bungeni/ui/assignment.py:98
+#, fuzzy
+msgid "assigned"
+msgstr "تعيين البند"
+
+#: src/bungeni.main/bungeni/ui/attendance.py:52
+msgid "full names"
+msgstr "كامل أسماء"
+
+#: src/bungeni.main/bungeni/ui/attendance.py:136
+#: src/bungeni.main/bungeni/ui/forms/common.py:406
+#: src/bungeni.main/bungeni/ui/forms/common.py:562
+msgid "Save and view"
+msgstr "حفظ وعرض"
+
+#: src/bungeni.main/bungeni/ui/attendance.py:207
+msgid "Updated attendance record"
+msgstr "تحديث حضورا قياسيا"
+
+#: src/bungeni.main/bungeni/ui/audit.py:300
+#: src/bungeni.main/bungeni/ui/workflow.py:70
+msgid "user"
+msgstr "المستخدم"
+
+#. Default: "date active"
+#: src/bungeni.main/bungeni/ui/audit.py:302
+msgid "audit_column_date_active"
+msgstr ""
+
+#. Default: "object"
+#: src/bungeni.main/bungeni/ui/audit.py:305
+msgid "audit_column_object"
+msgstr ""
+
+#. Default: "description"
+#: src/bungeni.main/bungeni/ui/audit.py:308
+#, fuzzy
+msgid "audit_column_description"
+msgstr "وصف"
+
+#. Default: "note"
+#: src/bungeni.main/bungeni/ui/audit.py:311
+#, fuzzy
+msgid "audit_column_note"
+msgstr "ليس جدولة السياق"
+
+#. Default: "date audit"
+#: src/bungeni.main/bungeni/ui/audit.py:314
+msgid "audit_column_date_audit"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/audit.py:346
+msgid "No Change Data"
+msgstr "لا تغيير البيانات"
+
+#: src/bungeni.main/bungeni/ui/audit.py:405
+msgid "Change Log"
+msgstr "المفتاح"
+
+#. Default: "Venues"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:78
+msgid "scheduler_title_venues_view"
+msgstr ""
+
+#. Default: "Group"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:79
+#, fuzzy
+msgid "scheduler_field_group"
+msgstr "من المقرر"
+
+#. Default: "Start Date"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:80
+msgid "scheduler_field_start_date"
+msgstr ""
+
+#. Default: "End Date"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:81
+msgid "scheduler_field_end_date"
+msgstr ""
+
+#. Default: "Venue"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:82
+#, fuzzy
+msgid "scheduler_field_venue"
+msgstr "من المقرر"
+
+#. Default: "Sitting"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:83
+#, fuzzy
+msgid "scheduler_title_sitting"
+msgstr "حذف الجلوس"
+
+#. Default: "View"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:84
+msgid "scheduler_action_view_sitting"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:87
+msgid "Daily"
+msgstr "يوميا"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:88
+msgid "Weekly"
+msgstr "الأسبوعية"
+
+#. Default: "choose ${event_field_title}"
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:111
+msgid "event_form_field_default"
+msgstr "اختيار ${event_field_title}"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:269
+msgid "Scheduling"
+msgstr "جدولة"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:349
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:11
+msgid "Activity Type"
+msgstr "نوع النشاط"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:350
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:215
+msgid "Meeting Type"
+msgstr "نوع الاجتماع"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:351
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:82
+msgid "Convocation Type"
+msgstr "دعوة نوع"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:355
+msgid "Please check the highlighted sittings. Failed to apply changes"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:357
+msgid "Please review the highlighted sittings. Could not apply changes."
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:359
+msgid "Please review the highlighted events. Could not be deleted."
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:469
+msgid "${localized_start_date} to ${localized_end_date}"
+msgstr "${localized_start_date} إلى ${localized_end_date}"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:619
+msgid "Unable to add a sitting. Please make corrections."
+msgstr "غير قادر على إضافة الجلوس. يرجى إجراء التصحيحات."
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:732
+msgid "Error Updating Sitting"
+msgstr "حدث خطأ في تحديث الجلوس"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:857
+#, fuzzy
+msgid "Error Deleting Sitting"
+msgstr "حدث خطأ في تحديث الجلوس"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:1190
+msgid "Sitting Votes and Proceedings"
+msgstr "يجلس الأصوات وقائع"
+
+#: src/bungeni.main/bungeni/ui/calendar/browser.py:1192
+msgid "Sitting Agenda"
+msgstr "يجلس جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/calendar/data.py:48
+msgid "choose status"
+msgstr "اختيار الوضع"
+
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:29
+msgid "Start date and time of sitting"
+msgstr "بدء التاريخ والوقت في الجلوس"
+
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:30
+msgid "Choose sitting's start date and time"
+msgstr "اختيار موعد جلسة في البدء ووقت"
+
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:33
+msgid "End date and time of sitting"
+msgstr "تاريخ نهاية ووقت الجلوس"
+
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:34
+msgid "Choose sitting's end date and time"
+msgstr "اختيار موعد جلسة في نهاية والوقت"
+
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:37
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:418
+msgid "Venue"
+msgstr "مكان"
+
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:38
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:419
+msgid "Venues"
+msgstr "الملاعب"
+
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:42
+#: src/bungeni.main/bungeni/ui/calendar/interfaces.py:43
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:206
+#: src/bungeni.main/bungeni/ui/search.py:120
+#: src/bungeni.main/bungeni/ui/templates/bungeni-content.pt:26
+msgid "Language"
+msgstr "لغة"
+
+#: src/bungeni.main/bungeni/ui/calendar/templates/dhtmlxcalendar.pt:181
+msgid "Calendar of"
+msgstr "الجدول الزمني لل"
+
+#. Default: "Sitting"
+#: src/bungeni.main/bungeni/ui/calendar/templates/dhtmlxcalendarxml.pt:20
+#, fuzzy
+msgid "scheduler_label_sitting"
+msgstr "عرض الجدول الزمني للجلسة"
+
+#: src/bungeni.main/bungeni/ui/calendar/templates/scheduler.pt:8
+msgid "Agenda"
+msgstr "جدول أعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:4
+msgid "Acronym"
+msgstr "المختصر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:5
+msgid "Activate"
+msgstr "تفعيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:6
+msgid "Active"
+msgstr "نشط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:7
+msgid "Active Committee"
+msgstr "نشط لجنة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:8
+msgid "Active Group"
+msgstr "نشط المجموعة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:9
+msgid "Active Parliament"
+msgstr "نشط البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:10
+msgid "Active User"
+msgstr "نشط العضو"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:12
+#, fuzzy
+msgid "Add Bill Event"
+msgstr "إضافة بيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:13
+#, fuzzy
+msgid "Add Committee Address"
+msgstr "إضافة عنوان لجنة ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:14
+#, fuzzy
+msgid "Add Government Address"
+msgstr "إضافة العنوان الحكومة ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:15
+#, fuzzy
+msgid "Add Ministry Address"
+msgstr "إضافة عنوان الوزارة ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:16
+#, fuzzy
+msgid "Add Motion Event"
+msgstr "إضافة الحركة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:17
+#, fuzzy
+msgid "Add Office Address"
+msgstr "إضافة عنوان المكتب ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:18
+#, fuzzy
+msgid "Add Parliament Address"
+msgstr "إضافة البرلمان العنوان ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:19
+#, fuzzy
+msgid "Add Political Group Address"
+msgstr "إضافة عنوان المجموعة السياسية ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:20
+#, fuzzy
+msgid "Add Question Event"
+msgstr "إضافة سؤال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:21
+#, fuzzy
+msgid "Add Tabled Document Event"
+msgstr "طرح إصدار وثيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:23
+msgid "Address Type"
+msgstr "اكتب عنوان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:24
+msgid "Addresses"
+msgstr "عناوين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:25
+msgid "Adjourn"
+msgstr "فض"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:26
+msgid "Adjourn First Reading"
+msgstr "تأجيل القراءة الأولى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:27
+msgid "Adjourn First Report Reading"
+msgstr "تأجيل التقرير الأول للقراءة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:28
+msgid "Adjourn Second Reading"
+msgstr "تأجيل القراءة الثانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:29
+msgid "Adjourn Third Reading"
+msgstr "تأجيل القراءة الثالثة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:30
+msgid "Adjourn Whole House Committee"
+msgstr "تأجيل جنة مجلس النواب الجامع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:31
+msgid "Adjourn debate"
+msgstr "تأجيل المناقشة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:32
+msgid "Admissible"
+msgstr "مقبولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:33
+msgid "Admissible Date"
+msgstr "تاريخ قبول"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:34
+msgid "Adopt"
+msgstr "اعتماد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:35
+msgid "Adopt with amendments"
+msgstr "اعتماد مع بعض التعديلات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:36
+msgid "Adopted"
+msgstr "اعتمد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:37
+msgid "Adopted with amendments"
+msgstr "اعتمدت مع تعديلات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:38
+msgid "Agenda Item"
+msgstr "البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:39
+msgid "Agenda Items"
+msgstr "بنود جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:40
+msgid "Allow scheduling"
+msgstr "تسمح جدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:41
+msgid "Allow scheduling of First Reading"
+msgstr "يسمح الجدول الزمني للقراءة الأولى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:42
+msgid "Allow scheduling of First Report Reading"
+msgstr "يسمح الجدول الزمني لقراءة التقرير الأول"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:43
+msgid "Allow scheduling of Second Reading"
+msgstr "يسمح الجدول الزمني للقراءة الثانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:44
+msgid "Allow scheduling of Third Reading"
+msgstr "يسمح الجدول الزمني لقراءة ثالثة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:45
+msgid "Allow scheduling of Whole House Committee"
+msgstr "يسمح الجدول الزمني للجنة مجلس النواب الجامع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:46
+msgid "Allow scheduling/rescheduling of Whole House Committee"
+msgstr "تتيح جدولة / إعادة جدولة لجنة البيت الجامع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:47
+msgid "Approve"
+msgstr "الموافقة على"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:48
+msgid "Approved Bill"
+msgstr "وافق بيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:50
+msgid "Attachment"
+msgstr "التعلق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:51
+msgid "Attachment Type"
+msgstr "المرفقات نوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:52
+#, fuzzy
+msgid "Attachment Version"
+msgstr "المرفقات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:53
+#, fuzzy
+msgid "Attachment Versions"
+msgstr "المرفقات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:54
+msgid "Attachments"
+msgstr "المرفقات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:55
+msgid "Attendance"
+msgstr "الحضور"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:56
+#, fuzzy
+msgid "Auto Archive"
+msgstr "الأرشيف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:57
+msgid "Awaiting Consent"
+msgstr "في انتظار الموافقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:58
+#: src/bungeni.main/bungeni/ui/menu.zcml:910
+msgid "Bill"
+msgstr "مشروع قانون"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:59
+msgid "Bill Published in Gazette"
+msgstr "مشروع قانون نشر في الجريدة الرسمية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:60
+msgid "Bill Type"
+msgstr "فاتورة نوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:61
+msgid "Bill Withdrawn"
+msgstr "مشروع قانون مسحوب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:63
+#: src/bungeni.main/bungeni/ui/login.py:254
+msgid "Biographical notes"
+msgstr "السيرة الذاتية ملاحظات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:64
+msgid "Body"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:65
+#, fuzzy
+msgid "Change"
+msgstr "المفتاح"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:66
+#, fuzzy
+msgid "Changes"
+msgstr "المفتاح"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:67
+msgid "Choose the type of question"
+msgstr "اختيار نوع السؤال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:68
+msgid "Choose the type of response expected for this question"
+msgstr "اختيار نوع من رد الفعل المتوقع لهذا السؤال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:69
+msgid "City"
+msgstr "مدينة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:70
+msgid "Committee"
+msgstr "لجنة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:71
+msgid "Committee Identifier"
+msgstr "لجنة معرف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:72
+msgid "Committee Member"
+msgstr "عضو اللجنة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:73
+#, fuzzy
+msgid "Committee Members"
+msgstr "عضو اللجنة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:74
+#, fuzzy
+msgid "Committee Staff"
+msgstr "إضافة لجنة الأركان..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:75
+#, fuzzy
+msgid "Committee Staffs"
+msgstr "إضافة لجنة الأركان..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:76
+msgid "Committee Status Type"
+msgstr "لجنة وضع نوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:77
+msgid "Committee Type"
+msgstr "اللجنة النوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:78
+msgid "Committee is Dissolved"
+msgstr "تم حل لجنة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:80
+msgid "Complete"
+msgstr "كامل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:81
+msgid "Complete Response"
+msgstr "استجابة كاملة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:83
+msgid "Countries"
+msgstr "البلدان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:84
+msgid "Country"
+msgstr "بلد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:85
+msgid "Country Code"
+msgstr "كود البلد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:86
+#: src/bungeni.main/bungeni/ui/login.py:261
+msgid "Country of Birth"
+msgstr "بلد الميلاد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:87
+#, fuzzy
+msgid "Coverage"
+msgstr "ويغطي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:88
+msgid "Create"
+msgstr "خلق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:89
+msgid "Create Agenda Item"
+msgstr "خلق البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:90
+msgid "Create Agenda Item (On behalf of)"
+msgstr "إنشاء البند (باسم)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:91
+msgid "Create Bill"
+msgstr "إنشاء بيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:92
+msgid "Create Motion"
+msgstr "إنشاء الحركة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:93
+msgid "Create Motion (On behalf of)"
+msgstr "خلق الحركة (باسم)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:94
+msgid "Create Question"
+msgstr "إنشاء السؤال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:95
+msgid "Create Question (On behalf of)"
+msgstr "خلق سؤال (باسم)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:96
+msgid "Create Report"
+msgstr "إنشاء تقرير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:97
+msgid "Create Sitting"
+msgstr "خلق الجلوس"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:98
+msgid "Create Tabled Document"
+msgstr "قدمت وثيقة خلق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:99
+msgid "Create Tabled Document (On behalf of)"
+msgstr "قدمت وثيقة إنشاء (باسم)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:100
+msgid "Create and Sign"
+msgstr "إنشاء وتسجيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:101
+#: src/bungeni.main/bungeni/ui/login.py:264
+msgid "Current Nationality"
+msgstr "الجنسية الحالية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:102
+msgid "Date"
+msgstr "تاريخ"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:103
+#, fuzzy
+msgid "Date Active"
+msgstr "نشط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:104
+#, fuzzy
+msgid "Date Audit"
+msgstr "تاريخ الميلاد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:105
+#: src/bungeni.main/bungeni/ui/login.py:256
+msgid "Date of Birth"
+msgstr "تاريخ الميلاد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:106
+msgid "Date of Death"
+msgstr "تاريخ الموت"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:107
+msgid "Date of the dissolution"
+msgstr "تاريخ فسخ"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:108
+msgid "Date of the election"
+msgstr "موعد الانتخاب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:109
+msgid "Date of the swearing in"
+msgstr "تاريخ أداء اليمين الدستورية في"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:110
+#, fuzzy
+msgid "Date submitted to ministry"
+msgstr "قدمت الى وزارة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:111
+msgid "Deactivate"
+msgstr "إلغاء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:112
+msgid "Debate"
+msgstr "مناقشة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:113
+msgid "Debate adjourned"
+msgstr "تأجيل المناقشة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:114
+msgid "Debated"
+msgstr "ناقش"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:115
+msgid "Deceased User"
+msgstr "العضو المتوفى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:116
+msgid "Defer"
+msgstr "إرجاء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:117
+msgid "Deferred"
+msgstr "مؤجلة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:118
+#, fuzzy
+msgid "Delete Agenda Item"
+msgstr "حذف البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:119
+#, fuzzy
+msgid "Delete Bill"
+msgstr "حذف مشروع قانون"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:120
+#, fuzzy
+msgid "Delete Motion"
+msgstr "حذف الحركة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:121
+#, fuzzy
+msgid "Delete Question"
+msgstr "حذف سؤال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:122
+#, fuzzy
+msgid "Delete Tabled Document"
+msgstr "قدم حذف وثيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:123
+msgid "Description"
+msgstr "وصف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:124
+msgid "Disapprove"
+msgstr "رفض"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:125
+msgid "Dissolve"
+msgstr "حل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:126
+msgid "Doc"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:127
+#, fuzzy
+msgid "Doc Version"
+msgstr "الإصدار"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:128
+#, fuzzy
+msgid "Doc Versions"
+msgstr "إصدارات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:129
+msgid "Docs"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:130
+msgid "Document Type"
+msgstr "نوع الوثيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:131
+msgid "Draft"
+msgstr "مسودة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:132
+msgid "Draft - Committee not yet Active"
+msgstr "مشروع -- اللجنة لم تنشط بعد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:133
+msgid "Draft - Group not yet Active"
+msgstr "مشروع -- المجموعة التي لم تنشط بعد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:134
+msgid "Draft - Parliament not yet Active"
+msgstr "مشروع -- البرلمان لم تنشط بعد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:135
+msgid "Draft Address"
+msgstr "مشروع العنوان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:136
+msgid "Draft Agenda"
+msgstr "مشروع جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:137
+msgid "Draft Bill"
+msgstr "مشروع قانون"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:138
+msgid "Draft Event"
+msgstr "مشروع الحدث"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:139
+msgid "Draft Minutes"
+msgstr "مشروع دقائق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:140
+msgid "Drop"
+msgstr "قطرة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:141
+msgid "Dropped"
+msgstr "انخفض"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:142
+#, fuzzy
+msgid "Edit Agenda Item"
+msgstr "تعديل البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:143
+#, fuzzy
+msgid "Edit Bill"
+msgstr "تحرير فاتورة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:144
+#, fuzzy
+msgid "Edit Motion"
+msgstr "حركة تحرير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:145
+#, fuzzy
+msgid "Edit Question"
+msgstr "تعديل سؤال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:146
+#, fuzzy
+msgid "Edit Tabled Document"
+msgstr "تقدمت تحرير وثيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:148
+#, fuzzy
+msgid "Editorial Notes"
+msgstr "ملاحظة التحرير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:149
+msgid "Elapse"
+msgstr "ينقضي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:150
+msgid "Elapsed"
+msgstr "انقضى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:151
+msgid "Election Date"
+msgstr "تاريخ الانتخابات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:152
+msgid "Election Type"
+msgstr "انتخاب نوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:153
+msgid "Election/Nomination Date"
+msgstr "انتخاب / تاريخ الترشيح"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:154
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:155
+msgid "Email address"
+msgstr "عنوان البريد الإلكتروني"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:156
+msgid "End"
+msgstr "نهاية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:157
+msgid "End Date"
+msgstr "نهاية التاريخ"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:158
+msgid "Enter one fax number per line"
+msgstr "إدخال واحد في كل سطر رقم الفاكس"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:159
+msgid "Enter one phone number per line"
+msgstr "أدخل رقم هاتف واحد في كل سطر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:160
+msgid "Event"
+msgstr "حدث"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:161
+msgid "Event Type"
+msgstr "نوع الحدث"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:162
+msgid "Events"
+msgstr "أحداث"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:163
+msgid "Fax Number(s)"
+msgstr "رقم الفاكس (ق)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:164
+msgid "File"
+msgstr "ملف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:165
+msgid "Finalize Agenda"
+msgstr "الانتهاء من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:166
+msgid "First Name"
+msgstr "الاسم الأول"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:167
+msgid "First Reading"
+msgstr "القرأة الأولى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:168
+msgid "First Reading Adjourned"
+msgstr "القراءة الأولى تأجيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:169
+msgid "First Reading Pending"
+msgstr "القراءة الأولى ريثما"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:170
+msgid "First Report Reading"
+msgstr "أول تقرير القراءة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:171
+msgid "First Report Reading Adjourned"
+msgstr "القراءة الأولى عن تأجيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:172
+msgid "First Report Reading Pending"
+msgstr "أول قراءة تقرير معلق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:173
+#: src/bungeni.main/bungeni/ui/descriptor/descriptor.py:555
+msgid "Full Name"
+msgstr "بدر تام"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:174
+#, fuzzy
+msgid "Full Name [Short Name]"
+msgstr "اسم قصير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:175
+#: src/bungeni.main/bungeni/ui/login.py:255
+msgid "Gender"
+msgstr "بين الجنسين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:176
+#, fuzzy
+msgid "Geolocation"
+msgstr "عدد السكان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:177
+msgid "Government"
+msgstr "حكومة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:178
+msgid "Government Identifier"
+msgstr "الحكومة معرف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:179
+msgid "Governments"
+msgstr "الحكومات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:180
+msgid "Group"
+msgstr "مجموعة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:181
+#, fuzzy
+msgid "Group Membership"
+msgstr "عضوية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:182
+#, fuzzy
+msgid "Group Memberships"
+msgstr "عضوية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:183
+#, fuzzy
+msgid "Group document assignment"
+msgstr "يبدأ تاريخ الاحالة وثيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:184
+msgid "Group is Dissolved"
+msgstr "تم حل جماعة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:185
+msgid "Groups"
+msgstr "المجموعات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:186
+msgid "Heading"
+msgstr "عنوان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:187
+msgid "Headings"
+msgstr "العناوين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:188
+msgid "Identifier"
+msgstr "المعرف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:189
+#: src/bungeni.main/bungeni/ui/login.py:266
+msgid "Image"
+msgstr "صورة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:190
+msgid "In power from"
+msgstr "من في السلطة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:191
+msgid "In power till"
+msgstr "حتى في السلطة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:192
+msgid "Inactive User"
+msgstr "نشط العضو"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:193
+msgid "Inactive address"
+msgstr "عنوان غير نشط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:194
+msgid "Inactive event"
+msgstr "نشط الحدث"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:195
+msgid "Inactive file"
+msgstr "ملف نشط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:196
+msgid "Inactive heading obsolete"
+msgstr "عنوان غير نشط عفا عليها الزمن"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:197
+msgid "Inadmissible"
+msgstr "غير مقبول"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:198
+msgid "Initial password"
+msgstr "كلمة السر الأولية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:199
+msgid "Item"
+msgstr "بند"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:200
+#, fuzzy
+msgid "Item Schedule"
+msgstr "بند جدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:201
+#, fuzzy
+msgid "Item Schedule Discussion"
+msgstr "تعديل بند مناقشة جدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:202
+#, fuzzy
+msgid "Item Schedule Discussions"
+msgstr "تعديل بند مناقشة جدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:203
+#, fuzzy
+msgid "Item Schedules"
+msgstr "بند جدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:204
+#: src/bungeni.main/bungeni/ui/forms/forms.py:188
+msgid "Item Type"
+msgstr "نوع البند"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:205
+msgid "Item URI"
+msgstr "البند URI"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:207
+msgid "Last Name"
+msgstr "اسم العائلة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:208
+msgid "Leave Reason"
+msgstr "ترك السبب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:209
+msgid "Limits persons with this title to one"
+msgstr "حدود الأشخاص مع هذا اللقب إلى واحد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:210
+#: src/bungeni.main/bungeni/ui/menu.py:88
+msgid "Login"
+msgstr "دخول"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:211
+msgid "Logo"
+msgstr "الشعار"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:212
+#, fuzzy
+msgid "MIME Type"
+msgstr "نوع البند"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:213
+msgid "Make available for scheduling"
+msgstr "تتيح لجدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:214
+#, fuzzy
+msgid "Marital Status"
+msgstr "حالة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:216
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:354
+msgid "Member"
+msgstr "عضو"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:217
+msgid "Member of Parliament"
+msgstr "عضو في البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:218
+msgid "Member of parliament"
+msgstr "عضو في البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:219
+msgid "Members of parliament"
+msgstr "أعضاء البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:220
+msgid "Middle Name"
+msgstr "الاسم الأوسط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:221
+#, fuzzy
+msgid "Minimum Number of members"
+msgstr "الحد الأدنى من عدد الأعضاء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:222
+msgid "Minister"
+msgstr "وزير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:223
+msgid "Ministers"
+msgstr "وزراء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:224
+msgid "Ministries"
+msgstr "الوزارات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:225
+msgid "Ministry"
+msgstr "وزارة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:226
+msgid "Ministry Identifier"
+msgstr "وزارة المعرف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:227
+#: src/bungeni.main/bungeni/ui/forms/templates/doc-minutes.pt:1
+msgid "Minutes"
+msgstr "دقيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:228
+msgid "Model"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:229
+msgid "Models"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:230
+#: src/bungeni.main/bungeni/ui/menu.zcml:916
+msgid "Motion"
+msgstr "اقتراح"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:232
+msgid "Move from Deceased"
+msgstr "الانتقال من المتوفون"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:233
+msgid "Move to Deceased"
+msgstr "الانتقال إلى المتوفون"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:234
+msgid "Moved by"
+msgstr "انتقلت من"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:235
+msgid "Mover"
+msgstr "المحرك"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:236
+#, fuzzy
+msgid ""
+"Must contain only letters, numbers, a period (.) and underscore (_). Should "
+"start with a letter and be between 3 and 20 characters long"
+msgstr ""
+"يجب أن يحتوي فقط الأحرف والأرقام وفترة (.) والشرطة السفلية (_). يجب أن يبدأ "
+"بحرف وتكون ما بين 3 و 20 حرفا"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:237
+msgid "Name"
+msgstr "اسم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:238
+msgid "Name of activity"
+msgstr "اسم النشاط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:239
+msgid "Name of the Country"
+msgstr "اسم الدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:240
+msgid "National Id"
+msgstr "الهوية الوطنية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:241
+#: src/bungeni.main/bungeni/ui/login.py:258
+msgid "Nationality at Birth"
+msgstr "الجنسية عند الميلاد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:242
+msgid "Needs Recomplete to Approve"
+msgstr "يحتاج إلى الموافقة Recomplete"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:243
+msgid "Notes"
+msgstr "تلاحظ"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:244
+msgid "Notice Date"
+msgstr "تاريخ إشعار"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:245
+msgid "Number"
+msgstr "عدد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:246
+msgid "Number of clerks"
+msgstr "عدد من كتبة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:247
+msgid "Number of members"
+msgstr "عدد الأعضاء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:248
+msgid "Number of researchers"
+msgstr "عدد من الباحثين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:249
+msgid "Office"
+msgstr "مكتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:250
+msgid "Office Identifier"
+msgstr "مكتب معرف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:251
+msgid "Office Member"
+msgstr "عضو المكتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:252
+msgid "Office Members"
+msgstr "مكتب الأعضاء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:253
+msgid "Offices"
+msgstr "المكاتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:254
+msgid "Only one user may have this title"
+msgstr "قد مستخدم واحد فقط وهذا اللقب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:255
+#: src/bungeni.main/bungeni/ui/search.py:522
+msgid "Owner"
+msgstr "مالك"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:256
+msgid "Parliament"
+msgstr "مجلس النواب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:257
+msgid "Parliament Identifier"
+msgstr "البرلمان معرف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:258
+#, fuzzy
+msgid "Parliament Name"
+msgstr "اسم البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:259
+msgid "Parliament is Dissolved"
+msgstr "تم حل البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:260
+msgid "Parliamentary session"
+msgstr "الدورة البرلمانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:261
+msgid "Parliamentary sessions"
+msgstr "الدورات البرلمانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:262
+msgid "Parliaments"
+msgstr "البرلمانات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:263
+msgid "Pending response"
+msgstr "في انتظار الرد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:264
+msgid "Phone Number(s)"
+msgstr "رقم الهاتف (ق)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:265
+msgid "Picture of the person"
+msgstr "صورة الشخص"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:266
+#, fuzzy
+msgid "Political Group"
+msgstr "الجماعات السياسية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:267
+#, fuzzy
+msgid "Political Group Member"
+msgstr "إضافة السياسية عضو مجموعة ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:268
+#, fuzzy
+msgid "Political Group Members"
+msgstr "إضافة السياسية عضو مجموعة ..."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:269
+#, fuzzy
+msgid "Political Groups"
+msgstr "الجماعات السياسية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:270
+msgid "Political Party"
+msgstr "حزب سياسي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:271
+msgid "Postal Address Type"
+msgstr "العنوان البريدي نوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:272
+msgid "Proportional representation"
+msgstr "التمثيل النسبي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:273
+msgid "Public"
+msgstr "جمهور"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:274
+msgid "Publication Date"
+msgstr "تاريخ النشر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:275
+msgid "Publications type"
+msgstr "اكتب المنشورات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:276
+msgid "Publish"
+msgstr "نشر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:277
+msgid "Publish Internal"
+msgstr "نشر داخلي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:278
+msgid "Publish Internal Agenda"
+msgstr "نشر جدول الأعمال الداخلية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:279
+msgid "Publish Minutes"
+msgstr "نشر دقائق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:280
+msgid "Publish Minutes Internal"
+msgstr "نشر محضر الداخلية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:281
+msgid "Publish in Gazette"
+msgstr "نشر في الجريدة الرسمية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:282
+msgid "Published"
+msgstr "نشرت"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:283
+msgid "Published Agenda"
+msgstr "نشرت جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:284
+msgid "Published Agenda Internal"
+msgstr "نشرت جدول الأعمال الداخلية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:285
+msgid "Published Date"
+msgstr "تاريخ النشر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:286
+msgid "Published Internal"
+msgstr "نشرت الداخلية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:287
+msgid "Published Minutes"
+msgstr "نشرت دقائق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:288
+msgid "Published Minutes Internal"
+msgstr "نشرت دقائق الداخلية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:289
+#: src/bungeni.main/bungeni/ui/menu.zcml:922
+msgid "Question"
+msgstr "سؤال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:290
+msgid "Question Type"
+msgstr "السؤال نوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:292
+msgid "Quorum"
+msgstr "نصاب قانوني"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:293
+msgid "Re-publish"
+msgstr "إعادة نشر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:294
+msgid "Re-schedule"
+msgstr "إعادة جدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:295
+msgid "Reactivate"
+msgstr "تنشيط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:296
+msgid "Receive"
+msgstr "تلقى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:297
+msgid "Received by Clerks Office"
+msgstr "التي تلقاها مكتب كتبة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:298
+msgid "Received by clerk"
+msgstr "التي تلقاها كاتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:299
+msgid "Recomplete"
+msgstr "Recomplete"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:300
+msgid "Redraft"
+msgstr "إعادة صياغة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:301
+msgid "Redraft (Automatic)"
+msgstr "إعادة صياغة (تلقائي)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:302
+msgid "Redraft Agenda"
+msgstr "إعادة صياغة جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:303
+msgid "Redraft Minutes"
+msgstr "إعادة صياغة دقائق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:304
+msgid "Redraft Response"
+msgstr "إعادة صياغة الرد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:305
+#: src/bungeni.main/bungeni/ui/templates/bungeni-content.pt:22
+msgid "Registry Number"
+msgstr "سجل عدد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:306
+msgid "Reinstatement Date"
+msgstr "إعادة التاريخ"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:307
+msgid "Reject"
+msgstr "رفض"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:308
+msgid "Reject a scheduled motion"
+msgstr "رفض اقتراحا من المقرر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:309
+msgid "Rejected"
+msgstr "رفض"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:310
+msgid "Rejected Bill"
+msgstr "ورفض بيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:311
+msgid "Remarks"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:312
+#: src/bungeni.main/bungeni/ui/reporting/generators.py:91
+msgid "Report"
+msgstr "تقرير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:313
+msgid "Reports"
+msgstr "تقارير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:314
+#, fuzzy
+msgid "Representation"
+msgstr "تقرير التوثيق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:315
+msgid "Require Clarification to Approve"
+msgstr "تتطلب الموافقة على توضيح"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:316
+msgid "Require Clarification to Receive"
+msgstr "تتطلب التوضيح لاستقبال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:317
+msgid "Require Recomplete to Approve"
+msgstr "تتطلب الموافقة على Recomplete"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:318
+msgid "Requires Clarification to Approve"
+msgstr "ويتطلب توضيح للموافقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:319
+msgid "Requires Clarification to Receive"
+msgstr "ويتطلب توضيح لاستقبال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:320
+msgid "Reschedule"
+msgstr "إعادة جدولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:321
+msgid "Reschedule First Reading"
+msgstr "إعادة جدولة القراءة الأولى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:322
+msgid "Reschedule First Report Reading"
+msgstr "إعادة جدولة القراءة الأولى تقرير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:323
+msgid "Reschedule Second Reading"
+msgstr "إعادة جدولة القراءة الثانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:324
+msgid "Reschedule Third Reading"
+msgstr "إعادة جدولة القراءة الثالثة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:325
+msgid "Reschedule Whole House Committee"
+msgstr "إعادة جدولة الجامع جنة مجلس النواب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:326
+#: src/bungeni.main/bungeni/ui/forms/templates/written-question-response.pt:2
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:312
+msgid "Response"
+msgstr "استجابة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:327
+msgid "Response Type"
+msgstr "نوع الاستجابة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:328
+msgid "Response completed"
+msgstr "أكملت استجابة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:329
+msgid "Response submitted"
+msgstr "قدمت استجابة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:330
+msgid "Resubmit"
+msgstr "إعادة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:331
+msgid "Revert to admissible"
+msgstr "العودة إلى مقبولة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:332
+msgid "Role"
+msgstr "دور"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:333
+msgid "Role given to members of this office"
+msgstr "الدور المعطى لأعضاء هذا المكتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:334
+msgid "Salutation"
+msgstr "تحية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:336
+msgid "Schedule First Reading"
+msgstr "جدول القراءة الأولى"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:337
+msgid "Schedule First Report Reading"
+msgstr "جدول قراءة التقرير الأول"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:338
+msgid "Schedule Second Reading"
+msgstr "جدول القراءة الثانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:339
+msgid "Schedule Third Reading"
+msgstr "جدول القراءة الثالثة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:340
+msgid "Schedule Whole House Committee"
+msgstr "الجدول الجامع لجنة مجلس النواب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:341
+msgid "Schedule pending"
+msgstr "جدولة ريثما"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:342
+msgid "Scheduled"
+msgstr "من المقرر"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:343
+msgid "Second Reading"
+msgstr "القراءة الثانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:344
+msgid "Second Reading Adjourned"
+msgstr "تأجيل القراءة الثانية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:345
+msgid "Second Reading Pending"
+msgstr "القراءة الثانية ريثما"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:346
+#, fuzzy
+msgid "Select Coverage"
+msgstr "حذف الحكومة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:347
+#, fuzzy
+msgid "Select Geolocation"
+msgstr "وفد حذف المستخدم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:348
+#, fuzzy
+msgid "Select Representation"
+msgstr "وفد حذف المستخدم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:349
+msgid "Select Subjects"
+msgstr "اختيار المواضيع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:350
+msgid "Select the user who moved the document"
+msgstr "حدد المستخدم الذي انتقل الوثيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:351
+msgid "Send to Ministry"
+msgstr "ارسل الى وزارة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:352
+#: src/bungeni.main/bungeni/ui/descriptor/descriptor.py:555
+msgid "Short Name"
+msgstr "اسم قصير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:353
+msgid "Shorter name for the parliament"
+msgstr "أقصر اسم للبرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:354
+#: src/bungeni.main/bungeni/ui/viewlets/templates/signatories-status.pt:7
+msgid "Signatories"
+msgstr "الموقعون"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:355
+msgid "Signatory"
+msgstr "موقعة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:356
+msgid "Signature Consented"
+msgstr "وافق توقيع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:357
+msgid "Signature Rejected"
+msgstr "رفض توقيع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:358
+#, fuzzy
+msgid "Signature Status"
+msgstr "توقيع حالة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:359
+msgid "Signature Withdrawn"
+msgstr "توقيع المسحوب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:360
+msgid "Sitting"
+msgstr "جلسة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:361
+msgid "Sitting Activity Type"
+msgstr "يجلس نوع النشاط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:362
+#, fuzzy
+msgid "Sitting Attendance"
+msgstr "يجلس الحضور"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:363
+#, fuzzy
+msgid "Sitting Attendances"
+msgstr "يجلس الحضور"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:364
+msgid "Sitting Convocation Type"
+msgstr "يجلس الدعوة نوع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:365
+msgid "Sitting Meeting Type"
+msgstr "يجلس نوع الاجتماع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:366
+#, fuzzy
+msgid "Sitting Report"
+msgstr "الجلسات الواردة في هذا التقرير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:367
+#, fuzzy
+msgid "Sitting Reports"
+msgstr "الجلسات الواردة في هذا التقرير"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:369
+msgid "Sort Order"
+msgstr "الترتيب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:370
+msgid "Start Date"
+msgstr "تاريخ بدء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:371
+msgid "Statement of Purpose"
+msgstr "بيان الغرض"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:372
+#: src/bungeni.main/bungeni/ui/search.py:524
+msgid "Status"
+msgstr "حالة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:373
+msgid "Status Date"
+msgstr "وضع تاريخ"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:374
+msgid "Street"
+msgstr "شارع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:375
+msgid "Subject Terms"
+msgstr "موضوع شروط"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:376
+msgid "Submission Date"
+msgstr "تاريخ التقديم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:377
+msgid "Submit"
+msgstr "تقدم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:378
+msgid "Submit Bill to Select Committee (I)"
+msgstr "تقديم مشروع قانون لجنة اختيار (I)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:379
+msgid "Submit Bill to Select Committee (II)"
+msgstr "تقديم مشروع قانون لتحديد اللجنة (الثاني)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:380
+msgid "Submit Response"
+msgstr "تقديم الرد"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:381
+msgid "Submit to Signatories"
+msgstr "يقدم إلى الدول الموقعة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:382
+msgid "Submit/Resubmit Bill to Select Committee (II)"
+msgstr "يقدم / إعادة تقديم مشروع القانون إلى اللجنة المختارة (II)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:383
+msgid "Submitted"
+msgstr "المقدمة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:384
+msgid "Submitted to Clerk"
+msgstr "قدمت إلى كاتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:385
+msgid "Submitted to Select Committee (after 1st reading)"
+msgstr "قدمت إلى اللجنة المختارة (1 بعد القراءة)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:386
+msgid "Submitted to Select Committee (after 2nd reading)"
+msgstr "قدمت إلى اللجنة المختارة (بعد قراءة 2)"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:387
+msgid "Submitted to Signatories"
+msgstr "المقدمة إلى الدول الموقعة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:388
+msgid "Submitted to clerk"
+msgstr "قدم إلى موظف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:389
+msgid "Submitted to the Speaker"
+msgstr "سلمه إلى رئيس البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:390
+msgid "Substituted by"
+msgstr "يحل محله"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:391
+msgid "Table"
+msgstr "جدول"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:392
+msgid "Tabled"
+msgstr "قدم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:393
+msgid "Tabled Document"
+msgstr "قدمت وثيقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:394
+msgid "Tabled Documents"
+msgstr "قدمت وثائق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:395
+msgid "Text"
+msgstr "نص"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:396
+msgid ""
+"The order in which members with this title will appear relative to other "
+"members"
+msgstr "الترتيب الذي الأعضاء على هذا العنوان سوف تظهر النسبية للأعضاء الآخرين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:397
+msgid "Third Reading"
+msgstr "القراءة الثالثة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:398
+msgid "Third Reading Adjourned"
+msgstr "القراءة الثالثة تأجيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:399
+msgid "Third Reading Pending"
+msgstr "القراءة الثالثة ريثما"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:400
+#: src/bungeni.main/bungeni/ui/search.py:152
+msgid "Title"
+msgstr "لقب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:401
+#, fuzzy
+msgid "Title type"
+msgstr "لقب أنواع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:402
+msgid "Title types"
+msgstr "لقب أنواع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:403
+msgid "Titles"
+msgstr "العناوين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:404
+msgid "Two letter ISO Code for this country e.g. DZ for Algeria"
+msgstr "اثنين رمز ISO الرسالة لهذا البلد على سبيل المثال بالنسبة للجزائر DZ"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:405
+msgid "Type of Substitution"
+msgstr "نوع من الإحلال"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:406
+msgid "URI"
+msgstr "URI"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:407
+msgid "Unique identifier or number for this Committee"
+msgstr "فريد معرف أو عدد لهذه اللجنة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:408
+msgid "Unique identifier or number for this Government"
+msgstr "فريد معرف أو عدد لهذه الحكومة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:409
+msgid "Unique identifier or number for this Ministry"
+msgstr "فريد معرف أو عدد لهذه الوزارة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:410
+msgid "Unique identifier or number for this Office"
+msgstr "فريد معرف أو رقم لهذا المكتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:411
+msgid "Unique identifier or number for this Parliament"
+msgstr "فريد معرف أو رقم لهذا البرلمان"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:412
+msgid "Unique identifier or number for this political group"
+msgstr "فريد معرف أو عدد لهذه المجموعة السياسية"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:413
+msgid "Upload a file"
+msgstr "إيداع ملف"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:414
+msgid "User"
+msgstr "المستخدم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:415
+#, fuzzy
+msgid "User Delegation"
+msgstr "الوفود"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:416
+#, fuzzy
+msgid "User Delegations"
+msgstr "الوفود"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:417
+msgid "Users"
+msgstr "المستخدمين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:421
+#: src/bungeni.main/bungeni/ui/menu.zcml:1084
+#: src/bungeni.main/bungeni/ui/templates/version.pt:5
+msgid "Versions"
+msgstr "إصدارات"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:422
+msgid "Whole House"
+msgstr "البيت كله"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:423
+msgid "Whole House Adjourned"
+msgstr "البيت كله تأجيل"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:424
+msgid "Whole House Pending"
+msgstr "البيت كله معلق"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:425
+msgid "Withdraw"
+msgstr "سحب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:426
+msgid "Withdrawn"
+msgstr "سحب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:427
+msgid "Working Draft"
+msgstr "عمل مشروع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:428
+msgid "Zip Code"
+msgstr "الرمز البريدي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:429
+msgid "consent"
+msgstr "موافقة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:430
+msgid "e.g. Chief Advisor, etc."
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:431
+msgid "e.g. Mr. Mrs, Prof. etc."
+msgstr "على سبيل المثال السيدة السيد ، استاذ الخ."
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:432
+msgid "is global"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:433
+msgid "received by clerk"
+msgstr "وردت من قبل كاتب"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:434
+msgid "reject"
+msgstr "رفض"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:435
+msgid "sub role"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:436
+msgid "sub roles"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:437
+msgid "the sub role this member will get"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:438
+msgid "unsign document - automatic"
+msgstr "unsign وثيقة - أوتوماتيكي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:439
+msgid "whether or not this role is granted globally"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:440
+msgid "withdraw signature"
+msgstr "سحب توقيع"
+
+#: src/bungeni.main/bungeni/ui/descriptor/_dumped_msgids.py:441
+msgid "withdraw signature - automatic"
+msgstr "سحب توقيع - أوتوماتيكي"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:27
+msgid "Invalid value"
+msgstr "قيمة غير صالحة"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:48
+msgid "This is not a valid email address"
+msgstr "هذا ليس عنوان بريد إلكتروني صالح"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:49
+msgid "Invalid login name"
+msgstr "غير صالحة لتسجيل الدخول اسم"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:58
+msgid "The life of a parliament must start after its election"
+msgstr "يجب أن حياة البرلمان يبدأ بعد انتخاباتها"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:68
+msgid "End Date must be after Start Date"
+msgstr "يجب أن يكون بعد تاريخ انتهاء تاريخ البدء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:90
+msgid "A person cannot be active and substituted at the same time"
+msgstr "لا يمكن لأي شخص أن تكون نشطة واستبدالها في نفس الوقت"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:99
+msgid "If a person is substituted End Date must be set"
+msgstr "إذا يجب أن يتم استبدال شخص يمكن تعيين تاريخ الانتهاء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:109
+msgid "If a person is inactive End Date must be set"
+msgstr "يجب إذا كان الشخص غير نشط يتم تعيين تاريخ الانتهاء"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:119
+msgid ""
+"A parliament member has to be elected/nominated before she/he can be sworn in"
+msgstr "وقال عضو البرلمان أن ينتخب / رشح من قبل وقالت / انه يمكن في اليمين"
+
+#: src/bungeni.main/bungeni/ui/descriptor/constraints.py:129
+msgid "Check dates: death must follow birth"
+msgstr "التحقق من التواريخ : وفاة يجب أن تتبع الولادة"
+
+#: src/bungeni.main/bungeni/ui/downloaddocument.py:154
+msgid "No template for document of type: ${dtype}. Contact admin."
+msgstr "لا يوجد نموذج لوثيقة من نوع : ${dtype}. اتصل المسؤول."
+
+#: src/bungeni.main/bungeni/ui/errors.py:24
+msgid "An error occurred in Bungeni."
+msgstr "حدث خطأ في Bungeni."
+
+#: src/bungeni.main/bungeni/ui/errors.py:28
+msgid "Bungeni - [Error]"
+msgstr "Bungeni - [خطأ]"
+
+#: src/bungeni.main/bungeni/ui/errors.py:43
+msgid "A system error occurred."
+msgstr "حدث خطأ في النظام."
+
+#: src/bungeni.main/bungeni/ui/errors.py:56
+msgid "Your account is not authorized to view this item."
+msgstr "غير مخول الحساب الخاص لعرض هذا البند."
+
+#: src/bungeni.main/bungeni/ui/fields.py:20
+msgid "Choose items from provided vocabulary"
+msgstr "اختيار العناصر من المفردات المقدمة"
+
+#. Default: "file"
+#: src/bungeni.main/bungeni/ui/file.py:106
+msgid "file_column_file_link"
+msgstr ""
+
+#. Default: "status"
+#: src/bungeni.main/bungeni/ui/file.py:111
+msgid "file_column_status"
+msgstr ""
+
+#. Default: "modified"
+#: src/bungeni.main/bungeni/ui/file.py:114
+#, fuzzy
+msgid "file_column_last_modified"
+msgstr "تعديل"
+
+#. Default: "file"
+#: src/bungeni.main/bungeni/ui/file.py:212
+#, fuzzy
+msgid "file_version_filename"
+msgstr "تحرير &quot;$title&quot; (الإصدار $version)"
+
+#. Default: "status"
+#: src/bungeni.main/bungeni/ui/file.py:217
+msgid "file_version_status"
+msgstr ""
+
+#. Default: "modified"
+#: src/bungeni.main/bungeni/ui/file.py:220
+#, fuzzy
+msgid "file_version_last_modified"
+msgstr "تعديل"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:116
+#: src/bungeni.main/bungeni/ui/menu.zcml:842
+#: src/bungeni.main/bungeni/ui/menu.zcml:1033
+#: src/bungeni.main/bungeni/ui/menu.zcml:1318
+#: src/bungeni.main/bungeni/ui/viewlets/templates/portlet-contentactions.pt:6
+msgid "View"
+msgstr "رأي"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:344
+msgid "A record with this value already exists"
+msgstr "سجل مع هذه القيمة موجودة بالفعل"
+
+#. Default: "choose ${title} ..."
+#: src/bungeni.main/bungeni/ui/forms/common.py:361
+msgid "bungeni_widget_no_value"
+msgstr "اختيار ${title}..."
+
+#. Default: "Add $name"
+#: src/bungeni.main/bungeni/ui/forms/common.py:380
+msgid "add_item_legend"
+msgstr "إضافة $name"
+
+#. Default: "Adding $name"
+#: src/bungeni.main/bungeni/ui/forms/common.py:385
+msgid "add_item_title"
+msgstr "مضيفا $name"
+
+#. Default: "Editing $language translation of '$title'"
+#: src/bungeni.main/bungeni/ui/forms/common.py:484
+#: src/bungeni.main/bungeni/ui/forms/common.py:628
+msgid "edit_translation_legend"
+msgstr "تحرير $language ترجمة &#39;$title&#39;"
+
+#. Default: "Editing \"$title\" (version $version)"
+#: src/bungeni.main/bungeni/ui/forms/common.py:490
+msgid "edit_version_legend"
+msgstr "تحرير &quot;$title&quot; (الإصدار $version)"
+
+#. Default: "Editing \"$title\""
+#: src/bungeni.main/bungeni/ui/forms/common.py:494
+msgid "edit_item_legend"
+msgstr "تحرير &quot;$title&quot;"
+
+#. Default: "The original $language version is shown on the left"
+#: src/bungeni.main/bungeni/ui/forms/common.py:502
+msgid "edit_translation_help"
+msgstr "يتم عرض النسخة الأصلية $language على اليسار"
+
+#. Default: "Add $language translation"
+#: src/bungeni.main/bungeni/ui/forms/common.py:614
+msgid "translate_item_legend"
+msgstr "إضافة $language الترجمة"
+
+#. Default: "The document \"$title\" has not yet been translated into $language. Use this form to add the translation"
+#: src/bungeni.main/bungeni/ui/forms/common.py:636
+msgid "translate_item_help"
+msgstr ""
+"وثيقة &quot;$title&quot; لم يتم بعد ترجمتها إلى $language. استخدم هذا "
+"النموذج لإضافة الترجمة"
+
+#. Default: "Adding $language translation"
+#: src/bungeni.main/bungeni/ui/forms/common.py:648
+msgid "translate_item_title"
+msgstr "مضيفا $language الترجمة"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:715
+msgid "Save translation"
+msgstr "حفظ الترجمة"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:770
+msgid "Item reordering"
+msgstr "البند إعادة ترتيب"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:837
+#: src/bungeni.main/bungeni/ui/forms/forms.py:193
+#: src/bungeni.main/bungeni/ui/menu.zcml:1203
+msgid "Delete"
+msgstr "حذف"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:855
+msgid ""
+"Could not delete item due to database integrity error. You may wish to try "
+"deleting any related sub-records first?"
+msgstr ""
+"لا يمكن حذف بند بسبب خطأ سلامة قاعدة البيانات. قد ترغب في محاولة حذف أي "
+"الفرعية ذات الصلة السجلات أولا؟"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:896
+msgid "Please confirm that you wish to sign this document"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:899
+msgid "You have already signed this document"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:901
+#, fuzzy
+msgid "You may not sign this document"
+msgstr "أيضا تحرير وثيقة:"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:917
+#: src/bungeni.main/bungeni/ui/forms/templates/sign-open-document.pt:5
+#: src/bungeni.main/bungeni/ui/menu.zcml:1049
+#: src/bungeni.main/bungeni/ui/menu.zcml:1067
+#, fuzzy
+msgid "Sign Document"
+msgstr "وثائق"
+
+#: src/bungeni.main/bungeni/ui/forms/common.py:925
+#, fuzzy
+msgid "Review Signature"
+msgstr "استعراض التوقيع"
+
+#: src/bungeni.main/bungeni/ui/forms/fields.py:73
+msgid "General"
+msgstr "عام"
+
+#: src/bungeni.main/bungeni/ui/forms/fields.py:121
+msgid "This content is not yet translated into $language"
+msgstr "ليس هذا المحتوى يترجم بعد إلى $language"
+
+#: src/bungeni.main/bungeni/ui/forms/forms.py:129
+msgid "Direction"
+msgstr "اتجاه"
+
+#: src/bungeni.main/bungeni/ui/forms/forms.py:133
+msgid "AM"
+msgstr "AM"
+
+#: src/bungeni.main/bungeni/ui/forms/forms.py:138
+msgid "Move"
+msgstr "تحرك"
+
+#: src/bungeni.main/bungeni/ui/forms/forms.py:184
+msgid "Item ID"
+msgstr "البند رقم"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/content-view.pt:8
+msgid "${DYNAMIC_CONTENT} ${DYNAMIC_CONTENT}"
+msgstr "${DYNAMIC_CONTENT} ${DYNAMIC_CONTENT}"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/content-view.pt:21
+#: src/bungeni.main/bungeni/ui/forms/templates/generic-sub-container.pt:1
+#: src/bungeni.main/bungeni/ui/forms/templates/sign-open-document.pt:13
+#: src/bungeni.main/bungeni/ui/viewlets/templates/schedulable-items.pt:1
+#: src/bungeni.main/bungeni/ui/viewlets/templates/signatories-status.pt:8
+msgid "${DYNAMIC_CONTENT}"
+msgstr "${DYNAMIC_CONTENT}"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/delete.pt:5
+msgid "Delete item confirmation"
+msgstr "تأكيد حذف البند"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/delete.pt:13
+msgid "Please confirm that you wish to delete this item."
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/forms/templates/delete.pt:18
+msgid "The following item will be deleted."
+msgstr ""
+
+#. Default: "(Required)"
+#: src/bungeni.main/bungeni/ui/forms/templates/diff-form.pt:14
+msgid "label_required"
+msgstr "(مطلوب)"
+
+#. Default: "Required"
+#: src/bungeni.main/bungeni/ui/forms/templates/diff-form.pt:14
+msgid "title_required"
+msgstr "مطلوب"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/diff-form.pt:30
+msgid "Also editing the document:"
+msgstr "أيضا تحرير وثيقة:"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/doc-minutes.pt:26
+#, fuzzy
+msgid "This sitting has no minutes."
+msgstr "من المقرر ان يجلس أي عناصر"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/doc-minutes.pt:31
+#, fuzzy
+msgid "This item has no schedule records"
+msgstr "من المقرر ان يجلس أي عناصر"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/mp-item-viewlet.pt:1
+msgid "Parliamentary activities"
+msgstr "الأنشطة البرلمانية"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/offices-held-viewlet.pt:1
+msgid "Offices held"
+msgstr "عقدت المكاتب"
+
+#. Default: "Office"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices-held-viewlet.pt:9
+msgid "office_held"
+msgstr "مكتب"
+
+#. Default: "Type"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices-held-viewlet.pt:10
+msgid "office_type"
+msgstr "نوع"
+
+#. Default: "Title"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices-held-viewlet.pt:11
+msgid "office_title"
+msgstr "لقب"
+
+#. Default: "From"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices-held-viewlet.pt:12
+msgid "office_from"
+msgstr "من"
+
+#. Default: "To"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices-held-viewlet.pt:13
+msgid "office_to"
+msgstr "إلى"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/rss-link.pt:4
+msgid "Subscribe"
+msgstr "اشترك"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/rss-link.pt:12
+msgid "Unsubscribe"
+msgstr "إلغاء الاشتراك"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/sign-open-document.pt:16
+#, fuzzy
+msgid "Document Details."
+msgstr "وثائق"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/written-question-response.pt:7
+msgid "Written response to question by ${respondent}"
+msgstr "مكتوب ردا على سؤال ل ${respondent}"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:51
+msgid "invalid date. choose or type correct date"
+msgstr "تاريخ غير صالحة. اختر أو اكتب التاريخ الصحيح"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:61
+#: src/bungeni.main/bungeni/ui/forms/validations.py:64
+#: src/bungeni.main/bungeni/ui/forms/validations.py:66
+msgid "Email already taken!"
+msgstr "البريد الإلكتروني التي اتخذت بالفعل!"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:82
+msgid "Start date must be after (%s)"
+msgstr "يجب أن يكون بعد تاريخ بدء (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:88
+msgid "Start date must be prior to (%s)"
+msgstr "يجب أن يكون تاريخ البدء قبل (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:103
+msgid "End date must be equal to start date"
+msgstr "يجب أن يكون تاريخ الانتهاء يساوي تاريخ البدء"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:122
+msgid "End date must be after (%s)"
+msgstr "يجب أن يكون تاريخ الانتهاء بعد (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:128
+msgid "End date must be prior to (%s)"
+msgstr "يجب أن يكون تاريخ الانتهاء قبل (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:180
+#: src/bungeni.main/bungeni/ui/forms/validations.py:191
+#: src/bungeni.main/bungeni/ui/forms/validations.py:200
+#: src/bungeni.main/bungeni/ui/forms/validations.py:318
+#: src/bungeni.main/bungeni/ui/forms/validations.py:327
+#: src/bungeni.main/bungeni/ui/forms/validations.py:333
+msgid "The person is a member in (%s) at that date"
+msgstr "الشخص هو عضو في (%s) في ذلك التاريخ"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:221
+#: src/bungeni.main/bungeni/ui/forms/validations.py:274
+msgid "The start date overlaps with (%s)"
+msgstr "يتراكب مع تاريخ البدء (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:229
+#: src/bungeni.main/bungeni/ui/forms/validations.py:282
+msgid "The end date overlaps with (%s)"
+msgstr "يتراكب مع تاريخ نهاية (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:237
+msgid "The election date overlaps with (%s)"
+msgstr "يتراكب مع موعد الانتخابات (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:244
+msgid "Another parliament is not yet dissolved (%s)"
+msgstr "ليس آخر البرلمان المنحل بعد (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:259
+msgid "Start date cannot be after the parliaments dissolution"
+msgstr "يمكن أن لا يكون تاريخ البدء بعد حل البرلمان"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:265
+msgid "Start date must start after the swearing in of the parliament"
+msgstr "يجب أن تبدأ بعد تاريخ بدء أداء اليمين الدستورية في مجلس النواب"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:289
+msgid "Another government is not yet dissolved (%s)"
+msgstr "لم يتم حل حكومة أخرى بعد (%s)"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:421
+#: src/bungeni.main/bungeni/ui/forms/validations.py:426
+#: src/bungeni.main/bungeni/ui/forms/validations.py:439
+#: src/bungeni.main/bungeni/ui/forms/validations.py:444
+msgid "This persons already has the title %s"
+msgstr "هذا شخص لديه بالفعل عنوان %s"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:457
+#: src/bungeni.main/bungeni/ui/forms/validations.py:462
+#: src/bungeni.main/bungeni/ui/forms/validations.py:475
+#: src/bungeni.main/bungeni/ui/forms/validations.py:480
+msgid "A person with the title %s already exists"
+msgstr "ألف شخص مع عنوان موجود بالفعل %s"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:507
+msgid "Venue \"$venue\" already booked in this time slot"
+msgstr "مكان &quot;$venue&quot; حجزت بالفعل في هذا الوقت فتحة"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:539
+msgid "If recurrence is limited by date, it must lie after the starting date"
+msgstr "إذا اقتصر تكرار حسب التاريخ ، لا بد أن تقع بعد تاريخ بدء"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:548
+msgid ""
+"One or more events would be scheduled for $F, which is after the scheduling "
+"group's end date"
+msgstr ""
+"سيكون من المقرر واحد أو أكثر من الأحداث ل$F ، وهو بعد تاريخ نهاية المجموعة "
+"لجدولة"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:584
+msgid ""
+"One or more events would be scheduled for $F, which overlaps with an "
+"existing sitting"
+msgstr ""
+"سيكون من المقرر واحد أو أكثر من الأحداث ل$F ، التي تتداخل مع يجلس القائمة"
+
+#: src/bungeni.main/bungeni/ui/forms/validations.py:623
+msgid "A title with %s sub role already exists"
+msgstr "لقب مع %s دور شبه موجود بالفعل"
+
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:209
+msgid "Contacts"
+msgstr "اتصالات"
+
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:238
+msgid "Personal Info"
+msgstr "معلومات شخصية"
+
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:294
+#, fuzzy
+msgid "Unknown venue"
+msgstr "غير معروف"
+
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:470
+msgid "No item has been set"
+msgstr "لم يتم تحديد اي بند"
+
+#: src/bungeni.main/bungeni/ui/interfaces.py:138
+#, fuzzy
+msgid "Object type"
+msgstr "نوع المحتوى"
+
+#: src/bungeni.main/bungeni/ui/interfaces.py:139
+#, fuzzy
+msgid "Choose the type of object to be serialized."
+msgstr "اختيار نوع السؤال"
+
+#. Default: "Username"
+#: src/bungeni.main/bungeni/ui/login.py:36
+msgid "label_login_form_username"
+msgstr ""
+
+#. Default: "Password"
+#: src/bungeni.main/bungeni/ui/login.py:38
+#, fuzzy
+msgid "label_login_form_password"
+msgstr "تأكيد كلمة السر"
+
+#. Default: "Login"
+#: src/bungeni.main/bungeni/ui/login.py:45
+msgid "login_form_title"
+msgstr ""
+
+#. Default: "Login"
+#: src/bungeni.main/bungeni/ui/login.py:56
+msgid "label_login_form_login"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/login.py:60
+msgid "Invalid account credentials"
+msgstr "بيانات اعتماد الحساب غير صالحة"
+
+#: src/bungeni.main/bungeni/ui/login.py:64
+msgid "You are now logged in"
+msgstr "الآن يتم تسجيل لك في"
+
+#. Default: "Email"
+#: src/bungeni.main/bungeni/ui/login.py:77
+msgid "label_restore_login_email"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/login.py:82
+msgid "Restore Login"
+msgstr "استعادة تسجيل الدخول"
+
+#: src/bungeni.main/bungeni/ui/login.py:95
+#: src/bungeni.main/bungeni/ui/login.py:145
+msgid "Restore"
+msgstr "استعادة"
+
+#: src/bungeni.main/bungeni/ui/login.py:106
+msgid "Your login is: "
+msgstr "تسجيل الدخول الخاص بك هو :"
+
+#: src/bungeni.main/bungeni/ui/login.py:111
+msgid "Bungeni login restoration"
+msgstr "Bungeni دخول استعادة"
+
+#: src/bungeni.main/bungeni/ui/login.py:114
+msgid "Your login was sent to you email."
+msgstr "وقد أرسلت الدخول إليك عبر البريد الالكتروني."
+
+#: src/bungeni.main/bungeni/ui/login.py:116
+msgid "Wrong email address."
+msgstr "خاطئ عنوان البريد الإلكتروني."
+
+#. Default: "Username"
+#: src/bungeni.main/bungeni/ui/login.py:121
+msgid "label_restore_password_username"
+msgstr ""
+
+#. Default: "Email"
+#: src/bungeni.main/bungeni/ui/login.py:125
+msgid "label_restore_password_email"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/login.py:132
+msgid "Restore Password"
+msgstr "استعادة كلمة المرور"
+
+#: src/bungeni.main/bungeni/ui/login.py:169
+msgid "This user's link is still active!"
+msgstr "ربط هذا المستخدم ما تزال نشطة!"
+
+#: src/bungeni.main/bungeni/ui/login.py:184
+msgid "Restore password link: "
+msgstr "استعادة كلمة السر الرابط :"
+
+#: src/bungeni.main/bungeni/ui/login.py:187
+msgid "This link will expire in 24 hours."
+msgstr "وسوف تنتهي هذه العلاقة خلال 24 ساعة."
+
+#: src/bungeni.main/bungeni/ui/login.py:192
+msgid "Bungeni password restoration"
+msgstr "استعادة كلمة المرور Bungeni"
+
+#: src/bungeni.main/bungeni/ui/login.py:195
+msgid "Email was sent!"
+msgstr "تم إرسال البريد الإلكتروني!"
+
+#: src/bungeni.main/bungeni/ui/login.py:197
+msgid "User not found!"
+msgstr "المستخدم غير موجود!"
+
+#: src/bungeni.main/bungeni/ui/login.py:201
+msgid "Password"
+msgstr "كلمة السر"
+
+#: src/bungeni.main/bungeni/ui/login.py:202
+msgid "Confirm Password"
+msgstr "تأكيد كلمة السر"
+
+#: src/bungeni.main/bungeni/ui/login.py:209
+msgid "Reset Password"
+msgstr "إعادة تعيين كلمة المرور"
+
+#: src/bungeni.main/bungeni/ui/login.py:222
+msgid "Wrong key!"
+msgstr "الخطأ المفتاح!"
+
+#: src/bungeni.main/bungeni/ui/login.py:224
+msgid "Key expired!"
+msgstr "انتهت المفتاح!"
+
+#: src/bungeni.main/bungeni/ui/login.py:227
+msgid "Reset"
+msgstr "إعادة"
+
+#: src/bungeni.main/bungeni/ui/login.py:235
+msgid "Password confirmation failed!"
+msgstr "فشل تأكيد كلمة السر!"
+
+#: src/bungeni.main/bungeni/ui/login.py:243
+msgid "Password successfully reset!"
+msgstr "إعادة تعيين كلمة المرور بنجاح!"
+
+#: src/bungeni.main/bungeni/ui/login.py:247
+msgid "First name"
+msgstr "الاسم الأول"
+
+#: src/bungeni.main/bungeni/ui/login.py:248
+msgid "Last name"
+msgstr "اسم العائلة"
+
+#: src/bungeni.main/bungeni/ui/login.py:249
+msgid "Middle name"
+msgstr "الاسم الأوسط"
+
+#. Default: "Email"
+#: src/bungeni.main/bungeni/ui/login.py:251
+msgid "label_profile_email"
+msgstr ""
+
+#. Default: "Email already taken!"
+#: src/bungeni.main/bungeni/ui/login.py:272
+msgid "error_profile_email_taken"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/login.py:288
+msgid "Profile"
+msgstr "التعريف"
+
+#: src/bungeni.main/bungeni/ui/login.py:366
+msgid "Profile data updated"
+msgstr "تحديث بيانات التعريف"
+
+#: src/bungeni.main/bungeni/ui/login.py:368
+#, fuzzy
+msgid "Save Profile"
+msgstr "التعريف"
+
+#: src/bungeni.main/bungeni/ui/login.py:373
+#, fuzzy
+msgid "Save profile and view"
+msgstr "حفظ وعرض"
+
+#: src/bungeni.main/bungeni/ui/login.py:391
+msgid "Old password"
+msgstr "كلمة السر القديمة"
+
+#: src/bungeni.main/bungeni/ui/login.py:392
+#, fuzzy
+msgid "New password"
+msgstr "كلمة السر القديمة"
+
+#: src/bungeni.main/bungeni/ui/login.py:393
+#, fuzzy
+msgid "Confirm new password"
+msgstr "تأكيد كلمة السر"
+
+#: src/bungeni.main/bungeni/ui/login.py:399
+msgid "Old password incorrect"
+msgstr "قديمة كلمة مرور غير صحيحة"
+
+#. Default: "Change password"
+#: src/bungeni.main/bungeni/ui/login.py:407
+#, fuzzy
+msgid "change_password_form_title"
+msgstr "تغيير كلمة السر"
+
+#. Default: "Change password"
+#: src/bungeni.main/bungeni/ui/login.py:426
+#, fuzzy
+msgid "label_change_password"
+msgstr "تغيير كلمة السر"
+
+#: src/bungeni.main/bungeni/ui/login.py:434
+msgid "Password confirmation failed"
+msgstr "فشل تأكيد كلمة السر"
+
+#: src/bungeni.main/bungeni/ui/login.py:438
+msgid "Password changed"
+msgstr "تغير كلمة السر"
+
+#: src/bungeni.main/bungeni/ui/menu.py:101
+msgid "Logout"
+msgstr "خروج"
+
+#. Default: "Language:"
+#: src/bungeni.main/bungeni/ui/menu.py:164
+msgid "label_translate"
+msgstr "اللغة :"
+
+#. Default: "State:"
+#: src/bungeni.main/bungeni/ui/menu.py:234
+msgid "label_state"
+msgstr "الدولة :"
+
+#. Default: "Calendar:"
+#: src/bungeni.main/bungeni/ui/menu.py:326
+msgid "label_calendar_context"
+msgstr "تقويم :"
+
+#. Default: "download document"
+#: src/bungeni.main/bungeni/ui/menu.py:457
+msgid "label_document_download"
+msgstr "تحميل وثيقة"
+
+#: src/bungeni.main/bungeni/ui/menu.py:479
+msgid "Download PDF"
+msgstr "تحميل PDF"
+
+#: src/bungeni.main/bungeni/ui/menu.py:480
+msgid "Download ODT"
+msgstr "تحميل ODT"
+
+#: src/bungeni.main/bungeni/ui/menu.py:481
+msgid "Akoma Ntoso"
+msgstr "Akoma Ntoso"
+
+#: src/bungeni.main/bungeni/ui/menu.py:482
+msgid "RSS"
+msgstr "RSS"
+
+#. Default: "Manage:"
+#: src/bungeni.main/bungeni/ui/menu.py:587
+msgid "label_calendar_content_manager"
+msgstr "إدارة:"
+
+#: src/bungeni.main/bungeni/ui/menu.py:595
+msgid "Manage Scheduling Content"
+msgstr "إدارة المحتوى جدولة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:33
+msgid "Actions Workspace"
+msgstr "إجراءات مساحة عمل"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:35
+msgid "Actions Admin"
+msgstr "الاجراءات الادارية"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:42
+msgid "Actions for Calendar Sittings"
+msgstr "إجراءات لجلسات التقويم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:45
+msgid "Discussions in scheduling"
+msgstr "مناقشات في جدولة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:48
+msgid "Actions for Calendar Schedulings"
+msgstr "إجراءات التقويم Schedulings"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:51
+msgid "The 'workflow' menu - allows user to execute workflow transitions"
+msgstr ""
+"في &quot;سير العمل &#39;القائمة - يسمح للمستخدم لتنفيذ التحولات سير العمل"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:55
+#, fuzzy
+msgid "The 'download' menu - provides options/formats to download a document"
+msgstr "التنزيلات القائمة - تقدم مختلف الأشكال تحميل وثيقة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:63
+msgid "The 'Calendar' menu - allows user to select a scheduling context"
+msgstr "و&#39;التقويم&#39; القائمة - يسمح للمستخدم لاختيار سياق جدولة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:67
+msgid "The 'Calendar' menu - for management of content used in calendars"
+msgstr "و&#39;التقويم&#39; القائمة - لإدارة المحتوى المستخدمة في التقاويم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:71
+msgid "The 'Add' menu - allows user to add content"
+msgstr "&quot;إضافة&quot; القائمة - يسمح للمستخدم لإضافة محتوى"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:75
+msgid "The 'Translate' menu - allows user to translate content"
+msgstr "و&#39;ترجم&#39; القائمة - يسمح للمستخدم لترجمة محتوى"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:79
+msgid "The 'Add' menu - allows user to add content while in workspace"
+msgstr ""
+"&quot;إضافة&quot; القائمة - يسمح للمستخدم لإضافة محتوى بينما في مساحة العمل"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:83
+#, fuzzy
+msgid "Assignment Menu"
+msgstr "تعيين البند"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:104
+msgid "The 'Actions' menu - provides context-specific actions (views)"
+msgstr "القائمة &quot;إجراءات&quot; -- توفر إجراءات محددة للسياق (وجهات النظر)"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:110
+#: src/bungeni.main/bungeni/ui/menu.zcml:118
+msgid "Add parliamentary content..."
+msgstr "إضافة محتوى البرلمانية ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:128
+msgid "The 'Add...' menu"
+msgstr "&quot;إضافة ...&quot; القائمة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:132
+msgid "Add..."
+msgstr "إضافة..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:141
+msgid "Edit political group member"
+msgstr "تحرير سياسي عضو في المجموعة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:149
+#, fuzzy
+msgid "Delete political group member"
+msgstr "حذف مجموعة سياسية"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:157
+#: src/bungeni.main/bungeni/ui/menu.zcml:165
+msgid "Add political group member..."
+msgstr "إضافة سياسي عضو في المجموعة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:172
+#: src/bungeni.main/bungeni/ui/menu.zcml:547
+msgid "Add committee member..."
+msgstr "إضافة عضو لجنة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:180
+msgid "Add staff..."
+msgstr "إضافة الموظفين ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:188
+msgid "Edit committee staff"
+msgstr "عدل لجنة الموظفين"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:196
+msgid "Delete committee staff"
+msgstr "حذف لجنة الموظفين"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:204
+#: src/bungeni.main/bungeni/ui/menu.zcml:698
+#: src/bungeni.main/bungeni/ui/menu.zcml:789
+#: src/bungeni.main/bungeni/ui/menu.zcml:899
+msgid "Add agenda item..."
+msgstr "إضافة البند من جدول الأعمال ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:212
+#: src/bungeni.main/bungeni/ui/menu.zcml:220
+msgid "Add sitting..."
+msgstr "إضافة يجلس ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:228
+#: src/bungeni.main/bungeni/ui/menu.zcml:533
+msgid "Add ministry..."
+msgstr "إضافة وزارة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:236
+#: src/bungeni.main/bungeni/ui/menu.zcml:577
+msgid "Add minister..."
+msgstr "إضافة وزير ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:244
+msgid "Edit minister"
+msgstr "عدل وزير"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:252
+msgid "Delete minister"
+msgstr "حذف وزير"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:261
+#: src/bungeni.main/bungeni/ui/menu.zcml:393
+msgid "Add title..."
+msgstr "إضافة عنوان..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:269
+#, fuzzy
+msgid "Add subrole..."
+msgstr "أضف عضو ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:277
+#, fuzzy
+msgid "Add member role..."
+msgstr "أضف عضو ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:286
+#, fuzzy
+msgid "Add MP address..."
+msgstr "إضافة عنوان ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:294
+#: src/bungeni.main/bungeni/ui/menu.zcml:676
+msgid "Add signatory..."
+msgstr "إضافة الموقعة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:303
+msgid "Respond to question"
+msgstr "الرد على السؤال"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:311
+#, fuzzy
+msgid "Edit Event"
+msgstr "تحرير حدث"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:319
+#, fuzzy
+msgid "Delete Event"
+msgstr "حذف حدث"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:328
+msgid "Edit heading"
+msgstr "تعديل البند"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:336
+msgid "Delete heading"
+msgstr "حذف البند"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:344
+#, fuzzy
+msgid "Edit venue"
+msgstr "تحرير حدث"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:352
+#, fuzzy
+msgid "Delete venue"
+msgstr "حذف حدث"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:360
+msgid "Edit member title"
+msgstr "تعديل لقب عضو"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:368
+msgid "Delete member title"
+msgstr "حذف لقب عضو"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:378
+msgid "Add title type..."
+msgstr "إضافة نوع عنوان ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:385
+#: src/bungeni.main/bungeni/ui/menu.zcml:584
+msgid "Add office member..."
+msgstr "أضف عضو المكتب ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:402
+msgid "Edit office member"
+msgstr "تحرير عضو مكتب"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:410
+msgid "Delete office member"
+msgstr "حذف عضو مكتب"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:434
+msgid "Email settings"
+msgstr "إعدادات البريد الإلكتروني"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:442
+msgid "Edit sitting"
+msgstr "تعديل الجلوس"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:450
+msgid "Edit attendance"
+msgstr "تحرير الحضور"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:458
+msgid "Delete sitting"
+msgstr "حذف الجلوس"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:467
+msgid "Add parliament..."
+msgstr "إضافة برلمان ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:474
+msgid "Add committee..."
+msgstr "إضافة لجنة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:481
+msgid "Add session..."
+msgstr "إضافة الدورة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:488
+msgid "Add government..."
+msgstr "إضافة الحكومة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:495
+msgid "Add MP..."
+msgstr "إضافة النائب..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:502
+msgid "Edit MP"
+msgstr "عدل النائب"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:510
+msgid "Delete MP"
+msgstr "حذف MP"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:519
+msgid "Add office..."
+msgstr "إضافة مكتب ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:526
+msgid "Add political group..."
+msgstr "إضافة مجموعة سياسية ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:540
+msgid "Add user..."
+msgstr "إضافة مستخدم ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:554
+msgid "Edit committee member"
+msgstr "عدل عضو اللجنة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:562
+msgid "Delete committee member"
+msgstr "حذف عضو اللجنة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:570
+msgid "Add committee staff..."
+msgstr "إضافة لجنة الموظفين ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:602
+msgid "Add Group Address..."
+msgstr "إضافة عنوان المجموعة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:610
+#: src/bungeni.main/bungeni/ui/menu.zcml:617
+msgid "Add user address..."
+msgstr "إضافة عنوان المستخدم ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:626
+#: src/bungeni.main/bungeni/ui/menu.zcml:1101
+msgid "Edit user"
+msgstr "تعديل المستخدم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:635
+msgid "Change password"
+msgstr "تغيير كلمة السر"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:644
+msgid "Edit user address"
+msgstr "تعديل عنوان المستخدم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:653
+msgid "Delete user address"
+msgstr "حذف عنوان المستخدم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:662
+msgid "Add user delegation..."
+msgstr "إضافة وفد المستخدم ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:669
+msgid "Add member title"
+msgstr "إضافة لقب عضو"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:683
+msgid "Delete signatory"
+msgstr "حذف الموقعة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:691
+msgid "Add tabled document..."
+msgstr "إضافة قدمت وثيقة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:716
+msgid "Edit session"
+msgstr "تحرير الجلسة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:724
+msgid "Delete session"
+msgstr "حذف الجلسة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:736
+msgid "Add question..."
+msgstr "إضافة سؤال ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:743
+msgid "Add motion..."
+msgstr "إضافة حركة ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:750
+msgid "Add heading..."
+msgstr "إضافة عنوان ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:757
+msgid "Add venue..."
+msgstr "إضافة مكان..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:764
+msgid "Add bill..."
+msgstr "إضافة مشروع قانون ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:772
+#: src/bungeni.main/bungeni/ui/menu.zcml:780
+msgid "Add file..."
+msgstr "إضافة ملف..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:850
+msgid "Edit discussion"
+msgstr "تحرير نقاش"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:858
+msgid "Schedule item"
+msgstr "جدولة البند"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:866
+msgid "Remove scheduled item"
+msgstr "إزالة بند من المقرر"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:874
+#, fuzzy
+msgid "schedule"
+msgstr "من المقرر"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:882
+msgid "Edit agenda and minutes"
+msgstr "تعديل جدول الأعمال ودقيقة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:890
+msgid "Delete scheduling"
+msgstr "حذف جدولة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:928
+msgid "Agenda item"
+msgstr "البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:934
+msgid "Tabled document"
+msgstr "طرحت الوثيقة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:954
+msgid "Workspace"
+msgstr "مساحة العمل"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:961
+msgid "Home"
+msgstr "منزل"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:996
+#: src/bungeni.main/bungeni/ui/menu.zcml:1004
+msgid "Actions..."
+msgstr "إجراءات ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1012
+#: src/bungeni.main/bungeni/ui/templates/assignment-edit.pt:5
+#: src/bungeni.main/bungeni/ui/templates/assignment-view.pt:5
+#, fuzzy
+msgid "Assignment"
+msgstr "تعيين البند"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1039
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:5
+msgid "Workflow"
+msgstr "سير العمل"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1041
+msgid "attachments"
+msgstr "المرفقات"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1058
+msgid "Review signature"
+msgstr "استعراض التوقيع"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1076
+msgid "Audit log"
+msgstr "مراجعة السجل"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1093
+msgid "Delete user"
+msgstr "حذف مستخدم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1112
+msgid "Edit attached file"
+msgstr "تعديل الملف المرفق"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1115
+msgid "Delete attached file"
+msgstr "حذف الملف المرفق"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1118
+msgid "Download attached file"
+msgstr "تحميل الملف المرفق"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1123
+msgid "Edit parliament"
+msgstr "عدل البرلمان"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1131
+msgid "Edit office"
+msgstr "تحرير مكتب"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1139
+msgid "Edit committee"
+msgstr "تحرير لجنة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1147
+msgid "Edit political group"
+msgstr "تحرير مجموعة سياسية"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1155
+msgid "Delete parliament"
+msgstr "حذف البرلمان"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1163
+msgid "Delete office"
+msgstr "حذف مكتب"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1171
+msgid "Delete committee"
+msgstr "حذف لجنة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1179
+msgid "Delete political group"
+msgstr "حذف مجموعة سياسية"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1187
+msgid "Edit government"
+msgstr "تعديل الحكومة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1195
+msgid "Edit ministry"
+msgstr "تحرير وزارة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1211
+msgid "Delete ministry"
+msgstr "حذف وزارة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1219
+msgid "Edit group address"
+msgstr "تحرير عنوان المجموعة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1227
+msgid "Delete group address"
+msgstr "حذف عنوان المجموعة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1235
+msgid "Edit title type"
+msgstr "تعديل نوع لقب"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1243
+msgid "Delete title type"
+msgstr "حذف نوع لقب"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1251
+msgid "Delete user delegation"
+msgstr "وفد حذف المستخدم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1259
+msgid "Edit user delegation"
+msgstr "تحرير وفد المستخدم"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1267
+msgid "Committee schedule"
+msgstr "لجنة الجدول الزمني"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1275
+#, fuzzy
+msgid "Create reports"
+msgstr "إنشاء تقرير"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1291
+#, fuzzy
+msgid "View Assignment"
+msgstr "عرض الحكومة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1300
+#, fuzzy
+msgid "Edit Assignment"
+msgstr "تعديل الحكومة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1309
+#, fuzzy
+msgid "Group Assignment"
+msgstr "إضافة مجموعة تعيين السلعة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1326
+#, fuzzy
+msgid "Edit group assignment"
+msgstr "تعيين فريق تحرير السلعة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1334
+#, fuzzy
+msgid "Delete group assignment"
+msgstr "حذف تعيين الفريق السلعة"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1342
+#, fuzzy
+msgid "Add group assignment..."
+msgstr "إضافة مجموعة تعيين السلعة"
+
+#. Default: "Report template file does not exist at ${path}"
+#: src/bungeni.main/bungeni/ui/reporting/generators.py:138
+msgid "report-template-missing"
+msgstr "تقرير ملف قالب غير موجود في ${path}"
+
+#: src/bungeni.main/bungeni/ui/reporting/generators.py:227
+msgid "No items found"
+msgstr "لا توجد مواد"
+
+#: src/bungeni.main/bungeni/ui/reports.py:59
+msgid "Report Type"
+msgstr "نوع التقرير"
+
+#: src/bungeni.main/bungeni/ui/reports.py:60
+msgid "Choose template to use in generating Report"
+msgstr "اختيار قالب لاستخدامه في توليد تقرير"
+
+#. Default: "Start Date"
+#: src/bungeni.main/bungeni/ui/reports.py:64
+msgid "report_builder_start_date"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/reports.py:65
+msgid "Start date for this Report"
+msgstr "تاريخ البدء لهذا التقرير"
+
+#: src/bungeni.main/bungeni/ui/reports.py:67
+msgid "Publication Number"
+msgstr "نشر عدد"
+
+#: src/bungeni.main/bungeni/ui/reports.py:68
+msgid "Optional publication number for this Report"
+msgstr "اختياري لهذا العدد نشر تقرير"
+
+#: src/bungeni.main/bungeni/ui/reports.py:79
+msgid "Report Title"
+msgstr "التقرير عنوان"
+
+#: src/bungeni.main/bungeni/ui/reports.py:125
+msgid "Preview"
+msgstr "معاينة"
+
+#: src/bungeni.main/bungeni/ui/reports.py:131
+msgid "See the preview of the report below"
+msgstr "انظر المعاينة من التقرير أدناه"
+
+#. Default: "Publish"
+#: src/bungeni.main/bungeni/ui/reports.py:134
+#, fuzzy
+msgid "publish_report"
+msgstr "نشر التقارير"
+
+#: src/bungeni.main/bungeni/ui/reports.py:156
+msgid "Report has been processed and saved"
+msgstr "وقد تم تجهيز التقرير وحفظه"
+
+#. Default: "Date"
+#: src/bungeni.main/bungeni/ui/reports.py:167
+#, fuzzy
+msgid "report_start_date"
+msgstr "نهاية التاريخ"
+
+#: src/bungeni.main/bungeni/ui/reports.py:168
+msgid "Choose a starting date for this report"
+msgstr "اختيار موعد انطلاق لهذا التقرير"
+
+#. Default: "Date"
+#: src/bungeni.main/bungeni/ui/reports.py:171
+#, fuzzy
+msgid "report_end_date"
+msgstr "نهاية التاريخ"
+
+#: src/bungeni.main/bungeni/ui/reports.py:172
+msgid "Choose an end date for this report"
+msgstr "اختيار موعد نهاية لهذا التقرير"
+
+#: src/bungeni.main/bungeni/ui/reports.py:183
+#, fuzzy
+msgid "Sittings in Report"
+msgstr "الجلسات الواردة في هذا التقرير"
+
+#: src/bungeni.main/bungeni/ui/reports.py:184
+#, fuzzy
+msgid "List of sittings included in this report"
+msgstr "الجلسات الواردة في هذا التقرير"
+
+#: src/bungeni.main/bungeni/ui/reports.py:207
+#, fuzzy
+msgid "Save Report"
+msgstr "إنشاء تقرير"
+
+#. Default: "Sitting Agenda"
+#: src/bungeni.main/bungeni/ui/reports.py:257
+msgid "report_title_sitting_agenda"
+msgstr ""
+
+#. Default: "Sitting Votes and Proceedings"
+#: src/bungeni.main/bungeni/ui/reports.py:261
+#, fuzzy
+msgid "report_title_votes_and_proceedings"
+msgstr "الأصوات والإجراءات"
+
+#. Default: "Yes"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:32
+#, fuzzy
+msgid "scheduling_message_yes"
+msgstr "رسالة"
+
+#. Default: "No"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:33
+#, fuzzy
+msgid "scheduling_message_no"
+msgstr "رسالة"
+
+#. Default: "Okay"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:34
+#, fuzzy
+msgid "scheduling_message_okay"
+msgstr "رسالة"
+
+#. Default: "Done"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:35
+#, fuzzy
+msgid "scheduling_message_done"
+msgstr "رسالة"
+
+#. Default: "Notice"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:36
+msgid "scheduling_message_notice"
+msgstr ""
+
+#. Default: "Working"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:37
+msgid "scheduling_message_working"
+msgstr ""
+
+#. Default: "Cancel"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:38
+msgid "scheduling_message_cancel"
+msgstr ""
+
+#. Default: "View"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:39
+#, fuzzy
+msgid "scheduling_message_view"
+msgstr "رسالة"
+
+#. Default: "Edit"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:40
+#, fuzzy
+msgid "scheduling_message_edit"
+msgstr "رسالة"
+
+#. Default: "Delete"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:41
+msgid "scheduling_message_delete"
+msgstr ""
+
+#. Default: "Warning"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:42
+msgid "scheduling_message_warning"
+msgstr ""
+
+#. Default: "Minutes"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:43
+#, fuzzy
+msgid "scheduling_text_minutes"
+msgstr "المقاطع"
+
+#. Default: "Start Date"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:44
+msgid "scheduling_filters_start_date"
+msgstr ""
+
+#. Default: "End Date"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:45
+msgid "scheduling_filters_end_date"
+msgstr ""
+
+#. Default: "Type"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:48
+#, fuzzy
+msgid "scheduling_column_type"
+msgstr "ليس جدولة السياق"
+
+#. Default: "Moved by"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:49
+msgid "scheduling_column_mover"
+msgstr ""
+
+#. Default: "Status"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:50
+#, fuzzy
+msgid "scheduling_column_status"
+msgstr "ليس جدولة السياق"
+
+#. Default: "Date"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:51
+msgid "scheduling_column_status_date"
+msgstr ""
+
+#. Default: "No."
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:52
+msgid "scheduling_column_registry_no"
+msgstr ""
+
+#. Default: "Description"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:53
+msgid "scheduling_column_description"
+msgstr ""
+
+#. Default: "Minute Text"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:55
+#, fuzzy
+msgid "scheduling_column_minute_text"
+msgstr "ليس جدولة السياق"
+
+#. Default: "Agenda"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:59
+#, fuzzy
+msgid "scheduling_title_agenda"
+msgstr "تحرير &quot;$title&quot;"
+
+#. Default: "Scheduled Items"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:60
+msgid "scheduling_title_scheduled_items"
+msgstr ""
+
+#. Default: "Available Items"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:62
+msgid "scheduling_title_available_items"
+msgstr ""
+
+#. Default: "Agenda and Minutes"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:64
+#, fuzzy
+msgid "scheduling_title_discussions"
+msgstr "إجراءات لجدولة المناقشات"
+
+#. Default: "Heading"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:68
+#, fuzzy
+msgid "scheduling_type_heading"
+msgstr "إعادة جدولة القراءة الأولى"
+
+#. Default: "Minute Record"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:69
+msgid "scheduling_type_minute"
+msgstr ""
+
+#. Default: "Editorial Note"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:70
+msgid "scheduling_type_editorial_note"
+msgstr ""
+
+#. Default: "Remove Item"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:74
+msgid "scheduling_action_remove_item"
+msgstr ""
+
+#. Default: "Add Minute"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:75
+msgid "scheduling_action_add_minute"
+msgstr ""
+
+#. Default: "Save and preview"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:76
+msgid "scheduling_action_save_preview"
+msgstr ""
+
+#. Default: "Save Changes"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:78
+#, fuzzy
+msgid "scheduling_action_save_changes"
+msgstr "والجدول الزمني لم يتم حفظها التغييرات"
+
+#. Default: "Discard Changes"
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:80
+msgid "scheduling_action_discard_changes"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:86
+msgid "heading"
+msgstr "عنوان"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:88
+msgid "minute record"
+msgstr "سجل دقيقة"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:114
+msgid "Modify Item"
+msgstr "تعديل البند"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:126
+msgid "NO TEXT RECORD FOUND"
+msgstr "لا يوجد سجل النص الموجود"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:131
+msgid "Select existing heading"
+msgstr "حدد عنوان القائمة"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:139
+msgid ""
+"the agenda is empty. add items from below from from the available documents "
+"to the right"
+msgstr "جدول أعمال فارغ. إضافة عناصر من أدناه من من الوثائق المتاحة على يمين"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:146
+msgid "add text records"
+msgstr "إضافة سجلات النص"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:149
+msgid "custom heading"
+msgstr "عرف عنوان"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:159
+msgid "change this text"
+msgstr "تغيير هذا النص"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:161
+msgid "Remove item from schedule"
+msgstr "إزالة البند من جدول"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:163
+msgid "Are you sure you want to remove this item from schedule ?"
+msgstr "هل أنت متأكد أنك تريد إزالة هذا البند من الجدول؟"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:170
+msgid "No items have been scheduled. Add something then save."
+msgstr "كان من المقرر عقد أي عناصر. إضافة شيء ثم احفظ."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:175
+msgid "saving changes to schedule..."
+msgstr "حفظ التغييرات إلى الجدول الزمني ..."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:179
+msgid "saving changes to minutes..."
+msgstr "حفظ التغييرات إلى دقائق ..."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:183
+msgid "reloading schedule..."
+msgstr "إعادة الجدول الزمني ..."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:186
+msgid "there was an error while saving the schedule"
+msgstr "كان هناك خطأ أثناء حفظ الجدول الزمني"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:188
+msgid "no filters selected"
+msgstr "لا اختيار المرشحات"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:192
+msgid "you did not choose any filters.select some filters then hit apply"
+msgstr "لم تقم باختيار أي filters.select بعض المرشحات ضرب ثم تطبيق"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:199
+msgid "clear filters"
+msgstr "واضح مرشحات"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:201
+msgid "apply filters"
+msgstr "استخدام المرشحات"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:202
+msgid "this schedule is read only"
+msgstr "تتم قراءة هذا الجدول فقط"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:206
+msgid "add text to schedule"
+msgstr "إضافة نص إلى جدول"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:212
+msgid "Schedule has unsaved changes"
+msgstr "والجدول الزمني لم يتم حفظها التغييرات"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:216
+msgid "Do you want to delete unsaved minute?"
+msgstr "هل تريد حذف اللحظة لم يتم حفظها؟"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:218
+msgid "Confirmation Required"
+msgstr "تأكيد مطلوب"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:220
+msgid "Really remove this minute record?"
+msgstr "حقا إزالة هذا السجل دقيقة؟"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:223
+msgid ""
+"You need to save the schedule before adding minutes for it.to this item."
+msgstr "تحتاج إلى حفظ الجدول قبل إضافة دقائق لit.to هذا البند."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:229
+msgid "*Unsaved item. No minute records."
+msgstr "* البند غير محفوظ. عدم وجود سجلات دقيقة."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:232
+msgid "No minute records"
+msgstr "عدم وجود سجلات دقيقة"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:235
+#, fuzzy
+msgid "add minutes record"
+msgstr "سجل دقيقة"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:238
+msgid "Edit"
+msgstr "تحرير"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:239
+msgid "Loading minutes..."
+msgstr "تحميل دقائق ..."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:242
+msgid "unable to load minutes..."
+msgstr "غير قادر على تحميل دقائق ..."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:245
+msgid "agenda preview"
+msgstr "جدول المعاينة"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:246
+msgid "generating agenda preview..."
+msgstr "توليد معاينة جدول أعمال ..."
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:249
+msgid "ERROR: Could to generate preview"
+msgstr "خطأ: لتوليد المعاينة"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:254
+msgid "This event is unsaved. Edit to make any corrections and then save it"
+msgstr "وهذا الحدث لم يتم حفظها. تحرير لإجراء أية تصحيحات ثم احفظه"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:257
+msgid "Make Corrections"
+msgstr "إجراء التصحيحات"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:258
+msgid "Venue : Select a venue"
+msgstr "المكان: اختر مكانا"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:259
+msgid "Language : Select a language"
+msgstr "اللغة: اختر اللغة"
+
+#: src/bungeni.main/bungeni/ui/resources/dynamic.py:262
+msgid ""
+"This timeslot already has another event.\n"
+" Do you want to continue?"
+msgstr "هذا موعدها بالفعل حدث آخر. هل ترغب في الاستمرار؟"
+
+#: src/bungeni.main/bungeni/ui/rss.py:225
+#: src/bungeni.main/bungeni/ui/search.py:333
+msgid "changes from"
+msgstr "من التغييرات"
+
+#: src/bungeni.main/bungeni/ui/search.py:114
+msgid "Query"
+msgstr "الاستعلام"
+
+#: src/bungeni.main/bungeni/ui/search.py:124
+msgid "Content type"
+msgstr "نوع المحتوى"
+
+#: src/bungeni.main/bungeni/ui/search.py:141
+msgid "Status date"
+msgstr "مركز تاريخ"
+
+#: src/bungeni.main/bungeni/ui/search.py:146
+msgid "Highlight words"
+msgstr "تسليط الضوء على الكلمات"
+
+#: src/bungeni.main/bungeni/ui/search.py:153
+msgid "Annotation"
+msgstr "حاشية"
+
+#: src/bungeni.main/bungeni/ui/search.py:236
+msgid "rank"
+msgstr "مرتبة"
+
+#: src/bungeni.main/bungeni/ui/search.py:238
+msgid "type"
+msgstr "نوع"
+
+#: src/bungeni.main/bungeni/ui/search.py:240
+msgid "title"
+msgstr "لقب"
+
+#: src/bungeni.main/bungeni/ui/search.py:242
+msgid "status"
+msgstr "حالة"
+
+#: src/bungeni.main/bungeni/ui/search.py:244
+msgid "weight"
+msgstr "الوزن"
+
+#: src/bungeni.main/bungeni/ui/search.py:246
+msgid "percent"
+msgstr "في المئة"
+
+#: src/bungeni.main/bungeni/ui/search.py:307
+msgid "Found ${total} results in ${search_time} Seconds"
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/search.py:389
+#: src/bungeni.main/bungeni/ui/search.py:535
+#: src/bungeni.main/bungeni/ui/templates/paged-search.pt:7
+#: src/bungeni.main/bungeni/ui/templates/search.pt:7
+#: src/bungeni.main/bungeni/ui/viewlets/templates/search.pt:8
+msgid "Search"
+msgstr "بحث"
+
+#: src/bungeni.main/bungeni/ui/search.py:395
+#: src/bungeni.main/bungeni/ui/search.py:550
+msgid "Invalid Query"
+msgstr "استعلام غير صالح"
+
+#: src/bungeni.main/bungeni/ui/search.py:464
+msgid ""
+"Showing ${page_start} to ${page_end} of ${total} results. Search done in "
+"${search_time} seconds."
+msgstr ""
+
+#: src/bungeni.main/bungeni/ui/search.py:526
+msgid "Field"
+msgstr "حقل"
+
+#. Default: "Upload file"
+#: src/bungeni.main/bungeni/ui/templates/add-file-widget.pt:2
+msgid "upload-file"
+msgstr "تحميل الملف"
+
+#: src/bungeni.main/bungeni/ui/templates/advanced-paged-search.pt:5
+msgid "Advanced Search"
+msgstr "بحث متقدم"
+
+#: src/bungeni.main/bungeni/ui/templates/advanced-paged-search.pt:13
+#: src/bungeni.main/bungeni/ui/templates/paged-search.pt:21
+#: src/bungeni.main/bungeni/ui/templates/search.pt:19
+msgid "Results"
+msgstr "النتائج"
+
+#: src/bungeni.main/bungeni/ui/templates/app-index.pt:6
+msgid "Welcome to Bungeni"
+msgstr "مرحبا بكم في Bungeni"
+
+#: src/bungeni.main/bungeni/ui/templates/archive.pt:6
+msgid "Access to current and historical records"
+msgstr "الاطلاع على السجلات الحالية والتاريخية"
+
+#: src/bungeni.main/bungeni/ui/templates/attendance.pt:5
+msgid "Sitting attendance record"
+msgstr "يجلس سجل الحضور"
+
+#: src/bungeni.main/bungeni/ui/templates/attendance.pt:9
+msgid "Update member attendance for the sitting"
+msgstr "تحديث حضور الأعضاء من أجل الجلوس"
+
+#: src/bungeni.main/bungeni/ui/templates/bungeni-content.pt:14
+msgid "View in Bungeni"
+msgstr "عرض في Bungeni"
+
+#: src/bungeni.main/bungeni/ui/templates/diff.pt:3
+msgid "Diff <b>x</b>"
+msgstr "فرق <b>X</b>"
+
+#: src/bungeni.main/bungeni/ui/templates/diff.pt:3
+msgid "unchanged"
+msgstr "دون تغيير"
+
+#. Default: "Keep existing file"
+#: src/bungeni.main/bungeni/ui/templates/edit-file-widget.pt:21
+msgid "keep-file"
+msgstr "إبقاء ملف موجود"
+
+#. Default: "Replace with new file:"
+#: src/bungeni.main/bungeni/ui/templates/edit-file-widget.pt:30
+msgid "replace-file"
+msgstr "استبدال ملف جديد :"
+
+#. Default: "download"
+#: src/bungeni.main/bungeni/ui/templates/edit-file-widget.pt:38
+msgid "download-file"
+msgstr "تحميل"
+
+#. Default: "Keep existing image"
+#: src/bungeni.main/bungeni/ui/templates/image-widget.pt:23
+msgid "keep-image"
+msgstr "تبقي صورة موجودة"
+
+#. Default: "Delete current image"
+#: src/bungeni.main/bungeni/ui/templates/image-widget.pt:32
+msgid "delete-image"
+msgstr "حذف الصورة الحالية"
+
+#. Default: "Replace with new image:"
+#: src/bungeni.main/bungeni/ui/templates/image-widget.pt:41
+msgid "replace-image"
+msgstr "استبدال صورة جديدة :"
+
+#. Default: "Upload image"
+#: src/bungeni.main/bungeni/ui/templates/image-widget.pt:44
+msgid "upload-image"
+msgstr "تحميل الصور"
+
+#: src/bungeni.main/bungeni/ui/templates/report-error.pt:6
+msgid "An error occurred during generation of the document"
+msgstr "حدث خطأ خلال جيل من الوثيقة"
+
+#: src/bungeni.main/bungeni/ui/templates/similar.pt:7
+msgid "Similar Content"
+msgstr "محتوى مماثل"
+
+#: src/bungeni.main/bungeni/ui/templates/version.pt:9
+msgid ""
+"Select a version to compare to the current working copy, or make two "
+"selections to compare historic versions"
+msgstr ""
+"تحديد إصدار للمقارنة على نسخة العمل الحالي ، أو لتقديم اثنين من التحديدات "
+"مقارنة الإصدارات التاريخية"
+
+#: src/bungeni.main/bungeni/ui/templates/workflow-ajax.pt:5
+msgid "Change state..."
+msgstr "تغيير الدولة..."
+
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:8
+msgid "Current state: ${state}."
+msgstr "الدولة الحالي : ${state}."
+
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:12
+msgid "History"
+msgstr "تاريخ"
+
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:13
+msgid "No history available for this item"
+msgstr "لا يوجد تاريخ المتاحة لهذا البند"
+
+#: src/bungeni.main/bungeni/ui/templates/xapian-settings.pt:5
+msgid "Rebuild search index"
+msgstr "إعادة بناء فهرس البحث"
+
+#: src/bungeni.main/bungeni/ui/utils/misc.py:74
+msgid "Form values must be of type string or list"
+msgstr "يجب أن تكون القيم شكل سلسلة من نوع أو قائمة"
+
+#: src/bungeni.main/bungeni/ui/utils/misc.py:155
+msgid "No Text"
+msgstr "لا نص"
+
+#: src/bungeni.main/bungeni/ui/versions.py:96
+msgid "version"
+msgstr "الإصدار"
+
+#: src/bungeni.main/bungeni/ui/versions.py:100
+msgid "procedure"
+msgstr "إجراء"
+
+#: src/bungeni.main/bungeni/ui/versions.py:102
+msgid "modified"
+msgstr "تعديل"
+
+#: src/bungeni.main/bungeni/ui/versions.py:104
+msgid "by"
+msgstr "من قبل"
+
+#: src/bungeni.main/bungeni/ui/versions.py:106
+msgid "message"
+msgstr "رسالة"
+
+#: src/bungeni.main/bungeni/ui/versions.py:116
+msgid "No Version Data"
+msgstr "لم إصدار البيانات"
+
+#: src/bungeni.main/bungeni/ui/versions.py:175
+msgid "Change Message"
+msgstr "رسالة التغيير"
+
+#: src/bungeni.main/bungeni/ui/versions.py:181
+msgid "Version Log"
+msgstr "الإصدار دخول"
+
+#: src/bungeni.main/bungeni/ui/versions.py:234
+msgid "New Version"
+msgstr "النسخة الجديدة"
+
+#: src/bungeni.main/bungeni/ui/versions.py:242
+msgid "New Version Created"
+msgstr "النسخة الجديدة أنشاء"
+
+#: src/bungeni.main/bungeni/ui/versions.py:244
+msgid "Revert To"
+msgstr "العودة إلى"
+
+#: src/bungeni.main/bungeni/ui/versions.py:250
+msgid "Select one item to revert to"
+msgstr "تحديد عنصر واحد للعودة إلى"
+
+#: src/bungeni.main/bungeni/ui/versions.py:261
+msgid "Reverted to Previous Version %s"
+msgstr "عادت إلى الإصدار السابق %s"
+
+#: src/bungeni.main/bungeni/ui/versions.py:264
+msgid "Show Differences"
+msgstr "تظهر الاختلافات"
+
+#: src/bungeni.main/bungeni/ui/versions.py:267
+msgid "Displaying differences"
+msgstr "عرض الاختلافات"
+
+#: src/bungeni.main/bungeni/ui/versions.py:270
+msgid "Select one or two items to show differences"
+msgstr "اختيار واحد أو اثنين من العناصر لاظهار الاختلافات"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:23
+#: src/bungeni.main/bungeni/ui/widgets.py:1309
+msgid "From"
+msgstr "من"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:24
+#: src/bungeni.main/bungeni/ui/widgets.py:1310
+msgid "Leave blank or set lower limit"
+msgstr "يترك فارغا أو تعيين الحد الأدنى"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:28
+#: src/bungeni.main/bungeni/ui/widgets.py:1314
+msgid "To"
+msgstr "إلى"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:29
+#: src/bungeni.main/bungeni/ui/widgets.py:1315
+msgid "Leave blank or set upper limit"
+msgstr "يترك فارغا أو تعيين الحد الأعلى"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:33
+msgid "Or select"
+msgstr "أو حدد"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:34
+msgid "Set date range to that of a given particular parliament"
+msgstr "تعيين نطاق التاريخ إلى أن من البرلمان خاصة نظرا"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:42
+msgid "Filter the archive by date range"
+msgstr "تصفية أرشيف بواسطة نطاق التاريخ"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:81
+msgid "parliament..."
+msgstr "البرلمان..."
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:91
+msgid "Filter"
+msgstr "فلتر"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:99
+msgid "Invalid Date Range"
+msgstr "صالح نطاق التاريخ"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:105
+msgid "Start date must be before %s"
+msgstr "يجب أن يكون قبل تاريخ بدء %s"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:111
+msgid "End date must be after %s"
+msgstr "يجب أن يكون بعد تاريخ انتهاء %s"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:119
+msgid "Date range set"
+msgstr "تاريخ النطاق المحدد"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:121
+#: src/bungeni.main/bungeni/ui/widgets.py:1340
+msgid "Clear"
+msgstr "واضح"
+
+#: src/bungeni.main/bungeni/ui/viewlets/archive.py:127
+msgid "Date range cleared"
+msgstr "مسح نطاق التاريخ"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/archive-dates.pt:7
+msgid "Filter by date or parliament"
+msgstr "تصفية حسب تاريخ أو البرلمان"
+
+#. Default: "You are here:"
+#: src/bungeni.main/bungeni/ui/viewlets/templates/bread-crumbs.pt:2
+msgid "you_are_here"
+msgstr "انتم هنا :"
+
+#. Default: "Home"
+#: src/bungeni.main/bungeni/ui/viewlets/templates/bread-crumbs.pt:3
+msgid "tabs_home"
+msgstr "منزل"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/scheduling.pt:8
+msgid "Add items to schedule by clicking on the checkbox"
+msgstr "إضافة بنود إلى جدول من خلال النقر على مربع الاختيار"
+
+#. Default: "Sections"
+#: src/bungeni.main/bungeni/ui/viewlets/templates/sections.pt:2
+msgid "heading_sections"
+msgstr "المقاطع"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:8
+msgid "An overview of the daily operations of the parliament"
+msgstr "لمحة عامة عن العمليات اليومية للبرلمان"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:15
+msgid "From: ${whats_on_start_date} to: ${whats_on_end_date}"
+msgstr "من : ${whats_on_start_date} إلى : ${whats_on_end_date}"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:20
+msgid "Period selected has no Sittings"
+msgstr "الفترة المختارة لا يوجد لديه جلسات"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:66
+msgid "Period selected has no Bills"
+msgstr "الفترة المختارة لا يوجد لديه فواتير"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:93
+msgid "Period selected has no Motions"
+msgstr "الفترة المختارة لا يوجد لديه اقتراحات"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:120
+msgid "Period selected has no Questions"
+msgstr "الفترة المختارة لا يوجد لديه أسئلة"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:146
+msgid "Period selected has no Tabled Documents"
+msgstr "الفترة الزمنية المحددة تقدمت أية وثائق"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:172
+msgid "Period selected has no Agenda Items"
+msgstr "الفترة المختارة لا يوجد لديه بنود جدول الأعمال"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace-under-consideration.pt:4
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace.pt:4
+msgid "documents"
+msgstr "وثائق"
+
+#: src/bungeni.main/bungeni/ui/viewlets/whatson.py:47
+msgid "N/A"
+msgstr "N / A"
+
+#. Default: "This document has the required number of signatories. ${signed_members} member(s) have signed. ${required_members} signature(s) required."
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.py:78
+msgid "signature_requirement_met"
+msgstr ""
+"هذه الوثيقة لديها العدد المطلوب من الدول الموقعة. وقد وقعت ${signed_members} "
+"عضو (s). ${required_members} التوقيع (التوقيعات) المطلوبة."
+
+#. Default: "This document does not have the required number of signatories. Requires ${required_members} signature(s). ${signed_members} member(s) have signed."
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.py:90
+msgid "signature_requirements_not_met"
+msgstr ""
+"هذه الوثيقة لا تملك العدد المطلوب من الدول الموقعة. ${required_members} "
+"يتطلب توقيع (ق). وقد وقعت ${signed_members} عضو (s)."
+
+#: src/bungeni.main/bungeni/ui/views.zcml:407
+msgid "Listing"
+msgstr "قائمة"
+
+#: src/bungeni.main/bungeni/ui/vocabulary.py:72
+msgid "day_%d"
+msgstr "day_%d"
+
+#: src/bungeni.main/bungeni/ui/vocabulary.py:1410
+#, fuzzy
+msgid "* All types *"
+msgstr "مشروع القانون أنواع"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:74
+msgid "Unknown"
+msgstr "غير معروف"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:95
+msgid "Invalid date: $value"
+msgstr "صالح تاريخ $value"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:156
+#: src/bungeni.main/bungeni/ui/widgets.py:162
+#: src/bungeni.main/bungeni/ui/widgets.py:181
+msgid "Form upload is not a file object"
+msgstr "النموذج هو كائن لا تحميل الملف"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:237
+msgid "download"
+msgstr "تحميل"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:376
+msgid "Choose Month"
+msgstr "اختر شهر"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:377
+msgid "Enter Year"
+msgstr "دخول السنة"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:378
+msgid "OK"
+msgstr "موافق"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:380
+msgid "Please enter a valid year"
+msgstr "الرجاء إدخال صالح العام"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:503
+#: src/bungeni.main/bungeni/ui/widgets.py:567
+msgid "Incorrect string data for date"
+msgstr "سلسلة بيانات غير صحيحة للتاريخ"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:667
+#: src/bungeni.main/bungeni/ui/widgets.py:744
+msgid "Incorrect string data for date and time"
+msgstr "سلسلة بيانات غير صحيحة للتاريخ والوقت"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:987
+msgid "start typing to chose $fname..."
+msgstr "ابدأ الكتابة لاختيار $fname ..."
+
+#: src/bungeni.main/bungeni/ui/widgets.py:1260
+msgid "selected subject terms"
+msgstr "موضوع المصطلحات المختارة"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:1270
+msgid "no subjects"
+msgstr "لا مواضيع"
+
+#: src/bungeni.main/bungeni/ui/widgets.py:1335
+#, fuzzy
+msgid "Ok"
+msgstr "حسنا"
+
+#: src/bungeni.main/bungeni/ui/workflow.py:52
+msgid "Workflow history"
+msgstr "سير التاريخ"
+
+#: src/bungeni.main/bungeni/ui/workflow.py:68
+msgid "date"
+msgstr "تاريخ"
+
+#: src/bungeni.main/bungeni/ui/workflow.py:72
+msgid "description"
+msgstr "وصف"
+
+#: src/bungeni.main/bungeni/ui/workflow.py:121
+msgid "Comment on workflow change"
+msgstr "التعليق على سير العمل التغيير"
+
+#: src/bungeni.main/bungeni/ui/workflow.py:123
+msgid "Active Date"
+msgstr "نشط تاريخ"
+
+#: src/bungeni.main/bungeni/ui/workflow.py:125
+msgid "Registry number"
+msgstr "رقم التسجيل"
+
+#: src/bungeni.main/bungeni/ui/workflow.py:183
+msgid "Active Date is in the past."
+msgstr "تاريخ النشط في الماضي."
+
+#: src/bungeni.main/bungeni/ui/workflow.py:186
+msgid "Active Date is in the future."
+msgstr "تاريخ النشطة في المستقبل."
+
+#: src/bungeni.main/bungeni/ui/workflow.py:219
+msgid "Confirmation required for workflow transition: '${title}'"
+msgstr "تأكيد المطلوبة للانتقال سير العمل : &#39;${title}&#39;"
+
+#. Default: "title"
+#: src/bungeni.main/bungeni/ui/workspace.py:51
+#, fuzzy
+msgid "workspace_column_title"
+msgstr "workspace_no_items"
+
+#. Default: "item type"
+#: src/bungeni.main/bungeni/ui/workspace.py:53
+#, fuzzy
+msgid "workspace_column_type"
+msgstr "workspace_no_items"
+
+#. Default: "status"
+#: src/bungeni.main/bungeni/ui/workspace.py:55
+#, fuzzy
+msgid "workspace_column_status"
+msgstr "workspace_no_items"
+
+#. Default: "status date"
+#: src/bungeni.main/bungeni/ui/workspace.py:57
+#, fuzzy
+msgid "workspace_column_status_date"
+msgstr "workspace_no_items"
+
+#. Default: "title"
+#: src/bungeni.main/bungeni/ui/workspace.py:63
+#, fuzzy
+msgid "workspace_column_group_title"
+msgstr "workspace_no_items"
+
+#. Default: "group type"
+#: src/bungeni.main/bungeni/ui/workspace.py:65
+#, fuzzy
+msgid "workspace_column_group_type"
+msgstr "workspace_no_items"
+
+#. Default: "status"
+#: src/bungeni.main/bungeni/ui/workspace.py:67
+#, fuzzy
+msgid "workspace_column_group_status"
+msgstr "workspace_no_items"
+
+#. Default: "status date"
+#: src/bungeni.main/bungeni/ui/workspace.py:69
+msgid "workspace_column_group_status_date"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Report4 Sitting"
+#~ msgstr "خلق الجلوس"
+
+#, fuzzy
+#~ msgid "Report4 Sittings"
+#~ msgstr "جلسات عامة"
+
+#~ msgid "Reorder scheduling"
+#~ msgstr "إعادة ترتيب الجدول الزمني"
+
+#~ msgid "Move scheduling up"
+#~ msgstr "تحرك جدولة ما يصل"
+
+#~ msgid "Move scheduling down"
+#~ msgstr "تحرك لأسفل جدولة"
+
+#~ msgid "Value was changed!"
+#~ msgstr "تم تغيير قيمة!"
+
+#, fuzzy
+#~ msgid "my documents"
+#~ msgstr "وثائق"
+
+#~ msgid "draft"
+#~ msgstr "مسودة"
+
+#~ msgid "inbox"
+#~ msgstr "البريد الوارد"
+
+#~ msgid "Items scheduled for this meeting"
+#~ msgstr "البنود المقررة لهذا الاجتماع"
+
+#~ msgid "Refresh"
+#~ msgstr "التحديث"
+
+#~ msgid "State"
+#~ msgstr "دولة"
+
+#~ msgid "No items scheduled"
+#~ msgstr "أي عناصر المقرر"
+
+#~ msgid "Week ${week_no}"
+#~ msgstr "الأسبوع ${week_no}"
+
+#~ msgid "${count} item(s) scheduled"
+#~ msgstr "${count} البند (ق) من المقرر"
+
+#, fuzzy
+#~ msgid "Group Membership Role"
+#~ msgstr "عضوية"
+
+#, fuzzy
+#~ msgid "Group Membership Roles"
+#~ msgstr "عضوية"
+
+#~ msgid "file"
+#~ msgstr "ملف"
+
+#~ msgid "Username"
+#~ msgstr "اسم المستخدم"
+
+#~ msgid "Add event..."
+#~ msgstr "إضافة الحدث..."
+
+#~ msgid "Yes"
+#~ msgstr "نعم"
+
+#~ msgid "No"
+#~ msgstr "لا"
+
+#~ msgid "Okay"
+#~ msgstr "حسنا"
+
+#~ msgid "Done"
+#~ msgstr "فعل"
+
+#~ msgid "Notice"
+#~ msgstr "لاحظ"
+
+#~ msgid "Working"
+#~ msgstr "عامل"
+
+#~ msgid "Warning"
+#~ msgstr "تحذير"
+
+#~ msgid "editorial note"
+#~ msgstr "علما التحرير"
+
+#~ msgid "Scheduled Items"
+#~ msgstr "من المقرر العناصر"
+
+#~ msgid "Agenda and minutes"
+#~ msgstr "جدول الأعمال ودقيقة"
+
+#~ msgid "minute text"
+#~ msgstr "نص دقيقة"
+
+#~ msgid "Type"
+#~ msgstr "نوع"
+
+#~ msgid "No."
+#~ msgstr "رقم"
+
+#~ msgid "Moved By"
+#~ msgstr "انتقلت من"
+
+#~ msgid "remove item"
+#~ msgstr "إزالة البند"
+
+#~ msgid "save changes"
+#~ msgstr "حفظ التغييرات"
+
+#, fuzzy
+#~ msgid "save and preview"
+#~ msgstr "حفظ وعرض"
+
+#~ msgid "discard changes"
+#~ msgstr "تجاهل التغييرات"
+
+#~ msgid "add minute"
+#~ msgstr "إضافة دقيقة"
+
+#~ msgid "start date"
+#~ msgstr "تاريخ البدء"
+
+#~ msgid "Minutes:"
+#~ msgstr "دقيقة:"
+
+#~ msgid "item type"
+#~ msgstr "البند نوع"
+
+#~ msgid "status date"
+#~ msgstr "وضع تاريخ"
+
+#~ msgid "sent"
+#~ msgstr "أرسلت"
+
+#~ msgid "sent documents"
+#~ msgstr "ترسل وثائق"
+
+#, fuzzy
+#~ msgid "Documents under consideration"
+#~ msgstr "تأكيد حذف البند"
+
+#~ msgid "preview agenda"
+#~ msgstr "معاينة جدول الأعمال"
+
+#~ msgid "view"
+#~ msgstr "عرض"
+
+#~ msgid "A committee must be disolved before it can be reinstated"
+#~ msgstr "يجب أن يتم حله من قبل لجنة يمكن أن تعاد عليه"
+
+#~ msgid "Delegate to user"
+#~ msgstr "مندوب للمستخدم"
+
+#~ msgid "member"
+#~ msgstr "عضو"
+
+#~ msgid "members"
+#~ msgstr "الأعضاء"
+
+#~ msgid "Role associated with title"
+#~ msgstr "دور المرتبطة اللقب"
+
+#~ msgid "Role associated with this title"
+#~ msgstr "دور المرتبطة بهذا اللقب"
+
+#~ msgid "Staff"
+#~ msgstr "العاملين"
+
+#~ msgid "political group"
+#~ msgstr "مجموعة سياسية"
+
+#~ msgid "political groups"
+#~ msgstr "الجماعات السياسية"
+
+#, fuzzy
+#~ msgid "Short Title"
+#~ msgstr "التقرير عنوان"
+
+#~ msgid "Response to the Question"
+#~ msgstr "ردا على السؤال"
+
+#~ msgid "Start"
+#~ msgstr "بداية"
+
+#~ msgid "review"
+#~ msgstr "مراجعة"
+
+#~ msgid "political party"
+#~ msgstr "حزب سياسي"
+
+#~ msgid "no party"
+#~ msgstr "لا يجوز لأي طرف"
+
+#~ msgid "Schedulings"
+#~ msgstr "Schedulings"
+
+#~ msgid "uri"
+#~ msgstr "أوري"
+
+#~ msgid "Discussions"
+#~ msgstr "مناقشات"
+
+#~ msgid "My interests"
+#~ msgstr "بلدي المصالح"
+
+#~ msgid "Timeline"
+#~ msgstr "الجدول الزمني"
+
+#~ msgid "Speaker's Office Email"
+#~ msgstr "ارسل مكتب المتحدث"
+
+#~ msgid "Speaker's Office Notification"
+#~ msgstr "إعلام مكتب رئيس البرلمان"
+
+#~ msgid "Alert the speaker's office when a document is submitted"
+#~ msgstr "تنبيه مكتب رئيس مجلس النواب عند تقديم وثيقة"
+
+#~ msgid "Clerk's Office Notification"
+#~ msgstr "إعلام مكتب كاتب في"
+
+#~ msgid "Alert the clerk's office by e-mail when a document is submitted"
+#~ msgstr "تنبيه مكتب كاتب من خلال البريد الإلكتروني عندما يتم تقديم وثيقة"
+
+#~ msgid "Clerks's Office Email"
+#~ msgstr "البريد الإلكتروني لمكتب كتبة"
+
+#~ msgid "Ministries Notification"
+#~ msgstr "وزارات الإعلام"
+
+#~ msgid "Notify concerned ministries by e-mail when a document is submitted"
+#~ msgstr "بإخطار الوزارات المعنية عن طريق البريد الالكتروني عند تقديم وثيقة"
+
+#~ msgid "Administrator's Email"
+#~ msgstr "المسؤول البريد الإلكتروني"
+
+#~ msgid "Days to Notify Ministry of Pending Response"
+#~ msgstr "يوما لإخطار وزارة الاستجابة معلقة"
+
+#~ msgid ""
+#~ "Days after which to notify concerned ministry and  clerk's office of "
+#~ "questions with pending responses"
+#~ msgstr ""
+#~ "أيام بعد ذلك أن تخطر الوزارة المعنية ومكتب كاتب من الأسئلة المعلقة مع "
+#~ "استجابات"
+
+#~ msgid "Minimum consented signatories for a bill"
+#~ msgstr "وافقت الدول الموقعة الحد الأدنى لمشروع قانون"
+
+#~ msgid "Maximum consented signatories for a bill"
+#~ msgstr "وافقت الدول الموقعة القصوى لمشروع قانون"
+
+#~ msgid "Minimum consented signatories for a question"
+#~ msgstr "وافقت الدول الموقعة الحد الأدنى لسؤال"
+
+#~ msgid "Maximum consented signatories for a question"
+#~ msgstr "وافقت الدول الموقعة الحد الأقصى لسؤال"
+
+#~ msgid "Minimum consented signatories for a motion"
+#~ msgstr "وافقت الدول الموقعة الحد الأدنى للحركة"
+
+#~ msgid "Maximum consented signatories for a motion"
+#~ msgstr "وافقت الدول الموقعة الحد الأقصى لحركة"
+
+#~ msgid "Minimum consented signatories for an agenda item"
+#~ msgstr "وافقت الدول الموقعة الحد الأدنى للبند في جدول الأعمال"
+
+#~ msgid "Maximum consented signatories for an agenda item"
+#~ msgstr "وافقت الدول الموقعة الأقصى لبند في جدول الأعمال"
+
+#~ msgid "Minimum consented signatories for a tabled document"
+#~ msgstr "وافقت الدول الموقعة الحد الأدنى لمستند قدم"
+
+#~ msgid "Maximum consented signatories for a tabled document"
+#~ msgstr "وافقت الدول الموقعة الحد الأقصى لمستند قدم"
+
+#~ msgid "Constituency"
+#~ msgstr "الدائرة"
+
+#~ msgid "Province"
+#~ msgstr "مقاطعة"
+
+#~ msgid "region"
+#~ msgstr "منطقة"
+
+#~ msgid "political parties"
+#~ msgstr "الأحزاب السياسية"
+
+#~ msgid "Unique identifier or number for this political party"
+#~ msgstr "فريد معرف أو رقم لهذا الحزب السياسي"
+
+#~ msgid "Sequential Number"
+#~ msgstr "تسلسلي عدد"
+
+#~ msgid "Summary"
+#~ msgstr "ملخص"
+
+#~ msgid "Constituencies"
+#~ msgstr "الدوائر الانتخابية"
+
+#~ msgid "Name of the constituency"
+#~ msgstr "اسم الدائرة الانتخابية"
+
+#~ msgid "Provinces"
+#~ msgstr "المحافظات"
+
+#~ msgid "Name of the Province"
+#~ msgstr "اسم مقاطعة"
+
+#~ msgid "Region"
+#~ msgstr "منطقة"
+
+#~ msgid "Regions"
+#~ msgstr "المناطق"
+
+#~ msgid "Name of the Region"
+#~ msgstr "اسم المنطقة"
+
+#~ msgid "Constituency details"
+#~ msgstr "دائرة التفاصيل"
+
+#~ msgid "Details"
+#~ msgstr "تفاصيل"
+
+#~ msgid "Date the data was submitted from the Constituency"
+#~ msgstr "تاريخ تقديم البيانات من الدوائر الانتخابية"
+
+#~ msgid "Total Number of People living in this Constituency"
+#~ msgstr "مجموع عدد الأشخاص الذين يعيشون في هذه الدائرة"
+
+#~ msgid "Registered Voters"
+#~ msgstr "تسجيل الناخبين"
+
+#~ msgid "Number of Voters registered in this Constituency"
+#~ msgstr "عدد الناخبين المسجلين في هذه الدائرة"
+
+#~ msgid "Add party member..."
+#~ msgstr "إضافة عضو في الحزب ..."
+
+#~ msgid "Edit party member"
+#~ msgstr "تحرير عضو في الحزب"
+
+#~ msgid "Delete party member"
+#~ msgstr "حذف عضو في الحزب"
+
+#~ msgid "Add political party..."
+#~ msgstr "إضافة حزب سياسي ..."
+
+#~ msgid "Add constituency..."
+#~ msgstr "إضافة الدائرة ..."
+
+#~ msgid "Add province..."
+#~ msgstr "إضافة المحافظة ..."
+
+#~ msgid "Add region..."
+#~ msgstr "إضافة منطقة ..."
+
+#~ msgid "Edit political party"
+#~ msgstr "تحرير حزب سياسي"
+
+#~ msgid "Delete political party"
+#~ msgstr "حذف حزب سياسي"
+
+#~ msgid "Delete province"
+#~ msgstr "حذف مقاطعة"
+
+#~ msgid "Edit province"
+#~ msgstr "تحرير مقاطعة"
+
+#~ msgid "Delete region"
+#~ msgstr "حذف منطقة"
+
+#~ msgid "Edit region"
+#~ msgstr "تحرير منطقة"
+
+#~ msgid "Edit constituency"
+#~ msgstr "تعديل الدوائر الانتخابية"
+
+#~ msgid "Delete constituency"
+#~ msgstr "حذف دائرة انتخابية"
+
+#~ msgid "Attached file"
+#~ msgstr "ملف مرفق"
+
+#~ msgid "active"
+#~ msgstr "نشط"
+
+#~ msgid "inactive"
+#~ msgstr "غير فعال"
+
+#~ msgid "deceased"
+#~ msgstr "متوفى"
+
+#~ msgid "The 'Reports' menu - provides reporting actions"
+#~ msgstr "القائمة &quot;التقارير&quot; -- توفر إجراءات الإبلاغ"
+
+#~ msgid "Agenda..."
+#~ msgstr "جدول الأعمال..."
+
+#~ msgid "Votes and proceedings..."
+#~ msgstr "الأصوات والإجراءات..."
+
+#~ msgid "Download"
+#~ msgstr "تحميل"
+
+#~ msgid "Type of report to be produced"
+#~ msgstr "النوع من التقارير إلى أن يتم إنتاجها"
+
+#~ msgid "Order of the day"
+#~ msgstr "أمر اليوم"
+
+#~ msgid "Sitting Votes and  Proceedings"
+#~ msgstr "يجلس الأصوات وقائع"
+
+#~ msgid "timeline"
+#~ msgstr "الجدول الزمني"
+
+#~ msgid "This document has no signatories."
+#~ msgstr "هذه الوثيقة لا يوجد لديه الموقعة."
+
+#~ msgid "Day $number of every month"
+#~ msgstr "$number يوم من كل شهر"
+
+#~ msgid "First $day of every month"
+#~ msgstr "الأول من كل شهر $day"
+
+#~ msgid "Male"
+#~ msgstr "ذكر"
+
+#~ msgid "Female"
+#~ msgstr "أنثى"
+
+#~ msgid "initial"
+#~ msgstr "الأولي"
+
+#~ msgid "subsequent"
+#~ msgstr "لاحق"
+
+#~ msgid "Delete member of parliament"
+#~ msgstr "حذف عضو في البرلمان"
+
+#~ msgid "Reverted to previous version $version"
+#~ msgstr "عادت إلى الإصدار السابق $version"
+
+#~ msgid "Title of document assignment to group or committee"
+#~ msgstr "عنوان الوثيقة مهمة لمجموعة أو لجنة"
+
+#~ msgid "End date of document assignment"
+#~ msgstr "تاريخ نهاية مهمة وثيقة"
+
+#~ msgid "Document assignment type"
+#~ msgstr "وثيقة مهمة نوع"
+
+#~ msgid "Add government"
+#~ msgstr "إضافة حكومة"
+
+#~ msgid "Add group member"
+#~ msgstr "إضافة عضو في المجموعة"
+
+#~ msgid "Edit group member"
+#~ msgstr "تحرير عضو في المجموعة"
+
+#~ msgid "View group member"
+#~ msgstr "عرض عضو في المجموعة"
+
+#~ msgid "Add office"
+#~ msgstr "إضافة مكتب"
+
+#~ msgid "View office"
+#~ msgstr "عرض مكتب"
+
+#~ msgid "Translate content"
+#~ msgstr "ترجمة محتوى"
+
+#~ msgid "View office member"
+#~ msgstr "عرض عضو المكتب"
+
+#~ msgid "Add ministry"
+#~ msgstr "إضافة وزارة"
+
+#~ msgid "View ministry"
+#~ msgstr "رأي وزارة"
+
+#~ msgid "Add mp"
+#~ msgstr "إضافة النائب"
+
+#~ msgid "Edit mp"
+#~ msgstr "عدل النائب"
+
+#~ msgid "Delete mp"
+#~ msgstr "حذف MP"
+
+#~ msgid "View mp"
+#~ msgstr "رأي النائب"
+
+#~ msgid "Add session"
+#~ msgstr "إضافة الجلسة"
+
+#~ msgid "Add user"
+#~ msgstr "إضافة مستخدم"
+
+#~ msgid "View user"
+#~ msgstr "عرض المستخدم"
+
+#~ msgid "Add constituency"
+#~ msgstr "إضافة الدوائر الانتخابية"
+
+#~ msgid "View constituency"
+#~ msgstr "عرض الانتخابية"
+
+#~ msgid "Add sitting"
+#~ msgstr "إضافة الجلوس"
+
+#~ msgid "View minister"
+#~ msgstr "رأي وزير"
+
+#~ msgid "View committee member"
+#~ msgstr "عرض عضو اللجنة"
+
+#~ msgid "View committee staff"
+#~ msgstr "عرض لجنة الموظفين"
+
+#~ msgid "View political group member"
+#~ msgstr "عرض سياسي عضو في المجموعة"
+
+#~ msgid "View address"
+#~ msgstr "عرض عنوان"
+
+#~ msgid "Add delegation"
+#~ msgstr "إضافة وفد"
+
+#~ msgid "View delegation"
+#~ msgstr "عرض وفد"
+
+#~ msgid "Add title/function"
+#~ msgstr "إضافة عنوان / وظيفة"
+
+#~ msgid "Edit title/function"
+#~ msgstr "تعديل لقب / وظيفة"
+
+#~ msgid "Delete title/function"
+#~ msgstr "حذف لقب / وظيفة"
+
+#~ msgid "View title/function"
+#~ msgstr "عرض لقب / وظيفة"
+
+#~ msgid "Add title/event"
+#~ msgstr "إضافة عنوان / الحدث"
+
+#~ msgid "View title/event"
+#~ msgstr "عرض عنوان / الحدث"
+
+#~ msgid "View audit log"
+#~ msgstr "عرض سجل التدقيق"
+
+#~ msgid "Reorder items in the schedule of a sitting"
+#~ msgstr "إعادة ترتيب العناصر في الجدول الزمني للجلسة"
+
+#~ msgid "Add and edit amendments"
+#~ msgstr "إضافة وتحرير التعديلات"
+
+#~ msgid "View amendments"
+#~ msgstr "عرض التعديلات"
+
+#~ msgid "Add and edit comments"
+#~ msgstr "إضافة وتحرير التعليقات"
+
+#~ msgid "View comments"
+#~ msgstr "عرض التعليقات"
+
+#~ msgid "Add a signatory"
+#~ msgstr "إضافة الموقعة"
+
+#~ msgid "Consent or reject signature request"
+#~ msgstr "الموافقة أو رفض طلب التوقيع"
+
+#~ msgid "Edit a signatory"
+#~ msgstr "تحرير إحدى الدول الموقعة"
+
+#~ msgid "View a signatory"
+#~ msgstr "عرض الموقعة"
+
+#~ msgid "View document assigned to a group or committee"
+#~ msgstr "عرض وثيقة تعيينه لمجموعة أو لجنة"
+
+#~ msgid "Assign a document to a group or committee"
+#~ msgstr "تعيين وثيقة لمجموعة أو لجنة"
+
+#~ msgid "Delete document assignment to a group or committee"
+#~ msgstr "حذف وثيقة مهمة لمجموعة أو لجنة"
+
+#~ msgid "Edit document assignment to a group or committee"
+#~ msgstr "تحرير وثيقة مهمة لمجموعة أو لجنة"
+
+#~ msgid "Permission to generate report"
+#~ msgstr "إذن لتوليد تقرير"
+
+#~ msgid "view an attached file"
+#~ msgstr "عرض ملف مرفق"
+
+#~ msgid "add translation"
+#~ msgstr "إضافة ترجمة"
+
+#~ msgid "View workspace"
+#~ msgstr "عرض مساحة العمل"
+
+#~ msgid "View sitting attendance"
+#~ msgstr "عرض الحضور الجلوس"
+
+#~ msgid "Add sitting attendance"
+#~ msgstr "إضافة الحضور الجلوس"
+
+#~ msgid "Edit sitting attendance"
+#~ msgstr "تحرير الحضور الجلوس"
+
+#~ msgid "Delete sitting attendance"
+#~ msgstr "حذف الحضور الجلوس"
+
+#~ msgid "Add committee"
+#~ msgstr "إضافة لجنة"
+
+#~ msgid "View committee"
+#~ msgstr "عرض لجنة"
+
+#~ msgid "View Question"
+#~ msgstr "عرض السؤال"
+
+#~ msgid "View heading"
+#~ msgstr "عرض عنوان"
+
+#~ msgid "View Motion"
+#~ msgstr "عرض الحركة"
+
+#~ msgid "Add agenda item"
+#~ msgstr "إضافة البند من جدول الأعمال"
+
+#~ msgid "Add tabled document"
+#~ msgstr "قدم إضافة وثيقة"
+
+#~ msgid "View tabled document"
+#~ msgstr "قدم عرض المستند"
+
+#~ msgid "Edit Response"
+#~ msgstr "تعديل الرد"
+
+#~ msgid "View Response"
+#~ msgstr "عرض الاستجابة"
+
+#~ msgid "Add Parliament"
+#~ msgstr "إضافة البرلمان"
+
+#~ msgid "View Parliament"
+#~ msgstr "رأي البرلمان"
+
+#~ msgid "View Bill"
+#~ msgstr "عرض بيل"
+
+#~ msgid "Add party"
+#~ msgstr "إضافة الطرف"
+
+#~ msgid "Edit party"
+#~ msgstr "حزب التحرير"
+
+#~ msgid "Delete party"
+#~ msgstr "حذف حزب"
+
+#~ msgid "View party"
+#~ msgstr "رأي الحزب"
+
+#~ msgid "Site Manager"
+#~ msgstr "مدير موقع"
+
+#~ msgid "Bungeni Admin"
+#~ msgstr "Bungeni الادارية"
+
+#~ msgid "Clerks Office"
+#~ msgstr "كتبة مكتب"
+
+#~ msgid "Speaker Office"
+#~ msgstr "مكتب المتحدث"
+
+#~ msgid "Translators Office"
+#~ msgstr "مكتب المترجمين"
+
+#~ msgid "All authenticated users"
+#~ msgstr "جميع المستخدمين المصادق"
+
+#~ msgid "Bungeni Visitor"
+#~ msgstr "Bungeni الزائر"
+
+#~ msgid "Document Signatory"
+#~ msgstr "الوثيقة الموقعة"
+
+#~ msgid "Party Member"
+#~ msgstr "عضو حزب"
+
+#~ msgid "Member of Government"
+#~ msgstr "عضو في الحكومة"
+
+#~ msgid "action"
+#~ msgstr "عمل"
+
+#~ msgid "Sitting Info"
+#~ msgstr "يجلس معلومات"
+
+#~ msgid "Due Date"
+#~ msgstr "يرجع تاريخ"
+
+#~ msgid "Assigned items"
+#~ msgstr "تعيين العناصر"
+
+#~ msgid "Assigned group"
+#~ msgstr "تعيين مجموعة"
+
+#~ msgid "Files"
+#~ msgstr "ملفات"
+
+#~ msgid "File Type"
+#~ msgstr "ملف نوع"
+
+#~ msgid "Attached file version"
+#~ msgstr "ملف مرفق نسخة"
+
+#~ msgid "Recommendation note"
+#~ msgstr "التوصية علما"
+
+#~ msgid "Receive notification"
+#~ msgstr "تلقي إعلام"
+
+#~ msgid "Select this option to receive notifications for this item"
+#~ msgstr "حدد هذا الخيار لاستلام إشعارات لهذا البند"
+
+#~ msgid "Agenda Item version"
+#~ msgstr "البند الإصدار"
+
+#~ msgid "Motion version"
+#~ msgstr "اقتراح إصدار"
+
+#~ msgid "Bill version"
+#~ msgstr "إصدار فاتورة"
+
+#~ msgid "Question version"
+#~ msgstr "مسألة إصدار"
+
+#~ msgid "Tabled document Number"
+#~ msgstr "طرحت الوثيقة رقم"
+
+#~ msgid "Types"
+#~ msgstr "أنواع"
+
+#~ msgid "Sitting Date"
+#~ msgstr "يجلس تاريخ"
+
+#~ msgid "Note"
+#~ msgstr "مذكرة"
+
+#~ msgid "EDIT"
+#~ msgstr "EDIT"
+
+#~ msgid "DELETE"
+#~ msgstr "DELETE"
+
+#~ msgid "DOWNLOAD"
+#~ msgstr "تحميل"
+
+#~ msgid "attached files"
+#~ msgstr "الملفات المرفقة"
+
+#~ msgid "VIEW"
+#~ msgstr "VIEW"
+
+#~ msgid "svn_listing_name"
+#~ msgstr "اسم"
+
+#~ msgid "svn_listing_size"
+#~ msgstr "من قبل"
+
+#~ msgid "add event"
+#~ msgstr "إضافة الحدث"
+
+#~ msgid "Add Title/Function..."
+#~ msgstr "إضافة عنوان / وظيفة..."
+
+#~ msgid "Delete Session"
+#~ msgstr "حذف الدورة"
+
+#~ msgid "The 'Add...' menu - for political parties"
+#~ msgstr "&quot;إضافة ...&quot; القائمة - للأحزاب السياسية"
+
+#~ msgid "Respond"
+#~ msgstr "استجابة"
+
+#~ msgid "Add Party Address..."
+#~ msgstr "إضافة عنوان الحزب ..."
+
+#~ msgid "download pdf"
+#~ msgstr "تنزيل قوات الدفاع الشعبي"
+
+#~ msgid "download odt"
+#~ msgstr "تحميل ODT"
+
+#~ msgid "rss"
+#~ msgstr "آر إس إس"
+
+#~ msgid "The 'Add...' menu - for committees"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- لجان"
+
+#~ msgid "Assign an item..."
+#~ msgstr "تعيين عنصر ..."
+
+#~ msgid "The 'Add...' menu - for a Parliament"
+#~ msgstr "&quot;إضافة ...&quot; القائمة - للحصول على البرلمان"
+
+#~ msgid "The 'Add...' menu - for a parliament's sittings"
+#~ msgstr "&quot;إضافة ...&quot; القائمة - لجلسات البرلمان لل"
+
+#~ msgid "The 'Add..' menu - for government"
+#~ msgstr "&quot;إضافة..&quot; القائمة -- على الحكومة"
+
+#~ msgid "The 'Add..' menu - for ministry"
+#~ msgstr "&quot;إضافة..&quot; القائمة -- وزارة"
+
+#~ msgid "The 'Add...' menu - for Group Memberships"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- لعضوية المجموعة"
+
+#~ msgid "Add Member Address..."
+#~ msgstr "إضافة عنوان عضو ..."
+
+#~ msgid "The 'Add...' menu - for Group Sittings"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- لجلسات الفريق"
+
+#~ msgid "The 'Add...' menu - for motion"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- على الحركة"
+
+#~ msgid "Assign motion to a group..."
+#~ msgstr "تعيين الحركة إلى مجموعة ..."
+
+#~ msgid "Assign bill to a committee..."
+#~ msgstr "تعيين مشروع قانون الى لجنة ..."
+
+#~ msgid "The 'Add...' menu - for question"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- على السؤال"
+
+#~ msgid "Assign question to a group..."
+#~ msgstr "تعيين سؤال إلى مجموعة ..."
+
+#~ msgid "The 'Add...' menu - for tabled document"
+#~ msgstr "&quot;إضافة...&quot; قدم للمستند -- القائمة"
+
+#~ msgid "Assign this document to a group..."
+#~ msgstr "تعيين هذه الوثيقة إلى مجموعة ..."
+
+#~ msgid "The 'Add...' menu - for agenda item"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- على البند من جدول الأعمال"
+
+#~ msgid "Assign agenda item to a group..."
+#~ msgstr "تعيين البند من جدول الأعمال لمجموعة ..."
+
+#~ msgid "The 'Add...' menu - for offices"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- للمكاتب"
+
+#~ msgid "Add Title..."
+#~ msgstr "إضافة عنوان ..."
+
+#~ msgid "content"
+#~ msgstr "محتوى"
+
+#~ msgid "Add ..."
+#~ msgstr "إضافة..."
+
+#~ msgid "The 'Add..' menu - for calendar"
+#~ msgstr "&quot;إضافة..&quot; القائمة -- للتقويم"
+
+#~ msgid "Delete Sitting"
+#~ msgstr "حذف الجلوس"
+
+#~ msgid "Add Committee Member..."
+#~ msgstr "إضافة عضو لجنة..."
+
+#~ msgid "Add Office Member..."
+#~ msgstr "أضف عضو المكتب..."
+
+#~ msgid "You are trying to generate a report outside scheduling"
+#~ msgstr "تحاول لإنشاء تقرير خارج جدولة"
+
+#~ msgid "The period selected has no sittings"
+#~ msgstr "الفترة المختارة لا يوجد لديه جلسات"
+
+#~ msgid "A parliament must be active in the period"
+#~ msgstr "ويجب على البرلمان أن تكون نشطة في الفترة"
+
+#~ msgid "no_attachments"
+#~ msgstr "العثور على أي مرفقات."
+
+#~ msgid "manual"
+#~ msgstr "كتيب"
+
+#~ msgid "No items"
+#~ msgstr "أي عناصر"
+
+#~ msgid "vocabularies"
+#~ msgstr "المفردات"
+
+#~ msgid "Committee type status"
+#~ msgstr "لجنة وضع نوع"
+
+#~ msgid "Committee type statuses"
+#~ msgstr "لجنة أوضاع نوع"
+
+#~ msgid "Committee types"
+#~ msgstr "أنواع جنة"
+
+#~ msgid "Type of committee"
+#~ msgstr "اكتب لجنة"
+
+#~ msgid "Address type"
+#~ msgstr "اكتب عنوان"
+
+#~ msgid "Address types"
+#~ msgstr "أنواع عنوان"
+
+#~ msgid "Postal address types"
+#~ msgstr "أنواع العنوان البريدي"
+
+#~ msgid "Postal address type name"
+#~ msgstr "اكتب اسم عنوان البريد"
+
+#~ msgid "Postal Type"
+#~ msgstr "نوع البريدية"
+
+#~ msgid "Question type"
+#~ msgstr "اكتب السؤال"
+
+#~ msgid "Question types"
+#~ msgstr "السؤال أنواع"
+
+#~ msgid "Response type"
+#~ msgstr "استجابة نوع"
+
+#~ msgid "Response types"
+#~ msgstr "استجابة أنواع"
+
+#~ msgid "Attendance types"
+#~ msgstr "أنواع الحضور"
+
+#~ msgid "Attendance type"
+#~ msgstr "اكتب الحضور"
+
+#~ msgid "None"
+#~ msgstr "لا شيء"
+
+#~ msgid "Member election type"
+#~ msgstr "عضو نوع الانتخابات"
+
+#~ msgid "Member election types"
+#~ msgstr "أنواع الأعضاء في الانتخابات"
+
+#~ msgid "elected/nominated"
+#~ msgstr "انتخب / رشح"
+
+#~ msgid "Add bill type..."
+#~ msgstr "إضافة نوع مشروع القانون..."
+
+#~ msgid "Add question type..."
+#~ msgstr "إضافة نوع السؤال..."
+
+#~ msgid "Add response type..."
+#~ msgstr "إضافة نوع استجابة..."
+
+#~ msgid "Add attendance type..."
+#~ msgstr "إضافة نوع الحضور..."
+
+#~ msgid "Add committee type..."
+#~ msgstr "إضافة نوع جنة..."
+
+#~ msgid "Add committee type status..."
+#~ msgstr "إضافة لجنة وضع نوع..."
+
+#~ msgid "Add postal type..."
+#~ msgstr "إضافة نوع البريدية..."
+
+#~ msgid "Add address type..."
+#~ msgstr "إضافة نوع عنوان..."
+
+#~ msgid "Publish to Public"
+#~ msgstr "نشر في العام"
+
+#~ msgid "Publish internal"
+#~ msgstr "نشر الداخلية"
+
+#~ msgid "Make private"
+#~ msgstr "جعل خاصة"
+
+#~ msgid "withdraw"
+#~ msgstr "سحب"
+
+#~ msgid "unsignauto"
+#~ msgstr "unsignauto"
+
+#~ msgid "Archived"
+#~ msgstr "أرشفة"
+
+#~ msgid "Create Translation"
+#~ msgstr "إنشاء الترجمة"
+
+#~ msgid "Internal - visible to bungeni users"
+#~ msgstr "الداخلية -- مرئية للمستخدمين bungeni"
+
+#~ msgid "Private"
+#~ msgstr "خاص"
+
+#~ msgid "Published internal"
+#~ msgstr "نشرت الداخلية"
+
+#~ msgid "Public event"
+#~ msgstr "الحدث العام"
+
+#~ msgid "Change office type"
+#~ msgstr "تغيير نوع مكتب"
+
+#~ msgid "View Agenda and Minutes reports of the current parliament"
+#~ msgstr "عرض جدول الأعمال والمحضر تقارير مجلس النواب الحالي"
+
+#~ msgid "Browse"
+#~ msgstr "تصفح"
+
+#~ msgid "Current and historical records"
+#~ msgstr "السجلات التاريخية والحالية"
+
+#~ msgid "Visit the digital document repository"
+#~ msgstr "زيارة مستودع الوثائق الرقمية"
+
+#~ msgid "xapian settings"
+#~ msgstr "ضبط xapian"
+
+#~ msgid "Resurrect"
+#~ msgstr "بعث"
+
+#~ msgid "Name of the Assignment"
+#~ msgstr "اسم التعيين"
+
+#~ msgid "&rarr;"
+#~ msgstr "→"
+
+#~ msgid "&larr;"
+#~ msgstr "←"
+
+#~ msgid "User Unique"
+#~ msgstr "المستخدم الفريدة"
+
+#~ msgid "Ordinary or Private Notice"
+#~ msgstr "العادية أو الخاصة لاحظ"
+
+#~ msgid "Oral or Written"
+#~ msgstr "شفوية أو مكتوبة"
+
+#~ msgid "ISO Code of the  country"
+#~ msgstr "ISO قانون البلاد"
+
+#~ msgid "Voters"
+#~ msgstr "الناخبين"
+
+#~ msgid "A parliament has to be elected before it can be sworn in"
+#~ msgstr "برلمان أن ينتخب قبل أن تتمكن من اليمين في"
+
+#~ msgid "One cannot die before being born"
+#~ msgstr "لا يمكن للمرء أن يموت قبل أن يولد"
+
+#~ msgid "Duplicate Value for Unique Field"
+#~ msgstr "مكرر القيمة لحقل فريد"
+
+#~ msgid "The 'Add...' menu - for a Parliament's GroupSittingContainer"
+#~ msgstr "&quot;إضافة...&quot; القائمة -- لGroupSittingContainer للبرلمان"
+
+#~ msgid "date must be of type datetime or date"
+#~ msgstr "يجب أن يكون تاريخ من نوع التاريخ والوقت أو التاريخ"
+
+#~ msgid "Assigned bill"
+#~ msgstr "تعيين فاتورة"
+
+#~ msgid "Assigned bills"
+#~ msgstr "تعيين الفواتير"
+
+#~ msgid "Subject"
+#~ msgstr "موضوع"
+
+#~ msgid "draft items"
+#~ msgstr "مشروع البنود"
+
+#~ msgid "to review"
+#~ msgstr "لاستعراض"
+
+#~ msgid "in progress"
+#~ msgstr "في التقدم"
+
+#~ msgid "pending with the clerk"
+#~ msgstr "المعلقة مع كاتب"
+
+#~ msgid "approved"
+#~ msgstr "وافق"
+
+#~ msgid "to be scheduled"
+#~ msgstr "المزمع عقده"
+
+#~ msgid "questions to the ministry"
+#~ msgstr "أسئلة إلى وزارة"
+
+#~ msgid "oral questions"
+#~ msgstr "الأسئلة الشفوية"
+
+#~ msgid "written questions"
+#~ msgstr "أسئلة مكتوبة"
+
+#~ msgid "agendas/minutes"
+#~ msgstr "جداول / دقائق"
+
+#~ msgid "The sections of a user's workspace"
+#~ msgstr "المقاطع من مساحة العمل للمستخدم"
+
+#~ msgid " items"
+#~ msgstr "البنود"
+
+#~ msgid "Parliamentary items"
+#~ msgstr "البنود البرلمانية"
+
+#~ msgid "My archive personal items"
+#~ msgstr "أرشفة العناصر الشخصية"
+
+#~ msgid "permanent"
+#~ msgstr "دائم"
+
+#~ msgid "elected"
+#~ msgstr "منتخب"
+
+#~ msgid "nominated"
+#~ msgstr "رشح"
+
+#~ msgid "ex officio"
+#~ msgstr "بحكم منصبه"
+
+#~ msgid "P.O. Box"
+#~ msgstr "ص."
+
+#~ msgid "Military"
+#~ msgstr "عسكري"
+
+#~ msgid "Ordinary"
+#~ msgstr "العادي"
+
+#~ msgid "Private Notice"
+#~ msgstr "لاحظ خاصة"
+
+#~ msgid "Oral"
+#~ msgstr "عن طريق الفم"
+
+#~ msgid "Written"
+#~ msgstr "مكتوب"
+
+#~ msgid "Resubmit to Clerk"
+#~ msgstr "إعادة لكاتب"
+
+#~ msgid "Needs Clarification by Clerks Office"
+#~ msgstr "يحتاج الى توضيح من مكتب كتبة"
+
+#~ msgid "Finalize Minutes"
+#~ msgstr "وضع اللمسات الأخيرة دقائق"
+
+#~ msgid "Approved"
+#~ msgstr "وافق"
+
+#~ msgid "Needs MPs clarification"
+#~ msgstr "يحتاج النواب التوضيح"
+
+#~ msgid "Needs clerks clarification"
+#~ msgstr "توضيح الاحتياجات كتبة"
+
+#~ msgid "Submit to the Speaker Office"
+#~ msgstr "يقدم إلى مكتب رئيس"
+
+#~ msgid "insert"
+#~ msgstr "أدخل"
+
+#~ msgid "update"
+#~ msgstr "التحديث"
+
+#~ msgid "Instant Messenger Id"
+#~ msgstr "لحظة رسول معرف"
+
+#~ msgid "ICQ, AOL IM, GoogleTalk..."
+#~ msgstr "ICQ ، AOL IM ، GoogleTalk..."
+
+#~ msgid "Type of Office"
+#~ msgstr "نوع من مكتب"
+
+#~ msgid "Approval Date"
+#~ msgstr "تاريخ الموافقة"
+
+#~ msgid "Entered By"
+#~ msgstr "تم إدخاله من قبل"
+
+#~ msgid "Initial/supplementary question"
+#~ msgstr "السؤال الأولي / التكميلية"
+
+#~ msgid "Sitting Time"
+#~ msgstr "يجلس الزمن"
+
+#~ msgid "Document sources"
+#~ msgstr "مصادر وثيقة"
+
+#~ msgid "Report Start Date"
+#~ msgstr "تقرير تاريخ البدء"
+
+#~ msgid "Roles/Titles"
+#~ msgstr "أدوار / العناوين"
+
+#~ msgid "Party membership"
+#~ msgstr "عضوية الحزب"
+
+#~ msgid "Party memberships"
+#~ msgstr "عضوية الحزب"
+
+#~ msgid "Name [Acronym]"
+#~ msgstr "اسم [اختصار]"
+
+#~ msgid "Default chairperson"
+#~ msgstr "رئيس الافتراضي"
+
+#~ msgid "File name"
+#~ msgstr "اسم الملف"
+
+#~ msgid "Parliament Membership"
+#~ msgstr "عضوية البرلمان"
+
+#~ msgid "House Business Office"
+#~ msgstr "أعمال مجلس النواب مكتب"
+
+#~ msgid "Library Office"
+#~ msgstr "مكتبة مكتب"
+
+#~ msgid "Supplementary Question to: <br/> %s"
+#~ msgstr "السؤال المكمل ل: <br/> %s"
+
+#~ msgid "Initial Question"
+#~ msgstr "السؤال الأولي"
+
+#~ msgid "$type &mdash; ${start}-${end}"
+#~ msgstr "$type -- ${start} - ${end}"
+
+#~ msgid "Include draft sittings"
+#~ msgstr "وتشمل جلسات مشروع"
+
+#~ msgid "Whether or not to include sittings still in draft"
+#~ msgstr "أم لا يزال في جلسات تشمل مشروع"
+
+#~ msgid "ORDER OF THE DAY"
+#~ msgstr "ترتيب DAY"
+
+#~ msgid "This form generates the “votes and proceedings” report"
+#~ msgstr "هذا الشكل يولد &quot;الأصوات والإجراءات&quot; تقرير"
+
+#~ msgid "VOTES AND PROCEEDINGS"
+#~ msgstr "الأصوات وقائع"
+
+#~ msgid "Action"
+#~ msgstr "عمل"
+
+#~ msgid "Agenda Item change"
+#~ msgstr "البند التغيير"
+
+#~ msgid "Date Published"
+#~ msgstr "تاريخ النشر"
+
+#~ msgid "Edited by"
+#~ msgstr "تاليف"
+
+#~ msgid "Weekdays"
+#~ msgstr "أيام الأسبوع"
+
+#~ msgid "Select the days on which the event should occur"
+#~ msgstr "حدد الأيام التي ينبغي أن يحدث هذا الحدث"
+
+#~ msgid "Monthly"
+#~ msgstr "شهريا"
+
+#~ msgid "Select the mode of monthly recurrence"
+#~ msgstr "حدد النمط من تكرار الشهرية"
+
+#~ msgid ""
+#~ "Enter the number of times which the event should be repeated (as an "
+#~ "integer)"
+#~ msgstr "أدخل عدد المرات التي يجب تكرار الحدث (كعدد صحيح)"
+
+#~ msgid "Repeat until date"
+#~ msgstr "كرر حتى تاريخ"
+
+#~ msgid "Limit recurrence to the specified date"
+#~ msgstr "للحد من تكرار التاريخ المحدد"
+
+#~ msgid "Exceptions"
+#~ msgstr "الاستثناءات"
+
+#~ msgid ""
+#~ "Events will not be scheduled at dates appearing in this field. Separate "
+#~ "with comma or newline. Format: YYYY/MM/DD"
+#~ msgstr ""
+#~ "ولن تكون الأحداث المقرر في المواعيد الواردة في هذا الميدان. منفصلة مع "
+#~ "فاصلة أو سطر جديد. الشكل : YYYY / MM / DD"
+
+#~ msgid "Must limit recurrence (by number or date)"
+#~ msgstr "يجب الحد من تكرار (عن طريق الرقم أو التاريخ)"
+
+#~ msgid "Recurring events"
+#~ msgstr "الأحداث المتكررة"
+
+#~ msgid "Motion timeline"
+#~ msgstr "اقتراح جدول زمني"
+
+#~ msgid "Question timeline"
+#~ msgstr "مسألة الجدول الزمني"
+
+#~ msgid "Tabled document timeline"
+#~ msgstr "طرحت الوثيقة الجدول الزمني"
+
+#~ msgid "Agenda item timeline"
+#~ msgstr "البند الزمني"
+
+#~ msgid "Info"
+#~ msgstr "معلومات"
+
+#~ msgid "Currently displaying version ${version}"
+#~ msgstr "تعرض حاليا الإصدار ${version}"
+
+#~ msgid "edit transcript"
+#~ msgstr "تحرير محضر"
+
+#~ msgid "Party members"
+#~ msgstr "أعضاء الحزب"
+
+#~ msgid "Add new Question..."
+#~ msgstr "إضافة سؤال جديد..."
+
+#~ msgid "Add new Bill..."
+#~ msgstr "إضافة مشروع القانون الجديد..."
+
+#~ msgid "Add new Motion..."
+#~ msgstr "إضافة حركة جديدة..."
+
+#~ msgid "Add new Committee..."
+#~ msgstr "إضافة لجنة جديدة..."
+
+#~ msgid "Items succesfully tabled"
+#~ msgstr "البنود طرحت بنجاح"
+
+#~ msgid "questions at the ministries"
+#~ msgstr "أسئلة في الوزارات"
+
+#~ msgid "If a user is deceased he must have the status D"
+#~ msgstr "إذا كان المتوفى مستخدم انه يجب ان يكون مد حالة"
+
+#~ msgid "A Date of Death must be given if a user is deceased"
+#~ msgstr "يجب أن تعطى لتاريخ الوفاة إذا كان المتوفى هو مستخدم"
+
+#~ msgid "If a user is deceased he must have the status 'D'"
+#~ msgstr "إذا كان المتوفى مستخدم انه يجب ان يكون &quot;دال&quot; حالة"
+
+#~ msgid "Attach a file"
+#~ msgstr "إرفاق ملف"
+
+#~ msgid "Actions for the Administrator"
+#~ msgstr "إجراءات للمدير"
+
+#~ msgid "Actions for the 'Business' section"
+#~ msgstr "إجراءات لقسم &quot;الأعمال&quot;"
+
+#~ msgid "Actions for the 'Members' section"
+#~ msgstr "إجراءات لقسم &quot;الأعضاء&quot;"
+
+#~ msgid "Actions for the 'Archive' section"
+#~ msgstr "إجراءات لقسم &quot;الأرشيف&quot;"
+
+#~ msgid "Actions for the 'Records' section"
+#~ msgstr "إجراءات لقسم &quot;الوثائق&quot;"
+
+#~ msgid "box_sessions"
+#~ msgstr "box_sessions"
+
+#~ msgid "box_members"
+#~ msgstr "box_members"
+
+#~ msgid "Tasks"
+#~ msgstr "المهام"
+
+#~ msgid "Add Category..."
+#~ msgstr "إضافة عنوان..."
+
+#~ msgid "Identifer"
+#~ msgstr "Identifer"
+
+#~ msgid "Motion amendment"
+#~ msgstr "اقتراح التعديل"
+
+#~ msgid "Motion Amendment Text"
+#~ msgstr "اقتراح تعديل نص"
+
+#~ msgid "Vote Date"
+#~ msgstr "تاريخ التصويت"
+
+#~ msgid "Category"
+#~ msgstr "فئة"
+
+#~ msgid "Categories"
+#~ msgstr "فئات"
+
+#~ msgid "Short name"
+#~ msgstr "اسم قصير"
+
+#~ msgid "Dissolution date"
+#~ msgstr "تاريخ فسخ"
+
+#~ msgid "Items that failed to be tabled"
+#~ msgstr "طرحت العناصر التي فشلت في أن تكون"
+
+#~ msgid "My Questions"
+#~ msgstr "أسئلتي"
+
+#~ msgid "identifier"
+#~ msgstr "المعرف"
+
+#~ msgid "roll call identifier"
+#~ msgstr "لفة معرف الدعوة"

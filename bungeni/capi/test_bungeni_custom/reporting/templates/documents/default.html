@@ -1,0 +1,51 @@
+<html xml:lang="en" xmlns:br="http://bungeni.org/reports">
+  <br:config>
+    <title>Document Report</title>
+    <language>en</language>
+    <doctypes>default</doctypes>
+  </br:config>
+  <head>
+    <title>Document Report</title>
+  </head>
+  <body> 
+    <div id="report-content">
+        <h1 class="heading" br:type="text" br:source="dc:title"/>
+        <div>
+            <p>
+                <span>Submitted By : </span>
+                <span br:type="text" br:source="dc:mover"/>
+            </p>
+        </div>
+        <div>
+            <h2>Document Text</h2>
+            <p br:type="html" br:source="body"/>
+        </div>
+        <div>
+            <h2>Signatories</h2>
+            <table border="1">
+                <tbody br:type="listing" br:source="signatories">
+                    <tr>
+                        <td br:type="text" br:source="dc:title"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h2>Attachments</h2>
+            <table border="1">
+                <tbody br:type="listing" br:source="files">
+                    <tr>
+                        <td br:type="text" br:source="title"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h2>Changes</h2>
+            <ul br:type="listing" br:source="changes">
+                <li br:type="text" br:source="dc:title"/>
+            </ul>
+        </div>
+    </div>
+   </body>
+</html>

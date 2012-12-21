@@ -1,0 +1,68 @@
+<html xml:lang="en" xmlns:br="http://bungeni.org/reports">
+  <br:config>
+    <title>Weekly Business</title>
+    <length>1w</length>
+    <language>en</language>
+  </br:config>
+  <head>
+    <title>Weekly Business</title>
+  </head>
+  <body> 
+    <div id="report-content">
+        <h1 class="heading" br:type="text" br:source="title"/>
+        <div id="listing-body">
+            <div br:type="listing" br:source="sittings">
+                <h2 br:type="text" br:source="dc:title"/>
+
+                <div class="questions" br:condition="questions">
+                    <h3>Questions</h3>
+                    <ul br:type="listing" br:source="questions">
+                        <li>
+                            <span br:type="text" br:source="dc:title"/>
+                            <p br:condition="dc:mover">
+                                Asked by (<span br:type="text" br:source="dc:mover"/>)
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="motions" br:condition="motions">
+                    <h3>Motions</h3>
+                    <ul br:type="listing" br:source="motions">
+                        <li>
+                            <span br:type="text" br:source="dc:title"/>
+                            <p br:condition="dc:mover">
+                                Moved by (<span br:type="text" br:source="dc:mover"/>)
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tableddocuments" br:condition="tableddocuments">
+                    <h3>Tabled Documents</h3>
+                    <ul br:type="listing" br:source="tableddocuments">
+                        <li>
+                            <span br:type="text" br:source="dc:title"/>
+                            <p br:condition="dc:mover">
+                                Tabled By (<span br:type="text" br:source="dc:mover"/>)
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bills" br:condition="bills">
+                    <h3>Bills</h3>
+                    <ul br:type="listing" br:source="bills">
+                        <li>
+                            <span br:type="text" br:source="dc:title"/>
+                            <p br:condition="dc:mover">
+                                Presented by (<span br:type="text" br:source="dc:mover"/>)
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+   </body>
+</html>

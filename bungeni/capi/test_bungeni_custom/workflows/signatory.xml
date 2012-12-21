@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<workflow title="Signatory Workflow"
+    description="Workflow for Signatory documents"
+    tags="public workspace terminal"
+    permission_actions=".View .Edit .Add .Delete .Act .Append"
+    >
+    <!-- 
+        Act: Consent or reject signature request
+        Append: Append signature to a document
+    -->
+    
+    <!-- global grants -->
+    <allow permission=".Act" roles="Signatory" /><!-- !+ why is this global? -->
+    <allow permission=".Append" roles="MP" />
+    
+    
+    <!-- features -->
+    <feature name="audit" enabled="true" />
+    <feature name="version" enabled="false" />
+    <feature name="attachment" enabled="false" />
+    
+    
+    <!-- workflow facets -->
+    <facet name="draft_Clerk">
+        <allow permission=".View" roles="Clerk" />
+        <allow permission=".Edit" roles="Clerk" />
+        <allow permission=".Add" roles="Clerk" />
+        <allow permission=".Delete" roles="Clerk" />
+    </facet>
+    <facet name="draft_Owner">
+        <allow permission=".View" roles="Owner" />
+        <allow permission=".Edit" roles="Owner" />
+        <allow permission=".Add" roles="Owner" />
+        <allow permission=".Delete" roles="Owner" />
+    </facet>
+    <facet name="internal" default="true">
+        <allow permission=".View" roles="Clerk Owner Signatory MP" /><!-- !+Authenticated? -->
+    </facet>
+    <facet name="internal_Owner">
+        <allow permission=".View" roles="Authenticated" />
+        <allow permission=".Edit" roles="Owner" />
+        <allow permission=".Add" roles="Owner" />
+    </facet>
+    <facet name="internal_frozen">
+        <allow permission=".View" roles="Authenticated" />
+    </facet>
+    <facet name="public_frozen">
+        <allow permission=".View" roles="Anonymous" />
+    </facet>
+    
+    
+    <state id="awaiting_consent" title="Awaiting Consent" tags="workspace">
+        <facet ref=".draft_Owner" />
+    </state>
+    
+    <state id="consented" title="Signature Consented" tags="workspace public">
+        <facet ref=".public_frozen" />
+    </state>
+    
+    <state id="rejected" title="Signature Rejected" tags="terminal">
+        <facet ref=".internal_frozen" />
+    </state>
+    
+    <state id="withdrawn" title="Signature Withdrawn" tags="terminal">
+        <facet ref=".internal_frozen" />
+    </state>
+    
+    
+    <transition title="Create"
+        source=""
+        condition="signatory_manual_sign"
+        destination="awaiting_consent"
+        trigger="automatic"
+    />
+    
+    <transition title="Create and Sign"
+        source=""
+        destination="consented"
+        trigger="automatic"
+        condition="signatory_auto_sign"
+    />
+    
+    <transition title="consent"
+        source="awaiting_consent"
+        destination="consented"
+        trigger="manual"
+        roles="Owner"
+        require_confirmation="true"
+        condition="pi_allow_signature"
+    />
+    
+    <transition title="reject"
+        source="awaiting_consent"
+        destination="rejected"
+        trigger="manual"
+        roles="Owner"
+        require_confirmation="true"
+        condition="pi_allow_signature_actions"
+    />
+    
+    <transition title="withdraw signature"
+        source="consented"
+        destination="withdrawn"
+        trigger="manual"
+        roles="Owner"
+        require_confirmation="true"
+        condition="pi_allow_signature_actions"
+    />
+    
+    <transition title="withdraw signature - automatic"
+        source="awaiting_consent"
+        destination="withdrawn"
+        trigger="automatic"
+        condition="pi_signature_period_expired"
+    />
+    
+    <transition title="unsign document - automatic"
+        source="consented rejected withdrawn"
+        destination="awaiting_consent"
+        trigger="automatic"
+        condition="pi_unsign_signature"
+    />
+
+</workflow>

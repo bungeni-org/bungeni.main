@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<template html="false"
+  xmlns:tal="http://xml.zope.org/namespaces/tal">
+
+  <block onstate="published-agenda">
+    <subject>
+      The agenda for this sitting <span tal:replace="item/title"/> has been published
+    </subject>
+    <body>
+      The agenda for this sitting, <span tal:replace="item/title"/> was published on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+</template>

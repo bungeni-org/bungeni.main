@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<template html="false" 
+  xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <block onstate="submitted">
+    <subject>
+      Agenda item has been submitted : <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The agenda item
+      <span tal:replace="item/title"/> was submitted on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="received">
+    <subject>
+      Agenda item has been received by the Clerk's Office : <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The agenda item
+      <span tal:replace="item/title"/> was received on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="inadmissible">
+    <subject>
+      Agenda item is inadmissible : <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The agenda item 
+      <span tal:replace="item/title"/> was declared inadmissible on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="clarification_required">
+    <subject>
+      Clarification required for agenda item : 
+      <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The agenda item 
+      <span tal:replace="item/title"/> was declared inadmissible on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="debated">
+    <subject>
+      Agenda item : 
+      <span tal:replace="item/title"/> has been debated
+    </subject>
+    <body>
+      The agenda item 
+      <span tal:replace="item/title"/> was debated on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="scheduled">
+    <subject>
+      Agenda item 
+      <span tal:replace="item/title"/> has been scheduled
+    </subject>
+    <body>
+      The agenda item 
+      <span tal:replace="item/title"/> was scheduled on 
+      <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="defered">
+    <subject>
+      Agenda item 
+      <span tal:replace="item/title"/> has been deferred
+    </subject>
+    <body>
+      The agenda item 
+      <span tal:replace="item/title"/> was declared inadmissible on 
+      <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+</template>

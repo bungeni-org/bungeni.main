@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<template html="false"
+  xmlns:tal="http://xml.zope.org/namespaces/tal">
+
+  <block onstate="received">
+    <subject>
+      Question has been received by the Clerk's Office : <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The question
+      <span tal:replace="item/title"/> was received on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="inadmissible">
+    <subject>
+      Question is inadmissible : <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The question 
+      <span tal:replace="item/title"/> was declared inadmissible on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="clarification_required">
+    <subject>
+      Clarification required for question : 
+      <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The question 
+      <span tal:replace="item/title"/> requires clarification <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block afterstate="clarification_required" time="59d">
+    <subject>
+      Clarification for this question was required 59 days ago : <span tal:replace="item/title"/>
+    </subject>
+    <body>
+      The question <span tal:replace="item/title"/> required clarification 59 days ago and will be dropped by the Clerk tomorrow
+    </body>
+  </block>
+
+  <block onstate="debated">
+    <subject>
+      Question : 
+      <span tal:replace="item/title"/> has been debated
+    </subject>
+    <body>
+      The question 
+      <span tal:replace="item/title"/> was debated on <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="scheduled">
+    <subject>
+      Question 
+      <span tal:replace="item/title"/> has been scheduled
+    </subject>
+    <body>
+      The question 
+      <span tal:replace="item/title"/> was scheduled on 
+      <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+
+  <block onstate="defered">
+    <subject>
+      Question 
+      <span tal:replace="item/title"/> has been deferred
+    </subject>
+    <body>
+      The question 
+      <span tal:replace="item/title"/> was declared inadmissible on 
+      <span tal:replace="item/status_date"/>
+    </body>
+  </block>
+</template>

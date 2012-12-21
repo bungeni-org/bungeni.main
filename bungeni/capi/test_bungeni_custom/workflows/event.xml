@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<workflow title="Event Workflow"
+    description="Workflow for base Event"
+    tags="draft private public"
+    permission_actions=".View .Edit .Add .Delete"
+    >
+    
+    <!-- sub-item, so should have NO "global" grants here -> should be 
+    responsibility of the "owning" document's workflow e.g. it is that workflow
+    that must declare who (and in which states) has the permission '.Add'.
+    -->
+    
+    <!-- sub-item: NO global grants -->
+        
+    
+    <!-- features -->
+    <feature name="audit" enabled="true" />
+    <feature name="version" enabled="true" />
+    <feature name="attachment" enabled="true" />
+    
+    
+    <!-- workflow facets -->
+    <!-- 
+    NOTE on "feature" sub-item facet permissions: 
+    Feature sub-item permissions (apart from theAdd permission, that is by 
+    definitiion NOT bound to an *existing* sub-item) that are allowed within 
+    a *facet* apply only for when:
+    - the parent doc is in a state that uses this same facet
+    - the "feature" sub-item (that is always worklfowed) itself is in a 
+      state that sets permissions_from_parent="true". 
+    -->
+    <facet name="draft_Clerk">
+        <allow permission=".View" roles="Clerk" />
+        <allow permission=".Edit" roles="Clerk" />
+        <allow permission=".Add" roles="Clerk" />
+        <allow permission=".Delete" roles="Clerk" />
+    </facet>
+    <facet name="draft_Owner">
+        <allow permission=".View" roles="Owner" />
+        <allow permission=".Edit" roles="Owner" />
+        <allow permission=".Add" roles="Owner" />
+        <allow permission=".Delete" roles="Owner" />
+    </facet>
+    <facet name="internal" default="true">
+        <allow permission=".View" roles="Authenticated" />
+        <allow permission=".Edit" roles="Clerk Speaker" />
+        <allow permission=".Add" roles="Clerk Speaker" />
+    </facet>
+    <facet name="internal_frozen">
+        <allow permission=".View" roles="Authenticated" />
+    </facet>
+    <facet name="public">
+        <allow permission=".View" roles="Anonymous" />
+        <allow permission=".Edit" roles="Clerk" />
+        <allow permission=".Add" roles="Clerk" />
+    </facet>
+    <facet name="public_frozen">
+        <allow permission=".View" roles="Anonymous" />
+    </facet>
+
+    
+    <state id="draft" title="Draft Event" tags="draft private">
+        <facet ref=".draft_Owner" />
+        <facet ref="attachment.draft_Owner" />
+    </state>
+    
+    <state id="attached" title="Event" permissions_from_parent="true" tags="public" />
+    <!-- !+event.attachment(mr, dec-2012) NOTE that when an attachment (on this 
+    event) is in the "attached" state AND the this event itself is in the "attached" 
+    state then the HEAD doc handles all permissions (including all attachment-related 
+    permissions). But, the HEAD doc (in all likeliness) also directly supports
+    attachments and the workflow defines all the permissions for it, and (when both 
+    this event and a sub-attachment are both in "attached" state) there is 
+    NO DISTINCTION between permissions on direct attachments on HEAD doc or 
+    the attachments on THIS event!
+    -->
+
+    
+    <state id="internal" title="Published Internal">
+        <facet ref=".internal" />
+        <facet ref="attachment.internal" />
+    </state>
+    
+    <!-- !+inactive(mr, aug-2011) review usage and rename across the board
+        currently being used in attachment, heading, event
+        consider using "dropped", "obsoleted", "removed"...
+    -->
+    <state id="inactive" title="Inactive event">
+        <facet ref=".internal_frozen" />
+        <facet ref="attachment.internal_frozen" />
+    </state>
+    
+    
+    <!-- !+IDENTICAL_TRANSITIONS(mr, sep-2011) attachment, address, event -->
+    <!-- 
+    When adding a child item to a parent item that is NOT in draft, we 
+    take safer route of creating the sub-item in draft. But, as a simple 
+    convenience for the common case of adding a child item to a parent that
+    IS in draft, we simply jump to the more natural "parent-bound" state.
+    -->
+    <transition title="Create"
+        source=""
+        destination="draft"
+        condition="context_parent_is_not_draft"
+        trigger="automatic"
+    />
+    <transition title="Create"
+        source=""
+        destination="attached"
+        condition="context_parent_is_draft"
+        trigger="automatic"
+    />
+    
+    <transition title="Publish"
+        source="draft"
+        destination="attached"
+        trigger="manual"
+        roles="Owner"
+    />
+    
+    <transition title="Publish Internal"
+        source="draft"
+        destination="internal"
+        trigger="manual"
+        roles="Owner"
+    />
+    
+    <transition title="Re-publish"
+        source="internal"
+        destination="attached"
+        trigger="manual"
+        roles="Clerk Owner"
+    />
+    
+    <!-- 
+    if the parent has been published (i.e. is public, assuming that once 
+    published it is never retracted) we do not want to allow transitioning away 
+    from "attached".
+    -->
+    <transition title="Publish Internal"
+        source="attached"
+        destination="internal"
+        condition="context_parent_is_not_public"
+        trigger="manual"
+        roles="Clerk Owner"
+    />
+    
+    <transition title="Deactivate"
+        source="attached internal"
+        destination="inactive"
+        condition="context_parent_is_not_public"
+        trigger="manual"
+        roles="Clerk Owner"
+        require_confirmation="true"
+    />
+
+</workflow>

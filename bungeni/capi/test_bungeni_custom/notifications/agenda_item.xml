@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<notifications>
+  <notify roles="bungeni.Clerk " onstate="submitted"/>
+  <notify roles="bungeni.Owner" onstate="received"/>
+  <notify roles="bungeni.Owner" onstate="inadmissible clarification_required"/>
+  <notify roles="bungeni.Owner" onstate="debated scheduled deferred"/>
+</notifications>
