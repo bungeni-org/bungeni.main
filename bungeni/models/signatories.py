@@ -45,8 +45,9 @@ def _allow_sign_document(context):
     Used in bungeni/ui/menu.zcml to filter out 'sign document action'
     """
     manager = interfaces.ISignatoryManager(context)
-    return manager.can_sign() or (
-        manager.is_signatory and not manager.is_consented_signatory())
+    return ((manager.can_sign() and manager.allow_signature()) or 
+        (manager.is_signatory() and not manager.is_consented_signatory())
+    )
 
 def _allow_withdraw_signature(context):
     """Callable on class to check if current user is a signatory.
