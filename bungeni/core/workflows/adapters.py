@@ -150,6 +150,8 @@ def register_custom_types():
                         extended_type, name, domain_model)
                     vp_kls = get_vp_kls(extended_type)
                     domain_model.extended_properties.append((name, vp_kls))
+            # !+instrument_extended_properties, doc
+            MODEL_MODULE.instrument_extended_properties(domain_model, "doc")
         
         # !+ add containers, derived
         

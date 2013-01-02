@@ -610,7 +610,7 @@ class Doc(Entity):
     
     extended_properties = [
     ]
-instrument_extended_properties(Doc, "doc")
+#instrument_extended_properties(Doc, "doc")
 
 
 class AdmissibleMixin(object):
@@ -845,7 +845,7 @@ class Bill(Doc):
     extended_properties = [
         #("short_title", vp.TranslatedText),
     ]
-instrument_extended_properties(Bill, "doc")
+#instrument_extended_properties(Bill, "doc")
 #BillAudit
 
 class Motion(AdmissibleMixin, Doc):
@@ -895,7 +895,7 @@ class Question(AdmissibleMixin, Doc):
         #("response_type", vp.Text),
         #("response_text", vp.TranslatedText),
     ]
-instrument_extended_properties(Question, "doc")
+#instrument_extended_properties(Question, "doc")
 #QuestionAudit
 
 class TabledDocument(AdmissibleMixin, Doc):
