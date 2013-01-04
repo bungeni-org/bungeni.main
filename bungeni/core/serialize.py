@@ -69,7 +69,11 @@ def setupStorageDirectory(part_target="xml_db"):
     if os.path.exists(store_dir):
         assert os.path.isdir(store_dir)
     else:
-        os.mkdir(store_dir)
+        try:
+            os.mkdir(store_dir)
+        except OSError:
+            # assume some other code created directory
+            assert(os.path.exists(store_dir))
     
     return store_dir
 
