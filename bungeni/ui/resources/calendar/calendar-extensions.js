@@ -210,7 +210,11 @@ function re_render_event(old_id, new_id){
     event = scheduler.getEvent(new_id);
     event["status"] = "sitting";
     scheduler.clear_event(new_id);
-    scheduler.render_event(event);
+    if (scheduler._table_view){
+        scheduler.render_event_bar(event);
+    }else{
+        scheduler.render_event(event);
+    }
 }
 
 /**
