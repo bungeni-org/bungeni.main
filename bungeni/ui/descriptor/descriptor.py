@@ -328,7 +328,9 @@ class GroupMembershipRoleDescriptor(ModelDescriptor):
         ]
 
 class GroupMembershipDescriptor(ModelDescriptor):
-    localizable = False
+    localizable = True #!+False #!+ARCHETYPE_LOCALIZATION
+    scope = "archetype"
+    
     sort_on = ["user_id"]
     sort_dir = "asc"
     
@@ -424,6 +426,7 @@ _ORDER_BY_CONTAINER_NAMES = [
     "title_types",
 ]
 
+#!+CUSTOM
 # !+naming
 class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("parliamentmembers")
@@ -504,37 +507,10 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
        constraints.MpStartBeforeElection]
 
 
-class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
-    """Membership of a user in a political group."""
-    localizable = True
-    
-    fields = [
-        F(name="user_id",
-            label="Name",
-            required=True,
-            localizable=[
-                show("add view listing"), # db-not-null-ui-add
-            ],
-            value_type="member", # !+user: constrained by "parent group" OR vocabulary
-            render_type="single_select",
-            vocabulary="parliament_member",
-        ),
-    ]
-    fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    fields.extend([
-        F(name="notes",
-            label="Notes",
-            localizable=[
-                show("view edit add"),
-            ],
-            value_type="text",
-            render_type="rich_text",
-        ),
-    ])
-
-
 class GroupDescriptor(ModelDescriptor):
     localizable = True # !+ARCHETYPE_LOCALIZATION
+    scope = "archetype"
+    
     sort_on = ["group_id"]
     sort_dir = "asc"
     _combined_name_title = "%s [%s]" % (_("Full Name"), _("Short Name"))
@@ -616,7 +592,7 @@ class GroupDescriptor(ModelDescriptor):
     schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
 
-
+#!+CUSTOM
 class ParliamentDescriptor(GroupDescriptor):
     order = 1 # top
     localizable = True
@@ -700,7 +676,7 @@ class ParliamentDescriptor(GroupDescriptor):
     ]
     custom_validators = [validations.validate_parliament_dates]
 
-
+#!+CUSTOM
 class CommitteeDescriptor(GroupDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("committees")
     localizable = True
@@ -812,33 +788,6 @@ class CommitteeDescriptor(GroupDescriptor):
     ]
     custom_validators = [validations.validate_date_range_within_parent]
 
-
-class CommitteeMemberDescriptor(GroupMembershipDescriptor):
-    localizable = True
-    
-    fields = [
-        F(name="user_id",
-            label="Name",
-            required=True,
-            localizable=[
-                show("add view listing"), # db-not-null-ui-add
-            ],
-            value_type="user",
-            render_type="single_select",
-            vocabulary="parliament_member",
-        ),
-    ]
-    fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    fields.extend([
-        F(name="notes",
-            label="Notes",
-            localizable=[
-                show("view edit add"),
-            ],
-            value_type="text",
-            render_type="rich_text",
-        ),
-    ])
 
 
 class GroupDocumentAssignmentDescriptor(ModelDescriptor):
@@ -1038,34 +987,7 @@ class MemberTitleDescriptor(ModelDescriptor):
     ]
 
 
-class CommitteeStaffDescriptor(GroupMembershipDescriptor):
-    localizable = True
-    
-    fields = [
-        F(name="user_id",
-            label="Name",
-            required=True,
-            localizable=[
-                show("add view listing"), # db-not-null-ui-add
-            ],
-            value_type="user",
-            render_type="single_select",
-            vocabulary="user_not_mp",
-        ),
-    ]
-    fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    fields.extend([
-        F(name="notes",
-            label="Notes",
-            localizable=[
-                show("view edit add"),
-            ],
-            value_type="text",
-            render_type="rich_text",
-        ),
-    ])
-
-
+#!+CUSTOM
 class PoliticalGroupDescriptor(GroupDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("politicalgroups")
     localizable = True
@@ -1093,6 +1015,7 @@ class PoliticalGroupDescriptor(GroupDescriptor):
     custom_validators = [validations.validate_date_range_within_parent]
 
 
+#!+CUSTOM
 class OfficeDescriptor(GroupDescriptor):
     order = 2 # top
     localizable = True
@@ -1121,34 +1044,7 @@ class OfficeDescriptor(GroupDescriptor):
     custom_validators = [validations.validate_date_range_within_parent]
 
 
-class OfficeMemberDescriptor(GroupMembershipDescriptor):
-    localizable = True
-    
-    fields = [
-        F(name="user_id",
-            label="Name",
-            required=True,
-            localizable=[
-                show("add view listing"), # db-not-null-ui-add
-            ],
-            value_type="user",
-            render_type="single_select",
-            vocabulary="user_not_mp",
-        ),
-    ]
-    fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    fields.extend([
-        F(name="notes",
-            label="Notes",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            value_type="text",
-            render_type="rich_text",
-        ),
-    ])
-
-
+#!+CUSTOM
 class MinistryDescriptor(GroupDescriptor):
     localizable = True
     
@@ -1166,34 +1062,7 @@ class MinistryDescriptor(GroupDescriptor):
     custom_validators = [validations.validate_date_range_within_parent]
 
 
-class MinisterDescriptor(GroupMembershipDescriptor):
-    localizable = True
-    
-    fields = [
-        F(name="user_id",
-            label="Name",
-            required=True,
-            localizable=[
-                show("add view listing"), # db-not-null-ui-add
-            ],
-            value_type="user",
-            render_type="single_select",
-            vocabulary="user",
-        ),
-    ]
-    fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    fields.extend([
-        F(name="notes",
-            label="Notes",
-            localizable=[
-                show("view edit add"),
-            ],
-            value_type="text",
-            render_type="rich_text",
-        ),
-    ])
-
-
+#!+CUSTOM
 class GovernmentDescriptor(GroupDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("governments")
     localizable = True

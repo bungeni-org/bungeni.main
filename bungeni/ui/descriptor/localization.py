@@ -8,7 +8,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 
-from time import time
 from lxml import etree
 from bungeni import alchemist
 from bungeni.alchemist.descriptor import (
@@ -29,8 +28,6 @@ from bungeni.utils import naming, misc
 from bungeni.ui.descriptor import descriptor as DESCRIPTOR_MODULE
 
 PATH_UI_FORMS_SYSTEM = capi.get_path_for("forms", "ui.xml")
-PATH_UI_FORMS_CUSTOM = capi.get_path_for("forms", "custom.xml")
-
 ROLES_DEFAULT = " ".join(Field._roles)
 
 
@@ -88,58 +85,59 @@ def is_stale_info(bval, cval, message):
     return False
 '''
 
+
+@bungeni_custom_errors
 def check_reload_localization(event):
     """Called once on IWSGIApplicationCreatedEvent and (if in DEVMODE)
     once_per_request on IBeforeTraverseEvent events (ui.publication).
     """
-    for file_path in [PATH_UI_FORMS_SYSTEM, PATH_UI_FORMS_CUSTOM]:
+    if capi.is_modified_since(PATH_UI_FORMS_SYSTEM):
+        localize_descriptors(PATH_UI_FORMS_SYSTEM)
+    for type_key, ti in capi.iter_type_info(scope="custom"):
+        #!+get_descriptor_elem
+        file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
         if capi.is_modified_since(file_path):
-            localize_descriptors(file_path)
+            descriptor_doc = bungeni.schema.validate_file_rng("descriptor", file_path)
+            assert misc.xml_attr_str(descriptor_doc, "name") == type_key, type_key
+            localize_descriptor(descriptor_doc)
 
 
-@bungeni_custom_errors
 def localize_descriptors(file_path):
     """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
     """
-    start_time = time()
     descriptor_doc = bungeni.schema.validate_file_rng("descriptor", file_path)
     # make the value of <ui.@roles> as *the* bungeni default list of roles
     global ROLES_DEFAULT
     Field._roles[:] = qualified_roles(descriptor_doc.get("roles", ROLES_DEFAULT))
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
-    
-    localized = []
     for edescriptor in descriptor_doc.findall("descriptor"):
-        type_key = misc.xml_attr_str(edescriptor, "name")
-        try:
-            ti = capi.get_type_info(type_key)
-        except KeyError:
-            # unknown type (or no enabled type found) for this descriptor
-            log.warn("No enabled type found for descriptor %r - "
-                "ignoring localization" % (type_key))
-            continue
-        # !+ ensure domain_model has already been set
-        assert ti.domain_model, ti
-        order = misc.xml_attr_int(edescriptor, "order")
-        fields = new_descriptor_fields(edescriptor)
-        try:
-            cls = update_descriptor_cls(type_key, fields, order)
-        except AttributeError:
-            # new custom descriptor
-            archetype = misc.xml_attr_str(edescriptor, "archetype")
-            cls = new_descriptor_cls(type_key, fields, order, archetype)
-        localized.append(type_key)
-    
-    m = ("\n\nDone LOCALIZING DESCRIPTORS from FILE: %s\n"
-         "RUNNING WITH:\n\n%s\n\n"
-         "...DONE [in %s secs]") % (
-            file_path, 
-            "\n\n".join(sorted(
-                [ "%s: %s" % (key, capi.get_type_info(key)) for key in localized ]
-            )),
-            time()-start_time)
-    log.debug(m)
+        localize_descriptor(edescriptor)
+
+
+def localize_descriptor(descriptor_elem):
+    """Localize descriptor from descriptor XML element.
+    """
+    type_key = misc.xml_attr_str(descriptor_elem, "name")
+    try:
+        ti = capi.get_type_info(type_key)
+    except KeyError:
+        # unknown type (or no enabled type found) for this descriptor
+        log.warn("No enabled type found for descriptor %r - "
+            "ignoring localization" % (type_key))
+        return
+    # !+ ensure domain_model has already been set
+    assert ti.domain_model, ti
+    order = misc.xml_attr_int(descriptor_elem, "order")
+    fields = new_descriptor_fields(descriptor_elem)
+    try:
+        cls = update_descriptor_cls(type_key, fields, order)
+    except AttributeError:
+        # new custom descriptor
+        archetype = misc.xml_attr_str(descriptor_elem, "archetype")
+        cls = new_descriptor_cls(type_key, fields, order, archetype)
+    log.debug("Localized descriptor [%s] %s", type_key, ti)
+
 
 
 def new_descriptor_fields(edescriptor):

@@ -191,3 +191,4 @@ def dump_i18n_message_ids():
 if __name__ == "__main__":    
     reset_localization_system_descriptors()
     dump_i18n_message_ids()
+

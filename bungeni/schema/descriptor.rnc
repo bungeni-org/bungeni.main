@@ -14,7 +14,7 @@
 grammar {
     include "common.rnc"
     
-    start = UI
+    start = ( UI | DESCRIPTOR )
     
     UI = element ui {
         attribute roles { SPACE_SEPARATED_TOKENS }, # (un/qualified) roles
