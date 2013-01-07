@@ -23,7 +23,6 @@ from bungeni.models.utils import get_principal_id
 import bungeni.core.version
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
-from bungeni.utils import naming
 import re
 import dbutils
 
@@ -244,7 +243,7 @@ def schedule_sitting_items(context):
         except (NoTransitionAvailableError, RuntimeWarning):
             debug.log_exc_info(sys.exc_info(), log.error)
     
-    for schedule in context.item_schedule:
+    for schedule in context.items.values():
         wfc = IWorkflowController(schedule.item, None)
         if wfc is None:
             continue

@@ -1,3 +1,13 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Bungeni notifications
+Sets up notification machinery for each document type.
+ 
+$Id$
+"""
+
 log = __import__("logging").getLogger("bungeni.core.notifications")
 
 import os
@@ -15,6 +25,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap, IRole
 from zope.component.zcml import handler
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.utils import core
+from bungeni.utils import naming
 from bungeni.core.interfaces import INotificationsUtility, IMessageQueueConfig
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.alchemist import Session
@@ -224,7 +235,10 @@ def notification_time(time_string):
 def get_message(document, principal_ids):
     message = obj2dict(document, 0)
     if not message.get("type", None):
-        message["type"] = message["document_type"]
+        try:
+            message["type"] = message["document_type"]
+        except KeyError:
+            message["type"] = naming.polymorphic_identity(document.__class__)
     message["principal_ids"] = list(principal_ids)
     return message
 
