@@ -653,7 +653,7 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
 
 
 class WorkspaceSchedulableContainer(WorkspaceUnderConsiderationContainer):
-    """Contains documents availbale for scheduling
+    """Contains documents available for scheduling
     """
     
     def domain_status(self):

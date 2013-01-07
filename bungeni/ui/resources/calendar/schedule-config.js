@@ -45,7 +45,10 @@ YAHOO.bungeni.Utils = function(){
      * container
      **/
      var _makeURI = function (suffix){
-         return SGlobals.items_container_uri + "/" + suffix;
+         if (suffix.indexOf("/")>=0){
+            return suffix
+        }
+        return SGlobals.items_container_uri + "/" + suffix;
      }
 
     return {
