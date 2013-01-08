@@ -19,7 +19,11 @@ from bungeni.capi import capi
     capi.get_type_info(type_key) 
     ...
     # decorator
-    capi.bungeni_custom_errors 
+    capi.bungeni_custom_errors
+    
+    # schema
+    capi.schema.validate_file_rng()
+    ...
 
 $Id$
 """
@@ -27,13 +31,18 @@ log = __import__("logging").getLogger("bungeni.capi")
 
 __all__ = ["capi"]
 
-import _capi
+import _capi, _schema
 
 
 # we access all via the singleton instance
 capi = _capi.CAPI()
 
-# convenience, attach _bungeni_custom_errors decorator onto capi singleton
+# additional conveniences for simpler and more uniform usage
+
+# attach _bungeni_custom_errors decorator onto capi singleton
 capi.bungeni_custom_errors = _capi._bungeni_custom_errors
+
+# attach _schema sub-package onto capi singleton
+capi.schema = _schema
 
 

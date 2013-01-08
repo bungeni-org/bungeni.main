@@ -20,7 +20,6 @@ from zc.table import column
 from zope import formlib
 
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.schema import qualified_roles
 from bungeni.ui.i18n import _
 from bungeni.ui.table import TableFormatter
 from bungeni.ui import forms
@@ -64,9 +63,9 @@ class UserAssignmentView(forms.common.BaseForm):
                     feature = f
         if feature:
             if role_type == "assigner":
-                return qualified_roles(feature.params["assigner_roles"])
+                return capi.schema.qualified_roles(feature.params["assigner_roles"])
             elif role_type == "assignable":
-                return qualified_roles(feature.params["assignable_roles"])
+                return capi.schema.qualified_roles(feature.params["assignable_roles"])
         return []
 
     def assignable_roles(self):

@@ -18,7 +18,27 @@
   <start>
     <choice>
       <ref name="UI"/>
-      <ref name="DESCRIPTOR"/>
+      <element name="descriptor">
+        <attribute name="name">
+          <ref name="SYMBOL_NAME"/>
+        </attribute>
+        <!-- type_key -->
+        <attribute name="archetype">
+          <ref name="SYMBOL_NAME"/>
+        </attribute>
+        <optional>
+          <!-- an archetype key, custom types MUST specify this -->
+          <attribute name="order">
+            <data type="integer"/>
+          </attribute>
+        </optional>
+        <optional>
+          <attribute name="note"/>
+        </optional>
+        <zeroOrMore>
+          <ref name="FIELD"/>
+        </zeroOrMore>
+      </element>
     </choice>
   </start>
   <define name="UI">
@@ -39,12 +59,6 @@
       </attribute>
       <optional>
         <!-- type_key -->
-        <attribute name="archetype">
-          <ref name="SYMBOL_NAME"/>
-        </attribute>
-      </optional>
-      <optional>
-        <!-- an archetype key, custom types MUST specify this -->
         <attribute name="order">
           <data type="integer"/>
         </attribute>

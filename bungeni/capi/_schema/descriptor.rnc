@@ -14,7 +14,16 @@
 grammar {
     include "common.rnc"
     
-    start = ( UI | DESCRIPTOR )
+    start = ( UI |
+        element descriptor {
+            attribute name { SYMBOL_NAME }, # type_key
+            attribute archetype { SYMBOL_NAME }, # an archetype key, custom types MUST specify this
+            attribute order { xsd:integer }?,
+            attribute note { text }?,
+            
+            FIELD* 
+        }
+    )
     
     UI = element ui {
         attribute roles { SPACE_SEPARATED_TOKENS }, # (un/qualified) roles
@@ -24,7 +33,6 @@ grammar {
     
     DESCRIPTOR = element descriptor {
         attribute name { SYMBOL_NAME }, # type_key
-        attribute archetype { SYMBOL_NAME }?, # an archetype key, custom types MUST specify this
         attribute order { xsd:integer }?,
         attribute note { text }?,
         

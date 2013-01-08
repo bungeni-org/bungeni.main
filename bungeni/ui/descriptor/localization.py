@@ -17,10 +17,8 @@ from bungeni.alchemist.descriptor import (
     show, hide,
     #norm_sorted,
 )
-from bungeni.schema import qualified_roles
 from bungeni.ui.descriptor import field
 from bungeni.capi import capi
-import bungeni.schema
 from bungeni.utils import naming, misc
 
 xas, xab = misc.xml_attr_str, misc.xml_attr_bool
@@ -99,7 +97,7 @@ def check_reload_localization(event):
         #!+get_descriptor_elem
         file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
         if capi.is_modified_since(file_path):
-            descriptor_doc = bungeni.schema.validate_file_rng("descriptor", file_path)
+            descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
             assert xas(descriptor_doc, "name") == type_key, type_key
             localize_descriptor(descriptor_doc)
 
@@ -107,10 +105,10 @@ def check_reload_localization(event):
 def localize_descriptors(file_path):
     """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
     """
-    descriptor_doc = bungeni.schema.validate_file_rng("descriptor", file_path)
+    descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
     # make the value of <ui.@roles> as *the* bungeni default list of roles
     global ROLES_DEFAULT
-    Field._roles[:] = qualified_roles(descriptor_doc.get("roles", ROLES_DEFAULT))
+    Field._roles[:] = capi.schema.qualified_roles(descriptor_doc.get("roles", ROLES_DEFAULT))
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
     for edescriptor in descriptor_doc.findall("descriptor"):
@@ -154,7 +152,7 @@ def new_descriptor_fields(edescriptor):
         clocs = []
         for cloc_elem in f_elem.getchildren():
             modes = xas(cloc_elem, "modes")
-            roles = qualified_roles(xas(cloc_elem, "roles", ROLES_DEFAULT))
+            roles = capi.schema.qualified_roles(xas(cloc_elem, "roles", ROLES_DEFAULT))
             tag = cloc_elem.tag
             if tag == "show":
                 clocs.append(show(modes=modes, roles=roles))

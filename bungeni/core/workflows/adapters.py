@@ -103,12 +103,12 @@ def register_custom_types():
     """
     from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
     from bungeni.models import feature
-    import bungeni.schema
+    from bungeni.capi import capi
     
     # !+archetype? move to types? what about extended/derived/container attrs?
     def get_descriptor_elem(type_key):
         file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
-        descriptor_doc = bungeni.schema.validate_file_rng("descriptor", file_path)
+        descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
         assert misc.xml_attr_str(descriptor_doc, "name") == type_key, type_key
         return descriptor_doc
     

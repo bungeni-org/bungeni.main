@@ -18,12 +18,6 @@ from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.capi import capi
-from bungeni.schema import (
-    validate_file_rng,
-    qualified_permission_actions,
-    qualified_pid,
-    qualified_roles,
-)
 from bungeni.utils import naming, misc
 
 #
@@ -174,8 +168,8 @@ def load_facets(workflow_name, workflow_elem):
 
 def get_permissions_from_allows(workflow_name, elem):
     def gen_allow_permissions(allow_elem):
-        pid = qualified_pid(workflow_name, xas(allow_elem, "permission"))
-        for role in qualified_roles(xas(allow_elem, "roles")):
+        pid = capi.schema.qualified_pid(workflow_name, xas(allow_elem, "permission"))
+        for role in capi.schema.qualified_roles(xas(allow_elem, "roles")):
             yield (GRANT, pid, role)
     perms = []
     for allow in elem.iterchildren("allow"):
@@ -257,7 +251,7 @@ def load(file_key, workflow_name,
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
-    workflow_doc = validate_file_rng("workflow", file_path)
+    workflow_doc = capi.schema.validate_file_rng("workflow", file_path)
     return _load(workflow_name, workflow_doc)
 
 def _load(workflow_name, workflow):
@@ -307,7 +301,7 @@ def _load(workflow_name, workflow):
             "same role [%s].") % (workflow_name, pid, role)
     
     # permission_actions -> permissions for this type
-    for (key, permission_action) in qualified_permission_actions(
+    for (key, permission_action) in capi.schema.qualified_permission_actions(
             workflow_name, xas(workflow, "permission_actions", "").split()
         ):
         pid = "bungeni.%s.%s" % (key, permission_action)
@@ -439,7 +433,7 @@ def _load(workflow_name, workflow):
         if "trigger" in kw:
             kw["trigger"] = trigger_value_map[kw["trigger"]]
         # roles -> permission - one-to-one per transition
-        roles = qualified_roles(kw.pop("roles", ""))
+        roles = capi.schema.qualified_roles(kw.pop("roles", ""))
         if not is_zcml_permissionable(t):
             assert not roles, "Workflow [%s] - non-permissionable transition " \
                 "does not allow @roles [%s]." % (workflow_name, roles) #!+RNC
