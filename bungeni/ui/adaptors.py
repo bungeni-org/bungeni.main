@@ -18,7 +18,7 @@ from bungeni.models.interfaces import (IFeatureAudit, \
     IAlchemistContainer
 )
 from bungeni.utils import register
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 #import bungeni.ui.versions # !+REGISTER
 

@@ -36,7 +36,7 @@ from bungeni.models import domain, interfaces
 from appy.pod.renderer import Renderer
 
 
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, misc
 from bungeni.ui.reporting import generators

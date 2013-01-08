@@ -17,7 +17,7 @@ from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
 
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 #!+CALENDAR(mb, Jan-2012) This should come from capi or workflow configuration
 #!+SCHEDULE(mr, feb-2012) this can already be added as a feature on each 

@@ -29,7 +29,7 @@ from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
 from bungeni.models import utils, domain
 from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
-from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.capi import capi
 from bungeni.core.interfaces import (
     IWorkspaceTabsUtility,
     IWorkspaceContainer,
@@ -450,7 +450,7 @@ def load_workspaces():
         if workflow and workflow.has_feature("workspace"):
             load_workspace("%s.xml" % type_key, ti.domain_model)
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt.
     """

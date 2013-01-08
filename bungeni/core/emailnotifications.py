@@ -18,7 +18,7 @@ from bungeni.core.interfaces import (IMessageQueueConfig, IBungeniMailer,
 from bungeni.core.notifications import get_mq_connection
 from bungeni.models import domain
 from bungeni.models.settings import EmailSettings
-from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.capi import capi
 from bungeni.utils import register
 from bungeni.ui.reporting.generators import get_attr
 
@@ -160,7 +160,7 @@ class EmailBlock(object):
                 body_template(item=Item(self.message)))
 
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def email_notifications_callback(channel, method, properties, body):
     message = simplejson.loads(body)
     ti = capi.get_type_info(message["type"])
@@ -190,7 +190,7 @@ def email_worker():
     channel.start_consuming()
 
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def load_email():
     for type_key, ti in capi.iter_type_info():
         workflow = ti.workflow

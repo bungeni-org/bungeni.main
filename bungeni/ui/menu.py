@@ -44,7 +44,7 @@ from bungeni.ui.i18n import  _
 from bungeni.ui.utils import url, misc
 from bungeni.ui import interfaces
 
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.utils import naming
 
 class BrowserMenu(zope.browsermenu.menu.BrowserMenu):

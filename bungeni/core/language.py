@@ -19,7 +19,7 @@ from zope.i18n import translate
 from locale import getdefaultlocale
 
 from bungeni.core.interfaces import ILanguageProvider
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.core.translation import get_request_language
 from bungeni.ui.utils.common import get_request # !+CORE_UI_DEPENDENCY
 from bungeni.utils import register

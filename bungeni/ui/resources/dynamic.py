@@ -3,7 +3,7 @@ import zope.interface
 from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
 import zope.cachedescriptors.property
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, common
 from bungeni.core.translation import (translate_i18n as i18n, 

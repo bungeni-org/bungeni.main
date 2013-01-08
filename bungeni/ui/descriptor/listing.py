@@ -40,7 +40,7 @@ from bungeni.models.interfaces import IOwned, IScheduleText
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui.utils import common, date, url
 from bungeni.ui.i18n import _
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 
 # support utils 

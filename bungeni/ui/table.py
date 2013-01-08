@@ -10,7 +10,7 @@ from bungeni.ui import container
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
 from bungeni.ui.widgets import text_input_search_widget
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 import bungeni.alchemist
 from bungeni.alchemist import utils
 from bungeni.utils import naming

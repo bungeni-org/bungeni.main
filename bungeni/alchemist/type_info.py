@@ -5,7 +5,7 @@
 """Aggregation of information about loaded domain types.
 
 No public methods here -- all available methods from this are those exposed 
-via bungeni.utils.capi.
+via bungeni.capi.
 
 $Id$
 """
@@ -40,7 +40,7 @@ def _add(workflow_key, iface, workflow, domain_model, descriptor_model):
     assert iface and domain_model, "Must at least specify interface and model."
     type_key = naming.polymorphic_identity(domain_model)
     try:
-        from bungeni.utils.capi import capi
+        from bungeni.capi import capi
         ti = capi.get_type_info(type_key)
     except KeyError:
         # ok, no TI entry for type_key as yet
@@ -233,7 +233,7 @@ class TI(object):
 - !+ should ti.interface be automatically generated also for system types?
 
 Usage:
-    from bungeni.utils.capi import capi
+    from bungeni.capi import capi
     capi.get_type_info(discriminator) -> TypeInfo
     capi.iter_type_info() -> iterator of all registered (key, TypeInfo)
 '''

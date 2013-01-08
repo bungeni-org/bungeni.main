@@ -11,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.ui.feature")
 
 from zope.configuration import xmlconfig
 from bungeni.models import domain
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.utils import naming
 
 

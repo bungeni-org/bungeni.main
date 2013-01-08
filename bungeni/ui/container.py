@@ -28,7 +28,7 @@ from bungeni.ui.utils import url, date
 from bungeni.ui import cookies
 from bungeni.ui import browser
 from bungeni.utils import register
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.utils.naming import polymorphic_identity
 
 

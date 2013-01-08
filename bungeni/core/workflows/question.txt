@@ -173,7 +173,7 @@ Set up a security mapping.
 
 
 !+register_specific_workflow_adapter
-    >>> from bungeni.utils.capi import capi
+    >>> from bungeni.capi import capi
     >>> ti = capi.get_type_info("question")
     >>> from bungeni.core.workflows import adapters
     >>> adapters.register_specific_workflow_adapter(ti)

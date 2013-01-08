@@ -68,7 +68,7 @@ from bungeni.alchemist import Session
 from bungeni.ui import vocabulary
 
 from bungeni.utils import register, naming
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 # Filter key names prefix - for available items listings
 FILTER_PREFIX = "filter_"

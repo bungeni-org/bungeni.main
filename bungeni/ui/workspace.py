@@ -30,7 +30,7 @@ from bungeni.ui.forms.common import AddForm
 from bungeni.core.workspace import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 #from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.utils import register
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.ui.widgets import date_input_search_widget
 from bungeni.models import domain
 

@@ -23,7 +23,7 @@ from zope import component
 from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap, IRole
 from zope.component.zcml import handler
-from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.capi import capi
 from bungeni.utils import core
 from bungeni.utils import naming
 from bungeni.core.interfaces import INotificationsUtility, IMessageQueueConfig
@@ -455,7 +455,7 @@ class NotificationsUtility(object):
 component.provideUtility(NotificationsUtility())
 
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def load_notification_config(file_name, domain_class):
     """Loads the notification configuration for each document
     """

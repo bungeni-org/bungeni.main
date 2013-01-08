@@ -6,7 +6,7 @@ import sys
 # are not loaded and other types have workflow set to None
 from bungeni.core.workflows import adapters
 from bungeni.core.workflow.dot import dot
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 def write_file(in_folder, file_name, contents):
     f = open(in_folder + file_name, "w")

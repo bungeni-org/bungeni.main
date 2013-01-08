@@ -26,7 +26,7 @@ from bungeni.ui.utils import debug
 import re
 import dbutils
 
-from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.capi import capi
 
 from ConfigParser import ConfigParser, NoOptionError
 import os
@@ -94,7 +94,7 @@ def create_version(context):
     #message = message_template % context.__dict__
 
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def get_mask(context):
     # assert IBungeniParliamentaryContent.providedBy(context)
     # !+IBungeniParliamentaryContent(mr, nov-2011) only context typed

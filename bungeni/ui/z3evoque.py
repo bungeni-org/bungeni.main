@@ -158,7 +158,7 @@ def set_get_gettext():
     This function is to be defined and called by the application - 
     get_gettext itself should have the parameters (i18n_domain, language).
     """
-    from bungeni.utils.capi import capi
+    from bungeni.capi import capi
     _i18n_domain_localedirs = {
         "bungeni": capi.get_path_for("translations", "bungeni"),
     }

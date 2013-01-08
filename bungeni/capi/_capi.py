@@ -2,22 +2,14 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Accessor API for Bungeni Custom parameters.
+"""Defines the accessor class for Bungeni Custom parameters.
 
-Provides uniform access and validation layer, plus related utilities, 
-for using bungeni_custom parameters.
-
-All access to bungeni_custom parameters should go through this module. 
-
-Usage:
-from bungeni.utils.capi import capi
-    ... capi.NAME ...
+See bungeni.capi __init__.py for usage.
 
 $Id$
 """
-__all__ = ["capi", "bungeni_custom_errors"]
+log = __import__("logging").getLogger("bungeni.capi")
 
-log = __import__("logging").getLogger("bungeni.utils.capi")
 
 import time
 import os
@@ -27,7 +19,7 @@ from bungeni.alchemist import type_info
 import bungeni_custom as bc
 
 
-def bungeni_custom_errors(f):
+def _bungeni_custom_errors(f):
     """Decorator to intercept any error raised by function f and re-raise it
     as a BungeniCustomError. To be used to decorate any function involved 
     in reading/validating/processing any bungeni_custom parameters. 
@@ -55,14 +47,14 @@ class CAPI(object):
     # bungeni_custom parameter properties
     
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def zope_i18n_allowed_languages(self):
         # NOTE: zope.i18n.config.ALLOWED_LANGUAGES expects the value of the 
         # env variable for this to be a COMMA or SPACE separated STRING
         return tuple(bc.zope_i18n_allowed_languages.split())
     
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def zope_i18n_compile_mo_files(self):
         return bool(
             bc.zope_i18n_compile_mo_files is True or 
@@ -70,7 +62,7 @@ class CAPI(object):
         )
     
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def default_language(self):
         assert bc.default_language in self.zope_i18n_allowed_languages, \
             "Default language [%s] not in allowed languages [%s]" % (
@@ -78,7 +70,7 @@ class CAPI(object):
         return bc.default_language
         
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def right_to_left_languages(self):
         rtl_langs = tuple(bc.right_to_left_languages.split())
         assert set(rtl_langs).issubset(set(self.zope_i18n_allowed_languages)),\
@@ -87,7 +79,7 @@ class CAPI(object):
         return rtl_langs
     
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def check_auto_reload_localization(self):
         """ () -> int
         minimum number of seconds to wait between checks for whether a 
@@ -96,13 +88,13 @@ class CAPI(object):
         int(bc.check_auto_reload_localization) # TypeError if not an int
         return bc.check_auto_reload_localization
     
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def get_workflow_condition(self, condition):
         conds_module = resolve("._conditions", "bungeni_custom.workflows")
         return getattr(conds_module, condition) # raises AttributeError
     
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def default_number_of_listing_items(self):
         """This is the max number of items that are displayed in a listing by
         default. Returns an integer
@@ -110,13 +102,13 @@ class CAPI(object):
         return int(bc.default_number_of_listing_items)
     
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def long_text_column_listings_truncate_at(self):
         """When listing text columns, only display first so many characters."""
         return int(bc.long_text_column_listings_truncate_at)
     
     @property
-    @bungeni_custom_errors
+    @_bungeni_custom_errors
     def workspace_tab_count_cache_refresh_time(self):
         """The duration in seconds between tab count refresh operations"""
         return int(bc.workspace_tab_count_cache_refresh_time)
@@ -211,8 +203,4 @@ class CAPI(object):
         for type_key, ti in type_info._iter():
             if (scope is None or ti.scope == scope):
                 yield type_key, ti
-
-
-# we access all via the singleton instance
-capi = CAPI()
 

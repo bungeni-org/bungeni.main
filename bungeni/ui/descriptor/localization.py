@@ -19,9 +19,11 @@ from bungeni.alchemist.descriptor import (
 )
 from bungeni.schema import qualified_roles
 from bungeni.ui.descriptor import field
-from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.capi import capi
 import bungeni.schema
 from bungeni.utils import naming, misc
+
+xas, xab = misc.xml_attr_str, misc.xml_attr_bool
 
 # constants 
 
@@ -86,7 +88,7 @@ def is_stale_info(bval, cval, message):
 '''
 
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def check_reload_localization(event):
     """Called once on IWSGIApplicationCreatedEvent and (if in DEVMODE)
     once_per_request on IBeforeTraverseEvent events (ui.publication).
@@ -98,7 +100,7 @@ def check_reload_localization(event):
         file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
         if capi.is_modified_since(file_path):
             descriptor_doc = bungeni.schema.validate_file_rng("descriptor", file_path)
-            assert misc.xml_attr_str(descriptor_doc, "name") == type_key, type_key
+            assert xas(descriptor_doc, "name") == type_key, type_key
             localize_descriptor(descriptor_doc)
 
 
@@ -118,7 +120,7 @@ def localize_descriptors(file_path):
 def localize_descriptor(descriptor_elem):
     """Localize descriptor from descriptor XML element.
     """
-    type_key = misc.xml_attr_str(descriptor_elem, "name")
+    type_key = xas(descriptor_elem, "name")
     try:
         ti = capi.get_type_info(type_key)
     except KeyError:
@@ -134,7 +136,7 @@ def localize_descriptor(descriptor_elem):
         cls = update_descriptor_cls(type_key, fields, order)
     except AttributeError:
         # new custom descriptor
-        archetype = misc.xml_attr_str(descriptor_elem, "archetype")
+        archetype = xas(descriptor_elem, "archetype")
         cls = new_descriptor_cls(type_key, fields, order, archetype)
     log.debug("Localized descriptor [%s] %s", type_key, ti)
 
@@ -145,7 +147,6 @@ def new_descriptor_fields(edescriptor):
     descriptor configuration.
     # !+ what about "removed" fields from a sys-descriptor config?
     """
-    xas, xab = misc.xml_attr_str, misc.xml_attr_bool
     type_key = xas(edescriptor, "name")
     fields = []
     for f_elem in edescriptor.findall("field"):
@@ -164,7 +165,7 @@ def new_descriptor_fields(edescriptor):
                     "Unknown directive %r in field %r in descriptor %r" % (
                         cloc_elem.tag, xas(f_elem, "name"), type_key))
             else:
-                pass # comment, ....
+                pass # xml comment, ...
         fields.append(field.F(
                 name=xas(f_elem, "name"),
                 label=xas(f_elem, "label"),

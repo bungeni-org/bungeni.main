@@ -52,7 +52,7 @@ from bungeni.ui import browser
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import register
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 TRUE_VALS = "true", "1"
 

@@ -33,7 +33,7 @@ from bungeni.alchemist.interfaces import (IAlchemistContainer,
 )
 import domain, schema, delegation
 from bungeni.core.workflow.states import get_head_object_state_rpm
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 # !+ move "contextual" utils to ui.utils.contextual
 

@@ -30,7 +30,7 @@ from sqlalchemy.orm import mapper
 import sqlalchemy as rdb
 import sqlalchemy.sql.expression as sql
 
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
 from bungeni.alchemist.interfaces import IAlchemistContainer

@@ -25,7 +25,7 @@ from bungeni.ui.i18n import _
 from bungeni.ui.table import TableFormatter
 from bungeni.ui import forms
 from bungeni.ui.utils import url, common
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 from bungeni.alchemist import Session
 from bungeni.models import domain, utils
 from bungeni.models.interfaces import ISubRoleAnnotations

@@ -38,7 +38,7 @@ from plone.i18n.locales.interfaces import ILanguageAvailability
 # See zope.i18n.config for how these values are consumed.
 # 
 #from zope.i18n.config import ALLOWED_LANGUAGES
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 ALLOWED_LANGUAGES = capi.zope_i18n_allowed_languages
 
 from bungeni.alchemist import Session

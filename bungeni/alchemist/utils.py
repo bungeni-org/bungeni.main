@@ -15,19 +15,19 @@ from sqlalchemy.orm import class_mapper
 # - raises KeyError if not matched
 
 def get_descriptor(discriminator):
-    from bungeni.utils.capi import capi
+    from bungeni.capi import capi
     return capi.get_type_info(discriminator).descriptor_model
 
 def get_interface(discriminator):
-    from bungeni.utils.capi import capi
+    from bungeni.capi import capi
     return capi.get_type_info(discriminator).interface
 
 def get_derived_table_schema(discriminator):
-    from bungeni.utils.capi import capi
+    from bungeni.capi import capi
     return capi.get_type_info(discriminator).derived_table_schema
 
 def get_workflow(discriminator):
-    from bungeni.utils.capi import capi
+    from bungeni.capi import capi
     return capi.get_type_info(discriminator).workflow
 
 

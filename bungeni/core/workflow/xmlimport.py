@@ -17,7 +17,7 @@ from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
-from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.capi import capi
 from bungeni.schema import (
     validate_file_rng,
     qualified_permission_actions,
@@ -246,7 +246,7 @@ def check_add_assign_permission(workflow_name, permissions, (setting, p, r)):
 
 #
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def load(file_key, workflow_name,
         path_custom_workflows=capi.get_path_for("workflows")
     ):

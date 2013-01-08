@@ -63,7 +63,7 @@ def catalyse_system_descriptors(module):
     import inspect
     from bungeni.alchemist.descriptor import IModelDescriptor
     from bungeni.models import domain
-    from bungeni.utils.capi import capi
+    from bungeni.capi import capi
     from bungeni.ui.utils import debug
     
     def descriptor_classes():

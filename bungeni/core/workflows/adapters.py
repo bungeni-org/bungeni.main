@@ -27,7 +27,7 @@ from bungeni.alchemist.model import (
     new_custom_domain_model,
 )
 from bungeni.utils import naming, misc
-from bungeni.utils.capi import capi, bungeni_custom_errors
+from bungeni.capi import capi
 from bungeni.alchemist.catalyst import (
     INTERFACE_MODULE, 
     MODEL_MODULE
@@ -95,7 +95,7 @@ def register_generic_workflow_adapters():
         WorkflowController, (IWorkflowed,), IWorkflowController)    
     
 
-@bungeni_custom_errors
+@capi.bungeni_custom_errors
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
     This is called prior to loading of the workflows for these custom types.

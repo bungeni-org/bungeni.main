@@ -1097,7 +1097,7 @@ class ItemSchedule(Entity):
     def get_item_domain(self):
         if self.item_type is None:
             return # no item set
-        from bungeni.utils.capi import capi
+        from bungeni.capi import capi
         return capi.get_type_info(self.item_type).domain_model
     
     def item():

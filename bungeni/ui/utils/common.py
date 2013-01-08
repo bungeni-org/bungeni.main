@@ -22,7 +22,7 @@ import sqlalchemy.sql.expression as sql
 import bungeni
 import bungeni.ui.interfaces
 import bungeni.alchemist
-from bungeni.utils.capi import capi
+from bungeni.capi import capi
 
 from ore.wsgiapp.interfaces import IApplication
 def get_application():
