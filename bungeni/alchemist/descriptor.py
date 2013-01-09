@@ -443,6 +443,7 @@ class ModelDescriptor(object):
     #properties = () # !+UNUSED
     schema_order = () # !+UNUSED but needed by ore/alchemist/sa2zs.py
     schema_invariants = ()
+    custom_validators = ()
     
     # a means to specify relative order to be used as needed by the usage 
     # context e.g. when listing different containers for the different types,

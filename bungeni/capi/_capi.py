@@ -90,8 +90,18 @@ class CAPI(object):
     
     @_bungeni_custom_errors
     def get_workflow_condition(self, condition):
-        conds_module = resolve("._conditions", "bungeni_custom.workflows")
-        return getattr(conds_module, condition) # raises AttributeError
+        condition_module = resolve("._conditions", "bungeni_custom.workflows")
+        return getattr(condition_module, condition) # raises AttributeError
+    
+    @_bungeni_custom_errors
+    def get_form_constraint(self, constraint):
+        constraint_module = resolve("._constraints", "bungeni_custom.forms")
+        return getattr(constraint_module, constraint) # raises AttributeError
+    
+    @_bungeni_custom_errors
+    def get_form_validator(self, validation):
+        validator_module = resolve("._validations", "bungeni_custom.forms")
+        return getattr(validator_module, validation) # raises AttributeError
     
     @property
     @_bungeni_custom_errors

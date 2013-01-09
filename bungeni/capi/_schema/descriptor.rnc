@@ -21,7 +21,8 @@ grammar {
             attribute order { xsd:integer }?,
             attribute note { text }?,
             
-            FIELD* 
+            FIELD*,
+            INTEGRITY?
         }
     )
     
@@ -36,7 +37,8 @@ grammar {
         attribute order { xsd:integer }?,
         attribute note { text }?,
         
-        FIELD*
+        FIELD*,
+        INTEGRITY?
     }
     
     FIELD = element field {
@@ -78,6 +80,11 @@ grammar {
         )
     }
     
+    INTEGRITY = element integrity {
+        attribute constraints { SPACE_SEPARATED_TOKENS }?, # forms._constraints
+        attribute validations { SPACE_SEPARATED_TOKENS }?, # forms._validations
+        attribute note { text }?
+    }
     
     # enums
     

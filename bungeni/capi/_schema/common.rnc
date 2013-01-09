@@ -15,7 +15,7 @@
 # a space-separated string value !+pattern for un/qualified permission_actions, roles
 SPACE_SEPARATED_TOKENS = list { token+ }
 
-# a space-separated VALID SYMBOLs value
+# a space-separated VALID SYMBOLs value (may not be empty string)
 SPACE_SEPARATED_SYMBOLS = list { SYMBOL_NAME+ }
 
 # a valid programming language symbol name e.g. in python this means must 

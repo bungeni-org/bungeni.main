@@ -22,7 +22,7 @@
       </oneOrMore>
     </list>
   </define>
-  <!-- a space-separated VALID SYMBOLs value -->
+  <!-- a space-separated VALID SYMBOLs value (may not be empty string) -->
   <define name="SPACE_SEPARATED_SYMBOLS">
     <list>
       <oneOrMore>

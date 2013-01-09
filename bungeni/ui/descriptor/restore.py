@@ -108,6 +108,21 @@ def serialize_field(f, depth=2):
         acc.append('%s<field %s />' % (ind, decl_attrs))
     return acc
 
+def serialize_integrity(schema_invariants, custom_validators, depth=2):
+    acc = []
+    ind = INDENT * depth
+    attr_strs = []
+    attr_tmpl = '%s="%s"'
+    if schema_invariants:
+        attr_strs.append(attr_tmpl % ("constraints", 
+                " ".join([c.__name__ for c in schema_invariants ])))
+    if custom_validators:
+        attr_strs.append(attr_tmpl % ("validations",
+                " ".join([c.__name__ for c in custom_validators ])))
+    if attr_strs:
+        acc.append("%s<integrity %s />" % (ind, " ".join(attr_strs)))
+    return acc
+
 def serialize_cls(cls, depth=1):
     """(cls:ModelDescriptor) -> [str]
     
@@ -117,6 +132,8 @@ def serialize_cls(cls, depth=1):
     _acc = []
     for f in cls.fields:
         _acc.extend(serialize_field(f, depth+1))
+    _acc.extend(serialize_integrity(
+            cls.schema_invariants, cls.custom_validators, depth+1))
     
     acc = []
     ind = INDENT * depth

@@ -4,6 +4,10 @@
 
 """Field constraints and schema invariants
 
+Constraint API:
+    constraint(context) -> None # OK
+        failure raises zope.interface.Invalid
+
 $Id$
 """
 import re
@@ -51,7 +55,15 @@ check_login = RegexChecker(LOGIN_RE, _(u"Invalid login name"))
 
 # schema invariants
 
-def ElectionAfterStart(obj):
+def end_after_start(obj):
+    """End Date must be after Start Date."""
+    if obj.end_date is None: 
+        return
+    if obj.end_date <= obj.start_date:
+        raise Invalid(
+            _("End Date must be after Start Date"), "start_date", "end_date")
+
+def parliament_start_after_election(obj):
     """Start Date must be after Election Date."""
     if obj.election_date >= obj.start_date:
         raise Invalid(
@@ -60,15 +72,6 @@ def ElectionAfterStart(obj):
             "start_date"
         )
 
-def EndAfterStart(obj):
-    """End Date must be after Start Date."""
-    if obj.end_date is None: return
-    if obj.end_date <= obj.start_date:
-        raise Invalid(
-            _("End Date must be after Start Date"),
-            "start_date",
-            "end_date"
-        )
 
 ''' !+UNUSED
 def DissolutionAfterReinstatement(obj):
@@ -83,35 +86,36 @@ def DissolutionAfterReinstatement(obj):
         )
 '''
 
-def ActiveAndSubstituted(obj):
+
+def active_and_substituted(obj):
     """A person cannot be active and substituted at the same time."""
     if obj.active_p and obj.replaced_id:
         raise Invalid(
             _("A person cannot be active and substituted at the same time"),
-            "active_p",
-            "replaced_id"
-        )
+            "active_p", 
+            "replaced_id")
 
-def SubstitudedEndDate(obj):
+
+def substituted_end_date(obj):
     """If a person is substituted he must have an end date."""
     if not obj.end_date and obj.replaced_id:
         raise Invalid(
             _("If a person is substituted End Date must be set"),
             "replaced_id",
-            "end_date"
-        )
+            "end_date")
 
-def InactiveNoEndDate(obj):
+
+def inactive_no_end_date(obj):
     """If you set a person inactive you must provide an end date."""
     if not obj.active_p:
         if not (obj.end_date):
             raise Invalid(
                 _("If a person is inactive End Date must be set"),
                 "end_date",
-                "active_p"
-            )
+                "active_p")
 
-def MpStartBeforeElection(obj):
+
+def member_start_after_elected(obj):
     """MP start date (when set) must be after election."""
     if obj.election_nomination_date is None:
         return
@@ -119,16 +123,16 @@ def MpStartBeforeElection(obj):
         raise Invalid(_("A parliament member has to be "
                 "elected/nominated before she/he can be sworn in"),
             "election_nomination_date",
-            "start_date"
-        )
+            "start_date")
 
-def DeathBeforeLife(user):
+
+def user_birth_death_dates(user):
     """Check if date of death is after date of birth."""
-    if user.date_of_death is None: return
+    if user.date_of_death is None: 
+        return
     if user.date_of_death < User.date_of_birth:
         raise Invalid(_("Check dates: death must follow birth"),
             "date_of_death",
-            "date_of_birth"
-        )
+            "date_of_birth")
 
 

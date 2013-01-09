@@ -21,7 +21,7 @@ from bungeni.ui.descriptor import field
 from bungeni.capi import capi
 from bungeni.utils import naming, misc
 
-xas, xab = misc.xml_attr_str, misc.xml_attr_bool
+xas, xab, xai = misc.xml_attr_str, misc.xml_attr_bool, misc.xml_attr_int
 
 # constants 
 
@@ -128,14 +128,24 @@ def localize_descriptor(descriptor_elem):
         return
     # !+ ensure domain_model has already been set
     assert ti.domain_model, ti
-    order = misc.xml_attr_int(descriptor_elem, "order")
+    order = xai(descriptor_elem, "order")
     fields = new_descriptor_fields(descriptor_elem)
+    integrity = descriptor_elem.find("integrity")
+    if integrity is not None:
+        constraints = [ capi.get_form_constraint(c) for c in
+            xas(integrity, "constraints", "").split() ]
+        validations = [ capi.get_form_validator(v) for v in 
+            xas(integrity, "validations", "").split() ]
+    else:
+        constraints, validations = (), ()
     try:
-        cls = update_descriptor_cls(type_key, fields, order)
+        cls = update_descriptor_cls(
+            type_key, order, fields, constraints, validations)
     except AttributeError:
         # new custom descriptor
         archetype = xas(descriptor_elem, "archetype")
-        cls = new_descriptor_cls(type_key, fields, order, archetype)
+        cls = new_descriptor_cls(
+            type_key, archetype, order, fields, constraints, validations)
     log.debug("Localized descriptor [%s] %s", type_key, ti)
 
 
@@ -176,7 +186,7 @@ def new_descriptor_fields(edescriptor):
             ))
     return fields
 
-def new_descriptor_cls(type_key, fields, order, archetype_key):
+def new_descriptor_cls(type_key, archetype_key, order, fields, constraints, validations):
     """Generate and setup new custom descriptor from configuration.
     """
     assert archetype_key, \
@@ -191,6 +201,8 @@ def new_descriptor_cls(type_key, fields, order, archetype_key):
             "__module__": DESCRIPTOR_MODULE.__name__,
             "order": order,
             "fields": fields,
+            "schema_invariants": constraints,
+            "custom_validators": validations,
             "default_field_order": [ f.name for f in fields ],
         })
     # set on DESCRIPTOR_MODULE, register as the ti.descriptor_model
@@ -203,7 +215,7 @@ def new_descriptor_cls(type_key, fields, order, archetype_key):
             type_key, DESCRIPTOR_MODULE.__name__, descriptor_cls_name))
     return cls
 
-def update_descriptor_cls(type_key, fields, order):
+def update_descriptor_cls(type_key, order, fields, constraints, validations):
     cls = get_localizable_descriptor_class(DESCRIPTOR_MODULE, type_key)
     if order is not None:
         cls.order = order
@@ -211,6 +223,8 @@ def update_descriptor_cls(type_key, fields, order):
     # instance) and validate/update descriptor model
     cls.fields[:] = fields
     cls.sanity_check_fields()
+    cls.schema_invariants = constraints
+    cls.custom_validators = validations
     # push back on alchemist model interface !+
     reset_zope_schema_properties_on_model_interface(cls)
 

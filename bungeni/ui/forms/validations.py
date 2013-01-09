@@ -53,7 +53,7 @@ def as_date(date):
 
 # validators
 
-def email_validator(action, data, context, container):
+def validate_email_availability(action, data, context, container):
     session = Session()
     users = session.query(domain.User
         ).filter(domain.User.email==data.get("email", ""))

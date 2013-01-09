@@ -38,6 +38,9 @@
         <zeroOrMore>
           <ref name="FIELD"/>
         </zeroOrMore>
+        <optional>
+          <ref name="INTEGRITY"/>
+        </optional>
       </element>
     </choice>
   </start>
@@ -69,6 +72,9 @@
       <zeroOrMore>
         <ref name="FIELD"/>
       </zeroOrMore>
+      <optional>
+        <ref name="INTEGRITY"/>
+      </optional>
     </element>
   </define>
   <define name="FIELD">
@@ -180,6 +186,25 @@
           </element>
         </zeroOrMore>
       </interleave>
+    </element>
+  </define>
+  <define name="INTEGRITY">
+    <element name="integrity">
+      <optional>
+        <attribute name="constraints">
+          <ref name="SPACE_SEPARATED_TOKENS"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- forms._constraints -->
+        <attribute name="validations">
+          <ref name="SPACE_SEPARATED_TOKENS"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- forms._validations -->
+        <attribute name="note"/>
+      </optional>
     </element>
   </define>
   <!-- enums -->

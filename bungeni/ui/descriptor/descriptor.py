@@ -279,8 +279,8 @@ class UserDescriptor(ModelDescriptor):
             render_type="rich_text",
         ),
     ]
-    schema_invariants = [constraints.DeathBeforeLife]
-    custom_validators = [validations.email_validator]
+    schema_invariants = [constraints.user_birth_death_dates]
+    custom_validators = [validations.validate_email_availability]
 
 
 class UserDelegationDescriptor(ModelDescriptor):
@@ -397,10 +397,10 @@ class GroupMembershipDescriptor(ModelDescriptor):
         ),
     ]
     schema_invariants = [
-        constraints.EndAfterStart,
-        constraints.ActiveAndSubstituted,
-        constraints.SubstitudedEndDate,
-        constraints.InactiveNoEndDate
+        constraints.end_after_start,
+        constraints.active_and_substituted,
+        constraints.substituted_end_date,
+        constraints.inactive_no_end_date
     ]
     custom_validators = [
         validations.validate_date_range_within_parent,
@@ -425,86 +425,6 @@ _ORDER_BY_CONTAINER_NAMES = [
     "governments",
     "title_types",
 ]
-
-#!+CUSTOM
-# !+naming
-class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
-    order = _ORDER_BY_CONTAINER_NAMES.index("parliamentmembers")
-    localizable = True
-    display_name = "Member of parliament" # !+Parliament Member
-    container_name = "Members of parliament" # !+Parliament Members
-    sort_on = ["user_id"]
-    fields = [
-        F(name="user_id",
-            label="Name",
-            required=True,
-            localizable=[
-                show("add view listing"), # db-not-null-ui-add
-            ],
-            value_type="user",
-            render_type="single_select",
-            vocabulary="member",
-        ),
-        F(name="member_election_type",
-            label="Election Type",
-            required=True,
-            localizable=[
-                show("add view edit listing"), # db-not-null-ui-add
-            ],
-            value_type="vocabulary",
-            render_type="single_select",
-            vocabulary="member_election_type",
-        ),
-        F(name="election_nomination_date",
-            label="Election/Nomination Date",
-            required=False,
-            localizable=[
-                show("add view edit listing"), # db-not-null-ui-add
-            ],
-            value_type="date",
-            render_type="date",
-        ),
-    ]
-    fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    fields.extend([
-        F(name="representation",
-            label="Representation",
-            description="Select Representation",
-            localizable=[
-                show("add view edit"), # db-not-null-ui-add
-                hide("listing"),
-            ],
-            value_type="text",
-            render_type="tree_text",
-            vocabulary="representation",
-        ),
-        F(name="party",
-            label="Political Party",
-            localizable=[
-                show("add view edit listing"), # db-not-null-ui-add
-            ],
-            value_type="vocabulary",
-            render_type="single_select",
-            vocabulary="party",
-        ),
-        F(name="leave_reason",
-            label="Leave Reason",
-            localizable=[
-                show("view edit add"),
-                hide("listing"),
-            ],
-        ),
-        F(name="notes",
-            label="Notes",
-            localizable=[
-                show("view edit add"),
-            ],
-            value_type="text",
-            render_type="rich_text",
-        ),
-    ])
-    schema_invariants = GroupMembershipDescriptor.schema_invariants + [
-       constraints.MpStartBeforeElection]
 
 
 class GroupDescriptor(ModelDescriptor):
@@ -589,203 +509,7 @@ class GroupDescriptor(ModelDescriptor):
             vocabulary="workflow_states",
         ),
     ]
-    schema_invariants = [constraints.EndAfterStart]
-    custom_validators = [validations.validate_date_range_within_parent]
-
-#!+CUSTOM
-class ParliamentDescriptor(GroupDescriptor):
-    order = 1 # top
-    localizable = True
-    sort_on = ["start_date"]
-    default_field_order = [
-        "full_name",
-        "short_name",
-        "identifier", #"acronym",
-        #"combined_name",
-        "language",
-        "election_date",
-        "start_date",
-        "end_date",
-        #"status",
-        "description",
-    ]
-    fields = [
-        F(name="full_name",
-            label="Parliament Name",
-            localizable=[
-                show("view edit add listing"),
-            ],
-        ),
-        F(name="short_name",
-            label="Short Name",
-            description="Shorter name for the parliament",
-            required=True,
-            localizable=[
-                show("add view edit listing"), # db-not-null-ui-add
-            ],
-        ),
-        F(name="identifier",
-            label="Parliament Identifier",
-            description="Unique identifier or number for this Parliament",
-            localizable=[
-                show("view edit add listing"),
-            ],
-        ),
-        LanguageField("language"), # [user-req]
-        F(name="description",
-            label="Description",
-            localizable=[
-                show("view edit add"),
-            ],
-            value_type="text",
-            render_type="rich_text",
-        ),
-        F(name="election_date",
-            label="Election Date",
-            description="Date of the election",
-            required=True,
-            localizable=[
-                show("add view edit listing"), # db-not-null-ui-add
-            ],
-            value_type="date",
-            render_type="date",
-        ),
-        F(name="start_date",
-            label="In power from",
-            description="Date of the swearing in",
-            required=True,
-            localizable=[
-                show("add view edit listing"), # db-not-null-ui-add
-            ],
-            value_type="date",
-            render_type="date",
-        ),
-        F(name="end_date",
-            label="In power till",
-            description="Date of the dissolution",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            value_type="date",
-            render_type="date",
-        ),
-    ]
-    schema_invariants = [
-        constraints.EndAfterStart,
-        constraints.ElectionAfterStart
-    ]
-    custom_validators = [validations.validate_parliament_dates]
-
-#!+CUSTOM
-class CommitteeDescriptor(GroupDescriptor):
-    order = _ORDER_BY_CONTAINER_NAMES.index("committees")
-    localizable = True
-    
-    fields = deepcopy(GroupDescriptor.fields)
-    get_field(fields, "start_date").localizable = [
-        show("view edit add"),
-        hide("listing")
-    ]
-    get_field(fields, "end_date").localizable = [
-        show("view edit add"),
-        hide("listing")
-    ]
-    
-    fields.extend([
-        F(name="identifier",
-            label="Committee Identifier",
-            description="Unique identifier or number for this Committee",
-            localizable=[
-                show("view edit add"),
-            ],
-        ),
-        F(name="sub_type", # group field, only used in committee
-            label="Committee Type",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            value_type="vocabulary",
-            render_type="single_select",
-            vocabulary="committee_type",
-        ),
-        F(name="group_continuity",
-            label="Committee Status Type",
-            required=True,
-            localizable=[
-                show("add view edit listing"), # db-not-null-ui-add
-            ],
-            value_type="vocabulary",
-            render_type="single_select",
-            vocabulary="committee_continuity",
-        ),
-        F(name="num_members",
-            label="Number of members",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            value_type="number",
-            render_type="number",
-        ),
-        F(name="min_num_members",
-            label="Minimum Number of members",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            value_type="number",
-            render_type="number",
-        ),
-        F(name="quorum",
-            label="Quorum",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            value_type="number",
-            render_type="number",
-        ),
-        F(name="num_clerks",
-            label="Number of clerks",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            value_type="number",
-            render_type="number",
-        ),
-        F(name="num_researchers",
-            label="Number of researchers",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            value_type="number",
-            render_type="number",
-        ),
-        F(name="proportional_representation",
-            label="Proportional representation",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            value_type="bool",
-            render_type="bool",
-        ),
-        F(name="reinstatement_date",
-            label="Reinstatement Date",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            value_type="date",
-            render_type="date",
-        ),
-    ])
-    schema_invariants = [
-        constraints.EndAfterStart,
-        #DissolutionAfterReinstatement
-    ]
+    schema_invariants = [constraints.end_after_start]
     custom_validators = [validations.validate_date_range_within_parent]
 
 
@@ -979,106 +703,12 @@ class MemberTitleDescriptor(ModelDescriptor):
     #      if f["name"] not in ("role_title_id",) ]
 
     schema_invariants = [
-        constraints.EndAfterStart,
+        constraints.end_after_start,
     ]
     custom_validators = [
         validations.validate_date_range_within_parent,
         validations.validate_member_titles
     ]
-
-
-#!+CUSTOM
-class PoliticalGroupDescriptor(GroupDescriptor):
-    order = _ORDER_BY_CONTAINER_NAMES.index("politicalgroups")
-    localizable = True
-    
-    fields = deepcopy(GroupDescriptor.fields)
-    fields.extend([
-        F(name="identifier",
-            label="Identifier",
-            description="Unique identifier or number for this political group",
-            localizable=[
-                show("view edit add"),
-            ],
-        ),
-        F(name="logo_data",
-            label="Logo",
-            # !+LISTING_IMG(mr, apr-2011) TypeError, not JSON serializable
-            localizable=[
-                show("view edit add"),
-            ],
-            value_type="image",
-            render_type="image",
-        ),
-    ])
-    schema_invariants = [constraints.EndAfterStart]
-    custom_validators = [validations.validate_date_range_within_parent]
-
-
-#!+CUSTOM
-class OfficeDescriptor(GroupDescriptor):
-    order = 2 # top
-    localizable = True
-    
-    fields = [
-        F(name="identifier",
-            label="Office Identifier",
-            description="Unique identifier or number for this Office",
-            localizable=[
-                show("view edit add"),
-            ],
-        ),
-        F(name="office_role",
-            label="Role",
-            description="Role given to members of this office",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            value_type="text",
-            render_type="single_select",
-            vocabulary="office_role",
-        ),
-
-    ]
-    fields.extend(deepcopy(GroupDescriptor.fields))
-    custom_validators = [validations.validate_date_range_within_parent]
-
-
-#!+CUSTOM
-class MinistryDescriptor(GroupDescriptor):
-    localizable = True
-    
-    fields = deepcopy(GroupDescriptor.fields)
-    fields.extend([
-        F(name="identifier",
-            label="Ministry Identifier",
-            description="Unique identifier or number for this Ministry",
-            localizable=[
-                show("view edit add"),
-            ],
-        ),
-    ])
-    schema_invariants = [constraints.EndAfterStart]
-    custom_validators = [validations.validate_date_range_within_parent]
-
-
-#!+CUSTOM
-class GovernmentDescriptor(GroupDescriptor):
-    order = _ORDER_BY_CONTAINER_NAMES.index("governments")
-    localizable = True
-    sort_on = ["start_date"]
-    fields = deepcopy(GroupDescriptor.fields)
-    fields.extend([
-        F(name="identifier",
-            label="Government Identifier",
-            description="Unique identifier or number for this Government",
-            localizable=[
-                show("view edit add"),
-            ],
-        ),
-    ])
-    schema_invariants = [constraints.EndAfterStart]
-    custom_validators = [validations.validate_government_dates]
 
 
 class AttachmentDescriptor(ModelDescriptor):
@@ -1642,7 +1272,7 @@ class SittingDescriptor(ModelDescriptor):
             vocabulary="sitting_convocation_types", 
         ),
     ]
-    schema_invariants = [constraints.EndAfterStart]
+    schema_invariants = [constraints.end_after_start]
     custom_validators = [
         validations.validate_date_range_within_parent,
         #validations.validate_start_date_equals_end_date,
@@ -1746,7 +1376,7 @@ class SessionDescriptor(ModelDescriptor):
             ],
         ),
     ]
-    schema_invariants = [constraints.EndAfterStart]
+    schema_invariants = [constraints.end_after_start]
     custom_validators = [validations.validate_date_range_within_parent]
 
 
