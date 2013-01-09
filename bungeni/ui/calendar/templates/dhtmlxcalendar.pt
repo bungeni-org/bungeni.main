@@ -157,6 +157,7 @@
                     collission_handler
                 );
                 scheduler.attachEvent("onBeforeLightbox", handle_lightbox);
+                scheduler.attachEvent("onBeforeDrag", handle_lightbox);
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
                 dp.styles.invalid = "border:2px solid red;color:red;"
                 dp.init(scheduler);

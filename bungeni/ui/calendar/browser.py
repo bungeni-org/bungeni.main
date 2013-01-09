@@ -686,7 +686,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         add_form = AddForm(trusted.get_group().sittings, self.request)
         add_form.update()
         if not add_form.errors:
-            initial_sitting = add_form.created_object
+            initial_sitting = removeSecurityProxy(add_form.created_object)
         else:
             return self.insert_sitting_failure_handler(action, data,
                 add_form.errors
