@@ -10,7 +10,7 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
 
-from bungeni.alchemist.descriptor import ModelDescriptor, show, hide
+from bungeni.alchemist.descriptor import ModelDescriptor, show, hide, classproperty
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
@@ -22,7 +22,7 @@ from bungeni.ui.i18n import _
 from bungeni.ui import vocabulary # !+
 from bungeni.ui.descriptor import constraints
 from bungeni.ui.descriptor.field import F
-from bungeni.utils import misc
+from bungeni.utils import misc, naming
 
 
 def get_field(fields, name):
@@ -406,7 +406,23 @@ class GroupMembershipDescriptor(ModelDescriptor):
         validations.validate_date_range_within_parent,
         validations.validate_group_membership_dates
     ]
-
+    
+    # !+DESCRIPTOR_CONTAINER_NAME(mr, jan-2013) workaround (to handle special 
+    # plural of this form) for membership type names that do not conform to 
+    # convention "X_member" but instead use a form such as "member_of_X" 
+    # options: 
+    # a) add @container_label to <descriptor>, that will if used as container_name 
+    #    (so hiding cls property that derives this off cls name via convention)
+    # b) rename such membership to conform to suggested convention 
+    # c) live with bad-english *msgids* such as "Member of Parliaments" and just
+    #    translate them as needed...
+    # d) as far as selenium is concerned, do NOT use text labels for element selection!
+    @classproperty
+    def container_name(cls):
+        display_name = cls.display_name
+        if display_name.startswith("Member"):
+            return naming.plural("Member") + display_name[len("Member"):] # !+unicode
+        return naming.plural(display_name) # !+unicode
 
 
 class GroupDescriptor(ModelDescriptor):
@@ -493,7 +509,6 @@ class GroupDescriptor(ModelDescriptor):
     ]
     schema_invariants = [constraints.end_after_start]
     custom_validators = [validations.validate_date_range_within_parent]
-
 
 
 class GroupDocumentAssignmentDescriptor(ModelDescriptor):

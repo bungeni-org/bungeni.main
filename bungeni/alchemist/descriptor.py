@@ -26,8 +26,7 @@ from bungeni.alchemist.interfaces import (
     IModelDescriptor,
     IModelDescriptorField
 )
-from bungeni.ui.utils import common 
-from bungeni.ui.i18n import _
+from bungeni.ui.utils import common
 from bungeni.utils import naming
 
 
@@ -542,8 +541,8 @@ class ModelDescriptor(object):
     def display_name(cls):
         cls_name = naming.model_name(
             naming.type_key("descriptor_class_name", cls.__name__))
-        return _(naming.split_camel(cls_name)) # !+unicode
+        return naming.split_camel(cls_name) # !+unicode
     @classproperty
     def container_name(cls):
-        return _(naming.plural(cls.display_name)) # !+unicode
+        return naming.plural(cls.display_name) # !+unicode
 
