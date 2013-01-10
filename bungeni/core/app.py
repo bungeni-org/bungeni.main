@@ -311,6 +311,11 @@ class AppSetup(object):
             #!+marker=interfaces.IMotionAddContext,
             description=_(u"View motions moved in the current parliament"))
         
+        business[u"tableddocuments"] = QueryContent(
+            container_getter(get_current_parliament, "tableddocuments"),
+            title=_(u"Tabled documents"),
+            description=_(u"View the documents tabled in the current parliament"))
+        
         business[u"agendaitems"] = QueryContent(
             container_getter(get_current_parliament, "agendaitems"),
             title=_(u"Agenda items"),

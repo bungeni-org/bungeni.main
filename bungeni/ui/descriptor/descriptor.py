@@ -408,24 +408,6 @@ class GroupMembershipDescriptor(ModelDescriptor):
     ]
 
 
-# !+bungeni_custom, as part of descriptor config?
-_ORDER_BY_CONTAINER_NAMES = [
-    0, 1, 2, 3, 4, 5, 6, 7, 8 , 9, # occupy first 10, start this batch from 10
-    "agendaitems",
-    "bills",
-    "motions",
-    "questions",
-    "tableddocuments",
-    "preports",
-    "sessions",
-    "sittings",
-    "parliamentmembers",
-    "politicalgroups",
-    "committees",
-    "governments",
-    "title_types",
-]
-
 
 class GroupDescriptor(ModelDescriptor):
     localizable = True # !+ARCHETYPE_LOCALIZATION
@@ -627,7 +609,7 @@ class UserAddressDescriptor(AddressDescriptor):
     fields = deepcopy(AddressDescriptor.fields)
 
 class TitleTypeDescriptor(ModelDescriptor):
-    order = _ORDER_BY_CONTAINER_NAMES.index("title_types")
+    order = 22
     localizable = True
     display_name = "Title type" # !+
     container_name = "Title types" # !+
@@ -1201,7 +1183,7 @@ class VenueDescriptor(ModelDescriptor):
 
 
 class SittingDescriptor(ModelDescriptor):
-    order = _ORDER_BY_CONTAINER_NAMES.index("sittings")
+    order = 17
     localizable = True
     fields = [
         F(name="short_name",
@@ -1328,7 +1310,7 @@ class SittingReportDescriptor(ModelDescriptor):
     ]
 
 class SessionDescriptor(ModelDescriptor):
-    order = _ORDER_BY_CONTAINER_NAMES.index("sessions")
+    order = 16
     localizable = True
     display_name = "Parliamentary session"
     container_name = "Parliamentary sessions"
