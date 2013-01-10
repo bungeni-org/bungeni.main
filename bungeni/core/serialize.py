@@ -46,7 +46,8 @@ from bungeni.core.notifications import (get_mq_connection,
 )
 from bungeni.models import interfaces, domain, settings
 from bungeni.models.utils import obj2dict, get_permissions_dict
-from bungeni.utils import register, naming, core, capi
+from bungeni.utils import register, naming, core
+from bungeni.capi import capi
 
 import transaction
 import pika
@@ -379,11 +380,11 @@ def batch_serialize(type_key="*"):
     #list of domain classes to be serialized
     domain_models = []
     if type_key == "*":
-        for (type_key, info) in capi.capi.iter_type_info():
+        for (type_key, info) in capi.iter_type_info():
             if info.workflow:
                 domain_models.append(info.domain_model)
     else:
-        info = capi.capi.get_type_info(type_key)
+        info = capi.get_type_info(type_key)
         if info.workflow:
             domain_models.append(info.domain_model)
     session = Session()
