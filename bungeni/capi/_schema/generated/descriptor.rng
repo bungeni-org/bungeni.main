@@ -18,22 +18,52 @@
   <start>
     <choice>
       <ref name="UI"/>
+      <!-- custom descriopto, in own file -->
       <element name="descriptor">
         <attribute name="name">
           <ref name="SYMBOL_NAME"/>
         </attribute>
-        <!-- type_key -->
-        <attribute name="archetype">
-          <ref name="SYMBOL_NAME"/>
-        </attribute>
         <optional>
-          <!-- an archetype key, custom types MUST specify this -->
+          <!-- type_key -->
           <attribute name="order">
             <data type="integer"/>
           </attribute>
         </optional>
         <optional>
           <attribute name="note"/>
+        </optional>
+        <!-- Attrs only in custom descriptors: -->
+        <attribute name="archetype">
+          <ref name="SYMBOL_NAME"/>
+        </attribute>
+        <optional>
+          <!-- an archetype key, custom types MUST specify this -->
+          <!--
+            Note: if label/container_label present, the mechanism to 
+            auto-derive the display_name/container_name from name->type_key 
+            will be "hidden" by the specified fixed value.
+          -->
+          <attribute name="label"/>
+        </optional>
+        <optional>
+          <!-- i18n msgid, descriptor.display_name -->
+          <attribute name="container_label"/>
+        </optional>
+        <optional>
+          <!-- i18n msgid, descriptor.container_name -->
+          <!-- default sorting settings -->
+          <attribute name="sort_on">
+            <ref name="SPACE_SEPARATED_TOKENS"/>
+          </attribute>
+        </optional>
+        <optional>
+          <!-- field names -->
+          <attribute name="sort_dir">
+            <choice>
+              <value>asc</value>
+              <value>desc</value>
+            </choice>
+          </attribute>
         </optional>
         <zeroOrMore>
           <ref name="FIELD"/>
@@ -86,11 +116,11 @@
         <attribute name="label"/>
       </optional>
       <optional>
-        <!-- i18n !+ should really be required in *UI* fields -->
+        <!-- i18n msgid !+ should really be required in *UI* fields -->
         <attribute name="description"/>
       </optional>
       <optional>
-        <!-- i18n -->
+        <!-- i18n msgid -->
         <attribute name="required">
           <data type="boolean"/>
         </attribute>

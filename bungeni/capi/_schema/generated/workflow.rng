@@ -21,8 +21,10 @@
   <define name="WORKFLOW">
     <element name="workflow">
       <attribute name="title"/>
+      <!-- i18n msgid -->
       <attribute name="description"/>
       <optional>
+        <!-- i18n msgid -->
         <attribute name="tags">
           <ref name="SPACE_SEPARATED_SYMBOLS"/>
         </attribute>
@@ -119,6 +121,7 @@
       </attribute>
       <attribute name="title"/>
       <optional>
+        <!-- i18n msgid -->
         <attribute name="version">
           <data type="boolean"/>
         </attribute>
@@ -167,6 +170,7 @@
   <define name="TRANSITION">
     <element name="transition">
       <attribute name="title"/>
+      <!-- i18n msgid -->
       <attribute name="source">
         <choice>
           <ref name="SPACE_SEPARATED_SYMBOLS"/>

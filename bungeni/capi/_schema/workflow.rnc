@@ -18,8 +18,8 @@ grammar {
     start = WORKFLOW
     
     WORKFLOW = element workflow {
-        attribute title { text },
-        attribute description { text },
+        attribute title { text }, # i18n msgid
+        attribute description { text }, # i18n msgid
         attribute tags { SPACE_SEPARATED_SYMBOLS }?, # declare any (system-defined) tags used in workflow
         attribute note { text }?,
         attribute permission_actions { SPACE_SEPARATED_TOKENS }?, # type-relative permission actions
@@ -60,7 +60,7 @@ grammar {
     
     STATE = element state {
         attribute id { SYMBOL_NAME },
-        attribute title { text },
+        attribute title { text }, # i18n msgid
         attribute version { xsd:boolean }?, # default:false
         attribute tags { SPACE_SEPARATED_SYMBOLS }?,
         attribute note { text }?,
@@ -80,7 +80,7 @@ grammar {
     }
     
     TRANSITION = element transition {
-        attribute title { text },
+        attribute title { text }, # i18n msgid
         attribute source { SPACE_SEPARATED_SYMBOLS | empty }, # space separated list of state ids
         attribute destination { SYMBOL_NAME }, # state.id
         attribute grouping_unique_sources { token }?, # a transition grouping id

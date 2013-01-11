@@ -15,11 +15,26 @@ grammar {
     include "common.rnc"
     
     start = ( UI |
+        # custom descriopto, in own file
         element descriptor {
             attribute name { SYMBOL_NAME }, # type_key
-            attribute archetype { SYMBOL_NAME }, # an archetype key, custom types MUST specify this
             attribute order { xsd:integer }?,
             attribute note { text }?,
+            
+            # Attrs only in custom descriptors:
+            
+            attribute archetype { SYMBOL_NAME }, # an archetype key, custom types MUST specify this
+            
+            # Note: if label/container_label present, the mechanism to 
+            # auto-derive the display_name/container_name from name->type_key 
+            # will be "hidden" by the specified fixed value.
+            attribute label { text }?, # i18n msgid, descriptor.display_name
+            attribute container_label { text }?, # i18n msgid, descriptor.container_name
+            
+            # default sorting settings
+            attribute sort_on { SPACE_SEPARATED_TOKENS }?, # field names
+            attribute sort_dir { "asc" | "desc" }?,
+            
             
             FIELD*,
             INTEGRITY?
@@ -43,8 +58,8 @@ grammar {
     
     FIELD = element field {
         attribute name { SYMBOL_NAME },
-        attribute label { text }?, # i18n !+ should really be required in *UI* fields
-        attribute description { text }?, # i18n
+        attribute label { text }?, # i18n msgid !+ should really be required in *UI* fields
+        attribute description { text }?, # i18n msgid
         attribute required { xsd:boolean }?, # default:false
         attribute value_type { FIELD_VALUE_TYPE }?,
         # vocabulary is required for some render_types

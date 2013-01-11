@@ -146,6 +146,19 @@ def localize_descriptor(descriptor_elem):
         archetype = xas(descriptor_elem, "archetype")
         cls = new_descriptor_cls(
             type_key, archetype, order, fields, constraints, validations)
+        
+        # only "push" onto cls (hiding same-named properties or ovrriding 
+        # inherited setting) if set in the descriptor and only on cls creation:
+        if xas(descriptor_elem, "label"):
+            cls.display_name = xas(descriptor_elem, "label")
+        if xas(descriptor_elem, "container_label"):
+            cls.container_name = xas(descriptor_elem, "container_label")
+        if xas(descriptor_elem, "sort_on"):
+            cls.sort_on = xas(descriptor_elem, "sort_on").split()
+            # !+ assert each name is a field in the descriptor
+        if xas(descriptor_elem, "sort_dir"):
+            cls.sort_dir = xas(descriptor_elem, "sort_dir")
+        
     log.debug("Localized descriptor [%s] %s", type_key, ti)
 
 
