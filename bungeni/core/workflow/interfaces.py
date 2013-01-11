@@ -23,7 +23,6 @@ class AmbiguousTransitionError(InvalidTransitionError): pass
 class WorkflowRuntimeError(Exception): 
     """Internal error while executing a workflow action""" 
 class WorkflowStateActionError(WorkflowRuntimeError): pass
-class WorkflowConditionError(WorkflowRuntimeError): pass
 class WorkflowNotificationError(WorkflowRuntimeError): pass
 
 

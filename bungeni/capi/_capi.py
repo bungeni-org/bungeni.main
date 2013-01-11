@@ -19,15 +19,34 @@ from bungeni.alchemist import type_info
 import bungeni_custom as bc
 
 
+class BungeniCustomError(Exception):
+    """A configuration errorm during loading of configuration.
+    """
+class BungeniCustomRuntimeError(Exception): 
+    """Internal error while executing a callable determined from configuration.
+    """ 
+
+
 def _bungeni_custom_errors(f):
     """Decorator to intercept any error raised by function f and re-raise it
     as a BungeniCustomError. To be used to decorate any function involved 
     in reading/validating/processing any bungeni_custom parameters. 
     """
-    class BungeniCustomError(Exception):
-        """A Localization Error.
-        """
     return error.exceptions_as(BungeniCustomError, True)(f)
+
+
+def wrapped_callable(unwrapped):
+    @error.exceptions_as(BungeniCustomRuntimeError, True)
+    def wrapped(*args):
+        if unwrapped is None:
+            return True
+        result = unwrapped(*args)
+        log.debug("Calling %s... %s" % (unwrapped.__name__, result))
+        return result
+    # remember original unwrapped callable
+    wrapped._unwrapped = unwrapped
+    return wrapped
+
 
 
 class CAPI(object):
@@ -91,17 +110,20 @@ class CAPI(object):
     @_bungeni_custom_errors
     def get_workflow_condition(self, condition):
         condition_module = resolve("._conditions", "bungeni_custom.workflows")
-        return getattr(condition_module, condition) # raises AttributeError
+        condition = getattr(condition_module, condition) # raises AttributeError
+        return wrapped_callable(condition)
     
     @_bungeni_custom_errors
     def get_form_constraint(self, constraint):
         constraint_module = resolve("._constraints", "bungeni_custom.forms")
-        return getattr(constraint_module, constraint) # raises AttributeError
+        constraint = getattr(constraint_module, constraint) # raises AttributeError
+        return wrapped_callable(constraint)
     
     @_bungeni_custom_errors
     def get_form_validator(self, validation):
         validator_module = resolve("._validations", "bungeni_custom.forms")
-        return getattr(validator_module, validation) # raises AttributeError
+        validator = getattr(validator_module, validation) # raises AttributeError
+        return wrapped_callable(validator)
     
     @property
     @_bungeni_custom_errors

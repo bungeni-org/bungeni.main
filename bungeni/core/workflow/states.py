@@ -37,21 +37,6 @@ def named__str__(self, name):
         self.__module__, type(self).__name__, name, hex(id(self)))
 
 
-def wrapped_condition(condition, parent):
-    def test(context):
-        if condition is None:
-            return True
-        try:
-            result = condition(context)
-            log.debug("Trying condition %s of %s... %s" % (
-                condition.__name__, parent, result))
-            return result
-        except Exception, e:
-            raise interfaces.WorkflowConditionError("%s: %s [%s/%s]" % (
-                type(e).__name__, e, context, condition))
-    return test
-
-
 class Facet(object):
     """A workflow/feature facet encapsulating a set of allowed permissions.
     """
@@ -161,7 +146,7 @@ class Transition(object):
     
     def __init__(self, title, source, destination,
             grouping_unique_sources=None,
-            condition=None,
+            condition=None, # _capi.wrapped_callable
             trigger=interfaces.MANUAL, 
             permission=CheckerPublic,
             order=0,
@@ -173,8 +158,7 @@ class Transition(object):
         self.source = source
         self.destination = destination
         self.grouping_unique_sources = grouping_unique_sources
-        self._raw_condition = condition # remember unwrapped condition
-        self.condition = wrapped_condition(condition, self)
+        self.condition = condition
         self.trigger = trigger
         self.permission = permission
         self.order = order
@@ -636,7 +620,7 @@ class WorkflowController(object):
                     "transition: %s" % transition.id, 
                     transition.permission)
         # now make sure transition can still work in this context
-        transition.condition(self.context) # raises WorkflowConditionError
+        transition.condition(self.context) # raises BungeniCustomError
     
     # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):

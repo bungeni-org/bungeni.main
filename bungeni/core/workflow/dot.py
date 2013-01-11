@@ -61,11 +61,11 @@ def toDot(workflow):
             if t.trigger is interfaces.AUTOMATIC:
                 option.append("color=green")
             elif t.trigger is interfaces.SYSTEM:
-                if not t._raw_condition is None:
+                if not t.condition._unwrapped is None:
                     option.append("color=yellow")
                 else:
                     option.append("color=blue")
-            elif not t._raw_condition is None:
+            elif not t.condition._unwrapped is None:
                 option.append("color=red")
             print >> io, ' %s -> %s [label="%s", %s];' % (
                 t.source, t.destination, t.id, ", ".join(option))
