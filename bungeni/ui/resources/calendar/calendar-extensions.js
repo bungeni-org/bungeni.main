@@ -153,9 +153,12 @@ function collission_handler(ev, evs){
  * @description handle show lightbox event - not displayed for sessions 
  */
 function handle_lightbox(event_id){
-    event = scheduler.getEvent(event_id);
-    if (event.event_type=="session"){
-        return false;
+    if (event_id != null){
+        //only block for existing events (with ids)
+        event = scheduler.getEvent(event_id);
+        if (event.event_type=="session"){
+            return false;
+        }
     }
     return true;
 }
