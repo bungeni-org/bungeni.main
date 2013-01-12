@@ -619,8 +619,9 @@ class WorkflowController(object):
                 raise Unauthorized(self.context, 
                     "transition: %s" % transition.id, 
                     transition.permission)
-        # now make sure transition can still work in this context
-        transition.condition(self.context) # raises BungeniCustomError
+        # ensure transition can still work in this context, None always passes
+        if transition.condition is not None:
+            transition.condition(self.context) # raises BungeniCustomError
     
     # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):
@@ -703,7 +704,10 @@ class WorkflowController(object):
         return [ transition for transition in transitions
             if ((trigger_ifilter is None or 
                     transition.trigger == trigger_ifilter) and
-                (not conditional or transition.condition(self.context))) ]
+                (conditional and
+                    # a None condition always passes
+                    (transition.condition is None or 
+                        transition.condition(self.context)))) ]
 
 
 class WorkflowTransitionEvent(zope.component.interfaces.ObjectEvent):

@@ -36,17 +36,15 @@ def _bungeni_custom_errors(f):
 
 
 def wrapped_callable(unwrapped):
+    assert unwrapped is not None
     @error.exceptions_as(BungeniCustomRuntimeError, True)
     def wrapped(*args):
-        if unwrapped is None:
-            return True
         result = unwrapped(*args)
         log.debug("Calling %s... %s" % (unwrapped.__name__, result))
         return result
     # remember original unwrapped callable
     wrapped._unwrapped = unwrapped
     return wrapped
-
 
 
 class CAPI(object):
