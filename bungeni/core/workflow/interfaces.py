@@ -20,7 +20,8 @@ class InvalidTransitionError(InvalidWorkflow): pass
 class NoTransitionAvailableError(InvalidTransitionError): pass
 class AmbiguousTransitionError(InvalidTransitionError): pass
 
-class WorkflowRuntimeError(Exception): 
+# !+WorkflowRuntimeError(BungeniCustomRuntimeError)
+class WorkflowRuntimeError(Exception):
     """Internal error while executing a workflow action""" 
 class WorkflowStateActionError(WorkflowRuntimeError): pass
 class WorkflowNotificationError(WorkflowRuntimeError): pass

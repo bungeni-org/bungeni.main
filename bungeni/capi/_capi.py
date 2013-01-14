@@ -10,7 +10,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.capi")
 
-
+import sys
 import time
 import os
 from zope.dottedname.resolve import resolve
@@ -22,11 +22,11 @@ import bungeni_custom as bc
 class BungeniCustomError(Exception):
     """A configuration errorm during loading of configuration.
     """
-class BungeniCustomRuntimeError(Exception): 
+class BungeniCustomRuntimeError(BungeniCustomError): 
     """Internal error while executing a callable determined from configuration.
     """ 
 
-
+# additional conveniences for simpler and more uniform usage
 def _bungeni_custom_errors(f):
     """Decorator to intercept any error raised by function f and re-raise it
     as a BungeniCustomError. To be used to decorate any function involved 
@@ -36,14 +36,21 @@ def _bungeni_custom_errors(f):
 
 
 def wrapped_callable(unwrapped):
-    assert unwrapped is not None
-    @error.exceptions_as(BungeniCustomRuntimeError, True)
+    assert callable(unwrapped), unwrapped
     def wrapped(*args):
-        result = unwrapped(*args)
-        log.debug("Calling %s... %s" % (unwrapped.__name__, result))
-        return result
+        log.debug("Calling %s with args: %s" % (unwrapped, args))
+        try:
+            return unwrapped(*args)
+        except:
+            # intercept exc, to re-raise it *unchanged*, only for debugging
+            # e.g. constraints raise numerous (expected?) NoInputData errors
+            exc = sys.exc_info()[1]
+            log.debug("BungeniCustomRuntimeError [%r] in wrapped_callable: %s %s",
+                    exc, wrapped, args)
+            raise
     # remember original unwrapped callable
     wrapped._unwrapped = unwrapped
+    wrapped.__name__ = unwrapped.__name__
     return wrapped
 
 
