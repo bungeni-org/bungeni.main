@@ -9,7 +9,11 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 import json
+
+from zope.security import checkPermission
+
 from sqlalchemy import orm, sql
+
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.interfaces import IParliament, IAgendaItem
@@ -19,12 +23,27 @@ from bungeni.ui.i18n import _
 
 from bungeni.capi import capi
 
-#!+CALENDAR(mb, Jan-2012) This should come from capi or workflow configuration
-#!+SCHEDULE(mr, feb-2012) this can already be added as a feature on each 
-# respective workflow e.g. <feature name="schedule" enabled="true" />, and then
-# can be tested for with: workflow.has_feature"schedule")
+TAG_SCHEDULE_PENDING = "tobescheduled"
+TAG_SCHEDULED = "scheduled"
+
+def can_schedule(workflow):
+    """Determine if the current user can schedule this document type.
+    i.e. if they have the global workflow permission to schedule a document.
+    """
+    allow = False
+    scheduled_states = workflow.get_state_ids(tagged=[TAG_SCHEDULED])
+    if scheduled_states:
+        transitions = workflow.get_transitions_to(scheduled_states[0])
+        if transitions:
+            allow = checkPermission(transitions[0].permission,
+                common.get_application()
+            )
+    return allow
 
 def get_schedulable_types():
+    """Get types that may be scheduled. Limit to those that the current user
+    has the right to transition to a scheduled state.
+    """
     schedulable_types = []
     for (key, type_info) in capi.iter_type_info():
         if type_info.workflow and type_info.workflow.has_feature("schedule"):
@@ -37,11 +56,12 @@ def get_schedulable_types():
             display_name=type_info.descriptor_model.display_name
         ))
         for (type_key, type_info) in schedulable_types
+        if can_schedule(type_info.workflow)
     ])
 
 
 
-def get_filter_config(tag="tobescheduled"):
+def get_filter_config(tag=TAG_SCHEDULE_PENDING):
     return dict(
         [ (item_type, 
             { 
@@ -82,7 +102,7 @@ class SchedulableItemsGetter(object):
         self.item_type = item_type
         type_info = capi.get_type_info(item_type)
         self.filter_states = (filter_states or 
-            type_info.workflow.get_state_ids(tagged=["tobescheduled"])
+            type_info.workflow.get_state_ids(tagged=[TAG_SCHEDULE_PENDING])
         )
         self.group_filter = (group_filter or 
             not IParliament.providedBy(context.group) or

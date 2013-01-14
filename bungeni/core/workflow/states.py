@@ -573,6 +573,10 @@ class Workflow(object):
     @error.exceptions_as(interfaces.InvalidStateError)
     def get_transitions_from(self, source):
         return sorted(self._transitions_by_source[source])
+
+    @error.exceptions_as(interfaces.InvalidStateError)
+    def get_transitions_to(self, destination):
+        return sorted(self._transitions_by_destination[destination])
     
     def __call__(self, context):
         """A Workflow instance is itself the "singleton factory" of itself.

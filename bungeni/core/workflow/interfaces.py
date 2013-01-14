@@ -41,8 +41,12 @@ class IWorkflow(zope.interface.Interface):
         If no such transition, raises InvalidTransitionError.
         """
     def get_transitions_from(source):
-        """Get all transitions from source.
+        """Get all transitions from source (source is a state id).
         """
+    def get_transitions_to(destination):
+        """Get all transitions to destination (destination is a state id).
+        """
+
     def __call__(context):
         """A Workflow instance is itself the factory of own AdaptedWorkflows.
         """
