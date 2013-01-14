@@ -775,7 +775,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
             # updating recurring events - we assume existing events fall
             # at the beginning of the sequence and offer in place update.
-            parent_sitting_id = int(data["ids"]) or data["event_pid"]
+            parent_sitting_id = get_real_id(data["ids"]) or data["event_pid"]
             length = data["event_length"]
             sitting_length = timedelta(seconds=length)
             base_sitting_length = sitting_length + timedelta(hours=1)
@@ -830,7 +830,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 self.template_data.append({
                         "sitting_id": sitting.sitting_id, 
                         "action": (is_new and "inserted" or "updated"),
-                        "ids": sitting.sitting_id,
+                        "ids": create_id(sitting)
                 })
             #delete any sittings outside recurring bounds
             for del_sibling in siblings[len(dates):]:
@@ -842,7 +842,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                     self.template_data.append({
                         "sitting_id": del_sibling.sitting_id,
                         "action": "deleted",
-                        "ids": del_sibling.sitting_id
+                        "ids": create_id(del_sibling)
                     })
         else:
             sitting_id = get_real_id(data["ids"])
