@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<descriptor name="report" archetype="doc" order="30">
+    <field name="language" label="Language" required="true" value_type="language" render_type="single_select" vocabulary="language">
+        <show modes="add view edit" />
+        <hide modes="listing" />
+    </field>
+    <field name="title" label="Publications type" required="true" value_type="text" render_type="text_box">
+        <show modes="add view edit listing" />
+    </field>
+    <field name="status_date" label="Published Date" required="true" value_type="date" render_type="date">
+        <show modes="view listing" />
+    </field>
+    <field name="body" label="Text" required="true" value_type="text" render_type="rich_text">
+        <show modes="view edit add" />
+    </field>
+</descriptor>
+

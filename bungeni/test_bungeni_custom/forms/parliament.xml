@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<descriptor name="parliament" archetype="group" order="1" sort_on="start_date">
+    <field name="full_name" label="Parliament Name" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="short_name" label="Short Name" description="Shorter name for the parliament" required="true" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="identifier" label="Parliament Identifier" description="Unique identifier or number for this Parliament" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="language" label="Language" required="true" value_type="language" render_type="single_select" vocabulary="language">
+        <show modes="view edit add" />
+        <hide modes="listing" />
+    </field>
+    <field name="election_date" label="Election Date" description="Date of the election" required="true" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="start_date" label="In power from" description="Date of the swearing in" required="true" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="end_date" label="In power till" description="Date of the dissolution" required="false" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="description" label="Description" required="false" value_type="text" render_type="rich_text">
+        <show modes="view edit add" />
+    </field>
+    
+    <integrity 
+        constraints="end_after_start parliament_start_after_election"
+        validations="validate_parliament_dates"
+    />
+    
+</descriptor>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<descriptor name="political_group" archetype="group" order="19">
+    <field name="full_name" label="Full Name" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="short_name" label="Short Name" required="true" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="acronym" label="Acronym" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="combined_name" label="Full Name [Short Name]" required="false" value_type="combined_name" render_type="text_line">
+        <show modes="listing" />
+    </field>
+    <field name="language" label="Language" required="true" value_type="language" render_type="single_select" vocabulary="language">
+        <show modes="view edit add" />
+        <hide modes="listing" />
+    </field>
+    <field name="start_date" label="Start Date" required="true" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="end_date" label="End Date" required="false" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="status" label="Status" required="true" value_type="status" render_type="single_select" vocabulary="workflow_states">
+        <show modes="view listing" />
+    </field>
+    <field name="description" label="Description" required="false" value_type="text" render_type="rich_text">
+        <show modes="view edit add" />
+    </field>
+    <field name="identifier" label="Identifier" description="Unique identifier or number for this political group" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add" />
+    </field>
+    <field name="logo_data" label="Logo" required="false" value_type="image" render_type="image">
+        <show modes="view edit add" />
+    </field>
+    <integrity constraints="end_after_start" validations="validate_date_range_within_parent" />
+</descriptor>
+

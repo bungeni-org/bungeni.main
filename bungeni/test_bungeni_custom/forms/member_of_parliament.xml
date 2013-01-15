@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<descriptor name="member_of_parliament" archetype="group_membership" order="18"
+        label="Parliament Member" container_label="Parliament Members"
+        sort_on="start_date"
+    >
+    <field name="user_id" label="Name" required="true" value_type="user" render_type="single_select" vocabulary="member">
+        <show modes="view add listing" />
+    </field>
+    <field name="member_election_type" label="Election Type" required="true" value_type="vocabulary" render_type="single_select" vocabulary="member_election_type">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="election_nomination_date" label="Election/Nomination Date" required="false" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="start_date" label="Start Date" required="true" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="end_date" label="End Date" required="false" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="active_p" label="Active" required="false" value_type="bool" render_type="bool">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="language" label="Language" required="true" value_type="language" render_type="single_select" vocabulary="language">
+        <show modes="view edit add" />
+        <hide modes="listing" />
+    </field>
+    <field name="substitution_type" label="Type of Substitution" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit listing" />
+    </field>
+    <field name="replaced_id" label="Substituted by" required="false" value_type="text" render_type="single_select" vocabulary="substitution">
+        <show modes="view edit listing" />
+    </field>
+    <field name="status" label="Status" required="true" value_type="status" render_type="single_select" vocabulary="workflow_states">
+        <show modes="view listing" />
+    </field>
+    <field name="status_date" label="Status Date" required="true" value_type="date" render_type="date">
+        <show modes="view listing" />
+    </field>
+    <field name="representation" label="Representation" description="Select Representation" required="false" value_type="text" render_type="tree_text" vocabulary="representation">
+        <show modes="view edit add" />
+        <hide modes="listing" />
+    </field>
+    <field name="party" label="Political Party" required="false" value_type="vocabulary" render_type="single_select" vocabulary="party">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="leave_reason" label="Leave Reason" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add" />
+        <hide modes="listing" />
+    </field>
+    <field name="notes" label="Notes" required="false" value_type="text" render_type="rich_text">
+        <show modes="view edit add" />
+    </field>
+    
+    <integrity
+        constraints="
+            end_after_start
+            active_and_substituted
+            substituted_end_date
+            inactive_no_end_date
+            member_start_after_elected
+        "
+    />
+
+</descriptor>
+

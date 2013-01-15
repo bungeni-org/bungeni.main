@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<descriptor name="committee_staff" archetype="group_membership">
+    <field name="user_id" label="Name" required="true" value_type="user" render_type="single_select" vocabulary="user_not_mp">
+        <show modes="view add listing" />
+    </field>
+    <field name="start_date" label="Start Date" required="true" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="end_date" label="End Date" required="false" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="active_p" label="Active" required="false" value_type="bool" render_type="bool">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="language" label="Language" required="true" value_type="language" render_type="single_select" vocabulary="language">
+        <show modes="view edit add" />
+        <hide modes="listing" />
+    </field>
+    <field name="substitution_type" label="Type of Substitution" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit listing" />
+    </field>
+    <field name="replaced_id" label="Substituted by" required="false" value_type="text" render_type="single_select" vocabulary="substitution">
+        <show modes="view edit listing" />
+    </field>
+    <field name="status" label="Status" required="true" value_type="status" render_type="single_select" vocabulary="workflow_states">
+        <show modes="view listing" />
+    </field>
+    <field name="status_date" label="Status Date" required="true" value_type="date" render_type="date">
+        <show modes="view listing" />
+    </field>
+    <field name="notes" label="Notes" required="false" value_type="text" render_type="rich_text">
+        <show modes="view edit add" />
+    </field>
+</descriptor>
+

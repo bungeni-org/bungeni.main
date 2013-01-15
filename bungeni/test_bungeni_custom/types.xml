@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<types>
+    <!-- Bungeni Custom Types
+    
+    All custom types must be declared, enabled/disabled, here.
+    
+    The "archetype" of a custom type is indicated by a dedicated tag name.
+    This also allows for different types to have different attributes e.g. a
+    group and/or a membership could specify an associated role (even if such 
+    info could well be specified elsewhere).
+    
+    Some custom types are dependent on another custom type e.g. a membership
+    on a group, hence the nesting of these declarations. 
+    
+    All custom types must specify a name, that is the "type key".
+    
+    All custom types are workflowed. When not explicitly specified, the 
+    workflow name is the same as the type name.
+    
+    Disabling a type means the type will not be registered, and all associated 
+    configuration e.g. workflow, descriptor, workspace, etc, will not be loaded.
+    
+    Type element attributes:
+        @name: the type name used throughout the system as the type key, REQUIRED
+        @workflow: the worklow key (the name of the workflow definition file, 
+            in `workflows/` folder), if not set then value of @name is used.
+        @enabled: "true" | "false", default is "true"
+            note that if parent is disabled, then all nested elements are also 
+            disabled (even if they set enabled="true")
+    -->
+    <doc name="question" enabled="true" />
+    <doc name="bill" enabled="true" />
+    <doc name="report" enabled="true" />
+    
+    <doc name="test_doc" enabled="false" />
+    
+    <group name="office" workflow="group" enabled="true">
+        <member name="office_member" workflow="group_membership" enabled="true" />
+    </group>
+    <group name="political_group" workflow="group" enabled="true">
+        <member name="political_group_member" workflow="group_membership" enabled="true" />
+    </group>
+    <group name="ministry" workflow="group" enabled="true">
+        <member name="minister" workflow="group_membership" enabled="true" />
+    </group>
+    <group name="committee" enabled="true">
+        <member name="committee_member" workflow="group_membership" enabled="true" />
+        <member name="committee_staff" workflow="group_membership" enabled="true" />
+    </group>
+    <group name="government" workflow="group" enabled="true" />
+    <group name="parliament" enabled="true">
+        <member name="member_of_parliament" workflow="group_membership" enabled="true" />
+    </group>
+
+</types>
+

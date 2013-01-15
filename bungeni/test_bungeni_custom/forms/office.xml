@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<descriptor name="office" archetype="group" order="2">
+    <field name="full_name" label="Full Name" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="short_name" label="Short Name" required="true" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="acronym" label="Acronym" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="combined_name" label="Full Name [Short Name]" required="false" value_type="combined_name" render_type="text_line">
+        <show modes="listing" />
+    </field>
+    <field name="language" label="Language" required="true" value_type="language" render_type="single_select" vocabulary="language">
+        <show modes="view edit add" />
+        <hide modes="listing" />
+    </field>
+    <field name="start_date" label="Start Date" required="true" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="end_date" label="End Date" required="false" value_type="date" render_type="date">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="status" label="Status" required="true" value_type="status" render_type="single_select" vocabulary="workflow_states">
+        <show modes="view listing" />
+    </field>
+    <field name="description" label="Description" required="false" value_type="text" render_type="rich_text">
+        <show modes="view edit add" />
+    </field>
+    <field name="identifier" label="Office Identifier" description="Unique identifier or number for this Office" required="false" value_type="text" render_type="text_line">
+        <show modes="view edit add" />
+    </field>
+    <field name="office_role" label="Role" description="Role given to members of this office" required="false" value_type="text" render_type="single_select" vocabulary="office_role">
+        <show modes="view edit add listing" />
+    </field>
+    <integrity validations="validate_date_range_within_parent" />
+
+</descriptor>
+
