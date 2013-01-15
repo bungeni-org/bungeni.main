@@ -18,7 +18,10 @@ class CachedProperties(object):
         """
         site =  getSite()
         container = site["workspace"]["scheduling"]["documents"]
-        return url.absoluteURL(container, common.get_request())
+        request = common.get_request()
+        app_url = request.getApplicationURL()
+        return url.absoluteURL(container, request).replace(app_url, "")
+        
 cached_props = CachedProperties()
 
 RESOURCE_MAPPING = {
