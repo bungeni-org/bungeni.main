@@ -95,7 +95,11 @@ def get_real_id(scheduler_id):
     """Get actual sitting id from ID of form <type>-<id>.
     Resolves primary key of event created using 
     """
-    return int(scheduler_id.split("-")[-1])
+    if type(scheduler_id) is int:
+        return scheduler_id
+    str_value = (scheduler_id.split("-")[-1] if ("-" in scheduler_id) else 
+        scheduler_id)
+    return int(str_value)
 
 
 class TIME_SPAN:
@@ -597,6 +601,10 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         for key in request.form.keys():
             t = key.partition("_")
             request.form[t[2]] = data[key]
+        if request.form.get("event_pid"):
+            request.form["event_pid"] = get_real_id(request.form["event_pid"])
+        if request.form.get("rec_type") == "none":
+            request.form["!nativeeditor_status"] = "deleted"
         if "!nativeeditor_status" in request.form.keys():
             if request.form["!nativeeditor_status"] == "inserted":
                 request.form["actions.insert"] = "insert"
@@ -775,7 +783,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
             # updating recurring events - we assume existing events fall
             # at the beginning of the sequence and offer in place update.
-            parent_sitting_id = get_real_id(data["ids"]) or data["event_pid"]
+            parent_sitting_id = get_real_id(data["ids"] or data["event_pid"])
             length = data["event_length"]
             sitting_length = timedelta(seconds=length)
             base_sitting_length = sitting_length + timedelta(hours=1)
@@ -846,7 +854,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                     })
         else:
             sitting_id = get_real_id(data["ids"])
-            parent_id = data["event_pid"]
+            parent_id = get_real_id(data["event_pid"])
             sitting = container.get(sitting_id)
             if sitting is None:
                 sitting = container.get(int(parent_id))
@@ -890,7 +898,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             container = removeSecurityProxy(self.context.__parent__).sittings
         else:
             container = self.context.publishTraverse(self.request, "sittings")
-        sitting = container.get(get_real_id(data["ids"]))
+        sitting = (container.get(get_real_id(data["ids"])) or
+            container.get(get_real_id(self.request.form["event_pid"])))
         self.template_data = []
         if sitting is not None:
             self.request.form["headless"] = "true"
