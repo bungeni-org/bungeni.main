@@ -708,7 +708,7 @@ class WorkflowController(object):
         return [ transition for transition in transitions
             if ((trigger_ifilter is None or 
                     transition.trigger == trigger_ifilter) and
-                (conditional and
+                (not conditional or
                     # a None condition always passes
                     (transition.condition is None or 
                         transition.condition(self.context)))) ]
