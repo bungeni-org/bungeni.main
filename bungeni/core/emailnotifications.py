@@ -3,6 +3,7 @@ log = __import__("logging").getLogger("bungeni.core.emailnotifications")
 import os
 import simplejson
 import smtplib
+import socket
 from email.mime.text import MIMEText
 from threading import Thread
 from lxml import etree
@@ -43,15 +44,35 @@ class BungeniSMTPMailer(object):
         port = self.settings.port
         username = self.settings.username or None
         password = self.settings.password or None
-        connection = smtplib.SMTP(hostname, port)
+        try:
+            connection = smtplib.SMTP(hostname, port)
+        except smtplib.SMTPConnectError:
+            log.error("Error occurred during establishment of"
+                      " a connection with the SMTP server.")
+            return
+        except socket.error, v:
+            log.error("Connection to SMTP server failed with error code: %s"
+                % v[0])
+            return
         if self.settings.use_tls:
             connection.ehlo()
             connection.starttls()
             connection.ehlo()
         # authenticate if needed
         if username is not None and password is not None:
-            connection.login(username, password)
-        connection.sendmail(msg["From"], recipients, msg.as_string())
+            try:
+                connection.login(username, password)
+            except smtplib.SMTPAuthenticationError:
+                log.error("Error occured when establishing connection"
+                          " with SMTP server")
+        try:
+            connection.sendmail(msg["From"], recipients, msg.as_string())
+        except smtplib.SMTPSenderRefused:
+            log.error("Email sender address refused")
+        except smtplib.SMTPRecipientsRefused:
+            log.error("Email recipient addresses refused.")
+        except smtplib.SMTPDataError:
+            log.error("The SMTP server refused to accept the message data.")
         connection.quit()
 
 
@@ -160,7 +181,7 @@ class EmailBlock(object):
                 body_template(item=Item(self.message)))
 
 
-@capi.bungeni_custom_errors
+#@capi.bungeni_custom_errors
 def email_notifications_callback(channel, method, properties, body):
     message = simplejson.loads(body)
     ti = capi.get_type_info(message["type"])
