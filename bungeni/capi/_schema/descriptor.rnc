@@ -15,7 +15,7 @@ grammar {
     include "common.rnc"
     
     start = ( UI |
-        # custom descriopto, in own file
+        # custom descriptor, in own file
         element descriptor {
             attribute name { SYMBOL_NAME }, # type_key
             attribute order { xsd:integer }?,
@@ -74,9 +74,15 @@ grammar {
             )
         )?,
         attribute note { text }?,
-        # A field may NOT be declared extended if it is defined in super 
-        # (archetype) descriptor. Value is one of allowed extended types.
-        attribute extended { "text" | "translated_text" }?,
+        
+        # extended | derived 
+        (
+            # A field may NOT be declared extended if it is defined in super 
+            # (archetype) descriptor. Value is one of allowed extended types.
+            attribute extended { "text" | "translated_text" }?
+            |
+            attribute derived { SYMBOL_NAME }?
+        ),
         
         # each mode token may appear only ONCE in sum of all show/hide elements
         (

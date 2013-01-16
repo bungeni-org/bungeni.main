@@ -18,7 +18,7 @@
   <start>
     <choice>
       <ref name="UI"/>
-      <!-- custom descriopto, in own file -->
+      <!-- custom descriptor, in own file -->
       <element name="descriptor">
         <attribute name="name">
           <ref name="SYMBOL_NAME"/>
@@ -161,18 +161,26 @@
       <optional>
         <attribute name="note"/>
       </optional>
-      <optional>
-        <!--
-          A field may NOT be declared extended if it is defined in super 
-          (archetype) descriptor. Value is one of allowed extended types.
-        -->
-        <attribute name="extended">
-          <choice>
-            <value>text</value>
-            <value>translated_text</value>
-          </choice>
-        </attribute>
-      </optional>
+      <!-- extended | derived -->
+      <choice>
+        <optional>
+          <!--
+            A field may NOT be declared extended if it is defined in super 
+            (archetype) descriptor. Value is one of allowed extended types.
+          -->
+          <attribute name="extended">
+            <choice>
+              <value>text</value>
+              <value>translated_text</value>
+            </choice>
+          </attribute>
+        </optional>
+        <optional>
+          <attribute name="derived">
+            <ref name="SYMBOL_NAME"/>
+          </attribute>
+        </optional>
+      </choice>
       <!-- each mode token may appear only ONCE in sum of all show/hide elements -->
       <interleave>
         <zeroOrMore>

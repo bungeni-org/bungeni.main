@@ -601,24 +601,9 @@ class Doc(Entity):
             if c.audit.status in states:
                 return c.date_active
     
-    @property
-    def submission_date(self):
-        # As base meaning of "submission_date" we take the most recent date
-        # of workflow transition to "submit" to clerk. Subclasses may need
-        # to overload as appropriate for their respective workflows.
-        return self._get_workflow_date("submitted")
-    
     extended_properties = [
     ]
 #instrument_extended_properties(Doc, "doc")
-
-
-class AdmissibleMixin(object):
-    """Assumes self._get_workflow_date().
-    """
-    @property
-    def admissible_date(self):
-        return self._get_workflow_date("admissible")
 
 
 class Change(HeadParentedMixin, Entity):
@@ -798,12 +783,8 @@ class DocVersion(Version):
     #events = one2many("events",
     #    "bungeni.models.domain.DocVersionContainer", "head_id")
     
-    submission_date = None # !+bypass error when loading a doc version view
-    # !+ proper logic of this would have to be the value of 
-    # self.head.submission_date at the time of *this* version!
-    
-
-class AgendaItem(AdmissibleMixin, Doc):
+#!+CUSTOM
+class AgendaItem(Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
     interface.implements(
@@ -812,6 +793,7 @@ class AgendaItem(AdmissibleMixin, Doc):
     )
 #AgendaItemAudit
 
+#!+CUSTOM
 class Bill(Doc):
     """Bill domain type.
     """
@@ -825,7 +807,8 @@ class Bill(Doc):
     # !+BILL_MINISTRY(fz, oct-2011) the ministry field here logically means the 
     # bill is presented by the Ministry and so... Ministry should be the author,
     # not a "field" 
-    # !+MINISTRY_ID
+    # !+MINISTRY_ID should be removed or made simply an alias to the
+    # sqlalchemy.orm.attributes.InstrumentedAttribute Bill.group_id
     def ministry_id():
         doc = "Related group must be a ministry."
         def fget(self):
@@ -838,32 +821,23 @@ class Bill(Doc):
         return locals()
     ministry_id = property(**ministry_id())
     
-    @property
-    def publication_date(self):
-        return self._get_workflow_date("gazetted")
-    
     extended_properties = [
         #("short_title", vp.TranslatedText),
     ]
 #instrument_extended_properties(Bill, "doc")
 #BillAudit
 
-class Motion(AdmissibleMixin, Doc):
+class Motion(Doc):
     """Motion domain type.
     """
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
         interfaces.IMotion,
     )
-    
-    @property
-    def notice_date(self):
-        return self._get_workflow_date("scheduled")
 #MotionAudit
 
 
-
-class Question(AdmissibleMixin, Doc):
+class Question(Doc):
     """Question domain type.
     """
     interface.implements(
@@ -874,7 +848,7 @@ class Question(AdmissibleMixin, Doc):
     #!+doc_type: default="ordinary", nullable=False,
     #!+response_type: default="oral", nullable=False,
     
-    # !+MINISTRY_ID
+    # !+MINISTRY_ID same as for Bill!
     def ministry_id():
         doc = "Related group must be a ministry."
         def fget(self):
@@ -887,10 +861,6 @@ class Question(AdmissibleMixin, Doc):
         return locals()
     ministry_id = property(**ministry_id())
     
-    @property
-    def ministry_submit_date(self):
-        return self._get_workflow_date("response_pending")
-    
     extended_properties = [
         #("response_type", vp.Text),
         #("response_text", vp.TranslatedText),
@@ -898,7 +868,7 @@ class Question(AdmissibleMixin, Doc):
 #instrument_extended_properties(Question, "doc")
 #QuestionAudit
 
-class TabledDocument(AdmissibleMixin, Doc):
+class TabledDocument(Doc):
     """Tabled document: captures metadata about the document (owner, date, 
     title, description) and can have multiple physical documents attached.
     
@@ -932,8 +902,6 @@ class Event(HeadParentedMixin, Doc):
     interface.implements(
         interfaces.IEvent,
     )
-    
-    #!+delete submission_date
     
     @property
     def event_date(self):

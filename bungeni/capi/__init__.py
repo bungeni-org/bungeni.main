@@ -40,9 +40,10 @@ capi = _capi.CAPI()
 # additional conveniences for simpler and more uniform usage
 
 # attach _bungeni_custom_errors decorator onto capi singleton
-capi.bungeni_custom_errors = _capi._bungeni_custom_errors
+capi.bungeni_custom_errors = _capi.bungeni_custom_errors
 
 # attach _schema sub-package onto capi singleton
 capi.schema = _schema
 
+# 
 

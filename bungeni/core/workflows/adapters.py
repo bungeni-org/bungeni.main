@@ -131,11 +131,13 @@ def register_custom_types():
             archetype_key = type_elem.tag # !+archetype? move to types?
             domain_model = new_custom_domain_model(type_key, model_iface, archetype_key)
         
-        # add declarations of any extended properties
+        # add declarations of any extended/derived properties
         descriptor_elem = get_descriptor_elem(type_key)
         if descriptor_elem is not None:
             archetype_key = misc.xml_attr_str(descriptor_elem, "archetype") # !+archetype? move to types?
             for f_elem in descriptor_elem.findall("field"):
+                
+                # extended
                 extended_type = misc.xml_attr_str(f_elem, "extended")
                 if extended_type is not None:
                     name = misc.xml_attr_str(f_elem, "name")
@@ -146,6 +148,20 @@ def register_custom_types():
                         extended_type, name, domain_model)
                     vp_kls = get_vp_kls(extended_type)
                     domain_model.extended_properties.append((name, vp_kls))
+                
+                # derived
+                derived = misc.xml_attr_str(f_elem, "derived")
+                if derived is not None:
+                    name = misc.xml_attr_str(f_elem, "name")
+                    # !+ do not allow clobbering of a same-named attribute
+                    assert not name in domain_model.__dict__, \
+                        "May not overwrite field %r as derived attribute, an " \
+                        "attribute with same name already defined directly by " \
+                        "domain model class for type %r." % (name, type_key)
+                    # set as property on domain class
+                    setattr(domain_model, name, 
+                        property(capi.get_form_derived(derived)))
+            
             # !+instrument_extended_properties, doc
             MODEL_MODULE.instrument_extended_properties(domain_model, "doc")
         

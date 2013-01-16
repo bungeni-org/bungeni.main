@@ -19,15 +19,16 @@ from bungeni.alchemist import type_info
 import bungeni_custom as bc
 
 
+# utils 
+
 class BungeniCustomError(Exception):
-    """A configuration errorm during loading of configuration.
+    """A configuration error during loading of configuration.
     """
 class BungeniCustomRuntimeError(BungeniCustomError): 
     """Internal error while executing a callable determined from configuration.
     """ 
 
-# additional conveniences for simpler and more uniform usage
-def _bungeni_custom_errors(f):
+def bungeni_custom_errors(f):
     """Decorator to intercept any error raised by function f and re-raise it
     as a BungeniCustomError. To be used to decorate any function involved 
     in reading/validating/processing any bungeni_custom parameters. 
@@ -54,6 +55,8 @@ def wrapped_callable(unwrapped):
     return wrapped
 
 
+# capi (singleton)
+
 class CAPI(object):
     """Accessor class for Bungeni Custom parameters.
     """
@@ -71,14 +74,14 @@ class CAPI(object):
     # bungeni_custom parameter properties
     
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def zope_i18n_allowed_languages(self):
         # NOTE: zope.i18n.config.ALLOWED_LANGUAGES expects the value of the 
         # env variable for this to be a COMMA or SPACE separated STRING
         return tuple(bc.zope_i18n_allowed_languages.split())
     
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def zope_i18n_compile_mo_files(self):
         return bool(
             bc.zope_i18n_compile_mo_files is True or 
@@ -86,7 +89,7 @@ class CAPI(object):
         )
     
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def default_language(self):
         assert bc.default_language in self.zope_i18n_allowed_languages, \
             "Default language [%s] not in allowed languages [%s]" % (
@@ -94,7 +97,7 @@ class CAPI(object):
         return bc.default_language
         
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def right_to_left_languages(self):
         rtl_langs = tuple(bc.right_to_left_languages.split())
         assert set(rtl_langs).issubset(set(self.zope_i18n_allowed_languages)),\
@@ -103,7 +106,7 @@ class CAPI(object):
         return rtl_langs
     
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def check_auto_reload_localization(self):
         """ () -> int
         minimum number of seconds to wait between checks for whether a 
@@ -112,26 +115,32 @@ class CAPI(object):
         int(bc.check_auto_reload_localization) # TypeError if not an int
         return bc.check_auto_reload_localization
     
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def get_workflow_condition(self, condition):
         condition_module = resolve("._conditions", "bungeni_custom.workflows")
         condition = getattr(condition_module, condition) # raises AttributeError
         return wrapped_callable(condition)
     
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def get_form_constraint(self, constraint):
         constraint_module = resolve("._constraints", "bungeni_custom.forms")
         constraint = getattr(constraint_module, constraint) # raises AttributeError
         return wrapped_callable(constraint)
     
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def get_form_validator(self, validation):
         validator_module = resolve("._validations", "bungeni_custom.forms")
         validator = getattr(validator_module, validation) # raises AttributeError
         return wrapped_callable(validator)
     
+    @bungeni_custom_errors
+    def get_form_derived(self, derived):
+        derived_module = resolve("._derived", "bungeni_custom.forms")
+        derived_def = getattr(derived_module, derived) # raises AttributeError
+        return wrapped_callable(derived_def)
+    
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def default_number_of_listing_items(self):
         """This is the max number of items that are displayed in a listing by
         default. Returns an integer
@@ -139,13 +148,13 @@ class CAPI(object):
         return int(bc.default_number_of_listing_items)
     
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def long_text_column_listings_truncate_at(self):
         """When listing text columns, only display first so many characters."""
         return int(bc.long_text_column_listings_truncate_at)
     
     @property
-    @_bungeni_custom_errors
+    @bungeni_custom_errors
     def workspace_tab_count_cache_refresh_time(self):
         """The duration in seconds between tab count refresh operations"""
         return int(bc.workspace_tab_count_cache_refresh_time)
@@ -240,4 +249,5 @@ class CAPI(object):
         for type_key, ti in type_info._iter():
             if (scope is None or ti.scope == scope):
                 yield type_key, ti
+
 

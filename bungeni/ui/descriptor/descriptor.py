@@ -833,7 +833,6 @@ class DocDescriptor(ModelDescriptor):
         #"amc_signatories",
         #"amc_attachments",
         #"amc_events",
-        "submission_date",
         "subject",
         "coverage",
         "geolocation",
@@ -850,16 +849,6 @@ class DocDescriptor(ModelDescriptor):
         # amc_signatories
         # amc_attachments
         # amc_events
-        F(name="submission_date",
-            label="Submission Date",
-            localizable=[
-                show("view"), 
-                hide("listing"),
-            ],
-            value_type="date",
-            render_type="date",
-        ),
-
         #   admissible_date
         # owner
         # signatories

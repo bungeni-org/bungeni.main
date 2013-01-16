@@ -171,6 +171,7 @@ def new_descriptor_fields(edescriptor):
     type_key = xas(edescriptor, "name")
     fields = []
     for f_elem in edescriptor.findall("field"):
+        name = xas(f_elem, "name")
         # custom_localizable_directives
         clocs = []
         for cloc_elem in f_elem.getchildren():
@@ -184,18 +185,28 @@ def new_descriptor_fields(edescriptor):
             elif isinstance(tag, basestring):
                 raise ValueError(
                     "Unknown directive %r in field %r in descriptor %r" % (
-                        cloc_elem.tag, xas(f_elem, "name"), type_key))
+                        cloc_elem.tag, name, type_key))
             else:
                 pass # xml comment, ...
+
+        # vaildate additional model-related constraints (not expressed in RNC)
+        if xas(f_elem, "derived"):
+            non_view_fmodes = [ mode for loc in clocs for mode in loc.modes 
+                if mode not in ("view", "listing") ]
+            assert not non_view_fmodes, \
+                "Unsupported modes %r in derived field %r in descriptor %r. " \
+                "Derived fields are read-only and may ony specify modes in: %r." % (
+                    non_view_fmodes, name, type_key, ("view", "listing"))
+        
         fields.append(field.F(
-                name=xas(f_elem, "name"),
+                name=name,
                 label=xas(f_elem, "label"),
                 description=xas(f_elem, "description"),
                 required=xab(f_elem, "required"),
                 localizable=clocs,
                 value_type=xas(f_elem, "value_type"),
                 render_type=xas(f_elem, "render_type"),
-                vocabulary=xas(f_elem, "vocabulary")
+                vocabulary=xas(f_elem, "vocabulary"),
             ))
     return fields
 
