@@ -221,6 +221,20 @@ function re_render_event(old_id, new_id){
 }
 
 /**
+ * @function refresh_events
+ * @description - force refresh of calendar after adding a recurring event
+ * ensures db ids are loaded client-side
+ */
+function refresh_events(old_id, new_id){
+    event = scheduler.getEvent(new_id);
+    if (event.rec_type!="none"){
+        scheduler.clearAll();
+        scheduler.load(scheduler._load_url);
+    }
+}
+
+
+/**
  * @function event_type_class
  * @description return custom style for each event type
  */

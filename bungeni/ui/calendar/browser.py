@@ -91,10 +91,12 @@ def create_id(event):
     return "%s-%d" % (naming.polymorphic_identity(event.__class__),
         mapper.primary_key_from_instance(event)[0])
 
-def get_real_id(scheduler_id):
+def get_real_id(scheduler_id, default=0):
     """Get actual sitting id from ID of form <type>-<id>.
     Resolves primary key of event created using 
     """
+    if not scheduler_id:
+        return default
     if type(scheduler_id) is int:
         return scheduler_id
     str_value = (scheduler_id.split("-")[-1] if ("-" in scheduler_id) else 
