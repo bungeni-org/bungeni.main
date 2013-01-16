@@ -70,14 +70,8 @@ class IReportAddContext(IAddContext):
 
 class IWorkspaceScheduling(interface.Interface):
     """Marker inteface for workspace scheduling"""
-class IWorkspaceInbox(interface.Interface):
-    """Marker inteface for workspace inbox"""
-class IWorkspaceDraft(interface.Interface):
-    """Marker inteface for workspace draft"""
-class IWorkspacePending(interface.Interface):
-    """Marker inteface for workspace sent"""
-class IWorkspaceArchive(interface.Interface):
-    """Marker inteface for workspace archive"""
+class IWorkspaceTab(interface.Interface):
+    """Marker inteface for workspace tabs"""
 class IWorkspaceDocuments(interface.Interface):
     """Marker inteface for workspace my-documents"""
 class IWorkspaceUnderConsideration(interface.Interface):

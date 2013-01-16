@@ -113,7 +113,9 @@ def setup_customization_ui():
             # add menu item
             # !+workspace_feature_add(mr, oct-2012) note that an enabled
             # workspace feature also implies "add" functionality for the type
-            action = "../../draft/add_{k}".format(k=type_key)
+            first_tab = capi.workspace_tabs[0]
+            action = "../../{first_tab}/add_{k}".format(first_tab=first_tab,
+                k=type_key)
             register_menu_item(type_key, "Add", type_title, "*", action,
                 menu="workspace_add_parliamentary_content", order=7)
             
@@ -141,7 +143,7 @@ def setup_customization_ui():
             # add view
             name = "add_{type_key}".format(type_key=type_key)
             register_form_view(type_key, "Add", name,
-                "bungeni.core.interfaces.IWorkspaceDraft",
+                "bungeni.core.interfaces.IWorkspaceTab",
                 "bungeni.ui.workspace.WorkspaceAddForm")
         
         # events

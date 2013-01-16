@@ -162,31 +162,13 @@ class AppSetup(object):
             marker=interfaces.IWorkspaceDocuments,
         )
         
-        workspace["my-documents"]["draft"] = WorkspaceContainer(
-            tab_type="draft",
-            title=_("section_workspace_draft", default="draft"),
-            description=_("draft documents"),
-            marker=interfaces.IWorkspaceDraft
-        )
-        workspace["my-documents"]["inbox"] = WorkspaceContainer(
-            tab_type="inbox",
-            title=_("section_workspace_inbox", default="inbox"),
-            description=_("incoming documents"),
-            marker=interfaces.IWorkspaceInbox
-        )
-        workspace["my-documents"]["pending"] = WorkspaceContainer(
-            tab_type="pending",
-            title=_("section_workspace_pending", default="pending"),
-            description=_("pending documents"),
-            marker=interfaces.IWorkspacePending
-        )
-        workspace["my-documents"]["archive"] = WorkspaceContainer(
-            tab_type="archive",
-            title=_("archive"),
-            description=_("archived documents"),
-            marker=interfaces.IWorkspaceArchive
-        )
-        
+        for tab in capi.workspace_tabs:
+            workspace["my-documents"][tab] = WorkspaceContainer(
+                tab_type=tab,
+                title=_("section_workspace_%s" % tab),
+                marker=interfaces.IWorkspaceTab
+            )
+
         workspace["under-consideration"] = WorkspaceSection(
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),

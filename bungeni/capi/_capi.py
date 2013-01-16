@@ -159,6 +159,12 @@ class CAPI(object):
         """The duration in seconds between tab count refresh operations"""
         return int(bc.workspace_tab_count_cache_refresh_time)
     
+    @property
+    @bungeni_custom_errors
+    def workspace_tabs(self):
+        """The tabs in the workspace"""
+        return bc.workspace_tabs
+
     # utility methods
     
     def get_root_path(self):

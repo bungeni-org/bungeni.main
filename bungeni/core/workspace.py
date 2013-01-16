@@ -41,17 +41,13 @@ from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui.container import get_date_strings, string_to_date
 from bungeni.core.workflows.utils import view_permission
 
-# Tabs that are available in the workspace
-# All logged in users get a workspace with these tabs
-TABS = ["draft", "inbox", "pending", "archive"]
-
 TabCountRecord = namedtuple("TabCountRecord", ["timestamp", "count"])
 
 
 class WorkspaceBaseContainer(AlchemistContainer):
     __name__ = __parent__ = None
 
-    def __init__(self, tab_type, title, description, marker=None):
+    def __init__(self, tab_type, title, description=None, marker=None):
         self.__name__ = tab_type
         self.title = title
         self.description = description
@@ -67,8 +63,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
         mapper = orm.object_mapper(unproxied)
         primary_key = mapper.primary_key_from_instance(unproxied)
         domain_class = instance.__class__
-        workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-        item_type = workspace_tabs.get_type(domain_class)
+        workspace_utility = component.getUtility(IWorkspaceTabsUtility)
+        item_type = workspace_utility.get_type(domain_class)
         return "%s-%d" % (item_type, primary_key[0])
 
     @staticmethod
@@ -79,8 +75,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
         properties = identity_key.split("-")
         if len(properties) != 2:
             raise ValueError
-        workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-        domain_class = workspace_tabs.get_domain(properties[0])
+        workspace_utility = component.getUtility(IWorkspaceTabsUtility)
+        domain_class = workspace_utility.get_domain(properties[0])
         primary_key = properties[1]
         return domain_class, primary_key
 
@@ -454,15 +450,16 @@ def load_workspaces():
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt.
     """
-    workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
+    workspace_utility = component.getUtility(IWorkspaceTabsUtility)
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)
     item_type = file_name.split(".")[0]
-    workspace_tabs.register_item_type(domain_class, item_type)
+    workspace_utility.register_item_type(domain_class, item_type)
     workspace = etree.fromstring(open(file_path).read())
     for state in workspace.iterchildren(tag="state"):
         for tab in state.iterchildren(tag="tab"):
-            assert tab.get("id") in TABS, "Workspace configuration error : " \
+            assert tab.get("id") in capi.workspace_tabs, \
+                "Workspace configuration error : " \
                 "Invalid tab - %s. file: %s, state : %s" % (
                     tab.get("id"), file_name, state.get("id"))
             if tab.get("roles"):
@@ -472,7 +469,7 @@ def load_workspace(file_name, domain_class):
                         "Workspace configuration error : " \
                         "Invalid role - %s. file: %s, state : %s" % (
                             role, file_name, state.get("id"))
-                    workspace_tabs.set_content(role,
+                    workspace_utility.set_content(role,
                         tab.get("id"), domain_class, state.get("id"))
 
 
@@ -480,7 +477,7 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
 
     interface.implements(IWorkspaceUnderConsiderationContainer)
 
-    def __init__(self, name, title, description, marker=None):
+    def __init__(self, name, title, description=None, marker=None):
         self.__name__ = name
         self.title = title
         self.description = description
