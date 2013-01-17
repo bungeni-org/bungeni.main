@@ -1329,7 +1329,7 @@ party = FlatVDEXVocabularyFactory("party.vdex")
 sitting_activity_types = FlatVDEXVocabularyFactory("sitting-activity-types.vdex") # !+naming
 sitting_meeting_types = FlatVDEXVocabularyFactory("sitting-meeting-types.vdex") # !+naming
 sitting_convocation_types = FlatVDEXVocabularyFactory("sitting-convocation-types.vdex") # !+naming
-
+sitting_schedule_vote_result = FlatVDEXVocabularyFactory("sitting-schedule-vote-result.vdex")
 #
 # Vocabularies for XML configuration based report generation
 #

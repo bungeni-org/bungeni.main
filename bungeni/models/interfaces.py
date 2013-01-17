@@ -245,6 +245,9 @@ class IScheduleContent(interface.Interface):
 class IItemScheduleDiscussion(interface.Interface): pass
 class IItemScheduleDiscussionContainer(IAlchemistContainer): pass
 
+class IItemScheduleVote(interface.Interface): pass
+class IItemScheduleVoteContainer(IAlchemistContainer): pass
+
 class ITabledDocument(IBungeniContent):
     """Tabled document.
     """

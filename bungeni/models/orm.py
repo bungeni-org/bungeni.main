@@ -631,6 +631,8 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussion,
     }
 )
 
+mapper(domain.ItemScheduleVote, schema.item_schedule_vote)
+
 # items scheduled for a sitting
 # expressed as a join between item and schedule
 

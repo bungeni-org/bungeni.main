@@ -436,6 +436,20 @@ class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
     def title(self):
         return _(u"Discussion")
 
+@register.adapter()
+class ItemScheduleVoteDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IItemScheduleVote)
+    
+    @property
+    def title(self):
+        return _(u"Vote (${title}) held on ${date}",
+            mapping={
+                "title": self.context.title,
+                "date": self.formatDate(self.context.date)
+            }
+        )
+
+
 
 @register.adapter()
 class ChangeDescriptiveProperties(DescriptiveProperties):

@@ -1543,3 +1543,69 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
         #),
     ]
 
+class ItemScheduleVoteDescriptor(ModelDescriptor):
+    localizable=True
+    fields =[
+        F(name="date",
+            label="Vote Date",
+            required=True,
+            localizable=[ show("add view edit listing") ],
+            value_type="date",
+            render_type="date",
+        ),
+        F(name="title",
+            label="Vote Title",
+            required=True,
+            localizable=[ show("add view edit listing") ],
+        ),
+        F(name="description",
+            label="Vote Description",
+            required=False,
+            localizable=[ show("add view edit") ],
+            value_type="text",
+            render_type="text_box"
+        ),
+        F(name="result",
+            label="Vote Result",
+            required=True,
+            localizable=[ show("add view edit listing") ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="sitting_schedule_vote_result"
+            
+        ),
+        F(name="votes_for",
+            label="Votes Cast For",
+            localizable=[
+                show("add view edit"), 
+            ],
+            value_type="number",
+            render_type="number",
+        ),
+        F(name="votes_against",
+            label="Votes Cast Against",
+            localizable=[
+                show("add view edit"), 
+            ],
+            value_type="number",
+            render_type="number",
+        ),
+        F(name="votes_absent",
+            label="Number",
+            localizable=[
+                show("add view edit"), 
+            ],
+            value_type="number",
+            render_type="number",
+        ),
+        F(name="file",
+            label="Vote Record File",
+            description="Upload Vote Record File (XML)",
+            localizable=[
+                show("view edit add"),
+            ],
+            value_type="file",
+            render_type="file",
+        ),
+        LanguageField("language"),
+    ]

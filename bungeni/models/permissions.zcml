@@ -41,6 +41,16 @@
     <permission id="bungeni.item_schedule_discussion.Edit"
         title="Edit item scheduling discussion" />
   <meta:redefinePermission from="bungeni.item_schedule.View" to="zope.View" />
+
+    <permission id="bungeni.item_schedule_vote.View" 
+        title="View vote" />
+    <permission id="bungeni.item_schedule_vote.Add" 
+        title="Add vote record" />
+    <permission id="bungeni.item_schedule_vote.Edit" 
+        title="Edit vote record" />
+    <permission id="bungeni.item_schedule_vote.Delete" 
+        title="Delete vote record" />
+   <meta:redefinePermission from="bungeni.item_schedule_vote.View" to="zope.View" />
     
   <permission id="bungeni.sitting_attendance.View" title="View sitting attendance" />
   <permission id="bungeni.sitting_attendance.Add" title="Add sitting attendance" />

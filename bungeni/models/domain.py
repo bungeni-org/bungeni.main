@@ -1061,6 +1061,9 @@ class ItemSchedule(Entity):
     )
     discussions = one2many("discussions",
         "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
+    votes = one2many("votes",
+        "bungeni.models.domain.ItemScheduleVoteContainer", "schedule_id"
+    )
     
     def get_item_domain(self):
         if self.item_type is None:
@@ -1120,6 +1123,10 @@ class ItemScheduleDiscussion(Entity):
         interfaces.ITranslatable,
     )
 
+class ItemScheduleVote(Entity):
+    """Vote records on a scheduled item
+    """
+    interface.implements(interfaces.IItemScheduleVote)
 
 class Holiday(object):
     """Is this day a holiday?

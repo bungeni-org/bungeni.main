@@ -782,6 +782,39 @@
         />
     </class>
     
+    <class class=".domain.ItemScheduleVote">
+        <require permission="bungeni.item_schedule_vote.View"
+            attributes="
+                vote_id
+                schedule_id
+                date
+                title
+                description
+                result
+                votes_for
+                votes_against
+                votes_absent
+                file
+                language
+            "
+        />
+        <require permission="bungeni.item_schedule_vote.Edit"
+            set_attributes="
+                vote_id
+                schedule_id
+                date
+                title
+                description
+                result
+                votes_for
+                votes_against
+                votes_absent
+                file
+                language
+            "
+        />
+    </class>
+    
     <class class=".domain.Signatory">
         <require permission="bungeni.signatory.View"
             attributes="

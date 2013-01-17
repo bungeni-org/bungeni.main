@@ -277,6 +277,7 @@ TYPE_REGISTRY = [
     ("country", TI(None, interfaces.ICountry)),
     ("item_schedule", TI(None, interfaces.IItemSchedule)),
     ("item_schedule_discussion", TI(None, interfaces.IItemScheduleDiscussion)),
+    ("item_schedule_vote", TI(None, interfaces.IItemScheduleVote)),
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
     ("sitting_report", TI(None, interfaces.ISittingReport)),
     ("group_membership_role", TI(None, interfaces.IGroupMembershipRole)),

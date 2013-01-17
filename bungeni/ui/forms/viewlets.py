@@ -510,21 +510,12 @@ class DisplayViewlet(BungeniAttributeDisplay):
         descriptor = utils.get_descriptor(self.factory)
         return descriptor.display_name
 
-
-class SchedulingMinutesViewlet(DisplayViewlet):
-    factory = domain.ItemScheduleDiscussion
-    view_id = "scheduling-minutes"
-
-    def get_target(self):
-        return self.context.discussion
-
-    def set_target(self, target):
-        self.context.discussion = target
-
-    def get_add_url(self):
-        return "%s/discussions/add" % url.absoluteURL(
-            self.context, self.request)
-
+@register.viewlet(interfaces.IItemSchedule,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.scheduling-item-discussions",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
+class SchedulingMinutesViewlet(SubformViewlet):
+    sub_attr_name = "discussions"
 
 @register.viewlet(interfaces.ISession,
     manager=IContentViewManager,
