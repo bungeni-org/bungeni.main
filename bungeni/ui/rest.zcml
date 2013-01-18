@@ -17,7 +17,7 @@
 
     <browser:page name="enumerateusers"
         for="bungeni.models.interfaces.IBungeniApplication"
-        class=".rest.enumerateUsers"
+        class=".rest.EnumerateUsers"
         layer="bungeni.rest.interfaces.IRESTLayer"
         permission="zope.Public"
         allowed_attributes="GET"

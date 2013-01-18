@@ -8,8 +8,9 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 
-from lxml import etree
+#from lxml import etree
 from bungeni import alchemist
+from bungeni.alchemist.model import localize_domain_model_from_descriptor_class
 from bungeni.alchemist.descriptor import (
     #ModelDescriptor,
     IModelDescriptor,
@@ -17,6 +18,8 @@ from bungeni.alchemist.descriptor import (
     show, hide,
     #norm_sorted,
 )
+from bungeni.alchemist.catalyst import MODEL_MODULE
+
 from bungeni.ui.descriptor import field
 from bungeni.capi import capi
 from bungeni.utils import naming, misc
@@ -86,7 +89,7 @@ def is_stale_info(bval, cval, message):
 '''
 
 
-@capi.bungeni_custom_errors
+#@capi.bungeni_custom_errors
 def check_reload_localization(event):
     """Called once on IWSGIApplicationCreatedEvent and (if in DEVMODE)
     once_per_request on IBeforeTraverseEvent events (ui.publication).
@@ -99,7 +102,7 @@ def check_reload_localization(event):
         if capi.is_modified_since(file_path):
             descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
             assert xas(descriptor_doc, "name") == type_key, type_key
-            localize_descriptor(descriptor_doc)
+            localize_descriptor(descriptor_doc, scope="custom")
 
 
 def localize_descriptors(file_path):
@@ -115,12 +118,13 @@ def localize_descriptors(file_path):
         localize_descriptor(edescriptor)
 
 
-def localize_descriptor(descriptor_elem):
+def localize_descriptor(descriptor_elem, scope="system"):
     """Localize descriptor from descriptor XML element.
     """
     type_key = xas(descriptor_elem, "name")
     try:
         ti = capi.get_type_info(type_key)
+        assert ti.domain_model, type_key
     except KeyError:
         # unknown type (or no enabled type found) for this descriptor
         log.warn("No enabled type found for descriptor %r - "
@@ -138,29 +142,37 @@ def localize_descriptor(descriptor_elem):
             xas(integrity, "validations", "").split() ]
     else:
         constraints, validations = (), ()
-    try:
+    
+    domain_model = ti.domain_model
+    if scope=="custom":
+        try:
+            cls = update_descriptor_cls(
+                type_key, order, fields, constraints, validations)
+        except AttributeError:
+            # first time around, no such descriptor - so create a new custom descriptor
+            archetype_key = xas(descriptor_elem, "archetype")
+            cls = new_descriptor_cls(
+                type_key, archetype_key, order, fields, constraints, validations)
+            
+            # only "push" onto cls (hiding same-named properties or overriding 
+            # inherited setting) if set in the descriptor AND only on cls creation:
+            if xas(descriptor_elem, "label"):
+                cls.display_name = xas(descriptor_elem, "label")
+            if xas(descriptor_elem, "container_label"):
+                cls.container_name = xas(descriptor_elem, "container_label")
+            if xas(descriptor_elem, "sort_on"):
+                cls.sort_on = xas(descriptor_elem, "sort_on").split()
+                # !+ assert each name is a field in the descriptor
+            if xas(descriptor_elem, "sort_dir"):
+                cls.sort_dir = xas(descriptor_elem, "sort_dir")
+            
+            localize_domain_model_from_descriptor_class(domain_model, cls)
+    else:
         cls = update_descriptor_cls(
             type_key, order, fields, constraints, validations)
-    except AttributeError:
-        # new custom descriptor
-        archetype = xas(descriptor_elem, "archetype")
-        cls = new_descriptor_cls(
-            type_key, archetype, order, fields, constraints, validations)
-        
-        # only "push" onto cls (hiding same-named properties or ovrriding 
-        # inherited setting) if set in the descriptor and only on cls creation:
-        if xas(descriptor_elem, "label"):
-            cls.display_name = xas(descriptor_elem, "label")
-        if xas(descriptor_elem, "container_label"):
-            cls.container_name = xas(descriptor_elem, "container_label")
-        if xas(descriptor_elem, "sort_on"):
-            cls.sort_on = xas(descriptor_elem, "sort_on").split()
-            # !+ assert each name is a field in the descriptor
-        if xas(descriptor_elem, "sort_dir"):
-            cls.sort_dir = xas(descriptor_elem, "sort_dir")
-        
+        localize_domain_model_from_descriptor_class(domain_model, cls)
+    
     log.debug("Localized descriptor [%s] %s", type_key, ti)
-
 
 
 def new_descriptor_fields(edescriptor):
@@ -190,7 +202,8 @@ def new_descriptor_fields(edescriptor):
                 pass # xml comment, ...
 
         # vaildate additional model-related constraints (not expressed in RNC)
-        if xas(f_elem, "derived"):
+        derived=xas(f_elem, "derived")
+        if derived:
             non_view_fmodes = [ mode for loc in clocs for mode in loc.modes 
                 if mode not in ("view", "listing") ]
             assert not non_view_fmodes, \
@@ -207,6 +220,8 @@ def new_descriptor_fields(edescriptor):
                 value_type=xas(f_elem, "value_type"),
                 render_type=xas(f_elem, "render_type"),
                 vocabulary=xas(f_elem, "vocabulary"),
+                extended=xas(f_elem, "extended"),
+                derived=xas(f_elem, "derived"),
             ))
     return fields
 
@@ -251,6 +266,7 @@ def update_descriptor_cls(type_key, order, fields, constraints, validations):
     cls.custom_validators = validations
     # push back on alchemist model interface !+
     reset_zope_schema_properties_on_model_interface(cls)
+    return cls
 
 def reset_zope_schema_properties_on_model_interface(descriptor_cls):
     type_key = naming.type_key("descriptor_class_name", descriptor_cls.__name__)

@@ -17,6 +17,7 @@ from bungeni.alchemist.catalyst import (
     MODEL_MODULE
 )
 from bungeni.utils import naming
+from bungeni.capi import capi
 
 
 def get_vp_kls(extended_type):
@@ -62,4 +63,60 @@ def new_custom_domain_model(type_key, model_interface, archetype_key):
     log.info("new_custom_domain_model [%s] %s.%s" % (
             type_key, MODEL_MODULE.__name__, domain_model_name))
     return domain_model
+
+
+def add_extended_property_to_model(domain_model, name, extended_type, archetype_key):
+    assert not hasattr(domain_model, name), \
+        "May not add %r as extended field, already defined in archetype %r" % (
+            name, archetype_key)
+    log.info("Adding %r extended field %r to domain model %s",
+        extended_type, name, domain_model)
+    vp_kls = get_vp_kls(extended_type)
+    domain_model.extended_properties.append((name, vp_kls))
+
+
+def add_derived_property_to_model(domain_model, name, derived):
+    # !+ do not allow clobbering of a same-named attribute
+    assert not name in domain_model.__dict__, \
+        "May not overwrite %r as derived field, a field with same name is " \
+        "already defined directly by domain model class for type %r." % (
+            name, naming.polymorphic_identity(domain_model))
+    # set as property on domain class
+    setattr(domain_model, name, 
+        property(capi.get_form_derived(derived)))
+
+
+def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
+    """Localize the domain model for configuration information in the 
+    descriptor i.e. any extended/derived attributes.
+    
+    For any model/descriptor this should be called only once!
+    """
+    # only "localize" non-custom models from the descriptor once!
+    type_key = naming.polymorphic_identity(domain_model)
+    if type_key in localize_domain_model_from_descriptor_class.DONE:
+        return
+    localize_domain_model_from_descriptor_class.DONE.append(type_key)
+    
+    #!+GET_ARCHETYPE
+    #!+archetype_key = naming.polymorphic_identity(domain_model.__bases__[0]) multiple inheritance...
+    archetype_key = naming._type_key_from_descriptor_class_name(
+            descriptor_cls.__bases__[0].__name__)
+    
+    for field in descriptor_cls.fields:
+        
+        # extended
+        if field.extended is not None:
+            add_extended_property_to_model(domain_model, 
+                field.name, field.extended, archetype_key)
+        
+        # derived
+        if field.derived is not None:
+            add_derived_property_to_model(domain_model, 
+                field.name, field.derived)
+    
+    # !+instrument_extended_propertie, archetype_key => table...
+    MODEL_MODULE.instrument_extended_properties(domain_model, archetype_key)
+localize_domain_model_from_descriptor_class.DONE = []
+
 

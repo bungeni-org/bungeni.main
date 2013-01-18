@@ -176,11 +176,10 @@ def truncatable_text_column(name, title, vocabulary=None,
     return _column(name, title, renderer)
 
 
-# !+ rename User.fullname to "combined_name"
 # !+ mv combined_name_column to a property Group.combined_name, merge...
 def user_name_column(name, title, vocabulary=None):
     def getter(user, formatter):
-        return user.fullname # User.fullname property
+        return user.combined_name # combined_name derived property
     return column.GetterColumn(title, getter)
 
 def combined_name_column(name, title, vocabulary=None):
@@ -216,7 +215,7 @@ def related_user_name_column(name, title, vocabulary=None):
     related_user_attribute_name = get_mapper_property_name_for_fk(name)
     def getter(item_user, formatter):
         item_user = _get_related_user(item_user, related_user_attribute_name)
-        return item_user.fullname # User.fullname property
+        return item_user.combined_name # User.combined_name derived property
     return column.GetterColumn(title, getter)
 
 def related_user_name_column_filter(query, filter_string, sort_dir_func, column=None):
@@ -270,7 +269,7 @@ def member_linked_name_column(name, title, vocabulary=None):
             mp = get_member_of_parliament(related_user.user_id)
             href = "/members/current/obj-%s/" % (mp.membership_id)
         return zope.formlib.widget.renderElement("a",
-            contents=related_user.fullname,  # User.fullname derived property
+            contents=related_user.combined_name,  # User.combined_name derived property
             href=href
         )
     return column.GetterColumn(title, getter)

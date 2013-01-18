@@ -141,6 +141,14 @@ class UserDescriptor(ModelDescriptor):
                 show("add view edit listing"), # db-not-null-ui-add
             ],
         ),
+        F(name="combined_name", # [derived]
+            label="Full Name",
+            localizable=[
+                show("listing"),
+            ],
+            value_type="combined_name",
+            derived="user_combined_name",
+        ),
         F(name="email",
             label="Email",
             description="Email address",

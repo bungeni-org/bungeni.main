@@ -22,7 +22,6 @@ from bungeni.core.workflow.states import StateController, WorkflowController, \
 import bungeni.core.audit
 from bungeni.alchemist import utils
 from bungeni.alchemist.model import (
-    get_vp_kls,
     new_custom_model_interface,
     new_custom_domain_model,
 )
@@ -93,7 +92,7 @@ def register_generic_workflow_adapters():
     # IWorkflowController
     component.provideAdapter(
         WorkflowController, (IWorkflowed,), IWorkflowController)    
-    
+
 
 @capi.bungeni_custom_errors
 def register_custom_types():
@@ -104,13 +103,6 @@ def register_custom_types():
     from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
     from bungeni.models import feature
     from bungeni.capi import capi
-    
-    # !+archetype? move to types? what about extended/derived/container attrs?
-    def get_descriptor_elem(type_key):
-        file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
-        descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
-        assert misc.xml_attr_str(descriptor_doc, "name") == type_key, type_key
-        return descriptor_doc
     
     def register_type(type_elem):
         type_key = misc.xml_attr_str(type_elem, "name")
@@ -131,6 +123,14 @@ def register_custom_types():
             archetype_key = type_elem.tag # !+archetype? move to types?
             domain_model = new_custom_domain_model(type_key, model_iface, archetype_key)
         
+        '''!+localize_domain_model_from_descriptor_class
+        # !+archetype? move to types? what about extended/derived/container attrs?
+        def get_descriptor_elem(type_key):
+            file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
+            descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
+            assert misc.xml_attr_str(descriptor_doc, "name") == type_key, type_key
+            return descriptor_doc
+        
         # add declarations of any extended/derived properties
         descriptor_elem = get_descriptor_elem(type_key)
         if descriptor_elem is not None:
@@ -141,31 +141,20 @@ def register_custom_types():
                 extended_type = misc.xml_attr_str(f_elem, "extended")
                 if extended_type is not None:
                     name = misc.xml_attr_str(f_elem, "name")
-                    assert not hasattr(domain_model, name), \
-                        "May not extend field %r, already defined in archetype %r" % (
-                            name, archetype_key)
-                    log.info("Adding %r extended field %r to domain model %s",
-                        extended_type, name, domain_model)
-                    vp_kls = get_vp_kls(extended_type)
-                    domain_model.extended_properties.append((name, vp_kls))
+                    add_extended_property_to_model(domain_model, 
+                        name, extended_type, archetype_key)
                 
                 # derived
                 derived = misc.xml_attr_str(f_elem, "derived")
                 if derived is not None:
                     name = misc.xml_attr_str(f_elem, "name")
-                    # !+ do not allow clobbering of a same-named attribute
-                    assert not name in domain_model.__dict__, \
-                        "May not overwrite field %r as derived attribute, an " \
-                        "attribute with same name already defined directly by " \
-                        "domain model class for type %r." % (name, type_key)
-                    # set as property on domain class
-                    setattr(domain_model, name, 
-                        property(capi.get_form_derived(derived)))
+                    add_derived_property_to_model(domain_model, name, derived)
             
             # !+instrument_extended_properties, doc
             MODEL_MODULE.instrument_extended_properties(domain_model, "doc")
         
         # !+ add containers, derived
+        '''
         
         # type_info
         ti = TI(workflow_key, model_iface, domain_model)

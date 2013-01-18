@@ -173,13 +173,6 @@ class User(Entity):
         self.active_p = value
     status = property(_get_status, _set_status)
     
-    # !+FULLNAME(mr, jul-2012) inconsistent naming
-    @property
-    def fullname(self):
-        if not self.middle_name:
-            return "%s %s" % (self.first_name, self.last_name)
-        return "%s %s %s" % (self.first_name, self.middle_name, self.last_name)
-    
     delegations = one2many("delegations",
         "bungeni.models.domain.UserDelegationContainer", "user_id")
     _password = property(getPassword, setPassword)
@@ -984,7 +977,7 @@ class SignatoryAudit(Audit):
     label_attribute_name = None
     @property
     def label(self):
-        return self.user.fullname
+        return self.user.combined_name
     description = label
     
     @property

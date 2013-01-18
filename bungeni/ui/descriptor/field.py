@@ -15,7 +15,7 @@ from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import listing, constraints
 from bungeni.utils import naming
-
+from bungeni.capi import capi
 
 # supported value types
 # {str: {property-kwarg:value}}
@@ -156,6 +156,9 @@ def F(name=None, label=None, description=None,
         value_type="text",
         render_type="text_line",
         vocabulary=None,
+        # only passed down
+        extended=None,
+        derived=None,
     ):
     """
     A "configuration layer" for Fields, to decouple lower level details from 
@@ -266,6 +269,8 @@ def F(name=None, label=None, description=None,
             edit_widget=edit_widget, 
             add_widget=add_widget, 
             search_widget=search_widget,
+            extended=extended,
+            derived=derived,
         )
     # !+DECL remember all declarative attrs *as-is*
     f._decl = (
@@ -277,6 +282,8 @@ def F(name=None, label=None, description=None,
         ("value_type", value_type),
         ("render_type", render_type),
         ("vocabulary", vocabulary),
+        ("extended", extended),
+        ("derived", derived),
     )
     return f
 

@@ -882,7 +882,7 @@ class OwnerOrLoggedInUserSource(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 owner_or_login = OwnerOrLoggedInUserSource(
     token_field="user_id",
-    title_field="fullname",
+    title_field="combined_name",
     value_field="user_id"
 )
 component.provideUtility(owner_or_login, IVocabularyFactory, "owner_or_login")
@@ -898,7 +898,7 @@ class UserSource(SpecializedSource):
         return users
 user = UserSource(
     token_field="user_id", 
-    title_field="fullname", 
+    title_field="combined_name", 
     value_field="user_id"
 )
 component.provideUtility(user, IVocabularyFactory, "user")
@@ -951,7 +951,7 @@ class MembershipUserSource(UserSource):
         return users
 member = MembershipUserSource(
     token_field="user_id",
-    title_field="fullname",
+    title_field="combined_name",
     value_field="user_id",
 )
 component.provideUtility(member, IVocabularyFactory, "member")
@@ -1003,7 +1003,7 @@ class UserNotMPSource(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 user_not_mp = UserNotMPSource(
     token_field="user_id",
-    title_field="fullname",
+    title_field="combined_name",
     value_field="user_id"
 )
 component.provideUtility(user_not_mp, IVocabularyFactory, "user_not_mp")
@@ -1071,7 +1071,7 @@ class SittingAttendanceSource(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 sitting_attendance = SittingAttendanceSource(
     token_field="user_id",
-    title_field="fullname",
+    title_field="combined_name",
     value_field="member_id"
 )
 component.provideUtility(sitting_attendance, IVocabularyFactory, "sitting_attendance")
@@ -1134,7 +1134,7 @@ class SubstitutionSource(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 substitution = SubstitutionSource(
     token_field="user_id",
-    title_field="fullname",
+    title_field="combined_name",
     value_field="user_id"
 )
 component.provideUtility(substitution, IVocabularyFactory, "substitution")

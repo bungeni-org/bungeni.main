@@ -782,7 +782,7 @@ def _render_link_to_mp_or_user(user_id, context, request):
     try:
         mp = get_member_of_parliament(user_id)
         return zope.formlib.widget.renderElement("a",
-            contents=mp.user.fullname,
+            contents=mp.user.combined_name,
             href="/members/current/obj-%s/" % (mp.membership_id))
     except NoResultFound:
         # not a member of parliament 
@@ -797,13 +797,13 @@ def _render_link_to_mp_or_user(user_id, context, request):
         if IAdminSectionLayer.providedBy(request):
             # for now, only if admin, we link into the admin view...
             return zope.formlib.widget.renderElement("a",
-                contents=user.fullname,
+                contents=user.combined_name,
                 href="/admin/content/users/obj-%s/" % (user_id))
         else:
             # !+user_directory_listing_view(mr, aug-2012) link to a canonical
             # directory listing page for the user (when that is available).
             # Just the display text (no directory page to link to as yet).
-            return user.fullname
+            return user.combined_name
 
 
 class UserURLDisplayWidget(zope.formlib.widget.DisplayWidget):

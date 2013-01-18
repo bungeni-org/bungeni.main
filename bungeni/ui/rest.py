@@ -20,7 +20,8 @@ def safeencode(v):
 
 
 class Users(REST):
-    """ RESTful view for User object."""
+    """RESTful view for User object.
+    """
     
     def GET(self):
         if "auth" in self.request.keys():
@@ -30,9 +31,10 @@ class Users(REST):
             session = Session()
             connection = session.connection(domain.Group)
             res = connection.execute(rdb.select(cols,
-                                rdb.and_(user.c.login == self.request["login"],
-                                         user.c.active_p == "A"
-                                )))
+                    rdb.and_(
+                        user.c.login == self.request["login"], 
+                        user.c.active_p == "A"
+                    )))
             uid_tuple = res.fetchone()
             if not uid_tuple:
                 return None
@@ -56,7 +58,7 @@ class Users(REST):
             if len(user_values) == 1:
                 b_user = user_values[0]
                 data = {
-                    "fullname": b_user.fullname,
+                    "combined_name": b_user.combined_name,
                     "email": b_user.email or u"",
                     "description": b_user.description or u"",
                     "notification": b_user.receive_notification or False,
@@ -96,9 +98,10 @@ class Users(REST):
         user.update().where(user.c.user_id == uid).values(
                                                      active_p = 'I').execute()        
 
-class enumerateUsers(REST):
-    """ RESTful view for Users listing."""        
-
+class EnumerateUsers(REST):
+    """RESTful view for Users listing.
+    """
+    
     def GET(self):
         id = self.request["id"]
         login = self.request["login"]
@@ -173,9 +176,9 @@ class enumerateUsers(REST):
             query =query.limit(max_results)
             
         uservalues = [ 
-            dict(id=safeencode(r.login), 
+            dict(id=safeencode(r.login),
                 title=u"%s %s" %(r.first_name, r.last_name),
-                fullname=r.fullname,
+                combined_name=r.combined_name,
                 email=r.email,
                 login=safeencode(r.login), pluginid=plugin_id) 
             for r in query.all() ]

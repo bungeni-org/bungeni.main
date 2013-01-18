@@ -249,7 +249,9 @@ class Field(object):
             # domain class attribute (and so, descriptor field) are declared in
             # domain.zcml. There is however still the possibility that these may 
             # be useful for when a descriptor field does not correspond directly 
-            # to a domain class attribute (to be determined). 
+            # to a domain class attribute (to be determined).
+            extended=None,
+            derived=None,
         ):
         """The defaults of each init parameter is set as a class attribute --
         if not explicitly specified, then an attribute on the instance is
@@ -280,6 +282,9 @@ class Field(object):
             v = kw[p]
             if v is not None:
                 setattr(self, p, v)
+        
+        self.extended = extended
+        self.derived = derived
         
         # parameter integrity
         assert self.name, "Field [%s] must specify a valid name" % (self.name)

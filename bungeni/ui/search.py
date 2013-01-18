@@ -160,7 +160,7 @@ class UserToSearchResult(object):
 
     @property
     def title(self):
-        return self.context.fullname.strip()
+        return self.context.combined_name.strip()
 
     @property
     def annotation(self):
@@ -174,7 +174,7 @@ class MemberToSearchResult(object):
 
     @property
     def title(self):
-        return self.context.user.fullname.strip()
+        return self.context.user.combined_name.strip()
 
     @property
     def annotation(self):
