@@ -1128,6 +1128,10 @@ class ItemScheduleVote(Entity):
     """
     interface.implements(interfaces.IItemScheduleVote)
 
+    @property
+    def data(self):
+        return self.file
+
 class Holiday(object):
     """Is this day a holiday?
     if a date in in the table it is otherwise not
