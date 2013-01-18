@@ -116,7 +116,7 @@ class describe(object):
         
     def __call__(self,fn):
         def newfn(*args):
-            newfn.desc = self.desc
+            newfn.description = self.description
             return fn(*args)
         return newfn
 
