@@ -733,6 +733,14 @@
      />
 
   <browser:menuItem
+     menu="context_actions"
+     for="bungeni.models.interfaces.IItemScheduleVote"
+     title="Edit vote"
+     action="./edit"
+     permission="bungeni.item_schedule_vote.Edit"
+     />
+
+  <browser:menuItem
      menu="sitting_actions"
      for="bungeni.models.interfaces.ISitting"
      title="Schedule item"
@@ -741,11 +749,11 @@
      />
 
   <browser:menuItem
-     menu="sitting_actions"
-     for="bungeni.models.interfaces.ISitting"
-     title="Remove scheduled item"
-     action="./items/delete"
-     permission="bungeni.item_schedule.Delete"
+     menu="plone_contentmenu"
+     for="bungeni.models.interfaces.IItemSchedule"
+     title="Add vote record"
+     action="./votes/add"
+     permission="bungeni.item_schedule_vote.Add"
      />
 
     <browser:menuItem menu="context_actions"
@@ -770,6 +778,13 @@
         action="./delete?next_url=..."
         order="41"
         permission="bungeni.item_schedule.Delete"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IItemScheduleVote"
+        title="Delete vote record"
+        action="./delete"
+        order="41"
+        permission="bungeni.item_schedule_vote.Delete"
     />
 
     <!-- scheduling agenda items -->

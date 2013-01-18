@@ -161,10 +161,20 @@ class MemberOfParliamentViewlet(SubformViewlet):
 
 class SittingAttendanceViewlet(SubformViewlet):
     sub_attr_name = "attendance"
+    weight = 55
 
 class SittingReportsViewlet(SubformViewlet):
     form_name = "Reports" # !+
     sub_attr_name = "sreports"
+    weight = 60
+
+@register.viewlet(interfaces.ISitting,
+    manager=ISubFormViewletManager,
+    name="bungeni.viewlet.sitting-items",
+    protect={"bungeni.item_schedule.View": register.VIEWLET_DEFAULT_ATTRS})
+class SittingScheduleViewlet(SubformViewlet):
+    sub_attr_name = "items"
+    weight = 70
 
 class MinistersViewlet(SubformViewlet):
     sub_attr_name = "ministers"
@@ -516,6 +526,13 @@ class DisplayViewlet(BungeniAttributeDisplay):
     protect=register.PROTECT_VIEWLET_PUBLIC)
 class SchedulingMinutesViewlet(SubformViewlet):
     sub_attr_name = "discussions"
+
+@register.viewlet(interfaces.IItemSchedule,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.scheduling-item-votes",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
+class SchedulingVotesViewlet(SubformViewlet):
+    sub_attr_name = "votes"
 
 @register.viewlet(interfaces.ISession,
     manager=IContentViewManager,

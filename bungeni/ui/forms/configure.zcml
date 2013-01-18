@@ -83,11 +83,27 @@ to e.g. "bungeni.{type}.Edit").
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IItemScheduleVote"
+     class=".forms.DeleteForm"
+     permission="bungeni.item_schedule_vote.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
    <browser:page
      name="add"
      for="bungeni.models.interfaces.IItemScheduleContainer"
      class=".common.AddForm"
      permission="bungeni.item_schedule.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+   <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IItemScheduleVoteContainer"
+     class=".common.AddForm"
+     permission="bungeni.item_schedule_vote.Add"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
@@ -160,7 +176,12 @@ to e.g. "bungeni.{type}.Edit").
         permission="bungeni.item_schedule.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-
+    <browser:page name="edit"
+        for="bungeni.models.interfaces.IItemScheduleVote"
+        class=".common.EditForm"
+        permission="bungeni.item_schedule_vote.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
   <browser:page
      name="edit"
      for="bungeni.models.interfaces.IItemScheduleDiscussion"
