@@ -583,7 +583,7 @@ class DownloadDocumentMenu(BrowserMenu):
         return results
         
 class CalendarContentSubMenuItem(CalendarSubMenuItem):
-    title = _(u"label_calendar_content_manager", default=u"Manage:")
+    title = None
     submenuId = "calendar_content_manager"
     order = 10
     
@@ -601,10 +601,16 @@ class CalendarContentMenu(BrowserMenu):
     """
     def getMenuItems(self, context, request):
         results = []
+        unproxied = proxy.removeSecurityProxy(context.__parent__)
         try:
-            items = proxy.removeSecurityProxy(context.__parent__).items()
+            items = unproxied.items()
         except AttributeError:
-            return results
+            items = []
+            for key, info in capi.iter_type_info():
+                if IScheduleContent.implementedBy(info.domain_model):
+                    name = naming.plural(key)
+                    if hasattr(unproxied, name):
+                        items.append((name, getattr(unproxied, name)))
         for key, item in items:
             if not IAlchemistContainer.providedBy(item): continue
             if not IScheduleContent.implementedBy(item.domain_model): continue

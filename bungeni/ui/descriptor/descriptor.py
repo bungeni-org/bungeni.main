@@ -1160,6 +1160,8 @@ class HeadingDescriptor(ModelDescriptor):
             localizable=[
                 show("add view edit listing"), # db-not-null-ui-add
             ],
+            value_type="text",
+            render_type="text_box",
         ),
         LanguageField("language"), # [user-req]
     ]
