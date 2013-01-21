@@ -32,9 +32,9 @@
   </span>
   <br/>
   <input id="form.logo_data" class="fileType" type="file" size="40" name="form.logo_data"
-         disabled='true' hidden="true"
-         tal:attributes="id view/upload_name; name view/upload_name"/>
+         disabled="true" tal:attributes="id view/upload_name; name view/upload_name"/>
   <br/>
-  <a tal:attributes="href view/fileURL" i18n:translate="download-file">download</a>
+  <a tal:condition="not:view/empty_field" 
+    tal:attributes="href view/fileURL" i18n:translate="download-file">download</a>
          
 </div>

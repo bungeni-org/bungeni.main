@@ -756,6 +756,14 @@
      permission="bungeni.item_schedule_vote.Add"
      />
 
+  <browser:menuItem
+     menu="plone_contentmenu"
+     for="bungeni.models.interfaces.IItemScheduleVoteContainer"
+     title="Add vote record"
+     action="./add"
+     permission="bungeni.item_schedule_vote.Add"
+     />
+
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IBungeniGroup"
         action="schedule"

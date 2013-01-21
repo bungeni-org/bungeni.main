@@ -226,6 +226,7 @@ function re_render_event(old_id, new_id){
  * ensures db ids are loaded client-side
  */
 function refresh_events(old_id, new_id){
+    //#!+SCHEDULER_REFRESH(mb, Jan-2013) - Find a way to do this gracefully.
     event = scheduler.getEvent(new_id);
     if (event.rec_type!="none"){
         scheduler.clearAll();

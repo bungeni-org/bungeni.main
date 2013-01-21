@@ -91,6 +91,13 @@
         class=".file.FileDeactivate"
     /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->
 
+  <browser:view
+     for="bungeni.models.interfaces.IItemScheduleVote"
+     permission="bungeni.item_schedule_vote.View"
+     name="download"
+     class=".file.FileDownload"
+     />
+
   <!-- Login UI -->
 
   <browser:page

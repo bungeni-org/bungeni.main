@@ -153,7 +153,7 @@
                 scheduler.config.readonly = false;
                 scheduler.attachEvent("onEventSave", event_save_handler);
                 scheduler.attachEvent("onEventIdChange", re_render_event);
-                scheduler.attachEvent("onEventIdChange", refresh_events);
+                //scheduler.attachEvent("onEventIdChange", refresh_events);
                 scheduler.attachEvent("onEventCollision", 
                     collission_handler
                 );

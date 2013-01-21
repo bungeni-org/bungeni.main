@@ -175,6 +175,7 @@ class SittingReportsViewlet(SubformViewlet):
 class SittingScheduleViewlet(SubformViewlet):
     sub_attr_name = "items"
     weight = 70
+    form_name = _("items scheduled")
 
 class MinistersViewlet(SubformViewlet):
     sub_attr_name = "ministers"
@@ -533,6 +534,7 @@ class SchedulingMinutesViewlet(SubformViewlet):
     protect=register.PROTECT_VIEWLET_PUBLIC)
 class SchedulingVotesViewlet(SubformViewlet):
     sub_attr_name = "votes"
+    form_name = _("vote records")
 
 @register.viewlet(interfaces.ISession,
     manager=IContentViewManager,

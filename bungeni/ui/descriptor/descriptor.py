@@ -1552,6 +1552,8 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     ]
 
 class ItemScheduleVoteDescriptor(ModelDescriptor):
+    display_name = _("vote record")
+    container_name = _("vote records")
     localizable=True
     fields =[
         F(name="date",
