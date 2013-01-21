@@ -40,9 +40,11 @@ def can_schedule(workflow):
             )
     return allow
 
-def get_schedulable_types():
+def get_schedulable_types(skip_permission_check=False):
     """Get types that may be scheduled. Limit to those that the current user
     has the right to transition to a scheduled state.
+    You can skip the `limit to allowed types` behaviour by calling with 
+    `skip_permission_check` set to `True`
     """
     schedulable_types = []
     for (key, type_info) in capi.iter_type_info():
@@ -56,7 +58,7 @@ def get_schedulable_types():
             display_name=type_info.descriptor_model.display_name
         ))
         for (type_key, type_info) in schedulable_types
-        if can_schedule(type_info.workflow)
+        if (skip_permission_check or can_schedule(type_info.workflow))
     ])
 
 

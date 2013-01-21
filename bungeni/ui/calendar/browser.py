@@ -551,6 +551,19 @@ class ScheduleJSONListing(ContainerJSONListingRaw):
         map(add_wf_meta, enumerate(items))
         return items
 
+@register.view(model_interfaces.IItemScheduleContainer, 
+    name="jsonlisting-schedule-documents",
+    protect={"bungeni.item_schedule.View": 
+        register.VIEW_DEFAULT_ATTRS})
+class ScheduleJSONListingDocuments(ContainerJSONListingRaw):
+    """Lists all scheduled documents (excluding headings and notes)
+    """
+    def query_add_filters(self, query):
+        return query.filter(self.domain_model.item_type.in_(
+            data.get_schedulable_types(True).keys()
+        ))
+    
+
 class SchedulableItemsJSON(BrowserView):
     
     def __init__(self, context, request):

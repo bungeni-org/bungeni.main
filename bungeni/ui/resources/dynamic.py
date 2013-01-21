@@ -92,7 +92,7 @@ def get_globals(group_name, **kwargs):
     }
     type_names.update([
         (name, i18n(info.get("display_name"), language))
-        for (name, info) in data.get_schedulable_types().iteritems()
+        for (name, info) in data.get_schedulable_types(True).iteritems()
     ])
     globals_map = {
         "SCHEDULER_GLOBALS" : {
@@ -102,7 +102,7 @@ def get_globals(group_name, **kwargs):
                 for (name, info) in 
                 sorted(data.get_schedulable_types().iteritems())
              ],
-            "discussable_types": [k for k in data.get_schedulable_types()],
+            "discussable_types": [k for k in data.get_schedulable_types(True)],
             "editable_types": ["editorial_note", "minute"],
             "types": {
                 "HEADING": "heading",

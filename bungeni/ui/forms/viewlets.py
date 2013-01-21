@@ -176,6 +176,12 @@ class SittingScheduleViewlet(SubformViewlet):
     sub_attr_name = "items"
     weight = 70
     form_name = _("items scheduled")
+    
+    @property
+    def formatter(self):
+        formatter = super(SittingScheduleViewlet, self).formatter
+        formatter.data_view = "/jsonlisting-schedule-documents"
+        return formatter
 
 class MinistersViewlet(SubformViewlet):
     sub_attr_name = "ministers"
