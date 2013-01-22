@@ -162,6 +162,47 @@
         />
     </class>
     
+    <!-- !+ATTACHMENTS_NOT_EDITABLE(ah, 22-01-2013) adding domain configuration 
+    for Attachment to make attachments editable -->
+    <class class=".domain.Attachment">
+        <require permission="bungeni.attachment.View"
+            attributes="
+                attachment_id
+                head_id
+                type
+                title
+                description
+                data
+                name
+                mimetype
+                status
+                status_date
+                language
+                audits
+                versions
+                owner
+                owner_id
+            "
+        />
+        <require permission="bungeni.attachment.Edit"
+            set_attributes="
+                attachment_id
+                head_id
+                type
+                title
+                description
+                data
+                name
+                mimetype
+                status
+                status_date
+                owner
+                owner_id
+                language
+            "
+        />
+    </class>
+    
     <!-- !+DECL tmp special case -->
     <class class=".domain.Question">
         <require like_class=".domain.Doc" />
