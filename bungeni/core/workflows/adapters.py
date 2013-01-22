@@ -160,7 +160,8 @@ def register_custom_types():
         ti = TI(workflow_key, model_iface, domain_model)
         ti.custom = True
         TYPE_REGISTRY.append((type_key, ti))
-        log.info("Registering custom type [%s]: %s" % (type_elem.tag, type_key))
+        
+        log.info("Registered custom type [%s]: %s" % (type_elem.tag, type_key))
         return type_key, ti
     
     attr_name_inconsistency_map = { # !+ correct incosistency, rel_attr config

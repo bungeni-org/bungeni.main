@@ -10,7 +10,6 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 
 #from lxml import etree
 from bungeni import alchemist
-from bungeni.alchemist.model import localize_domain_model_from_descriptor_class
 from bungeni.alchemist.descriptor import (
     #ModelDescriptor,
     IModelDescriptor,
@@ -97,13 +96,17 @@ def check_reload_localization(event):
     if capi.is_modified_since(PATH_UI_FORMS_SYSTEM):
         localize_descriptors(PATH_UI_FORMS_SYSTEM)
     for type_key, ti in capi.iter_type_info(scope="custom"):
-        #!+get_descriptor_elem
-        file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
-        if capi.is_modified_since(file_path):
-            descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
-            assert xas(descriptor_doc, "name") == type_key, type_key
-            localize_descriptor(descriptor_doc, scope="custom")
+        check_reload_descriptor_file(type_key)
 
+def check_reload_descriptor_file(type_key):
+    """Check if a singel file has been modified and needs reloading.
+    """
+    #!+get_descriptor_elem
+    file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
+    if capi.is_modified_since(file_path):
+        descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
+        assert xas(descriptor_doc, "name") == type_key, type_key
+        localize_descriptor(descriptor_doc, scope="custom")
 
 def localize_descriptors(file_path):
     """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
@@ -166,11 +169,25 @@ def localize_descriptor(descriptor_elem, scope="system"):
             if xas(descriptor_elem, "sort_dir"):
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
             
-            localize_domain_model_from_descriptor_class(domain_model, cls)
+            alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
+        
+            # !+AUDIT_EXTENDED_ATTRIBUTES as audit class was created prior to 
+            # extended attributes being updated on domain type, need to push onto 
+            # it any extended attrs that were read from model's descriptor
+            from bungeni.models import interfaces
+            if interfaces.IFeatureAudit.implementedBy(domain_model):
+                # either defined manually or created dynamically in feature_audit()
+                audit_kls = getattr(MODEL_MODULE, "%sAudit" % (domain_model.__name__))
+                # propagate any extended attributes on head kls also to its audit_kls
+                from bungeni.models import domain
+                audit_table_name = domain.get_audit_table_name(domain_model)
+                alchemist.model.instrument_extended_properties(
+                    audit_kls, audit_table_name, from_class=domain_model)
+    
     else:
         cls = update_descriptor_cls(
             type_key, order, fields, constraints, validations)
-        localize_domain_model_from_descriptor_class(domain_model, cls)
+        alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
     
     log.debug("Localized descriptor [%s] %s", type_key, ti)
 

@@ -210,7 +210,6 @@ def configurable_mappings(kls):
     """Configuration mappings for declarative-model types.
     """
     name = kls.__name__
-    orm.mapper_add_relation_vertical_properties(kls)
     
     # auditable, determine properties, map audit class/table
     if interfaces.IFeatureAudit.implementedBy(kls):

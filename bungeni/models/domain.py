@@ -485,44 +485,6 @@ class GroupAddress(Address):
 
 # extended attributes - vertical properties
 
-# !+could use __metaclass__ but that causes internal breaks elsewhere...
-# !+could be a class decorator 
-def instrument_extended_properties(cls, object_type, from_class=None):
-    # !+class not yet mapped
-    #from sqlalchemy.orm import class_mapper
-    #object_type = class_mapper(cls).local_table.name 
-    if from_class is None:
-        from_class = cls
-    # ensure cls.__dict__.extended_properties
-    cls.extended_properties = cls.extended_properties[:]
-    for vp_name, vp_type in from_class.extended_properties:
-        if (vp_name, vp_type) not in cls.extended_properties:
-            cls.extended_properties.append((vp_name, vp_type))
-        setattr(cls, vp_name, vertical_property(object_type, vp_name, vp_type))
-
-def vertical_property(object_type, vp_name, vp_type, *args, **kw):
-    """Get the external (non-SQLAlchemy) extended Vertical Property
-    (on self.__class__) as a regular python property.
-    
-    !+ Any additional args/kw are exclusively for instantiation of vp_type.
-    """
-    _vp_name = "_vp_%s" % (vp_name) # name for SA mapper property for this
-    doc = "VerticalProperty %s of type %s" % (vp_name, vp_type)
-    def fget(self):
-        vp = getattr(self, _vp_name, None)
-        if vp is not None:
-            return vp.value
-    def fset(self, value):
-        vp = getattr(self, _vp_name, None)
-        if vp is not None:
-            vp.value = value
-        else:
-            vp = vp_type(self, object_type, vp_name, value, *args, **kw)
-            setattr(self, _vp_name, vp)
-    def fdel(self):
-        setattr(self, _vp_name, None)
-    return property(fget=fget, fset=fset, fdel=fdel, doc=doc)
-
 class VerticalProperty(Entity):
     """Base Vertical Property.
     """
@@ -596,7 +558,6 @@ class Doc(Entity):
     
     extended_properties = [
     ]
-#instrument_extended_properties(Doc, "doc")
 
 
 class Change(HeadParentedMixin, Entity):
@@ -643,7 +604,6 @@ class Change(HeadParentedMixin, Entity):
     extended_properties = [
         ("note", vp.TranslatedText)
     ]
-instrument_extended_properties(Change, "change")
 
 class ChangeTree(Entity):
     """Relates a parent change with a child change.
@@ -738,7 +698,7 @@ class Audit(HeadParentedMixin, Entity):
         audit_table_name = get_audit_table_name(auditable_cls)
         # Extended properties from cls are inherited... but need to propagate 
         # onto audit_kls any extended properties defined by auditable_cls:
-        instrument_extended_properties(factory, audit_table_name, 
+        alchemist.model.instrument_extended_properties(factory, audit_table_name, 
             from_class=auditable_cls)
         return factory
     
@@ -765,7 +725,6 @@ class DocAudit(Audit):
     label_attribute_name = "title"
     extended_properties = [
     ]
-#instrument_extended_properties(DocAudit, "doc_audit")
 
 class DocVersion(Version):
     """A version of a document.
@@ -817,7 +776,6 @@ class Bill(Doc):
     extended_properties = [
         #("short_title", vp.TranslatedText),
     ]
-#instrument_extended_properties(Bill, "doc")
 #BillAudit
 
 class Motion(Doc):
@@ -858,7 +816,6 @@ class Question(Doc):
         #("response_type", vp.Text),
         #("response_text", vp.TranslatedText),
     ]
-#instrument_extended_properties(Question, "doc")
 #QuestionAudit
 
 class TabledDocument(Doc):

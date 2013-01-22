@@ -281,48 +281,6 @@ mapper(domain.Venue, schema.venue)
 ##############################
 # Document
 
-def mapper_add_relation_vertical_properties(kls):
-    """Instrument any extended attributes as vertical properties.
-    """
-    for vp_name, vp_type in kls.extended_properties:
-        mapper_add_relation_vertical_property(kls, vp_name, vp_type)
-def mapper_add_relation_vertical_property(kls, vp_name, vp_type):
-    """Add the SQLAlchemy internal mapper property for the vertical property.
-    """
-    kls_mapper = class_mapper(kls)
-    object_type = kls_mapper.local_table.name # kls_mapper.mapped_table.name
-    assert len(kls_mapper.primary_key) == 1
-    object_id_column = kls_mapper.primary_key[0]
-    kls_mapper.add_property("_vp_%s" % (vp_name),
-        relation_vertical_property(
-            object_type, object_id_column, vp_name, vp_type)
-    )
-def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
-    """Get the SQLAlchemy internal property for the vertical property.
-    """
-    vp_table = class_mapper(vp_type).mapped_table
-    return relation(vp_type,
-        primaryjoin=rdb.and_(
-            object_id_column == vp_table.c.object_id,
-            object_type == vp_table.c.object_type,
-            vp_name == vp_table.c.name,
-        ),
-        foreign_keys=[vp_table.c.object_id],
-        uselist=False,
-        # !+abusive, cannot create a same-named backref to multiple classes!
-        #backref=object_type,
-        # sqlalchemy.orm.relationship(cascade="save-update, merge, 
-        #       refresh-expire, expunge, delete, delete-orphan")
-        # False (default) -> "save-update, merge"
-        # "all" -> "save-update, merge, refresh-expire, expunge, delete"
-        cascade="all",
-        single_parent=True,
-        lazy=False, # !+LAZY(mr, jul-2012) gives orm.exc.DetachedInstanceError
-        # e.g. in business/questions listing:
-        # Parent instance <Question at ...> is not bound to a Session; 
-        # lazy load operation of attribute '_vp_response_type' cannot proceed
-    )
-
 
 mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)
@@ -723,9 +681,11 @@ mapper(domain.SittingReport, schema.sitting_report,
 
 mapper(domain.ObjectTranslation, schema.translation)
 
+mapper(domain.TimeBasedNotication, schema.time_based_notification)
+
 
 # !+IChange-vertical-properties special case: 
-# class is NOT workflowed, and in any case has no available_dynamic_features
-mapper_add_relation_vertical_properties(domain.Change)
+# class is NOT workflowed, and in any case has no available_dynamic_features, no descriptor
+import bungeni.alchemist.model
+bungeni.alchemist.model.instrument_extended_properties(domain.Change, "change")
 
-mapper(domain.TimeBasedNotication, schema.time_based_notification)
