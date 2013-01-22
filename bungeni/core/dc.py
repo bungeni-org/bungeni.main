@@ -499,16 +499,6 @@ class ReportDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class ItemScheduleCategoryDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IItemScheduleCategory)
-    
-    @property
-    def title(self):
-        context = _merged(self.context)
-        return self.translate(context, "short_name")
-
-
-@register.adapter()
 class UserDelegationDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IUserDelegation)
     

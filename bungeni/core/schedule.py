@@ -121,9 +121,6 @@ class PrincipalGroupSchedulingContext(object):
         unproxied.__parent__ = ProxyFactory(LocationProxy(
             unproxied.__parent__, container=self, name="group"))
         return sittings
-    
-    def get_categories(self):
-        return domain.ItemScheduleCategoryContainer()
 
 class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IBungeniApplication)

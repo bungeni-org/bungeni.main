@@ -650,7 +650,7 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
 
 
 class WorkspaceSchedulableContainer(WorkspaceUnderConsiderationContainer):
-    """Contains documents available for scheduling
+    """Contains public documents for all types implemeting schedule feature
     """
     
     def domain_status(self):
@@ -658,6 +658,6 @@ class WorkspaceSchedulableContainer(WorkspaceUnderConsiderationContainer):
         for type_key, ti in capi.iter_type_info():
             workflow = ti.workflow
             if workflow and workflow.has_feature("schedule"):
-                states = workflow.get_state_ids(tagged=["tobescheduled"])
+                states = workflow.get_state_ids(tagged=["public"])
                 domain_status_map[ti.domain_model] = states
         return domain_status_map

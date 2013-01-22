@@ -459,6 +459,10 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                 )
                                 continue
             result[property.key] = value
+    
+    for prop_name, prop_type in obj.__class__.extended_properties:
+        result[prop_name] = getattr(obj, prop_name)
+    
     return result
 
 
