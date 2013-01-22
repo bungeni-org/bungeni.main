@@ -146,7 +146,7 @@ class UserDescriptor(ModelDescriptor):
             localizable=[
                 show("listing"),
             ],
-            value_type="combined_name",
+            value_type="text",
             derived="user_combined_name",
         ),
         F(name="email",
@@ -476,7 +476,8 @@ class GroupDescriptor(ModelDescriptor):
             localizable=[
                 show("listing"),
             ],
-            value_type="combined_name",
+            value_type="text",
+            derived="group_combined_name",
         ),
         LanguageField("language"), # [user-req]
         F(name="description",

@@ -37,7 +37,7 @@ VALUETYPE = {
     "user": {},
     "member": {}, # !+ should be "archetype generic" e.g. should not assume "member of parliament"
     "signatory": {}, # !+
-    "combined_name": {}, # !+
+    #"combined_name": {}, # !+DERIVED_LISTING_FILTERING
     "group": {},
 }
 
@@ -85,10 +85,11 @@ WIDGETS = {
             widgets.TreeVocabularyWidget, None, None, None),
     ("text", "no_input"):
         (None, widgets.NoInputWidget, widgets.NoInputWidget, None, None, None),
-    ("combined_name", "text_line"):
-        (None, None, None, None, 
-            listing.combined_name_column, 
-            listing.combined_name_column_filter),
+    #!+DERIVED_LISTING_FILTERING
+    #("combined_name", "text_line"):
+    #    (None, None, None, None, 
+    #        listing.combined_name_column, 
+    #        listing.combined_name_column_filter),
     ("date", "date"):
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget,

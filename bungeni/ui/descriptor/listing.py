@@ -182,6 +182,8 @@ def user_name_column(name, title, vocabulary=None):
         return user.combined_name # combined_name derived property
     return column.GetterColumn(title, getter)
 
+
+'''!+DERIVED_LISTING_FILTERING
 def combined_name_column(name, title, vocabulary=None):
     """An extended name, combining full_name (localized)
     and short_name columns.
@@ -197,6 +199,7 @@ def combined_name_column_filter(query, filter_string, sort_dir_func, column=None
     return _multi_attrs_column_filter(
         [domain.Group.full_name, domain.Group.short_name],
         query, filter_string, sort_dir_func)
+'''
 
 
 ''' !+UNUSED should not be needed - the properly prepared and localized 
