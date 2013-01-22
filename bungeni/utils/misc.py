@@ -103,21 +103,16 @@ def check_overwrite_file(file_path, content):
         open(file_path, "w").write(content.encode("utf-8"))
 
 
-class describe(object):
+
+def describe(funcdesc):
     """
     The describe decorator is used add @describe annotations to 
     functions. This is used in conditions, validations etc to provide
     a extractable and i18n-able description of the function - as these 
     are provided in list boxes in the configuration UI
     """
-    
-    def __init__(self, desc):
-        self.description = desc
-        
-    def __call__(self,fn):
-        def newfn(*args):
-            newfn.description = self.description
-            return fn(*args)
-        return newfn
-
+    def decorate(func):
+        setattr(func,"description", funcdesc)
+        return func
+    return decorate            
 
