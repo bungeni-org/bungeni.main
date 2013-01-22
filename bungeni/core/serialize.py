@@ -154,6 +154,7 @@ def publish_to_xml(context):
                 # saving attachment to tmp
                 attached_file = tmp(delete=False)
                 attached_file.write(attachment.data)
+                attached_file.flush()
                 attached_file.close()
                 files.append(attached_file.name)
                 attachment_dict["saved_file"] = os.path.basename(
@@ -176,8 +177,10 @@ def publish_to_xml(context):
             os.remove(f)
         #write the xml
         zip_file.write(temp_xml.name, "%s.xml" % os.path.basename(file_path))
-        os.remove(temp_xml.name) 
         zip_file.close()
+        #placed remove after zip_file.close !+ZIP_FILE_CRC_FAILURE
+        os.remove(temp_xml.name) 
+
     else:
         # save serialized xml to file
         with open("%s.xml" % (file_path), "w") as xml_file:
