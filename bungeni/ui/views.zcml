@@ -222,7 +222,7 @@
      name="calendar"
      class=".calendar.browser.DhtmlxCalendarScheduleView"
     /> -->
-    />
+    
     <browser:page
      for="bungeni.models.interfaces.IBungeniContent"
      permission="zope.Public"
