@@ -589,7 +589,13 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussion,
     }
 )
 
-mapper(domain.ItemScheduleVote, schema.item_schedule_vote)
+mapper(domain.ItemScheduleVote, schema.item_schedule_vote,
+    properties={
+        "scheduled_item": relation(domain.ItemSchedule, uselist=False,
+            backref=backref("itemvotes", cascade="all, delete-orphan")
+        ),
+    }
+)
 
 # items scheduled for a sitting
 # expressed as a join between item and schedule

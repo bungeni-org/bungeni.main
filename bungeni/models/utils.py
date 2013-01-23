@@ -357,7 +357,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
             if isinstance(value, collections.Iterable):
                 result[property.key] = []
                 for item in value:
-                    result[property.key].append(obj2dict(item, depth-1, 
+                    result[property.key].append(obj2dict(item, 1, 
                             parent=obj,
                             include=[],
                             exclude=exclude + ["changes"],
@@ -462,6 +462,20 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
     
     for prop_name, prop_type in obj.__class__.extended_properties:
         result[prop_name] = getattr(obj, prop_name)
+    
+    #any additional attributes - this allows us to capture any derived attributes
+    if IAlchemistContent.providedBy(obj):
+        seen_keys = ( [ prop.key for prop in mapper.iterate_properties ] + 
+            include + exclude)
+        try:
+            domain_schema = utils.get_derived_table_schema(type(obj))
+            known_names = [ k for k, d in 
+                domain_schema.namesAndDescriptions(all=True) ]
+            extra_properties = set(known_names).difference(set(seen_keys))
+            for prop_name in extra_properties:
+                result[prop_name] = getattr(obj, prop_name)
+        except KeyError:
+            log.warn("Could not find table schema for %s", obj)
     
     return result
 

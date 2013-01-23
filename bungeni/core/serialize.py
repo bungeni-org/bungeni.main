@@ -30,6 +30,7 @@ from sqlalchemy.types import Binary
 from ore.alchemist.container import valueKey
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
+from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.core.workflow.states import (get_object_state_rpm, 
     get_head_object_state_rpm
 )
@@ -411,6 +412,22 @@ def serialization_version_event_handler(event):
 def serialization_event_handler(obj, event):
     """queues workflowed objects when created or modified"""
     queue_object_serialization(obj)
+
+@register.handler(adapts=(IAlchemistContent, IObjectCreatedEvent))
+@register.handler(adapts=(IAlchemistContent, IObjectModifiedEvent))
+def serialization_event_handler_non_wf(obj, event):
+    """queues serialization of workflowed parent (if any)"""
+    #!+SERIALIZATION(mb, Jan-2013) Might change how changes are bubbled up
+    if not IWorkflowed.providedBy(obj):
+        # workflowed types will be handled by serialize_event_handler
+        wf_parent = obj
+        while not IWorkflowed.providedBy(wf_parent):
+            wf_parent = (wf_parent.__parent__ 
+                if hasattr(wf_parent, "__parent__") else None)
+            if not wf_parent:
+                break
+        if wf_parent:
+            queue_object_serialization(wf_parent)
 
 def queue_object_serialization(obj):
     """Send a message to the serialization queue for non-draft documents
