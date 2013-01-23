@@ -279,7 +279,7 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#edit,
 dl#context_actions.actionMenu .actionMenuContent ul li a#edit-profile,
 dl#context_actions.actionMenu .actionMenuContent ul li a#change-password,
 dl#context_actions.actionMenu .actionMenuContent ul li a#calendar,
-dl#context_actions.actionMenu .actionMenuContent ul li a#versions,
+dl#context_actions.actionMenu .actionMenuContent ul li a#version-log,
 dl#context_actions.actionMenu .actionMenuContent ul li a#workflow,
 dl#context_actions.actionMenu .actionMenuContent ul li a#audit-log,
 dl#context_actions.actionMenu .actionMenuContent ul li a#odt,
@@ -322,7 +322,7 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#change-password {
 dl#context_actions.actionMenu .actionMenuContent ul li a#calendar {
 	background-image: url(images/calendar.png);
 }
-dl#context_actions.actionMenu .actionMenuContent ul li a#versions {
+dl#context_actions.actionMenu .actionMenuContent ul li a#version-log {
 	background-image: url(images/page_2_copy.png);
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#workflow {

@@ -542,6 +542,13 @@ class SchedulingVotesViewlet(SubformViewlet):
     sub_attr_name = "votes"
     form_name = _("vote records")
 
+    @property
+    def for_display(self):
+        """Only display viewlet for doc types"""
+        if not interfaces.IDoc.providedBy(self.context.__parent__):
+            return False
+        return super(SchedulingVotesViewlet, self).for_display
+
 @register.viewlet(interfaces.ISession,
     manager=IContentViewManager,
     name="bungeni.viewlet.session-sitting-calendar",

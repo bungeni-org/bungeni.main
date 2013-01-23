@@ -753,6 +753,7 @@
      for="bungeni.models.interfaces.IItemSchedule"
      title="Add vote record"
      action="./votes/add"
+     filter="context/type_document"
      permission="bungeni.item_schedule_vote.Add"
      />
 

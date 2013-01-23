@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
+    orderSignificant="true" profileType="flatTokenTerms">
+   <vocabName>
+      <langstring language="en">Schedule Vote Result Types</langstring>
+   </vocabName>
+   <vocabIdentifier>org.bungeni.metadata.vocabularies.sittingschedulevoteresult</vocabIdentifier>
+    <term>
+        <termIdentifier>passed</termIdentifier>
+        <caption>
+            <langstring language="en">passed</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>rejected</termIdentifier>
+        <caption>
+            <langstring language="en">rejected</langstring>
+        </caption>
+    </term>
+</vdex>

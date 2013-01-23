@@ -1,5 +1,6 @@
 <dl class="enableFormTabbing">
   <tal:viewlets repeat="viewlet view/viewlets">
-    <tal:render replace="structure viewlet/render" />
+    <tal:render replace="structure viewlet/render"
+        tal:condition="viewlet/for_display|python:True" />
   </tal:viewlets>
 </dl>
