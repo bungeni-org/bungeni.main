@@ -80,6 +80,14 @@ def on_wsgi_application_created_event(application, event):
     app_setup = model_interfaces.IBungeniSetup(application)
     app_setup.setUp()
     
+    # write configuration parameters to xml
+    try:
+        import bungeni.utils.xmlconfexport as confexp
+        confexp.write_all()
+    except:
+        log.debug(("on_wsgi_application_created :"
+            "error while exporting config parameters to xml"))
+    
     log.debug("on_wsgi_application_created_event: _features: %s" % (
         getConfigContext()._features))
 

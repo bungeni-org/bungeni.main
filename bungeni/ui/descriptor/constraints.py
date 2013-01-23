@@ -13,6 +13,7 @@ $Id$
 import re
 import zope.schema
 from zope.interface import Invalid
+from bungeni.utils.misc import describe
 from bungeni.ui.i18n import _
 
 
@@ -54,7 +55,7 @@ check_login = RegexChecker(LOGIN_RE, _(u"Invalid login name"))
 
 
 # schema invariants
-
+@describe(_(u"End Date must be after Start Date"))
 def end_after_start(obj):
     """End Date must be after Start Date."""
     if obj.end_date is None: 
@@ -63,6 +64,7 @@ def end_after_start(obj):
         raise Invalid(
             _("End Date must be after Start Date"), "start_date", "end_date")
 
+@describe(_(u"Parliament : Start Date for a parliament must be after Election Date"))
 def parliament_start_after_election(obj):
     """Start Date must be after Election Date."""
     if obj.election_date >= obj.start_date:
@@ -86,7 +88,7 @@ def DissolutionAfterReinstatement(obj):
         )
 '''
 
-
+@describe(_(u"Person: a person cannot be active and also substituted at the same time"))
 def active_and_substituted(obj):
     """A person cannot be active and substituted at the same time."""
     if obj.active_p and obj.replaced_id:
@@ -95,7 +97,7 @@ def active_and_substituted(obj):
             "active_p", 
             "replaced_id")
 
-
+@describe(_(u"Person: when a person is substituted, an end date for the substitution must be set"))
 def substituted_end_date(obj):
     """If a person is substituted he must have an end date."""
     if not obj.end_date and obj.replaced_id:
@@ -105,6 +107,7 @@ def substituted_end_date(obj):
             "end_date")
 
 
+@describe(_(u"Person: when a person is set to inactive, an end date for the inactive period must be set"))
 def inactive_no_end_date(obj):
     """If you set a person inactive you must provide an end date."""
     if not obj.active_p:
@@ -114,7 +117,7 @@ def inactive_no_end_date(obj):
                 "end_date",
                 "active_p")
 
-
+@describe(_(u"Member: the start date for a member must be after the election date"))
 def member_start_after_elected(obj):
     """MP start date (when set) must be after election."""
     if obj.election_nomination_date is None:
@@ -125,7 +128,7 @@ def member_start_after_elected(obj):
             "election_nomination_date",
             "start_date")
 
-
+@describe(_(u"Person: the date of death must be after the date of birth"))
 def user_birth_death_dates(user):
     """Check if date of death is after date of birth."""
     if user.date_of_death is None: 

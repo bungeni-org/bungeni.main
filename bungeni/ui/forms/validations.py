@@ -24,6 +24,7 @@ from bungeni.ui.i18n import _
 from bungeni.ui.utils import queries
 from bungeni.ui.calendar.utils import generate_dates
 from bungeni.ui.calendar.utils import datetimedict
+from bungeni.utils.misc import describe
 from zope.security.proxy import removeSecurityProxy
 from interfaces import Modified
 
@@ -52,7 +53,7 @@ def as_date(date):
 
 
 # validators
-
+@describe(_(u"Check if email address is already in use"))
 def validate_email_availability(action, data, context, container):
     session = Session()
     users = session.query(domain.User
@@ -65,7 +66,6 @@ def validate_email_availability(action, data, context, container):
     elif users.count() > 0:
         return [Invalid(_(u"Email already taken!"), "email")]
     return []
-
 
 def validate_start_date_within_parent(parent, data):
     """Check that the start date is inside the restrictictions.
@@ -129,7 +129,7 @@ def validate_end_date_within_parent(parent, data):
                         "end_date"))
     return logged_errors(errors, "validate_end_date_within_parent")
 
-
+@describe(_(u"Check if the date range of the item is within the date range of the parent document containing it"))
 def validate_date_range_within_parent(action, data, context, container):
     errors = validate_start_date_within_parent(container.__parent__, data)
     errors = errors + validate_end_date_within_parent(container.__parent__, data)
@@ -201,7 +201,7 @@ def validate_political_group_membership(action, data, context, container):
                 "end_date")) 
     return logged_errors(errors, "validate_political_group_membership")
 
-
+@describe(_(u"Check if the start - end date range of a parliament does not overlap with another parliament"))
 def validate_parliament_dates(action, data, context, container):
     """Parliaments must not overlap."""
     errors = []
@@ -245,6 +245,7 @@ def validate_parliament_dates(action, data, context, container):
                     "election_date"))
     return logged_errors(errors, "validate_parliament_dates")
 
+@describe(_(u"Checks if the government start/end dates fall within the start/end dates of the parliament"))
 def validate_government_dates(action, data, context, container):
     errors = []
     start_date = data.get("start_date")
@@ -292,6 +293,7 @@ def validate_government_dates(action, data, context, container):
     return logged_errors(errors, "validate_government_dates")
 
 
+@describe(_(u"Checks if a user is already a member of the group in a particular date range"))
 def validate_group_membership_dates(action, data, context, container):
     """A User must be member of a group only once at a time.
     """
@@ -364,6 +366,7 @@ rdb.orm.mapper(GroupMemberTitle, group_member_title,
 )
 
 
+@describe(_(u"Checks if a title has been assigned to another user, and if the title can be assigned only once within the group"))
 def validate_member_titles(action, data, context, container):
     """Titles for members follow the restrictions:
     A person must have the same title only once (e.g. you cannot
@@ -482,6 +485,7 @@ def validate_member_titles(action, data, context, container):
                         "end_date"))
     return logged_errors(errors, "validate_member_titles")
 
+@describe(_(u"Checks if a venue is already booked for sitting in a particular date range"))
 def validate_venues(action, data, context, container):
     """A venue can only be booked for one sitting at once."""
     

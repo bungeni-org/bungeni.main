@@ -30,6 +30,10 @@ def write_all():
     write_to_custom("forms", "_rendertypes.xml", output_rendertypes())
     # list of form field value types
     write_to_custom("forms", "_valuetypes.xml", output_valuetypes())
+    # list of form constraints
+    write_to_custom("forms", "_constraints.xml", output_constraints())
+    # list of form derived fields
+    write_to_custom("forms", "_derived.xml", output_derived_fields())
     # list of workflow features per type
     write_to_custom("workflows", "_features.xml", output_features())
     
@@ -124,6 +128,54 @@ def output_valuetypes():
     li_widgets.append("</valueTypes>")
     return ("\n".join(li_widgets)).encode("utf-8")
 
+def output_constraints():
+    """
+    Provides a list of constraints available to the forms
+    """
+
+    import bungeni_custom.forms._constraints as cons
+    import inspect
+    
+    li_cons = []
+    li_cons.append("<constraints>")
+    for name in dir(cons):
+        obj = getattr(cons, name)        
+        if inspect.isfunction(obj):
+            if hasattr(obj, "description"):
+                li_cons.append(
+                    '  <constraint name="%(name)s">%(desc)s</constraint>' %
+                    {"name":name,"desc":obj.description}
+                    )
+            else:
+                # dont include items without description
+                pass
+    li_cons.append("</constraints>")
+    return ("\n".join(li_cons)).encode("utf-8")
+        
+def output_derived_fields():
+    """
+    Provides a list of derived fields available to the forms
+    """
+
+    import bungeni_custom.forms._derived as dfs
+    import inspect
+    
+    li_dfs = []
+    li_dfs.append("<derivedFields>")
+    for name in dir(dfs):
+        obj = getattr(dfs, name)        
+        if inspect.isfunction(obj):
+            if hasattr(obj, "description"):
+                li_dfs.append(
+                    '  <derivedField name="%(name)s">%(desc)s</derivedField>' %
+                    {"name":name,"desc":obj.description}
+                    )
+            else:
+                # dont include items without description
+                pass
+    li_dfs.append("</derivedFields>")
+    return ("\n".join(li_dfs)).encode("utf-8")
+    
    
 def output_features():
     """
