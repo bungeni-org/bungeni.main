@@ -164,7 +164,7 @@ YAHOO.bungeni.agendaconfig = function(){
             {
                 key: Columns.ROW_CONTROLS, 
                 label: "",
-                formatter: Formatters.rowControls,
+                formatter: Formatters.type,
                 width: (0.2*cols_width)
             },
             {
@@ -246,7 +246,7 @@ YAHOO.bungeni.agendaconfig = function(){
         AGENDA_SCHEMA: _agendaSchema,
         AGENDA_DATASOURCE_URL: SGlobals.json_listing_url_meta,
         TITLE_AGENDA: SGlobals.current_schedule_items,
-        TITLE_AVAILABLE_ITEMS: SGlobals.available_items_title,
+        TITLE_AVAILABLE_ITEMS: SGlobals.minutes_header,
         minutesCache: minutesDSCache,
         EMPTY_AGENDA_MESSAGE: SGlobals.empty_agenda_message
     }

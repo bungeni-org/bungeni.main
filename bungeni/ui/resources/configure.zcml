@@ -116,8 +116,8 @@
     />
   </resourceLibrary>
   <resourceLibrary name="bungeni-schedule-minutes" 
-    require="bungeni-schedule-config bungeni-schedule-available-items 
-        yui-container yui-connection yui-button yui-rte yui-layout yui-json">
+    require="bungeni-schedule-config yui-container yui-connection 
+        yui-button yui-rte yui-layout yui-json">
     <directory source="calendar" 
         include="schedule-editor-minutes.js
                  schedule-editor-core.js
