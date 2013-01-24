@@ -36,11 +36,13 @@ YAHOO.bungeni.scheduling = function(){
             if(this.post_op){
                 if(AgendaConfig.minutesCache.get_minutes_count()==0){
                     YAHOO.bungeni.reloadView = true;
-                }else{
-                    for(idx=0;idx<row_count;idx++){
-                        YAHOO.bungeni.agendaconfig.handlers.saveMinutes(idx);
-                    }
                 }
+                /*else{
+                    !+MINUTES(mb, Jan-2013) Turned off. Reworking.
+                    for(idx=0;idx<row_count;idx++){
+                        //YAHOO.bungeni.agendaconfig.handlers.saveMinutes(idx);
+                    }
+                }*/
             }
             //reload schedule reflect changes to workflow actions - if any
             if (YAHOO.bungeni.reloadView){
@@ -414,12 +416,15 @@ YAHOO.bungeni.scheduling = function(){
                 dataTable.subscribe("rowUpdateEvent",
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
                 );
+                if (AgendaConfig.dataTableExtraInit != undefined){
+                    AgendaConfig.dataTableExtraInit(dataTable);
+                }
                 resizable_panel.on("endResize", function(){
                     Handlers.resizeDataTable(dataTable,
                         container.body.clientWidth-15
                     );
                 });
-                
+                                
                 return {
                     oDs: dataSource,
                     oDt: dataTable

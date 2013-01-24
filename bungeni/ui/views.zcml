@@ -293,7 +293,7 @@
     />
     <browser:page name="save-schedule"
         for="bungeni.models.interfaces.IItemScheduleContainer"
-        permission="bungeni.item_schedule.Edit"
+        permission="bungeni.sitting.Edit"
         class=".calendar.browser.ScheduleAddView"
     />
     <browser:page name="save-discussions"

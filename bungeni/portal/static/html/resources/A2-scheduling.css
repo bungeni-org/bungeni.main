@@ -11,6 +11,13 @@
     border:1px solid #AFCE6A;
 }
 
+.scheduling-wf-state{
+    border:1px solid #B7CDE9;
+    padding:0.1em;
+    text-align:center;
+
+}
+
 dl.portlet.portletNavigationTree {
     position: relative;
     width: 100%;

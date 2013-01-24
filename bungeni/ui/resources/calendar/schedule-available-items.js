@@ -320,15 +320,6 @@ YAHOO.bungeni.availableitems = function(){
                     ),
                 }
             );
-            var minute_tab = new YAHOO.widget.Tab(
-                { 
-                    label: SGlobals.type_names.minute,
-                    content: ("<div id='add-minute-record'>" + 
-                        "<textarea id='minute-record-value' " +
-                         "name='minute-record-value'></textarea></div>"
-                    ),
-                }
-            );
             var heading_tab = new YAHOO.widget.Tab(
                 { 
                     label: SGlobals.type_names.heading,
@@ -406,7 +397,6 @@ YAHOO.bungeni.availableitems = function(){
             }
             
             var rteEditor = null;
-            var minuteEditor = null;
             text_tab.getRecordValue = function(){
                 var record_value = {};
                 record_value[Columns.TITLE] = rteEditor.cleanHTML(
@@ -417,27 +407,11 @@ YAHOO.bungeni.availableitems = function(){
                     value: [ record_value ]
                 }
             }
-            minute_tab.getRecordValue = function(){
-                var record_value = {};
-                record_value[Columns.BODY] = minuteEditor.cleanHTML(
-                    minuteEditor.getEditorHTML()
-                );
-                return {
-                    type: SGlobals.types.MINUTE,
-                    value: [ record_value ]
-                }
-            }
             Event.onAvailable("add-text-record", function(event){
                 rteEditor = new YAHOO.widget.Editor("text-record-value",
                     { width: "100%", height: "60px",autoHeight: true }
                 );
                 rteEditor.render();
-            });
-            Event.onAvailable("add-minute-record", function(event){
-                minuteEditor = new YAHOO.widget.Editor("minute-record-value",
-                    { width: "100%", height: "60px", autoHeight: true }
-                );
-                minuteEditor.render();
             });
             this.showEvent.subscribe(function(){
                 if(hDt){ 
@@ -448,18 +422,13 @@ YAHOO.bungeni.availableitems = function(){
                     }
                 }
                 if(rteEditor){ rteEditor.setEditorHTML(""); }
-                if(minuteEditor){ minuteEditor.setEditorHTML(""); }
                 Y$.query("input", heading_tab.get("contentEl"))[0].value = "";
             });
             var tab_map = {};
             tab_map[SGlobals.types.HEADING] = 0;
             tab_map[SGlobals.types.EDITORIAL_NOTE] = 1;
-            tab_map[SGlobals.types.MINUTE] = 2;
             tab_view.addTab(heading_tab);
             tab_view.addTab(text_tab);
-            if(YAHOO.bungeni.agendaconfig.minuteEditor){
-                tab_view.addTab(minute_tab);
-            }
             tab_view.appendTo(this.body);
             this.tab_view = tab_view;
             this.selectTab = function(tab_id){

@@ -276,26 +276,17 @@ YAHOO.bungeni.config = function () {
                             new_index = (sDt.getRecordIndex(sel_record) + 1);
                         }
                         if (recordData.value.length) {
-                            if (recordData.type == SGlobals.types.MINUTE) {
-                                var sel_data = sel_record.getData();
-                                YAHOO.bungeni.agendaconfig.minutesCache.add(
-                                YAHOO.bungeni.Utils.slugify(
-                                sel_data[Columns.OBJECT_ID]),
-                                recordData.value[0]);
-                                sDt.updateRow((new_index - 1), sel_data);
-                            } else {
-                                var new_data_entries = new Array();
-                                for (idx = 0; idx < (recordData.value.length); idx++) {
-                                    var entry = recordData.value[idx];
-                                    entry[Columns.TYPE] = recordData.type;
-                                    new_data_entries.push(entry);
-                                }
-                                sDt.addRows(new_data_entries, new_index);
-                                sDt.scrollTo(sDt.getRow(new_index));
-                                sDt.unselectAllRows();
-                                sDt.selectRow(new_index + (recordData.value.length - 1));
-                                sDt.getTrEl(new_index + (recordData.value.length - 1)).className += " row-" + recordData.type;
+                            var new_data_entries = new Array();
+                            for (idx = 0; idx < (recordData.value.length); idx++) {
+                                var entry = recordData.value[idx];
+                                entry[Columns.TYPE] = recordData.type;
+                                new_data_entries.push(entry);
                             }
+                            sDt.addRows(new_data_entries, new_index);
+                            sDt.scrollTo(sDt.getRow(new_index));
+                            sDt.unselectAllRows();
+                            sDt.selectRow(new_index + (recordData.value.length - 1));
+                            sDt.getTrEl(new_index + (recordData.value.length - 1)).className += " row-" + recordData.type;
                             this.hide();
                         } else {
                             this.hide();
@@ -422,128 +413,6 @@ YAHOO.bungeni.config = function () {
                 el.innerHTML = tHTML;
             }
 
-            /**
-             * @method itemTitleMinutesFormatter
-             * @method render item title and minutes where applicable
-             */
-            var itemTitleMinutesFormatter = function (el, record, column, data) {
-                var data = record.getData();
-                var record_index = this.getRecordIndex(record);
-                el.className += " list-minutes";
-                el.innerHTML = "";
-                if (SGlobals.discussable_types.indexOf(
-                data[Columns.TYPE]) < 0) {
-                    el.innerHTML = data[Columns.TITLE];
-                } else {
-                    var cHTML = "";
-                    if (el.innerHTML) {
-                        tElem = Y$.query("em", el)[0];
-                        cHTML = BungeniUtils.wrapText(tElem.innerHTML);
-                    } else {
-                        cHTML = BungeniUtils.wrapText(data[Columns.TITLE]);
-                    }
-                    if (BungeniUtils.showURI(data)) {
-                        cHTML = cHTML + ("<a href='" + 
-                            BungeniUtils.makeURI(data) +
-                            "' target='blank'>&nbsp;" + 
-                            SGlobals.text_action_view + "</a>"
-                        );
-                    }
-                    cHTML = cHTML + BungeniUtils.wrapText(
-                    SGlobals.minutes_header, "span", "class='minutes-header'");
-                    var mAttrs = "class='minute-record'";
-                    var eAttrs = "class='minute-record-error'";
-                    var obj_id = data[Columns.OBJECT_ID];
-                    if (obj_id != undefined) {
-                        var ds_id = YAHOO.bungeni.Utils.slugify(obj_id);
-                        var attrs = "id='" + ds_id + "' " + mAttrs;
-                        cHTML = cHTML + BungeniUtils.wrapText(
-                        BungeniUtils.wrapText(SGlobals.minutes_loading,
-                            "p", attrs), "div");
-                        Event.onAvailable(ds_id, function () {
-                            var minutesContainer = this;
-                            var ds_url = ("./items/" + data[Columns.OBJECT_ID] + SGlobals.discussion_items_json_url);
-                            var oDs = YAHOO.util.DataSource(ds_url);
-                            oDs.responseType = YAHOO.util.DataSource.TYPE_JSON;
-                            oDs.responseSchema = {
-                                resultsList: "nodes",
-                                fields: [Columns.OBJECT_ID, Columns.BODY]
-                            }
-                            var render_minutes = function (items) {
-                                var nHTML = "";
-                                if (items.length) {
-                                    for (idx = 0; idx < items.length; idx++) {
-                                        mdata = items[idx];
-                                        idAttr = "rel='rec-" + idx + "'";
-                                        edId = "minute-edit_" + record_index + "-" + idx;
-                                        var editAttrs = (
-                                            "class='edit-minute-control' " +
-                                            "id='" + edId + "'");
-                                        nHTML = nHTML + BungeniUtils.wrapText(
-                                        (mdata[Columns.BODY] + BungeniUtils.wrapText(
-                                            "&nbsp;",
-                                            "span", editAttrs)),
-                                            "span", mAttrs + " " + idAttr);
-                                        Event.addListener(edId, "click",
-                                        YAHOO.bungeni.agendaconfig.handlers.editMinute);
-                                    }
-                                    // "add new record" row
-                                    nHTML = renderAddMinute(record_index, nHTML, mAttrs,
-                                    SGlobals.add_minutes_record);
-                                } else {
-                                    // "add new record" row on none
-                                    nHTML = renderAddMinute(record_index, nHTML, mAttrs,
-                                    SGlobals.minutes_no_records);
-                                }
-                                minutesContainer.innerHTML = nHTML;
-                            }
-                            callback = {
-                                success: function (request, response, payload) {
-                                    var nHTML = "";
-                                    YAHOO.bungeni.agendaconfig.minutesCache.set(
-                                    ds_id, response.results);
-                                    render_minutes(response.results);
-                                },
-                                failure: function (req, resp, payload) {
-                                    nHTML = oHTML + BungeniUtils.wrapText(
-                                    SGlobals.minutes_loading_error,
-                                        "span", eAttrs);
-                                    el.innerHTML = nHTML;
-                                },
-                            }
-                            var cached_items = YAHOO.bungeni.agendaconfig.minutesCache.get(ds_id);
-                            if (cached_items) {
-                                render_minutes(cached_items);
-                            } else {
-                                oDs.sendRequest(null, callback, this);
-                            }
-
-                        });
-                    } else {
-                        cHTML = cHTML + BungeniUtils.wrapText(
-                        BungeniUtils.wrapText(
-                        SGlobals.minutes_unsaved_agenda), "span", mAttrs);
-                    }
-                    el.innerHTML = cHTML;
-                }
-            }
-
-            var renderAddMinute = function (record_index, nHTML, mAttrs, txtLabel) {
-                idAttr = " rel='rec-NEW'";
-                addId = "minute-edit_" + record_index;
-                var addAttrs = (
-                    "class='minute-add' " +
-                    "id='" + addId + "'");
-                nHTML = nHTML + BungeniUtils.wrapText(
-                (txtLabel + BungeniUtils.wrapText(
-                    "&nbsp;",
-                    "span", addAttrs)),
-                    "span", mAttrs + " " + idAttr);
-                Event.addListener(addId, "click",
-                YAHOO.bungeni.agendaconfig.handlers.addMinute);
-                return nHTML;
-            }
-
             var countFormatter = function (el, record, column, data) {
                 el.innerHTML = this.getTrIndex(record) + 1;
             }
@@ -634,67 +503,70 @@ YAHOO.bungeni.config = function () {
                 type_el.className = "yui-dt-label";
                 type_el.textContent = SGlobals.type_names[rdata[Columns.TYPE]];
                 el.appendChild(type_el);
-                var menu = [{
-                    text: SGlobals.heading_button_text,
-                    value: SGlobals.types.HEADING
-                }, {
-                    text: SGlobals.text_button_text,
-                    value: SGlobals.types.EDITORIAL_NOTE
-                }, ]
+                if (YAHOO.bungeni.availableitems != undefined){
+                    //render edit buttons only in agenda edit mode
+                    var menu = [{
+                        text: SGlobals.heading_button_text,
+                        value: SGlobals.types.HEADING
+                    }, {
+                        text: SGlobals.text_button_text,
+                        value: SGlobals.types.EDITORIAL_NOTE
+                    }, ]
 
-                var button = new YAHOO.widget.Button({
-                    type: "menu",
-                    label: "&nbsp;",
-                    id: el.id + "-add-text-record-button",
-                    menu: menu
-                });
-                var clickHandler = function (type, args) {
-                    menuItem = args[1];
-                    if (menuItem) {
-                        YAHOO.bungeni.config.dialogs.textrecords.show(
-                        menuItem.value);
-                    }
-                }
-                button.addClass("schedule_edit");
-                button.getMenu().subscribe("click", clickHandler);
-                button.appendTo(el);
-                var rec_index = this.getRecordIndex(record);
-                var rec_size = this.getRecordSet().getLength();
-                var orderButtons = new YAHOO.widget.ButtonGroup({});
-                if (rec_index > 0) {
-                    orderButtons.addButton({
+                    var button = new YAHOO.widget.Button({
+                        type: "menu",
                         label: "&nbsp;",
-                        value: "UP"
-                    }).addClass("schedule_up");
-                }
-                if (rec_index < (rec_size - 1)) {
-                    orderButtons.addButton({
-                        label: "&nbsp;",
-                        value: "DOWN"
-                    }).addClass("schedule_down");
-                }
-                orderButtons.on("checkedButtonChange", function (ev) {
-                    if (ev.newValue) {
-                        YAHOO.bungeni.config.scheduling.handlers.moveRow(
-                        ev.newValue.get("value"),
-                        ev.newValue.get("element"));
-                        ev.newValue.set("checked", false, true);
+                        id: el.id + "-add-text-record-button",
+                        menu: menu
+                    });
+                    var clickHandler = function (type, args) {
+                        menuItem = args[1];
+                        if (menuItem) {
+                            YAHOO.bungeni.config.dialogs.textrecords.show(
+                            menuItem.value);
+                        }
                     }
-                });
-                orderButtons.appendTo(el);
+                    button.addClass("schedule_edit");
+                    button.getMenu().subscribe("click", clickHandler);
+                    button.appendTo(el);
+                    var rec_index = this.getRecordIndex(record);
+                    var rec_size = this.getRecordSet().getLength();
+                    var orderButtons = new YAHOO.widget.ButtonGroup({});
+                    if (rec_index > 0) {
+                        orderButtons.addButton({
+                            label: "&nbsp;",
+                            value: "UP"
+                        }).addClass("schedule_up");
+                    }
+                    if (rec_index < (rec_size - 1)) {
+                        orderButtons.addButton({
+                            label: "&nbsp;",
+                            value: "DOWN"
+                        }).addClass("schedule_down");
+                    }
+                    orderButtons.on("checkedButtonChange", function (ev) {
+                        if (ev.newValue) {
+                            YAHOO.bungeni.config.scheduling.handlers.moveRow(
+                            ev.newValue.get("value"),
+                            ev.newValue.get("element"));
+                            ev.newValue.set("checked", false, true);
+                        }
+                    });
+                    orderButtons.appendTo(el);
 
-                var deleteButton = new YAHOO.widget.Button({
-                    label: "&nbsp;"
-                })
+                    var deleteButton = new YAHOO.widget.Button({
+                        label: "&nbsp;"
+                    })
 
-                deleteButton.addClass("schedule_delete");
-                deleteButton.on("click", function () {
-                    YAHOO.bungeni.config.scheduling.handlers.removeRow(
-                    deleteButton.get("element"));
-                });
-                deleteButton.appendTo(el);
+                    deleteButton.addClass("schedule_delete");
+                    deleteButton.on("click", function () {
+                        YAHOO.bungeni.config.scheduling.handlers.removeRow(
+                        deleteButton.get("element"));
+                    });
+                    deleteButton.appendTo(el);
+                }
 
-                // adding minutes state
+                // adding minutes state (workflow actions)
                 var index = this.getTrIndex(record);
                 var rec_data = record.getData();
                 if (rec_data[Columns.WORKFLOW_STATE] !== undefined) {
@@ -708,7 +580,7 @@ YAHOO.bungeni.config = function () {
                             name: "wf_action_" + index,
                             menu: actions
                         });
-                        wfActionButton.addClass("wf-action-dropdown");
+                        wfActionButton.addClass("wf-action-dropdown scheduling-wf-state");
                         wfActionButton.appendTo(el);
                         wfActionButton.on("selectedMenuItemChange", function (args) {
                             var menuValue = args.newValue;
@@ -724,7 +596,7 @@ YAHOO.bungeni.config = function () {
                         }
                     } else {
                         var state_el = document.createElement("div");
-                        state_el.className = "yui-dt-label";
+                        state_el.className = "yui-dt-label scheduling-wf-state";
                         state_el.textContent = state_title;
                         el.appendChild(state_el);
                     }
@@ -736,7 +608,6 @@ YAHOO.bungeni.config = function () {
                 type: itemTypeFormatter,
                 title: itemTitleFormatter,
                 title_extended: itemTitleExtendedFormatter,
-                title_with_minutes: itemTitleMinutesFormatter,
                 counter: countFormatter,
                 longText: longTextFormatter,
                 editButton: editButtonFormatter,
