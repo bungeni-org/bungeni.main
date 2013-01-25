@@ -947,6 +947,15 @@
             "
         />
     </class>
-  
+   <class class=".domain.DebateRecord">
+      <require permission="bungeni.debate_record.View"
+           attributes="
+               sitting
+               status
+               status_date
+               debate_record_items
+               media"
+      />            
+   </class>
 </configure>
 

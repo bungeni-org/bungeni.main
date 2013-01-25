@@ -1531,6 +1531,24 @@ class EditorialNoteDescriptor(ModelDescriptor):
         LanguageField("language")
     ]
 
+class DebateMediaDescriptor(ModelDescriptor):
+    localisable = False
+    fields = [
+        F(name="media_path",
+          label="Media Path",
+          required=True,
+          value_type="text",
+          render_type="text_line"
+        ),
+        F(name="media_type",
+          label="Media Type",
+          required=True,
+          value_type="text",
+          vocabulary="debate_media_type",
+          render_type="single_select",
+        ),
+    ]
+
 class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     localizable = True
     #display_name = "Discussion"

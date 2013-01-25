@@ -105,4 +105,15 @@
         manager="ploned.ui.interfaces.IBelowContentManager"
         template="templates/restore-password.pt"
     />
+    <subscriber factory=".adaptors.DebateTraverserPlugin"
+        provides="z3c.traverser.interfaces.ITraverserPlugin"
+        for="bungeni.models.interfaces.ISitting
+             zope.publisher.interfaces.IPublisherRequest"
+    
+    />
+    <adapter for="bungeni.models.interfaces.IDebateRecord
+            zope.publisher.interfaces.IPublisherRequest"
+        factory=".debaterecord.DebateRecordTraverser"
+        provides="zope.publisher.interfaces.IPublishTraverse"
+    />
 </configure>

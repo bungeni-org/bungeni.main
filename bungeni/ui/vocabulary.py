@@ -315,7 +315,7 @@ postal_address_type = FlatVDEXVocabularyFactory("postal_address_type.vdex")
 gender = FlatVDEXVocabularyFactory("gender.vdex")
 marital_status = FlatVDEXVocabularyFactory("marital_status.vdex")
 bool_yes_no = BoolFlatVDEXVocabularyFactory("yes_no.vdex")
-
+debate_media_type = FlatVDEXVocabularyFactory("debate_media_type.vdex")
 #
 
 class OfficeRoleFactory(BaseVocabularyFactory):

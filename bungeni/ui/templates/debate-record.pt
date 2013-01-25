@@ -1,0 +1,62 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  <div metal:fill-slot="body" i18n:domain="bungeni">
+    <div id="main_hansard_page">
+      <div id="hansard_video">
+        <span tal:condition="view/transcription_video">
+          <video src="myOgg.ogg" width="400" height="300" 
+                 tal:attributes="src view/transcription_video" controls="controls">
+            <object type="application/x-java-applet" width="400" height="300">
+              <param name="archive" value="/@@/debate/cortado.jar"/>
+              <param name="code" value="com.fluendo.player.Cortado.class"/>
+              <param name="url" value="myOgg.ogg" tal:attributes="value view/transcription_video"/>
+              <p>You need to install Java to play this file.</p>
+            </object>
+          </video>
+        </span>
+        <span tal:condition="not:view/transcription_video">
+          <img src="/@@/debate/no_media.png" alt="Missing video"/>
+        </span>
+      </div>  
+      <div id="video_side_bar">
+        <fieldset id="video_side_bar_fieldset"  >
+          <legend >
+            Transcripts
+          </legend>
+          <div id="new_transcript">
+          </div>
+          <tal:loop tal:repeat="item context/debate_record_items">
+            <span tal:condition="python:item.type=='debate_speech'">
+              <div tal:attributes="id item/debate_record_item_id">
+                <fieldset id="transcript_fieldset" >
+                  <legend>
+                    <a>
+                      <img src="/@@/portal/images/control_play_blue.png"/>
+                      <span tal:replace="python:item.start_date.strftime('%H:%M:%S') | nothing"/> to 
+                      <span tal:replace="python:item.end_date.strftime('%H:%M:%S') | nothing"/>
+                      </a> | 
+                      <a href="javascript:edit_transcript()">Versions</a> |
+                      <a href="javascript:edit_transcript()">Audit Log</a>
+                  </legend>
+                  <div>
+                    <div class="transcript_person">
+                      <span tal:content="item/person/first_name"/> 
+                      <span tal:content="item/person/last_name"/>
+                    </div>
+                  </div>
+                  <div class="transcript_speech">
+                    <span tal:content="item/text"></span>
+                  </div>
+                </fieldset>
+              </div>
+            </span> 
+            <span tal:condition="python:item.item_type=='debate_doc'">
+              <a>sssssssss</a>
+            </span>
+          </tal:loop>
+        </fieldset>
+      </div>  
+    </div>
+  </div>  
+</html>  

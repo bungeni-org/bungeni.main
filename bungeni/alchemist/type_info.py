@@ -263,6 +263,8 @@ TYPE_REGISTRY = [
     ("group_membership", TI("group_membership", interfaces.IBungeniGroupMembership)),
     ("group_document_assignment", TI("group_assignment", interfaces.IGroupDocumentAssignment)),
     
+    ("debate_record", TI("debate_record", interfaces.IDebateRecord)),
+    ("debate_media", TI(None, interfaces.IDebateMedia)),
     # non-workflowed
     ("user_delegation", TI(None, interfaces.IUserDelegation)),
     ("title_type", TI(None, interfaces.ITitleType)),
@@ -281,7 +283,6 @@ TYPE_REGISTRY = [
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
     ("sitting_report", TI(None, interfaces.ISittingReport)),
     ("group_membership_role", TI(None, interfaces.IGroupMembershipRole)),
-    
     ## custom types -- loaded dynamically from bungeni_custom/types.xml
 ]
 

@@ -195,4 +195,24 @@
         permission="bungeni.group_assignment.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
+    
+    
+    <browser:page name="add"
+        for="bungeni.models.interfaces.IDebateMediaContainer"
+        class=".common.AddForm"
+        permission="bungeni.debate_media.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="edit"
+        for="bungeni.models.interfaces.IDebateMedia"
+        class=".common.EditForm"
+        permission="bungeni.debate_media.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="delete"
+        for="bungeni.models.interfaces.IDebateMedia"
+        class=".common.DeleteForm"
+        permission="bungeni.debate_media.Delete"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
 </configure>

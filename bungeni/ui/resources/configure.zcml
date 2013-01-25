@@ -153,4 +153,12 @@
 	      include="tinymce_config.js"
 	      />
 	 </resourceLibrary>
+	 <resourceLibrary name="debate-css">
+      <directory source="debate"
+          include="debate.css"/>       
+   </resourceLibrary>
+   <browser:resourceDirectory
+     name="debate"
+     directory="debate"
+     />
 </configure>

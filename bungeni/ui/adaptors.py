@@ -10,16 +10,21 @@ log = __import__("logging").getLogger("bungeni.ui.adapters")
 
 # !+SPELLING(mr, jan-2012) why does name for this file use "adaptor" spelling 
 # and not "adapter" like everywhere else thoughout the application?
+from zope import interface
+from zope.location.interfaces import ILocation
 from zope.security import checkPermission
+from zope.security.proxy import removeSecurityProxy
+from z3c.traverser.traverser import NameTraverserPlugin
+from bungeni.alchemist import Session
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.workflows.utils import view_permission
+from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.models import domain
 from bungeni.models.interfaces import (IFeatureAudit, \
     IAlchemistContainer
 )
 from bungeni.utils import register
 from bungeni.capi import capi
-
 #import bungeni.ui.versions # !+REGISTER
 
 
@@ -75,3 +80,26 @@ class TimelineRSSValues(RSSValues):
     def values(self):
         return domain.get_changes(self.context, "modify", "add")
 
+
+class DebateTraverserPlugin(NameTraverserPlugin):
+    traversalName = "debate"
+
+    def _traverse(self, request, name):
+        self.context = removeSecurityProxy(self.context)
+        session = Session()
+        context = session.merge(self.context)
+        debate = session.query(domain.DebateRecord) \
+            .filter(domain.DebateRecord.sitting_id
+                == context.sitting_id) \
+                .first()
+        if not debate:
+            debate = domain.DebateRecord()
+            debate.sitting_id = context.sitting_id
+            session.add(debate)
+            wfc = IWorkflowController(debate)
+            wfc.fireAutomatic()
+            session.flush()
+        debate.__name__ = self.traversalName
+        debate.__parent__ = self.context
+        interface.alsoProvides(debate, ILocation)
+        return debate

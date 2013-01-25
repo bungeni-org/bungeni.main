@@ -564,7 +564,7 @@
       provides=".widgets.IDiffDisplayWidget"
       factory=".widgets.HTMLDisplay"
       permission="zope.Public"
-      />
+   />
       
    <adapter
       for="zope.schema.interfaces.ITextLine
@@ -572,12 +572,20 @@
       provides=".widgets.IDiffDisplayWidget"
       factory=".widgets.HTMLDisplay"
       permission="zope.Public"
-      />
+   />
       
    <browser:page
       for="bungeni.models.interfaces.IFeatureUserAssignment"
       name="user-assignments"
       class=".assignment.UserAssignmentView"
       permission="bungeni.user_assignment.View"
-      />
+   />
+      
+   <!-- Debate Record -->
+   <browser:page
+      for="bungeni.models.interfaces.IDebateRecord"
+      name="index.html"
+      class="bungeni.ui.debaterecord.DebateRecordView"
+      permission="bungeni.debate_record.View"
+   />
 </configure>

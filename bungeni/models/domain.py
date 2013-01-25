@@ -1142,3 +1142,36 @@ class ObjectTranslation(object):
 class TimeBasedNotication(Entity):
     """Time based Notifications
     """
+
+class DebateRecord(Entity):
+    """Debate record object associated with a sitting
+    """
+    available_dynamic_features = ["audit", "version", "attachment",
+        "workspace", "notification", "email", "user_assignment"]
+    interface.implements(interfaces.IDebateRecord)
+    media = one2many("media",
+        "bungeni.models.domain.DebateMediaContainer", "debate_record_id")
+
+class DebateRecordItem(Entity):
+    """Items that may be included in a debate record
+    """
+    interface.implements(interfaces.IDebateRecordItem)
+
+class DebateDoc(DebateRecordItem):
+    """A document that is discussed during a sitting
+    """
+    interface.implements(interfaces.IDebateDoc)
+    available_dynamic_features = ["audit", "version"]
+
+class DebateSpeech(DebateRecordItem):
+    """A single speech in a debate record
+    """
+    available_dynamic_features = ["audit", "version", "attachment",
+        "workspace", "notification", "email", "user_assignment"]
+    interface.implements(interfaces.ITranslatable, interfaces.IDebateSpeech)
+
+class DebateMedia(Entity):
+    """
+    Media files of a sitting
+    """
+    interface.implements(interfaces.IDebateMedia)

@@ -1,0 +1,102 @@
+#new_transcript {
+    position:relative;
+    top:1px;
+}
+#video_side_bar {
+    bottom:10px;
+    left:450px;
+    margin:4px;
+    min-height:480px;
+    min-width:470px;
+    position:absolute;
+    right:15px;
+    top:100px;
+    overflow:auto;
+}
+#video_side_bar_fieldset {
+    min-height:480px;
+}
+#transcript_fieldset{
+    height:100px;
+}
+#transcripts_main{
+    min-height:480px;
+}
+#transcript_video{
+    top:100px
+}
+#transcript_slider { 
+    margin: 10px; 
+}
+
+div.start_time_widget{
+    position:absolute;
+    width:20%;
+}
+#transcript_slider{
+    position:absolute;
+    top:20px;
+    left:22%;
+    height:20px;
+    width:56%;
+}
+div.end_time_widget{
+    position:absolute;
+    left:80%;
+    width:20%;
+}
+div.speech_widget{
+    position:absolute;
+    top:40px;
+    left:200px;
+    width:70%;
+}
+div.person_widget{
+    position:absolute;
+    top:40px;
+}
+/*
+#form\.actions\.save{
+    position:absolute;
+    bottom:10px;
+    right:80px;
+}
+
+
+#form\.actions\.cancel{
+    position:absolute;
+    bottom:10px;
+    right:10px;
+}
+*/
+#form\.speech{
+    height:100px;
+    width:105%;
+}
+#form\.start_time{
+    width:70%;
+}
+#form\.end_time{
+    width:70%;
+}
+
+#field\.form\.editors{
+    display: inline-block;
+}
+
+#field\.form\.readers{
+    display: inline-block;
+}
+#field\.form\.reporters{
+    display: inline-block;
+}
+#form\.web_optimised_video_path{
+    width:400px;
+}
+#form\.audio_only_path{
+    width:400px;
+}
+#form\.high_quality_video_path
+{
+    width:400px;
+}

@@ -155,5 +155,9 @@
   <permission id="bungeni.user_assignment.View" title="View User Assignment" />
   <permission id="bungeni.user_assignment.Edit" title="Edit User Assignment"/>
   
+  <permission id="bungeni.debate_media.Add" title="Add debate media" />
+  <permission id="bungeni.debate_media.Edit" title="Edit debate media" />
+  <permission id="bungeni.debate_media.View" title="View debate media" />
+  <permission id="bungeni.debate_media.Delete" title="View debate media" />
   <include package="bungeni_custom.sys.acl" file="permissions.zcml" />
 </configure>

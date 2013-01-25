@@ -250,6 +250,20 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <permission id="bungeni.group_assignment.Delete" title="Delete Group Assignment" />
 
 
+<!-- debate_record -->
+<permission id="bungeni.debate_record.View" title="View Debate Record" />
+<permission id="bungeni.debate_record.Edit" title="Edit Debate Record" />
+<permission id="bungeni.debate_record.Add" title="Add Debate Record" />
+<permission id="bungeni.debate_record.Delete" title="Delete Debate Record" />
+<grant permission="bungeni.debate_record.View" role="bungeni.Authenticated" />
+<grant permission="bungeni.debate_record.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.debate_record.Edit" role="bungeni.Speaker" />
+<grant permission="bungeni.debate_media.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.debate_media.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.debate_media.View" role="bungeni.Clerk" />
+<grant permission="bungeni.debate_media.Delete" role="bungeni.Clerk" />
+
+
 <!-- agenda_item -->
 <permission id="bungeni.agenda_item.View" title="View Agenda Item" />
 <permission id="bungeni.agenda_item.Edit" title="Edit Agenda Item" />
