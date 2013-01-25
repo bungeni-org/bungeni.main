@@ -373,7 +373,7 @@ YAHOO.bungeni.config = function () {
                     if (BungeniUtils.showURI(rec_data)) {
                         el.innerHTML = (rec_data.item_title +
                             "<em style='display:block;'><span>" + SGlobals.text_moved_by + " : " + rec_data.item_mover + "</span>&nbsp;&nbsp;" +
-                            "<a href='" + BungeniUtils.makeURI(rec_data) + "' target='blank'>" + SGlobals.text_action_view + "</a>");
+                            "<a href='" + BungeniUtils.makeURI(rec_data) + "' target='_blank'>" + SGlobals.text_action_view + "</a>");
                     } else {
                         el.innerHTML = (rec_data.item_title +
                             "<em><span style='display:block;'>Moved by: " + rec_data.item_mover + "</span></em>");
@@ -408,7 +408,7 @@ YAHOO.bungeni.config = function () {
                 }
                 if (BungeniUtils.showURI(rec_data)) {
                     tHTML = tHTML + ("<a href='" + BungeniUtils.makeURI(rec_data) +
-                        "' target='blank'>" + SGlobals.text_action_view + "</a>");
+                        "' target='_blank'>" + SGlobals.text_action_view + "</a>");
                 }
                 el.innerHTML = tHTML;
             }
@@ -460,7 +460,7 @@ YAHOO.bungeni.config = function () {
                     if (BungeniUtils.showURI(rec_data)){
                         cHTML = (cHTML + "&nbsp;<a href=\"" + 
                             BungeniUtils.makeURI(rec_data) +
-                            "\" target=\"blank\"\">" +
+                            "\" target=\"_blank\"\">" +
                              SGlobals.text_action_view + "</a>"
                         );
                     }

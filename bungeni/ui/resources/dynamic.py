@@ -60,6 +60,8 @@ COLUMN_MINUTE_TEXT = _("scheduling_column_minute_text",
 
 #titles
 TITLE_AGENDA = _("scheduling_title_agenda", default="Agenda")
+TITLE_AGENDA_MINUTES = _("scheduling_title_agenda_minutes", 
+    default="Agenda Minutes and Votes")
 TITLE_SCHEDULED_ITEMS = _("scheduling_title_scheduled_items", 
     default="Scheduled Items")
 TITLE_AVAILABLE_ITEMS = _("scheduling_title_available_items", 
@@ -111,6 +113,7 @@ def get_globals(group_name, **kwargs):
             },
             "type_names": type_names,
             "current_schedule_title": i18n(TITLE_AGENDA, language),
+            "agenda_minutes_title": i18n(TITLE_AGENDA_MINUTES, language),
             "current_schedule_items": i18n(TITLE_SCHEDULED_ITEMS, language),
             "available_items_title": i18n(TITLE_AVAILABLE_ITEMS, language),
             "schedule_discussions_title": i18n(TITLE_DISCUSSIONS, language),

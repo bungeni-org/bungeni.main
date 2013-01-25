@@ -311,6 +311,34 @@ YAHOO.bungeni.scheduling = function(){
             refreshDeleted: refreshDeleted,
         }
     }();
+
+    var DEFAULT_LAYOUT_CONFIG = [
+        {
+            position:'left',
+            header: AgendaConfig.TITLE_AGENDA,
+            body: '',
+            width: "660",
+            unit: "%",
+            gutter: "2 2",
+            resize: true,
+        },
+        {
+            position:'center',
+            header: AgendaConfig.TITLE_AVAILABLE_ITEMS,
+            body: '',
+            gutter: "2 2",
+            resize: true,
+            collapse: true,
+        },
+        {
+            position:'bottom',
+            body: '',
+            header: '',
+            gutter: "2 2",
+            height: 42
+        }
+    ]
+    var containerUnit = (AgendaConfig.containerUnit || "left");
     var Layout = { layout:null }
     Event.onDOMReady(function(){
         if (window.location.href.indexOf('?preview=') !== -1) {
@@ -321,39 +349,13 @@ YAHOO.bungeni.scheduling = function(){
             "scheduler-layout",
             {
                 height: 600,
-                units: [
-                    {
-                        position:'left',
-                        header: AgendaConfig.TITLE_AGENDA,
-                        body: '',
-                        width: "660",
-                        unit: "%",
-                        gutter: "2 2",
-                        resize: true,
-                    },
-                    {
-                        position:'center',
-                        header: AgendaConfig.TITLE_AVAILABLE_ITEMS,
-                        body: '',
-                        gutter: "2 2",
-                        resize: true,
-                        collapse: true,
-                    },
-                    {
-                        position:'bottom',
-                        body: '',
-                        header: '',
-                        gutter: "2 2",
-                        height: 42
-                    }
-                ]
+                units: (AgendaConfig.layoutConfig || DEFAULT_LAYOUT_CONFIG)
             }
         );
         layout.on("render", function(){
             YAHOO.bungeni.schedule = function(){
                 var editor = new YAHOO.widget.TextareaCellEditor();
-                var container = layout.getUnitByPosition("left");
-                var resizable_panel = layout.getUnitByPosition("left");
+                var container = layout.getUnitByPosition(containerUnit);
                 var init_width = container.body.clientWidth-15;
                 editor.subscribe("showEvent", Handlers.renderRTECellEditor);
                 AgendaConfig.setEditor(editor);
@@ -419,11 +421,14 @@ YAHOO.bungeni.scheduling = function(){
                 if (AgendaConfig.dataTableExtraInit != undefined){
                     AgendaConfig.dataTableExtraInit(dataTable);
                 }
-                resizable_panel.on("endResize", function(){
-                    Handlers.resizeDataTable(dataTable,
-                        container.body.clientWidth-15
-                    );
-                });
+                var resizable_panel = layout.getUnitByPosition("left");
+                if (resizable_panel){
+                    resizable_panel.on("endResize", function(){
+                        Handlers.resizeDataTable(dataTable,
+                            container.body.clientWidth-15
+                        );
+                    });
+                }
                                 
                 return {
                     oDs: dataSource,

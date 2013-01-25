@@ -238,10 +238,37 @@ YAHOO.bungeni.agendaconfig = function(){
         }
     }();
 
+    var LayoutConfig = [
+        {
+            position: 'center',
+            header: SGlobals.agenda_minutes_title,
+            body: '',
+            width: "660",
+            unit: "%",
+            gutter: "2 2",
+            resize: true,
+        },
+        /*{
+            position:'center',
+            header: AgendaConfig.TITLE_AVAILABLE_ITEMS,
+            body: '',
+            gutter: "2 2",
+            resize: true,
+            collapse: true,
+        },*/
+        {
+            position:'bottom',
+            body: '',
+            header: '',
+            gutter: "2 2",
+            height: 42
+        }
+    ]
+
     var _dataTableExtraInit = function(dt){
         //bind any extra events to data table
-        dt.subscribe("rowSelectEvent", 
-            YAHOO.bungeni.agendaconfig.handlers.renderMinutes);
+        //dt.subscribe("rowSelectEvent", 
+        //    YAHOO.bungeni.agendaconfig.handlers.renderMinutes);
     }
 
     return {
@@ -252,11 +279,12 @@ YAHOO.bungeni.agendaconfig = function(){
         handlers: _handlers,
         getColumns: _getColumns,
         AGENDA_SCHEMA: _agendaSchema,
+        TITLE_AGENDA: SGlobals.agenda_minutes_title,
         AGENDA_DATASOURCE_URL: SGlobals.json_listing_url_meta,
-        TITLE_AGENDA: SGlobals.current_schedule_items,
-        TITLE_AVAILABLE_ITEMS: SGlobals.minutes_header,
         minutesCache: minutesDSCache,
         EMPTY_AGENDA_MESSAGE: SGlobals.empty_agenda_message,
+        layoutConfig: LayoutConfig,
+        containerUnit: "center",
         dataTableExtraInit: _dataTableExtraInit
     }
 }();
