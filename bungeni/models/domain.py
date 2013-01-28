@@ -252,7 +252,10 @@ class GroupMembership(HeadParentedMixin, Entity):
     available_dynamic_features = []
     interface.implements(
         interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
-
+    subroles = one2many(
+        "subroles", "bungeni.models.domain.GroupMembershipRoleContainer",
+        "membership_id"
+    )
     @property
     def image(self):
         return self.user.image
@@ -268,10 +271,10 @@ class CommitteeStaff(GroupMembership):
     interface.implements(interfaces.ICommitteeStaff)
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
-    subroles = one2many(
+    '''subroles = one2many(
         "subroles", "bungeni.models.domain.GroupMembershipRoleContainer",
         "membership_id"
-    )
+    )'''
 
 
 class GroupMembershipRole(Entity):
@@ -454,10 +457,10 @@ class OfficeMember(GroupMembership):
     )
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
-    subroles = one2many(
+    '''subroles = one2many(
         "subroles", "bungeni.models.domain.GroupMembershipRoleContainer",
         "membership_id"
-    )
+    )'''
 
 class Address(HeadParentedMixin, Entity):
     """Address base class
