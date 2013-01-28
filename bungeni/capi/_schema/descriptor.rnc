@@ -201,7 +201,8 @@ grammar {
         "sitting" |
         "sitting_attendance" |
         "report" |
-        "venue"
+        "venue" |
+        "sitting_schedule_vote_result"
     )
 
 }

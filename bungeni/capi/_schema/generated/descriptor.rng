@@ -360,6 +360,7 @@
       <value>sitting_attendance</value>
       <value>report</value>
       <value>venue</value>
+      <value>sitting_schedule_vote_result</value>
     </choice>
   </define>
 </grammar>
