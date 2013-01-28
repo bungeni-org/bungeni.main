@@ -53,7 +53,7 @@ from bungeni.core.workflows.utils import get_group_local_role
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
 from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
-from bungeni.utils import misc
+from bungeni.utils import misc, naming
 
 try:
     import json
@@ -1438,7 +1438,8 @@ class WorkflowedTypeVocabulary(BaseVocabularyFactory):
                     #!+I18N(mb, Nov-2012) some display names aren't i18n msgids
                     # wrap them here so formlib translates from bungeni catalog
                     title=_i18n_message_factory(
-                        info.descriptor_model.display_name
+                        (info.descriptor_model.display_name if 
+                            info.descriptor_model else naming.plural(type_key))
                     )
                 ))
         return vocabulary.SimpleVocabulary(terms)
