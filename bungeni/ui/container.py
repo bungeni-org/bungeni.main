@@ -419,9 +419,14 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 md_field = self.domain_annotation.get(sort_on)
                 if md_field:
                     if not md_field.listing_column_filter:
-                        sort_on_expressions.append(
-                            self.sort_dir_func(
-                                getattr(self.domain_model, sort_on)))
+                        continue
+                else:
+                    # check domain model if this if field is not in descriptor
+                    if not hasattr(self.domain_model, sort_on):
+                        continue
+                sort_on_expressions.append(
+                    self.sort_dir_func(
+                        getattr(self.domain_model, sort_on)))
         for lc_filter_query, params in lc_filter_queries:
             filter_string = params[0]
             column_name = params[1]
