@@ -247,11 +247,11 @@ user_delegation = rdb.Table("user_delegation", metadata,
 currently_editing_document = rdb.Table("currently_editing_document", metadata,
     rdb.Column("user_id", rdb.Integer,
         rdb.ForeignKey("user.user_id"),
-        primary_key=True # !+ so, a user can only edit only ONE document at a TIME ?!?!?!?!?
+        primary_key=True
     ),
     rdb.Column("currently_editing_id", rdb.Integer,
         rdb.ForeignKey("doc.doc_id"),
-        nullable=False,
+        primary_key=True
     ),
     rdb.Column("editing_date", rdb.DateTime(timezone=False)) 
 )
@@ -474,6 +474,7 @@ user_group_membership = rdb.Table("user_group_membership", metadata,
         nullable=False,
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
+    rdb.schema.UniqueConstraint("user_id", "group_id")
 )
 
 ##############
@@ -496,6 +497,7 @@ member_title = rdb.Table("member_title", metadata,
     rdb.Column("start_date", rdb.Date, default=datetime.now, nullable=False),
     rdb.Column("end_date", rdb.Date),
     rdb.Column("language", rdb.String(5), nullable=False),
+    rdb.schema.UniqueConstraint("membership_id", "title_type_id")
 )
 
 
