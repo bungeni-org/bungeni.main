@@ -49,6 +49,15 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <permission id="bungeni.attachment.Add" title="Add Attachment" />
 <permission id="bungeni.attachment.Delete" title="Delete Attachment" />
 
+<permission id="bungeni.attachment.wf.attached.review" title="Attachment Review" />
+<grant permission="bungeni.attachment.wf.attached.review" role="bungeni.Clerk" />
+
+<permission id="bungeni.attachment.wf.review.review_complete" title="Attachment Review Complete" />
+<grant permission="bungeni.attachment.wf.review.review_complete" role="bungeni.Clerk" />
+
+<permission id="bungeni.attachment.wf.review_complete.review" title="Attachment Review" />
+<grant permission="bungeni.attachment.wf.review_complete.review" role="bungeni.Clerk" />
+
 <permission id="bungeni.attachment.wf.draft.attached" title="Publish" />
 <grant permission="bungeni.attachment.wf.draft.attached" role="bungeni.Owner" />
 
