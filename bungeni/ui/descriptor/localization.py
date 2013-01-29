@@ -219,16 +219,6 @@ def new_descriptor_fields(edescriptor):
                         cloc_elem.tag, name, type_key))
             else:
                 pass # xml comment, ...
-
-        # vaildate additional model-related constraints (not expressed in RNC)
-        derived=xas(f_elem, "derived")
-        if derived:
-            non_view_fmodes = [ mode for loc in clocs for mode in loc.modes 
-                if mode not in ("view", "listing") ]
-            assert not non_view_fmodes, \
-                "Unsupported modes %r in derived field %r in descriptor %r. " \
-                "Derived fields are read-only and may ony specify modes in: %r." % (
-                    non_view_fmodes, name, type_key, ("view", "listing"))
         
         fields.append(field.F(
                 name=name,

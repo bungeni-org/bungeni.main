@@ -41,10 +41,8 @@ def get_registry_counts(specific_model):
 
 
 def unschedule_doc(doc):
-    """ 
-    when a question gets postponed the previous schedules of that
-    question are invalidated so they do not show up in the schedule 
-    calendar any more
+    """When a doc gets postponed the previous schedules of that doc are 
+    invalidated so they do not show up in the schedule calendar any more.
     """
     # only pertinent if doc is transiting from a scheduled state...
     # !+unschedule(mr, may-2012) review this logic here, seems clunky...
@@ -98,16 +96,6 @@ def getActiveItemSchedule(doc):
     sorted_results = sorted(sorted_results)
     sorted_results.reverse()
     return [ r for (d, r) in sorted_results ]
-
-
-def set_doc_type_number(doc):
-    """Sets the number that indicates the order in which docs of this type
-    have been approved by the Speaker to be the current maximum + 1.
-    
-    The number is reset at the start of each new parliamentary session with the 
-    first doc of this type being assigned the number 1.
-    """
-    doc.type_number = get_max_type_number(doc.__class__) + 1
 
 #
 
@@ -226,10 +214,5 @@ def endChildGroups(group):
                 ministry.end_date = end_date
             yield ministry
 
-def set_real_order(sitting):
-    """ set planned order = real order """
-    for item in sitting.item_schedule:
-            item.real_order = item.planned_order
-                             
 
-    
+

@@ -352,12 +352,9 @@ def _load(workflow_name, workflow):
                     s.get("version"))) #!+RNC
             if make_version:
                 state_actions.append(ACTIONS_MODULE.create_version)
-        # state-id-inferred action - if "actions" module defines an action for
-        # this state (associated via a naming convention), then use it.
-        # !+ tmp, until state_actions are user-exposed as part of <state>
-        action_name = "_%s_%s" % (workflow_name, state_id)
-        if hasattr(ACTIONS_MODULE, action_name):
-            state_actions.append(getattr(ACTIONS_MODULE, action_name))
+        
+        for action_name in xas(s, "actions", "").split():
+            state_actions.append(capi.get_workflow_action(action_name))
         
         # @tags
         tags = xas(s, "tags", "").split()

@@ -115,11 +115,18 @@ class CAPI(object):
         int(bc.check_auto_reload_localization) # TypeError if not an int
         return bc.check_auto_reload_localization
     
+    
     @bungeni_custom_errors
     def get_workflow_condition(self, condition):
         condition_module = resolve("._conditions", "bungeni_custom.workflows")
         condition = getattr(condition_module, condition) # raises AttributeError
         return wrapped_callable(condition)
+    
+    @bungeni_custom_errors
+    def get_workflow_action(self, action):
+        action_module = resolve("._actions", "bungeni_custom.workflows")
+        action = getattr(action_module, action) # raises AttributeError
+        return wrapped_callable(action)
     
     @bungeni_custom_errors
     def get_form_constraint(self, constraint):
@@ -138,6 +145,7 @@ class CAPI(object):
         derived_module = resolve("._derived", "bungeni_custom.forms")
         derived_def = getattr(derived_module, derived) # raises AttributeError
         return wrapped_callable(derived_def)
+    
     
     @property
     @bungeni_custom_errors

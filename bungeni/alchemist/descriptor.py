@@ -286,8 +286,9 @@ class Field(object):
         self.extended = extended
         self.derived = derived
         
-        # parameter integrity
+        # parameter integrity, model-related constraints (may not be expressed in RNC)
         assert self.name, "Field [%s] must specify a valid name" % (self.name)
+        
         #self.modes = self.validated_modes(self.modes)
         # Ensure that a field is included in a descriptor only when it is 
         # relevant to the UI i.e. it is displayed in at least one mode -- 
@@ -299,6 +300,7 @@ class Field(object):
         # such security-related issues (see r19 commit log of bungeni-testing).
         assert self.modes, "Field [%s] must specify one or more modes." % (
             self.name)
+        
         if listing_column:
             assert "listing" in self.modes, \
                 "Field [%s] sets listing_column but no listing mode" % (
@@ -307,6 +309,14 @@ class Field(object):
             assert "listing" in self.modes, \
                 "Field [%s] sets listing_column_filter but no listing mode" % (
                     self.name)
+        
+        if derived:
+            non_view_fmodes = [ mode for mode in modes if mode not in ("view", "listing") ]
+            assert not non_view_fmodes, \
+                "Unsupported modes %r in derived field %r. " \
+                "Derived fields are read-only and may ony specify modes in: %r." % (
+                    non_view_fmodes, self.name, ("view", "listing"))
+        
         # the default list of show/hide localization directives
         if self.localizable is None:
             self.localizable = []

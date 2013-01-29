@@ -20,7 +20,6 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
 from bungeni.models.utils import get_principal_id
-import bungeni.core.version
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
 import re
@@ -84,15 +83,6 @@ def assign_role_owner_to_login(context):
     #if owner and (owner.login != current_user_login):
     #    assign_role("bungeni.Owner", owner.login, context)
 
-def create_version(context):
-    """Create a new version of an object and return it.
-    Note: context.status is already updated to destination state.
-    """
-    return bungeni.core.version.create_version(context)
-    # !+capi.template_message_version_transition
-    #message_template = "New version on workflow transition to: %(status)s"
-    #message = message_template % context.__dict__
-
 
 @capi.bungeni_custom_errors
 def get_mask(context):
@@ -148,7 +138,17 @@ def set_doc_registry_number(doc):
             mask = mask.replace("{%s}" % name, type_key)
     
     doc.registry_number = mask
+
+
+def set_doc_type_number(doc):
+    """Sets the number that indicates the order in which docs of this type
+    have been approved by the Speaker to be the current maximum + 1.
     
+    The number is reset at the start of each new parliamentary session with the 
+    first doc of this type being assigned the number 1.
+    """
+    doc.type_number = dbutils.get_max_type_number(doc.__class__) + 1
+
 
 
 is_pi_scheduled = dbutils.is_pi_scheduled
@@ -156,20 +156,17 @@ is_pi_scheduled = dbutils.is_pi_scheduled
 
 # question
 # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
-def assign_role_minister_question(context):
-    assert interfaces.IQuestion.providedBy(context), \
-        "Not a Question: %s" % (context)
-    if context.ministry is not None:
-        ministry_login_id = context.ministry.group_principal_id
+# !+CUSTOM
+def assign_role_minister_question(question):
+    assert interfaces.IQuestion.providedBy(question), \
+        "Not a Question: %s" % (question)
+    if question.ministry is not None:
+        ministry_login_id = question.ministry.group_principal_id
         if ministry_login_id:
-            assign_role("bungeni.Minister", ministry_login_id, context)
+            assign_role("bungeni.Minister", ministry_login_id, question)
 
 unschedule_doc = dbutils.unschedule_doc
 
-
-# tabled_document
-def setTabledDocumentHistory(context):
-    pass
 
 def get_group_local_role(group):
     if interfaces.IParliament.providedBy(group):
