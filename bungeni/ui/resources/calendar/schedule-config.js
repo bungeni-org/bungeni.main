@@ -639,7 +639,8 @@ YAHOO.bungeni.config = function () {
                     draggable: true,
                     constraintoviewport: true,
                     monitorresize: true,
-                    autoHeight: true
+                    autoHeight: true,
+                    toolbar: YAHOO.bungeni.config.scheduling.editor_toolbar,
                 });
                 rteCellEditor.render();
                 args.editor.getInputValue = function () {
@@ -744,6 +745,34 @@ YAHOO.bungeni.config = function () {
                 resizeDataTable: _resizeDataTable,
             }
         }(),
+        editor_toolbar: {
+            collapse: true,
+            titlebar: 'Text Editing Tools',
+            draggable: false,
+            buttons: [
+                { group: 'textstyle', label: 'Font Style',
+                    buttons: [
+                        { type: 'push', label: 'Bold CTRL + SHIFT + B', value: 'bold' },
+                        { type: 'push', label: 'Italic CTRL + SHIFT + I', value: 'italic' },
+                        { type: 'push', label: 'Underline CTRL + SHIFT + U', value: 'underline' },
+                        { type: 'separator' },
+                    ]
+                },
+                { type: 'separator' },
+                { group: 'indentlist', label: 'Lists',
+                    buttons: [
+                        { type: 'push', label: 'Create an Unordered List', value: 'insertunorderedlist' },
+                        { type: 'push', label: 'Create an Ordered List', value: 'insertorderedlist' }
+                    ]
+                },
+                { type: 'separator' },
+                { group: 'insertitem', label: 'Insert Item',
+                    buttons: [
+                        { type: 'push', label: 'HTML Link CTRL + SHIFT + L', value: 'createlink', disabled: true },
+                    ]
+                }
+            ]
+        }
     }
     return {
         schemas: _schemas,

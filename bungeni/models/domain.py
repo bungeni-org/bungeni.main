@@ -1048,6 +1048,8 @@ class ItemSchedule(Entity):
     # Then, the 2 props below ca be reduced to just @owner (and reuse @item defined above)
     @property
     def item_title(self):
+        if interfaces.IScheduleText.providedBy(self.item):
+            return self.item.text
         return IDCDescriptiveProperties(self.item).title
     @property
     def item_mover(self): # !+ item_owner_title

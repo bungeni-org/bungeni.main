@@ -62,8 +62,13 @@ YAHOO.bungeni.agendaconfig = function(){
             this.dialog.setBody("<div><textarea name='minutestext' id='minutestext'></textarea></div>");
             this.dialog.setHeader(SGlobals.schedule_discussions_title);
             Event.onAvailable("minutestext", function(e){
-                var editor = new YAHOO.widget.Editor("minutestext",
-                    { width:"100%", height:"150px" , autoHeight:false }
+                var editor = new YAHOO.widget.SimpleEditor("minutestext",
+                    { 
+                        width:"100%", 
+                        height:"150px" , 
+                        autoHeight:false ,
+                        toolbar: YAHOO.bungeni.config.scheduling.editor_toolbar,
+                    }
                 );
                 editor.render();
                 YAHOO.bungeni.agendaconfig.minuteEditor.getText = function(){

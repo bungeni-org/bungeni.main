@@ -408,8 +408,13 @@ YAHOO.bungeni.availableitems = function(){
                 }
             }
             Event.onAvailable("add-text-record", function(event){
-                rteEditor = new YAHOO.widget.Editor("text-record-value",
-                    { width: "100%", height: "60px",autoHeight: true }
+                rteEditor = new YAHOO.widget.SimpleEditor("text-record-value",
+                    { 
+                        width: "100%", 
+                        height: "60px",
+                        autoHeight: true,
+                        toolbar: YAHOO.bungeni.config.scheduling.editor_toolbar,
+                    }
                 );
                 rteEditor.render();
             });
