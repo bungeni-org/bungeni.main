@@ -461,7 +461,12 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
             result[property.key] = value
     
     for prop_name, prop_type in obj.__class__.extended_properties:
-        result[prop_name] = getattr(obj, prop_name)
+        try:
+            result[prop_name] = getattr(obj, prop_name)
+        except NoInteraction:
+            log.error("Extended property %s requires an interaction.",
+                prop_name)
+
     
     #any additional attributes - this allows us to capture any derived attributes
     if IAlchemistContent.providedBy(obj):
@@ -473,7 +478,12 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                 domain_schema.namesAndDescriptions(all=True) ]
             extra_properties = set(known_names).difference(set(seen_keys))
             for prop_name in extra_properties:
-                result[prop_name] = getattr(obj, prop_name)
+                try:
+                    result[prop_name] = getattr(obj, prop_name)
+                except NoInteraction:
+                    log.error("Attribute %s requires an interaction.",
+                        prop_name)
+
         except KeyError:
             log.warn("Could not find table schema for %s", obj)
     

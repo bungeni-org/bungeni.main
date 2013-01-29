@@ -20,9 +20,10 @@ import simplejson
 
 import zope.component
 import zope.app.component
-from zope.security.proxy import removeSecurityProxy
+import zope.security
 import zope.event
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
+from bungeni.core.testing import create_participation
 
 from sqlalchemy.orm import class_mapper, object_mapper
 from sqlalchemy.types import Binary
@@ -84,13 +85,23 @@ def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains
     attachments - XML is saved in zip archive with all attached files. 
     """
+
+    #create a fake interaction to ensure items requiring a participation
+    #are serialized 
+    #!+SERIALIZATION(mb, Jan-2013) review this approach
+    try:
+        zope.security.management.getInteraction()
+    except zope.security.interfaces.NoInteraction:
+        principal = zope.security.testing.Principal('user', 'manager', ())
+        zope.security.management.newInteraction(create_participation(principal))
+
     include = []
     # list of files to zip
     files = []
     # data dict to be published
     data = {}
     
-    context = removeSecurityProxy(context)
+    context = zope.security.proxy.removeSecurityProxy(context)
     
     if interfaces.IFeatureVersion.providedBy(context):
         include.append("versions")
@@ -466,7 +477,7 @@ def queue_object_serialization(obj):
         wfc.state_controller.get_status() in 
         wfc.workflow.get_state_ids(tagged=["private"], restrict=False)):
         return
-    unproxied = removeSecurityProxy(obj)
+    unproxied = zope.security.proxy.removeSecurityProxy(obj)
     mapper = object_mapper(unproxied)
     primary_key = mapper.primary_key_from_instance(unproxied)
     #!+CAPI(mb, Aug-2012) capi lookup in as at r9707 fails for some keys
