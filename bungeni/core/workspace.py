@@ -214,6 +214,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         # in the tab requested eg. through an outdated url
         if self.check_item(domain_class, value.status):
             value = contained(value, self, name)
+            print "ZZZZZZZZZZZZZZZZZZZZZZZZZZ", checkPermission(view_permission(value), value)
             return value
         else:
             return default
@@ -293,8 +294,8 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                 reverse=reverse)
-        results = [item for item in results if checkPermission(view_permission(
-            contained(item, self, self.string_key(item))), item)]
+        results = [item for item in results if checkPermission(
+            view_permission(item), contained(item, self, self.string_key(item)))]    
         count = len(results)
         if not (kw.get("filter_title", None) or
                 kw.get("filter_type", None) or
