@@ -168,6 +168,8 @@ def localize_descriptor(descriptor_elem, scope="system"):
                 # !+ assert each name is a field in the descriptor
             if xas(descriptor_elem, "sort_dir"):
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
+            naming.MSGIDS.add(cls.display_name)
+            naming.MSGIDS.add(cls.container_name)
             
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
         
