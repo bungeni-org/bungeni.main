@@ -38,5 +38,5 @@ def version_increment_for_state(context):
     defines a version="true".
     """
     state = get_object_state(context)
-    return int(ACTIONS_MODULE.create_version in state.actions)
+    return int(ACTIONS_MODULE.version in state.actions)
 

@@ -342,17 +342,10 @@ def _load(workflow_name, workflow):
         state_id = xas(s, "id")
         assert state_id, "Workflow State must define @id" #!+RNC
         validate_id(state_id, "state")
+        
+        # @actions
         # state actions
         state_actions = []
-        # version (prior to any custom actions)
-        if xas(s, "version") is not None:
-            make_version = xab(s, "version")
-            if make_version is None:
-                raise ValueError("Invalid state value [version=%r]" % (
-                    s.get("version"))) #!+RNC
-            if make_version:
-                state_actions.append(ACTIONS_MODULE.create_version)
-        
         for action_name in xas(s, "actions", "").split():
             state_actions.append(capi.get_workflow_action(action_name))
         

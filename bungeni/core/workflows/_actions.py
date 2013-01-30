@@ -2,43 +2,36 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Workflow transition actions.
+"""Workflow transition-to-state actions.
 
-    _{workflow_name}_{state_name}
-
-Signature of all (both private and public) action callables:
+Signature of all transition-to-state action callables:
 
     (context:Object) -> None
 
-All state transition actions are set ON execution of the workflow trransition 
-i.e. the status has already been updated to destination state id. 
+All transition-to-state actions are executed "on workflow trransition" i.e. 
+exactly when the status is updated from the source to the destination state, 
+and in exactly the order they are specified in the state.@actions xml attribute.
 
-The order of execution of any actions follows same order of how actions are 
-listed.
-
-The specially-handled "version" action, specified via state.@version="true",
-whenever present is ALWAYS executed as first action.
-!+ drop @version bool attr for simply another action?
+REMEMBER: when a transition-to-state action is executed, the context.status 
+is already updated to the destination state.
 
 $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
 from bungeni.core.workflows import utils
-import bungeni.core.version
 
 
 # version
-
-def create_version(context):
-    """Create a new version of an object and return it.
-    Specially handled action, tied to <state>.@version="true" bool attribute.
-    Note: context.status is already updated to destination state.
-    """
-    return bungeni.core.version.create_version(context)
-    # !+capi.template_message_version_transition
-    #message_template = "New version on workflow transition to: %(status)s"
-    #message = message_template % context.__dict__
+# - create a new version of an object and return it
+# - context must be version-enabled
+# - recommendation: when present, version should be first action to execute
+from bungeni.core.version import (
+    create_version as version
+)
+# !+capi.template_message_version_transition
+#message_template = "New version on workflow transition to: %(status)s"
+#message = message_template % context.__dict__
 
 
 from bungeni.core.workflows.utils import (
@@ -90,7 +83,7 @@ def set_real_order(sitting):
 
 # user
 
-def assign_owner_role(context):
-    utils.assign_role("bungeni.Owner", context.login, context)
-    context.date_of_death = None
+def assign_owner_role(user):
+    utils.assign_role("bungeni.Owner", user.login, user)
+    user.date_of_death = None
 

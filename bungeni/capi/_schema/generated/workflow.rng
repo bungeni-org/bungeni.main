@@ -122,12 +122,6 @@
       <attribute name="title"/>
       <optional>
         <!-- i18n msgid -->
-        <attribute name="version">
-          <data type="boolean"/>
-        </attribute>
-      </optional>
-      <optional>
-        <!-- default:false -->
         <attribute name="actions">
           <ref name="SPACE_SEPARATED_SYMBOLS"/>
         </attribute>
