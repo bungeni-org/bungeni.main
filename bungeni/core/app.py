@@ -240,23 +240,6 @@ class AppSetup(object):
                     workspace["scheduling"][container_name]
                 )
         
-        # Proof-of-concept: support for selective inclusion in breadcrumb trail:
-        # a view marked with an attribute __crumb__=False is NOT included in 
-        # the breadcrumb trail (see ui/viewlets/navigation.py)
-        #self.context["workspace"].__crumb__ = False
-        business = self.context["business"] = Section(
-            title=_(u"Business"),
-            description=_(u"Daily operations of the parliament"),
-            default_name="business-index")
-        members = self.context["members"] = Section(
-            title=_(u"Members"),
-            description=_(u"Records of members of parliament"),
-            default_name="members-index")
-        archive = self.context["archive"] = Section(
-            title=_(u"Archive"),
-            description=_(u"Parliament records and documents"),
-            default_name="archive-index")
-        alsoProvides(archive, interfaces.ISearchableSection)
         
         #!+SECURITY(miano. nov-2010) Admin section now uses AdminSection
         # container that is identical to Section, only difference is that
@@ -270,116 +253,6 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin)
         alsoProvides(admin, interfaces.ISearchableSection)
         
-        # business section
-        business["whats-on"] = Section(
-            title=_(u"What's on"),
-            description=_(u"Current parliamentary activity"),
-            default_name="whats-on")
-        alsoProvides(business, interfaces.ISearchableSection)
-        
-        business[u"committees"] = QueryContent(
-            container_getter(get_current_parliament, "committees"),
-            title=_(u"Committees"),
-            #!+marker=interfaces.ICommitteeAddContext,
-            description=_(u"View committees created by the current parliament"))
-        
-        business[u"bills"] = QueryContent(
-            container_getter(get_current_parliament, "bills"),
-            title=_(u"Bills"),
-            #!+marker=interfaces.IBillAddContext,
-            description=_(u"View bills introduced in the current parliament"))
-
-        business[u"questions"] = QueryContent(
-            container_getter(get_current_parliament, "questions"),
-            title=_(u"Questions"),
-            #!+marker=interfaces.IQuestionAddContext,
-            description=_(u"View questions tabled in the current parliament"))
-
-        business[u"motions"] = QueryContent(
-            container_getter(get_current_parliament, "motions"),
-            title=_(u"Motions"),
-            #!+marker=interfaces.IMotionAddContext,
-            description=_(u"View motions moved in the current parliament"))
-        
-        business[u"tableddocuments"] = QueryContent(
-            container_getter(get_current_parliament, "tableddocuments"),
-            title=_(u"Tabled documents"),
-            description=_(u"View the documents tabled in the current parliament"))
-        
-        business[u"agendaitems"] = QueryContent(
-            container_getter(get_current_parliament, "agendaitems"),
-            title=_(u"Agenda items"),
-            #!+marker=interfaces.IAgendaItemAddContext,
-            description=_(u"View the agenda items of the current parliament"))
-        
-        business[u"sittings"] = QueryContent(
-            container_getter(get_current_parliament, "sittings"),
-            title=_(u"Sittings"),
-            description=_(u"View the sittings of the current parliament"))
-        
-        # parliamentary reports
-        business[u"preports"] = QueryContent(
-            container_getter(get_current_parliament, "preports"),
-            title=_(u"Publications"),
-            #!+marker=interfaces.IReportAddContext,
-            description=\
-                _(u"browse and download parliamentary publications")
-        )
-        
-        
-        # members section
-        members[u"current"] = QueryContent(
-            container_getter(get_current_parliament, "parliamentmembers"),
-            title=_(u"Current"),
-            description=_(u"View current parliament members (MPs)"))
-        alsoProvides(members, interfaces.ISearchableSection)
-        
-        members[u"political-groups"] = QueryContent(
-            container_getter(get_current_parliament, "politicalgroups"),
-            title=_(u"Political groups"),
-            description=_(u"View current political groups"))
-        
-        # archive
-        records = archive[u"browse"] = Section(
-            title=_(u"Browse archives"),
-            description=_(u"Browse records from the archive"),
-            default_name="browse-archive")
-        
-        documents = archive["documents"] = Section(
-            title=_(u"Documents"),
-            description=_(u"Browse documents in the archive"),
-            default_name="browse-archive")
-        
-        # archive/records
-        documents[u"bills"] = domain.BillContainer()
-        to_locatable_container(domain.Bill, documents[u"bills"])
-        
-        documents[u"motions"] = domain.MotionContainer()
-        to_locatable_container(domain.Motion, documents[u"motions"])
-        
-        documents[u"questions"] = domain.QuestionContainer()
-        to_locatable_container(domain.Question, documents[u"questions"])
-        
-        documents[u"agendaitems"] = domain.AgendaItemContainer()
-        to_locatable_container(domain.AgendaItem, documents[u"agendaitems"])
-        
-        documents[u"reports"] = domain.ReportContainer()
-        to_locatable_container(domain.Report, documents[u"reports"])
-        
-        records[u"parliaments"] = domain.ParliamentContainer()
-        to_locatable_container(domain.Parliament, records[u"parliaments"])
-        
-        records[u"political-groups"] = domain.PoliticalGroupContainer()
-        to_locatable_container(domain.PoliticalGroup, 
-            records[u"political-groups"]
-        )
-        
-        records[u"committees"] = domain.CommitteeContainer()
-        to_locatable_container(domain.Committee, records[u"committees"])
-        
-        #records[u"mps"] = domain.MemberOfParliamentContainer()
-        #component.provideAdapter(location.ContainerLocation(records[u"mps"]),
-        #               (implementedBy(domain.MemberOfParliament), ILocation))
         
         ##########
         # Admin User Interface
@@ -424,10 +297,5 @@ class AppSetup(object):
         content[u"parliaments"] = domain.ParliamentContainer()
         to_locatable_container(domain.Parliament, content[u"parliaments"])
         
-        content[u"offices"] = domain.OfficeContainer()
-        to_locatable_container(domain.Office, content[u"offices"])
-        
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
-
-

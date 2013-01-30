@@ -276,6 +276,11 @@ def get_parliament_for_group_id(group_id):
     else:
         return get_parliament_for_group_id(group.parent_group_id)
 
+def get_parliament_for_user(user):
+    session = Session()
+    if user.group_membership:
+        return get_parliament_for_group_id(user.group_membership[0].group.group_id)
+    return None    
 
 # misc queries
 

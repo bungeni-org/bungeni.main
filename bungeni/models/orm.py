@@ -164,6 +164,7 @@ mapper(domain.GroupMembership, schema.user_group_membership,
             primaryjoin=rdb.and_(schema.user_group_membership.c.user_id ==
                 schema.user.c.user_id),
             uselist=False,
+            backref="group_membership",
             lazy=False),
         "group":relation(domain.Group,
             primaryjoin=(schema.user_group_membership.c.group_id ==

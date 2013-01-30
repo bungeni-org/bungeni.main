@@ -333,6 +333,8 @@ class Parliament(Group):
         "bungeni.models.domain.CommitteeContainer", "parent_group_id")
     governments = one2many("governments",
         "bungeni.models.domain.GovernmentContainer", "parent_group_id")
+    offices = one2many("offices",
+        "bungeni.models.domain.OfficeContainer", "parent_group_id")
     parliamentmembers = one2many("parliamentmembers",
         "bungeni.models.domain.MemberOfParliamentContainer", "group_id")
     politicalgroups = one2many("politicalgroups",

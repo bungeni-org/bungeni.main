@@ -19,7 +19,7 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
-from bungeni.models.utils import get_principal_id
+from bungeni.models.utils import get_principal_id, get_parliament_for_group_id
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
 import re
@@ -29,26 +29,6 @@ from bungeni.capi import capi
 
 from ConfigParser import ConfigParser, NoOptionError
 import os
-
-
-''' !+UNUSED(mr, mar-2011)
-def get_parliament(context):
-    """go up until we find a parliament """
-    parent = context.__parent__
-    while parent:
-        if  interfaces.IParliament.providedBy(parent):
-            return parent
-        else:
-            try:
-                parent = parent.__parent__
-            except:
-                parent = None
-    if not parent:
-        parliament_id = context.parliament_id
-        session = Session()
-        parliament = session.query(domain.Parliament).get(parliament_id)
-        return parliament
-'''
 
 
 def formatted_user_email(user):
@@ -187,7 +167,7 @@ def get_group_local_role(group):
 
 def get_group_context(context):
     if interfaces.IOffice.providedBy(context):
-        return getSite() #get_parliament(context)
+        return get_parliament_for_group_id(context.group_id)
     else:
         return context
 

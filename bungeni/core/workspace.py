@@ -214,7 +214,6 @@ class WorkspaceBaseContainer(AlchemistContainer):
         # in the tab requested eg. through an outdated url
         if self.check_item(domain_class, value.status):
             value = contained(value, self, name)
-            print "ZZZZZZZZZZZZZZZZZZZZZZZZZZ", checkPermission(view_permission(value), value)
             return value
         else:
             return default
@@ -222,10 +221,12 @@ class WorkspaceBaseContainer(AlchemistContainer):
     @property
     def parliament_id(self):
         """Vocabularies in the forms get the parliament id from the context,
-        this property returns the id of the current parliament because
-        the workspace is meant only for adding current documents
+        this property returns the id of the parliament the currently logged in
+        user is a member of
         """
-        return utils.get_current_parliament().group_id
+        user = utils.get_db_user()
+        user_parliament = utils.get_parliament_for_user(user)
+        return user_parliament.group_id
 
     def __getitem__(self, name):
         value = self.get(name)
@@ -239,14 +240,14 @@ class WorkspaceBaseContainer(AlchemistContainer):
     # in One2Many sets the foreign key of an item to the
     # primary key of the container when an item is added.
     # This does the same for the workspace containers
-    # The add forms in the workspace are only to add documents to the
-    # current parliament.
-    # This sets the foreign key of the doc to the current parliament.
+    # This sets the foreign key of the doc to the parliament the currently
+    # logged in member is a user
 
     def __setitem__(self, name, item):
         session = Session()
-        current_parliament = utils.get_current_parliament()
-        item.parliament_id = current_parliament.parliament_id
+        user = utils.get_db_user()
+        user_parliament = utils.get_parliament_for_user(user)
+        item.parliament_id = user_parliament.parliament_id
         session.add(item)
 
 
@@ -290,12 +291,12 @@ class WorkspaceContainer(WorkspaceBaseContainer):
                     if (prm.getSetting(obj_role, principal.id) == Allow):
                         results.append(
                             contained(obj, self, self.string_key(obj)))
+        results = [item for item in results if checkPermission(
+            view_permission(item), contained(item, self, self.string_key(item)))]
         # Sort items
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                 reverse=reverse)
-        results = [item for item in results if checkPermission(
-            view_permission(item), contained(item, self, self.string_key(item)))]    
         count = len(results)
         if not (kw.get("filter_title", None) or
                 kw.get("filter_type", None) or
@@ -317,20 +318,15 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         results, count = self._query()
         return count
 
-# !+SECURITY(miano, july 2011) This factory adapts the workspaces to
-# zope.securitypolicy.interface.IPrincipalRoleMap and is equivalent to the
-# principalrolemap of the current parliament.
-# If/when Bungeni is modified to support bicameral houses this should be
-# modified so that the oid is set to the group_id of the house the current
-# principal in the interaction is a member of.
 class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
     def __init__(self, context):
         self.context = context
-        current_parliament = utils.get_current_parliament()
-        if current_parliament:
-            self.object_type = current_parliament.type
-            self.oid = current_parliament.group_id
+        user = utils.get_db_user()
+        user_parliament = utils.get_parliament_for_user(user)
+        if user_parliament:
+            self.object_type = user_parliament.type
+            self.oid = user_parliament.group_id
         else:
             self.object_type = None
             self.oid = None
