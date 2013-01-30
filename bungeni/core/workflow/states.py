@@ -391,7 +391,7 @@ class Workflow(object):
         # integrity
         self.validate()
     
-    @error.exceptions_as(interfaces.InvalidWorkflow, False)
+    @error.exceptions_as(interfaces.InvalidWorkflow)
     def validate(self):
         """Verify initial conditions (that may be checked at init time).
         """
@@ -461,7 +461,7 @@ class Workflow(object):
                     "sources in grouped transitions [%s] in workflow [%s]" % (
                         grouping, self.name)
     
-    @error.exceptions_as(interfaces.InvalidWorkflow, False)
+    @error.exceptions_as(interfaces.InvalidWorkflow)
     def validate_permissions_roles(self):
         """Verify registrations of permissions and roles (when application 
         finishes loading, and registrations have been executed).

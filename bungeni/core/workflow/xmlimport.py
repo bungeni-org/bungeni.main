@@ -343,14 +343,14 @@ def _load(workflow_name, workflow):
         assert state_id, "Workflow State must define @id" #!+RNC
         validate_id(state_id, "state")
         
-        # @actions
-        # state actions
+        # @actions - transition-to-state actions
         state_actions = []
         for action_name in xas(s, "actions", "").split():
             state_actions.append(capi.get_workflow_action(action_name))
         
         # @tags
         tags = xas(s, "tags", "").split()
+        
         # @permissions_from_state
         permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
         # state.@permissions_from_state : to reduce repetition and enhance 

@@ -17,7 +17,7 @@ __all__ = ["exceptions_as"]
 import sys
 import traceback
 
-def exceptions_as(exc_kls, include_name=True):
+def exceptions_as(exc_kls):
     def _exceptions_as(f):
         """Decorator to intercept any error raised by function f and 
         re-raise it as a exc_kls. 
@@ -25,16 +25,12 @@ def exceptions_as(exc_kls, include_name=True):
         def _errorable_f(*args, **kw):
             try: 
                 return f(*args, **kw)
-            except Exception, e:
-                log.error("%s [exceptions_as(%s)]\n%s" % (
-                    f, 
-                    exc_kls.__name__,
-                    traceback.format_exc(sys.exc_info()[2])))
-                if include_name:
-                    raise exc_kls("%s: %s [in %s.%s]" % (
-                            e.__class__.__name__, e, f.__module__, f.__name__))
-                else:
-                    raise exc_kls("%s" % (e))
+            except Exception:
+                e_type, e_inst, e_traceback = sys.exc_info()
+                m = "%r in CALL to %s.%s (%s) WITH args=%r AND kw=%r" % (
+                    e_inst, f.__module__, f.__name__, hex(id(f)), args, kw)
+                log.debug(traceback.format_exc(e_traceback))
+                raise exc_kls, m, e_traceback
         return _errorable_f
     return _exceptions_as
 

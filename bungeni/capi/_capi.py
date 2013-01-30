@@ -33,7 +33,7 @@ def bungeni_custom_errors(f):
     as a BungeniCustomError. To be used to decorate any function involved 
     in reading/validating/processing any bungeni_custom parameters. 
     """
-    return error.exceptions_as(BungeniCustomError, True)(f)
+    return error.exceptions_as(BungeniCustomError)(f)
 
 
 def wrapped_callable(unwrapped):
