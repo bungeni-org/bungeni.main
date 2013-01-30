@@ -144,9 +144,10 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
                     restrict=False)
             return False
         
+        instance = removeSecurityProxy(self.context)
         min_date_active = None
+        
         if IFeatureAudit.providedBy(self.context):
-            instance = removeSecurityProxy(self.context)
             # !+PASTDATAENTRY(mr, jun-2011) offers a way to enter past data 
             # for workflowed items via the UI -- note, ideally we should be 
             # able to also control the item's creation active_date.
@@ -159,11 +160,21 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
                 if changes:
      	            # then use the "date_active" of the most recent entry
                     min_date_active = changes[-1].date_active
+        
         if not min_date_active:
-            # fallback to current parliament's start_date (cast to a datetime)
+            # ok, try determine a min_date_active in another way, namely via the
+            # start_date of the "parliament" the instance may be "attached" to...
+            if hasattr(instance, "parliament"):
+                parliament = instance.parliament
+            elif hasattr(instance.head, "parliament"):
+                parliament = instance.head.parliament
+            else:
+                parliament = globalsettings.get_current_parliament()
+            # !+RELATED_CHAMBER(mr, jan-2013) factor this out to a generic 
+            # get_related_chamber(context) utility
             min_date_active = datetime.datetime.combine(
-                globalsettings.get_current_parliament().start_date,
-                datetime.time())
+                parliament.start_date, datetime.time())
+        
         # As the precision of the UI-submitted datetime is only to the minute, 
         # we adjust min_date_active by a margin of 59 secs earlier to avoid 
         # issues of doing 2 transitions in quick succession (within same minute) 

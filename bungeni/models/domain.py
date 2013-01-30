@@ -50,6 +50,8 @@ def get_changes(auditable, *actions):
         assert_valid_change_action(action)
     # lazy loading - merge to avoid sqlalchemy.orm.exc.DetachedInstanceError
     auditable = alchemist.Session().merge(auditable)
+    # !+ for some reason, on event creation (with minimal log for one workflow 
+    # and one add change) the following does not pick up the one workflow change:
     return [ c for c in auditable.changes if c.action in actions ]
 
 def get_audit_table_name(kls):

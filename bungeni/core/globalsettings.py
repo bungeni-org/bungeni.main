@@ -25,6 +25,7 @@ app = BungeniApp()
 # !+ switch to bungeni naming standard (underscore-spearated words)
 # !+CUSTOM(mr, mar-2011) migrate all "global parameters" here to bungeni_custom
 
+
 def get_current_parliament(date=None):
     """Return the parliament for a given date (or the current for no date)
     """
@@ -54,6 +55,7 @@ def get_current_parliament(date=None):
                 " in Bungeni admin :: %s", e.__repr__()
             )
             raise ValueError("Unable to locate active parliament")
+
 
 def getCurrentParliamentId(date=None):
     """Return the parliament_id for a given date (or the current for no date)
