@@ -37,12 +37,11 @@ YAHOO.bungeni.scheduling = function(){
                 if(AgendaConfig.minutesCache.get_minutes_count()==0){
                     YAHOO.bungeni.reloadView = true;
                 }
-                /*else{
-                    !+MINUTES(mb, Jan-2013) Turned off. Reworking.
+                else{
                     for(idx=0;idx<row_count;idx++){
-                        //YAHOO.bungeni.agendaconfig.handlers.saveMinutes(idx);
+                        YAHOO.bungeni.agendaconfig.handlers.saveMinutes(idx);
                     }
-                }*/
+                }
             }
             //reload schedule reflect changes to workflow actions - if any
             if (YAHOO.bungeni.reloadView){
