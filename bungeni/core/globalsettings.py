@@ -17,8 +17,6 @@ from bungeni.core.app import BungeniApp
 
 from bungeni.models import domain
 from bungeni.models import schema
-from bungeni.models.interfaces import IBungeniSettings
-from bungeni.models.settings import GlobalSettingFactory
 
 app = BungeniApp()
 
@@ -65,28 +63,6 @@ def getCurrentParliamentId(date=None):
     except:
         pass
 
-''' !+UNUSED(mr, mar-2011)
-def getQuestionSubmissionAllowed():
-    return BungeniSettings(app).question_submission_allowed
-'''
-
-def getMaxQuestionsPerSitting():
-    return BungeniSettings(app).max_questions_sitting
-        
-def getMaxQuestionsByMpPerSitting():
-    return BungeniSettings(app).max_mp_questions_sitting
-    
-def getNoOfDaysBeforeQuestionSchedule():
-    return BungeniSettings(app).days_before_question_schedule
-    
-    
-def getNoOfDaysBeforeBillSchedule():
-    """
-    Parameter  : Elapsed days from date of publication for placement of bill	
-    Configurable numeric value describing number of days after date of publication 
-    of bill after which bill can be placed before the house
-    """
-    return BungeniSettings(app).days_before_bill_schedule
         
 def getWeekendDays():
     """
@@ -107,5 +83,3 @@ def getPloneMenuUrl():
 
     raise NotImplementedError(
         "This method should not be used.")
-
-BungeniSettings = GlobalSettingFactory(IBungeniSettings)

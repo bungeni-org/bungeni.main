@@ -75,30 +75,6 @@
         weight="0"
     />
 
-  <!-- archive -->
-
-  <browser:viewlet
-     name="bungeni.archive.dates"
-     for="*"
-     layer="bungeni.ui.interfaces.IArchiveSectionLayer"
-     class=".archive.ArchiveDatesViewlet"
-     manager="ploned.ui.interfaces.IAboveContentManager"
-     permission="zope.Public"
-     weight="0"
-     />
-
-  <!-- Whats on -->
-   <browser:viewlet
-     name="bungeni.whatson.dates"
-     for="*"
-     layer="bungeni.ui.interfaces.IBusinessWhatsOnSectionLayer"
-     class=".archive.ArchiveDatesViewlet"
-     manager="ploned.ui.interfaces.IAboveContentManager"
-     permission="zope.Public"
-     weight="0"
-     />
-
-  <!-- scheduling -->
 
     <!-- Languages -->
     

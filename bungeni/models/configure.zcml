@@ -11,10 +11,7 @@
         provides=".interfaces.IBungeniUserSettings"
     />
     
-    <!-- Convience for Access for Settings without Context --> 
-    <utility factory=".settings.SettingsUtility"
-        provides=".interfaces.IBungeniSettings"
-    />
+    <!-- Settings Utilities --> 
     <utility factory=".settings.EmailSettingsUtility"
         provides=".interfaces.IBungeniEmailSettings"
     />

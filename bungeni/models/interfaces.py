@@ -271,40 +271,6 @@ class IBungeniSetup(interface.Interface):
         """Setup the application on server start.
         """
 
-class IBungeniSettings(interface.Interface):
-    question_submission_allowed = schema.Bool(
-        title=_(u"Allow Question Submission"),
-        default=True
-    )
-    days_to_defer_question = schema.Int(
-        title=_(u"Days to Defer Question"),
-        description=_(u"number of days after which admissible questions are "
-            "automatically deferred"
-        ),
-        default=10
-    )
-    days_before_question_schedule = schema.Int(
-        title=_(u"Days before question scheduled"),
-        default=3
-    )
-    days_before_bill_schedule = schema.Int(
-        title=_(u"Days before bill scheduled"),
-        default=3
-    )
-    max_questions_sitting = schema.Int(
-        title=_(u"Maximum Questions Per Sitting"),
-        default=15
-    )
-    max_mp_questions_sitting = schema.Int(
-        title=_(u"Maximum Questions Per Sitting Per MP"),
-        default=1
-    )
-    max_sittings_in_business = schema.Int(
-        title=_(u"Number of sittings to include in what's business section"),
-        default=5,
-        min=1
-    )
-
 class IBungeniRegistrySettings(interface.Interface):
 
     global_number = schema.Bool(

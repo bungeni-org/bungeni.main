@@ -183,17 +183,9 @@ def GlobalSettingFactory( iface ):
                       
     return klass
 
-BungeniSettings = GlobalSettingFactory( interfaces.IBungeniSettings )
 UserSettings = UserSettingFactory( interfaces.IBungeniUserSettings )
 EmailSettings = GlobalSettingFactory( interfaces.IBungeniEmailSettings )
 RegistrySettings = GlobalSettingFactory( interfaces.IBungeniRegistrySettings )
-
-class SettingsUtility( object ):
-    """ allow for lookup of settings in a context less fashion.. ie
-        settings = component.getUtility( IBungeniSettings )()
-        """
-    def __call__( self ):
-        return BungeniSettings( None )
 
 class EmailSettingsUtility( object ):
     #!-EMAIL(murithi, mar-2011) to register utility after app starts

@@ -336,18 +336,6 @@
         class=".redirect.BusinessIndexRedirect"
         permission="zope.Public"
     />
-    <browser:page name="whats-on"
-        for="bungeni.core.interfaces.ISection"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".viewlets.whatson.WhatsOnBrowserView"
-        permission="zope.Public"
-    />
-    <browser:page name="whats-on-portlet"
-        for="bungeni.models.interfaces.IBungeniApplication"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".viewlets.whatson.WhatsOnPortletBrowserView"
-        permission="zope.Public"
-    />
 
   <!-- members -->
 

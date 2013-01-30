@@ -20,42 +20,9 @@ from bungeni.ui import browser
 from bungeni.ui.interfaces import IBungeniSkin, ISerializationManager
 from bungeni.utils import register
 from bungeni.ui.i18n import _
-#from bungeni.ui.utils.queries import execute_sql
-
-
-@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="settings",
-    protect={"zope.ManageSite": register.VIEW_DEFAULT_ATTRS})
-class Settings(ui.EditForm):
-    
-    form_fields = form.Fields(interfaces.IBungeniSettings)
-    
-    def update(self):
-        settings = component.getUtility(interfaces.IBungeniSettings)()
-        self.adapters = {interfaces.IBungeniSettings : settings}
-        super(Settings, self).update()
-
-
-## class FieldEditColumn(column.FieldEditColumn):
-##     def renderCell(self, item, formatter):
-##         id = self.makeId(item)
-##         request = formatter.request
-##         field = self.field
-##         if self.bind:
-##             field = field.bind(item)
-##         widget = component.getMultiAdapter((field, request), IInputWidget)
-##         widget.setPrefix(self.prefix + "." + id)
-##         if self.widget_extra is not None:
-##             widget.extra = self.widget_extra
-##         if self.widget_class is not None:
-##             widget.cssClass = self.widget_class
-##         ignoreStickyValues = getattr(formatter, "ignoreStickyValues", False)
-##         if ignoreStickyValues or not widget.hasInput():
-##             widget.setRenderedValue(self.get(item))
-##         return widget()
-
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="email-settings",
-    like_class=Settings)
+    protect={"zope.ManageSite": register.VIEW_DEFAULT_ATTRS})
 class EmailSettings(ui.EditForm):
     
     form_fields = form.Fields(interfaces.IBungeniEmailSettings)
@@ -91,7 +58,7 @@ class UserSettings(ui.EditForm):
         super(UserSettings, self).update()
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="xapian-settings",
-    like_class=Settings)
+    like_class=EmailSettings)
 class XapianSettings(browser.BungeniBrowserView):
     
     render = ViewPageTemplateFile("templates/xapian-settings.pt")
@@ -106,7 +73,7 @@ class XapianSettings(browser.BungeniBrowserView):
     
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="registry-settings",
-    like_class=Settings)
+    like_class=EmailSettings)
 class RegistrySettings(ui.EditForm):
     
     form_fields = form.Fields(interfaces.IBungeniRegistrySettings)
@@ -145,7 +112,7 @@ class RegistrySettings(ui.EditForm):
 
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, 
-    name="serialization-manager", like_class=Settings)
+    name="serialization-manager", like_class=EmailSettings)
 class SerializationManager(form.PageForm, browser.BungeniBrowserView):
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.FormFields(ISerializationManager)

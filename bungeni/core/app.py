@@ -264,12 +264,6 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="browse-admin")
         
-        admin["settings"] = Section(
-            title=_(u"Settings"),
-            description=_(u"settings"),
-            marker=model_interfaces.IBungeniAdmin,
-            default_name="settings")
-        
         admin["email-settings"] = Section(
             title=_(u"email settings"),
             description=_(u"manage email settings"),
