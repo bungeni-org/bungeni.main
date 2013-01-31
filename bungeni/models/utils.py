@@ -3,10 +3,10 @@
 # Copyright (C) 2010 UN/DESA - http://www.un.org/esa/desa/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-'''Utilities to help with working with queries on the domain model
+"""Utilities to help with working with queries on the domain model
 
 $Id$
-'''
+"""
 log = __import__("logging").getLogger("bungeni.models.utils")
 
 import collections
@@ -152,7 +152,7 @@ def get_current_parliament_governments(parliament=None):
         parliament = get_current_parliament()
     governments = Session().query(domain.Government).filter(
             sql.and_(domain.Government.parent_group_id == parliament.group_id,
-                     domain.Government.status == 'active')).all()
+                     domain.Government.status == "active")).all()
     return governments
 
 def get_current_parliament_committees(parliament=None):
@@ -160,7 +160,7 @@ def get_current_parliament_committees(parliament=None):
         parliament = get_current_parliament(None)
     committees = Session().query(domain.Committee).filter(
             sql.and_(domain.Committee.parent_group_id == parliament.group_id,
-                     domain.Committee.status == 'active')).all()
+                     domain.Committee.status == "active")).all()
     return committees
 
 def get_all_group_ids_in_parliament(parliament_id):
@@ -170,7 +170,7 @@ def get_all_group_ids_in_parliament(parliament_id):
     group_ids = [parliament_id, ]
     query = session.query(domain.Group).filter(
         domain.Group.parent_group_id == parliament_id).options(
-            eagerload('contained_groups'),
+            eagerload("contained_groups"),
             )
     results = query.all()
     for result in results:
@@ -187,7 +187,7 @@ def get_ministries_for_user_in_government(user_id, government_id):
         rdb.and_(
             schema.user_group_membership.c.user_id == user_id,
             schema.group.c.parent_group_id == government_id,
-            schema.group.c.status == 'active',
+            schema.group.c.status == "active",
             schema.user_group_membership.c.active_p == True))
     return query.all()
 def get_ministry_ids_for_user_in_government(user_id, government_id):
@@ -206,7 +206,7 @@ def get_ministry_ids_for_user_in_government(user_id, government_id):
             rdb.and_(
             schema.user_group_membership.c.user_id==user_id,
             schema.group.c.parent_group_id==government_id,
-            schema.group.c.status=='active',
+            schema.group.c.status=="active",
             schema.user_group_membership.c.active_p==True))
     session = Session()
     connection = session.connection(domain.Group)
@@ -271,18 +271,34 @@ def get_parliament_for_group_id(group_id):
         return None
     session = Session()
     group = session.query(domain.Group).get(group_id)
-    if group.type == 'parliament':
+    if group.type == "parliament":
         return group
     else:
         return get_parliament_for_group_id(group.parent_group_id)
 
 def get_parliament_for_user(user):
-    session = Session()
     if user.group_membership:
         return get_parliament_for_group_id(user.group_membership[0].group.group_id)
-    return None    
+    # !+ what guarantees that "first" [0] group the user is a member of is
+    # the right place to start?
+
+def getattr_ancestry(context, name, parent_ref="__parent__"):
+    """Get the first encountered non-None value for attribute {name}, 
+    cascading upwards to parent via {parent_ref}.
+    """
+    while context:
+        value = getattr(context, name, None)
+        if value is not None:
+            return value
+        context = getattr(context, parent_ref, None)
+
 
 # misc queries
+
+# !+parliament_mapper_property(mr, jan-2013) some types/tables define a 
+# parliament_id column, but not parliament mapper property... add it?
+def get_parliament(parliament_id):
+    return Session().query(domain.Parliament).get(parliament_id)            
 
 def get_member_of_parliament(user_id):
     """Get the MemberOfParliament instance for user_id.
@@ -295,8 +311,8 @@ def get_user(user_id):
     """Get the User instance for user_id.
     Raises sqlalchemy.orm.exc.NoResultFound
     """
-    return Session().query(domain.User
-        ).filter(domain.User.user_id == user_id).one()
+    return Session().query(domain.User).get(user_id)
+    # .filter(domain.User.user_id == user_id).one()
 
 
 
@@ -473,7 +489,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                 prop_name)
 
     
-    #any additional attributes - this allows us to capture any derived attributes
+    # any additional attributes - this allows us to capture any derived attributes
     if IAlchemistContent.providedBy(obj):
         seen_keys = ( [ prop.key for prop in mapper.iterate_properties ] + 
             include + exclude)

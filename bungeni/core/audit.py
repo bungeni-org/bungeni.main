@@ -132,7 +132,7 @@ def _object_reversion(ob, event):
 def _get_auditable_ancestor(obj):
     parent = obj.__parent__
     while parent:
-        if  IFeatureAudit.providedBy(parent):
+        if IFeatureAudit.providedBy(parent):
             return parent
         else:
             parent = getattr(parent, "__parent__", None)

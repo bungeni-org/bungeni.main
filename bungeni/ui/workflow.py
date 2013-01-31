@@ -21,13 +21,13 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.i18n import translate
 
 from bungeni.alchemist import Session
-from bungeni.core import globalsettings
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
 from bungeni.core.interfaces import IWorkspaceContainer
-from bungeni.models.interfaces import IFeatureAudit, \
-    IBungeniParliamentaryContent
-from bungeni.models.domain import Doc, get_changes, Parliament
+from bungeni.models.interfaces import IFeatureAudit, IBungeniParliamentaryContent
+from bungeni.models.domain import Doc, get_changes
+from bungeni import models
+
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
@@ -163,22 +163,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         
         if not min_date_active:
             # ok, try determine a min_date_active in another way, namely via the
-            # start_date of the "parliament" the instance may be "attached" to...
-            
-            # !+parliament_mapper_property(mr, jan-2013) add it, using parliament_id
-            # or re-use something like 
-            # vocabulary.SpecializedSource._get_parliament_id(self, context)
-            def get_parliament(parliament_id):
-                return Session().query(Parliament).get(parliament_id)
-            
-            if hasattr(instance, "parliament_id") and instance.parliament_id:
-                parliament = get_parliament(instance.parliament_id)
-            elif hasattr(instance.head, "parliament_id") and instance.head.parliament_id:
-                parliament = get_parliament(instance.head.parliament_id)
-            else:
-                parliament = globalsettings.get_current_parliament()
-            # !+RELATED_CHAMBER(mr, jan-2013) factor this out to a generic 
-            # get_related_chamber(context) utility
+            # start_date of the "parliament" the instance "lives" in...
+            parliament = models.utils.get_parliament(
+                models.utils.getattr_ancestry(instance, "parliament_id")) #!+parent_ref="head"?
             min_date_active = datetime.datetime.combine(
                 parliament.start_date, datetime.time())
         

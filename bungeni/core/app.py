@@ -177,41 +177,40 @@ class AppSetup(object):
                 marker=interfaces.IWorkspaceTab
             )
 
-        workspace["under-consideration"] = WorkspaceSection(
+        ws_uc = workspace["under-consideration"] = WorkspaceSection(
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),
             default_name="documents",
-            marker=interfaces.IWorkspaceUnderConsideration
-        )
-        workspace["under-consideration"]["documents"] = WorkspaceUnderConsiderationContainer(
+            marker=interfaces.IWorkspaceUnderConsideration)
+        ws_uc["documents"] = WorkspaceUnderConsiderationContainer(
             name="documents",
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),
             marker=interfaces.IWorkspaceTrackedDocuments)
-        workspace["under-consideration"]["tracked-documents"] = WorkspaceTrackedDocumentsContainer(
+        ws_uc["tracked-documents"] = WorkspaceTrackedDocumentsContainer(
             name="tracked documents",
             title=_(u"tracked documents"),
             description=_(u"tracked documents"))
         
-        workspace["scheduling"] = Section(
+        ws_sched = workspace["scheduling"] = Section(
             title=_("section_scheduling", default=u"Scheduling"),
             description=_(u"Workspace Scheduling"),
             default_name="index",
             marker=interfaces.IWorkspaceScheduling)
-        workspace["scheduling"]["committees"] = QueryContent(
+        ws_sched["committees"] = QueryContent(
             container_getter(get_current_parliament, "committees"),
             title=_("section_scheduling_committees", default=u"Committees"),
             #!+marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules"))
-        workspace["scheduling"]["documents"] = WorkspaceSchedulableContainer(
+        ws_sched["documents"] = WorkspaceSchedulableContainer(
             name=_(u"schedulable items"),
             title=_(u"schedulable items"),
             description=_(u"documents available for scheduling"))
-        workspace["scheduling"]["sittings"] = QueryContent(
+        ws_sched["sittings"] = QueryContent(
             container_getter(get_current_parliament, "sittings"),
             title=_("section_scheduling_sittings", default=u"Sittings"),
             description=_(u"Plenary Sittings"))
-        workspace["scheduling"]["agendaitems"] = QueryContent(
+        ws_sched["agendaitems"] = QueryContent(
             container_getter(get_current_parliament, "agendaitems"),
             title=_("section_scheduling_agenda_items", 
                 default=u"Agenda items"),
@@ -235,11 +234,13 @@ class AppSetup(object):
             if model_interfaces.IScheduleContent.implementedBy(info.domain_model):
                 container_name = "%ss" % key
                 container = "%sContainer" % info.domain_model.__name__
-                workspace["scheduling"][container_name] = getattr(domain, container)()
-                to_locatable_container(info.domain_model, 
-                    workspace["scheduling"][container_name]
-                )
+                ws_sched[container_name] = getattr(domain, container)()
+                to_locatable_container(info.domain_model, ws_sched[container_name])
         
+        
+        ##########
+        # Admin User Interface
+        # Administration section
         
         #!+SECURITY(miano. nov-2010) Admin section now uses AdminSection
         # container that is identical to Section, only difference is that
@@ -252,11 +253,6 @@ class AppSetup(object):
             default_name="admin-index",
             marker=model_interfaces.IBungeniAdmin)
         alsoProvides(admin, interfaces.ISearchableSection)
-        
-        
-        ##########
-        # Admin User Interface
-        # Administration section
         
         content = admin["content"] = Section(
             title=_(u"Content"),
@@ -293,3 +289,6 @@ class AppSetup(object):
         
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
+
+
+

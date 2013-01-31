@@ -30,8 +30,9 @@ from bungeni.models.interfaces import (IBungeniApplication, IParliament,
 from bungeni.models import domain
 from bungeni.core.interfaces import (ISchedulingContext, IWorkspaceScheduling, 
     IDailySchedulingContext)
-from bungeni.core.globalsettings import (getCurrentParliamentId, 
-    get_current_parliament
+from bungeni.core.globalsettings import (
+    get_current_parliament,
+    get_current_parliament_id,
 )
 from bungeni.core.i18n import _
 from bungeni.core.proxy import LocationProxy
@@ -127,7 +128,7 @@ class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     @property
     def group_id(self):
         """Return current parliament's group id."""
-        return getCurrentParliamentId()
+        return get_current_parliament_id() #!+BICAMERA
 
 class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IParliament)
@@ -169,7 +170,7 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IWorkspaceScheduling)
     @property
     def group_id(self):
-        return getCurrentParliamentId()
+        return get_current_parliament_id() #!+BICAMERA
         
     def get_group(self, name=None):
         assert name is None

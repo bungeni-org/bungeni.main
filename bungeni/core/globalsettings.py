@@ -26,14 +26,20 @@ app = BungeniApp()
 # !+CUSTOM(mr, mar-2011) migrate all "global parameters" here to bungeni_custom
 
 
+
+
+# !+BICAMERA assumes UNICAMERA
+
 def get_current_parliament(date=None):
     """Return the parliament for a given date (or the current for no date)
     """
     def getFilter(date):
         return sql.or_(
-            sql.between(date, schema.group.c.start_date, schema.group.c.end_date),
-            sql.and_(schema.group.c.start_date<=date, schema.group.c.end_date==None)
-            )
+            sql.between(date, 
+                schema.group.c.start_date, schema.group.c.end_date),
+            sql.and_(
+                schema.group.c.start_date<=date, 
+                schema.group.c.end_date==None))
     if not date:
         date = datetime.date.today()
     session = Session()
@@ -42,28 +48,31 @@ def get_current_parliament(date=None):
         return query.one()
     except:
         ##XXX raise(_(u"inconsistent data: none or more than one parliament found for this date"))
-        #!+DATA(mb, July-2012) this should get the one active parliament
+        # !+DATA(mb, July-2012) this should get the one active parliament
         # needs some review if there is more than one parliament active e.g.
         # bicameral legislatures
-        query = session.query(domain.Parliament).filter(
-            schema.group.c.status=="active"
-        )
+        query = session.query(domain.Parliament).filter(schema.group.c.status=="active")
         try:
             return query.one()
         except Exception, e:
             log.error("Could not find active parliament. Activate a parliament"
-                " in Bungeni admin :: %s", e.__repr__()
-            )
-            raise ValueError("Unable to locate active parliament")
+                " in Bungeni admin :: %s", e.__repr__())
+            raise ValueError("Unable to locate a currently active parliament")
 
 
-def getCurrentParliamentId(date=None):
+def get_current_parliament_id(date=None):
     """Return the parliament_id for a given date (or the current for no date)
     """
     try:
         return get_current_parliament(date).parliament_id
     except:
         pass
+
+# !+/BICAMERA assumes UNICAMERA
+
+
+
+
 
         
 def getWeekendDays():
@@ -85,3 +94,5 @@ def getPloneMenuUrl():
 
     raise NotImplementedError(
         "This method should not be used.")
+
+

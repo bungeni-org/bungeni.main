@@ -34,7 +34,7 @@ class RedirectToCurrent(BrowserView):
         self.context = context
         self.request = request
         self.traverse_subpath = []
-        self.currParliament = prefs.getCurrentParliamentId()
+        self.current_parliament_id = prefs.get_current_parliament_id() #!+BICAMERA
 
     def publishTraverse(self, request, name):
         self.traverse_subpath.append(name)
@@ -59,7 +59,7 @@ class RedirectToCurrent(BrowserView):
             if self.traverse_subpath[0] == 'parliament':
                 to_url = "%s/parliament/obj-%s/%s?%s" % (
                         root_url,
-                        self.currParliament,
+                        self.current_parliament_id,
                         '/'.join(self.traverse_subpath[1:]),
                         qstr)
         return response.redirect(to_url)

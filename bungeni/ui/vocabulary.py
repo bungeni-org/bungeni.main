@@ -455,16 +455,6 @@ class SpecializedSource(BaseVocabularyFactory):
         self.title_field = title_field
         self.value_field = value_field
     
-    def _get_parliament_id(self, context):
-        trusted = removeSecurityProxy(context)
-        parliament_id = getattr(trusted, "parliament_id", None)
-        if parliament_id is None:
-            if trusted.__parent__ is None:
-                return None
-            else:
-                parliament_id = self._get_parliament_id(trusted.__parent__)
-        return parliament_id
-    
     def constructQuery(self, context):
         raise NotImplementedError("Must be implemented by subclass.")
     
@@ -587,7 +577,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
                 )
             return query
         else:
-            parliament_id = self._get_parliament_id(trusted)
+            parliament_id = utils.getattr_ancestry(trusted, "parliament_id")
             if parliament_id:
                 query = session.query(MemberOfParliament).filter(
                     sql.and_(MemberOfParliament.group_id ==
@@ -639,7 +629,7 @@ class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
         session = Session()
         trusted = removeSecurityProxy(context)
         user_id = getattr(trusted, self.value_field, None)
-        parliament_id = self._get_parliament_id(trusted)
+        parliament_id = utils.getattr_ancestry(trusted, "parliament_id")
         if user_id:
             if parliament_id:
                 query = session.query(MemberOfParliament
@@ -757,7 +747,7 @@ class MinistrySource(SpecializedSource):
         session= Session()
         trusted=removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
-        parliament_id = self._get_parliament_id(trusted)
+        parliament_id = utils.getattr_ancestry(trusted, "parliament_id")
         if parliament_id:
             governments = session.query(domain.Government).filter(
                 sql.and_(
@@ -961,9 +951,9 @@ class UserNotMPSource(SpecializedSource):
     """ All users that are NOT a MP """
         
     def constructQuery(self, context):
-        session= Session()
-        trusted=removeSecurityProxy(context)
-        parliament_id = self._get_parliament_id(trusted)
+        session = Session()
+        trusted = removeSecurityProxy(context)
+        parliament_id = utils.getattr_ancestry(trusted, "parliament_id")
         mp_user_ids = sql.select([schema.user_group_membership.c.user_id], 
             schema.user_group_membership.c.group_id == parliament_id)
         query = session.query(domain.User).filter(sql.and_(
@@ -1168,7 +1158,7 @@ class PIAssignmentSource(SpecializedSource):
     def constructQuery(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
-        parliament_id = self._get_parliament_id(context)
+        parliament_id = utils.getattr_ancestry(context, "parliament_id")
         item_id = getattr(context, self.value_field, None)
         trusted = removeSecurityProxy(context)
         existing_item_ids = [assn.item_id for assn in trusted.values()]
@@ -1191,7 +1181,7 @@ class CommitteeSource(SpecializedSource):
 
     def constructQuery(self, context):
         session= Session()
-        parliament_id = self._get_parliament_id(context)
+        parliament_id = utils.getattr_ancestry(context, "parliament_id")
         query = session.query(domain.Committee).filter(
             sql.and_(
             domain.Committee.status == "active",
@@ -1208,7 +1198,7 @@ class MotionPoliticalGroupSource(SpecializedSource):
         user_id = getattr(trusted, "owner_id", None)
         if user_id is None:
             user_id = utils.get_db_user_id()
-        parliament_id = self._get_parliament_id(context)
+        parliament_id = utils.getattr_ancestry(trusted, "parliament_id")
         
         if user_id: 
             query = session.query(domain.PoliticalGroupMembership
