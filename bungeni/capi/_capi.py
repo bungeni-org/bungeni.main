@@ -86,14 +86,13 @@ class CAPI(object):
     def zope_i18n_compile_mo_files(self):
         return bool(
             bc.zope_i18n_compile_mo_files is True or 
-            bc.zope_i18n_compile_mo_files == "1"
-        )
+            bc.zope_i18n_compile_mo_files == "1")
    
     @property
     @bungeni_custom_errors
     def country_code(self):
-        """
-        returns system  country_code 
+        """The official ISO 3166-1 alpha-2 country code for locale of this 
+        bungeni instance.
         """
         return bc.country_code
 

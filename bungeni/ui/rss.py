@@ -24,6 +24,7 @@ from bungeni.models import interfaces as model_interfaces
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.translation import translate_obj
 from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.capi import capi
 
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
@@ -513,14 +514,12 @@ class AkomantosoXMLView(BrowserView):
             self.get_publication_date(ob).strftime("%Y-%m-%d"),
             ob.language
         )
-
+    
     def get_country(self, ob):
-        """ No way to determine country
-            for the document. Will be
-            Kenya for now
+        """The 2-letter country code for this bungeni instance.
         """
-        return "ke"
-
+        return capi.country_code
+    
     def get_publication_date(self, item):
         publication_date = None
         for attr in ["publication_date", "submission_date", "status_date"]:

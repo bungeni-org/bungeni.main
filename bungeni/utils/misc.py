@@ -112,7 +112,7 @@ def describe(funcdesc):
     are provided in list boxes in the configuration UI
     """
     def decorate(func):
-        setattr(func,"description", funcdesc)
+        setattr(func, "description", funcdesc)
         return func
     return decorate            
 

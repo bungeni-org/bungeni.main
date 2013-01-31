@@ -31,6 +31,9 @@ zope_i18n_compile_mo_files = True
 # string, language identifier, must be one of zope_i18n_allowed_languages
 default_language = "en"
 
+# official country code for locale where bungeni is running - ISO 3166-1 alpha-2
+country_code = "ke"
+
 # language ids for languages written right to left, as a space-separated string
 right_to_left_languages = "ar" 
 
