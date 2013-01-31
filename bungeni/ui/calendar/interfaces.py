@@ -37,7 +37,7 @@ class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
     venue = zope.schema.Choice(title=_(u"Venue"),
         description=_(u"Venues"),
         source=vocabulary.venue_factory,
-        required=True
+        required=False
     )
     language = zope.schema.Choice(title=_(u"Language"),
         description=_(u"Language"),

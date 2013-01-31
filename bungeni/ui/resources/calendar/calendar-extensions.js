@@ -42,6 +42,28 @@ var Y_PROPERTY_MAPPING = {
 }
 
 /**
+ * @function show_notification
+ * @description renders a notification that blocks the ui momentarily
+ **/
+var show_notification = function(message){
+        $.blockUI({
+            message: message,
+            css: { 
+                border: 'none', 
+                padding: '15px', 
+                backgroundColor: '#773F3B', 
+                '-webkit-border-radius': '10px', 
+                '-moz-border-radius': '10px', 
+                opacity: .7, 
+                color: '#fff' 
+            },
+            timeout: 3000,
+            baseZ: 20000,
+            showOverlay: true,
+         });
+}
+
+/**
  * @function handle_before_change_view
  * @description Handler for scheduler's onBeforeViewChange event
  *  Determines the scope and render mode of timeline views whenever
@@ -94,34 +116,18 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
  */
 function event_save_handler(id, data, is_new_event){
     delete scheduler._dataprocessor._in_progress[id];
-    var error_messages = new Array();
-    //#!I18N(mb, apr-2012) Bind validation to zope form
-    if ((data.venue=="") || (data.venue==undefined)){
-        error_messages.push(calendar_globals.venue_required);
-    }
-    if ((data.language=="") || (data.language==undefined)){
-        error_messages.push(calendar_globals.language_required);
-    }
-    if (error_messages.length > 0){
-        html_errors = $("<ul style='text-align:justify;margin:5px;'/>");
-        html_errors.append("<h2>" + calendar_globals.errors_title + "</h2>");
-        for (error_key in error_messages){
-            html_errors.append("<li>" + error_messages[error_key] + "</li>");
+    var error_messages = 0;
+    for (field_index in cal_globals.required_fields){
+        field_name = cal_globals.required_fields[field_index];
+        data_value = data[field_name];
+        if (data_value == undefined || data_value == ""){
+            error_messages += 1;
+            $("tr[rel='"+ field_name +"']", 
+                $("div.dhx_cal_light")).addClass("scheduling_input_error");
         }
-        html_errors.append('<input type="button" value="' 
-            + calendar_globals.message_okay 
-            + '" onclick="javascript:$.unblockUI();"/>'
-        );
-        html_errors.wrap("<div/>");
-        $.blockUI({
-            message: html_errors.html(),
-            css: {backgroundColor: "#FFF", padding: "20px;", fontSize: "110%",
-                borderColor: "#F45E4D", color: "#F45E4D"
-            },
-            timeout: 3000,
-            showOverlay: true,
-            baseZ: 20000,
-        });
+    }
+    if (error_messages > 0){
+        show_notification(calendar_globals.errors_scheduler);
         return false;
     }
     event = scheduler.getEvent(id)
@@ -160,6 +166,7 @@ function handle_lightbox(event_id){
             return false;
         }
     }
+    $("tr", $("div.dhx_cal_light")).removeClass("scheduling_input_error");
     return true;
 }
 
@@ -251,20 +258,8 @@ function event_type_class(start, end, event){
  */
 function row_marked(id, state, mode, invalid){
     if(invalid){
-        $.blockUI({
-            message: (cal_globals.error_messages[mode] || 
-                cal_globals.error_messages.default),
-            css: { 
-                border: 'none', 
-                padding: '15px', 
-                backgroundColor: '#773F3B', 
-                '-webkit-border-radius': '10px', 
-                '-moz-border-radius': '10px', 
-                opacity: .7, 
-                color: '#fff' 
-            },
-            timeout: 3000,
-         });
+        show_notification(cal_globals.error_messages[mode] || 
+            cal_globals.error_messages.default);
     }
     return true;
 }

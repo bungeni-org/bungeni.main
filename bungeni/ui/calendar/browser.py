@@ -361,6 +361,10 @@ class CalendarView(BungeniBrowserView):
     def calendar_js_globals(self):
         cal_globals = dict(
             ical_url=self.ical_url,
+            required_fields=[field.field.getName() 
+                for field in self.partial_event_form.form_fields
+                if field.field.required
+            ],
             view_url=self.url,
             venues_view_title=translate_i18n(TITLE_VENUES_VIEW),
             text_group=translate_i18n(FIELD_GROUP),
@@ -702,9 +706,9 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         if data.get("rec_type") not in [None, "none"]:
             data["end_date"] = data["start_date"] + timedelta(seconds=length)
             self.request.form["end_date"] = data["end_date"].strftime(DT_FORMAT)
-        data["venue_id"] = unicode(data["venue"])
+        data["venue_id"] = unicode(data["venue"]) if data['venue'] else None
         data["headless"] = "true"
-        self.request.form["venue_id"] = unicode(data["venue"])
+        self.request.form["venue_id"] = unicode(data["venue"]) if data['venue'] else None
         self.request.form["headless"] = "true"
         add_form = AddForm(trusted.get_group().sittings, self.request)
         add_form.update()
@@ -789,7 +793,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         data["rec_end_date"] = data["end_date"]
         data["headless"] = 'true'
         self.request.form["venue_id"] = unicode(data["venue"])
-        data["venue_id"] = unicode(data["venue"])
+        data["venue_id"] = unicode(data["venue"]) if data['venue'] else None
         self.request.form["headless"] = "true"
         if ISchedulingContext.providedBy(self.context):
             container = removeSecurityProxy(self.context.__parent__).sittings

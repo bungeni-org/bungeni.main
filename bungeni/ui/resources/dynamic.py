@@ -260,11 +260,8 @@ def get_globals(group_name, **kwargs):
             "unsaved_event": i18n(_(u"This event is unsaved. " 
                 "Edit to make any corrections and then save it"), language
             ),
-            "errors_title": i18n(_(u"Make Corrections"), language),
-            "venue_required": i18n(_(u"Venue : Select a venue"), language),
-            "language_required": i18n(_(u"Language : Select a language"), 
-                language
-            ),
+            "errors_scheduler": i18n(_(u"Please make corrections. "
+                "The highlighted fields are required."), language),
             "error_collission": i18n(_(u"This timeslot already has another " 
                     u"event.\n Do you want to continue?"
                 ), language

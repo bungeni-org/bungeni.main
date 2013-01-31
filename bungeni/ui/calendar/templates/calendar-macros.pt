@@ -4,14 +4,14 @@
   <metal:eventformhtml define-macro="eventformhtml">
     <div class="dhl_cal_ltext" style="height:auto;">
       <table>
-	<metal:block tal:repeat="widget view/partial_event_form/get_widgets">
-	  <tr>
-	    <td i18n:translate="" tal:content="nocall:widget/label"></td>
-	    <td>
-	      <span tal:replace="structure widget"/>
-	    </td>
-	  </tr>
-	</metal:block>
+    <metal:block tal:repeat="widget view/partial_event_form/get_widgets">
+      <tr tal:attributes="rel widget/name">
+        <td i18n:translate="" tal:content="nocall:widget/label"></td>
+        <td>
+          <span tal:replace="structure widget"/>
+        </td>
+      </tr>
+    </metal:block>
       </table>
     </div>
   </metal:eventformhtml>

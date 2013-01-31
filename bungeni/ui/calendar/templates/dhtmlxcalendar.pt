@@ -133,8 +133,7 @@
                         ev.short_name = $("#short_name").val();
                         ev.language = $("#language").val();
                         ev.venue = $("#venue_id").val();
-                        ev.text = (cal_globals.text_sitting + ' : ' 
-                            + $("#venue_id option:selected").text());
+                        ev.text = cal_globals.text_sitting;
                         ev.activity_type = $("#activity_type").val();
                         ev.meeting_type = $("#meeting_type").val();
                         ev.convocation_type = $("#convocation_type").val();

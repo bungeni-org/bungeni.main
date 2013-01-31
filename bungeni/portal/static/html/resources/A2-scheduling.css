@@ -18,6 +18,10 @@
 
 }
 
+.scheduling_input_error{
+    background-color:#FFB8B1;
+}
+
 dl.portlet.portletNavigationTree {
     position: relative;
     width: 100%;
