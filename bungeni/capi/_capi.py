@@ -69,6 +69,7 @@ class CAPI(object):
         Ensure valid setup of properties at instantiation of CAPI instance
         """
         self.default_language
+        self.country_code
         self.right_to_left_languages
     
     # bungeni_custom parameter properties
@@ -87,7 +88,15 @@ class CAPI(object):
             bc.zope_i18n_compile_mo_files is True or 
             bc.zope_i18n_compile_mo_files == "1"
         )
-    
+   
+    @property
+    @bungeni_custom_errors
+    def country_code(self):
+        """
+        returns system  country_code 
+        """
+        return bc.country_code
+
     @property
     @bungeni_custom_errors
     def default_language(self):
