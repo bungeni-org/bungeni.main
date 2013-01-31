@@ -8,7 +8,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.models.schema")
 
-import sqlalchemy as rdb
+import sqlalchemy as rdb # !+ as sa?
 from fields import FSBlob
 from sqlalchemy.sql import text #, functions #!+CATALYSE(mr, nov-2010)
 from datetime import datetime
@@ -35,6 +35,12 @@ vp_translated_text = rdb.Table("vp_translated_text", metadata,
     rdb.Column("name", rdb.String(50), primary_key=True, nullable=False,),
     rdb.Column("value", rdb.UnicodeText),
     rdb.Column("language", rdb.String(5), nullable=False),
+)
+vp_datetime = rdb.Table("vp_datetime", metadata,
+    rdb.Column("object_id", rdb.Integer, primary_key=True, nullable=False),
+    rdb.Column("object_type", rdb.String(32), primary_key=True, nullable=False),
+    rdb.Column("name", rdb.String(50), primary_key=True, nullable=False,),
+    rdb.Column("value", rdb.DateTime(timezone=False)),
 )
 
 

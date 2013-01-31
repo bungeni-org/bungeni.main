@@ -286,6 +286,7 @@ mapper(domain.Venue, schema.venue)
 
 mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)
+mapper(domain.vp.Datetime, schema.vp_datetime)
 
 mapper(domain.Doc, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator

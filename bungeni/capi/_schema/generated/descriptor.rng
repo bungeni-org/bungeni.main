@@ -169,10 +169,7 @@
             (archetype) descriptor. Value is one of allowed extended types.
           -->
           <attribute name="extended">
-            <choice>
-              <value>text</value>
-              <value>translated_text</value>
-            </choice>
+            <ref name="EXTENDED_PROPERTY_TYPE"/>
           </attribute>
         </optional>
         <optional>
@@ -267,6 +264,7 @@
       <value>status</value>
       <value>language</value>
       <value>vocabulary</value>
+      <!-- !+ should a real value_type e.g. text or number? -->
       <value>email</value>
       <!-- "constraint": constraints.check_email -->
       <value>login</value>
@@ -297,7 +295,7 @@
       <value>file</value>
       <value>no_input</value>
     </choice>
-    <!-- !+ -->
+    <!-- !+ remove? -->
   </define>
   <define name="FIELD_RENDER_TYPE_VOCABULARY">
     <choice>
@@ -308,7 +306,14 @@
       <!-- vocabulary -->
       <value>tree_text</value>
     </choice>
-    <!-- VocabularyTextField, -->
+    <!-- VocabularyTextField -->
+  </define>
+  <define name="EXTENDED_PROPERTY_TYPE">
+    <choice>
+      <value>text</value>
+      <value>translated_text</value>
+      <value>datetime</value>
+    </choice>
   </define>
   <define name="VACABULARY_NAME">
     <choice>

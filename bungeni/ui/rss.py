@@ -346,7 +346,7 @@ class AkomantosoXMLView(BrowserView):
                     event_element = self.create_element("event",
                         id="evn%s" % item.doc_id,
                         type="generation",
-                        date=item.event_date and item.event_date.strftime("%Y-%m-%d") or "",
+                        date=item.attached_date and item.attached_date.strftime("%Y-%m-%d") or "",
                         source="orig")
                     lifecycle_element.appendChild(event_element)
                 

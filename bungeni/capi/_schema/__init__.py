@@ -5,7 +5,7 @@
 """Bungeni Schemas (RNC)
 
 Note RNC is the master format to maintain. All RNG files (that is what is used 
-by lxml for validation by lxml) are auto-generated from teh RNC, via a tool 
+by lxml for validation by lxml) are auto-generated from the RNC, via a tool 
 like:
 
 java -jar trang.jar -I rnc -O rng workflow.rnc generated/workflow.rng

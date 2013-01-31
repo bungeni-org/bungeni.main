@@ -135,8 +135,9 @@
                 geolocation
                 head_id
                 timestamp
-                
                 event_date
+                
+                attached_date
             "
         />
         <require permission="bungeni.event.Edit"
@@ -158,6 +159,7 @@
                 coverage
                 geolocation
                 head_id
+                event_date
             "
         />
     </class>

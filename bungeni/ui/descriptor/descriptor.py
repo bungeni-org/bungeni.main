@@ -1018,15 +1018,27 @@ class EventDescriptor(DocDescriptor):
     # !+ phase out default_field_order...
     fields = deepcopy(DocDescriptor.fields)
     insert_field_after(fields, "owner_id",
-    F(name="group_id",
-        label="Group",
-        localizable=[
-            show("view edit add listing"),
-        ],
-        value_type="text",
-        render_type="single_select",
-        vocabulary="group",
-    ))
+        F(name="group_id",
+            label="Group",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="group",
+        ),
+    )
+    insert_field_after(fields, "body",
+        F(name="event_date",
+            label="Event Date",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="datetime",
+            render_type="datetime",
+            extended="datetime",
+        ),
+    )
     default_field_order = DocDescriptor.default_field_order[:]
     default_field_order.insert(
         default_field_order.index("owner_id") + 1, "group_id")

@@ -79,7 +79,7 @@ grammar {
         (
             # A field may NOT be declared extended if it is defined in super 
             # (archetype) descriptor. Value is one of allowed extended types.
-            attribute extended { "text" | "translated_text" }?
+            attribute extended { EXTENDED_PROPERTY_TYPE }?
             |
             attribute derived { SYMBOL_NAME }?
         ),
@@ -120,7 +120,7 @@ grammar {
         "number" |
         "status" |
         "language" |
-        "vocabulary" |
+        "vocabulary" | # !+ should a real value_type e.g. text or number?
         "email" | # "constraint": constraints.check_email
         "login" | # "min_length": 3, "max_length": 20, "constraint": constraints.check_login
         "password" |
@@ -143,14 +143,20 @@ grammar {
         "number" |
         "image" |
         "file" |
-        "no_input" # !+
+        "no_input" # !+ remove?
     )
     FIELD_RENDER_TYPE_VOCABULARY = (
         # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
         "single_select" | # vocabulary
         "radio" | # vocabulary
-        "tree_text" # VocabularyTextField,
+        "tree_text" # VocabularyTextField
     )    
+    
+    EXTENDED_PROPERTY_TYPE = (
+        "text" | 
+        "translated_text" | 
+        "datetime"
+    )
     
     VACABULARY_NAME = (
         

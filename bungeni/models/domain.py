@@ -524,7 +524,9 @@ class vp(object):
             # !+LANGUAGE(mr, mar-2012) using "en" as default... as
             # get_default_language() is in core, that *depends* on models!
             self.language = language or "en" # or get_default_language()
-
+    class Datetime(VerticalProperty):
+        """VerticalProperty of type datetime.
+        """
 
 class Doc(Entity):
     """Base class for a workflowed parliamentary document.
@@ -860,8 +862,10 @@ class Event(HeadParentedMixin, Doc):
         interfaces.IEvent,
     )
     
+    # !+ mv out as derived property; only used in rss, needed? should be 
+    # replaced with non-derived event_date?
     @property
-    def event_date(self):
+    def attached_date(self):
         # !+ should this be when first added? if in a "attached" state, the 
         # latest of these (what is returned here) ? if in "internal"??
         return self._get_workflow_date("attached")
