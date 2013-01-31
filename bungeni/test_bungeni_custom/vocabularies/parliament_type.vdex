@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
+    orderSignificant="true" profileType="flatTokenTerms">
+    <vocabName>
+        <langstring language="en">parliament type</langstring>
+    </vocabName>
+    <vocabIdentifier>org.bungeni.metadata.vocabularies.parliament_type</vocabIdentifier>
+    <term>
+        <termIdentifier>senate</termIdentifier>
+        <caption>
+            <langstring language="en">Senate</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>house_of_represenatatives</termIdentifier>
+        <caption>
+            <langstring language="en">House of representatives</langstring>
+        </caption>
+    </term>
+</vdex>

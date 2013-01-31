@@ -177,7 +177,8 @@ grammar {
         "sitting_meeting_types" |
         "subject_terms" |
         "yes_no" |
-        
+        "parliament_type" |
+
         # dynamic
         "language" |
         "country" |

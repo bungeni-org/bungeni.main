@@ -336,6 +336,7 @@
       <value>sitting_meeting_types</value>
       <value>subject_terms</value>
       <value>yes_no</value>
+      <value>parliament_type</value>
       <!-- dynamic -->
       <value>language</value>
       <value>country</value>

@@ -362,6 +362,7 @@ parliament = rdb.Table("parliament", metadata,
         rdb.ForeignKey("group.group_id"),
         primary_key=True
     ),
+   rdb.Column("parliament_type", rdb.String(30), nullable=True),
    rdb.Column("election_date", rdb.Date, nullable=False),
 )
 

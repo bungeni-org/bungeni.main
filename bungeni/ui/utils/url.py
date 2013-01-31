@@ -16,7 +16,7 @@ import zope
 from bungeni.ui.utils import common
 from bungeni.utils import register
 from ploned.ui.interfaces import IBodyCSS
-
+from bungeni.models import utils
 
 def get_destination_url_path(request=None):
     """Get the (effective, sans any "traversal namespace notation" components
@@ -64,7 +64,14 @@ class BodyCSSClass(object):
     
     def get_body_css_class(self):
         # Add custom css classes to the list below
-        classes = ["yui-skin-sam", "section-bungeni-"+get_section_name()]
+        parliament_type = "default"
+        user = utils.get_db_user()
+        if user:
+            parliament = utils.get_parliament_for_user(user)
+            if parliament:
+                parliament_type = parliament.parliament_type
+        classes = ["yui-skin-sam", "section-bungeni-%s" % get_section_name(),
+                   "chamber-%s" % parliament_type]
         return " ".join(classes)
 
 
