@@ -68,7 +68,7 @@ class BodyCSSClass(object):
         user = utils.get_db_user()
         if user:
             parliament = utils.get_parliament_for_user(user)
-            if parliament:
+            if parliament and parliament.parliament_type:
                 parliament_type = parliament.parliament_type
         classes = ["yui-skin-sam", "section-bungeni-%s" % get_section_name(),
                    "chamber-%s" % parliament_type]
