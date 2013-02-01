@@ -398,3 +398,18 @@ class INotificationEvent(IObjectEvent):
 class NotificationEvent(ObjectEvent):
     interface.implements(INotificationEvent)
 
+class IDebateRecordConfig(interface.Interface):
+    """Interface for debate record configuration
+    """
+
+class IDebateRecordConfigSchema(interface.Interface):
+    transcriber_role = schema.Text(
+        title=u"Transcriber role",
+        description=u"Role for the members of staff who do the transcription",
+        required=True,
+        )
+    take_duration = schema.Int(
+        title=u"Duration of takes",
+        description=u"Take duration",
+        required=True,
+        )

@@ -15,4 +15,10 @@
       schema="bungeni.core.interfaces.IMessageQueueConfigSchema"
       handler="bungeni.core.notifications.registerMessageQueueConfig"
       />
+      <directive
+      name="debaterecord"
+      namespace="http://namespaces.bungeni.org/zope"
+      schema="bungeni.core.interfaces.IDebateRecordConfigSchema"
+      handler="bungeni.core.debaterecord.registerDebateRecordConfig"
+      />
 </configure>

@@ -68,6 +68,10 @@
     <include package="bungeni.ui" file="meta.zcml" />
     <include package="bungeni_custom.sys" file="openoffice.zcml" />
     
+    <!-- Debate Record configuration -->
+    <include package="bungeni.core" file="meta.zcml" />
+    <include package="bungeni_custom.sys" file="debaterecord.zcml"/>
+    
     <!-- REST API support -->
     <include package="bungeni.rest" />  
     
