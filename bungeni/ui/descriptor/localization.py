@@ -88,7 +88,7 @@ def is_stale_info(bval, cval, message):
 '''
 
 
-#@capi.bungeni_custom_errors
+@capi.bungeni_custom_errors
 def check_reload_localization(event):
     """Called once on IWSGIApplicationCreatedEvent and (if in DEVMODE)
     once_per_request on IBeforeTraverseEvent events (ui.publication).
@@ -171,6 +171,7 @@ def localize_descriptor(descriptor_elem, scope="system"):
             naming.MSGIDS.add(cls.display_name)
             naming.MSGIDS.add(cls.container_name)
             
+            # this is guarenteed to execute maximum once per type_key
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
         
             # !+AUDIT_EXTENDED_ATTRIBUTES as audit class was created prior to 
@@ -189,7 +190,12 @@ def localize_descriptor(descriptor_elem, scope="system"):
     else:
         cls = update_descriptor_cls(
             type_key, order, fields, constraints, validations)
-        alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
+        # ensures that this executes a maximum once per type_key
+        if type_key in alchemist.model.localize_domain_model_from_descriptor_class.DONE:
+            log.warn("Ignoring attempt to re-localize non-custom model "
+                "from descriptor for type %r", type_key)
+        else:
+            alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
     
     log.debug("Localized descriptor [%s] %s", type_key, ti)
 
@@ -259,7 +265,7 @@ def new_descriptor_cls(type_key, archetype_key, order, fields, constraints, vali
     ti.descriptor_model = cls
     # first time around we need to catalyse custom descriptors
     alchemist.catalyst.catalyse(ti)
-    log.info("localize_descriptors [type=%s] generated descriptor %s.%s" % (
+    log.info("generated descriptor [type=%s] %s.%s" % (
             type_key, DESCRIPTOR_MODULE.__name__, descriptor_cls_name))
     return cls
 

@@ -21,7 +21,6 @@ from bungeni.alchemist.catalyst import (
     MODEL_MODULE
 )
 from bungeni.utils import naming
-from bungeni.capi import capi
 
 
 def get_vp_kls(extended_type):
@@ -31,19 +30,19 @@ def get_vp_kls(extended_type):
 
 # domain model, create, update
 
-def new_custom_model_interface(type_key, model_iname):
-    model_iface = interface.InterfaceClass(
-        model_iname,
+def new_custom_domain_interface(type_key, domain_iface_name):
+    domain_iface = interface.InterfaceClass(
+        domain_iface_name,
         bases=(interfaces.IBungeniContent,), # !+archetype?
         __module__=INTERFACE_MODULE.__name__
     )
     # set on INTERFACE_MODULE (register on type_info downstream)
-    setattr(INTERFACE_MODULE, model_iname, model_iface)
-    log.info("new_custom_model_interface [%s] %s.%s" % (
-            type_key, INTERFACE_MODULE.__name__, model_iname))
-    return model_iface
+    setattr(INTERFACE_MODULE, domain_iface_name, domain_iface)
+    log.info("new_custom_domain_interface [%s] %s.%s" % (
+            type_key, INTERFACE_MODULE.__name__, domain_iface_name))
+    return domain_iface
 
-def new_custom_domain_model(type_key, model_interface, archetype_key):
+def new_custom_domain_model(type_key, domain_interface, archetype_key):
     domain_model_name = naming.model_name(type_key)
     assert archetype_key, \
         "Custom descriptor %r does not specify an archetype" % (type_key)
@@ -56,8 +55,8 @@ def new_custom_domain_model(type_key, model_interface, archetype_key):
             "extended_properties": [],
         }
     )
-    # apply model_interface
-    classImplements(domain_model, model_interface)
+    # apply domain_interface
+    classImplements(domain_model, domain_interface)
     # set on MODEL_MODULE (register on type_info downstream)
     setattr(MODEL_MODULE, domain_model_name, domain_model)
     # db map custom domain class
@@ -174,8 +173,8 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     """
     # localize models from descriptors only once!
     type_key = naming.polymorphic_identity(domain_model)
-    if type_key in localize_domain_model_from_descriptor_class.DONE:
-        return
+    assert type_key not in localize_domain_model_from_descriptor_class.DONE, \
+        "May not re-localize [%s] domain model from descriptor" % (type_key)
     localize_domain_model_from_descriptor_class.DONE.append(type_key)
     
     #!+GET_ARCHETYPE
@@ -204,11 +203,14 @@ localize_domain_model_from_descriptor_class.DONE = []
 # derived properties
 
 def add_derived_property_to_model(domain_model, name, derived):
+    from bungeni.capi import capi
+    
     # !+ do not allow clobbering of a same-named attribute
     assert not name in domain_model.__dict__, \
         "May not overwrite %r as derived field, a field with same name is " \
         "already defined directly by domain model class for type %r." % (
             name, naming.polymorphic_identity(domain_model))
+    
     # set as property on domain class
     setattr(domain_model, name, 
         property(capi.get_form_derived(derived)))

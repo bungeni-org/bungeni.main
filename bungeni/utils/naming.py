@@ -118,6 +118,10 @@ TABLE_SCHEMA_POSTFIX = "TableSchema"
 DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
 CONTAINER_CLASSNAME_POSTFIX = "Container"
 
+# !+ rename:
+# model_name -> domain_model_name
+# model_interface_name -> domain_interface_name
+
 def model_name(type_key):
     return camel(type_key)
 

@@ -21,14 +21,9 @@ from bungeni.core.workflow.states import StateController, WorkflowController, \
     Workflow, get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
 from bungeni.alchemist import utils
-from bungeni.alchemist.model import (
-    new_custom_model_interface,
-    new_custom_domain_model,
-)
 from bungeni.utils import naming, misc
 from bungeni.capi import capi
 from bungeni.alchemist.catalyst import (
-    INTERFACE_MODULE, 
     MODEL_MODULE
 )
 
@@ -100,75 +95,20 @@ def register_custom_types():
     This is called prior to loading of the workflows for these custom types.
     Returns (type_key, TI) for the newly created TI instance.
     """
-    from bungeni.alchemist.type_info import TYPE_REGISTRY, TI
-    from bungeni.models import feature
-    from bungeni.capi import capi
-    
-    def register_type(type_elem):
+        
+    def parse_elem(type_elem):
         type_key = misc.xml_attr_str(type_elem, "name")
         workflow_key = misc.xml_attr_str(type_elem, "workflow", default=type_key)
-        # generate custom interface
-        model_iname = naming.model_interface_name(type_key)
-        try: 
-            model_iface = resolve("%s.%s" % (INTERFACE_MODULE.__name__, model_iname))
-            log.warn("Custom interface ALREADY EXISTS: %s" % (model_iface))
-        except ImportError:
-            model_iface = new_custom_model_interface(type_key, model_iname)
-        # generate custom domain_model
-        domain_model_name = naming.model_name(type_key)
-        try:
-            domain_model = resolve("%s.%s" % (MODEL_MODULE.__name__, domain_model_name))
-            log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
-        except ImportError:
-            archetype_key = type_elem.tag # !+archetype? move to types?
-            domain_model = new_custom_domain_model(type_key, model_iface, archetype_key)
-        
-        '''!+localize_domain_model_from_descriptor_class
-        # !+archetype? move to types? what about extended/derived/container attrs?
-        def get_descriptor_elem(type_key):
-            file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
-            descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
-            assert misc.xml_attr_str(descriptor_doc, "name") == type_key, type_key
-            return descriptor_doc
-        
-        # add declarations of any extended/derived properties
-        descriptor_elem = get_descriptor_elem(type_key)
-        if descriptor_elem is not None:
-            archetype_key = misc.xml_attr_str(descriptor_elem, "archetype") # !+archetype? move to types?
-            for f_elem in descriptor_elem.findall("field"):
-                
-                # extended
-                extended_type = misc.xml_attr_str(f_elem, "extended")
-                if extended_type is not None:
-                    name = misc.xml_attr_str(f_elem, "name")
-                    add_extended_property_to_model(domain_model, 
-                        name, extended_type, archetype_key)
-                
-                # derived
-                derived = misc.xml_attr_str(f_elem, "derived")
-                if derived is not None:
-                    name = misc.xml_attr_str(f_elem, "name")
-                    add_derived_property_to_model(domain_model, name, derived)
-            
-            # !+instrument_extended_properties, doc
-            MODEL_MODULE.instrument_extended_properties(domain_model, "doc")
-        
-        # !+ add containers, derived
-        '''
-        
-        # type_info
-        ti = TI(workflow_key, model_iface, domain_model)
-        ti.custom = True
-        TYPE_REGISTRY.append((type_key, ti))
-        
-        log.info("Registered custom type [%s]: %s" % (type_elem.tag, type_key))
-        return type_key, ti
+        archetype_key = type_elem.tag # !+archetype? move to types?
+        return type_key, workflow_key, archetype_key
     
     attr_name_inconsistency_map = { # !+ correct incosistency, rel_attr config
         "agenda_items": ("agendaitems", "group_id"),
         "tabled_documents": ("tableddocuments", "parliament_id"),
         "reports": ("preports", "group_id"),
     }
+    
+    from bungeni.models import feature
     def set_one2many_attrs_on_domain_models(type_key, ti):
         container_qualname = "bungeni.models.domain.%s" % (
             naming.container_class_name(type_key))
@@ -188,20 +128,24 @@ def register_custom_types():
     # load XML file
     etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
     # register enabled types
+    from bungeni.alchemist import type_info
     for edoc in etypes.iterchildren("doc"):
         if not misc.xml_attr_bool(edoc, "enabled", default=True):
             # not enabled, ignore
             continue
-        type_key, ti = register_type(edoc)
+        type_key, ti = type_info.register_new_custom_type(*parse_elem(edoc))
         set_one2many_attrs_on_domain_models(type_key, ti)
     # group/member types
     for egroup in etypes.iterchildren("group"):
         if not misc.xml_attr_bool(egroup, "enabled", default=True):
             # not enabled, ignore
             continue
-        register_type(egroup)
+        type_info.register_new_custom_type(*parse_elem(egroup))
         for emember in egroup.iterchildren("member"):
-            register_type(emember)
+            if not misc.xml_attr_bool(emember, "enabled", default=True):
+                # not enabled, ignore
+                continue
+            type_info.register_new_custom_type(*parse_elem(emember))
 
 
 def load_workflow(type_key, ti):
@@ -248,6 +192,12 @@ def retrieve_domain_model(type_key):
 
 def _setup_all():
     """Do all workflow related setup.
+    
+    This is the entry point of setup from configuration, with the main other
+    participating modules being:
+    - alchemist/type_info.py
+    - alchemist/model.py
+    - ui/descriptor/localization.py
     """
     log.info("adapters._setup_all() ------------------------------------------")
     # cleared by each call to zope.app.testing.placelesssetup.tearDown()
@@ -261,6 +211,7 @@ def _setup_all():
         load_workflow(type_key, ti)
     
     # custom types
+    # - first register/update each type in types.xml
     register_custom_types()
     for type_key, ti in capi.iter_type_info(scope="custom"):
         # load/get workflow instance (if any) and associate with type

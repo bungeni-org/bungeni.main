@@ -13,7 +13,17 @@ log = __import__("logging").getLogger("bungeni.alchemist.type_info")
 
 from zope.interface.interfaces import IInterface
 from zope.security.proxy import removeSecurityProxy
+from zope.dottedname.resolve import resolve
+
 from bungeni.alchemist.interfaces import IModelDescriptor, IIModelInterface
+from bungeni.alchemist.model import (
+    new_custom_domain_interface,
+    new_custom_domain_model,
+)
+from bungeni.alchemist.catalyst import (
+    INTERFACE_MODULE, 
+    MODEL_MODULE
+)
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow
@@ -286,6 +296,39 @@ TYPE_REGISTRY = [
     ## custom types -- loaded dynamically from bungeni_custom/types.xml
 ]
 
+
+
+
+# register custom types
+
+def register_new_custom_type(type_key, workflow_key, archetype_key):
+    """Retrieve (create if needed) a domain interface and model for type_key,
+    and register as new entry on TYPE_REGISTER.
+    """
+    
+    # generate custom domain interface
+    model_iname = naming.model_interface_name(type_key)
+    try:
+        model_iface = resolve("%s.%s" % (INTERFACE_MODULE.__name__, model_iname))
+        log.warn("Custom interface ALREADY EXISTS: %s" % (model_iface))
+    except ImportError:
+        model_iface = new_custom_domain_interface(type_key, model_iname)
+    
+    # generate custom domain_model
+    domain_model_name = naming.model_name(type_key)
+    try:
+        domain_model = resolve("%s.%s" % (MODEL_MODULE.__name__, domain_model_name))
+        log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
+    except ImportError:
+        domain_model = new_custom_domain_model(type_key, model_iface, archetype_key)
+    
+    # type_info entry
+    ti = TI(workflow_key, model_iface, domain_model)
+    ti.custom = True
+    TYPE_REGISTRY.append((type_key, ti))
+    
+    log.info("Registered custom type [%s]: %s" % (archetype_key, type_key))
+    return type_key, ti
 
 
 
