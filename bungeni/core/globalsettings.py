@@ -15,7 +15,7 @@ import sqlalchemy.sql.expression as sql
 from bungeni.alchemist import Session
 from bungeni.core.app import BungeniApp
 
-from bungeni.models import domain
+from bungeni.models import domain, utils, interfaces
 from bungeni.models import schema
 
 app = BungeniApp()
@@ -30,35 +30,50 @@ app = BungeniApp()
 
 # !+BICAMERA assumes UNICAMERA
 
-def get_current_parliament(date=None):
+def get_current_parliament(date=None, context=None):
     """Return the parliament for a given date (or the current for no date)
     """
-    def getFilter(date):
-        return sql.or_(
-            sql.between(date, 
-                schema.group.c.start_date, schema.group.c.end_date),
-            sql.and_(
-                schema.group.c.start_date<=date, 
-                schema.group.c.end_date==None))
-    if not date:
-        date = datetime.date.today()
-    session = Session()
-    query = session.query(domain.Parliament).filter(getFilter(date))
-    try:
-        return query.one()
-    except:
-        ##XXX raise(_(u"inconsistent data: none or more than one parliament found for this date"))
-        # !+DATA(mb, July-2012) this should get the one active parliament
-        # needs some review if there is more than one parliament active e.g.
-        # bicameral legislatures
-        query = session.query(domain.Parliament).filter(schema.group.c.status=="active")
+    #check logged in user's parliament:
+    parliament = utils.get_parliament_for_user(utils.get_db_user())
+    if parliament is None:
+        if context is not None:
+            # look for current parliament from context tree
+            _parent = context
+            while not interfaces.IParliament.providedBy(_parent):
+                _parent = _parent.__parent__
+                if _parent is None:
+                    break
+                elif interfaces.IParliament.providedBy(_parent):
+                    parliament = _parent
+                    break
+    #assume unicameral
+    if parliament is None:
+        def getFilter(date):
+            return sql.or_(
+                sql.between(date, 
+                    schema.group.c.start_date, schema.group.c.end_date),
+                sql.and_(
+                    schema.group.c.start_date<=date, 
+                    schema.group.c.end_date==None))
+        if not date:
+            date = datetime.date.today()
+        session = Session()
+        query = session.query(domain.Parliament).filter(getFilter(date))
         try:
-            return query.one()
-        except Exception, e:
-            log.error("Could not find active parliament. Activate a parliament"
-                " in Bungeni admin :: %s", e.__repr__())
-            raise ValueError("Unable to locate a currently active parliament")
-
+            parliament = query.one()
+        except:
+            ##XXX raise(_(u"inconsistent data: none or more than one parliament found for this date"))
+            # !+DATA(mb, July-2012) this should get the one active parliament
+            # needs some review if there is more than one parliament active e.g.
+            # bicameral legislatures
+            query = session.query(domain.Parliament).filter(schema.group.c.status=="active")
+            try:
+                parliament = query.one()
+            except Exception, e:
+                log.error("Could not find active parliament. Activate a parliament"
+                    " in Bungeni admin :: %s", e.__repr__())
+                raise ValueError("Unable to locate a currently active parliament")
+    return parliament
 
 def get_current_parliament_id(date=None):
     """Return the parliament_id for a given date (or the current for no date)

@@ -276,7 +276,7 @@ class AlchemistContainer(Persistent, Contained):
     def __len__(self):
         try:
             return self._query.count()
-        except exceptions.SQLError:
+        except exceptions.DBAPIError:
             return 0
 
 ''' !+OBSOLETE_VERSIONING

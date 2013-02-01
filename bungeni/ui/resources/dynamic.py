@@ -263,7 +263,7 @@ def get_globals(group_name, **kwargs):
             "errors_scheduler": i18n(_(u"Please make corrections. "
                 "The highlighted fields are required."), language),
             "error_collission": i18n(_(u"This timeslot already has another " 
-                    u"event.\n Do you want to continue?"
+                    u"event.\n Do you want still want to add it?"
                 ), language
             ),
             "message_okay": i18n(OKAY, language),

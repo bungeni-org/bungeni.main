@@ -286,7 +286,7 @@ def getattr_ancestry(context, name, parent_ref="__parent__"):
     """Get the first encountered non-None value for attribute {name}, 
     cascading upwards to parent via {parent_ref}.
     """
-    while context:
+    while context is not None:
         value = getattr(context, name, None)
         if value is not None:
             return value
