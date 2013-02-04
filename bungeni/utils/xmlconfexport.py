@@ -38,7 +38,8 @@ def write_all():
     write_to_custom("forms", "_constraints.xml", output_constraints())
     # list of form derived fields
     write_to_custom("forms", "_derived.xml", output_derived_fields())
-
+    # list of all roles in system
+    write_to_custom("sys", "_roles.xml", output_all_roles())
 
 def output_actions():
     """
@@ -202,6 +203,23 @@ def output_derived_fields():
                 pass
     li_dfs.append("</derivedFields>")
     return ("\n".join(li_dfs)).encode("utf-8")
+    
+
+def output_all_roles():
+    """
+    Outputs all the roles in the system, including :
+      bungeni.models.roles.zcml
+      bungeni_custom.sys.roles.zcml
+    """
+    from zope.component import getUtilitiesFor
+    from zope.securitypolicy.interfaces import IRole
+    roles = [name for name, role in getUtilitiesFor(IRole)]
+    li_roles = []
+    li_roles.append("<roles>")
+    for role in roles:
+        li_roles.append('<role name="%s" />' % role)
+    li_roles.append("</roles>")
+    return ("\n".join(li_roles)).encode("utf-8")    
     
    
 def output_features():
