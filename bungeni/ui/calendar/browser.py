@@ -703,12 +703,12 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         trusted = removeSecurityProxy(ISchedulingContext(self.context))        
         initial_sitting = None
         length = data["event_length"]
+        venue_id = unicode(data["venue"]) if data['venue'] else None
         if data.get("rec_type") not in [None, "none"]:
             data["end_date"] = data["start_date"] + timedelta(seconds=length)
             self.request.form["end_date"] = data["end_date"].strftime(DT_FORMAT)
-        data["venue_id"] = unicode(data["venue"]) if data['venue'] else None
         data["headless"] = "true"
-        self.request.form["venue_id"] = unicode(data["venue"]) if data['venue'] else None
+        self.request.form["venue_id"] = data["venue_id"] = venue_id
         self.request.form["headless"] = "true"
         add_form = AddForm(trusted.get_group().sittings, self.request)
         add_form.update()
@@ -790,10 +790,10 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     def handle_update(self, action, data):
         session = Session()
         self.template_data = []
+        venue_id = unicode(data["venue"]) if data['venue'] else None
         data["rec_end_date"] = data["end_date"]
         data["headless"] = 'true'
-        self.request.form["venue_id"] = unicode(data["venue"])
-        data["venue_id"] = unicode(data["venue"]) if data['venue'] else None
+        self.request.form["venue_id"] = data["venue_id"] = venue_id
         self.request.form["headless"] = "true"
         if ISchedulingContext.providedBy(self.context):
             container = removeSecurityProxy(self.context.__parent__).sittings

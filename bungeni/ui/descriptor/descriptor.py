@@ -1168,7 +1168,7 @@ class HeadingDescriptor(ModelDescriptor):
     
     fields = [
         F(name="text",
-            label="Title",
+            label="Heading",
             required=True,
             localizable=[
                 show("add view edit listing"), # db-not-null-ui-add

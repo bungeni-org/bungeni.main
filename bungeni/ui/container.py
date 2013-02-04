@@ -19,7 +19,6 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
 
-from bungeni.core.workflow.interfaces import IWorkflowed
 from bungeni.core.workflows.utils import view_permission
 from bungeni.core import translation
 
@@ -29,7 +28,6 @@ from bungeni.ui import cookies
 from bungeni.ui import browser
 from bungeni.utils import register
 from bungeni.capi import capi
-from bungeni.utils.naming import polymorphic_identity
 
 
 def query_iterator(query, parent):
@@ -493,90 +491,6 @@ class ContainerJSONListingRaw(ContainerJSONListing):
             values.append(d)
         return values
 
-#@register.view(IAlchemistContainer, 
-#    layer=ufaces.IMembersSectionLayer, name="jsonlisting") 
-#@register.view(IAlchemistContainer, 
-#    layer=ufaces.IArchiveSectionLayer, name="jsonlisting")
-#@register.view(IAlchemistContainer, 
-#    layer=ufaces.IMembersSectionLayer, name="jsonlisting") 
-#@register.view(IAlchemistContainer, 
-#    layer=ufaces.IArchiveSectionLayer, name="jsonlisting")
-@register.view(IAlchemistContainer, 
-    layer=ufaces.IBusinessSectionLayer, name="jsonlisting",
-    protect=register.PROTECT_VIEW_PUBLIC)
-class PublicStatesContainerJSONListing(ContainerJSONListing):
-    """JSON Listing based on public workflow states.
-    
-    Given public states only, for viewing no permission checking is needed.
-    
-    Given results are the same (for a given set of input parameters) for all
-    users, they are cached.
-    
-    Used for listings for all roles/users in the UI layers:
-    IBusinessSectionLayer, IMembersSectionLayer, IArchiveSectionLayer
-    """
-    # !+PUBLIC_CONTAINER_VIEW(mr, may-2102) having permission=None is a
-    # somewhat dangerous optimization of avoiding to call checkPermission on
-    # each item (under the assumption that the state-based logic will never
-    # be faulty. Should really be left as "ziope.View". 
-    # In any case, this view class will go away.
-    permission = None
-    
-    def query_add_filters(self, query):
-        """Add filtering on public workflow states
-        """
-        if IWorkflowed.implementedBy(self.context.domain_model):
-            type_key = polymorphic_identity(self.context.domain_model)
-            workflow = capi.get_type_info(type_key).workflow
-            #!+WORKFLOWS(mb, July-2012) skip filter states if no workflow
-            # type_info lookup of workflows will fail if no wf is explicitly
-            # registered. DISCREPANCY
-            # inheriting may implement IWorkflowed if base class does but
-            # lookup will fail. 
-            # type_info lookup should mirror zope registry lookup
-            if workflow:
-                public_wfstates = workflow.get_state_ids(tagged=["public"], 
-                    restrict=False)
-                if public_wfstates:
-                    query = query.filter(
-                        self.domain_model.status.in_(public_wfstates))
-        else:
-            log.warn("PublicStateContainerJSONListing.query_add_filters called "
-                "a type [%s] that is not workflowed... cannot apply any filters "
-                "on workflow states!" % (self.context.domain_model))
-        return query
-    
-    def get_cache_key(self, context, lang, start, limit, sort_direction):
-        r = self.request
-        jslc = JSLCaches[context.__name__]  # raises KeyError
-        filters = tuple(r.get(name) or None for name in jslc.filter_params)
-        # as sort_dir param may have a (overridable) model default, we 
-        # treat it differently than other params (note that sort_on may 
-        # also have a model default, but the values here accumulate, so for
-        # key uniqueness it suffices to consider only any sort_on parameter 
-        # value incoming in the request).
-        return (lang, start, limit, sort_direction, self.sort_on, filters)
-    
-    def __call__(self):
-        # prepare required parameters
-        start, limit = self.get_offsets()
-        lang = translation.get_request_language(request=self.request)
-        context = proxy.removeSecurityProxy(self.context)
-        # there may not be a cache defined for this context type
-        try:
-            cache_key = self.get_cache_key(context, lang, start, limit, 
-                self.sort_dir)
-            cache = JSLCaches[context.__name__].cache
-        except KeyError:
-            log.warn(" ********* [%s] No such JSLCache !" % (context.__name__))
-            # no cache, proceed...
-            return self.json_batch(start, limit, lang)
-        # OK, we have a cache and a cache_key
-        if not cache.has(cache_key):
-            log.debug(" [%s] CACHE SETTING key: %s" % (
-                context.__name__, cache_key,))
-            cache.set(cache_key, self.json_batch(start, limit, lang))
-        return cache.get(cache_key)
 
 
 # caches for json container listings
