@@ -885,7 +885,8 @@ class UserSource(SpecializedSource):
     def constructQuery(self, context):
         session = Session()
         users = session.query(domain.User).order_by(
-            domain.User.last_name, domain.User.first_name)
+            domain.User.last_name, domain.User.first_name).filter(
+            domain.User.active_p == "A")
         return users
 user = UserSource(
     token_field="user_id", 
