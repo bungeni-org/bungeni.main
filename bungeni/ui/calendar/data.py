@@ -17,6 +17,7 @@ from sqlalchemy import orm, sql
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.interfaces import IParliament, IAgendaItem
+from bungeni.models.utils import get_current_parliament
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
@@ -36,7 +37,7 @@ def can_schedule(workflow):
         transitions = workflow.get_transitions_to(scheduled_states[0])
         if transitions:
             allow = checkPermission(transitions[0].permission,
-                common.get_application()
+                get_current_parliament()
             )
     return allow
 
