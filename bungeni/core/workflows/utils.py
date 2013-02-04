@@ -22,6 +22,9 @@ import bungeni.models.interfaces as interfaces
 from bungeni.models.utils import get_principal_id, get_parliament_for_group_id
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
+from bungeni.utils.misc import describe
+from bungeni.ui.i18n import _
+
 import re
 import dbutils
 
@@ -45,10 +48,13 @@ def assign_role(role_id, principal_id, context):
         role_id, principal_id, context)
     # throws IntegrityError when principal_id is None
     IPrincipalRoleMap(context).assignRoleToPrincipal(role_id, principal_id)
+
+
 def unset_role(role_id, principal_id, context):
     log.debug("Unsetting role [%s] for principal [%s] on [%s]", 
         role_id, principal_id, context)
     IPrincipalRoleMap(context).unsetRoleForPrincipal(role_id, principal_id)
+
 
 def assign_role_owner_to_login(context):
     """Assign bungeni.Owner role on context to the currently logged in user.
@@ -83,6 +89,7 @@ def get_mask(context):
 
 # !+REGISTRY(mr, apr-2012) this utility MUST ALWAYS be executed whenever a doc 
 # reaches a state that semantically implies "receive" !!
+@describe(_("Sets the document's registry number"))
 def set_doc_registry_number(doc):
     """A doc's registry_number should be set on the item being 
     submitted to parliament.
@@ -119,7 +126,7 @@ def set_doc_registry_number(doc):
     
     doc.registry_number = mask
 
-
+@describe(_(u"Sets the serial number of the document in the order of approval"))
 def set_doc_type_number(doc):
     """Sets the number that indicates the order in which docs of this type
     have been approved by the Speaker to be the current maximum + 1.
@@ -137,6 +144,7 @@ is_pi_scheduled = dbutils.is_pi_scheduled
 # question
 # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
 # !+CUSTOM
+@describe(_(u"Grant the ministry access to a question"))
 def assign_role_minister_question(question):
     assert interfaces.IQuestion.providedBy(question), \
         "Not a Question: %s" % (question)
@@ -202,6 +210,8 @@ def dissolveChildGroups(groups, context):
 # sitting
 SCHEDULED = "scheduled"
 PENDING = "tobescheduled"
+
+@describe(_(u"Schedules the items on a sitting"))
 def schedule_sitting_items(context):
     
     # !+fireTransitionToward(mr, dec-2010) sequence of fireTransitionToward 

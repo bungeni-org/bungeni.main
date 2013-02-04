@@ -20,7 +20,8 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
 from bungeni.core.workflows import utils
-
+from bungeni.utils.misc import describe
+from bungeni.ui.i18n import _
 
 # version
 # - create a new version of an object and return it
@@ -53,11 +54,14 @@ from bungeni.core.workflows.utils import (
 )
 
 
+@describe(_(u"Activate a group"))
 def activate(group):
     """Perform any actions required to activate a group.
     """
     utils.set_group_local_role(group)
 
+
+@describe(_(u"Dissolve a group"))
 def dissolve(group):
     """Perform any actions required to dissolve a group.
     
@@ -73,7 +77,7 @@ def dissolve(group):
 
 
 # sitting
-
+@describe(_(u"Apply the planned order of a setting as  the real order"))
 def set_real_order(sitting):
     """Set real order to planned order.
     """
@@ -82,7 +86,7 @@ def set_real_order(sitting):
 
 
 # user
-
+@describe(_(u"Assign owner role to the user"))
 def assign_owner_role(user):
     utils.assign_role("bungeni.Owner", user.login, user)
     user.date_of_death = None

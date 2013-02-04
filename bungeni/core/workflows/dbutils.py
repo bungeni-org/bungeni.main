@@ -9,7 +9,8 @@ from bungeni.alchemist import Session
 import bungeni.models.domain as domain
 import bungeni.models.schema as schema
 import bungeni.models.interfaces as interfaces
-
+from bungeni.utils.misc import describe
+from bungeni.ui.i18n import _
 
 def get_max_type_number(domain_model):
     """Get the current maximum numeric value for this domain_model's type_number.
@@ -40,6 +41,7 @@ def get_registry_counts(specific_model):
     return registry_count_general, registry_count_specific
 
 
+@describe(_(u"Unschedule a document which has been scheduled"))
 def unschedule_doc(doc):
     """When a doc gets postponed the previous schedules of that doc are 
     invalidated so they do not show up in the schedule calendar any more.

@@ -24,6 +24,10 @@ def write_all():
 
     # list of conditions used in workflows
     write_to_custom("workflows", "_conditions.xml", output_conditions())
+    # list of workflow features per type
+    write_to_custom("workflows", "_features.xml", output_features())
+    # list of workflow features per type
+    write_to_custom("workflows", "_actions.xml", output_actions())
     # list of form validations
     write_to_custom("forms", "_validations.xml", output_validations())
     # list of form field render types
@@ -34,8 +38,31 @@ def write_all():
     write_to_custom("forms", "_constraints.xml", output_constraints())
     # list of form derived fields
     write_to_custom("forms", "_derived.xml", output_derived_fields())
-    # list of workflow features per type
-    write_to_custom("workflows", "_features.xml", output_features())
+
+
+def output_actions():
+    """
+    Provides a list of workflow conditions in the system in XML format
+    """
+
+    import bungeni_custom.workflows._actions as actions
+    import inspect
+
+    li_actions = []
+    li_actions.append("<actions>")
+    for name in dir(actions):
+        obj = getattr(actions, name)        
+        if inspect.isfunction(obj):
+            if hasattr(obj, "description"):
+                li_actions.append(
+                    '  <action name="%(name)s">%(desc)s</action>' %
+                    {"name":name,"desc":obj.description}
+                    )
+            else:
+                # dont include items without description
+                pass
+    li_actions.append("</actions>")
+    return ("\n".join(li_actions)).encode("utf-8")
     
 
 def output_conditions():
