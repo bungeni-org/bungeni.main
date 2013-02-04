@@ -42,27 +42,6 @@ def _iter():
     for type_key, ti in TYPE_REGISTRY:
         yield type_key, ti
 
-''' !+UNUSED
-def _add(workflow_key, iface, workflow, domain_model, descriptor_model):
-    """Create and add a TypeInfo instance for supplied information.
-    Raise ValueError is an entry exists already.
-    """
-    assert iface and domain_model, "Must at least specify interface and model."
-    type_key = naming.polymorphic_identity(domain_model)
-    try:
-        from bungeni.capi import capi
-        ti = capi.get_type_info(type_key)
-    except KeyError:
-        # ok, no TI entry for type_key as yet
-        ti = TI(workflow_key, iface)
-        ti.workflow = workflow
-        ti.domain_model = domain_model
-        ti.descriptor_model = descriptor_model
-        TYPE_REGISTRY.append((type_key, ti))
-    else:
-        raise ValueError, "An type entry for [%s] already exists." % (type_key)
-'''
-
 def _get(discriminator):
     """Get the TypeInfo instance for discriminator, that may be any of:
             type_key: str (the lowercase underscore-separated of domain cls name)
@@ -307,12 +286,12 @@ def register_new_custom_type(type_key, workflow_key, archetype_key):
     """
     
     # generate custom domain interface
-    model_iname = naming.model_interface_name(type_key)
+    domain_iface_name = naming.model_interface_name(type_key)
     try:
-        model_iface = resolve("%s.%s" % (INTERFACE_MODULE.__name__, model_iname))
-        log.warn("Custom interface ALREADY EXISTS: %s" % (model_iface))
+        domain_iface = resolve("%s.%s" % (INTERFACE_MODULE.__name__, domain_iface_name))
+        log.warn("Custom interface ALREADY EXISTS: %s" % (domain_iface))
     except ImportError:
-        model_iface = new_custom_domain_interface(type_key, model_iname)
+        domain_iface = new_custom_domain_interface(type_key, domain_iface_name)
     
     # generate custom domain_model
     domain_model_name = naming.model_name(type_key)
@@ -320,10 +299,10 @@ def register_new_custom_type(type_key, workflow_key, archetype_key):
         domain_model = resolve("%s.%s" % (MODEL_MODULE.__name__, domain_model_name))
         log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
     except ImportError:
-        domain_model = new_custom_domain_model(type_key, model_iface, archetype_key)
+        domain_model = new_custom_domain_model(type_key, domain_iface, archetype_key)
     
     # type_info entry
-    ti = TI(workflow_key, model_iface, domain_model)
+    ti = TI(workflow_key, domain_iface, domain_model)
     ti.custom = True
     TYPE_REGISTRY.append((type_key, ti))
     

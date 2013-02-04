@@ -171,8 +171,8 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     
     For any model/descriptor this should be called only once!
     """
-    # localize models from descriptors only once!
     type_key = naming.polymorphic_identity(domain_model)
+    # localize models from descriptors only once!
     assert type_key not in localize_domain_model_from_descriptor_class.DONE, \
         "May not re-localize [%s] domain model from descriptor" % (type_key)
     localize_domain_model_from_descriptor_class.DONE.append(type_key)
@@ -194,9 +194,22 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
             add_derived_property_to_model(domain_model, 
                 field.name, field.derived)
     
+    # !+if domain_model.extended_properties: ?
     # !+instrument_extended_properties, archetype_key => table...
     instrument_extended_properties(domain_model, archetype_key)
     mapper_add_relation_vertical_properties(domain_model)
+    # !+AUDIT_EXTENDED_ATTRIBUTES as audit class was created prior to 
+    # extended attributes being updated on domain type, need to push onto 
+    # it any extended attrs that were read from model's descriptor
+    if interfaces.IFeatureAudit.implementedBy(domain_model):
+        # either defined manually or created dynamically in feature_audit()
+        audit_kls = getattr(MODEL_MODULE, "%sAudit" % (domain_model.__name__))
+        # propagate any extended attributes on head kls also to its audit_kls
+        import bungeni.models.domain
+        audit_table_name = bungeni.models.domain.get_audit_table_name(domain_model)
+        instrument_extended_properties(
+            audit_kls, audit_table_name, from_class=domain_model)
+
 localize_domain_model_from_descriptor_class.DONE = []
 
 

@@ -17,8 +17,6 @@ from bungeni.alchemist.descriptor import (
     show, hide,
     #norm_sorted,
 )
-from bungeni.alchemist.catalyst import MODEL_MODULE
-
 from bungeni.ui.descriptor import field
 from bungeni.capi import capi
 from bungeni.utils import naming, misc
@@ -156,7 +154,6 @@ def localize_descriptor(descriptor_elem, scope="system"):
             archetype_key = xas(descriptor_elem, "archetype")
             cls = new_descriptor_cls(
                 type_key, archetype_key, order, fields, constraints, validations)
-            
             # only "push" onto cls (hiding same-named properties or overriding 
             # inherited setting) if set in the descriptor AND only on cls creation:
             if xas(descriptor_elem, "label"):
@@ -170,30 +167,15 @@ def localize_descriptor(descriptor_elem, scope="system"):
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
             naming.MSGIDS.add(cls.display_name)
             naming.MSGIDS.add(cls.container_name)
-            
             # this is guarenteed to execute maximum once per type_key
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
-        
-            # !+AUDIT_EXTENDED_ATTRIBUTES as audit class was created prior to 
-            # extended attributes being updated on domain type, need to push onto 
-            # it any extended attrs that were read from model's descriptor
-            from bungeni.models import interfaces
-            if interfaces.IFeatureAudit.implementedBy(domain_model):
-                # either defined manually or created dynamically in feature_audit()
-                audit_kls = getattr(MODEL_MODULE, "%sAudit" % (domain_model.__name__))
-                # propagate any extended attributes on head kls also to its audit_kls
-                from bungeni.models import domain
-                audit_table_name = domain.get_audit_table_name(domain_model)
-                alchemist.model.instrument_extended_properties(
-                    audit_kls, audit_table_name, from_class=domain_model)
-    
     else:
         cls = update_descriptor_cls(
             type_key, order, fields, constraints, validations)
         # ensures that this executes a maximum once per type_key
         if type_key in alchemist.model.localize_domain_model_from_descriptor_class.DONE:
-            log.warn("Ignoring attempt to re-localize non-custom model "
-                "from descriptor for type %r", type_key)
+            log.warn("Ignoring attempt to re-localize model [scope=%r] "
+                "from descriptor for type %r", scope, type_key)
         else:
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
     
