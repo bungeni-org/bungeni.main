@@ -283,13 +283,13 @@ class AkomantosoXMLView(BrowserView):
     """ Base class to generate XML
         in akomantoso format
     """
-
+    
     xmlns = u"http://www.akomantoso.org/1.0"
     
     def __init__(self, context, request):
         super(AkomantosoXMLView, self).__init__(context, request)
         self.response = xmllib.Document()
-
+    
     def __call__(self):
         ob = translate_obj(self.context, self.request.locale.id.language)
         akomantoso_element = self.create_base_structure()
@@ -297,24 +297,24 @@ class AkomantosoXMLView(BrowserView):
         self.response.appendChild(akomantoso_element)
         self.request.response.setHeader("Content-Type", "text/xml")
         return self.response.toxml("utf-8")
-
+    
     @property
     def document_type(self):
         return self.context.type if type in AKOMA_NTOSO_TYPES else "doc"
-        
+    
     def create_base_structure(self):
         """ Simply creates akomaNtoso tag
         """
         akomantoso_element = self.response.createElement("akomaNtoso")
         akomantoso_element.setAttribute("xmlns", self.xmlns)
         return akomantoso_element
-
+    
     def create_element(self, tag, **kwargs):
         element = self.response.createElement(tag)
         for key, value in kwargs.items():
             element.setAttribute(key.replace("_", ""), value)
         return element
-
+    
     def create_body_structure(self, ob):
         """ Creates bill specific akomantoso xml 
         """
@@ -322,22 +322,21 @@ class AkomantosoXMLView(BrowserView):
         country = self.get_country(ob)
         meta_element = self.create_element("meta")
         bill_element.appendChild(meta_element)
-
-        #Identification
-        identification_element = self.create_element("identification",
-                                                     source="bungeni")
+        
+        # Identification
+        identification_element = self.create_element("identification", source="bungeni")
         meta_element.appendChild(identification_element)
-        #FRBRWork
+        # FRBRWork
         identification_element.appendChild(self.create_frbr_work_element(ob))
-        #FRBRExpression
+        # FRBRExpression
         identification_element.appendChild(self.create_frbr_expression_element(ob))
-        #FRBRManifestation
+        # FRBRManifestation
         identification_element.appendChild(self.create_frbr_manifestation_element(ob))
-
-        #Publication
+        
+        # Publication
         meta_element.appendChild(self.create_publication_element(ob))
-
-        #Lifecycle
+        
+        # Lifecycle
         if hasattr(ob, "events"):
             if len(ob.events) > 0:
                 lifecycle_element = self.create_element("lifecycle",
@@ -346,50 +345,49 @@ class AkomantosoXMLView(BrowserView):
                     event_element = self.create_element("event",
                         id="evn%s" % item.doc_id,
                         type="generation",
-                        date=item.attached_date and item.attached_date.strftime("%Y-%m-%d") or "",
+                        date=item.event_date and item.event_date.strftime("%Y-%m-%d") or "",
                         source="orig")
                     lifecycle_element.appendChild(event_element)
                 
                 meta_element.appendChild(lifecycle_element)
-
-        #References
-        references_element = self.create_element("references",
-                                                 source="#bungeni")
+        
+        # References
+        references_element = self.create_element("references", source="#bungeni")
         meta_element.appendChild(references_element)
-        #Original
-        original_element = self.create_element("original",
-                                               href=self.get_frbr_expression_url(ob),
-                                               id="orig",
-                                               showAs=self.get_title(ob))
+        # Original
+        original_element = self.create_element("original", 
+            id="orig", 
+            href=self.get_frbr_expression_url(ob), 
+            showAs=self.get_title(ob))
         references_element.appendChild(original_element)
-        #Parliament TLCOrganization
-        tlc_parliament_element = self.create_element("TLCOrganization",
-                                                     id="parliament",
-                                                     href="/ontology/organization/%s/%s.bungeni" % (country, country),
-                                                     showAs="Parliament")
+        # Parliament TLCOrganization
+        tlc_parliament_element = self.create_element("TLCOrganization", 
+            id="parliament",
+            href="/ontology/organization/%s/%s.bungeni" % (country, country),
+            showAs="Parliament")
         references_element.appendChild(tlc_parliament_element)
-        #Bungeni TLCOrganization
+        # Bungeni TLCOrganization
         tlc_bungeni_element = self.create_element("TLCOrganization",
-                                                  id="bungeni",
-                                                  href="/ontology/organization/%s/%s.parliament" % (country, country),
-                                                  showAs="Bungeni")
+            id="bungeni",
+            href="/ontology/organization/%s/%s.parliament" % (country, country),
+            showAs="Bungeni")
         references_element.appendChild(tlc_bungeni_element)
-
-        #Body
+        
+        # Body
         body_element = self.create_element("body")
         bill_element.appendChild(body_element)
-
-        #Title
+        
+        # Title
         title_element = self.create_element("title")
         title_element.appendChild(self.response.createTextNode(self.get_title(ob)))
         body_element.appendChild(title_element)
-
-        #Article
+        
+        # Article
         article_element = self.create_element("article")
         article_element.appendChild(self.response.createTextNode(self.get_body(ob)))
         body_element.appendChild(article_element)
-
-        #Files
+        
+        # Files
         if model_interfaces.IFeatureAttachment.providedBy(ob):
             files = [f for f in ob.files.values()]
             if len(files) > 0:
@@ -403,9 +401,9 @@ class AkomantosoXMLView(BrowserView):
                         showAs=file.title
                     )
                     attachments_element.appendChild(attachment_element)
-
+        
         return bill_element
-
+    
     def create_publication_element(self, ob):
         publication_element = self.create_element("publication",
             name=ob.type,
@@ -413,10 +411,9 @@ class AkomantosoXMLView(BrowserView):
             date=self.get_publication_date(ob).strftime("%Y-%m-%d")
         )
         return publication_element
-
+    
     def create_frbr_work_element(self, ob):
-        """ Creates FRBRWork element with all
-            necessary children
+        """Creates FRBRWork element with all necessary children.
         """
         frbrwork_element = self.response.createElement("FRBRWork")
 
@@ -440,8 +437,7 @@ class AkomantosoXMLView(BrowserView):
         return frbrwork_element
 
     def create_frbr_expression_element(self, ob):
-        """ Creates FRBRExpression element with all
-            necessary children
+        """Creates FRBRExpression element with all necessary children.
         """
         frbr_expression_element = self.response.createElement("FRBRExpression")
 
@@ -465,8 +461,7 @@ class AkomantosoXMLView(BrowserView):
         return frbr_expression_element
 
     def create_frbr_manifestation_element(self, ob):
-        """ Creates FRBRManifestation element with all
-            necessary children
+        """Creates FRBRManifestation element with all necessary children.
         """
         frbr_manifestation_element = self.response.createElement(
             "FRBRManifestation"
@@ -535,8 +530,7 @@ class AkomantosoXMLView(BrowserView):
         return item.body or u''
 
 class SubscriptionView(BrowserView):
-    """ View to manipulate with user's
-        subscriptions (add or remove)
+    """View to manipulate with user's subscriptions (add or remove).
     """
 
     def subscribe(self):
@@ -567,3 +561,5 @@ class SubscriptionView(BrowserView):
             pass
         # Redirecting back to the item's page
         return self.request.response.redirect(redirect_url)
+
+

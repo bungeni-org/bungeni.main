@@ -136,8 +136,6 @@
                 head_id
                 timestamp
                 event_date
-                
-                attached_date
             "
         />
         <require permission="bungeni.event.Edit"
