@@ -861,14 +861,6 @@ class Event(HeadParentedMixin, Doc):
     interface.implements(
         interfaces.IEvent,
     )
-    
-    # !+ mv out as derived property; only used in rss, needed? should be 
-    # replaced with non-derived event_date?
-    @property
-    def attached_date(self):
-        # !+ should this be when first added? if in a "attached" state, the 
-        # latest of these (what is returned here) ? if in "internal"??
-        return self._get_workflow_date("attached")
 #EventAudit
 
 
