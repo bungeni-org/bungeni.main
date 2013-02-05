@@ -459,6 +459,10 @@ class ModelDescriptor(object):
     schema_invariants = ()
     custom_validators = ()
     
+    # information about the container attributes--to be instrumented on the 
+    # *model*--as loaded from the descriptor configuration.
+    info_containers = () # [ (name, target_type_key, rel_attr) ]
+    
     # a means to specify relative order to be used as needed by the usage 
     # context e.g. when listing different containers for the different types,
     # you may wish to fix the appearance order. 

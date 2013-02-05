@@ -102,29 +102,6 @@ def register_custom_types():
         archetype_key = type_elem.tag # !+archetype? move to types?
         return type_key, workflow_key, archetype_key
     
-    attr_name_inconsistency_map = { # !+ correct incosistency, rel_attr config
-        "agenda_items": ("agendaitems", "group_id"),
-        "tabled_documents": ("tableddocuments", "parliament_id"),
-        "reports": ("preports", "group_id"),
-    }
-    
-    from bungeni.models import feature
-    def set_one2many_attrs_on_domain_models(type_key, ti):
-        container_qualname = "bungeni.models.domain.%s" % (
-            naming.container_class_name(type_key))
-        attr_name = naming.plural(type_key)
-        # parliament
-        attr_name, rel_attr = attr_name_inconsistency_map.get(
-            attr_name, (attr_name, "parliament_id")) # !+
-        parliament_model = resolve("%s.%s" % (MODEL_MODULE.__name__, "Parliament"))
-        feature.set_one2many_attr(parliament_model, attr_name, container_qualname, rel_attr)
-        # user
-        user_model = resolve("%s.%s" % (MODEL_MODULE.__name__, "User"))
-        feature.set_one2many_attr(user_model, attr_name, container_qualname, "owner_id")
-        # !+ministry
-        # ("questions", "group_id")
-        # ("bills", "group_id")
-    
     # load XML file
     etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
     # register enabled types
@@ -134,18 +111,17 @@ def register_custom_types():
             # not enabled, ignore
             continue
         type_key, ti = type_info.register_new_custom_type(*parse_elem(edoc))
-        set_one2many_attrs_on_domain_models(type_key, ti)
     # group/member types
     for egroup in etypes.iterchildren("group"):
         if not misc.xml_attr_bool(egroup, "enabled", default=True):
             # not enabled, ignore
             continue
-        type_info.register_new_custom_type(*parse_elem(egroup))
+        type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
         for emember in egroup.iterchildren("member"):
             if not misc.xml_attr_bool(emember, "enabled", default=True):
                 # not enabled, ignore
                 continue
-            type_info.register_new_custom_type(*parse_elem(emember))
+            type_key, ti = type_info.register_new_custom_type(*parse_elem(emember))
 
 
 def load_workflow(type_key, ti):

@@ -37,6 +37,7 @@ grammar {
             
             
             FIELD*,
+            CONTAINER*,
             INTEGRITY?
         }
     )
@@ -53,6 +54,7 @@ grammar {
         attribute note { text }?,
         
         FIELD*,
+        CONTAINER*,
         INTEGRITY?
     }
     
@@ -99,6 +101,19 @@ grammar {
                 attribute note { text }?
             }*
         )
+    }
+    
+    # UI-traversible container attributes -- is only loaded and instrumented if 
+    # the {target_type_key} i.e. the part of the required value of @match that 
+    # precedes the ".", is enabled.
+    CONTAINER = element container {
+        # value of @match is {target_type_key}.{rel_attr_name} and will match
+        # all instances of the given type related to this instance via
+        # {rel_attr_name} (that is usually a direct or indirect fk field).
+        attribute match { token },
+        # @name defaults to naming.plural(target_type_key) 
+        attribute name { SYMBOL_NAME }?,
+        attribute note { text }?
     }
     
     INTEGRITY = element integrity {

@@ -135,6 +135,10 @@ def localize_descriptor(descriptor_elem, scope="system"):
     assert ti.domain_model, ti
     order = xai(descriptor_elem, "order")
     fields = new_descriptor_fields(descriptor_elem)
+    
+    info_containers = [ parse_container(c_elem) 
+        for c_elem in descriptor_elem.findall("container") ]
+    
     integrity = descriptor_elem.find("integrity")
     if integrity is not None:
         constraints = [ capi.get_form_constraint(c) for c in
@@ -147,13 +151,13 @@ def localize_descriptor(descriptor_elem, scope="system"):
     domain_model = ti.domain_model
     if scope=="custom":
         try:
-            cls = update_descriptor_cls(
-                type_key, order, fields, constraints, validations)
+            cls = update_descriptor_cls(type_key, order, 
+                fields, info_containers, constraints, validations)
         except AttributeError:
             # first time around, no such descriptor - so create a new custom descriptor
             archetype_key = xas(descriptor_elem, "archetype")
-            cls = new_descriptor_cls(
-                type_key, archetype_key, order, fields, constraints, validations)
+            cls = new_descriptor_cls(type_key, archetype_key, order, 
+                fields, info_containers, constraints, validations)
             # only "push" onto cls (hiding same-named properties or overriding 
             # inherited setting) if set in the descriptor AND only on cls creation:
             if xas(descriptor_elem, "label"):
@@ -169,18 +173,32 @@ def localize_descriptor(descriptor_elem, scope="system"):
             naming.MSGIDS.add(cls.container_name)
             # this is guarenteed to execute maximum once per type_key
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
+            #!+CATALYSE_SYSTEM_DESCRIPTORS -- all custom types are catalysed here!
+            # first time around we need to catalyse custom descriptors
+            alchemist.catalyst.catalyse(ti)
     else:
-        cls = update_descriptor_cls(
-            type_key, order, fields, constraints, validations)
+        cls = update_descriptor_cls(type_key, order, 
+            fields, info_containers, constraints, validations)
         # ensures that this executes a maximum once per type_key
         if type_key in alchemist.model.localize_domain_model_from_descriptor_class.DONE:
             log.warn("Ignoring attempt to re-localize model [scope=%r] "
                 "from descriptor for type %r", scope, type_key)
         else:
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
-    
+            #!+CATALYSE_SYSTEM_DESCRIPTORS -- all non-custom types have already 
+            # catalysed on import of ui.descriptor, and may not "catalyse twice"
+            # so just working around it by "calling" less of alchemist.catalyst.catalyse(ti)
+            # Make ui.descriptor.catalyse_system_descriptors to be more selective,
+            # and then catalyse remaining support types here?
+            #alchemist.catalyst.catalyse(ti)
+            alchemist.catalyst.apply_security(ti)
+            alchemist.catalyst.generate_collection_traversal(ti)
     log.debug("Localized descriptor [%s] %s", type_key, ti)
 
+def parse_container(container_elem):
+    target_type_key, rel_attr_name = xas(container_elem, "match").split(".", 1)
+    name = xas(container_elem, "name") or naming.plural(target_type_key)
+    return (name, target_type_key, rel_attr_name)
 
 def new_descriptor_fields(edescriptor):
     """(Re-)build (in desired order) all fields from newly loaded 
@@ -222,7 +240,9 @@ def new_descriptor_fields(edescriptor):
             ))
     return fields
 
-def new_descriptor_cls(type_key, archetype_key, order, fields, constraints, validations):
+def new_descriptor_cls(type_key, archetype_key, order, 
+        fields, info_containers, constraints, validations
+    ):
     """Generate and setup new custom descriptor from configuration.
     """
     assert archetype_key, \
@@ -237,6 +257,7 @@ def new_descriptor_cls(type_key, archetype_key, order, fields, constraints, vali
             "__module__": DESCRIPTOR_MODULE.__name__,
             "order": order,
             "fields": fields,
+            "info_containers": info_containers,
             "schema_invariants": constraints,
             "custom_validators": validations,
             "default_field_order": [ f.name for f in fields ],
@@ -245,13 +266,13 @@ def new_descriptor_cls(type_key, archetype_key, order, fields, constraints, vali
     setattr(DESCRIPTOR_MODULE, descriptor_cls_name, cls)
     ti = capi.get_type_info(type_key)
     ti.descriptor_model = cls
-    # first time around we need to catalyse custom descriptors
-    alchemist.catalyst.catalyse(ti)
     log.info("generated descriptor [type=%s] %s.%s" % (
             type_key, DESCRIPTOR_MODULE.__name__, descriptor_cls_name))
     return cls
 
-def update_descriptor_cls(type_key, order, fields, constraints, validations):
+def update_descriptor_cls(type_key, order, 
+        fields, info_containers, constraints, validations
+    ):
     cls = get_localizable_descriptor_class(DESCRIPTOR_MODULE, type_key)
     if order is not None:
         cls.order = order
@@ -259,6 +280,7 @@ def update_descriptor_cls(type_key, order, fields, constraints, validations):
     # instance) and validate/update descriptor model
     cls.fields[:] = fields
     cls.sanity_check_fields()
+    cls.info_containers = info_containers
     cls.schema_invariants = constraints
     cls.custom_validators = validations
     # push back on alchemist model interface !+

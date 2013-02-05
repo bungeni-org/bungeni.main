@@ -68,6 +68,9 @@
         <zeroOrMore>
           <ref name="FIELD"/>
         </zeroOrMore>
+        <zeroOrMore>
+          <ref name="CONTAINER"/>
+        </zeroOrMore>
         <optional>
           <ref name="INTEGRITY"/>
         </optional>
@@ -101,6 +104,9 @@
       </optional>
       <zeroOrMore>
         <ref name="FIELD"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="CONTAINER"/>
       </zeroOrMore>
       <optional>
         <ref name="INTEGRITY"/>
@@ -221,6 +227,32 @@
           </element>
         </zeroOrMore>
       </interleave>
+    </element>
+  </define>
+  <!--
+    UI-traversible container attributes - - is only loaded and instrumented if 
+    the {target_type_key} i.e. the part of the required value of @match that 
+    precedes the ".", is enabled.
+  -->
+  <define name="CONTAINER">
+    <element name="container">
+      <!--
+        value of @match is {target_type_key}.{rel_attr_name} and will match
+        all instances of the given type related to this instance via
+        {rel_attr_name} (that is usually a direct or indirect fk field).
+      -->
+      <attribute name="match">
+        <data type="token" datatypeLibrary=""/>
+      </attribute>
+      <optional>
+        <!-- @name defaults to naming.plural(target_type_key) -->
+        <attribute name="name">
+          <ref name="SYMBOL_NAME"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="note"/>
+      </optional>
     </element>
   </define>
   <define name="INTEGRITY">

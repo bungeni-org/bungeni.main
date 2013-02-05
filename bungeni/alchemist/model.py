@@ -20,6 +20,7 @@ from bungeni.alchemist.catalyst import (
     INTERFACE_MODULE, 
     MODEL_MODULE
 )
+from bungeni.alchemist.traversal import one2many
 from bungeni.utils import naming
 
 
@@ -165,6 +166,38 @@ def instrument_extended_properties(cls, object_type, from_class=None):
         mapper_add_relation_vertical_property(cls, vp_name, vp_type)
 
 
+# derived properties
+
+def add_derived_property_to_model(domain_model, name, derived):
+    from bungeni.capi import capi
+    
+    # !+ do not allow clobbering of a same-named attribute
+    assert not name in domain_model.__dict__, \
+        "May not overwrite %r as derived field, a field with same name is " \
+        "already defined directly by domain model class for type %r." % (
+            name, naming.polymorphic_identity(domain_model))
+    
+    # set as property on domain class
+    setattr(domain_model, name, 
+        property(capi.get_form_derived(derived)))
+
+
+# containers
+
+def add_container_property_to_model(domain_model, name, container_qualname, rel_attr):
+    """Add an alchemist container attribute to domain_model. 
+    These attributes are only catalysed (re-instrumented on domain_model) if 
+    defined directly on domain_model i.e. are not inherited, must be defined 
+    on each class.
+    """
+    assert not domain_model.__dict__.has_key(name), \
+        "type %s already has a %r attribute %r" % (
+            domain_model, name, domain_model.__dict__[name])
+    setattr(domain_model, name, one2many(name, container_qualname, rel_attr))
+    assert domain_model.__dict__.has_key(name)
+
+#
+
 def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     """Localize the domain model for configuration information in the 
     descriptor i.e. any extended/derived attributes.
@@ -209,23 +242,22 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
         audit_table_name = bungeni.models.domain.get_audit_table_name(domain_model)
         instrument_extended_properties(
             audit_kls, audit_table_name, from_class=domain_model)
+    
+    # containers
+    from bungeni.capi import capi
+    for name, target_type_key, rel_attr in descriptor_cls.info_containers:
+        try:
+            ti = capi.get_type_info(target_type_key)
+        except KeyError:
+            # target type not enabled
+            log.warn("Ignoring %r container property %r to disabled type: %s.%s", 
+                type_key, name, target_type_key, rel_attr)
+            continue
+        container_qualname = "bungeni.models.domain.%s" % (
+            naming.container_class_name(target_type_key))
+        add_container_property_to_model(domain_model, 
+            name, container_qualname, rel_attr)
 
 localize_domain_model_from_descriptor_class.DONE = []
-
-
-# derived properties
-
-def add_derived_property_to_model(domain_model, name, derived):
-    from bungeni.capi import capi
-    
-    # !+ do not allow clobbering of a same-named attribute
-    assert not name in domain_model.__dict__, \
-        "May not overwrite %r as derived field, a field with same name is " \
-        "already defined directly by domain model class for type %r." % (
-            name, naming.polymorphic_identity(domain_model))
-    
-    # set as property on domain class
-    setattr(domain_model, name, 
-        property(capi.get_form_derived(derived)))
 
 

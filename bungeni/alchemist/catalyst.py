@@ -204,7 +204,7 @@ def generate_table_schema_interface(ti):
     interface.classImplementsOnly(ti.domain_model, *implements)
     '''
 
-    
+
 def apply_security(ti):
     domain_model, descriptor_model = ti.domain_model, ti.descriptor_model
     type_key = naming.polymorphic_identity(domain_model)

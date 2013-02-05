@@ -22,22 +22,10 @@ import sqlalchemy as rdb
 from sqlalchemy.orm import mapper, class_mapper, relation
 from bungeni.alchemist.traversal import one2many
 from bungeni.alchemist.catalyst import MODEL_MODULE
+from bungeni.alchemist.model import add_container_property_to_model
 from bungeni.models import interfaces, domain, orm, schema
 from bungeni.core import audit
 from bungeni.utils import naming
-
-
-# utils
-
-def set_one2many_attr(kls, name, container_qualname, rel_attr):
-    """Add an alchemist container attribute to kls. 
-    These attributes are only catalysed (re-instrumented on kls) if defined 
-    directly on kls i.e. are not inherited, must be defined on each class.
-    """
-    assert not kls.__dict__.has_key(name), \
-        "type %s already has a %r attribute %r" % (kls, name, kls.__dict__[name])
-    setattr(kls, name, one2many(name, container_qualname, rel_attr))
-    assert kls.__dict__.has_key(name)
 
 
 # domain models
@@ -119,7 +107,7 @@ def feature_attachment(kls, **params):
     # domain.Attachment itself may NOT support attachments
     assert not interfaces.IAttachment.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureAttachment)
-    set_one2many_attr(kls, "files", 
+    add_container_property_to_model(kls, "files", 
         "bungeni.models.domain.AttachmentContainer", "head_id")
 
 
@@ -130,7 +118,7 @@ def feature_event(kls, **params):
     # domain.Event itself may NOT support events
     assert not interfaces.IEvent.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureEvent)
-    set_one2many_attr(kls, "events", 
+    add_container_property_to_model(kls, "events", 
         "bungeni.models.domain.EventContainer", "head_id")
 
 
@@ -139,7 +127,7 @@ def feature_signatory(kls, **params):
     For Doc types.
     """
     interface.classImplements(kls, interfaces.IFeatureSignatory)
-    set_one2many_attr(kls, "signatories", 
+    add_container_property_to_model(kls, "signatories", 
         "bungeni.models.domain.SignatoryContainer", "head_id")
     import bungeni.models.signatories
     bungeni.models.signatories.createManagerFactory(kls, **params)
@@ -158,10 +146,10 @@ def feature_address(kls, **params):
     """
     interface.classImplements(kls, interfaces.IFeatureAddress)
     if issubclass(kls, domain.Group):
-        set_one2many_attr(kls, "addresses",
+        add_container_property_to_model(kls, "addresses",
             "bungeni.models.domain.GroupAddressContainer", "group_id")
     elif issubclass(kls, domain.User):
-        set_one2many_attr(kls, "addresses",
+        add_container_property_to_model(kls, "addresses",
             "bungeni.models.domain.UserAddressContainer", "user_id")
 
 
@@ -200,7 +188,7 @@ def feature_group_assignment(kls, **params):
     """Decorator for domain types that support "group_assignment" feature.
     """
     interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
-    set_one2many_attr(kls, "group_assignments",
+    add_container_property_to_model(kls, "group_assignments",
         "bungeni.models.domain.GroupDocumentAssignmentContainer", "doc_id")
 
 
