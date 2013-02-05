@@ -44,12 +44,6 @@ check_auto_reload_localization = 5
 # default number of items in listings
 default_number_of_listing_items = 100
 
-#tabs in the workspace
-workspace_tabs = ["draft", "inbox", "pending", "archive"]
-
-# number of seconds in between workspace tab count refresh
-workspace_tab_count_cache_refresh_time = 120
-
 # when listing text columns, only display first so many characters
 long_text_column_listings_truncate_at = 57
 
