@@ -14,6 +14,7 @@ import sys
 import time
 import os
 from zope.dottedname.resolve import resolve
+from zope.cachedescriptors import property as cached_property
 from bungeni.utils import error
 from bungeni.alchemist import type_info
 import bungeni_custom as bc
@@ -71,7 +72,7 @@ class CAPI(object):
         self.default_language
         self.country_code
         self.right_to_left_languages
-    
+        
     # bungeni_custom parameter properties
     
     @property
@@ -169,17 +170,32 @@ class CAPI(object):
         """When listing text columns, only display first so many characters."""
         return int(bc.long_text_column_listings_truncate_at)
     
-    @property
+    def xml_workspace_tabs_file(self):
+        """helper function used by workspace tab info APIs"""
+        TABS_FILE = "tabs.xml"    
+        from lxml import etree
+        ws_path = self.get_path_for("workspace")
+        file_path = os.path.join(ws_path, TABS_FILE)
+        tabs = etree.fromstring(open(file_path).read()) 
+        return tabs                
+    
+    @cached_property.cachedIn("__workspace_tabs_count_refresh__")
     @bungeni_custom_errors
     def workspace_tab_count_cache_refresh_time(self):
         """The duration in seconds between tab count refresh operations"""
-        return int(bc.workspace_tab_count_cache_refresh_time)
+        tabs = self.xml_workspace_tabs_file()
+        tabs_count_refresh = tabs.attrib["tab_count_cache_refresh_time"]
+        return int(tabs_count_refresh)
     
-    @property
+    @cached_property.cachedIn("__workspace_tabs__")
     @bungeni_custom_errors
     def workspace_tabs(self):
         """The tabs in the workspace"""
-        return bc.workspace_tabs
+        ws_tabs = []
+        tabs = self.xml_workspace_tabs_file()
+        for tab in tabs.iterchildren(tag="tab"):
+            ws_tabs.append(tab.attrib["id"])
+        return ws_tabs    
 
     # utility methods
     
