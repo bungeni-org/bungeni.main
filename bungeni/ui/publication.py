@@ -115,14 +115,6 @@ mapping_on_path = (
     (re.compile(r'^/workspace(/.*)?$'),
         interfaces.IWorkspaceMyDocumentsSectionLayer
     ),
-    # Matches "business/" followed by anything but "/whats-on"
-    (re.compile(r'^/business(?!/whats-on)(/.*)+$'), 
-        interfaces.IBusinessSectionLayer
-    ),
-    # Matches "business/whats-on"
-    (re.compile(r'^/business/whats-on(/.*)?$'), 
-        interfaces.IBusinessWhatsOnSectionLayer
-    ),
     (re.compile(r'^/members(/.*)?$'), interfaces.IMembersSectionLayer),
     (re.compile(r'^/admin(/.*)?$'), interfaces.IAdminSectionLayer),
     (re.compile(r'^/bungeni(/.*)?$'), interfaces.IPermalinkSectionLayer)

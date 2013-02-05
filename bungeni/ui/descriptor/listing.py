@@ -268,9 +268,11 @@ def member_linked_name_column(name, title, vocabulary=None):
             item_user.__parent__ = parent
             href = url.absoluteURL(item_user, request)
         else:
+            #!+BUSINESS(mb, feb-2013) is deprecated
             # else we link direct to the MP's "public" view
-            mp = get_member_of_parliament(related_user.user_id)
-            href = "/members/current/obj-%s/" % (mp.membership_id)
+            #mp = get_member_of_parliament(related_user.user_id)
+            #href = "/members/current/obj-%s/" % (mp.membership_id)
+            return related_user.combined_name
         return zope.formlib.widget.renderElement("a",
             contents=related_user.combined_name,  # User.combined_name derived property
             href=href

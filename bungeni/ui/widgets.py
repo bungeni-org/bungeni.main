@@ -781,9 +781,12 @@ def _render_link_to_mp_or_user(user_id, context, request):
     """
     try:
         mp = get_member_of_parliament(user_id)
-        return zope.formlib.widget.renderElement("a",
-            contents=mp.user.combined_name,
-            href="/members/current/obj-%s/" % (mp.membership_id))
+        return mp.user.combined_name
+        #!+BUSINESS(mb, feb-2013) is deprecated - how to render
+        # bicameral installation
+        #return zope.formlib.widget.renderElement("a",
+        #    contents=mp.user.combined_name,
+        #    href="/workspace/members/obj-%s/" % (mp.membership_id))
     except NoResultFound:
         # not a member of parliament 
         #
