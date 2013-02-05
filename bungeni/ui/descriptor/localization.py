@@ -123,16 +123,11 @@ def localize_descriptor(descriptor_elem, scope="system"):
     """Localize descriptor from descriptor XML element.
     """
     type_key = xas(descriptor_elem, "name")
-    try:
-        ti = capi.get_type_info(type_key)
-        assert ti.domain_model, type_key
-    except KeyError:
-        # unknown type (or no enabled type found) for this descriptor
-        log.warn("No enabled type found for descriptor %r - "
-            "ignoring localization" % (type_key))
-        return
+    ti = capi.get_type_info(type_key)
+    
     # !+ ensure domain_model has already been set
-    assert ti.domain_model, ti
+    assert ti.domain_model, type_key
+    
     order = xai(descriptor_elem, "order")
     fields = new_descriptor_fields(descriptor_elem)
     
@@ -191,7 +186,8 @@ def localize_descriptor(descriptor_elem, scope="system"):
             # Make ui.descriptor.catalyse_system_descriptors to be more selective,
             # and then catalyse remaining support types here?
             #alchemist.catalyst.catalyse(ti)
-            alchemist.catalyst.apply_security(ti)
+            #!+re-apply_security breaks edit event view (fields shown in view mode!)
+            #alchemist.catalyst.apply_security(ti)
             alchemist.catalyst.generate_collection_traversal(ti)
     log.debug("Localized descriptor [%s] %s", type_key, ti)
 

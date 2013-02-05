@@ -152,32 +152,28 @@ class User(Entity):
             self.login = login
         super(User, self).__init__(**kw)
         self.salt = self._makeSalt()
-
+    
     def _makeSalt(self):
         return "".join(random.sample(string.letters[:52], 12))
-
+    
     def setPassword(self, password):
         self.password = self.encode(password)
-
     def getPassword(self):
         return None
-
+    _password = property(getPassword, setPassword)
+    
     def encode(self, password):
         return md5.md5(password + self.salt).hexdigest()
 
     def checkPassword(self, password_attempt):
         attempt = self.encode(password_attempt)
         return attempt == self.password
-
+    
     def _get_status(self):
         return self.active_p
     def _set_status(self, value):
         self.active_p = value
     status = property(_get_status, _set_status)
-    
-    delegations = one2many("delegations",
-        "bungeni.models.domain.UserDelegationContainer", "user_id")
-    _password = property(getPassword, setPassword)
 
 
 class AdminUser(Entity):
@@ -210,19 +206,6 @@ class Group(Entity):
     """
     available_dynamic_features = ["address"]
     interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
-    
-    #users = one2many("users", 
-    #   "bungeni.models.domain.GroupMembershipContainer", "group_id")
-    #sittings = one2many("sittings", 
-    #   "bungeni.models.domain.SittingContainer", "group_id")
-    
-    headings = one2many("headings", "bungeni.models.domain.HeadingContainer",
-        "group_id"
-    )
-    editorial_notes = one2many("editorialnotes", 
-        "bungeni.models.domain.EditorialNoteContainer",
-        "group_id"
-    )
     
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
@@ -329,22 +312,6 @@ class Parliament(Group):
     """A parliament.
     """
     interface.implements(interfaces.IParliament)
-    sessions = one2many("sessions",
-        "bungeni.models.domain.SessionContainer", "parliament_id")
-    committees = one2many("committees",
-        "bungeni.models.domain.CommitteeContainer", "parent_group_id")
-    governments = one2many("governments",
-        "bungeni.models.domain.GovernmentContainer", "parent_group_id")
-    offices = one2many("offices",
-        "bungeni.models.domain.OfficeContainer", "parent_group_id")
-    parliamentmembers = one2many("parliamentmembers",
-        "bungeni.models.domain.MemberOfParliamentContainer", "group_id")
-    politicalgroups = one2many("politicalgroups",
-        "bungeni.models.domain.PoliticalGroupContainer", "parent_group_id")
-    sittings = one2many("sittings",
-        "bungeni.models.domain.SittingContainer", "group_id")
-    title_types = one2many("title_types",
-        "bungeni.models.domain.TitleTypeContainer", "group_id")
 
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.

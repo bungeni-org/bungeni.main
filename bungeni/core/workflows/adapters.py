@@ -102,25 +102,21 @@ def register_custom_types():
         archetype_key = type_elem.tag # !+archetype? move to types?
         return type_key, workflow_key, archetype_key
     
+    def enabled_elems(elems):
+        for elem in elems:
+            if misc.xml_attr_bool(elem, "enabled", default=True):
+                yield elem
+    
     # load XML file
     etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
-    # register enabled types
+    # register enabled types - ignoring not enabled types
     from bungeni.alchemist import type_info
-    for edoc in etypes.iterchildren("doc"):
-        if not misc.xml_attr_bool(edoc, "enabled", default=True):
-            # not enabled, ignore
-            continue
+    for edoc in enabled_elems(etypes.iterchildren("doc")):
         type_key, ti = type_info.register_new_custom_type(*parse_elem(edoc))
     # group/member types
-    for egroup in etypes.iterchildren("group"):
-        if not misc.xml_attr_bool(egroup, "enabled", default=True):
-            # not enabled, ignore
-            continue
+    for egroup in enabled_elems(etypes.iterchildren("group")):
         type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
-        for emember in egroup.iterchildren("member"):
-            if not misc.xml_attr_bool(emember, "enabled", default=True):
-                # not enabled, ignore
-                continue
+        for emember in enabled_elems(egroup.iterchildren("member")):
             type_key, ti = type_info.register_new_custom_type(*parse_elem(emember))
 
 
