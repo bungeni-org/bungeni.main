@@ -70,15 +70,13 @@ span.minutes-header{
     font-size:10px;
     background-color:#e8e8e8;
     color:#39361E;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    -o-text-overflow:ellipsis;
     white-space:nowrap;
     position:relative;
+    border-bottom:1px solid #ffe;
+    padding-bottom:0.5em;
 }
 p span.minute-record{
     padding-left:20px;
-    height:20px;
 }
 span.minute-record-error{
     display:block;

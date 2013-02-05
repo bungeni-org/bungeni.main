@@ -645,7 +645,7 @@ li.formTab a.notify {
     background-color: #ffce7b;
     color: Black;
 }
-li.formTab a.required span {
+li.formTab a.required span, td.required-flag {
     background-image: url(required.gif);
     background-position: center right;
     background-repeat: no-repeat;

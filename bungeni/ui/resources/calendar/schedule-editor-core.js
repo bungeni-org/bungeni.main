@@ -47,7 +47,14 @@ YAHOO.bungeni.scheduling = function(){
             if (YAHOO.bungeni.reloadView){
                 Dialogs.blocking.show(SGlobals.saving_dialog_refreshing);
                 if (YAHOO.bungeni.saveAndPreview == true) {
-                    setTimeout('window.location.replace(window.location.href+"?preview=yes")', 200);
+                    if (YAHOO.bungeni.refresh_location==undefined){
+                        preview_flag = "preview=yes";
+                        YAHOO.bungeni.refresh_location = window.location.href;
+                        if (YAHOO.bungeni.refresh_location.indexOf(preview_flag)<0){
+                            YAHOO.bungeni.refresh_location += ("?" + preview_flag);
+                        }
+                    }
+                    setTimeout('window.location.replace(YAHOO.bungeni.refresh_location)', 200);
                 } else {
                     setTimeout('window.location.replace(window.location.href)', 200);
                 }

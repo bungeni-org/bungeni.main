@@ -259,7 +259,7 @@ class EditorialNoteDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         if len(self.context.text.strip())>0:
-            return html.fromstring(self.context.text).text_content()
+            return self.context.text
         else:
             return _(u"Editorial Note")
     
