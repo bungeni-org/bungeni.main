@@ -58,6 +58,9 @@ def catalyse_system_descriptors(module):
     Called when ui.descriptor is initially imported, so before descriptors for 
     custom types have been created (that happens on first call to 
     localization.localize_descriptors on application created event).
+    
+    !+CATALYSE_SYSTEM_DESCRIPTORS(mr, feb-2013) drop this, reworking it into
+    catalysing on first time to localize each descriptor.
     """
     import sys
     import inspect

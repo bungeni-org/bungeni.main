@@ -72,6 +72,7 @@
           <ref name="CONTAINER"/>
         </zeroOrMore>
         <optional>
+          <!-- only in custom descriptor -->
           <ref name="INTEGRITY"/>
         </optional>
       </element>
@@ -104,9 +105,6 @@
       </optional>
       <zeroOrMore>
         <ref name="FIELD"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="CONTAINER"/>
       </zeroOrMore>
       <optional>
         <ref name="INTEGRITY"/>

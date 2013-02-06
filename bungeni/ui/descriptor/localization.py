@@ -91,12 +91,14 @@ def check_reload_localization(event):
     """Called once on IWSGIApplicationCreatedEvent and (if in DEVMODE)
     once_per_request on IBeforeTraverseEvent events (ui.publication).
     """
+    is_init = (event is None)
     if capi.is_modified_since(PATH_UI_FORMS_SYSTEM):
-        localize_descriptors(PATH_UI_FORMS_SYSTEM)
+        localize_descriptors(PATH_UI_FORMS_SYSTEM, is_init)
     for type_key, ti in capi.iter_type_info(scope="custom"):
-        check_reload_descriptor_file(type_key)
+        check_reload_descriptor_file(type_key, is_init)
 
-def check_reload_descriptor_file(type_key):
+
+def check_reload_descriptor_file(type_key, is_init):
     """Check if a singel file has been modified and needs reloading.
     """
     #!+get_descriptor_elem
@@ -104,9 +106,9 @@ def check_reload_descriptor_file(type_key):
     if capi.is_modified_since(file_path):
         descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
         assert xas(descriptor_doc, "name") == type_key, type_key
-        localize_descriptor(descriptor_doc, scope="custom")
+        descriptor_cls = localize_descriptor(descriptor_doc, is_init, scope="custom")
 
-def localize_descriptors(file_path):
+def localize_descriptors(file_path, is_init):
     """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
     """
     descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
@@ -116,11 +118,12 @@ def localize_descriptors(file_path):
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
     for edescriptor in descriptor_doc.findall("descriptor"):
-        localize_descriptor(edescriptor)
+        descriptor_cls = localize_descriptor(edescriptor, is_init)
 
 
-def localize_descriptor(descriptor_elem, scope="system"):
+def localize_descriptor(descriptor_elem, is_init, scope="system"):
     """Localize descriptor from descriptor XML element.
+    Return the created/modified descriptor class.
     """
     type_key = xas(descriptor_elem, "name")
     ti = capi.get_type_info(type_key)
@@ -169,9 +172,9 @@ def localize_descriptor(descriptor_elem, scope="system"):
             # this is guarenteed to execute maximum once per type_key
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
             #!+CATALYSE_SYSTEM_DESCRIPTORS -- all custom types are catalysed here!
-            # first time around we need to catalyse custom descriptors
             alchemist.catalyst.catalyse(ti)
     else:
+        # non-custom
         cls = update_descriptor_cls(type_key, order, 
             fields, info_containers, constraints, validations)
         # ensures that this executes a maximum once per type_key
@@ -189,7 +192,9 @@ def localize_descriptor(descriptor_elem, scope="system"):
             #!+re-apply_security breaks edit event view (fields shown in view mode!)
             #alchemist.catalyst.apply_security(ti)
             alchemist.catalyst.generate_collection_traversal(ti)
-    log.debug("Localized descriptor [%s] %s", type_key, ti)
+    log.debug("Localized [init=%s] descriptor [%s] %s", is_init, type_key, ti)
+    return cls
+
 
 def parse_container(container_elem):
     target_type_key, rel_attr_name = xas(container_elem, "match").split(".", 1)

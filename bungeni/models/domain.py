@@ -19,7 +19,7 @@ from zope import interface, location
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import ore.xapian.interfaces
 from bungeni import alchemist
-from bungeni.alchemist.traversal import one2many, one2manyindirect
+from bungeni.alchemist.traversal import one2many #, !+one2manyindirect
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import object_mapper
 
@@ -164,7 +164,7 @@ class User(Entity):
     
     def encode(self, password):
         return md5.md5(password + self.salt).hexdigest()
-
+    
     def checkPassword(self, password_attempt):
         attempt = self.encode(password_attempt)
         return attempt == self.password
@@ -237,10 +237,10 @@ class GroupMembership(HeadParentedMixin, Entity):
     available_dynamic_features = []
     interface.implements(
         interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
-    subroles = one2many(
-        "subroles", "bungeni.models.domain.GroupMembershipRoleContainer",
-        "membership_id"
-    )
+    
+    subroles = one2many("subroles", 
+        "bungeni.models.domain.GroupMembershipRoleContainer", "membership_id")
+    
     @property
     def image(self):
         return self.user.image
@@ -254,12 +254,6 @@ class CommitteeStaff(GroupMembership):
     """Committee Staff.
     """
     interface.implements(interfaces.ICommitteeStaff)
-    titles = one2many("titles",
-        "bungeni.models.domain.MemberTitleContainer", "membership_id")
-    '''subroles = one2many(
-        "subroles", "bungeni.models.domain.GroupMembershipRoleContainer",
-        "membership_id"
-    )'''
 
 
 class GroupMembershipRole(Entity):
@@ -298,6 +292,7 @@ class Sitting(Entity):
     sreports = one2many("sreports",
         "bungeni.models.domain.SittingReportContainer", "sitting_id")
 
+
 class SittingAttendance(Entity):
     """A record of attendance at a meeting .
     """
@@ -317,12 +312,12 @@ class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
     """
     interface.implements(interfaces.IMemberOfParliament)
-    titles = one2many("titles",
-        "bungeni.models.domain.MemberTitleContainer", "membership_id")
+    ''' !+
     # !+MEMBER_ADDRESSES(mr, oct-2012) is it correct to assume that all 
     # user addresses are also "member" addresses?
     addresses = one2manyindirect("addresses", 
         "bungeni.models.domain.UserAddressContainer", "user_id")
+    '''
 
 class PoliticalGroup(Group):
     """A political group in a parliament.
@@ -331,18 +326,12 @@ class PoliticalGroup(Group):
         interfaces.IPoliticalGroup,
         interfaces.ITranslatable
     )
-    group_members = one2many("group_members",
-        "bungeni.models.domain.PoliticalGroupMemberContainer", "group_id")
-    title_types = one2many("title_types",
-        "bungeni.models.domain.TitleTypeContainer", "group_id")
 class PoliticalGroupMember(GroupMembership):
     """Member of a political group, defined by its group membership.
     """
     interface.implements(
         interfaces.IPoliticalGroupMember,
     )
-    titles = one2many("titles",
-        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 class Government(Group):
     """A government.
@@ -350,8 +339,6 @@ class Government(Group):
     interface.implements(
         interfaces.IGovernment,
     )
-    ministries = one2many("ministries",
-        "bungeni.models.domain.MinistryContainer", "parent_group_id")
 
 class Ministry(Group):
     """A government ministry.
@@ -359,54 +346,23 @@ class Ministry(Group):
     interface.implements(
         interfaces.IMinistry,
     )
-    ministers = one2many("ministers",
-        "bungeni.models.domain.MinisterContainer", "group_id")
-    # !+MINISTRY_ID(mr, jun-2012) alchemist does not want target attribute to 
-    # be a domain class property [ministry_id] so the property corresponding 
-    # directly to the db table column [group_id] is used instead.
-    questions = one2many("questions",
-        "bungeni.models.domain.QuestionContainer", "group_id")
-    # !+MINISTRY_ID
-    bills = one2many("bills",
-        "bungeni.models.domain.BillContainer", "group_id")
-    title_types = one2many("title_types",
-        "bungeni.models.domain.TitleTypeContainer", "group_id")
 class Minister(GroupMembership):
     """A Minister defined by its user_group_membership in a ministry (group).
     """
     interface.implements(
         interfaces.IMinister,
     )
-    titles = one2many("titles",
-        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
 class Committee(Group):
     """A parliamentary committee of MPs.
     """
     interface.implements(interfaces.ICommittee)
-    # !+ManagedContainer(mr, oct-2010) why do all these Managed container 
-    # attributes return a list of processed-id-derived strings instead of the 
-    # list of actual objects in question? 
-    # e.g. committee.committeemembers returns: ['obj-41', 'obj-42']
-    #
-    committeemembers = one2many("committeemembers",
-        "bungeni.models.domain.CommitteeMemberContainer", "group_id")
-    committeestaff = one2many("committeestaff",
-        "bungeni.models.domain.CommitteeStaffContainer", "group_id")
-    agendaitems = one2many("agendaitems",
-        "bungeni.models.domain.AgendaItemContainer", "group_id")
-    sittings = one2many("sittings",
-        "bungeni.models.domain.SittingContainer", "group_id")
-    title_types = one2many("title_types",
-        "bungeni.models.domain.TitleTypeContainer", "group_id")
 
 class CommitteeMember(GroupMembership):
     """A Member of a committee defined by its membership to a committee (group).
     """
     interface.implements(interfaces.ICommitteeMember)
-    titles = one2many("titles",
-        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 class Office(Group):
     """Parliamentary Office like speakers office, clerks office etc. 
@@ -415,10 +371,6 @@ class Office(Group):
     interface.implements(
         interfaces.IOffice,
     )
-    officemembers = one2many("officemembers",
-        "bungeni.models.domain.OfficeMemberContainer", "group_id")
-    title_types = one2many("title_types",
-        "bungeni.models.domain.TitleTypeContainer", "group_id")
 
 class OfficeMember(GroupMembership):
     """Clerks, .... 
@@ -426,12 +378,6 @@ class OfficeMember(GroupMembership):
     interface.implements(
         interfaces.IOfficeMember,
     )
-    titles = one2many("titles",
-        "bungeni.models.domain.MemberTitleContainer", "membership_id")
-    '''subroles = one2many(
-        "subroles", "bungeni.models.domain.GroupMembershipRoleContainer",
-        "membership_id"
-    )'''
 
 class Address(HeadParentedMixin, Entity):
     """Address base class
@@ -604,7 +550,7 @@ class Version(Change):
     def __name__(self):
         return "ver-%s" % (self.seq)
     
-    # !+ should only be when type(self.head) is versionable
+    # !+ should only be when type(self.head) is attachmentable
     # !+ other features?
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
@@ -982,8 +928,7 @@ class ItemSchedule(Entity):
     discussions = one2many("discussions",
         "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
     votes = one2many("votes",
-        "bungeni.models.domain.ItemScheduleVoteContainer", "schedule_id"
-    )
+        "bungeni.models.domain.ItemScheduleVoteContainer", "schedule_id")
     
     def get_item_domain(self):
         if self.item_type is None:
@@ -1120,6 +1065,7 @@ class TimeBasedNotication(Entity):
     """Time based Notifications
     """
 
+# !+NO_DESCRIPTOR
 class DebateRecord(Entity):
     """Debate record object associated with a sitting
     """

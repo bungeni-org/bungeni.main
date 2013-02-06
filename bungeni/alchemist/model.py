@@ -193,8 +193,8 @@ def add_container_property_to_model(domain_model, name, container_qualname, rel_
     assert not domain_model.__dict__.has_key(name), \
         "type %s already has a %r attribute %r" % (
             domain_model, name, domain_model.__dict__[name])
+    
     setattr(domain_model, name, one2many(name, container_qualname, rel_attr))
-    assert domain_model.__dict__.has_key(name)
 
 #
 
@@ -247,12 +247,13 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     from bungeni.capi import capi
     for name, target_type_key, rel_attr in descriptor_cls.info_containers:
         try:
-            ti = capi.get_type_info(target_type_key)
+            tti = capi.get_type_info(target_type_key)
         except KeyError:
             # target type not enabled
             log.warn("Ignoring %r container property %r to disabled type: %s.%s", 
                 type_key, name, target_type_key, rel_attr)
             continue
+        
         container_qualname = "bungeni.models.domain.%s" % (
             naming.container_class_name(target_type_key))
         add_container_property_to_model(domain_model, 

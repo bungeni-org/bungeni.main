@@ -16,7 +16,7 @@ __all__ = [
     "CollectionTraverser",          # redefn -> alchemist.traversal.collection
     #!+ALCHEMIST_INTERNAL "One2Many", # redefn -> alchemist.traversal.managed
     #!+ALCHEMIST_INTERNAL "CollectionTraverser", # redefn -> alchemist.traversal.collection
-    "one2manyindirect",             # redefn -> alchemist.traversal.managed
+    #"one2manyindirect",             # redefn -> alchemist.traversal.managed
     "PartialContainer",             # alias -> ore.alchemist.container
 ]
 
@@ -41,11 +41,12 @@ from sqlalchemy import orm
 
 # alchemist.traversal.managed    
 
+''' !+one2manyindirect
 def one2manyindirect(name, container, fk):
     constraint = One2ManyIndirect(fk)
     container = ManagedContainerDescriptor(name, container, constraint)
     return container
-
+'''
 
 class ConstraintManager(object):
     """Manages the constraints on a managed container.
@@ -80,6 +81,7 @@ class One2Many(ConstraintManager):
         #setattr( target, column.name, primary_key )
         setattr(target, self.fk, primary_key)
 
+''' !+one2manyindirect
 class One2ManyIndirect(One2Many):
     """
     Similar to one2many but gets a listing of indirectly related
@@ -94,7 +96,7 @@ class One2ManyIndirect(One2Many):
         #trusted = removeSecurityProxy(instance)
         attr_value = getattr(instance, self.fk) 
         setattr(target, self.fk, attr_value)
-
+'''
 
 def one2many(name, container, fk):
     constraint = One2Many(fk)

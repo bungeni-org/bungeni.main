@@ -37,7 +37,7 @@ grammar {
             
             
             FIELD*,
-            CONTAINER*,
+            CONTAINER*, # only in custom descriptor
             INTEGRITY?
         }
     )
@@ -54,7 +54,6 @@ grammar {
         attribute note { text }?,
         
         FIELD*,
-        CONTAINER*,
         INTEGRITY?
     }
     
@@ -224,7 +223,9 @@ grammar {
         "sitting_attendance" |
         "report" |
         "venue" |
-        "sitting_schedule_vote_result"
+        "sitting_schedule_vote_result" |
+        "sitting_schedule_vote_types" |
+        "sitting_schedule_vote_majority_types"
     )
 
 }
