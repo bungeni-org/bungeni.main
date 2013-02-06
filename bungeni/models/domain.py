@@ -1050,9 +1050,14 @@ class ItemScheduleVote(Entity):
     """
     interface.implements(interfaces.IItemScheduleVote)
 
+    #file download
     @property
     def data(self):
-        return self.file
+        return self.roll_call
+    
+    #file download
+    def name(self):
+        return "vote-record-%d.xml" % self.vote_id
 
 class Holiday(object):
     """Is this day a holiday?

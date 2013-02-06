@@ -442,14 +442,7 @@ class ItemScheduleVoteDescriptiveProperties(DescriptiveProperties):
     
     @property
     def title(self):
-        return _(u"Vote (${title}) held on ${date}",
-            mapping={
-                "title": self.context.title,
-                "date": self.formatDate(self.context.date)
-            }
-        )
-
-
+        return _(u"Vote record")
 
 @register.adapter()
 class ChangeDescriptiveProperties(DescriptiveProperties):

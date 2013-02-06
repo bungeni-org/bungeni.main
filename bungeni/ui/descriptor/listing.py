@@ -168,6 +168,9 @@ def truncatable_text_column(name, title, vocabulary=None,
     truncated_markup = '%s...<span class="untruncated %s">%s</span>'
     untruncated_markup = '<span class="untruncated">%s</span>'
     def renderer(value):
+        #!+LISTING(mb, Feb-2012) transform all other values to strings.
+        if not isinstance(value, basestring):
+            value = value.__str__()
         if len(value) > 3 + truncate_at:
             return truncated_markup % ( 
                 (value[:truncate_at], "hovertext", value))

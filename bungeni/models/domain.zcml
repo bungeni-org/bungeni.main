@@ -828,30 +828,46 @@
             attributes="
                 vote_id
                 schedule_id
-                date
-                title
                 description
                 result
                 votes_for
                 votes_against
-                votes_absent
-                file
+                votes_abstained
+                roll_call
                 language
+                issue_item
+                issue_sub_item
+                time
+                document_uri
+                notes
+                vote_type
+                majority_type
+                eligible_votes
+                cast_votes
+                mimetype
             "
         />
         <require permission="bungeni.item_schedule_vote.Edit"
             set_attributes="
                 vote_id
                 schedule_id
-                date
-                title
                 description
                 result
                 votes_for
                 votes_against
-                votes_absent
-                file
+                votes_abstained
+                roll_call
                 language
+                issue_item
+                issue_sub_item
+                time
+                document_uri
+                notes
+                vote_type
+                majority_type
+                eligible_votes
+                cast_votes
+                mimetype
             "
         />
     </class>

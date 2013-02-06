@@ -399,6 +399,8 @@
       <value>report</value>
       <value>venue</value>
       <value>sitting_schedule_vote_result</value>
+      <value>sitting_schedule_vote_types</value>
+      <value>sitting_schedule_vote_majority_types</value>
     </choice>
   </define>
 </grammar>

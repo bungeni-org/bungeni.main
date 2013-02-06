@@ -1322,6 +1322,8 @@ sitting_activity_types = FlatVDEXVocabularyFactory("sitting-activity-types.vdex"
 sitting_meeting_types = FlatVDEXVocabularyFactory("sitting-meeting-types.vdex") # !+naming
 sitting_convocation_types = FlatVDEXVocabularyFactory("sitting-convocation-types.vdex") # !+naming
 sitting_schedule_vote_result = FlatVDEXVocabularyFactory("sitting-schedule-vote-result.vdex")
+sitting_schedule_vote_types = FlatVDEXVocabularyFactory("sitting-schedule-vote-types.vdex")
+sitting_schedule_vote_majority_types = FlatVDEXVocabularyFactory("sitting-schedule-vote-majority-types.vdex")
 #
 # Vocabularies for XML configuration based report generation
 #
