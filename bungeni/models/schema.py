@@ -1167,7 +1167,16 @@ debate_media = rdb.Table("debate_media", metadata,
     rdb.Column("media_type", rdb.String(100), nullable=False)
 )
 
-
+debate_take = rdb.Table("debate_take", metadata,
+    rdb.Column("debate_record_id", rdb.Integer,
+        rdb.ForeignKey("debate_record.debate_record_id"), primary_key=True),
+    rdb.Column("debate_take_id", rdb.Integer, primary_key=True),
+    rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
+    rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
+    rdb.Column("transcriber_id", rdb.Integer, 
+        rdb.ForeignKey("user.user_id")),
+    rdb.Column("debate_take_name", rdb.String(100), nullable=False)
+)
 
 #for table_name in metadata.tables.keys():
 #    print metadata.tables[table_name].name

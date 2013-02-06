@@ -293,3 +293,11 @@ def list_container_items(container_instance, permission=None):
         if checkPermission(permission, item):
             yield item
 
+def get_users(role_id):
+    session = bungeni.alchemist.Session()
+    gmrs = session.query(bungeni.models.domain.GroupMembershipRole).filter(
+        sql.and_(
+            bungeni.models.domain.GroupMembershipRole.role_id == role_id,
+            bungeni.models.domain.GroupMembershipRole.is_global == False)).all()
+    return [gmr.member.user for gmr in gmrs]
+

@@ -159,5 +159,7 @@
   <permission id="bungeni.debate_media.Edit" title="Edit debate media" />
   <permission id="bungeni.debate_media.View" title="View debate media" />
   <permission id="bungeni.debate_media.Delete" title="View debate media" />
-  <include package="bungeni_custom.sys.acl" file="permissions.zcml" />
+
+  <permission id="bungeni.debate_takes.View" title="View debate takes" />
+  <permission id="bungeni.debate_takes.Edit" title="Edit debate takes" />
 </configure>

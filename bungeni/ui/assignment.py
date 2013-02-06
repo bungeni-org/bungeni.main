@@ -104,13 +104,6 @@ class UserAssignmentView(forms.common.BaseForm):
         self._assignable_roles = assignable_roles
         return self._assignable_roles
 
-    def get_users(self, role_id):
-        session = Session()
-        gmrs = session.query(domain.GroupMembershipRole).filter(and_(
-            domain.GroupMembershipRole.role_id == role_id,
-            domain.GroupMembershipRole.is_global == False)).all()
-        return [gmr.member.user for gmr in gmrs]
-
     def can_edit(self, action=None):
         return checkPermission("bungeni.user_assignment.Edit", self.context)
 
@@ -147,7 +140,10 @@ class UserAssignmentView(forms.common.BaseForm):
 
     def role_listing(self, role_id, editable):
         listing = []
-        for user in self.get_users(role_id):
+        users = common.get_users(role_id)
+        if not users:
+            return _("No users available for this role.")
+        for user in users:
             data = {}
             data["title"] = IDCDescriptiveProperties(user).title
             data["name"] = self.make_id(user.login, role_id)
@@ -184,7 +180,7 @@ class UserAssignmentView(forms.common.BaseForm):
 
     def process_assignment(self):
         for role_id in self.assignable_roles():
-            for user in self.get_users(role_id):
+            for user in common.get_users(role_id):
                 key = self.make_id(user.login, role_id)
                 if key in self.request.form.keys():
                     self.prm.assignRoleToPrincipal(role_id, user.login)

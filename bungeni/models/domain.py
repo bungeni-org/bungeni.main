@@ -1148,7 +1148,11 @@ class DebateSpeech(DebateRecordItem):
     interface.implements(interfaces.ITranslatable, interfaces.IDebateSpeech)
 
 class DebateMedia(Entity):
-    """
-    Media files of a sitting
+    """Media files of a sitting
     """
     interface.implements(interfaces.IDebateMedia)
+
+class DebateTake(Entity):
+    """Debate takes
+    """
+    interface.implements(interfaces.IDebateTake)

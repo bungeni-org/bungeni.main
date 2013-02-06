@@ -1195,13 +1195,36 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ISitting"
-        action="debate"
-        title="Delete Record"
+        action="debate/view"
+        title="Debate Record"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.debate_record.View"
     />
-
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IDebateRecord"
+        action="view"
+        title="View"
+        order="1"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.debate_record.View"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IDebateRecord"
+        action="media"
+        title="Media"
+        order="2"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.debate_media.View"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IDebateRecord"
+        action="takes"
+        title="Takes"
+        order="3"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.debate_takes.View"
+    />
    <browser:viewlet
      name="login"
      for="*"

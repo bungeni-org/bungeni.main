@@ -2,17 +2,12 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       metal:use-macro="context/@@standard_macros/page">
   <div metal:fill-slot="body" i18n:domain="bungeni">
-    <h1 i18n:translate="">Assignment</h1>
-    <div id="assignment">
+    <h1 i18n:translate="">Debate takes</h1>
+    <div id="debate_takes">
       <div metal:use-macro="context/@@standard_macros/form">
         <div metal:fill-slot="pre-fieldset">
-          <tal:loop tal:repeat="table view/tables">
-            <h1 tal:content="table/title"/>
-            <div tal:replace="structure table/table"/>
-          </tal:loop>
-        </div>
-        <div tal:condition="python:not len(view.tables)">
-          <span i18n:translate="">No users available for assignment</span>
+	  <div tal:replace="structure view/listing" tal:condition="not:view/has_no_takes"/>
+	  <div tal:condition="view/has_no_takes">No takes generated yet</div>
         </div>
         <div metal:fill-slot="actions">
           <div id="actionsView">

@@ -706,6 +706,10 @@ mapper(domain.DebateRecord, schema.debate_record,
             lazy=True,
             uselist=True
         ),
+        "debate_takes": relation(domain.DebateTake,
+            lazy=True,
+            uselist=True
+        ),
     }
 )
 
@@ -725,12 +729,18 @@ mapper(domain.DebateSpeech, schema.debate_speech,
     polymorphic_on=schema.debate_record_item.c.type,
     polymorphic_identity="debate_speech",
     properties={
-        "person": relation(domain.User, lazy=True)
+        "user": relation(domain.User, lazy=True)
     }
 )
 
 mapper(domain.DebateMedia, schema.debate_media)
 
+mapper(domain.DebateTake, schema.debate_take,
+    properties={
+        "user": relation(domain.User, lazy=True),
+        "debate_record": relation(domain.DebateRecord, lazy=True)
+    }
+)
 # !+IChange-vertical-properties special case: 
 # class is NOT workflowed, and in any case has no available_dynamic_features, no descriptor
 import bungeni.alchemist.model

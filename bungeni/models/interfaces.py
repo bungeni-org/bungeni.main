@@ -570,3 +570,6 @@ class IDebateMedia(interface.Interface):
 
 class IDebateMediaContainer(IAlchemistContainer):
     """Interface for debate media container"""
+
+class IDebateTake(interface.Interface):
+    """Marker interface for debate take"""
