@@ -217,7 +217,9 @@ def output_all_roles():
     li_roles = []
     li_roles.append("<roles>")
     for role in roles:
-        li_roles.append('<role name="%s" />' % role)
+        """get only roles that are bungeni specific """
+        if (role.startswith("bungeni.")):
+            li_roles.append('<role name="%s" />' % role[len("bungeni."):])
     li_roles.append("</roles>")
     return ("\n".join(li_roles)).encode("utf-8")    
     
