@@ -19,7 +19,7 @@ from zope import interface, location
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import ore.xapian.interfaces
 from bungeni import alchemist
-from bungeni.alchemist.traversal import one2many #, !+one2manyindirect
+from bungeni.alchemist.traversal import one2many
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import object_mapper
 
@@ -312,12 +312,6 @@ class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
     """
     interface.implements(interfaces.IMemberOfParliament)
-    ''' !+
-    # !+MEMBER_ADDRESSES(mr, oct-2012) is it correct to assume that all 
-    # user addresses are also "member" addresses?
-    addresses = one2manyindirect("addresses", 
-        "bungeni.models.domain.UserAddressContainer", "user_id")
-    '''
 
 class PoliticalGroup(Group):
     """A political group in a parliament.
@@ -326,6 +320,7 @@ class PoliticalGroup(Group):
         interfaces.IPoliticalGroup,
         interfaces.ITranslatable
     )
+
 class PoliticalGroupMember(GroupMembership):
     """Member of a political group, defined by its group membership.
     """
@@ -550,8 +545,9 @@ class Version(Change):
     def __name__(self):
         return "ver-%s" % (self.seq)
     
-    # !+ should only be when type(self.head) is attachmentable
-    # !+ other features?
+    # !+version_feature_attachment should only be when type(self.head) is 
+    # attachmentable, would need a version class per type
+    # !+version_feature_event some for other features with sub-types?
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     
@@ -651,9 +647,10 @@ class DocAudit(Audit):
 class DocVersion(Version):
     """A version of a document.
     """
+    # !+version_feature_attachment
     files = one2many("files",
         "bungeni.models.domain.AttachmentVersionContainer", "head_id")
-    #!+eventable items supporting feature "event":
+    #!+!+version_feature_event
     #events = one2many("events",
     #    "bungeni.models.domain.DocVersionContainer", "head_id")
     

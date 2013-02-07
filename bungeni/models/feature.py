@@ -46,7 +46,7 @@ def configurable_domain(kls, workflow):
 
 def feature_audit(kls, **params):
     """Decorator for domain types to support "audit" feature.
-
+    
     If a domain class is explicitly defined, then it is assumed that all 
     necessary setup is also taken care of. Typically, only the sub-classes
     of an archetype (mapped to a same table) need dynamic creation/setup.

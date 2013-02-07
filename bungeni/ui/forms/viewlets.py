@@ -213,10 +213,6 @@ class CommitteeMembersViewlet(SubformViewlet):
     sub_attr_name = "committeemembers"
 
 
-@register.viewlet(interfaces.IMemberOfParliament, 
-    manager=ISubFormViewletManager,
-    name="keep-zca-happy-addresses",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
 @register.viewlet(interfaces.IBungeniGroup, 
     manager=ISubFormViewletManager,
     name="keep-zca-happy-addresses",

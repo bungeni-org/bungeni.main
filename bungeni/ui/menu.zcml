@@ -273,15 +273,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
-    <!-- !+FeatureAddress membership type -->
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IMemberOfParliament"
-        title="Add MP address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="40"
-    />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IFeatureSignatory"
         title="Add signatory..."

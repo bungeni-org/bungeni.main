@@ -137,7 +137,7 @@ def serialize_cls(cls, depth=1):
     
     acc = []
     ind = INDENT * depth
-    acc.append("")
+    acc.append(ind)
     if _acc:
         if cls.order != 999: # default "not ordered":
             acc.append('%s<descriptor name="%s" order="%s">' % (
@@ -167,12 +167,12 @@ def serialize_module(module, depth=0):
         acc.append('%s<?xml version="1.0"?>' % (ind))
         acc.append('%s<ui roles="%s">' % (ind, serialize_roles(roles)))
         acc.extend(_acc)
-        acc.append("")
+        acc.append(ind)
         acc.append("%s</ui>" % (ind))
     else:
         acc.append('%s<ui roles="%s" />' % (ind, serialize_roles(roles)))
-    acc.append("") # blank line at end of file
-    acc.append("")
+    acc.append(ind) # blank line at end of file
+    acc.append(ind)
     return acc
 
 

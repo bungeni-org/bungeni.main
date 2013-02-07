@@ -16,7 +16,6 @@ __all__ = [
     "CollectionTraverser",          # redefn -> alchemist.traversal.collection
     #!+ALCHEMIST_INTERNAL "One2Many", # redefn -> alchemist.traversal.managed
     #!+ALCHEMIST_INTERNAL "CollectionTraverser", # redefn -> alchemist.traversal.collection
-    #"one2manyindirect",             # redefn -> alchemist.traversal.managed
     "PartialContainer",             # alias -> ore.alchemist.container
 ]
 
@@ -40,13 +39,6 @@ from z3c.traverser.interfaces import ITraverserPlugin
 from sqlalchemy import orm
 
 # alchemist.traversal.managed    
-
-''' !+one2manyindirect
-def one2manyindirect(name, container, fk):
-    constraint = One2ManyIndirect(fk)
-    container = ManagedContainerDescriptor(name, container, constraint)
-    return container
-'''
 
 class ConstraintManager(object):
     """Manages the constraints on a managed container.
@@ -80,23 +72,6 @@ class One2Many(ConstraintManager):
         #column = table.c[ self.fk ]
         #setattr( target, column.name, primary_key )
         setattr(target, self.fk, primary_key)
-
-''' !+one2manyindirect
-class One2ManyIndirect(One2Many):
-    """
-    Similar to one2many but gets a listing of indirectly related
-    objects e.g. addresses for an MP with addresses defined on User
-    Assumes shared foreign key has the same name
-    """
-    def getQueryModifier(self, instance, container):
-        attr_value = getattr(instance, self.fk)
-        return getattr(container.domain_model, self.fk) == attr_value
-        
-    def setConstrainedValues(self, instance, target):
-        #trusted = removeSecurityProxy(instance)
-        attr_value = getattr(instance, self.fk) 
-        setattr(target, self.fk, attr_value)
-'''
 
 def one2many(name, container, fk):
     constraint = One2Many(fk)
@@ -186,3 +161,4 @@ def CollectionTraverser(*names):
     return type("CollectionsTraverser", 
         (CollectionTraverserTemplate,),
         {"collection_attributes": names})
+
