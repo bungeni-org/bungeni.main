@@ -234,14 +234,28 @@ def output_features():
     from bungeni.alchemist.catalyst import MODEL_MODULE
     from bungeni.utils import naming
 
+    # get a list of available types in a list
+    li_available_types = []
+    for type_key, ti in capi.iter_type_info():
+        li_available_types.append(type_key)
+        
     li_features = []
     li_features.append("<featuresByType>")
+    
     for type_key, ti in capi.iter_type_info():
         obj =  resolve("%s.%s" % (MODEL_MODULE.__name__, naming.model_name(type_key)))       
         if len(obj.available_dynamic_features) > 0:
             li_features.append('  <features for="%s">' % type_key)
             for dyn_feature in obj.available_dynamic_features:
-                li_features.append('     <feature name="%s" />' % dyn_feature)
+                workflow = False
+                # check if feature is a type
+                if dyn_feature in li_available_types:
+                    # feature is a type, so it has a workflow
+                    workflow = True
+                li_features.append(
+                    '     <feature name="%(name)s" workflow="%(wf)s" />' % 
+                    {"name": dyn_feature, "wf": workflow}
+                )
             li_features.append("  </features>")
     li_features.append("</featuresByType>")                    
     return "\n".join(li_features).encode("utf-8")    
