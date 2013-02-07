@@ -233,7 +233,7 @@ TYPE_REGISTRY = [
     #   lowercase name of the domain_model (the domain class)
     # - order is relevant (dictates workflow loading order)
     
-    ## feature "support" types, system types, required
+    # feature "support" types, system types, required
     
     # workflowed
     ("user_address", TI("address", interfaces.IUserAddress)),
@@ -252,16 +252,16 @@ TYPE_REGISTRY = [
     ("group", TI("group", interfaces.IBungeniGroup)),
     ("group_membership", TI("group_membership", interfaces.IBungeniGroupMembership)),
     ("group_document_assignment", TI("group_assignment", interfaces.IGroupDocumentAssignment)),
-    
     ("debate_record", TI("debate_record", interfaces.IDebateRecord)),
-    ("debate_media", TI(None, interfaces.IDebateMedia)),
+    
     # non-workflowed
+    ("debate_media", TI(None, interfaces.IDebateMedia)),
     ("user_delegation", TI(None, interfaces.IUserDelegation)),
     ("title_type", TI(None, interfaces.ITitleType)),
     ("member_title", TI(None, interfaces.IMemberTitle)),
+    ("change", TI(None, interfaces.IChange)),
     ("doc", TI(None, interfaces.IDoc)),
     ("doc_version", TI(None, None)), #interfaces.IDocVersion)), #!+IVERSION
-    ("change", TI(None, interfaces.IChange)),
     ("attachment_version", TI(None, None)), #interfaces.IAttachmentVersion)), #!+IVERSION
     ("venue", TI(None, interfaces.IVenue)),
     ("session", TI(None, interfaces.ISession)),
@@ -273,7 +273,8 @@ TYPE_REGISTRY = [
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
     ("sitting_report", TI(None, interfaces.ISittingReport)),
     ("group_membership_role", TI(None, interfaces.IGroupMembershipRole)),
-    ## custom types -- loaded dynamically from bungeni_custom/types.xml
+    
+    # additional custom types are loaded dynamically from bungeni_custom/types.xml
 ]
 
 

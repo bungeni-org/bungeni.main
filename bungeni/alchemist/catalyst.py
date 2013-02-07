@@ -365,14 +365,15 @@ def generate_container_class(ti):
 
 def generate_collection_traversal(ti):
     
+    # !+ merge with utils.get_managed_containers?
     def get_collection_names(domain_model):
         return [ k for k, v in domain_model.__dict__.items()
             if IManagedContainer.providedBy(v) ]
     
     collection_names = get_collection_names(ti.domain_model)
+    
     if not collection_names:
         return
-    
     # Note: the templated CollectionTraverser TYPE returned by this is
     # instantiated per "inherited and catalysed" descriptor e.g. for Motion, 
     # it is instantiated once for DocDescriptor and once for MotionDescriptor.

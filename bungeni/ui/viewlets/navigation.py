@@ -29,7 +29,6 @@ from ploned.ui.menu import make_absolute
 from ploned.ui.menu import pos_action_in_url
 
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.alchemist import utils
 from bungeni.core.interfaces import IWorkspaceContainer, ISection
 from bungeni.core import location
@@ -364,7 +363,6 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             return ()
         context = chain.pop()
         items = []
-        
         if IApplication.providedBy(context):
             items.extend(self.expand(chain))
         elif IAlchemistContent.providedBy(context):
@@ -375,7 +373,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 nodes = self.expand(chain)
             else:
                 kls = context.__class__
-                containers = self._get_managed_containers(kls, context)
+                containers = utils.get_managed_containers(kls, context)
                 nodes = []
                 self.expand_containers(nodes, containers, _url, chain, None)
             
@@ -407,12 +405,12 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     containers = list(parent.items())
                 else:
                     kls = type(proxy.removeSecurityProxy(parent))
-                    containers = self._get_managed_containers(kls, parent)
+                    containers = utils.get_managed_containers(kls, parent)
             else:
                 containers = [(context.__name__, context)]
             self.expand_containers(items, containers, _url, chain, context)
         elif ILocation.providedBy(context):
-            # e.g. bungeni.core.content.Section
+            # e.g. bungeni.core.content.Section, DisplayForm
             _url = url.absoluteURL(context, self.request)
             selected = len(chain) == 0
             if selected and IReadContainer.providedBy(context):
@@ -424,9 +422,12 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     pass
             else:
                 nodes = self.expand(chain)
+            _title = getattr(context, "title", None) or \
+                getattr(context, "page_title", "!+BungeniBrowserView.title")
             items.append({
                     "id": self.get_nav_entry_id(_url),
-                    "label": IDCDescriptiveProperties(context).title,
+                    # !+BungeniBrowserView.title
+                    "label": _title, #IDCDescriptiveProperties(context).title,
                     "url": _url,
                     "current": True,
                     "selected": selected,
@@ -438,13 +439,6 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             raise Exception("!+NavigationTreeViewlet-EXPAND-IReadContainer [%s]" % context)
             items.extend(self.expand(chain))
         return items
-    
-    def _get_managed_containers(self, kls, context):
-        """Get the model class managed container properties.
-        """
-        return [ (key, getattr(context, key))
-            for key, value in kls.__dict__.items()
-            if isinstance(value, ManagedContainerDescriptor) ]
     
     def _sort_containers(self, key_containers):
         """Sort each container by its domain_model's descriptor order.
