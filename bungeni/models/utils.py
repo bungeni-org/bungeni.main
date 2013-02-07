@@ -31,7 +31,7 @@ from bungeni.alchemist import Session, utils
 from bungeni.alchemist.interfaces import (IAlchemistContainer, 
     IAlchemistContent
 )
-import domain, schema, delegation
+import domain, schema, delegation, fields
 from bungeni.core.workflow.states import get_head_object_state_rpm
 from bungeni.capi import capi
 
@@ -327,6 +327,13 @@ def get_permissions_dict(permissions):
             "setting": x[0] and "Allow" or "Deny"})
     return results
 
+BINARY_COLUMN_TYPES = [Binary, fields.FSBlob]
+def is_column_binary(column):
+    """return true if column is binary - assumption (one column)"""
+    if column.type.__class__  in BINARY_COLUMN_TYPES:
+        return True
+    return False
+
 def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
     """ Returns dictionary representation of a domain object.
     """
@@ -397,7 +404,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
             elif isinstance(property, ColumnProperty):
                 columns = property.columns
                 if len(columns) == 1:
-                    if columns[0].type.__class__ == Binary:
+                    if is_column_binary(columns[0]):
                         continue
             if descriptor:
                 columns = property.columns
@@ -472,7 +479,8 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                 finally:
                                     #fallback we cannot look up vocabularies/dc
                                     if display_name is None:
-                                        display_name = str(value)
+                                        log.error(value)
+                                        display_name = unicode(value, errors="escape")
                                 result[property.key] = dict(
                                     name=property.key,
                                     value=value,

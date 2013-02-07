@@ -1218,20 +1218,20 @@ class AgendaPreview(BrowserView):
         super(AgendaPreview, self).__init__(context, request)
 
     def get_template(self):
-        wf = IWorkflow(self.context)
         vocab = vocabulary.report_xhtml_template_factory
         report_type = "sitting_agenda"
-        if self.context.status in wf.get_state_ids(tagged=["publishedminutes"]):
+        #!+TAGS(mb, Feb-2013) Deprecate with tags. Configure as wf/feature.
+        if "minutes" in self.context.status:
             report_type = "sitting_minutes"
         term = vocab.getTermByFileName(report_type)
         return term and term.value or vocab.terms[0].value
 
     def generate_preview(self):
         sitting = removeSecurityProxy(self.context)
-        wf = IWorkflow(sitting)
         sittings = [data.ExpandedSitting(sitting)]
         generator = generators.ReportGeneratorXHTML(self.get_template())
-        if sitting.status in wf.get_state_ids(tagged=["publishedminutes"]):
+        #!+TAGS(mb, Feb-2013) Deprecate with tags. Configure as wf/feature.
+        if "minutes" in sitting.status:
             title = generator.title = _(u"Sitting Votes and Proceedings")
         else:
             title = generator.title = _(u"Sitting Agenda")

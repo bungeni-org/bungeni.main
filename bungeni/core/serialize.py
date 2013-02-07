@@ -241,7 +241,9 @@ def _serialize(parent_elem, data):
     else:
         parent_elem.attrib["name"] = parent_elem.tag
         parent_elem.tag = "field"
-        parent_elem.text = unicode(data)
+        if not isinstance(data, unicode):
+            data = unicode(data)
+        parent_elem.text = data
 
 
 def _serialize_list(parent_elem, data_list):
@@ -256,7 +258,10 @@ def _serialize_dict(parent_elem, data_dict):
         parent_elem.tag = "field"
         parent_elem.attrib["name"] = data_dict.get("name")
         parent_elem.attrib["displayAs"] = data_dict.get("displayAs")
-        parent_elem.text = unicode(data_dict.get("value"))
+        data = data_dict.get("value")
+        if not isinstance(data, unicode):
+            data = unicode(data)
+        parent_elem.text = data
         return
     for k, v in data_dict.iteritems():
         key_elem = Element(k)

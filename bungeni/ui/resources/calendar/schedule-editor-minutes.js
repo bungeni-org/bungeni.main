@@ -176,6 +176,22 @@ YAHOO.bungeni.agendaconfig = function(){
             var minute = indices[1];
             YAHOO.bungeni.agendaconfig.minuteEditor.render(row, minute);
         }
+        var _deleteMinute = function(args){
+            var indices = this.id.split("_")[1].split("-");
+            var row = Number(indices[0]);
+            var minute = Number(indices[1]);
+            var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+            var record = sDt.getRecord(row);
+            var row_data = record.getData();
+            var cache_key = YAHOO.bungeni.Utils.slugify(
+                row_data[Columns.OBJECT_ID]
+            );
+            var cdata = YAHOO.bungeni.agendaconfig.minutesCache.get(cache_key);
+            if(cdata){
+                YAHOO.bungeni.agendaconfig.minutesCache.delete(cache_key, minute);
+            }
+            sDt.updateRow(row, row_data);
+        }
         var _addMinute = function(args){
             sDt = YAHOO.bungeni.scheduling.getScheduleTable();;
             var selected_rows = sDt.getSelectedRows();
@@ -197,7 +213,7 @@ YAHOO.bungeni.agendaconfig = function(){
             var cKey = YAHOO.bungeni.Utils.slugify(obj_id);
             if (cKey){
                 var mcache = YAHOO.bungeni.agendaconfig.minutesCache.get(cKey);
-                if (mcache.length){
+                if (mcache!=undefined){
                     YAHOO.bungeni.processed_minute_records+=1;
                     var item_data = new Array();
                     for (index in mcache){
@@ -224,6 +240,7 @@ YAHOO.bungeni.agendaconfig = function(){
         return {
             renderMinutes: _renderMinutes,
             editMinute: _editMinute,
+            deleteMinute: _deleteMinute,
             addMinute: _addMinute,
             saveMinutes: _saveMinutes
         }
@@ -304,15 +321,25 @@ YAHOO.bungeni.agendaconfig = function(){
                                 idAttr = "rel='rec-" + idx + "'";
                                 edId = "minute-edit_" + record_index + "-" + idx;
                                 var editAttrs = (
-                                    "class='edit-minute-control' " +
+                                    "class='minute-control edit-minute-control' " +
                                     "id='" + edId + "'");
+                                delId = "minute-delete_" + record_index + "-" + idx;
+                                var delAttrs = (
+                                    "class='minute-control delete-minute-control' " +
+                                    "id='" + delId + "'");
+
+                                editControl = BungeniUtils.wrapText(
+                                    "", "span", editAttrs);
+                                deleteControl = BungeniUtils.wrapText(
+                                    "", "span", delAttrs);
                                 nHTML = nHTML + BungeniUtils.wrapText(
-                                (mdata[Columns.BODY] + BungeniUtils.wrapText(
-                                    "&nbsp;",
-                                    "span", editAttrs)),
-                                    "span", mAttrs + " " + idAttr);
+                                    (mdata[Columns.BODY] + editControl + deleteControl),
+                                    "span", (mAttrs + " " + idAttr)
+                                );
                                 Event.addListener(edId, "click",
                                     YAHOO.bungeni.agendaconfig.handlers.editMinute);
+                                Event.addListener(delId, "click",
+                                    YAHOO.bungeni.agendaconfig.handlers.deleteMinute);
                             }
                             // "add new record" row
                             nHTML = renderAddMinute(record_index, nHTML, mAttrs,
@@ -339,7 +366,7 @@ YAHOO.bungeni.agendaconfig = function(){
                         },
                     }
                     var cached_items = YAHOO.bungeni.agendaconfig.minutesCache.get(ds_id);
-                    if (cached_items) {
+                    if (cached_items!=undefined) {
                         render_minutes(cached_items);
                     } else {
                         oDs.sendRequest(null, callback, this);
@@ -410,7 +437,9 @@ YAHOO.bungeni.agendaconfig = function(){
         var _set = function(key, data){
             _cache[key] = data;
         }
-        
+        var _delete = function(key, index){
+            this.get(key).splice(index, 1);
+        }
         var _update = function(key, index, data){
             this.get(key)[index] = data;
         }
@@ -427,6 +456,7 @@ YAHOO.bungeni.agendaconfig = function(){
             get_minutes_count: _get_minutes_count,
             get: _get,
             set: _set,
+            delete: _delete,
             update: _update,
             add: _add,
         }

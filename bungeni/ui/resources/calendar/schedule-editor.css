@@ -76,7 +76,7 @@ span.minutes-header{
     padding-bottom:0.5em;
 }
 p span.minute-record{
-    padding-left:20px;
+    padding-left:40px;
 }
 span.minute-record-error{
     display:block;
@@ -84,7 +84,7 @@ span.minute-record-error{
     background-color:#e4702d;
     color:#ffffff;
 }
-span.edit-minute-control{
+span.minute-control{
     position:absolute;
     top:0;
     left:0;
@@ -94,7 +94,13 @@ span.edit-minute-control{
     color:#545450;
     width:16px;
     height:16px;
+}
+span.edit-minute-control{
     background:url("/@@/portal/images/page_white_edit.png") right center no-repeat;
+}
+span.delete-minute-control{
+    left:18px;
+    background:url("/@@/portal/images/cross.png") right center no-repeat;
 }
 span.dt_title_unit{
     padding:0.2em 0.4em;
