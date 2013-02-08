@@ -16,6 +16,7 @@ __all__ = [
     "CollectionTraverser",          # redefn -> alchemist.traversal.collection
     #!+ALCHEMIST_INTERNAL "One2Many", # redefn -> alchemist.traversal.managed
     #!+ALCHEMIST_INTERNAL "CollectionTraverser", # redefn -> alchemist.traversal.collection
+    #"one2manyindirect",             # redefn -> alchemist.traversal.managed
     "PartialContainer",             # alias -> ore.alchemist.container
 ]
 
@@ -73,10 +74,37 @@ class One2Many(ConstraintManager):
         #setattr( target, column.name, primary_key )
         setattr(target, self.fk, primary_key)
 
+class One2ManyIndirect(One2Many):
+    """
+    Similar to one2many but gets a listing of indirectly related
+    objects e.g. motions for an MP:
+    - via member "user" relation to user 
+    - via user "owner" relation to doc.
+    """
+    def __init__(self, child_key, parent_key):
+        self.child_key = child_key
+        self.parent_key = parent_key
+
+    def getQueryModifier(self, instance, container):
+        attr_value = getattr(instance, self.parent_key)
+        return getattr(container.domain_model, self.child_key) == attr_value
+        
+    def setConstrainedValues(self, instance, target):
+        #trusted = removeSecurityProxy(instance)
+        attr_value = getattr(instance, self.parent_key) 
+        setattr(target, self.child_key, attr_value)
+
+
 def one2many(name, container, fk):
     constraint = One2Many(fk)
     container = ManagedContainerDescriptor(name, container, constraint)
     return container
+
+def one2manyindirect(name, container, child_key, parent_key):
+    constraint = One2ManyIndirect(child_key, parent_key)
+    container = ManagedContainerDescriptor(name, container, constraint)
+    return container
+
 
 
 class ManagedContainerDescriptor(object):
@@ -130,7 +158,8 @@ class _ManagedContainer(PartialContainer):
     def setConstraintManager(self, constraints):
         self.constraints = constraints
         if self.__parent__ is not None:
-            self.setQueryModifier( constraints.getQueryModifier(self.__parent__, self))
+            self.setQueryModifier(
+                constraints.getQueryModifier(self.__parent__, self))
 
 
 # alchemist.traversal.collection

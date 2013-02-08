@@ -112,6 +112,8 @@ grammar {
         attribute match { token },
         # @name defaults to naming.plural(target_type_key) 
         attribute name { SYMBOL_NAME }?,
+        # @indirect_key defaults to foreign key defined in underlying data model
+        attribute indirect_key { SYMBOL_NAME }?,
         attribute note { text }?
     }
     

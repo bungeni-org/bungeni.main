@@ -20,7 +20,7 @@ from bungeni.alchemist.catalyst import (
     INTERFACE_MODULE, 
     MODEL_MODULE
 )
-from bungeni.alchemist.traversal import one2many
+from bungeni.alchemist.traversal import one2many, one2manyindirect
 from bungeni.utils import naming
 
 
@@ -184,7 +184,9 @@ def add_derived_property_to_model(domain_model, name, derived):
 
 # containers
 
-def add_container_property_to_model(domain_model, name, container_qualname, rel_attr):
+def add_container_property_to_model(domain_model, 
+        name, container_qualname, rel_attr, indirect_key=None
+    ):
     """Add an alchemist container attribute to domain_model. 
     These attributes are only catalysed (re-instrumented on domain_model) if 
     defined directly on domain_model i.e. are not inherited, must be defined 
@@ -194,7 +196,12 @@ def add_container_property_to_model(domain_model, name, container_qualname, rel_
         "type %s already has a %r attribute %r" % (
             domain_model, name, domain_model.__dict__[name])
     
-    setattr(domain_model, name, one2many(name, container_qualname, rel_attr))
+    if indirect_key:
+        setattr(domain_model, name, 
+            one2manyindirect(name, container_qualname, rel_attr, indirect_key))
+    else:
+        setattr(domain_model, name,
+            one2many(name, container_qualname, rel_attr))
 
 #
 
@@ -245,7 +252,7 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     
     # containers
     from bungeni.capi import capi
-    for name, target_type_key, rel_attr in descriptor_cls.info_containers:
+    for name, target_type_key, rel_attr, indirect in descriptor_cls.info_containers:
         try:
             tti = capi.get_type_info(target_type_key)
         except KeyError:
@@ -257,7 +264,7 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
         container_qualname = "bungeni.models.domain.%s" % (
             naming.container_class_name(target_type_key))
         add_container_property_to_model(domain_model, 
-            name, container_qualname, rel_attr)
+            name, container_qualname, rel_attr, indirect)
 
 localize_domain_model_from_descriptor_class.DONE = []
 

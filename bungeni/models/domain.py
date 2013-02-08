@@ -174,7 +174,9 @@ class User(Entity):
     def _set_status(self, value):
         self.active_p = value
     status = property(_get_status, _set_status)
-
+    
+    delegations = one2many("delegations",
+        "bungeni.models.domain.UserDelegationContainer", "user_id")
 
 class AdminUser(Entity):
     """An admin user"""

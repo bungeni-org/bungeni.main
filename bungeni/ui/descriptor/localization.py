@@ -198,8 +198,12 @@ def localize_descriptor(descriptor_elem, is_init, scope="system"):
 
 def parse_container(container_elem):
     target_type_key, rel_attr_name = xas(container_elem, "match").split(".", 1)
-    name = xas(container_elem, "name") or naming.plural(target_type_key)
-    return (name, target_type_key, rel_attr_name)
+    return (
+        xas(container_elem, "name") or naming.plural(target_type_key), 
+        target_type_key, 
+        rel_attr_name, 
+        xas(container_elem, "indirect_key")
+    )
 
 def new_descriptor_fields(edescriptor):
     """(Re-)build (in desired order) all fields from newly loaded 

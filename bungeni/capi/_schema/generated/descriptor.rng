@@ -249,6 +249,12 @@
         </attribute>
       </optional>
       <optional>
+        <!-- @indirect_key defaults to foreign key defined in underlying data model -->
+        <attribute name="indirect_key">
+          <ref name="SYMBOL_NAME"/>
+        </attribute>
+      </optional>
+      <optional>
         <attribute name="note"/>
       </optional>
     </element>
