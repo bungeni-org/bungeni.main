@@ -479,8 +479,8 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                 finally:
                                     #fallback we cannot look up vocabularies/dc
                                     if display_name is None:
-                                        log.error(value)
-                                        display_name = unicode(value, errors="escape")
+                                        if not isinstance(value, unicode):
+                                            display_name = unicode(value)
                                 result[property.key] = dict(
                                     name=property.key,
                                     value=value,
