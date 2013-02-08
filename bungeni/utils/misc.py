@@ -11,6 +11,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.utils.misc")
 
+import os
 
 # xml attr values
 
@@ -116,3 +117,31 @@ def describe(funcdesc):
         return func
     return decorate            
 
+
+def put_env(key, value):
+    """Set the the environment variable {key} to {value}
+    i.e. use to set os.environ[key].
+    
+    Wrapper on os.put_env(key, string_value) -- to take care of
+    the value string-casting required by os.put_env while still 
+    allowing the liberty of data-typing values of capi attributes 
+    as needed.
+    """
+    try:
+        os.environ[key] = value
+        # OK, value is a string... done.
+    except TypeError:
+        # putenv() argument 2 must be string, not <...>
+        # i.e. value is NOT a string... try string-casting:
+        try:
+            # some zope code expects sequences to be specified as a 
+            # COMMA or SPACE separated STRING, so we first try the value 
+            # as a sequence, and serialize it to an environment variable 
+            # value as expected by zope
+            os.environ[key] = " ".join(value)
+        except TypeError:
+            # not a sequence, just fallback on repr(value)
+            os.environ[key] = repr(value)
+            # ensure that the original object value defines a __repr__ 
+            # that can correctly re-instantiate the original object
+            assert eval(os.environ[key]) == value
