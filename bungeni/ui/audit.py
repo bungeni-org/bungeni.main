@@ -31,7 +31,7 @@ from bungeni.utils import register, naming
 
 CHANGE_TYPES = ("head", "signatory", "attachment", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
-# ("add", "modify", "workflow", "remove", "version")
+# ("add", "modify", "workflow", "remove", "version", "translate")
 
 
 # Data
@@ -252,6 +252,11 @@ def _df_version_head(change):
 def _df_version_event(change):
     return "%s: %d [%s]" % (
         translate(change.action), change.seq, _link_event(change))
+
+def _df_translate(change):
+    return "%s: %s" % (translate(change.action), translate(change.audit.language))
+
+
 
 # !+LINKED_SUB_ITEMS_IN_AUDIT_DESCRIPTION(mr, may-2012) should the change 
 # instance for the type know how to generate the URL for the action/type?

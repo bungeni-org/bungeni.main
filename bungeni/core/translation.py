@@ -45,6 +45,7 @@ from bungeni.alchemist import Session
 from bungeni.models.interfaces import IVersion, ITranslatable
 from bungeni.models import domain
 from bungeni.ui.utils import common # !+CORE_UI_DEPENDENCY(mr, dec-2011)
+from bungeni.utils import naming
 
 
 class BrowserFormLanguages(BrowserLanguages):
@@ -159,13 +160,13 @@ def get_translation_for(context, lang):
     """
     assert ITranslatable.providedBy(context), "%s %s" % (lang, context)
     trusted = removeSecurityProxy(context)
-    class_name = trusted.__class__.__name__
+    type_key = naming.polymorphic_identity(trusted.__class__)
     mapper = orm.object_mapper(trusted)
     pk = getattr(trusted, mapper.primary_key[0].name)
     session = Session()
     query = session.query(domain.ObjectTranslation).filter(
         sql.and_(
-            domain.ObjectTranslation.object_type == class_name,
+            domain.ObjectTranslation.object_type == type_key,
             domain.ObjectTranslation.object_id == pk,
             domain.ObjectTranslation.lang == lang
         )
@@ -225,7 +226,7 @@ def get_available_translations(context):
     of the object (value)
     """
     trusted = removeSecurityProxy(context)
-    class_name = trusted.__class__.__name__
+    type_key = naming.polymorphic_identity(trusted.__class__)
     try:
         mapper = orm.object_mapper(trusted)
         pk = getattr(trusted, mapper.primary_key[0].name)
@@ -233,7 +234,7 @@ def get_available_translations(context):
         query = session.query(domain.ObjectTranslation).filter(
                 sql.and_(
                     domain.ObjectTranslation.object_id == pk,
-                    domain.ObjectTranslation.object_type == class_name)
+                    domain.ObjectTranslation.object_type == type_key)
             ).distinct().values("lang", "object_id")
         return dict(query)
     except:

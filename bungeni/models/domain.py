@@ -36,7 +36,7 @@ def object_hierarchy_type(object):
     return ""
 
 
-CHANGE_ACTIONS = ("add", "modify", "workflow", "remove", "version")
+CHANGE_ACTIONS = ("add", "modify", "workflow", "remove", "version", "translate")
 
 def assert_valid_change_action(action):
     assert action in CHANGE_ACTIONS, \
@@ -1063,6 +1063,7 @@ class SittingReport(Entity):
             except AttributeError:
                 return getattr(self.sitting, name)
 
+# !+ this should really be called "FieldTranslation", and docstring should be pertinent!!
 class ObjectTranslation(object):
     """Get the translations for an Object.
     """

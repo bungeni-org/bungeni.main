@@ -1087,10 +1087,7 @@ holiday = rdb.Table("holiday", metadata,
 
 translation = rdb.Table("translation", metadata,
     rdb.Column("object_id", rdb.Integer, primary_key=True, nullable=False),
-    rdb.Column("object_type", rdb.String(50),
-        primary_key=True,
-        nullable=False
-    ),
+    rdb.Column("object_type", rdb.String(50), primary_key=True, nullable=False),
     rdb.Column("lang", rdb.String(5), primary_key=True, nullable=False),
     rdb.Column("field_name", rdb.String(50), primary_key=True, nullable=False),
     rdb.Column("field_text", rdb.UnicodeText),

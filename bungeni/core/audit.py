@@ -46,6 +46,8 @@ from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import IFeatureAudit
 from bungeni.models import schema
 from bungeni.models import domain
+from bungeni.core.interfaces import TranslationCreatedEvent
+from bungeni.core.translation import translate_obj
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.ui.utils import common
 from bungeni.utils import register
@@ -63,6 +65,12 @@ def _trace_audit_handler(ah):
 
 
 # change handlers
+
+@register.handler(adapts=(IFeatureAudit, TranslationCreatedEvent))
+@_trace_audit_handler
+def _object_translate(ob, event):
+    auditor = get_auditor(ob)
+    auditor.object_translate(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IFeatureAudit, IObjectCreatedEvent))
 @_trace_audit_handler
@@ -201,6 +209,19 @@ class _AuditorFactory(object):
                 note=note,
                 procedure=procedure)
     
+    def object_translate(self, ob, event):
+        # !+TRANSLATION_VERSION(mr, feb-2013) the audited values for the (head) 
+        # object are those for the newly submitted translation BUT a "translation"
+        # should really be bound to a specific *version* of the object, not to head.
+        translated_ob = translate_obj(ob, event.language)
+        translated_ob.language = event.language
+        # !+TRANSLATE_DESCRIPTION(mr, feb-2013) this should really be passed
+        # on such that is is picked up by the change description formattter,
+        # and not persisted on the xp change.note (intended primarily for 
+        # manual notes coming from the user).
+        note = "fields: %s" % (", ".join(event.translated_attribute_names))
+        return self._object_changed("translate", translated_ob, note=note)
+    
     #
     
     def _object_changed(self, action, ob, 
@@ -264,6 +285,10 @@ class _AuditorFactory(object):
         ch.user_id = user_id
         ch.action = action
         ch.seq = self._get_seq(ch)
+        # !+translate_seq(mr, feb-2013) this should be divided by language?
+        # !+translate_action(mr, feb-2013) shoudl there be an action per 
+        # language e.g. translate-fr for translations to french (resolves the 
+        # noted translate_seq issue)
         ch.procedure = procedure
         ch.date_audit = datetime.now()
         if date_active:

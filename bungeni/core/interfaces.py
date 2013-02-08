@@ -1,3 +1,4 @@
+
 from zope import interface, schema
 from zope.component.interfaces import IObjectEvent, ObjectEvent
 from zope.location.interfaces import ILocation
@@ -142,6 +143,21 @@ class VersionCreatedEvent(ObjectEvent):
     - The head doc for the version created is available as versionCreated.head.
     """
     interface.implements(IVersionCreatedEvent)
+
+
+class ITranslatonCreatedEvent(IObjectEvent):
+    """A translation of an instance was added.
+    """
+    language = interface.interface.Attribute(
+        "Target language of this translation.")
+    translated_attribute_names = interface.interface.Attribute(
+        "The list of attribute names that have changed by this translation.")
+class TranslationCreatedEvent(ObjectEvent):
+    interface.implements(ITranslatonCreatedEvent)
+    def __init__(self, obj, language, translated_attribute_names):
+        self.object = obj
+        self.language = language
+        self.translated_attribute_names = translated_attribute_names
 
 
 class ISchedulingContext(ILocation):

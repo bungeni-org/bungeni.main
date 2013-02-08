@@ -34,6 +34,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import ui
 from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
+from bungeni.core.interfaces import TranslationCreatedEvent
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation
@@ -51,7 +52,7 @@ from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
-from bungeni.utils import register
+from bungeni.utils import register, naming
 from bungeni.capi import capi
 
 TRUE_VALS = "true", "1"
@@ -462,7 +463,11 @@ class EditForm(BaseForm, ui.EditForm):
         # offer option to submit the response while in response edit mode. 
         if IBungeniContent.providedBy(self.context): # and self.mode=="edit"
             interface.alsoProvides(self.request, IFormEditLayer)
-
+    
+    # !+EDIT_FORM_TRANSLATION(mr, feb-2013) what is all this conditional 
+    # translation-related logic here? It seems to be debris from some earlier 
+    # refactoring... why is it not marked/commented/disabled/cleaned out?
+    
     @property
     def is_translation(self):
         return is_translation(self.context)
@@ -485,7 +490,7 @@ class EditForm(BaseForm, ui.EditForm):
                      default=u"Editing $language translation of '$title'",
                      mapping={"title": translate(props.title, context=self.request),
                               "language": language})
-
+        
         elif IVersion.providedBy(self.context):
             return _(u"edit_version_legend",
                      default=u'Editing "$title" (version $version)',
@@ -493,7 +498,7 @@ class EditForm(BaseForm, ui.EditForm):
                               "version": self.context.seq})
         return _(u"edit_item_legend", default=u'Editing "$title"',
                  mapping={"title": translate(props.title, context=self.request)})
-
+    
     @property
     def form_description(self):
         if self.is_translation:
@@ -552,15 +557,15 @@ class EditForm(BaseForm, ui.EditForm):
         notify(ObjectModifiedEvent(self.context))
         cascade_modifications(self.context)
         invalidate_caches_for(self.context.__class__.__name__, "edit")
-
+        
     @formlib.form.action(_(u"Save"), name="save",
-                         condition=formlib.form.haveInputWidgets)
+        condition=formlib.form.haveInputWidgets)
     def handle_edit_save(self, action, data):
         """Saves the document and goes back to edit page"""
         self._do_save(data)
 
     @formlib.form.action(_(u"Save and view"), name="save_and_view",
-                         condition=formlib.form.haveInputWidgets)
+        condition=formlib.form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
         """Saves the  document and redirects to its view page"""
         self._do_save(data)
@@ -570,7 +575,7 @@ class EditForm(BaseForm, ui.EditForm):
         self.request.response.redirect(self._next_url)
 
     @formlib.form.action(_(u"Cancel"), name="cancel",
-                         validator=ui.null_validator)
+        validator=ui.null_validator)
     def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         if not self._next_url:
@@ -581,7 +586,7 @@ class TranslateForm(AddForm):
     """Custom translate-form for Bungeni content.
     """
     is_translation = False
-
+    
     @property
     def side_by_side(self):
         return True
@@ -599,8 +604,9 @@ class TranslateForm(AddForm):
         return names
 
     def set_untranslatable_fields_for_display(self):
+        translatable_field_names = self.translatable_field_names()
         for field in self.form_fields:
-            if field.__name__ not in self.translatable_field_names():
+            if field.__name__ not in translatable_field_names:
                 field.for_display = True
                 field.custom_widget = self.model_descriptor.get(
                     field.__name__).view_widget
@@ -713,44 +719,61 @@ class TranslateForm(AddForm):
             widget.render_original = display_widget
 
     @formlib.form.action(_(u"Save translation"), name="save_translation",
-                         condition=formlib.form.haveInputWidgets)
+        condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
-        """After succesful creation of translation, redirect to the
-        view."""
+        """After succesful creation of translation, redirect to the view.
+        """
         #url = url.absoluteURL(self.context, self.request)
         #language = get_language_by_name(data["language"])["name"]
         session = Session()
         trusted = removeSecurityProxy(self.context)
         mapper = rdb.orm.object_mapper(trusted)
         pk = getattr(trusted, mapper.primary_key[0].name)
-
-        current_translation = get_translation_for(self.context, data["language"])
-        if current_translation:
-            for translation in current_translation:
-                session.delete(translation)
-
-        for form_field in data.keys():
-            if form_field == "language":
+        
+        current_translations = get_translation_for(self.context, data["language"])
+        def get_changed_current_translation(field_name, new_field_text):
+            for ct in current_translations:
+                if ct.field_name == field_name:
+                    if ct.field_text != new_field_text:
+                        return ct
+        
+        translated_attribute_names = []
+        for field_name in data.keys():
+            
+            if field_name == "language":
                 continue
+            
+            changed_current_translation = \
+                get_changed_current_translation(field_name, data[field_name])
+            if changed_current_translation is None:
+                continue
+            
+            session.delete(changed_current_translation)
+            translated_attribute_names.append(field_name)
             translation = domain.ObjectTranslation()
             translation.object_id = pk
-            translation.object_type = trusted.__class__.__name__
-            translation.field_name = form_field
+            translation.object_type = naming.polymorphic_identity(trusted.__class__)
+            translation.field_name = field_name
             translation.lang = data["language"]
-            translation.field_text = data[form_field]
+            translation.field_text = data[field_name]
             session.add(translation)
-        session.flush()
+        
+        if translated_attribute_names:
+            session.flush()
+            notify(TranslationCreatedEvent(self.context, 
+                    data["language"], sorted(translated_attribute_names)))
         
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no translate event
         # invalidate caches for this domain object type
-        invalidate_caches_for(trusted.__class__.__name__, "translate")
+        #invalidate_caches_for(trusted.__class__.__name__, "translate")
         
         #if not self._next_url:
         #    self._next_url = ( \
         #        "%s/versions/%s" % (url, stringKey(version)) + \
         #        "?portal_status_message=Translation added")
-
+        
         self._finished_add = True
+
 
 class ReorderForm(PageForm):
     """Item reordering form.

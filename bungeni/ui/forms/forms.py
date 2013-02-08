@@ -302,3 +302,4 @@ class SittingAddForm(AddForm):
         if ob.group_id is None:
             ob.group_id = removeSecurityProxy(
                 ISchedulingContext(self.context.__parent__)).group_id
+

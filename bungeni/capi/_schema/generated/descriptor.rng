@@ -249,7 +249,11 @@
         </attribute>
       </optional>
       <optional>
-        <!-- @indirect_key defaults to foreign key defined in underlying data model -->
+        <!--
+          value of @indirect_key must be the name of a field defined by this type
+          when @indirect_key is not set, the foreign key defined in underlying 
+          data model determines the relation.
+        -->
         <attribute name="indirect_key">
           <ref name="SYMBOL_NAME"/>
         </attribute>
