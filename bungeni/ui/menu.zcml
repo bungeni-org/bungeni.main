@@ -755,7 +755,6 @@
      action="./add"
      permission="bungeni.item_schedule_vote.Add"
      />
-
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IBungeniGroup"
         action="schedule"
@@ -764,9 +763,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.sitting.View"
      />
-    (["bungeni-schedule-minutes"], "bungeni.item_schedule_discussion.Edit"),
-    (["bungeni-schedule-editor"], "bungeni.item_schedule.Edit"),
-    (["bungeni-schedule-preview"], "bungeni.sitting.View"),
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.ISession"
+        action="schedule"
+        title="scheduling"
+        order="41"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.session.View"
+     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ISitting"
         action="schedule"

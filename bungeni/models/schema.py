@@ -577,6 +577,10 @@ sitting = rdb.Table("sitting", metadata,
         rdb.ForeignKey("group.group_id"),
         nullable=False
     ),
+    rdb.Column("session_id", rdb.Integer,
+        rdb.ForeignKey("session.session_id"),
+        nullable=True
+    ),
     rdb.Column("short_name", rdb.Unicode(512), nullable=True),
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),

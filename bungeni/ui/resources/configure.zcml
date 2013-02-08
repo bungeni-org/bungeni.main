@@ -70,8 +70,8 @@
         dhtmlxscheduler-recurring dhtmlxscheduler-multisource 
         dhtmlxscheduler-multi-day-visible 
         dhtmlxscheduler-year-view dhtmlxscheduler-week-agenda-view 
-        dhtmlxscheduler-expand bungeni-calendar-globals 
-        dhtmlxscheduler-timeline dhtmlxscheduler-tooltip 
+        dhtmlxscheduler-expand bungeni-calendar-globals
+        dhtmlxscheduler-limit dhtmlxscheduler-timeline dhtmlxscheduler-tooltip 
         dhtmlxscheduler-minical dhtmlxscheduler-collision">
     <directory source="calendar"
         include="calendar-extensions.js

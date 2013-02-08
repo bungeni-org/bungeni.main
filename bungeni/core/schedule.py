@@ -25,7 +25,7 @@ from zope.app.publication.traversers import SimpleComponentTraverser
 from sqlalchemy import sql
 
 from bungeni.models.interfaces import (IBungeniApplication, IParliament, 
-    IBungeniGroup, ISittingContainer
+    IBungeniGroup, ISittingContainer, ISession
 )
 from bungeni.models import domain
 from bungeni.core.interfaces import (ISchedulingContext, IWorkspaceScheduling, 
@@ -80,6 +80,8 @@ class PrincipalGroupSchedulingContext(object):
     interface.implements(ISchedulingContext)
 
     group_id = None
+    start_date = None #limit dates in scheduler
+    end_date = None #limit dates in scheduler
     
     def __init__(self, context):
         self.__parent__ = context
@@ -101,9 +103,13 @@ class PrincipalGroupSchedulingContext(object):
             raise RuntimeError("Group not found (%d)." % self.group_id)
         return group
     
+    @property
+    def sittings_container(self):
+        return self.get_group().sittings
+    
     def get_sittings(self, start_date=None, end_date=None):
         try: 
-            sittings = self.get_group().sittings
+            sittings = self.sittings_container
         except (AttributeError,):
             # e.g. ministry has no sittings attribute
             return {} # !+ should be a bungeni.models.domain.ManagedContainer
@@ -125,6 +131,7 @@ class PrincipalGroupSchedulingContext(object):
 
 class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IBungeniApplication)
+
     @property
     def group_id(self):
         """Return current parliament's group id."""
@@ -140,6 +147,7 @@ class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
 
     def get_group(self):
         return self.__parent__
+
     
 class GroupSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IBungeniGroup)
@@ -153,6 +161,32 @@ class GroupSchedulingContext(PrincipalGroupSchedulingContext):
         assert name is None
         return self.__parent__
 
+class ParliamentSchedulingContext(GroupSchedulingContext):
+    component.adapts(IParliament)
+
+
+class SessionSchedulingContext(GroupSchedulingContext):
+    component.adapts(ISession)
+    
+    @property
+    def start_date(self):
+        return self.__parent__.start_date
+
+    @property
+    def end_date(self):
+        return self.__parent__.end_date
+    
+    @property
+    def sittings_container(self):
+        return self.__parent__.sittings
+
+    def get_group(self, name=None):
+        assert name is None
+        return removeSecurityProxy(self.__parent__).group
+
+    @property
+    def group_id(self):
+        return self.__parent__.parliament_id
 
 class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ISittingContainer)

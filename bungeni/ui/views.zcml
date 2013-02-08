@@ -262,6 +262,12 @@
     />
 
   <browser:page
+     for="bungeni.models.interfaces.ISession"
+     permission="bungeni.session.View"
+     name="schedule"
+     class=".calendar.browser.CalendarView"
+    />
+  <browser:page
      for="bungeni.models.interfaces.IParliament"
      permission="bungeni.parliament.View"
      name="schedule"
@@ -289,7 +295,7 @@
         name="index"
         for="bungeni.core.interfaces.IWorkspaceScheduling"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
-        class=".calendar.browser.CalendarView"
+        class=".calendar.browser.SessionsRedirect"
         permission="bungeni.ui.workspace.View"
     />
     <browser:page name="schedule"

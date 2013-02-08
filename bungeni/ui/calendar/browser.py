@@ -59,6 +59,7 @@ from bungeni.ui.menu import get_actions
 from bungeni.ui.widgets import LanguageLookupWidget
 from bungeni.ui.container import ContainerJSONListingRaw
 from bungeni.ui.forms.common import AddForm, DeleteForm, EditForm
+from bungeni.ui.forms.forms import SittingAddForm
 from bungeni.ui.reporting import generators
 
 from bungeni.models import domain
@@ -277,6 +278,12 @@ def create_sittings_map(sittings, request):
     return mapping
 
 
+class SessionsRedirect(BrowserView):
+    redirect_to = "./sessions/"
+    def __call__(self):
+        return self.request.response.redirect(self.redirect_to)
+
+
 @register.view(model_interfaces.ISittingContainer, 
     layer=IBusinessSectionLayer, 
     name="index",
@@ -359,7 +366,11 @@ class CalendarView(BungeniBrowserView):
 
     @property
     def calendar_js_globals(self):
+        limit_start = ISchedulingContext(self.context).start_date
+        limit_end = ISchedulingContext(self.context).end_date
         cal_globals = dict(
+            limit_start=limit_start.isoformat() if limit_start else None,
+            limit_end=limit_end.isoformat() if limit_end else None,
             ical_url=self.ical_url,
             required_fields=[field.field.getName() 
                 for field in self.partial_event_form.form_fields
@@ -629,6 +640,14 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             elif request.form["!nativeeditor_status"] == "deleted":
                 request.form["actions.delete"] = "delete"
         super(DhtmlxCalendarSittingsEdit, self).__init__(context, request)
+
+
+    @property
+    def sittings_container(self):
+        traverser = component.getMultiAdapter((self.context, self.request), 
+            IPublishTraverse)
+        return traverser.publishTraverse(self.request, "sittings")
+
                   
     form_fields = form.Fields(interfaces.IDhtmlxCalendarSittingsEditForm)
     def setUpWidgets(self, ignore_request=False):
@@ -697,7 +716,6 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         session = Session()
         data["rec_end_date"] = data["end_date"]
         self.template_data = []
-        trusted = removeSecurityProxy(ISchedulingContext(self.context))        
         initial_sitting = None
         length = data["event_length"]
         venue_id = unicode(data["venue"]) if data['venue'] else None
@@ -707,7 +725,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         data["headless"] = "true"
         self.request.form["venue_id"] = data["venue_id"] = venue_id
         self.request.form["headless"] = "true"
-        add_form = AddForm(trusted.get_group().sittings, self.request)
+        add_form = SittingAddForm(self.sittings_container, self.request)
         add_form.update()
         if not add_form.errors:
             initial_sitting = removeSecurityProxy(add_form.created_object)
@@ -738,7 +756,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 
                 request_copy = copy(self.request)
                 request_copy.form = sitting_data
-                add_form = AddForm(trusted.get_group().sittings, request_copy)
+                add_form = SittingAddForm(self.sittings_container, request_copy)
                 add_form.update()
                 if not add_form.errors:
                     # use finishConstruction API here
@@ -792,10 +810,6 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         data["headless"] = 'true'
         self.request.form["venue_id"] = data["venue_id"] = venue_id
         self.request.form["headless"] = "true"
-        if ISchedulingContext.providedBy(self.context):
-            container = removeSecurityProxy(self.context.__parent__).sittings
-        else:
-            container = self.context.publishTraverse(self.request, "sittings")
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
             # updating recurring events - we assume existing events fall
             # at the beginning of the sequence and offer in place update.
@@ -808,7 +822,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 domain.Sitting.sitting_id==parent_sitting_id
             )
             siblings = [ sitting for sitting in
-                container.batch(order_by=(domain.Sitting.sitting_id),
+                self.sittings_container.batch(order_by=(domain.Sitting.sitting_id),
                     limit=None, filter=siblings_filter
                 )
             ] 
@@ -822,7 +836,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 request_copy = copy(self.request)
                 request_copy.form = sitting_data
                 if is_new:
-                    add_form = AddForm(container, request_copy)
+                    add_form = SittingAddForm(self.sittings_container, request_copy)
                     add_form.update()
                     if add_form.errors:
                         log.error("Could not add sitting in sequence: %s",
@@ -871,9 +885,9 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         else:
             sitting_id = get_real_id(data["ids"])
             parent_id = get_real_id(data["event_pid"])
-            sitting = container.get(sitting_id)
+            sitting = self.sittings_container.get(sitting_id)
             if sitting is None:
-                sitting = container.get(int(parent_id))
+                sitting = self.sittings_container.get(int(parent_id))
             edit_form = EditForm(sitting, self.request)
             edit_form.update()
             if edit_form.errors:

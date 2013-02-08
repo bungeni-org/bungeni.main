@@ -867,6 +867,13 @@ class Session(Entity):
         interfaces.IScheduleContent
     )
 
+    sittings = one2many("sittings",
+        "bungeni.models.domain.SittingContainer", "session_id")
+    
+    @property
+    def group_id(self):
+        return self.parliament_id
+
 ''' !+SUBSCRIPTIONS(mr, jun-2012) unused
 class ObjectSubscriptions(object):
     """

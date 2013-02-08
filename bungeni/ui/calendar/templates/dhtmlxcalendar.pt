@@ -94,7 +94,8 @@
                 scheduler.templates.event_bar_text = render_event_bar_text;
                 scheduler.templates.event_class = event_type_class;
                 
-                scheduler.init('scheduler_here', null, "week");
+                scheduler.init('scheduler_here', 
+                    new Date(cal_globals.limit_start), "week");
                 scheduler.setLoadMode("month");
                 scheduler.load(location.href+"/dhtmlxcalendar?uid="+scheduler.uid());
                 
@@ -150,6 +151,14 @@
                 scheduler.config.details_on_dblclick = true;
                 scheduler.config.icons_select=["icon_details","icon_delete"]
                 scheduler.config.readonly = false;
+                scheduler.config.limit_start = (
+                    (cal_globals.limit_start && new Date(cal_globals.limit_start)) ||
+                    null
+                );
+                scheduler.config.limit_end = (
+                    (cal_globals.limit_end && new Date(cal_globals.limit_end)) ||
+                    null
+                );
                 scheduler.attachEvent("onEventSave", event_save_handler);
                 scheduler.attachEvent("onEventIdChange", re_render_event);
                 //scheduler.attachEvent("onEventIdChange", refresh_events);

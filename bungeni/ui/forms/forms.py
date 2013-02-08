@@ -24,8 +24,9 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models import schema as model_schema
 from bungeni.models import utils as model_utils
-from bungeni.models.interfaces import ISessionContainer
+from bungeni.models.interfaces import ISessionContainer, ISittingContainer
 from bungeni.core.i18n import _
+from bungeni.core.interfaces import ISchedulingContext
 #from bungeni.ui.forms import validations
 from bungeni.ui.forms.common import ReorderForm
 from bungeni.ui.forms.common import PageForm
@@ -289,3 +290,15 @@ class SessionAddForm(AddForm):
         if ob.parliament_id is None:
             ob.parliament_id = model_utils.get_current_parliament(
                 ).parliament_id
+
+@register.view(ISittingContainer, layer=IBungeniSkin, name="add",
+    protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})
+class SittingAddForm(AddForm):
+    def finishConstruction(self, ob):
+        """We add the group ID if adding a sitting in contexts
+        not bound to groups in traversal hierarchy
+        """
+        super(SittingAddForm, self).finishConstruction(ob)
+        if ob.group_id is None:
+            ob.group_id = removeSecurityProxy(
+                ISchedulingContext(self.context.__parent__)).group_id
