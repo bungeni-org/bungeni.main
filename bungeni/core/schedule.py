@@ -25,7 +25,7 @@ from zope.app.publication.traversers import SimpleComponentTraverser
 from sqlalchemy import sql
 
 from bungeni.models.interfaces import (IBungeniApplication, IParliament, 
-    ICommittee, ISittingContainer
+    IBungeniGroup, ISittingContainer
 )
 from bungeni.models import domain
 from bungeni.core.interfaces import (ISchedulingContext, IWorkspaceScheduling, 
@@ -141,8 +141,8 @@ class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
     def get_group(self):
         return self.__parent__
     
-class CommitteeSchedulingContext(PrincipalGroupSchedulingContext):
-    component.adapts(ICommittee)
+class GroupSchedulingContext(PrincipalGroupSchedulingContext):
+    component.adapts(IBungeniGroup)
 
     @property
     def group_id(self):
@@ -152,7 +152,8 @@ class CommitteeSchedulingContext(PrincipalGroupSchedulingContext):
     def get_group(self, name=None):
         assert name is None
         return self.__parent__
-    
+
+
 class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ISittingContainer)
 

@@ -655,7 +655,7 @@
     
     <!-- committee agenda items -->
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.core.schedule.CommitteeSchedulingContext"
+        for="bungeni.core.schedule.GroupSchedulingContext"
         title="Add agenda item..."
         action="./../agendaitems/add"
         permission="bungeni.agenda_item.Add"

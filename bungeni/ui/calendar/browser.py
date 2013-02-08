@@ -416,9 +416,6 @@ class CalendarView(BungeniBrowserView):
             self.edit = True
         return template()
 
-class CommitteeCalendarView(CalendarView):
-    """Calendar-view for a committee."""
-
 class DailyCalendarView(CalendarView):
     """Daily calendar view."""
     

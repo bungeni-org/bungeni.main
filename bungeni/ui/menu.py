@@ -391,7 +391,7 @@ class CalendarMenu(BrowserMenu):
                        (committee.status == "active")
                     ):
                         contexts.append(
-                            schedule.CommitteeSchedulingContext(committee)
+                            schedule.GroupSchedulingContext(committee)
                         )
         else:
             for committee in committees:
@@ -401,7 +401,7 @@ class CalendarMenu(BrowserMenu):
                     or committee.start_date <= today) and
                    (committee.status == "active")
                 ):
-                    contexts.append(schedule.CommitteeSchedulingContext(
+                    contexts.append(schedule.GroupSchedulingContext(
                             committee))
         for context in contexts:
             context.__name__ = u"schedule"

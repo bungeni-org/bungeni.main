@@ -271,7 +271,13 @@
      for="bungeni.models.interfaces.ICommittee"
      permission="bungeni.committee.View"
      name="schedule"
-     class=".calendar.browser.CommitteeCalendarView"
+     class=".calendar.browser.CalendarView"
+    />
+  <browser:page
+     for="bungeni.models.interfaces.IBungeniGroup"
+     permission="bungeni.group.View"
+     name="schedule"
+     class=".calendar.browser.CalendarView"
     />
     <browser:page
      for="bungeni.core.interfaces.ISchedulingContext"
