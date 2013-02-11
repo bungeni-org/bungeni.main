@@ -747,14 +747,15 @@ class TranslateForm(AddForm):
             if is_changed(self.context, field_name, data[field_name]):
                 translated_attribute_names.append(field_name)
                 if field_name in curr_trans_by_name:
-                    session.delete(curr_trans_by_name[field_name])
-                translation = domain.ObjectTranslation()
-                translation.object_id = pk
-                translation.object_type = naming.polymorphic_identity(trusted.__class__)
-                translation.field_name = field_name
-                translation.lang = data["language"]
+                    translation = curr_trans_by_name[field_name]
+                else:
+                    translation = domain.ObjectTranslation()
+                    translation.object_id = pk
+                    translation.object_type = naming.polymorphic_identity(trusted.__class__)
+                    translation.field_name = field_name
+                    translation.lang = data["language"]
+                    session.add(translation)
                 translation.field_text = data[field_name]
-                session.add(translation)
         
         if translated_attribute_names:
             session.flush()

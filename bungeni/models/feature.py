@@ -42,10 +42,10 @@ def configurable_domain(kls, workflow):
         if feature.enabled:
             # !+ break decorators up also by archetype?
             feature_decorator = globals()["feature_%s" % (feature.name)]
-            feature_decorator(kls, **feature.params)
+            feature_decorator(kls, feature)
 
 
-def feature_audit(kls, **params):
+def feature_audit(kls, feature):
     """Decorator for domain types to support "audit" feature.
     
     If a domain class is explicitly defined, then it is assumed that all 
@@ -60,8 +60,7 @@ def feature_audit(kls, **params):
         """Identify what should be the BASE audit class for a 
         {kls}Audit class to inherit from, and return it.
         """
-        # !+ may have a deeper inheritance
-        # !+ other archetypes
+        # !+ may have a deeper inheritance, other archetypes... get via archetype
         if kls is not domain.Doc and issubclass(kls, domain.Doc):
             return domain.DocAudit
         return domain.Audit
@@ -90,7 +89,7 @@ def feature_audit(kls, **params):
     audit.set_auditor(kls)
 
 
-def feature_version(kls, **params):
+def feature_version(kls, feature):
     """Decorator for domain types to support "version" feature.
     """
     # domain.Version itself may NOT support versions
@@ -100,7 +99,7 @@ def feature_version(kls, **params):
     interface.classImplements(kls, interfaces.IFeatureVersion)
 
 
-def feature_attachment(kls, **params):
+def feature_attachment(kls, feature):
     """Decorator for domain types to support "attachment" feature.
     !+ currently assumes that kls is versionable.
     """
@@ -112,7 +111,7 @@ def feature_attachment(kls, **params):
         "bungeni.models.domain.AttachmentContainer", "head_id")
 
 
-def feature_event(kls, **params):
+def feature_event(kls, feature):
     """Decorator for domain types to support "event" feature.
     For Doc types (other than Event itself).
     """
@@ -123,7 +122,7 @@ def feature_event(kls, **params):
         "bungeni.models.domain.EventContainer", "head_id")
 
 
-def feature_signatory(kls, **params):
+def feature_signatory(kls, feature):
     """Decorator for domain types to support "signatory" feature.
     For Doc types.
     """
@@ -131,20 +130,20 @@ def feature_signatory(kls, **params):
     add_container_property_to_model(kls, "signatories", 
         "bungeni.models.domain.SignatoryContainer", "head_id")
     import bungeni.models.signatories
-    bungeni.models.signatories.createManagerFactory(kls, **params)
+    bungeni.models.signatories.createManagerFactory(kls, **feature.params)
 
 class SchedulingManager(object):
     """Store scheduling configuration properties for a known type
     """
     interface.implements(interfaces.ISchedulingManager)
-
+    
     schedulable_states = ()
     scheduled_states = ()
-
+    
     def __init__(self, context):
         self.context = context
 
-def createSchedulingManager(domain_class, **params):
+def create_scheduling_manager(domain_class, **params):
     """Instantiate a scheduling manager instance for `domain_class`"""
     manager_name = "%sSchedulingManager" % domain_class.__name__
     if manager_name in globals().keys():
@@ -174,11 +173,11 @@ def createSchedulingManager(domain_class, **params):
     gsm.registerAdapter(manager, (domain_iface,), interfaces.ISchedulingManager)
     return manager_name
 
-def feature_schedule(kls, **params):
+def feature_schedule(kls, feature):
     """Decorator for domain types to support "schedule" feature.
     For Doc types, means support for being scheduled in a group sitting.
     """
-    manager = createSchedulingManager(kls, **params)
+    manager = create_scheduling_manager(kls, **feature.params)
     if manager is not None:
         interface.classImplements(kls, interfaces.IFeatureSchedule)
     else:
@@ -187,7 +186,7 @@ def feature_schedule(kls, **params):
             kls)
 
 
-def feature_address(kls, **params):
+def feature_address(kls, feature):
     """Decorator for domain types to support "address" feature.
     For User and Group types, means support for possibility to have addresses.
     """
@@ -200,38 +199,38 @@ def feature_address(kls, **params):
             "bungeni.models.domain.UserAddressContainer", "user_id")
 
 
-def feature_workspace(kls):
+def feature_workspace(kls, feature):
     """Decorator for domain types that support "workspace" feature.
     """
     interface.classImplements(kls, interfaces.IFeatureWorkspace)
 
 
-def feature_notification(kls):
+def feature_notification(kls, feature):
     """Decorator for domain types to support "notification" feature.
     """
     interface.classImplements(kls, interfaces.IFeatureNotification)
 
 
-def feature_email(kls):
+def feature_email(kls, feature):
     """Decorator for domain types to support "email" notifications feature.
     """
     interface.classImplements(kls, interfaces.IFeatureEmail)
 
 
-def feature_download(kls):
+def feature_download(kls, feature):
     """Decorator for domain types that support downloading as 
     pdf/odt/rss/akomantoso.
     """
     interface.classImplements(kls, interfaces.IFeatureDownload)
 
 
-def feature_user_assignment(kls, **params):
+def feature_user_assignment(kls, feature):
     """Decorator for domain types that support "user_assignment" feature.
     """
     interface.classImplements(kls, interfaces.IFeatureUserAssignment)
 
 
-def feature_group_assignment(kls, **params):
+def feature_group_assignment(kls, feature):
     """Decorator for domain types that support "group_assignment" feature.
     """
     interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
