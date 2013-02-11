@@ -166,7 +166,7 @@ def make_audit_table(table, metadata):
 
 user = rdb.Table("user", metadata,
     rdb.Column("user_id", rdb.Integer, PrincipalSequence, primary_key=True),
-    # login is our principal id
+    # !+principal(mr, feb-2013) "login" should really be "principal_name" here
     rdb.Column("login", rdb.Unicode(80), unique=True, nullable=False),
     rdb.Column("salutation", rdb.Unicode(128)), # !+vocabulary?
     rdb.Column("title", rdb.Unicode(128)), # !+vocabulary?
@@ -334,6 +334,7 @@ group = rdb.Table("group", metadata,
     rdb.Column("end_date", rdb.Date),
     rdb.Column("type", rdb.String(30), nullable=False),
     rdb.Column("sub_type", rdb.Unicode(128), nullable=True),
+    # !+principal(mr, feb-2013) "group_principal_id" should really be "principal_name"
     # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema
     rdb.Column("group_principal_id", rdb.Unicode(50)),
     rdb.Column("parent_group_id", rdb.Integer,
@@ -830,8 +831,6 @@ attachment = rdb.Table("attachment", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 attachment_index = rdb.Index("attachment_head_id_idx", attachment.c["head_id"])
-
-# attachment_audit
 attachment_audit = make_audit_table(attachment, metadata)
 
 
@@ -1014,8 +1013,6 @@ doc = rdb.Table("doc", metadata,
     ),
 )
 doc_index = rdb.Index("doc_status_idx", doc.c["status"])
-
-# doc audit
 doc_audit = make_audit_table(doc, metadata)
 
 
@@ -1035,7 +1032,6 @@ signatory = rdb.Table("signatory", metadata,
     rdb.Column("status", rdb.Unicode(32)),
     rdb.UniqueConstraint("head_id", "user_id")
 )
-# attachment_audit
 signatory_audit = make_audit_table(signatory, metadata)
 
 
@@ -1122,7 +1118,6 @@ debate_record = rdb.Table("debate_record", metadata,
         nullable=False
     ),
 )
-
 debate_record_audit = make_audit_table(debate_record, metadata)
 
 debate_record_item = rdb.Table("debate_record_item", metadata,
@@ -1133,7 +1128,6 @@ debate_record_item = rdb.Table("debate_record_item", metadata,
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
 )
-
 debate_record_item_audit = make_audit_table(debate_record_item, metadata)
 
 debate_doc = rdb.Table("debate_doc", metadata,

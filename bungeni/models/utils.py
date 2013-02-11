@@ -9,31 +9,15 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.models.utils")
 
-import collections
 
-import zope.component
-import zope.schema
-from zope.security.interfaces import NoInteraction
 from zope.security.management import getInteraction
-from zope.security.proxy import removeSecurityProxy
 from zope.publisher.interfaces import IRequest
-from zope.i18n import translate
-from zope.dublincore.interfaces import IDCDescriptiveProperties
-
 import sqlalchemy as rdb
 from sqlalchemy import sql
-from sqlalchemy.orm import (eagerload, RelationshipProperty, ColumnProperty, 
-    class_mapper
-)
-from sqlalchemy.types import Binary
+from sqlalchemy.orm import eagerload
+from bungeni.alchemist import Session
+import domain, schema, delegation
 
-from bungeni.alchemist import Session, utils
-from bungeni.alchemist.interfaces import (IAlchemistContainer, 
-    IAlchemistContent
-)
-import domain, schema, delegation, fields
-from bungeni.core.workflow.states import get_head_object_state_rpm
-from bungeni.capi import capi
 
 # !+ move "contextual" utils to ui.utils.contextual
 
@@ -170,8 +154,7 @@ def get_all_group_ids_in_parliament(parliament_id):
     group_ids = [parliament_id, ]
     query = session.query(domain.Group).filter(
         domain.Group.parent_group_id == parliament_id).options(
-            eagerload("contained_groups"),
-            )
+            eagerload("contained_groups"))
     results = query.all()
     for result in results:
         group_ids.append(result.group_id)
@@ -315,18 +298,10 @@ def get_user(user_id):
     # .filter(domain.User.user_id == user_id).one()
 
 
+# misc
 
-# serialization utilities
-
-def get_permissions_dict(permissions):
-    results= []
-    for x in permissions:
-        # !+XML pls read the styleguide
-        results.append({"role": x[2], 
-            "permission": x[1], 
-            "setting": x[0] and "Allow" or "Deny"})
-    return results
-
+from bungeni.models import fields
+from sqlalchemy.types import Binary
 BINARY_COLUMN_TYPES = [Binary, fields.FSBlob]
 def is_column_binary(column):
     """return true if column is binary - assumption (one column)"""
@@ -334,189 +309,5 @@ def is_column_binary(column):
         return True
     return False
 
-def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
-    """ Returns dictionary representation of a domain object.
-    """
-    if lang is None:
-        lang = getattr(obj, "language", capi.default_language)
-    result = {}
-    obj = removeSecurityProxy(obj)
-    descriptor = None
-    if IAlchemistContent.providedBy(obj):
-        try:
-            descriptor = utils.get_descriptor(obj)
-        except KeyError:
-            log.error("Could not get descriptor for IAlchemistContent %r", obj)
-    
-    # Get additional attributes
-    for name in include:
-        value = getattr(obj, name, None)
-        if value is None:
-            continue
-        if not name.endswith("s"):
-            name += "s"
-        if isinstance(value, collections.Iterable):
-            res = []
-            # !+ allowance for non-container-api-conformant alchemist containers
-            if IAlchemistContainer.providedBy(value):
-                value = value.values()
-            for item in value:
-                i = obj2dict(item, 0, lang=lang)
-                if name == "versions":
-                    permissions = get_head_object_state_rpm(item).permissions
-                    i["permissions"] = get_permissions_dict(permissions)
-                res.append(i)
-            result[name] = res
-        else:
-            result[name] = value
-    
-    # Get mapped attributes
-    mapper = class_mapper(obj.__class__)
-    for property in mapper.iterate_properties:
-        if property.key in exclude:
-            continue
-        value = getattr(obj, property.key)
-        if value == parent:
-            continue
-        if value is None:
-            continue
-        
-        if isinstance(property, RelationshipProperty) and depth > 0:
-            if isinstance(value, collections.Iterable):
-                result[property.key] = []
-                for item in value:
-                    result[property.key].append(obj2dict(item, 1, 
-                            parent=obj,
-                            include=[],
-                            exclude=exclude + ["changes"],
-                            lang=lang
-                    ))
-            else:
-                result[property.key] = obj2dict(value, depth-1, 
-                    parent=obj,
-                    include=[],
-                    exclude=exclude + ["changes"],
-                    lang=lang
-                )
-        else:
-            if isinstance(property, RelationshipProperty):
-                continue
-            elif isinstance(property, ColumnProperty):
-                columns = property.columns
-                if len(columns) == 1:
-                    if is_column_binary(columns[0]):
-                        continue
-            if descriptor:
-                columns = property.columns
-                is_foreign = False
-                if len(columns) == 1:
-                    if len(columns[0].foreign_keys):
-                        is_foreign = True
-                if (not is_foreign) and (property.key in descriptor.keys()):
-                    field = descriptor.get(property.key)
-                    if (field and field.property and
-                        (field.property.__class__ == zope.schema.Choice)):
-                                factory = (field.property.vocabulary or 
-                                    field.property.source
-                                )
-                                if factory is None:
-                                    vocab_name = getattr(field.property, 
-                                        "vocabularyName", None)
-                                    factory = zope.component.getUtility(
-                                        zope.schema.interfaces.IVocabularyFactory,
-                                        vocab_name
-                                    )
-                                #!+VOCABULARIES(mb, Aug-2012)some vocabularies
-                                # expect an interaction to generate values
-                                # todo - update these vocabularies to work 
-                                # with no request e.g. in notification threads
-                                display_name = None
-                                try:
-                                    vocabulary = factory(obj)                             
-                                    term = vocabulary.getTerm(value)
-                                    if lang:
-                                        if hasattr(factory, "vdex"):
-                                            display_name = (
-                                                factory.vdex.getTermCaption(
-                                                factory.getTermById(value), 
-                                                lang
-                                            ))
-                                        else:
-                                            display_name = translate(
-                                                (term.title or term.value),
-                                                target_language=lang,
-                                                domain="bungeni"
-                                            )
-                                    else:
-                                        display_name = term.title or term.value
-                                except NoInteraction:
-                                    log.error("This vocabulary %s expects an"
-                                        "interaction to generate terms.",
-                                        factory
-                                    )
-                                    #try to use dc adapter lookup
-                                    try:
-                                        _prop = mapper.get_property_by_column(
-                                            property.columns[0])
-                                        _prop_value = getattr(obj, _prop.key)
-                                        dc = IDCDescriptiveProperties(
-                                            _prop_value, None)
-                                        if dc:
-                                            display_name = (
-                                                IDCDescriptiveProperties(
-                                                    _prop_value).title
-                                            )
-                                    except KeyError:
-                                        log.warn("No display text found for %s" 
-                                            " on object %s. Unmapped in orm.",
-                                            property.key, obj
-                                        )
-                                except Exception, e:
-                                    log.error("Could not instantiate"
-                                        " vocabulary %s. Exception: %s",
-                                        factory, e
-                                    )
-                                finally:
-                                    #fallback we cannot look up vocabularies/dc
-                                    if display_name is None:
-                                        if not isinstance(value, unicode):
-                                            display_name = unicode(value)
-                                if display_name is not None:
-                                    result[property.key] = dict(
-                                        name=property.key,
-                                        value=value,
-                                        displayAs=display_name
-                                    )
-                                    continue
-            result[property.key] = value
-    
-    for prop_name, prop_type in obj.__class__.extended_properties:
-        try:
-            result[prop_name] = getattr(obj, prop_name)
-        except NoInteraction:
-            log.error("Extended property %s requires an interaction.",
-                prop_name)
-
-    
-    # any additional attributes - this allows us to capture any derived attributes
-    if IAlchemistContent.providedBy(obj):
-        seen_keys = ( [ prop.key for prop in mapper.iterate_properties ] + 
-            include + exclude)
-        try:
-            domain_schema = utils.get_derived_table_schema(type(obj))
-            known_names = [ k for k, d in 
-                domain_schema.namesAndDescriptions(all=True) ]
-            extra_properties = set(known_names).difference(set(seen_keys))
-            for prop_name in extra_properties:
-                try:
-                    result[prop_name] = getattr(obj, prop_name)
-                except NoInteraction:
-                    log.error("Attribute %s requires an interaction.",
-                        prop_name)
-
-        except KeyError:
-            log.warn("Could not find table schema for %s", obj)
-    
-    return result
 
 

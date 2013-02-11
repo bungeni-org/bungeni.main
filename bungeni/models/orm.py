@@ -573,7 +573,7 @@ mapper(domain.Heading, schema.heading,
 )
 
 
-#Items scheduled for a sitting expressed as a relation
+# Items scheduled for a sitting expressed as a relation
 # to their item schedule
 
 mapper(domain.ItemSchedule, schema.item_schedule,

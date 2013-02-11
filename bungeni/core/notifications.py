@@ -29,12 +29,12 @@ from bungeni.utils import naming
 from bungeni.core.interfaces import INotificationsUtility, IMessageQueueConfig
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.alchemist import Session
-from bungeni.models.utils import obj2dict
 from bungeni.models import domain
 from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 # this module will be moved to bungeni.utils
 from bungeni.ui.utils import report_tools
 from bungeni.core import kronos
+import bungeni.core
 import transaction
 
 
@@ -130,9 +130,8 @@ def get_mq_connection():
     try:
         return pika.BlockingConnection(parameters=get_mq_parameters())
     except socket.error:
-        log.error("Unable to connect to AMQP server."
-                  "Notifications will not be sent")
-        return None
+        log.error(
+            "Unable to connect to AMQP server. Notifications will not be sent")
 
 
 def post_commit_publish(status, **kwargs):
@@ -233,7 +232,7 @@ def notification_time(time_string):
 
 
 def get_message(document, principal_ids):
-    message = obj2dict(document, 0)
+    message = bungeni.core.serialize.obj2dict(document, 0)
     if not message.get("type", None):
         try:
             message["type"] = message["document_type"]
