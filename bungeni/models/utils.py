@@ -481,12 +481,13 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                     if display_name is None:
                                         if not isinstance(value, unicode):
                                             display_name = unicode(value)
-                                result[property.key] = dict(
-                                    name=property.key,
-                                    value=value,
-                                    displayAs=display_name
-                                )
-                                continue
+                                if display_name is not None:
+                                    result[property.key] = dict(
+                                        name=property.key,
+                                        value=value,
+                                        displayAs=display_name
+                                    )
+                                    continue
             result[property.key] = value
     
     for prop_name, prop_type in obj.__class__.extended_properties:
