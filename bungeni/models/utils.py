@@ -300,13 +300,9 @@ def get_user(user_id):
 
 # misc
 
-from bungeni.models import fields
-BINARY_COLUMN_TYPES = [sa.types.Binary, fields.FSBlob]
 def is_column_binary(column):
-    """return true if column is binary - assumption (one column)"""
-    if column.type.__class__  in BINARY_COLUMN_TYPES:
-        return True
-    return False
-
+    """Return true if column is binary - assumption (one column).
+    """
+    return isinstance(column.type, sa.types.Binary)
 
 

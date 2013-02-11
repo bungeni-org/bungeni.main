@@ -730,33 +730,31 @@ class TranslateForm(AddForm):
         mapper = sa.orm.object_mapper(trusted)
         pk = getattr(trusted, mapper.primary_key[0].name)
         
-        current_translations = get_translation_for(self.context, data["language"])
-        def get_changed_current_translation(field_name, new_field_text):
-            for ct in current_translations:
-                if ct.field_name == field_name:
-                    if ct.field_text != new_field_text:
-                        return ct
+        curr_trans_by_name = dict( (ct.field_name, ct) 
+            for ct in get_translation_for(self.context, data["language"]))
+        
+        def is_changed(context, field_name, new_field_text):
+            if field_name in curr_trans_by_name:
+                old_field_text = curr_trans_by_name[field_name].field_text
+            else:
+                old_field_text = getattr(context, field_name)
+            return not old_field_text == new_field_text
         
         translated_attribute_names = []
         for field_name in data.keys():
-            
             if field_name == "language":
                 continue
-            
-            changed_current_translation = \
-                get_changed_current_translation(field_name, data[field_name])
-            if changed_current_translation is None:
-                continue
-            
-            session.delete(changed_current_translation)
-            translated_attribute_names.append(field_name)
-            translation = domain.ObjectTranslation()
-            translation.object_id = pk
-            translation.object_type = naming.polymorphic_identity(trusted.__class__)
-            translation.field_name = field_name
-            translation.lang = data["language"]
-            translation.field_text = data[field_name]
-            session.add(translation)
+            if is_changed(self.context, field_name, data[field_name]):
+                translated_attribute_names.append(field_name)
+                if field_name in curr_trans_by_name:
+                    session.delete(curr_trans_by_name[field_name])
+                translation = domain.ObjectTranslation()
+                translation.object_id = pk
+                translation.object_type = naming.polymorphic_identity(trusted.__class__)
+                translation.field_name = field_name
+                translation.lang = data["language"]
+                translation.field_text = data[field_name]
+                session.add(translation)
         
         if translated_attribute_names:
             session.flush()
