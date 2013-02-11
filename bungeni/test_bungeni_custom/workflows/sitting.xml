@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <workflow title="Group sitting workflow"
     description="Workflow for a group sitting."
-    tags="draft private public agendaprivate workspace published publishedminutes"
+    tags="draft private public published publishedminutes"
     permission_actions=".View .Edit .Add .Delete"
     >
     
@@ -16,6 +16,10 @@
     <allow permission="sitting_report.Edit" roles="Clerk" />
     <allow permission="sitting_report.Add" roles="Clerk" />
     <allow permission="sitting_report.Delete" roles="Clerk" />
+    <allow permission="item_schedule_vote.View" roles="Anonymous" />
+    <allow permission="item_schedule_vote.Edit" roles="Clerk" />
+    <allow permission="item_schedule_vote.Add" roles="Clerk" />
+    <allow permission="item_schedule_vote.Delete" roles="Clerk" />
     
     
     <!-- features -->
@@ -32,6 +36,7 @@
         <allow permission=".Edit" roles="Clerk" />
         <allow permission=".Delete" roles="Clerk" />
         <allow permission="item_schedule_discussion.View" roles="Clerk" />
+	<allow permission="debate_record.View" roles="Clerk Transcriber"/>
     </facet>
     <facet name="draft_agenda">
         <allow permission=".View" roles="Speaker Owner Signatory MP Minister Anonymous" />
@@ -42,43 +47,33 @@
         <allow permission="item_schedule.Add" roles="Clerk" />
         <allow permission="item_schedule.Delete" roles="Clerk" />
         <allow permission="item_schedule_discussion.View" roles="Clerk Speaker" />
+	
     </facet>
     <facet name="published_agenda">
         <allow permission=".View" roles="Speaker Owner Signatory MP Minister Anonymous" />
         <allow permission="item_schedule.View" roles="Clerk Speaker Owner Signatory MP Minister Anonymous" />
-        <allow permission="item_schedule.Add" roles="Clerk" />
-        <allow permission="item_schedule.Delete" roles="Clerk" />
         <allow permission="item_schedule_discussion.View" roles="Clerk Speaker" />
     </facet>
     <facet name="published_agenda_internal">
         <allow permission=".View" roles="Speaker Owner Signatory MP Minister Anonymous" />
         <allow permission="item_schedule.View" roles="Clerk Speaker Owner Signatory MP Minister" />
-        <allow permission="item_schedule.Add" roles="Clerk" />
-        <allow permission="item_schedule.Delete" roles="Clerk" />
         <allow permission="item_schedule_discussion.View" roles="Clerk Speaker" />
     </facet>
     <facet name="draft_minutes">
         <allow permission=".View" roles="Speaker Owner Signatory MP Minister Anonymous" />
         <allow permission=".Edit" roles="Clerk" />
         <allow permission="item_schedule.View" roles="Clerk Speaker Owner Signatory MP Minister" />
-        <allow permission="item_schedule.Edit" roles="Clerk" />
-        <allow permission="item_schedule.Add" roles="Clerk" />
-        <allow permission="item_schedule.Delete" roles="Clerk" />
         <allow permission="item_schedule_discussion.View" roles="Clerk Speaker" />
         <allow permission="item_schedule_discussion.Edit" roles="Clerk" />
     </facet>
     <facet name="published_minutes">
         <allow permission=".View" roles="Speaker Owner Signatory MP Minister Anonymous" />
-        <allow permission=".Edit" roles="Clerk" />
         <allow permission="item_schedule.View" roles="Clerk Speaker Owner Signatory MP Minister" />
-        <allow permission="item_schedule.Edit" roles="Clerk" />
         <allow permission="item_schedule_discussion.View" roles="Clerk Speaker Owner Signatory MP Minister Anonymous" />
     </facet>
     <facet name="published_minutes_internal">
         <allow permission=".View" roles="Speaker Owner Signatory MP Minister Anonymous" />
-        <allow permission=".Edit" roles="Clerk" />
         <allow permission="item_schedule.View" roles="Clerk Speaker Owner Signatory MP Minister" />
-        <allow permission="item_schedule.Edit" roles="Clerk" />
         <allow permission="item_schedule_discussion.View" roles="Clerk Speaker Owner Signatory MP Minister" />
     </facet>
     <facet name="archived">
@@ -87,23 +82,29 @@
     </facet>
     
     
-    <state id="sitting" title="Sitting" tags="draft public agendaprivate">
+    <state id="sitting" title="Sitting" tags="draft public">
         <facet ref=".all_Clerk" />
     </state>
     
-    <state id="draft_agenda" title="Draft Agenda" tags="draft public workspace agendaprivate">
+    <state id="draft_agenda" title="Draft Agenda"
+            actions="set_real_order"
+            tags="draft public"
+        >
         <facet ref=".draft_agenda" />
     </state>
     
-    <state id="published_agenda" title="Published Agenda" tags="public published workspace">
+    <state id="published_agenda" title="Published Agenda" 
+            actions="schedule_sitting_items"
+            tags="public published"
+        >
         <facet ref=".published_agenda" />
     </state>
     
-    <state id="published_agenda_internal" title="Published Agenda Internal" tags="public agendaprivate workspace">
+    <state id="published_agenda_internal" title="Published Agenda Internal" tags="public">
         <facet ref=".published_agenda_internal" />
     </state>
     
-    <state id="draft_minutes" title="Draft Minutes" tags="draft public workspace">
+    <state id="draft_minutes" title="Draft Minutes" tags="draft public">
         <facet ref=".draft_minutes" />
     </state>
     

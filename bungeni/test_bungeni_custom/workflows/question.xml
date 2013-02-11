@@ -1,17 +1,12 @@
 <?xml version="1.0"?>
 <workflow title="Question Workflow"
     description="A question"
-    tags="draft private public
-        approved tobescheduled scheduled
-        actionclerk actionmp
-        terminal succeed fail
-        oral written
-    "
+    tags="draft private public terminal"
     permission_actions=".View .Edit .Add .Delete"
     >
     
     <!-- global grants -->
-    <allow permission=".Add" roles="Clerk MP" />
+    <allow permission=".Add" roles="Clerk.HeadClerk MP" />
     
     
     <!-- features -->
@@ -26,22 +21,25 @@
     <feature name="signatory" enabled="true">
         <parameter name="open_states" value="admissible" />
     </feature>
-    <feature name="schedule" enabled="true" />
+    <feature name="schedule" enabled="true">
+        <parameter name="schedulable_states" value="schedule_pending" />
+        <parameter name="scheduled_states" value="scheduled" />
+    </feature>
     <feature name="workspace" enabled="true" />
     <feature name="notification" enabled="true" />
     <feature name="email" enabled="true" />
     <feature name="download" enabled="true" />
     <feature name="user_assignment" enabled="true">
-        <parameter name="assigner_roles" value="Clerk" />
-        <parameter name="assignable_roles" value="Clerk" />
+        <parameter name="assigner_roles" value="Clerk.HeadClerk" />
+        <parameter name="assignable_roles" value="Clerk.QuestionClerk" />
     </feature>
     
     
     <!-- workflow facets -->
     <facet name="draft_Clerk">
-        <allow permission=".View" roles="Clerk" />
-        <allow permission=".Edit" roles="Clerk" />
-        <allow permission=".Delete" roles="Clerk" />
+        <allow permission=".View" roles="Clerk.HeadClerk Clerk.QuestionClerk" />
+        <allow permission=".Edit" roles="Clerk.HeadClerk Clerk.QuestionClerk" />
+        <allow permission=".Delete" roles="Clerk.HeadClerk Clerk.QuestionClerk" />
     </facet>
     <facet name="draft_Owner">
         <allow permission=".View" roles="Owner" />
@@ -56,20 +54,20 @@
         <allow permission=".Edit" roles="Owner" />
     </facet>
     <facet name="view_Clerk">
-        <allow permission=".View" roles="Clerk Speaker Owner Signatory" />
+        <allow permission=".View" roles="Clerk.HeadClerk Clerk.QuestionClerk Speaker Owner Signatory" />
     </facet>
     <facet name="edit_Clerk">
-        <allow permission=".View" roles="Clerk Speaker Owner Signatory" />
-        <allow permission=".Edit" roles="Clerk" />
-        <allow permission="user_assignment.View" roles="Clerk" />
-        <allow permission="user_assignment.Edit" roles="Clerk" />
+        <allow permission=".View" roles="Clerk.HeadClerk Clerk.QuestionClerk Speaker Owner Signatory" />
+        <allow permission=".Edit" roles="Clerk.HeadClerk Clerk.QuestionClerk" />
+        <allow permission="user_assignment.View" roles="Clerk.HeadClerk Clerk.QuestionClerk" />
+        <allow permission="user_assignment.Edit" roles="Clerk.HeadClerk" />
     </facet>
     <facet name="edit_Speaker">
-        <allow permission=".View" roles="Clerk Speaker Owner Signatory" />
+        <allow permission=".View" roles="Clerk.HeadClerk Clerk.QuestionClerk Speaker Owner Signatory" />
         <allow permission=".Edit" roles="Speaker" />
     </facet>
     <facet name="edit_Owner">
-        <allow permission=".View" roles="Clerk Speaker Owner Signatory" />
+        <allow permission=".View" roles="Clerk.HeadClerk Clerk.QuestionClerk Speaker Owner Signatory" />
         <allow permission=".Edit" roles="Owner" />
     </facet>
     <facet name="public">
@@ -82,7 +80,7 @@
     </facet>
     <facet name="public_response_internal">
         <allow permission=".View" roles="Authenticated Anonymous" />
-        <allow permission="response.View" roles="Clerk Speaker Minister" />
+        <allow permission="response.View" roles="Clerk.HeadClerk Clerk.QuestionClerk Speaker Minister" />
     </facet>
     <facet name="public_response_public">
         <allow permission=".View" roles="Authenticated Anonymous" />
@@ -90,28 +88,34 @@
     </facet>
 
     
-    <state id="working_draft" title="Working Draft" tags="draft private">
+    <state id="working_draft" title="Working Draft"
+            actions="assign_role_minister_question"
+            tags="draft private"
+        >
         <facet ref=".draft_Clerk" />
         <facet ref="attachment.draft_Clerk" />
         <facet ref="event.draft_Clerk" />
         <facet ref="signatory.draft_Clerk" />
     </state>
     
-    <state id="draft" title="Draft" tags="draft private">
+    <state id="draft" title="Draft" 
+            actions="assign_role_minister_question"
+            tags="draft private"
+        >
         <facet ref=".draft_Owner" />
         <facet ref="attachment.draft_Owner" />
         <facet ref="event.draft_Owner" />
         <facet ref="signatory.draft_Owner" />
     </state>
     
-    <state id="submitted_signatories" title="Submitted to Signatories" version="true" tags="actionmp">
+    <state id="submitted_signatories" title="Submitted to Signatories" actions="version">
         <facet ref=".internal_Signatory" />
         <facet ref="attachment.internal" />
         <facet ref="event.internal" />
         <facet ref="signatory.internal" />
     </state>
     
-    <state id="redraft" title="Redraft" version="true" note="document under review before resubmission">
+    <state id="redraft" title="Redraft" actions="version" note="document under review before resubmission">
         <facet ref=".redraft_Owner" />
         <facet ref="attachment.internal_Owner" />
         <facet ref="event.internal" />
@@ -125,102 +129,116 @@
         <facet ref="signatory.internal_frozen" />
     </state>
     
-    <state id="withdrawn_internal" title="Withdrawn" tags="terminal fail">
+    <state id="withdrawn_internal" title="Withdrawn" 
+            actions="unschedule_doc"
+            tags="terminal"
+            note="A question can be withdrawn by the owner, visible as pre-withdrawn, cannot be edited by anyone."
+        >
         <facet ref=".internal_Signatory" />
         <facet ref="attachment.internal_frozen" />
         <facet ref="event.internal_frozen" />
         <facet ref="signatory.internal_frozen" />
     </state>
     
-    <state id="submitted" title="Submitted to clerk" version="true" tags="actionclerk">
+    <state id="submitted" title="Submitted to clerk" actions="version">
         <facet ref=".view_Clerk" />
         <facet ref="attachment.internal" />
         <facet ref="event.internal_frozen" />
         <facet ref="signatory.internal_frozen" />
     </state>
     
-    <state id="received" title="Received by clerk" tags="actionclerk">
+    <state id="received" title="Received by clerk" 
+            actions="set_doc_registry_number"
+            
+        >
         <facet ref=".edit_Clerk" />
         <facet ref="attachment.internal" />
         <facet ref="event.internal" />
         <facet ref="signatory.internal_frozen" />
     </state>
     
-    <state id="completed" title="Submitted to the Speaker" version="true">
+    <state id="completed" title="Submitted to the Speaker" actions="version">
         <facet ref=".edit_Speaker" />
         <facet ref="attachment.internal" />
         <facet ref="event.internal" />
         <facet ref="signatory.internal_frozen" />
     </state>
     
-    <state id="admissible" title="Admissible" version="true" tags="public approved oral written">
+    <state id="admissible" title="Admissible"
+            actions="version set_doc_type_number"
+            tags="public"
+        >
         <facet ref=".public" />
         <facet ref="attachment.public" />
         <facet ref="event.public" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="inadmissible" title="Inadmissible" tags="terminal fail">
+    <state id="inadmissible" title="Inadmissible" tags="terminal">
         <facet ref=".view_Clerk" />
         <facet ref="attachment.internal_frozen" />
         <facet ref="event.internal_frozen" />
         <facet ref="signatory.internal_frozen" />
     </state>
     
-    <state id="clarification_required" title="Requires Clarification to Receive" version="true" tags="actionmp">
+    <state id="clarification_required" title="Requires Clarification to Receive" actions="version">
         <facet ref=".edit_Owner" />
         <facet ref="attachment.internal_Owner" />
         <facet ref="event.internal" />
         <facet ref="signatory.internal" />
     </state>
     
-    <state id="incomplete" title="Require Clarification to Approve" version="true"
-        permissions_from_state="received" tags="actionclerk" />
+    <state id="incomplete" title="Require Clarification to Approve" actions="version"
+        permissions_from_state="received"  />
     
     <state id="schedule_pending" title="Schedule pending" 
-        permissions_from_state="admissible" tags="public tobescheduled oral" />
+        permissions_from_state="admissible" tags="public" />
     
     <state id="scheduled" title="Scheduled" 
-        permissions_from_state="admissible" tags="public scheduled oral" />
+        permissions_from_state="admissible" tags="public" />
 
     <state id="adjourned" title="Debate adjourned" 
-        permissions_from_state="admissible" tags="public approved" />
+        permissions_from_state="admissible" tags="public" />
     
-    <state id="response_pending" title="Pending response" tags="public written">
+    <state id="response_pending" title="Pending response" tags="public">
         <facet ref=".public_response_Minister" />
         <facet ref="attachment.public" />
         <facet ref="event.public" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="response_submitted" title="Response submitted" tags="public actionclerk">
+    <state id="response_submitted" title="Response submitted" tags="public">
         <facet ref=".public_response_internal" />
         <facet ref="attachment.public" />
         <facet ref="event.public" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="response_completed" title="Response completed" tags="public terminal succeed">
+    <state id="response_completed" title="Response completed" tags="public terminal">
         <facet ref=".public_response_public" />
         <facet ref="attachment.public" />
         <facet ref="event.public" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="deferred" title="Deferred" permissions_from_state="admissible" tags="public approved" />
+    <state id="deferred" title="Deferred" permissions_from_state="admissible" tags="public" />
     
-    <state id="debated" title="Debated" tags="public terminal succeed">
+    <state id="debated" title="Debated" tags="public terminal">
         <facet ref=".public" />
         <facet ref="attachment.public_frozen" />
         <facet ref="event.public_frozen" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="elapsed" title="Elapsed" permissions_from_state="debated" tags="public terminal fail" />
+    <state id="elapsed" title="Elapsed" permissions_from_state="debated" tags="public terminal" />
 
-    <state id="dropped" title="Dropped" permissions_from_state="debated" tags="public terminal fail" />
+    <state id="dropped" title="Dropped" permissions_from_state="debated" tags="public terminal" />
     
-    <state id="withdrawn" title="Withdrawn" permissions_from_state="debated" tags="public terminal fail" />
+    <state id="withdrawn" title="Withdrawn" permissions_from_state="debated" 
+        actions="unschedule_doc"
+        tags="public terminal" 
+        note="A question can be withdrawn by the owner, visible as pre-withdrawn, cannot be edited by anyone."
+    />
     
     
     <transition title="Create Question"
@@ -253,7 +271,7 @@
         destination="submitted"
         condition="pi_signatories_check"
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.HeadClerk"
         order="1"
     />
 
@@ -288,7 +306,7 @@
         destination="received"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.HeadClerk"
         order="2"
     />
     
@@ -297,7 +315,7 @@
         destination="clarification_required"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="3"
         require_confirmation="true"
     />
@@ -315,7 +333,7 @@
         destination="completed"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="4"
         note="The Question has all the formal requirements; forwarded to the
             Speaker's Office as well as to the Ministry for pre-viewing (but
@@ -356,7 +374,7 @@
         destination="completed"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="9"
     />
     
@@ -374,7 +392,7 @@
         destination="schedule_pending"
         condition="is_oral_response"
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="11"
     />
     
@@ -382,7 +400,7 @@
         source="scheduled"
         destination="schedule_pending"
         trigger="system"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
     />
     
     <transition title="Schedule"
@@ -390,7 +408,7 @@
         destination="scheduled"
         condition="is_scheduled"
         trigger="system"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="12"
     />
     
@@ -399,7 +417,7 @@
         destination="response_pending"
         condition="is_written_response"
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="13"
         note="Written-response questions are never scheduled but must be 
             answered directly by the Ministry."
@@ -419,7 +437,7 @@
         destination="response_pending"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="16"
     />
     
@@ -427,7 +445,7 @@
         source="response_submitted"
         destination="response_completed"
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="17"
     />
     
@@ -436,7 +454,7 @@
         destination="elapsed"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="18"
         require_confirmation="true"
     />
@@ -446,7 +464,7 @@
         destination="deferred"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="19"
         note="Oral question, postpone scheduling."
     />
@@ -456,7 +474,7 @@
         destination="dropped"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="22"
     />
     
@@ -465,7 +483,7 @@
         destination="adjourned"
         condition=""
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="23"
     />
     
@@ -473,7 +491,7 @@
         source="scheduled"
         destination="debated"
         trigger="manual"
-        roles="Clerk"
+        roles="Clerk.QuestionClerk"
         order="25"
     />
     
@@ -483,7 +501,7 @@
         grouping_unique_sources="withdrawn"
         condition=""
         trigger="manual"
-        roles="Clerk Owner"
+        roles="Clerk.QuestionClerk Owner"
         order="26"
         require_confirmation="true"
         note="The MP can withdraw his question at any stage where it can 
@@ -496,7 +514,7 @@
         grouping_unique_sources="withdrawn"
         condition=""
         trigger="manual"
-        roles="Clerk Owner"
+        roles="Clerk.QuestionClerk Owner"
         order="27"
         require_confirmation="true"
     />

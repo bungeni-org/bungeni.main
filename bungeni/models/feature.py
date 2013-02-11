@@ -18,14 +18,15 @@ log = __import__("logging").getLogger("bungeni.models.feature")
 
 
 from zope import interface
+from zope.component import getGlobalSiteManager
 import sqlalchemy as sa
 from sqlalchemy.orm import mapper, class_mapper, relation
-from bungeni.alchemist.traversal import one2many
 from bungeni.alchemist.catalyst import MODEL_MODULE
 from bungeni.alchemist.model import add_container_property_to_model
 from bungeni.models import interfaces, domain, orm, schema
 from bungeni.core import audit
 from bungeni.utils import naming
+from bungeni.capi import capi
 
 
 # domain models
@@ -132,12 +133,58 @@ def feature_signatory(kls, **params):
     import bungeni.models.signatories
     bungeni.models.signatories.createManagerFactory(kls, **params)
 
+class SchedulingManager(object):
+    """Store scheduling configuration properties for a known type
+    """
+    interface.implements(interfaces.ISchedulingManager)
+
+    schedulable_states = ()
+    scheduled_states = ()
+
+    def __init__(self, context):
+        self.context = context
+
+def createSchedulingManager(domain_class, **params):
+    """Instantiate a scheduling manager instance for `domain_class`"""
+    manager_name = "%sSchedulingManager" % domain_class.__name__
+    if manager_name in globals().keys():
+        log.error("Scheduling manager named %s already exists", manager_name)
+        return
+
+    ti = capi.get_type_info(domain_class)
+    domain_iface = ti.interface
+    if domain_iface is None:
+        log.error("No model interface for class %s", domain_class)
+        log.error("Skipping scheduling manager setup for for class %s", domain_class)
+        return
+
+    globals()[manager_name] = type(manager_name, (SchedulingManager,), {})
+    manager = globals()[manager_name]
+    known_params = interfaces.ISchedulingManager.names()
+    for config_name, config_value in params.iteritems():
+        assert config_name in known_params, ("Check your scheduling "
+            "feature configuration for %s. Only these parameters may be "
+            "configured %s" % (domain_class.__name__, known_params))
+        config_type = type(getattr(manager, config_name))
+        if config_type in (tuple, list):
+            config_value = map(str.strip, config_value.split())
+        setattr(manager, config_name, config_type(config_value))
+    
+    gsm = getGlobalSiteManager()
+    gsm.registerAdapter(manager, (domain_iface,), interfaces.ISchedulingManager)
+    return manager_name
 
 def feature_schedule(kls, **params):
     """Decorator for domain types to support "schedule" feature.
     For Doc types, means support for being scheduled in a group sitting.
     """
-    interface.classImplements(kls, interfaces.IFeatureSchedule)
+    manager = createSchedulingManager(kls, **params)
+    if manager is not None:
+        interface.classImplements(kls, interfaces.IFeatureSchedule)
+    else:
+        log.warning("Scheduling manager was not created for class %s."
+            "Check your logs for details",
+            kls)
 
 
 def feature_address(kls, **params):

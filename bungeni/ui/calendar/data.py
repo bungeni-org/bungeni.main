@@ -16,7 +16,8 @@ from sqlalchemy import orm, sql
 
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
-from bungeni.models.interfaces import IParliament, IAgendaItem
+from bungeni.models.interfaces import (IParliament, IAgendaItem, 
+    ISchedulingManager)
 from bungeni.models.utils import get_current_parliament
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
@@ -24,15 +25,28 @@ from bungeni.ui.i18n import _
 
 from bungeni.capi import capi
 
-TAG_SCHEDULE_PENDING = "tobescheduled"
-TAG_SCHEDULED = "scheduled"
+#!+CACHING(mb, Feb-2013) cache this
+def get_schedulable_states(type_key):
+    type_info = capi.get_type_info(type_key)
+    manager = ISchedulingManager(type_info.domain_model(), None)
+    if manager:
+        return ISchedulingManager(type_info.domain_model()).schedulable_states
+    else:
+        return []
 
-def can_schedule(workflow):
+def get_scheduled_states(type_key):
+    type_info = capi.get_type_info(type_key)
+    manager = ISchedulingManager(type_info.domain_model(), None)
+    if manager:
+        return ISchedulingManager(type_info.domain_model()).scheduled_states
+    else:
+        return []
+def can_schedule(type_key, workflow):
     """Determine if the current user can schedule this document type.
     i.e. if they have the global workflow permission to schedule a document.
     """
     allow = False
-    scheduled_states = workflow.get_state_ids(tagged=[TAG_SCHEDULED])
+    scheduled_states = get_scheduled_states(type_key)
     if scheduled_states:
         transitions = workflow.get_transitions_to(scheduled_states[0])
         if transitions:
@@ -59,12 +73,12 @@ def get_schedulable_types(skip_permission_check=False):
             display_name=type_info.descriptor_model.display_name
         ))
         for (type_key, type_info) in schedulable_types
-        if (skip_permission_check or can_schedule(type_info.workflow))
+        if (skip_permission_check or can_schedule(type_key, type_info.workflow))
     ])
 
 
-
-def get_filter_config(tag=TAG_SCHEDULE_PENDING):
+def get_filter_config():
+    """Get schedulable item filters"""
     return dict(
         [ (item_type, 
             { 
@@ -73,10 +87,8 @@ def get_filter_config(tag=TAG_SCHEDULE_PENDING):
                     { 
                         "text": type_info.get("workflow").get_state(status).title,
                         "value": status 
-                    } 
-                    for status in type_info.get("workflow").get_state_ids(
-                        tagged=[tag]
-                    )
+                    }
+                    for status in get_schedulable_states(item_type)
                 ]
             }
            ) 
@@ -104,9 +116,7 @@ class SchedulableItemsGetter(object):
         self.context = context
         self.item_type = item_type
         type_info = capi.get_type_info(item_type)
-        self.filter_states = (filter_states or 
-            type_info.workflow.get_state_ids(tagged=[TAG_SCHEDULE_PENDING])
-        )
+        self.filter_states = get_schedulable_states(item_type)
         self.group_filter = (group_filter or 
             not IParliament.providedBy(context.group) or
             IAgendaItem.implementedBy(type_info.domain_model)

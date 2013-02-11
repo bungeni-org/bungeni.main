@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <workflow title="Signatory Workflow"
     description="Workflow for Signatory documents"
-    tags="public workspace terminal"
+    tags="public terminal"
     permission_actions=".View .Edit .Add .Delete .Act .Append"
     >
     <!-- 
@@ -42,18 +42,18 @@
         <allow permission=".Add" roles="Owner" />
     </facet>
     <facet name="internal_frozen">
-        <allow permission=".View" roles="Authenticated" />
+        <allow permission=".View" roles="Owner" />
     </facet>
     <facet name="public_frozen">
         <allow permission=".View" roles="Anonymous" />
     </facet>
     
     
-    <state id="awaiting_consent" title="Awaiting Consent" tags="workspace">
+    <state id="awaiting_consent" title="Awaiting Consent">
         <facet ref=".draft_Owner" />
     </state>
     
-    <state id="consented" title="Signature Consented" tags="workspace public">
+    <state id="consented" title="Signature Consented" tags="public">
         <facet ref=".public_frozen" />
     </state>
     

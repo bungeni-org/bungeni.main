@@ -270,9 +270,6 @@ def createManagerFactory(domain_class, **params):
     if manager_name in globals().keys():
         log.error("Signatory manager named %s already exists", manager_name)
         return
-    #!+TIMING
-    #!+TYPE_INFO(mb, Jun-2012) type_info may still not be setup as workflows 
-    # are still loading
     ti = capi.get_type_info(domain_class)
     domain_iface = ti.interface
     if domain_iface is None:

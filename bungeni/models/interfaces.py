@@ -406,6 +406,12 @@ class ISignatoryManager(interface.Interface):
     def fire_workflow_actions():
         """Fire off any changes after workflow change on parent document"""
 
+class ISchedulingManager(interface.Interface):
+    """Configurator for class implementing scheduling feature
+    """
+    schedulable_states = interface.Attribute("""object's schedulable states""")
+    scheduled_states = interface.Attribute("""object's scheduled states""")
+
 class IDirectoryLocation(interface.Interface):
 
     repo_path = schema.ASCIILine()
