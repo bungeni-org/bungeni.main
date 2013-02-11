@@ -40,9 +40,9 @@ from bungeni.core.workspace import (WorkspaceContainer,
 from bungeni.core.notifications import load_notifications
 from bungeni.core.emailnotifications import load_email
 from bungeni.core.serialize import serialization_notifications
-from bungeni.ui.utils import url, common # !+ core dependency on ui
+from bungeni.ui.utils import url  # !+ core dependency on ui
 from bungeni.capi import capi
-from bungeni.utils import register
+from bungeni.utils import common, register
 
 
 

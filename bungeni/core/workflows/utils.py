@@ -17,9 +17,7 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 )
 
 import bungeni.models.interfaces as interfaces
-#import bungeni.models.domain as domain
 from bungeni.models.utils import get_principal_id, get_parliament_for_group_id
-#import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
 from bungeni.utils.misc import describe
 from bungeni.ui.i18n import _

@@ -92,7 +92,7 @@ class PrincipalGroupSchedulingContext(object):
         if group is not None:
             return u"%s (%s)" % (group.short_name, group.full_name)
         return _(u"Unknown user group")
-        
+    
     def get_group(self, name="group"):
         if self.group_id is None:
             return
@@ -131,7 +131,7 @@ class PrincipalGroupSchedulingContext(object):
 
 class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IBungeniApplication)
-
+    
     @property
     def group_id(self):
         """Return current parliament's group id."""

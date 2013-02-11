@@ -24,8 +24,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap, IRole
 from zope.component.zcml import handler
 from bungeni.capi import capi
-from bungeni.utils import core
-from bungeni.utils import naming
+from bungeni.utils import common, naming
 from bungeni.core.interfaces import INotificationsUtility, IMessageQueueConfig
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.alchemist import Session
@@ -212,7 +211,7 @@ def get_group_member_ids(group_id):
 
 def get_group_prms(document):
     prms = []
-    prms.append(IPrincipalRoleMap(core.get_application()))
+    prms.append(IPrincipalRoleMap(common.get_application()))
     parent_group = getattr(document, "group", None)
     if parent_group:
         prms.append(IPrincipalRoleMap(parent_group))

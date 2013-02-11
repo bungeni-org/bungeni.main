@@ -46,7 +46,7 @@ import bungeni.core
 
 from bungeni.models import interfaces, domain, settings
 from bungeni.models.utils import is_column_binary
-from bungeni.utils import register, naming, core
+from bungeni.utils import register, naming, common
 from bungeni.capi import capi
 
 import transaction
@@ -290,7 +290,7 @@ Error:
 """
 
 def notify_serialization_failure(template, **kw):
-    email_settings = settings.EmailSettings(core.get_application())
+    email_settings = settings.EmailSettings(common.get_application())
     recipients = [ email_settings.default_sender ]    
     if template:
         body_text = template % kw

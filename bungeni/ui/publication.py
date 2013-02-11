@@ -20,6 +20,7 @@ from bungeni.alchemist import Session
 
 from bungeni.ui import interfaces
 from bungeni.ui.utils import url, common
+from bungeni.utils.common import has_feature
 from bungeni.ui.descriptor.localization import check_reload_localization
 
 
@@ -56,7 +57,7 @@ def on_before_traverse(event):
         id(event.request), event.request.getURL(), event.object))
     apply_request_layer_by_url(event)
     remember_traversed_context(event)
-    if common.has_feature("devmode"):
+    if has_feature("devmode"):
         check_reload_localization(event)
 
 @component.adapter(IEndRequestEvent)

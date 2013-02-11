@@ -50,7 +50,7 @@ from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflows.utils import get_group_local_role
 
-from bungeni.ui.utils import common
+from bungeni.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
 from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
 from bungeni.utils import misc, naming

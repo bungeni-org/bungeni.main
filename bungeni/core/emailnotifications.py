@@ -9,7 +9,7 @@ from threading import Thread
 from lxml import etree
 from zope import component
 from zope import interface
-from bungeni.ui.utils.common import get_application
+from bungeni.utils import common
 from zope.pagetemplate.pagetemplatefile import PageTemplate
 from zope.cachedescriptors.property import CachedProperty
 from bungeni.alchemist import Session
@@ -35,7 +35,7 @@ class BungeniSMTPMailer(object):
 
     @CachedProperty
     def settings(self):
-        return EmailSettings(get_application())
+        return EmailSettings(common.get_application())
 
     def send(self, msg, recipients):
         msg["From"] = self.settings.default_sender

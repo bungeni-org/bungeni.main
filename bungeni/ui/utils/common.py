@@ -24,23 +24,9 @@ import bungeni.ui.interfaces
 import bungeni.alchemist
 from bungeni.capi import capi
 
-from ore.wsgiapp.interfaces import IApplication
-def get_application():
-    """Get the bungeni.core.app.BungeniApp instance."""
-    #!+utils(mb, oct-2012) replace usage with bungeni.utils.core.get_application
-    return zope.component.getUtility(IApplication)
-    # there is of course always ONE obvious way to do it ;-) :
-    # return zope.app.component.hooks.getSite()
 
+# !+ move to utils.common
 
-from zope.app.appsetup.appsetup import getConfigContext
-def has_feature(feature_name):
-    """Whether the application had been setup with the feature or not.
-    
-    (feature_name:str) -> bool
-    """
-    # via zope.configuration.config.ConfigurationMachine.hasFeature(name)
-    return getConfigContext().hasFeature(feature_name)
 
 def get_request():
     """ () -> either(IRequest, None)

@@ -13,19 +13,15 @@ import datetime
 import sqlalchemy.sql.expression as sql
 
 from bungeni.alchemist import Session
-from bungeni.core.app import BungeniApp
 
 from bungeni.models import domain, utils, interfaces
 from bungeni.models import schema
 
-app = BungeniApp()
 
 # !+ rename to globals.py
 # !+ move the "global common" utils in models.utils to here
 # !+ switch to bungeni naming standard (underscore-spearated words)
 # !+CUSTOM(mr, mar-2011) migrate all "global parameters" here to bungeni_custom
-
-
 
 
 # !+BICAMERA assumes UNICAMERA
@@ -84,30 +80,5 @@ def get_current_parliament_id(date=None):
         pass
 
 # !+/BICAMERA assumes UNICAMERA
-
-
-
-
-
-        
-def getWeekendDays():
-    """
-    (0 is Monday, 6 is Sunday)
-    """
-    return [5,6]
-
-def getFirstDayOfWeek():
-    """
-    (0 is Monday, 6 is Sunday)
-    """
-    return 0
-
-def getPloneMenuUrl():
-    """
-    URL at which the plone menu is returned as a json string
-    """
-
-    raise NotImplementedError(
-        "This method should not be used.")
 
 

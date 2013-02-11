@@ -35,7 +35,8 @@ from zc.resourcelibrary import need
 from sqlalchemy.orm.exc import NoResultFound
 
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import url, debug, date, misc, common
+from bungeni.ui.utils import url, debug, date, misc
+from bungeni.utils import common
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
     IAdminSectionLayer
 from bungeni.models.utils import get_db_user_id, get_user, get_member_of_parliament
@@ -1347,8 +1348,10 @@ class DateFilterWidget(form.PageForm):
 
 
 def date_input_search_widget(table_id, field_id):
-    form = DateFilterWidget(common.get_application(), common.get_request(),
-                            table_id, field_id)
+    import bungeni.ui.utils.common
+    form = DateFilterWidget(common.get_application(), 
+        bungeni.ui.utils.common.get_request(), 
+        table_id, field_id)
     html = '<div id="date_input_search_widget_%(table_id)s_%(field_id)s" style="display: none;">%(html)s</div>' \
            % {"table_id": table_id,
               "field_id": field_id,
