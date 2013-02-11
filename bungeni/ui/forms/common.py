@@ -25,7 +25,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.contained import ObjectRemovedEvent
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from zope.formlib.interfaces import IDisplayWidget
 from zope.formlib.namedtemplate import NamedTemplate
 from sqlalchemy.exc import IntegrityError
@@ -323,7 +323,7 @@ class AddForm(BaseForm, ui.AddForm):
         domain_model = removeSecurityProxy(self.getDomainModel())
         
         # find unique columns in data model.. TODO do this statically
-        mapper = rdb.orm.class_mapper(domain_model)
+        mapper = sa.orm.class_mapper(domain_model)
         ucols = list(ui.unique_columns(mapper))
         
         # query out any existing values with the same unique values,
@@ -727,7 +727,7 @@ class TranslateForm(AddForm):
         #language = get_language_by_name(data["language"])["name"]
         session = Session()
         trusted = removeSecurityProxy(self.context)
-        mapper = rdb.orm.object_mapper(trusted)
+        mapper = sa.orm.object_mapper(trusted)
         pk = getattr(trusted, mapper.primary_key[0].name)
         
         current_translations = get_translation_for(self.context, data["language"])

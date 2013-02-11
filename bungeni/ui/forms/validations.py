@@ -14,7 +14,7 @@ log = __import__("logging").getLogger("bungeni.ui.forms.validations")
 
 import datetime
 from zope.interface import Invalid
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from bungeni.alchemist import Session
 from bungeni.models import interfaces
 from bungeni.models import schema
@@ -139,10 +139,10 @@ class AllPoliticalGroupMemberships(object):
     """Helper class to get all political_group memberships for all users.
     """
 
-all_political_group_memberships = rdb.join(
+all_political_group_memberships = sa.join(
     schema.user_group_membership, schema.group).join(schema.political_group)
         
-rdb.orm.mapper(AllPoliticalGroupMemberships, all_political_group_memberships,
+sa.orm.mapper(AllPoliticalGroupMemberships, all_political_group_memberships,
     properties={
         "group_id":[
             schema.user_group_membership.c.group_id,
@@ -341,10 +341,10 @@ class GroupMemberTitle(object):
     """ Titels that may be held by multiple persons of the
     group at the same time"""
 
-group_member_title = rdb.join(schema.user_group_membership, schema.member_title
+group_member_title = sa.join(schema.user_group_membership, schema.member_title
     ).join(schema.title_type)
 
-rdb.orm.mapper(GroupMemberTitle, group_member_title,
+sa.orm.mapper(GroupMemberTitle, group_member_title,
     properties={
         "membership_id":[
             schema.user_group_membership.c.membership_id,
@@ -376,12 +376,12 @@ def validate_member_titles(action, data, context, container):
     may be applied to several persons at the same time""" 
     def get_q_user(date):
         return session.query(GroupMemberTitle).filter(
-                rdb.and_(
+                sa.and_(
                     GroupMemberTitle.group_id == group_id,
                     GroupMemberTitle.membership_id == membership_id,
                     GroupMemberTitle.title_type_id == title_type_id,
-                    rdb.or_(
-                        rdb.between(
+                    sa.or_(
+                        sa.between(
                             date, 
                             schema.member_title.c.start_date,
                             schema.member_title.c.end_date),
@@ -389,12 +389,12 @@ def validate_member_titles(action, data, context, container):
                     )))
     def get_q_unique(date):
         return session.query(GroupMemberTitle).filter(
-            rdb.and_(
+            sa.and_(
                 GroupMemberTitle.group_id == group_id,
                 schema.title_type.c.user_unique == True,
                 GroupMemberTitle.title_type_id == title_type_id,
-                rdb.or_(
-                    rdb.between(
+                sa.or_(
+                    sa.between(
                         date, 
                         schema.member_title.c.start_date,
                         schema.member_title.c.end_date),

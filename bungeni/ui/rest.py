@@ -9,7 +9,7 @@ from bungeni.models.schema import group
 from bungeni.models.schema import user_group_membership
 
 from bungeni.alchemist import Session
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from bungeni.alchemist.security import schema as security_schema
 
 
@@ -30,8 +30,8 @@ class Users(REST):
                 cols.extend([user.c.password, user.c.salt])
             session = Session()
             connection = session.connection(domain.Group)
-            res = connection.execute(rdb.select(cols,
-                    rdb.and_(
+            res = connection.execute(sa.select(cols,
+                    sa.and_(
                         user.c.login == self.request["login"], 
                         user.c.active_p == "A"
                     )))
@@ -45,7 +45,7 @@ class Users(REST):
         elif "login" in self.request.keys():
             session = Session()
             user = session.query(domain.User).filter(
-                rdb.and_(
+                sa.and_(
                     domain.User.login == self.request["login"],
                     domain.User.active_p == "A")
                 ).one()
@@ -134,11 +134,11 @@ class EnumerateUsers(REST):
             for key, value in kw.items():
                 column = getattr(user.c, key, None)
                 if column:
-                    clause = rdb.and_(clause, column.contains(value))
+                    clause = sa.and_(clause, column.contains(value))
                 else:
                     like_val ='%' + str(value) +'%'
-                    clause = rdb.and_(clause, 
-                        rdb.or_(user.c.login.like(like_val),
+                    clause = sa.and_(clause, 
+                        sa.or_(user.c.login.like(like_val),
                                 user.c.first_name.like(like_val),
                                 user.c.last_name.like(like_val)
                             )
@@ -147,13 +147,13 @@ class EnumerateUsers(REST):
             statements = []
             for i in id:
                 statements.append(user.c.login == i)
-            clause = rdb.or_(*statements)
+            clause = sa.or_(*statements)
         elif isinstance( id, (list, tuple)) and exact_match != "True":
             like_val ="%" + str(id) +"%"
-            clause = rdb.or_(*(map(user.c.login.like, like_val)))
+            clause = sa.or_(*(map(user.c.login.like, like_val)))
         elif exact_match!="True":
             like_val ="%" + str(id) +"%"
-            clause = rdb.or_(user.c.login.like(like_val),
+            clause = sa.or_(user.c.login.like(like_val),
                              user.c.first_name.like(like_val),
                              user.c.last_name.like(like_val)
                             )
@@ -162,7 +162,7 @@ class EnumerateUsers(REST):
         session = Session()
         
         query = session.query(domain.User).filter(
-                        rdb.and_(clause,
+                        sa.and_(clause,
                             user.c.active_p == "A",
                             user.c.login != None
                                 ))
@@ -192,7 +192,7 @@ class Groups(REST):
         session = Session()
         if "name" in self.request.keys():
             group_values = session.query(domain.Group).filter(
-                rdb.and_(domain.Group.status == "active", 
+                sa.and_(domain.Group.status == "active", 
                          domain.Group.group_principal_id == self.request["name"])
                 ).all()
             data ={}
@@ -242,15 +242,15 @@ class enumerateGroups(REST):
             statements = []
             for i in gid:
                 statements.append(domain.Group.group_principal_id == i)
-            clause = rdb.or_(*statements)
+            clause = sa.or_(*statements)
         elif isinstance( gid,(list, tuple)) and not exact_match:
-            clause = rdb.or_(*(map(domain.Group.group_principal_id.contains, gid)))
+            clause = sa.or_(*(map(domain.Group.group_principal_id.contains, gid)))
         elif not exact_match:
             clause = domain.Group.group_principal_id.contains(gid)
         else:
             clause = domain.Group.group_principal_id == gid
         query = session.query(domain.Group).filter(
-                        rdb.and_(clause,
+                        sa.and_(clause,
                             domain.Group.status == "active")
                         )
         if clause:
@@ -280,10 +280,10 @@ class Roles(REST):
         session = Session()
         connection = session.connection(domain.Group)
         principal_id = self.request["principal_id"]
-        mappings = connection.execute(rdb.select(
+        mappings = connection.execute(sa.select(
             [security_schema.principal_role_map.c.role_id],
-            rdb.and_(
-                rdb.or_(
+            sa.and_(
+                sa.or_(
                     security_schema.principal_role_map.c.object_type==None,
                     security_schema.principal_role_map.c.object_type==
                     "parliament"
@@ -325,7 +325,7 @@ class Roles(REST):
         # update existing
         connection.execute(
             security_schema.principal_role_map.update().where(
-                rdb.and_(
+                sa.and_(
                     security_schema.principal_role_map.c.principal_id==principal_id,
                     security_schema.principal_role_map.c.object_type==None,
                     security_schema.principal_role_map.c.object_id==None)).values(
@@ -337,7 +337,7 @@ class Roles(REST):
         principal_id = simplejson.loads(self.request["principal_id"])
         connection = session.connection(domain.Group)
         connection.execute(security_schema.principal_role_map.delete().where(
-            rdb.and_(
+            sa.and_(
                 security_schema.principal_role_map.c.principal_id == principal_id,
                 security_schema.principal_role_map.c.object_id == None,
                 security_schema.principal_role_map.c.object_type == None)))        
@@ -350,7 +350,7 @@ class enumerateRoles(REST):
         session = Session()
         connection = session.connection(domain.Group)
         plugin_id = self.request["plugin_id"]
-        mappings = connection.execute(rdb.select(
+        mappings = connection.execute(sa.select(
             [security_schema.principal_role_map.c.role_id]))
 
         role_ids = []
@@ -377,7 +377,7 @@ class Memberships(REST):
         session = Session()
         return self.json_response([r.group_principal_id
                 for r in session.query(domain.Group).filter(
-                    rdb.and_(
+                    sa.and_(
                         user.c.login == self.request["principal_id"],
                         user_group_membership.c.user_id == user.c.user_id,
                         group.c.group_id == user_group_membership.c.group_id,
@@ -391,7 +391,7 @@ class GroupMembers(REST):
         session = Session()
         ugm = user_group_membership
         user_values = session.query(domain.User).filter(
-            rdb.and_(user.c.user_id == ugm.c.user_id,
+            sa.and_(user.c.user_id == ugm.c.user_id,
                      group.c.group_id == ugm.c.group_id,
                      domain.Group.group_principal_id == self.request["group_id"],
                      ugm.c.active_p == True)).all()
@@ -401,7 +401,7 @@ class GroupMembers(REST):
         
         values=[r.group_principal_id
                 for r in session.query(domain.Group).filter(
-                    rdb.and_(
+                    sa.and_(
                         user.c.login == self.request["principal_id"],
                         user_group_membership.c.user_id == user.c.user_id,
                         group.c.group_id == user_group_membership.c.group_id,

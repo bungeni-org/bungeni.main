@@ -12,7 +12,7 @@ log = __import__("logging").getLogger("bungeni.models.utils")
 
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from sqlalchemy import sql
 from sqlalchemy.orm import eagerload
 from bungeni.alchemist import Session
@@ -94,7 +94,7 @@ def get_user_for_principal_id(principal_id):
     query = Session().query(domain.User).filter(domain.User.login == principal_id)
     try:
         return query.one()
-    except rdb.exc.InvalidRequestError:
+    except sa.exc.InvalidRequestError:
         # !+ sqlalchemy.orm.exc NoResultFound, MultipleResultsFound
         return None
 
@@ -167,7 +167,7 @@ def get_ministries_for_user_in_government(user_id, government_id):
     """Get the ministries where user_id is a active member."""
     session = Session()
     query = session.query(domain.Ministry).join(domain.Minister).filter(
-        rdb.and_(
+        sa.and_(
             schema.user_group_membership.c.user_id == user_id,
             schema.group.c.parent_group_id == government_id,
             schema.group.c.status == "active",
@@ -180,13 +180,13 @@ def get_ministry_ids_for_user_in_government(user_id, government_id):
     '''
     # alternative approach to get ministry_ids: 
     connection = session.connection(domain.Group)
-    ministries_ids_query = rdb.select([schema.group.c.group_id],
+    ministries_ids_query = sa.select([schema.group.c.group_id],
         from_obj=[
-        rdb.join(schema.group, schema.user_group_membership,
+        sa.join(schema.group, schema.user_group_membership,
         schema.group.c.group_id == schema.user_group_membership.c.group_id),
         ],
         whereclause =
-            rdb.and_(
+            sa.and_(
             schema.user_group_membership.c.user_id==user_id,
             schema.group.c.parent_group_id==government_id,
             schema.group.c.status=="active",
@@ -205,7 +205,7 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
     group_ids = get_all_group_ids_in_parliament(parliament_id)
     #!+MODELS(miano, 16 march 2011) Why are these queries hardcorded?
     #TODO:Fix this
-    offices_held = rdb.select([schema.group.c.short_name,
+    offices_held = sa.select([schema.group.c.short_name,
         schema.group.c.full_name,
         schema.group.c.type,
         schema.title_type.c.title_name,
@@ -215,7 +215,7 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
         schema.user_group_membership.c.end_date,
         ],
         from_obj=[
-        rdb.join(schema.group, schema.user_group_membership,
+        sa.join(schema.group, schema.user_group_membership,
         schema.group.c.group_id == schema.user_group_membership.c.group_id
             ).outerjoin(
             schema.member_title, schema.user_group_membership.c.membership_id ==
@@ -223,7 +223,7 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
                 schema.title_type,
                 schema.member_title.c.title_type_id ==
                     schema.title_type.c.title_type_id)],
-            whereclause=rdb.and_(
+            whereclause=sa.and_(
                 schema.group.c.group_id.in_(group_ids),
                 schema.user_group_membership.c.user_id == user_id),
             order_by=[schema.user_group_membership.c.start_date,
@@ -239,8 +239,8 @@ def get_group_ids_for_user_in_parliament(user_id, parliament_id):
     session = Session()
     connection = session.connection(domain.Group)
     group_ids = get_all_group_ids_in_parliament(parliament_id)
-    my_groups = rdb.select([schema.user_group_membership.c.group_id],
-        rdb.and_(schema.user_group_membership.c.active_p == True,
+    my_groups = sa.select([schema.user_group_membership.c.group_id],
+        sa.and_(schema.user_group_membership.c.active_p == True,
             schema.user_group_membership.c.user_id == user_id,
             schema.user_group_membership.c.group_id.in_(group_ids)),
         distinct=True)
@@ -301,8 +301,7 @@ def get_user(user_id):
 # misc
 
 from bungeni.models import fields
-from sqlalchemy.types import Binary
-BINARY_COLUMN_TYPES = [Binary, fields.FSBlob]
+BINARY_COLUMN_TYPES = [sa.types.Binary, fields.FSBlob]
 def is_column_binary(column):
     """return true if column is binary - assumption (one column)"""
     if column.type.__class__  in BINARY_COLUMN_TYPES:

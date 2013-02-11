@@ -39,7 +39,7 @@ from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent, \
 from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from bungeni.alchemist import Session
 
 from bungeni.models.utils import get_db_user_id
@@ -318,14 +318,14 @@ class _AuditorFactory(object):
         """
         ''' !+ALTERNATE_QUERY_CHANGE_SEQ_MAX, a little faster than head.changes?
         from time import time
-        t0 = time() # via query using rdb.func.max
+        t0 = time() # via query using sa.func.max
         head_id_column_name = ch.audit.head_id_column_name
-        audit_tbl = rdb.orm.object_mapper(ch.audit).local_table
-        max_seq_alt = Session().query(rdb.func.max(domain.Change.seq)
+        audit_tbl = sa.orm.object_mapper(ch.audit).local_table
+        max_seq_alt = Session().query(sa.func.max(domain.Change.seq)
             ).join(
                 (audit_tbl, domain.Change.audit_id == audit_tbl.c.audit_id)
             ).filter(
-                rdb.sql.expression.and_(
+                sa.sql.expression.and_(
                     domain.Change.action == ch.action,
                     audit_tbl.c[head_id_column_name] == 
                         getattr(ch.audit, head_id_column_name)
@@ -349,7 +349,7 @@ class _AuditorFactory(object):
         return max_seq + 1
     
     def _getKey(self, ob):
-        mapper = rdb.orm.object_mapper(ob)
+        mapper = sa.orm.object_mapper(ob)
         primary_key = mapper.primary_key_from_instance(ob)[0]
         return primary_key, unicode(ob.__class__.__name__)
     

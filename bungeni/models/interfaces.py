@@ -159,8 +159,8 @@ class IBungeniContent(IOwned):
     Should standardize registration on the appropriate one (or on IWorklfowed).
     """
     # !+ schema attributes ?
-    # status: rdb.Unicode(48)
-    # status_date: rdb.DateTime(timezone=False)
+    # status: sa.Unicode(48)
+    # status_date: sa.DateTime(timezone=False)
 
 class IBungeniParliamentaryContent(IBungeniContent):
     """Marker interface for true bungeni parliamentary content"""

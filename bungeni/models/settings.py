@@ -11,11 +11,11 @@ $Id$
 $URL$
 """
 
-# !!!! Cleanout this source file !!!!
+# !!!!! Cleanout this source file !!!!!
 
 from zope import schema
 from zope.security.proxy import removeSecurityProxy
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from sqlalchemy import orm
 from schema import setting
 
@@ -58,8 +58,8 @@ class SettingsBase( object ):
     
     def _fetch( self ):
         oid, otype = self._context()
-        values = rdb.select( [setting.c.name, setting.c.value ],
-                             rdb.and_( setting.c.propertysheet == self.settings_schema.__name__,
+        values = sa.select( [setting.c.name, setting.c.value ],
+                             sa.and_( setting.c.propertysheet == self.settings_schema.__name__,
                                        setting.c.object_type == otype,
                                        setting.c.object_id == oid )
                              )
@@ -102,7 +102,7 @@ class SettingsBase( object ):
             self._storedattrs.add( k )
         else:
             statement = setting.update(
-                whereclause=rdb.and_( setting.c.name == k,
+                whereclause=sa.and_( setting.c.name == k,
                     setting.c.propertysheet == \
                         self.settings_schema.__name__,
                     setting.c.object_type == otype,

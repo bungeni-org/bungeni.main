@@ -4,7 +4,6 @@ import datetime
 
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import mapper
-import sqlalchemy as rdb
 
 from bungeni.alchemist import Session
 

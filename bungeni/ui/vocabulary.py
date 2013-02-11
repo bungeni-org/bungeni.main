@@ -27,7 +27,7 @@ from zope.securitypolicy.interfaces import IRole
 from i18n import _
 
 from sqlalchemy.orm import mapper
-import sqlalchemy as rdb
+import sqlalchemy as sa
 import sqlalchemy.sql.expression as sql
 
 from bungeni.capi import capi
@@ -540,7 +540,7 @@ component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 class MemberOfParliament(object):
     """Member of Parliament = user join group membership join parliament"""
     
-member_of_parliament = rdb.join(schema.user_group_membership, 
+member_of_parliament = sa.join(schema.user_group_membership, 
     schema.user,
     schema.user_group_membership.c.user_id == schema.user.c.user_id
 ).join(schema.parliament,

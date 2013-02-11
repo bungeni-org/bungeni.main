@@ -30,7 +30,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.securitypolicy.interfaces import Allow, Deny, Unset
 from zope.app.authentication import interfaces, principalfolder
 import zope.security.proxy
-import sqlalchemy as rdb
+import sqlalchemy as sa
 import bungeni.alchemist
 from bungeni.utils import naming
 
@@ -45,7 +45,7 @@ class LocalPrincipalRoleMap(object):
         #self.context = context
         context = zope.security.proxy.removeSecurityProxy(context)
         # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
-        self.oid = rdb.orm.object_mapper(
+        self.oid = sa.orm.object_mapper(
             context).primary_key_from_instance(context)[0]
         self.object_type = naming.polymorphic_identity(context.__class__)
     
@@ -59,9 +59,9 @@ class LocalPrincipalRoleMap(object):
         then the empty list is returned.
         """
         prm = schema.principal_role_map
-        s = rdb.select(
+        s = sa.select(
                 [prm.c.principal_id, prm.c.setting],
-                rdb.and_(
+                sa.and_(
                     prm.c.role_id == role_id,
                     prm.c.object_type == self.object_type,
                     prm.c.object_id == self.oid))
@@ -73,9 +73,9 @@ class LocalPrincipalRoleMap(object):
         """
         #included_roles = set()
         prm = schema.principal_role_map
-        s = rdb.select(
+        s = sa.select(
                 [prm.c.role_id, prm.c.setting],
-                rdb.and_(
+                sa.and_(
                     prm.c.principal_id == principal_id,
                     prm.c.object_type == self.object_type,
                     prm.c.object_id == self.oid))
@@ -97,9 +97,9 @@ class LocalPrincipalRoleMap(object):
         """Return the setting for this principal, role combination
         """
         prm = schema.principal_role_map
-        s = rdb.select(
+        s = sa.select(
                 [prm.c.setting],
-                rdb.and_(
+                sa.and_(
                     prm.c.principal_id == principal_id,
                     prm.c.role_id == role_id, 
                     prm.c.object_type == self.object_type,
@@ -117,9 +117,9 @@ class LocalPrincipalRoleMap(object):
         role id, principal id, and setting, in that order.
         """
         prm = schema.principal_role_map
-        s = rdb.select(
+        s = sa.select(
                 [prm.c.role_id, prm.c.principal_id, prm.c.setting ],
-                rdb.and_(
+                sa.and_(
                     prm.c.object_type == self.object_type,
                     prm.c.object_id == self.oid))
         for role_id, principal_id, setting in s.execute():
@@ -127,9 +127,9 @@ class LocalPrincipalRoleMap(object):
     
     def assignRoleToPrincipal(self, role_id, principal_id):
         prm = schema.principal_role_map
-        s = rdb.select(
+        s = sa.select(
                 [prm.c.role_id, prm.c.setting],
-                rdb.and_(
+                sa.and_(
                     prm.c.principal_id == principal_id,
                     prm.c.object_type == self.object_type,
                     prm.c.role_id == role_id, 
@@ -145,9 +145,9 @@ class LocalPrincipalRoleMap(object):
     
     def removeRoleFromPrincipal(self, role_id, principal_id):
         prm = schema.principal_role_map
-        s = rdb.select(
+        s = sa.select(
                 [prm.c.role_id, prm.c.setting],
-                rdb.and_(
+                sa.and_(
                     prm.c.principal_id == principal_id,
                     prm.c.object_type == self.object_type,
                     prm.c.role_id == role_id, 
@@ -165,7 +165,7 @@ class LocalPrincipalRoleMap(object):
     def unsetRoleForPrincipal(self, role_id, principal_id):
         prm = schema.principal_role_map
         prm.delete(
-            rdb.and_(
+            sa.and_(
                 prm.c.role_id == role_id,
                 prm.c.principal_id == principal_id,
                 prm.c.object_type == self.object_type,
@@ -181,30 +181,30 @@ class GlobalPrincipalRoleMap(LocalPrincipalRoleMap):
 
 # schema
 
-metadata = rdb.MetaData()
+metadata = sa.MetaData()
 def schema():
     '''!+
-    role_permission_map = rdb.Table("zope_role_permission_map", metadata,
-       rdb.Column("role_id", rdb.Unicode(50)),
-       rdb.Column("permission_id", rdb.Unicode(50)),
-       rdb.Column("setting", rdb.Boolean, default=True, nullable=False),
-       rdb.Column("object_type", rdb.String(100),),
-       rdb.Column("object_id", rdb.Integer),
+    role_permission_map = sa.Table("zope_role_permission_map", metadata,
+       sa.Column("role_id", sa.Unicode(50)),
+       sa.Column("permission_id", sa.Unicode(50)),
+       sa.Column("setting", sa.Boolean, default=True, nullable=False),
+       sa.Column("object_type", sa.String(100),),
+       sa.Column("object_id", sa.Integer),
     )
-    rdb.Index("rpm_oid_idx",
+    sa.Index("rpm_oid_idx",
         role_permission_map.c["object_id"],
         role_permission_map.c["object_type"]
     )
     '''
-    principal_role_map = rdb.Table("zope_principal_role_map", metadata,
-       rdb.Column("principal_id", rdb.Unicode(50), index=True, nullable=False),
-       rdb.Column("role_id", rdb.Unicode(50), nullable=False),
-       rdb.Column("setting", rdb.Boolean, default=True, nullable=False),
-       rdb.Column("object_type", rdb.String(100)),
-       rdb.Column("object_id", rdb.Integer),
+    principal_role_map = sa.Table("zope_principal_role_map", metadata,
+       sa.Column("principal_id", sa.Unicode(50), index=True, nullable=False),
+       sa.Column("role_id", sa.Unicode(50), nullable=False),
+       sa.Column("setting", sa.Boolean, default=True, nullable=False),
+       sa.Column("object_type", sa.String(100)),
+       sa.Column("object_id", sa.Integer),
     )
     schema.principal_role_map = principal_role_map
-    rdb.Index("prm_oid_idx",
+    sa.Index("prm_oid_idx",
         principal_role_map.c["object_id"],
         principal_role_map.c["object_type"]
     )

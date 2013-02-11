@@ -3,7 +3,7 @@
 # from the db implementation
 
 from zope.security.proxy import removeSecurityProxy
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from sqlalchemy.orm import mapper
 from bungeni.alchemist import Session
 import bungeni.models.domain as domain
@@ -18,7 +18,7 @@ def get_max_type_number(domain_model):
     !+RESETTABLE per parliamentary session
     """
     session = Session()
-    return session.query(rdb.func.max(domain_model.type_number)).scalar() or 0
+    return session.query(sa.func.max(domain_model.type_number)).scalar() or 0
 
 def get_registry_counts(specific_model):
     """ kls -> (registry_count_general, registry_count_specific)
@@ -32,11 +32,11 @@ def get_registry_counts(specific_model):
     """
     session = Session()
     registry_count_general = session.query(
-        rdb.func.count(domain.Doc.registry_number)).filter(
+        sa.func.count(domain.Doc.registry_number)).filter(
             domain.Doc.registry_number != None).scalar() or 0
     specific_model = removeSecurityProxy(specific_model)
     registry_count_specific = session.query(
-        rdb.func.count(specific_model.registry_number)).filter(
+        sa.func.count(specific_model.registry_number)).filter(
             specific_model.registry_number != None).scalar() or 0
     return registry_count_general, registry_count_specific
 
@@ -49,7 +49,7 @@ def unschedule_doc(doc):
     # only pertinent if doc is transiting from a scheduled state...
     # !+unschedule(mr, may-2012) review this logic here, seems clunky...
     session = Session()
-    active_filter = rdb.and_(
+    active_filter = sa.and_(
         schema.item_schedule.c.item_id == doc.doc_id,
         schema.item_schedule.c.active==True
     )
@@ -64,12 +64,12 @@ def unschedule_doc(doc):
 # !+RESETTABLE per parliamentary session
 def get_next_reg():
     session = Session()
-    sequence = rdb.Sequence("registry_number_sequence")
+    sequence = sa.Sequence("registry_number_sequence")
     connection = session.connection(domain.ParliamentaryItem)
     return connection.execute(sequence)
 def get_next_prog(context):
     session = Session()
-    sequence = rdb.Sequence("%s_registry_sequence" % context.type)
+    sequence = sa.Sequence("%s_registry_sequence" % context.type)
     connection = session.connection(context.__class__)
     return connection.execute(sequence)
 '''
@@ -87,7 +87,7 @@ def getActiveItemSchedule(doc):
         s.start_date, s.end_date, s.status
     """
     session = Session()
-    active_filter = rdb.and_(
+    active_filter = sa.and_(
         schema.item_schedule.c.item_id == doc.doc_id,
         schema.item_schedule.c.active == True,
         schema.item_schedule.c.item_type == doc.type,
@@ -108,7 +108,7 @@ def get_ministry(ministry_id):
 '''class _Minister(object):
     pass
 
-ministers = rdb.join(schema.group,schema.user_group_membership, 
+ministers = sa.join(schema.group,schema.user_group_membership, 
         schema.group.c.group_id == schema.user_group_membership.c.group_id
     ).join(schema.user,
         schema.user_group_membership.c.user_id == schema.user.c.user_id)
@@ -146,7 +146,7 @@ def deactivateGroupMembers(group):
     connection = session.connection(domain.Group)
     connection.execute(
         schema.user_group_membership.update().where(
-            rdb.and_(
+            sa.and_(
                 schema.user_group_membership.c.group_id == group_id,
                 schema.user_group_membership.c.active_p == True
             )
@@ -154,18 +154,18 @@ def deactivateGroupMembers(group):
     )
     connection.execute(
         schema.user_group_membership.update().where(
-            rdb.and_(
+            sa.and_(
                 schema.user_group_membership.c.group_id == group_id,
                 schema.user_group_membership.c.end_date == None
             )
         ).values(end_date=end_date)
     )
     def deactivateGroupMemberTitles(group):
-        group_members = rdb.select([schema.user_group_membership.c.user_id],
+        group_members = sa.select([schema.user_group_membership.c.user_id],
                  schema.user_group_membership.c.group_id == group_id)
         connection.execute(
             schema.member_title.update().where(
-                rdb.and_( 
+                sa.and_( 
                     schema.member_title.c.membership_id.in_(group_members),
                     schema.member_title.c.end_date == None
                 ) 
@@ -182,7 +182,7 @@ def endChildGroups(group):
     (in order to be able to dissolve those groups)"""
     def _end_parliament_group(group_class, parent_id, end_date):
         groups = session.query(group_class).filter(
-            rdb.and_(group_class.status == "active",
+            sa.and_(group_class.status == "active",
                 group_class.parent_group_id == parliament_id)).all()
         for group in groups:
             if group.end_date == None:
@@ -208,7 +208,7 @@ def endChildGroups(group):
     elif interfaces.IGovernment.providedBy(group):
         government_id = group.group_id
         ministries = session.query(domain.Ministry).filter(
-            rdb.and_(domain.Ministry.status == "active",
+            sa.and_(domain.Ministry.status == "active",
                 domain.Ministry.parent_group_id == government_id)
             ).all()
         for ministry in ministries:

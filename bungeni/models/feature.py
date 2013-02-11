@@ -18,7 +18,7 @@ log = __import__("logging").getLogger("bungeni.models.feature")
 
 
 from zope import interface
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from sqlalchemy.orm import mapper, class_mapper, relation
 from bungeni.alchemist.traversal import one2many
 from bungeni.alchemist.catalyst import MODEL_MODULE
@@ -237,11 +237,11 @@ def configurable_mappings(kls):
                 # !+PrimaryKeyConstraint object does not support indexing
                 pk_col = [ c for c in tbl.primary_key ][0]
                 mapper_properties["changes"] = relation(domain.Change,
-                    primaryjoin=rdb.and_(
+                    primaryjoin=sa.and_(
                         pk_col == audit_tbl.c.get(pk_col.name),
                     ),
                     secondary=audit_tbl,
-                    secondaryjoin=rdb.and_(
+                    secondaryjoin=sa.and_(
                         audit_tbl.c.audit_id == schema.change.c.audit_id,
                     ),
                     lazy=True,

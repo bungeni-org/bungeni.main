@@ -12,7 +12,7 @@ log = __import__("logging").getLogger("bungeni.models.resourcebooking")
 import datetime
 
 import sqlalchemy.sql.expression as sql
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from sqlalchemy.orm import mapper
 
 from bungeni.alchemist import Session
@@ -23,7 +23,7 @@ from bungeni.models import domain, schema
 raise UserWarning("!+BookedResources(mr, oct-2011) needs conceptual+ review!")
 
 
-bookedresources = rdb.join(
+bookedresources = sa.join(
     schema.resources,
     schema.resourcebookings,
     schema.resources.c.resource_id == schema.resourcebookings.c.resource_id
@@ -62,7 +62,7 @@ def get_available_resources(start, end):
     FROM resources AS resources_1
     WHERE resources_1.resource_id NOT IN (%s) """ % sql_booked_resources
     connection = session.connection(domain.Resource)
-    query = connection.execute(rdb.text(sql_resources), start=start, end=end)
+    query = connection.execute(sa.text(sql_resources), start=start, end=end)
     resources= query.fetchall()
     return resources
 

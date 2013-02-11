@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 from bungeni.alchemist import Session
-import sqlalchemy as rdb
+import sqlalchemy as sa
 import  domain
 
 def get_user_delegations(user_id):
@@ -11,7 +11,7 @@ def get_user_delegations(user_id):
     """
     session = Session()
     query = session.query(domain.UserDelegation
-        ).filter(rdb.and_(domain.UserDelegation.delegation_id == user_id))
+        ).filter(sa.and_(domain.UserDelegation.delegation_id == user_id))
     results = query.all()
     for result in results:
         if ((result.user.active_p == "A") and

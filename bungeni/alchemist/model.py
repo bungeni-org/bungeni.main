@@ -9,7 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.alchemist.model")
 
 
-import sqlalchemy as rdb
+import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper, relation
 
 from zope.interface import interface, classImplements
@@ -129,7 +129,7 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
     """
     vp_table = class_mapper(vp_type).mapped_table
     return relation(vp_type,
-        primaryjoin=rdb.and_(
+        primaryjoin=sa.and_(
             object_id_column == vp_table.c.object_id,
             object_type == vp_table.c.object_type,
             vp_name == vp_table.c.name,
