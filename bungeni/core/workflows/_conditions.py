@@ -15,7 +15,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 from zope.security import checkPermission
 from bungeni.models.interfaces import ISignatoryManager
 #from bungeni.models import domain
-from bungeni.models import utils as model_utils
+from bungeni.models.utils import is_current_or_delegated_user
 from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
 from bungeni.ui.interfaces import IFormEditLayer
@@ -33,19 +33,19 @@ from bungeni.utils.misc import describe
 @describe(_(u"Require current user to not be the owner"))
 def user_is_not_context_owner(context):
     return not user_is_context_owner(context)
-    
+
+
 @describe(_(u"Require current user to be the owner"))
-def user_is_context_owner(context, owner_id=None):
+def user_is_context_owner(context):
     """Test if current user is the context owner e.g. to check if someone 
     manipulating the context object is other than the owner of the object.
     
-    Assimption: context is IOwned.
+    Assumption: context is IOwned.
     
     A delegate is considered to be an owner of the object.
     """
-    if owner_id:
-        return model_utils.is_current_or_delegated_user(owner_id)
-    return model_utils.is_current_or_delegated_user(context.owner_id)
+    return is_current_or_delegated_user(context.owner)
+
 
 @describe(_(u"Require public view access"))
 def context_is_public(context):
@@ -238,8 +238,7 @@ def pi_unsign_signature(context):
 def pi_allow_signature(context):
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return (user_is_context_owner(context, context.owner.user_id) and
-            manager.allow_signature())
+        return user_is_context_owner(context) and manager.allow_signature()
     return False
 
 @describe(_(u"signatory: Require the signatory to be allowed to withdraw or reject"))
@@ -248,9 +247,9 @@ def pi_allow_signature_actions(context):
     """
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return (user_is_context_owner(context, context.owner.user_id) and
+        return (user_is_context_owner(context) and 
             (manager.document_submitted() or manager.auto_sign()) and
-            user_is_not_parent_document_owner(context))
+                user_is_not_parent_document_owner(context))
     return False
 
 

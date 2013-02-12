@@ -129,30 +129,40 @@ class CAPI(object):
     def get_workflow_condition(self, condition):
         condition_module = resolve("._conditions", "bungeni_custom.workflows")
         condition = getattr(condition_module, condition) # raises AttributeError
+        assert condition.func_code.co_argcount == 1, \
+            "Workflow condition %r must have exactly 1 parameter." % (condition)
         return wrapped_callable(condition)
     
     @bungeni_custom_errors
     def get_workflow_action(self, action):
         action_module = resolve("._actions", "bungeni_custom.workflows")
         action = getattr(action_module, action) # raises AttributeError
+        assert action.func_code.co_argcount == 1, \
+            "Workflow action %r must have exactly 1 parameter." % (action)
         return wrapped_callable(action)
     
     @bungeni_custom_errors
     def get_form_constraint(self, constraint):
         constraint_module = resolve("._constraints", "bungeni_custom.forms")
         constraint = getattr(constraint_module, constraint) # raises AttributeError
+        assert constraint.func_code.co_argcount == 1, \
+            "Descriptor constraint %r must have exactly 1 parameter." % (constraint)
         return wrapped_callable(constraint)
     
     @bungeni_custom_errors
     def get_form_validator(self, validation):
         validator_module = resolve("._validations", "bungeni_custom.forms")
         validator = getattr(validator_module, validation) # raises AttributeError
+        assert validator.func_code.co_argcount == 4, \
+            "Descriptor validator %r must have exactly 4 parameters." % (validator)
         return wrapped_callable(validator)
     
     @bungeni_custom_errors
     def get_form_derived(self, derived):
         derived_module = resolve("._derived", "bungeni_custom.forms")
         derived_def = getattr(derived_module, derived) # raises AttributeError
+        assert derived_def.func_code.co_argcount == 1, \
+            "Field derived callable %r must have exactly 1 parameter." % (derived_def)
         return wrapped_callable(derived_def)
     
     

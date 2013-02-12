@@ -165,7 +165,7 @@ class SignatoryValidator(object):
         )
 
     def is_signatory(self, user=None):
-        user = user_id or model_utils.get_login_user()
+        user = user or model_utils.get_login_user()
         if user:
             return user.user_id in [ sgn.user_id for sgn in self.signatories ] 
         return False
