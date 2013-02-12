@@ -10,48 +10,79 @@ $Id$
 log = __import__("logging").getLogger("bungeni.models.utils")
 
 
-from zope.security.management import getInteraction
-from zope.publisher.interfaces import IRequest
 import sqlalchemy as sa
 from sqlalchemy import sql
 from sqlalchemy.orm import eagerload
 from bungeni.alchemist import Session
-import domain, schema, delegation
+from bungeni.models import interfaces, domain, schema, delegation
+from bungeni.utils import common
+
+
+# legislature and chambers
+
+# !+rename/rework chamber
+def get_current_parliament(context):
+    """Return the chamber in which the context exists.
+    """
+    # first look for current parliament from context tree
+    chamber = common.getattr_ancestry(context, None, "__parent__",
+        acceptable=interfaces.IParliament.providedBy)
+    # !+ should this ever be None here?
+    if chamber is None:
+        # check logged in user's parliament:
+        chamber = get_parliament_for_user(get_db_user())
+    return chamber
+    ''' !+ assume unicameral, date
+    import datetime
+    date = None
+    if parliament is None:
+        def getFilter(date):
+            return sql.or_(
+                sql.between(date, 
+                    schema.group.c.start_date, schema.group.c.end_date),
+                sql.and_(
+                    schema.group.c.start_date<=date, 
+                    schema.group.c.end_date==None))
+        if not date:
+            date = datetime.date.today()
+        session = Session()
+        query = session.query(domain.Parliament).filter(getFilter(date))
+        try:
+            parliament = query.one()
+        except:
+            ##XXX raise(_(u"inconsistent data: none or more than one parliament found for this date"))
+            # !+DATA(mb, July-2012) this should get the one active parliament
+            # needs some review if there is more than one parliament active e.g.
+            # bicameral legislatures
+            query = session.query(domain.Parliament).filter(schema.group.c.status=="active")
+            try:
+                parliament = query.one()
+            except Exception, e:
+                log.error("Could not find active parliament. Activate a parliament"
+                    " in Bungeni admin :: %s", e.__repr__())
+                raise ValueError("Unable to locate a currently active parliament")
+    '''
+
 
 
 # !+ move "contextual" utils to ui.utils.contextual
 
-# !+rename get_request_principal(), get_request_principal_id()
-def get_principal():
-    """ () -> either(zope.security.interfaces.IGroupAwarePrincipal, None)
-    """
-    interaction = getInteraction()
-    for participation in interaction.participations:
-        if IRequest.providedBy(participation):
-            return participation.principal
-
-def get_principal_id():
-    """ () -> either(str, None), login name of current principal, or None.
-    """
-    principal = get_principal()
-    if principal is not None:
-        return principal.id
-
-
-# !+rename get_request_user(), get_request_user_id()
+# !+rename get_logged_in_user
 def get_db_user(context=None):
     """ get the logged in user 
     Note: context is not used, but accommodated for as a dummy optional input 
     parameter to allow usage of this utility in e.g.
     bungeni.core.app: container_getter(get_db_user, "questions")
     """
-    principal_id = get_principal_id()
+    login = common.get_request_login()
     session = Session()
-    query = session.query(domain.User).filter(domain.User.login == principal_id)
+    query = session.query(domain.User).filter(domain.User.login == login)
+    # !+ why not .one() ?
     results = query.all()
     if len(results) == 1:
         return results[0]
 
+# !+rename get_logged_in_user_id
 def get_db_user_id(context=None):
     """ get the (numerical) user_id for the currently logged in user
     """
@@ -99,12 +130,6 @@ def get_user_for_principal_id(principal_id):
         return None
 
 
-# contextual
-def get_current_parliament(context=None):
-    from bungeni.core import globalsettings
-    return globalsettings.get_current_parliament()
-
-
 def container_getter(parent_container_or_getter, name, query_modifier=None):
     """Get a child container with name from the specified parent 
     container/container_callback."""
@@ -130,7 +155,7 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     func.__name__ = "get_%s_container" % name
     return func
 
-
+''' !+UNUSED and adding overhead to all refactoring efforts
 def get_current_parliament_governments(parliament=None):
     if parliament is None:
         parliament = get_current_parliament()
@@ -138,7 +163,10 @@ def get_current_parliament_governments(parliament=None):
             sql.and_(domain.Government.parent_group_id == parliament.group_id,
                      domain.Government.status == "active")).all()
     return governments
+'''
 
+
+''' !+UNUSED and adding overhead to all refactoring efforts
 def get_current_parliament_committees(parliament=None):
     if parliament is None:
         parliament = get_current_parliament(None)
@@ -146,6 +174,8 @@ def get_current_parliament_committees(parliament=None):
             sql.and_(domain.Committee.parent_group_id == parliament.group_id,
                      domain.Committee.status == "active")).all()
     return committees
+'''
+
 
 def get_all_group_ids_in_parliament(parliament_id):
     """ get all groups (group_ids) in a parliament
@@ -260,26 +290,18 @@ def get_parliament_for_group_id(group_id):
         return get_parliament_for_group_id(group.parent_group_id)
 
 def get_parliament_for_user(user):
+    # !+ make logic part of get_chamber(user) or get_chamber(None)?
     if user.group_membership:
         return get_parliament_for_group_id(user.group_membership[0].group.group_id)
     # !+ what guarantees that "first" [0] group the user is a member of is
     # the right place to start?
-
-def getattr_ancestry(context, name, parent_ref="__parent__"):
-    """Get the first encountered non-None value for attribute {name}, 
-    cascading upwards to parent via {parent_ref}.
-    """
-    while context is not None:
-        value = getattr(context, name, None)
-        if value is not None:
-            return value
-        context = getattr(context, parent_ref, None)
 
 
 # misc queries
 
 # !+parliament_mapper_property(mr, jan-2013) some types/tables define a 
 # parliament_id column, but not parliament mapper property... add it?
+# !+rename get_chamber_by_id
 def get_parliament(parliament_id):
     return Session().query(domain.Parliament).get(parliament_id)            
 

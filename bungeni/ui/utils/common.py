@@ -23,6 +23,7 @@ import bungeni
 import bungeni.ui.interfaces
 import bungeni.alchemist
 from bungeni.capi import capi
+from bungeni.utils import common
 
 
 # !+ move to utils.common
@@ -172,7 +173,7 @@ def get_workspace_roles():
     """Returns all the roles that the current principal has that are 
     relevant to the workspace configuration.
     """
-    principal = bungeni.models.utils.get_principal()
+    principal = common.get_request_principal()
     session = bungeni.alchemist.Session()
     roles = set()
     user_id = bungeni.models.utils.get_db_user_id()

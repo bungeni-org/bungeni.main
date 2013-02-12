@@ -40,7 +40,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.ui.i18n import _
 from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
-from bungeni.utils import register
+from bungeni.utils import common, register
 
 
 def _label(change):
@@ -165,7 +165,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             # ok, try determine a min_date_active in another way, namely via the
             # start_date of the "parliament" the instance "lives" in...
             parliament = models.utils.get_parliament(
-                models.utils.getattr_ancestry(instance, "parliament_id")) #!+parent_ref="head"?
+                common.getattr_ancestry(instance, "parliament_id")) #!+parent_ref="head"?
             min_date_active = datetime.datetime.combine(
                 parliament.start_date, datetime.time())
         

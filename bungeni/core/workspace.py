@@ -38,6 +38,7 @@ from bungeni.core.interfaces import (
     IWorkspaceGroupsContainer,
 )
 from bungeni.ui.utils.common import get_workspace_roles
+from bungeni.utils import common
 from bungeni.ui.container import get_date_strings, string_to_date
 from bungeni.core.workflows.utils import view_permission
 
@@ -255,7 +256,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
     interface.implements(IWorkspaceContainer)
 
     def _query(self, **kw):
-        principal = utils.get_principal()
+        principal = common.get_request_principal()
         roles = get_workspace_roles()
         group_roles_domain_status = self.item_status_filter(kw, roles)
         session = Session()
@@ -309,7 +310,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
     def count(self, read_from_cache=True):
         """Count of items in a container
         """
-        principal = utils.get_principal()
+        principal = common.get_request_principal()
         if (read_from_cache and principal.id in self.tab_count_cache.keys() and
                 (self.tab_count_cache[principal.id].timestamp +
                     capi.workspace_tab_count_cache_refresh_time) > time.time()

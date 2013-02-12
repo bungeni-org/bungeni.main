@@ -22,19 +22,6 @@ from bungeni.core.workflow import interfaces
 from bungeni.ui.i18n import _
 
 
-# pick data
-
-def get_parent_with_interface(context, iface):
-    """Get first parent to implement the interface."""
-    parent = context.__parent__
-    if parent:
-        if iface.providedBy(parent):
-            return parent
-        else:
-            return get_parent_with_interface(parent, iface)
-    return None
-
-
 # file system 
 
 def pathjoin(basefilepath, filepath):

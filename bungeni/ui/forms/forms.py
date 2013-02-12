@@ -23,7 +23,7 @@ from bungeni.alchemist import Session
 
 from bungeni.models import domain
 from bungeni.models import schema as model_schema
-from bungeni.models import utils as model_utils
+from bungeni.models.utils import get_current_parliament, get_db_user
 from bungeni.models.interfaces import ISessionContainer, ISittingContainer
 from bungeni.core.i18n import _
 from bungeni.core.interfaces import ISchedulingContext
@@ -288,8 +288,7 @@ class SessionAddForm(AddForm):
         """
         super(SessionAddForm, self).finishConstruction(ob)
         if ob.parliament_id is None:
-            ob.parliament_id = model_utils.get_current_parliament(
-                ).parliament_id
+            ob.parliament_id = get_current_parliament(get_db_user).parliament_id
 
 @register.view(ISittingContainer, layer=IBungeniSkin, name="add",
     protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})

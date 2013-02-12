@@ -17,7 +17,8 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 )
 
 import bungeni.models.interfaces as interfaces
-from bungeni.models.utils import get_principal_id, get_parliament_for_group_id
+from bungeni.models.utils import get_parliament_for_group_id
+from bungeni.utils import common
 from bungeni.ui.utils import debug
 from bungeni.utils.misc import describe
 from bungeni.ui.i18n import _
@@ -56,7 +57,7 @@ def unset_role(role_id, principal_id, context):
 def assign_role_owner_to_login(context):
     """Assign bungeni.Owner role on context to the currently logged in user.
     """
-    current_user_login = get_principal_id()
+    current_user_login = common.get_request_login()
     log.debug("assign_role_owner_to_login [%s] user:%s" % (
         context, current_user_login))
     assign_role("bungeni.Owner", current_user_login, context)

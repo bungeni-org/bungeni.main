@@ -28,12 +28,11 @@ from bungeni.models.interfaces import (IBungeniApplication, IParliament,
     IBungeniGroup, ISittingContainer, ISession
 )
 from bungeni.models import domain
-from bungeni.core.interfaces import (ISchedulingContext, IWorkspaceScheduling, 
+from bungeni.models.utils import get_current_parliament
+from bungeni.core.interfaces import (
+    ISchedulingContext, 
+    IWorkspaceScheduling, 
     IDailySchedulingContext)
-from bungeni.core.globalsettings import (
-    get_current_parliament,
-    get_current_parliament_id,
-)
 from bungeni.core.i18n import _
 from bungeni.core.proxy import LocationProxy
 from bungeni.ui.calendar import utils
@@ -80,8 +79,8 @@ class PrincipalGroupSchedulingContext(object):
     interface.implements(ISchedulingContext)
 
     group_id = None
-    start_date = None #limit dates in scheduler
-    end_date = None #limit dates in scheduler
+    start_date = None # limit dates in scheduler
+    end_date = None # limit dates in scheduler
     
     def __init__(self, context):
         self.__parent__ = context
@@ -134,15 +133,17 @@ class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     
     @property
     def group_id(self):
-        """Return current parliament's group id."""
-        return get_current_parliament_id() #!+BICAMERA
+        """Return current parliament's group id.
+        """
+        return get_current_parliament(self.__parent__).group_id
 
 class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IParliament)
     
     @property
     def group_id(self):
-        """Returns parliament's group id"""
+        """Returns parliament's group id.
+        """
         return self.__parent__.group_id
 
     def get_group(self):
@@ -154,7 +155,8 @@ class GroupSchedulingContext(PrincipalGroupSchedulingContext):
 
     @property
     def group_id(self):
-        """Return committee's group id."""
+        """Return committee's group id.
+        """
         return self.__parent__.group_id
 
     def get_group(self, name=None):
@@ -193,24 +195,27 @@ class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
 
     @property
     def group_id(self):
-        """Return committee's group id."""
-
+        """Return committee's group id.
+        """
         return self.__parent__.__parent__.group_id
 
     def get_group(self, name=None):
         assert name is None
         return self.__parent__.__parent__
 
+
 class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IWorkspaceScheduling)
+    
     @property
     def group_id(self):
-        return get_current_parliament_id() #!+BICAMERA
+        return self.get_group().group_id
         
     def get_group(self, name=None):
         assert name is None
-        return get_current_parliament()
-    
+        return get_current_parliament(self.__parent__)
+
+
 class DailySchedulingContext(object):
     interface.implements(IDailySchedulingContext, IDCDescriptiveProperties)
 

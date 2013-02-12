@@ -206,8 +206,8 @@ Questions transitions
 
 PRINCIPAL: member
 
-  >>> from bungeni.models.utils import get_principal_id
-  >>> get_principal_id()
+  >>> from bungeni.utils import common
+  >>> common.get_request_login()
   'member'
 
 -------------------------------------
@@ -321,7 +321,7 @@ Switch to the clerk, and check permission for Clerk on the question
 in "submitted" state:
 
   >>> set_interaction(clerk)
-  >>> get_principal_id()
+  >>> common.get_request_login()
   'clerk'
 
 -------------------------------------
@@ -352,7 +352,7 @@ PRINCIPAL: member
 Must re-submit:
 
     >>> set_interaction(member)
-    >>> get_principal_id()
+    >>> common.get_request_login()
     'member'
     >>> wfc.fireTransition("%s-submitted" % question.status)
     >>> question.status
@@ -368,7 +368,7 @@ PRINCIPAL: clerk
 And re-receive:
 
     >>> set_interaction(clerk)
-    >>> get_principal_id()
+    >>> common.get_request_login()
     'clerk'
     >>> wfc.fireTransition("%s-received" % question.status)
     >>> question.status
@@ -392,7 +392,7 @@ And re-receive:
 PRINCIPAL: speaker
 
     >>> set_interaction(speaker)
-    >>> get_principal_id()
+    >>> common.get_request_login()
     'speaker'
 
 "Require recomplete" (from "completed")
@@ -410,7 +410,7 @@ PRINCIPAL: clerk
 "Re-complete" (from "incomplete")
 
     >>> set_interaction(clerk)
-    >>> get_principal_id()
+    >>> common.get_request_login()
     'clerk'
 
     >>> wfc.fireTransition("%s-completed" % question.status)
@@ -427,7 +427,7 @@ PRINCIPAL: speaker
 "Approve" (from "completed")
 
   >>> set_interaction(speaker)
-  >>> get_principal_id()
+  >>> common.get_request_login()
   'speaker'
 
 
@@ -451,7 +451,7 @@ PRINCIPAL: clerk
 "Allow response" (send to ministry)
 
   >>> set_interaction(clerk)
-  >>> get_principal_id()
+  >>> common.get_request_login()
   'clerk'
 
 !+FIRETRANSITION(mr, feb-2011) should review/update/evolve tests below to use 

@@ -44,8 +44,8 @@ In order to create a participation, we need a principal:
   >>> member = create_principal("mp_1", "Member", ())
 
   >>> set_interaction(member)
-  >>> from bungeni.models.utils import get_principal_id
-  >>> get_principal_id()
+  >>> from bungeni.utils import common
+  >>> common.get_request_login()
   'mp_1'
 
     >>> question = add_content(

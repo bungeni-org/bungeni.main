@@ -20,7 +20,7 @@ from zope.cachedescriptors import property as cached_property
 
 from bungeni.alchemist import Session
 from bungeni.models import interfaces, domain, utils as model_utils
-from bungeni.utils import register
+from bungeni.utils import common, register
 from bungeni.capi import capi
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
 
@@ -205,7 +205,7 @@ class SignatoryValidator(object):
     def is_owner(self):
         return (
             (model_utils.get_prm_owner_principal_id(self.context) ==
-                model_utils.get_principal_id()
+                common.get_request_login()
             ) or model_utils.get_db_user() == self.context.owner
         )
 

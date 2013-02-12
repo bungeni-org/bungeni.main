@@ -80,6 +80,7 @@ def replace_keyed_item(seq, replacement_item, key="name"):
     raise LookupError("No matching item [%s=%r] found in seq: %s" % (
         key, replacement_item[key], seq))
 
+
 # io
 
 def read_file(file_path):
@@ -145,3 +146,4 @@ def put_env(key, value):
             # ensure that the original object value defines a __repr__ 
             # that can correctly re-instantiate the original object
             assert eval(os.environ[key]) == value
+

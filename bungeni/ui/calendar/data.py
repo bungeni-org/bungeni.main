@@ -18,7 +18,7 @@ from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.interfaces import (IParliament, IAgendaItem, 
     ISchedulingManager)
-from bungeni.models.utils import get_current_parliament
+from bungeni.models.utils import get_current_parliament, get_db_user
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
@@ -27,18 +27,18 @@ from bungeni.capi import capi
 
 #!+CACHING(mb, Feb-2013) cache this
 def get_schedulable_states(type_key):
-    type_info = capi.get_type_info(type_key)
-    manager = ISchedulingManager(type_info.domain_model(), None)
+    ti = capi.get_type_info(type_key)
+    manager = ISchedulingManager(ti.domain_model(), None)
     if manager:
-        return ISchedulingManager(type_info.domain_model()).schedulable_states
+        return ISchedulingManager(ti.domain_model()).schedulable_states
     else:
         return []
 
 def get_scheduled_states(type_key):
-    type_info = capi.get_type_info(type_key)
-    manager = ISchedulingManager(type_info.domain_model(), None)
+    ti = capi.get_type_info(type_key)
+    manager = ISchedulingManager(ti.domain_model(), None)
     if manager:
-        return ISchedulingManager(type_info.domain_model()).scheduled_states
+        return ISchedulingManager(ti.domain_model()).scheduled_states
     else:
         return []
 def can_schedule(type_key, workflow):
@@ -51,7 +51,7 @@ def can_schedule(type_key, workflow):
         transitions = workflow.get_transitions_to(scheduled_states[0])
         if transitions:
             allow = checkPermission(transitions[0].permission,
-                get_current_parliament()
+                get_current_parliament(get_db_user())
             )
     return allow
 
@@ -62,38 +62,33 @@ def get_schedulable_types(skip_permission_check=False):
     `skip_permission_check` set to `True`
     """
     schedulable_types = []
-    for (key, type_info) in capi.iter_type_info():
-        if type_info.workflow and type_info.workflow.has_feature("schedule"):
-            schedulable_types.append((key, type_info))
+    for (key, ti) in capi.iter_type_info():
+        if ti.workflow and ti.workflow.has_feature("schedule"):
+            schedulable_types.append((key, ti))
     return dict([
         (type_key, dict(
-            title=type_info.descriptor_model.container_name,
-            domain_model=type_info.domain_model,
-            workflow=type_info.workflow,
-            display_name=type_info.descriptor_model.display_name
+            title=ti.descriptor_model.container_name,
+            domain_model=ti.domain_model,
+            workflow=ti.workflow,
+            display_name=ti.descriptor_model.display_name
         ))
-        for (type_key, type_info) in schedulable_types
-        if (skip_permission_check or can_schedule(type_key, type_info.workflow))
+        for (type_key, ti) in schedulable_types
+        if (skip_permission_check or can_schedule(type_key, ti.workflow))
     ])
 
 
 def get_filter_config():
     """Get schedulable item filters"""
     return dict(
-        [ (item_type, 
-            { 
+        [ (type_key, { 
                 "label": _(u"choose status"),
-                "menu": [ 
-                    { 
-                        "text": type_info.get("workflow").get_state(status).title,
+                "menu": [ {
+                        "text": ti.get("workflow").get_state(status).title,
                         "value": status 
                     }
-                    for status in get_schedulable_states(item_type)
-                ]
-            }
-           ) 
-            for (item_type, type_info) in get_schedulable_types().iteritems()
-        ]
+                    for status in get_schedulable_states(type_key) ]
+            })
+            for (type_key, ti) in get_schedulable_types().iteritems() ]
     )
 
 class ReportContext(object):
@@ -110,27 +105,27 @@ class SchedulableItemsGetter(object):
     #!+(SCHEDULING, April-2012) There still needs to be a way to filter 
     # documents per group - at least for documents that may be created
     # in various group contexts e.g. AgendaItems, Headings e.t.c
-    def __init__(self, context, item_type, filter_states=None, 
+    def __init__(self, context, type_key, filter_states=None, 
             group_filter=False, item_filters={}
         ):
         self.context = context
-        self.item_type = item_type
-        type_info = capi.get_type_info(item_type)
-        self.filter_states = get_schedulable_states(item_type)
+        self.item_type = type_key
+        ti = capi.get_type_info(type_key)
+        self.filter_states = get_schedulable_states(type_key)
         self.group_filter = (group_filter or 
             not IParliament.providedBy(context.group) or
-            IAgendaItem.implementedBy(type_info.domain_model)
+            IAgendaItem.implementedBy(ti.domain_model)
         )
         try:
-            self.domain_class = get_schedulable_types()[item_type].get(
+            self.domain_class = get_schedulable_types()[type_key].get(
                 "domain_model")
         except KeyError:
             # !+try/except not necessary?
             try:
-                self.domain_class = type_info.domain_model
+                self.domain_class = ti.domain_model
             except KeyError:
                 raise KeyError("Unable to locate domain class for type %s" %
-                    item_type
+                    type_key
                 )
         self.item_filters = item_filters
     

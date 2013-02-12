@@ -15,9 +15,8 @@ from zope.publisher.browser import BrowserView
 from zope import interface
 from zope.publisher.interfaces import IPublishTraverse
 
-import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import url, common
-from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_db_user_id, get_current_parliament
 from bungeni.core.workflow.interfaces import IWorkflowController
 
 
@@ -34,8 +33,8 @@ class RedirectToCurrent(BrowserView):
         self.context = context
         self.request = request
         self.traverse_subpath = []
-        self.current_parliament_id = prefs.get_current_parliament_id() #!+BICAMERA
-
+        self.current_parliament_id = get_current_parliament(context)
+    
     def publishTraverse(self, request, name):
         self.traverse_subpath.append(name)
         return self

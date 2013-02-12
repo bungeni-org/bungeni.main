@@ -13,9 +13,9 @@ from zope.formlib import form
 from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 
-from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
 from bungeni.core.workflow import interfaces
+from bungeni.utils import common
 
 
 def bindTransitions(form_instance, transitions, wf):
@@ -55,7 +55,7 @@ class TransitionHandler(object):
             transition_id=%s
             next_url=%s 
             current_url=%s """ % (form, action.label, action.name, data, 
-                get_principal_id(), context, self.transition_id, 
+                common.get_request_login(), context, self.transition_id, 
                 form.next_url, form.request.getURL())
         )
         
