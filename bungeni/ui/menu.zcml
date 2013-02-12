@@ -209,6 +209,14 @@
         order="40"
     />
     <browser:menuItem menu="additems"
+        for="bungeni.models.interfaces.ISession"
+        title="Add sitting..."
+        action="./sittings/add"
+        permission="bungeni.sitting.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="40"
+    />
+    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ISittingContainer"
         title="Add sitting..."
         action="./add"

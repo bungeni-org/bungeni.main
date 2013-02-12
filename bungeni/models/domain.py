@@ -19,7 +19,7 @@ from zope import interface, location
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import ore.xapian.interfaces
 from bungeni import alchemist
-from bungeni.alchemist.traversal import one2many
+from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import object_mapper
 
@@ -263,6 +263,10 @@ class GroupMembershipRole(Entity):
        that are granted when a document is assigned to a user
     """
     interface.implements(interfaces.IGroupMembershipRole)
+    
+    @property
+    def group(self):
+        return self.member.group
 
 
 class GroupDocumentAssignment(Entity):
@@ -869,6 +873,9 @@ class Session(Entity):
 
     sittings = one2many("sittings",
         "bungeni.models.domain.SittingContainer", "session_id")
+    agendaitems = one2manyindirect("agendaitems",
+        "bungeni.models.domain.AgendaItemContainer", "parliament_id", 
+        "parliament_id")
     
     @property
     def group_id(self):

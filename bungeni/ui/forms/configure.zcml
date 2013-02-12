@@ -144,12 +144,6 @@ to e.g. "bungeni.{type}.Edit").
         permission="bungeni.item_schedule.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="add"
-        for="bungeni.models.interfaces.ISittingContainer"
-        class=".common.AddForm"
-        permission="bungeni.sitting.Add"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
     <browser:page name="view"
         for="bungeni.models.interfaces.ISitting"
         class=".common.DisplayForm"
