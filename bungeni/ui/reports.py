@@ -26,7 +26,7 @@ from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import ISitting
 
 from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
+from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.core.language import get_default_language
 
 from bungeni.ui import widgets
@@ -250,13 +250,13 @@ class SaveReportView(form.PageForm):
 # it generates report based on the default template and publishes it
 @register.handler(adapts=(ISitting, IWorkflowTransitionEvent))
 def default_reports(sitting, event):
-    wf = IWorkflow(sitting)
-    if sitting.status in wf.get_state_ids(tagged=["published"]):
+    #!+REPORTS(mb, Feb-2013) add a publish_report action - remove this handler
+    if "published" in sitting.status:
         sitting = removeSecurityProxy(sitting)
         report_type = "sitting_agenda"
         report_title = _("report_title_sitting_agenda", 
             default=u"Sitting Agenda")
-        if sitting.status in wf.get_state_ids(tagged=["publishedminutes"]):
+        if "minutes" in sitting.status:
             report_type = "sitting_minutes"
             report_title =  _("report_title_votes_and_proceedings", 
                 default=u"Sitting Votes and Proceedings")

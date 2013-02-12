@@ -295,7 +295,7 @@
         name="index"
         for="bungeni.core.interfaces.IWorkspaceScheduling"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
-        class=".calendar.browser.SessionsRedirect"
+        class=".calendar.browser.CalendarView"
         permission="bungeni.ui.workspace.View"
     />
     <browser:page name="schedule"

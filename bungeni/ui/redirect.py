@@ -135,7 +135,6 @@ class WorkflowRedirectSitting(WorkflowRedirect):
     @property
     def redirect_to(self):
         wfc = IWorkflowController(self.context)
-        if (wfc.state_controller.get_status() in 
-            wfc.workflow.get_state_ids(tagged=["draft"])):
+        if "draft" in wfc.state_controller.get_status():
             return "./schedule"
         return WorkflowRedirect.redirect_to
