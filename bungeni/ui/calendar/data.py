@@ -18,7 +18,7 @@ from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.interfaces import (IParliament, IAgendaItem, 
     ISchedulingManager)
-from bungeni.models.utils import get_current_parliament, get_login_user
+from bungeni.models.utils import get_login_user_chamber
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
@@ -50,9 +50,8 @@ def can_schedule(type_key, workflow):
     if scheduled_states:
         transitions = workflow.get_transitions_to(scheduled_states[0])
         if transitions:
-            allow = checkPermission(transitions[0].permission,
-                get_current_parliament(get_login_user())
-            )
+            allow = checkPermission(
+                transitions[0].permission, get_login_user_chamber())
     return allow
 
 def get_schedulable_types(skip_permission_check=False):

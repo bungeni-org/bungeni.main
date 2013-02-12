@@ -225,9 +225,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
         this property returns the id of the parliament the currently logged in
         user is a member of
         """
-        user = utils.get_login_user()
-        user_parliament = utils.get_parliament_for_user(user)
-        return user_parliament.group_id
+        chamber = utils.get_login_user_chamber()
+        return chamber.group_id
 
     def __getitem__(self, name):
         value = self.get(name)
@@ -246,9 +245,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
     def __setitem__(self, name, item):
         session = Session()
-        user = utils.get_login_user()
-        user_parliament = utils.get_parliament_for_user(user)
-        item.parliament_id = user_parliament.parliament_id
+        chamber = utils.get_login_user_chamber()
+        item.parliament_id = chamber.parliament_id
         session.add(item)
 
 
@@ -323,11 +321,10 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
     def __init__(self, context):
         self.context = context
-        user = utils.get_login_user()
-        user_parliament = utils.get_parliament_for_user(user)
-        if user_parliament:
-            self.object_type = user_parliament.type
-            self.oid = user_parliament.group_id
+        chamber = utils.get_login_user_chamber()
+        if chamber:
+            self.object_type = chamber.type
+            self.oid = chamber.group_id
         else:
             self.object_type = None
             self.oid = None

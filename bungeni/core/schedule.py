@@ -28,7 +28,7 @@ from bungeni.models.interfaces import (IBungeniApplication, IParliament,
     IBungeniGroup, ISittingContainer, ISession
 )
 from bungeni.models import domain
-from bungeni.models.utils import get_current_parliament
+from bungeni.models.utils import get_context_chamber
 from bungeni.core.interfaces import (
     ISchedulingContext, 
     IWorkspaceScheduling, 
@@ -135,7 +135,7 @@ class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     def group_id(self):
         """Return current parliament's group id.
         """
-        return get_current_parliament(self.__parent__).group_id
+        return get_context_chamber(self.__parent__).group_id
 
 class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IParliament)
@@ -213,7 +213,7 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
         
     def get_group(self, name=None):
         assert name is None
-        return get_current_parliament(self.__parent__)
+        return get_context_chamber(self.__parent__)
 
 
 class DailySchedulingContext(object):

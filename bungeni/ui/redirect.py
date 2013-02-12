@@ -15,7 +15,7 @@ from zope import interface
 from zope.publisher.interfaces import IPublishTraverse
 
 from bungeni.ui.utils import url, common
-from bungeni.models.utils import get_login_user, get_current_parliament
+from bungeni.models.utils import get_login_user, get_context_chamber
 from bungeni.core.workflow.interfaces import IWorkflowController
 
 
@@ -32,14 +32,14 @@ class RedirectToCurrent(BrowserView):
         self.context = context
         self.request = request
         self.traverse_subpath = []
-        self.current_parliament_id = get_current_parliament(context)
     
     def publishTraverse(self, request, name):
         self.traverse_subpath.append(name)
         return self
         
     def __call__(self):
-        """redirect to container"""
+        """Redirect to container.
+        """
         #context = proxy.removeSecurityProxy( self.context )
         response = self.request.response
         root_url = url.absoluteURL(self.context, self.request)
@@ -57,7 +57,7 @@ class RedirectToCurrent(BrowserView):
             if self.traverse_subpath[0] == 'parliament':
                 to_url = "%s/parliament/obj-%s/%s?%s" % (
                         root_url,
-                        self.current_parliament_id,
+                        get_context_chamber(self.context).group_id,
                         '/'.join(self.traverse_subpath[1:]),
                         qstr)
         return response.redirect(to_url)

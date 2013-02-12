@@ -21,8 +21,7 @@ from bungeni.utils import common
 # legislature and chambers
 
 
-# !+rename/rework chamber
-def get_current_parliament(context):
+def get_context_chamber(context):
     """Return the chamber in which the context exists.
     """
     # first look for current parliament from context tree
@@ -30,8 +29,8 @@ def get_current_parliament(context):
         acceptable=interfaces.IParliament.providedBy)
     # !+ should this ever be None here?
     if chamber is None:
-        # check logged in user's parliament:
-        chamber = get_parliament_for_user(get_login_user())
+        # check logged in user's chamber
+        chamber = get_login_user_chamber()
     return chamber
     ''' !+ assume unicameral, date
     import datetime
@@ -65,8 +64,12 @@ def get_current_parliament(context):
     '''
 
 
-
-# !+ move "contextual" utils to ui.utils.contextual
+def get_login_user_chamber():
+    user = get_login_user()
+    if user.group_membership:
+        return get_parliament_for_group_id(user.group_membership[0].group.group_id)
+    # !+ what guarantees that "first" [0] group the user is a member of is
+    # the right place to start?
 
 
 def get_login_user():
@@ -93,6 +96,8 @@ def is_current_or_delegated_user(user_id):
                 return True
     return False
 
+
+
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 def get_prm_owner_principal_id(context):
     """Get the principal_id, if any, of the bungeni.Owner for context.
@@ -107,6 +112,7 @@ def get_prm_owner_principal_id(context):
         raise ValueError("Ambiguous, multiple Owner roles assigned.")
     elif len_pids == 1:
         return principal_ids[0]
+
 
 def get_user_for_principal_id(principal_id):
     """Get the User for this principal_id.
@@ -146,9 +152,9 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     return func
 
 ''' !+UNUSED and adding overhead to refactoring efforts
-def get_current_parliament_governments(parliament=None):
+def get_context_chamber_governments(parliament=None):
     if parliament is None:
-        parliament = get_current_parliament()
+        parliament = get_context_chamber()
     governments = Session().query(domain.Government).filter(
             sql.and_(domain.Government.parent_group_id == parliament.group_id,
                      domain.Government.status == "active")).all()
@@ -157,9 +163,9 @@ def get_current_parliament_governments(parliament=None):
 
 
 ''' !+UNUSED and adding overhead to refactoring efforts
-def get_current_parliament_committees(parliament=None):
+def get_context_chamber_committees(parliament=None):
     if parliament is None:
-        parliament = get_current_parliament(None)
+        parliament = get_context_chamber(None)
     committees = Session().query(domain.Committee).filter(
             sql.and_(domain.Committee.parent_group_id == parliament.group_id,
                      domain.Committee.status == "active")).all()
@@ -254,6 +260,7 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
     o_held = connection.execute(offices_held)
     return o_held
 
+
 def get_group_ids_for_user_in_parliament(user_id, parliament_id):
     """ get the groups a user is member of for a specific parliament """
     session = Session()
@@ -269,6 +276,7 @@ def get_group_ids_for_user_in_parliament(user_id, parliament_id):
         my_group_ids.append(group_id[0])
     return my_group_ids
 
+
 def get_parliament_for_group_id(group_id):
     if group_id is None:
         return None
@@ -278,13 +286,6 @@ def get_parliament_for_group_id(group_id):
         return group
     else:
         return get_parliament_for_group_id(group.parent_group_id)
-
-def get_parliament_for_user(user):
-    # !+ make logic part of get_chamber(user) or get_chamber(None)?
-    if user.group_membership:
-        return get_parliament_for_group_id(user.group_membership[0].group.group_id)
-    # !+ what guarantees that "first" [0] group the user is a member of is
-    # the right place to start?
 
 
 # misc queries
