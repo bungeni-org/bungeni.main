@@ -28,7 +28,7 @@ from bungeni.capi import capi
 from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models.interfaces import ISubRoleAnnotations
-from bungeni.utils import common
+from bungeni import utils
 
 
 class UserAssignmentView(forms.common.BaseForm):
@@ -40,7 +40,7 @@ class UserAssignmentView(forms.common.BaseForm):
 
     def __init__(self, context, request):
         self._assignable_roles = []
-        self.principal = common.get_request_principal()
+        self.principal = utils.common.get_request_principal()
         self.context_roles = common.get_context_roles(
             context, self.principal)
         self.context = removeSecurityProxy(context)
