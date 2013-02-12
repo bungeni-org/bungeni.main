@@ -4,7 +4,8 @@
 
 """Common utilities oriented towards "usage of framework".
 
-This module should NEVER import from any other bungeni sub-package.
+This module should NEVER import from any other bungeni sub-package
+or even assume any knowledge of bungeni domain models.
 
 $Id$
 """

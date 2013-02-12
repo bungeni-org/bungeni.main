@@ -133,7 +133,7 @@ def feature_signatory(kls, feature):
     bungeni.models.signatories.createManagerFactory(kls, **feature.params)
 
 class SchedulingManager(object):
-    """Store scheduling configuration properties for a known type
+    """Store scheduling configuration properties for a known type.
     """
     interface.implements(interfaces.ISchedulingManager)
     
@@ -144,7 +144,8 @@ class SchedulingManager(object):
         self.context = context
 
 def create_scheduling_manager(domain_class, **params):
-    """Instantiate a scheduling manager instance for `domain_class`"""
+    """Instantiate a scheduling manager instance for `domain_class`.
+    """
     manager_name = "%sSchedulingManager" % domain_class.__name__
     if manager_name in globals().keys():
         log.error("Scheduling manager named %s already exists", manager_name)

@@ -263,7 +263,7 @@ def user_is_state_creator(context):
     """
     is_state_creator = False
     if IFeatureAudit.providedBy(context):
-        current_user = model_utils.get_db_user()
+        current_user = model_utils.get_login_user()
         if current_user:
             for _object_change in reversed(
                     domain.get_changes(context.changes, "workflow")

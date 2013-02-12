@@ -22,7 +22,7 @@ from zope.lifecycleevent import ObjectCreatedEvent
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
-from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_login_user
 from bungeni.models.interfaces import ISitting
 
 from bungeni.core.interfaces import ISchedulingContext
@@ -145,7 +145,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
             start_date=self.start_date,
             end_date=self.end_date,
             body=self.generated_content,
-            owner_id=get_db_user_id(), # !+GROUP_AS_OWNER
+            owner_id=get_login_user().user_id, # !+GROUP_AS_OWNER
             language=self.language,
             group_id=context_group_id
         )
@@ -213,7 +213,7 @@ class SaveReportView(form.PageForm):
         report.end_date = data["end_date"]
         report.note = data["note"]
         report.short_name = data["short_name"]
-        report.owner_id = get_db_user_id() # !+GROUP_AS_OWNER
+        report.owner_id = get_login_user().user_id # !+GROUP_AS_OWNER
         report.language = get_default_language()
         report.created_date = datetime.datetime.now()
         if not hasattr(self.context, "group_id"):
@@ -265,7 +265,7 @@ def default_reports(sitting, event):
         session = Session()
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
         # the report is the currently logged in user.
-        report.owner_id = get_db_user_id()
+        report.owner_id = get_login_user().user_id
         report.created_date = datetime.datetime.now()
         report.group_id = sitting.group_id
         # generate using html template in bungeni_custom

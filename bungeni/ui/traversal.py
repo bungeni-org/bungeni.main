@@ -11,7 +11,7 @@ from bungeni.models.domain import Doc, Bill
 from sqlalchemy import extract
 
 from bungeni.models.domain import User
-from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_login_user
 from zope.publisher.interfaces import IPublishTraverse, NotFound
 
 import datetime
@@ -101,10 +101,7 @@ class ProfileTraverser(ContainerTraverser):
 
         # Shortcut for current user workspace
         if name == u"profile":
-            session = Session()
-            user_id = get_db_user_id(self.context) 
-            user = session.query(User)\
-                          .filter(User.user_id==user_id).first()
+            user = get_login_user()
             if user is not None:
                 user.__parent__ = self.context
                 user.__name__ = "profile"

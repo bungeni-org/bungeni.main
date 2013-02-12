@@ -20,6 +20,7 @@ from bungeni.utils import common
 
 # legislature and chambers
 
+
 # !+rename/rework chamber
 def get_current_parliament(context):
     """Return the chamber in which the context exists.
@@ -30,7 +31,7 @@ def get_current_parliament(context):
     # !+ should this ever be None here?
     if chamber is None:
         # check logged in user's parliament:
-        chamber = get_parliament_for_user(get_db_user())
+        chamber = get_parliament_for_user(get_login_user())
     return chamber
     ''' !+ assume unicameral, date
     import datetime
@@ -67,38 +68,27 @@ def get_current_parliament(context):
 
 # !+ move "contextual" utils to ui.utils.contextual
 
-# !+rename get_logged_in_user
-def get_db_user(context=None):
-    """ get the logged in user 
-    Note: context is not used, but accommodated for as a dummy optional input 
-    parameter to allow usage of this utility in e.g.
-    bungeni.core.app: container_getter(get_db_user, "questions")
+
+def get_login_user():
+    """Get the logged in user. Returns None if no user logged in.
     """
     login = common.get_request_login()
-    session = Session()
-    query = session.query(domain.User).filter(domain.User.login == login)
-    # !+ why not .one() ?
+    query = Session().query(domain.User).filter(domain.User.login == login)
     results = query.all()
     if len(results) == 1:
         return results[0]
 
-# !+rename get_logged_in_user_id
-def get_db_user_id(context=None):
-    """ get the (numerical) user_id for the currently logged in user
-    """
-    db_user = get_db_user(context)
-    if db_user is not None:
-        return db_user.user_id
+
 
 def is_current_or_delegated_user(user_id):
     """Is this user (a delegation of) the currently logged user?
     """
-    current_user = get_db_user()
+    current_user = get_login_user()
     # Only if there is a user logged in!
     if current_user:
         if current_user.user_id == user_id:
             return True
-        for d in delegation.get_user_delegations(current_user.user_id):
+        for d in delegation.get_user_delegations(current_user):
             if d.user_id == user_id:
                 return True
     return False
@@ -155,7 +145,7 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     func.__name__ = "get_%s_container" % name
     return func
 
-''' !+UNUSED and adding overhead to all refactoring efforts
+''' !+UNUSED and adding overhead to refactoring efforts
 def get_current_parliament_governments(parliament=None):
     if parliament is None:
         parliament = get_current_parliament()
@@ -166,7 +156,7 @@ def get_current_parliament_governments(parliament=None):
 '''
 
 
-''' !+UNUSED and adding overhead to all refactoring efforts
+''' !+UNUSED and adding overhead to refactoring efforts
 def get_current_parliament_committees(parliament=None):
     if parliament is None:
         parliament = get_current_parliament(None)

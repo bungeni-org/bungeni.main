@@ -6,7 +6,6 @@
 
 $Id$
 """
-
 log = __import__("logging").getLogger("bungeni.ui.redirect")
 
 import datetime
@@ -16,7 +15,7 @@ from zope import interface
 from zope.publisher.interfaces import IPublishTraverse
 
 from bungeni.ui.utils import url, common
-from bungeni.models.utils import get_db_user_id, get_current_parliament
+from bungeni.models.utils import get_login_user, get_current_parliament
 from bungeni.core.workflow.interfaces import IWorkflowController
 
 
@@ -100,7 +99,7 @@ class SignatoryReview(BrowserView):
     def __call__(self):
         request = self.request
         context = self.context
-        user_id = get_db_user_id()
+        user_id = get_login_user().user_id
         signatories = context.signatories
         _filters = {"user_id": user_id}
         _signatories = signatories.query(**_filters)

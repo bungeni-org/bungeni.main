@@ -35,7 +35,7 @@ from zc.table import column
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import domain
-from bungeni.models.utils import get_db_user, get_member_of_parliament
+from bungeni.models.utils import get_login_user, get_member_of_parliament
 from bungeni.models.interfaces import IOwned, IScheduleText
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui.utils import common, date, url
@@ -296,7 +296,7 @@ def workflow_column(name, title, vocabulary=None):
         # from the others may be a useful feature.
         if IWorkspaceSectionLayer.providedBy(request) and IOwned.providedBy(item):
             # !+delegation?
-            if item.owner == get_db_user():
+            if item.owner == get_login_user():
                 state_title = "<b>%s</b> *" % (state_title)
         return state_title
     return column.GetterColumn(title, getter)

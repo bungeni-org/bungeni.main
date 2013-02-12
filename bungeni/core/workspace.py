@@ -225,7 +225,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         this property returns the id of the parliament the currently logged in
         user is a member of
         """
-        user = utils.get_db_user()
+        user = utils.get_login_user()
         user_parliament = utils.get_parliament_for_user(user)
         return user_parliament.group_id
 
@@ -246,7 +246,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
     def __setitem__(self, name, item):
         session = Session()
-        user = utils.get_db_user()
+        user = utils.get_login_user()
         user_parliament = utils.get_parliament_for_user(user)
         item.parliament_id = user_parliament.parliament_id
         session.add(item)
@@ -323,7 +323,7 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
     def __init__(self, context):
         self.context = context
-        user = utils.get_db_user()
+        user = utils.get_login_user()
         user_parliament = utils.get_parliament_for_user(user)
         if user_parliament:
             self.object_type = user_parliament.type
@@ -549,7 +549,7 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
 
     def _query(self, **kw):
         session = Session()
-        user = utils.get_db_user()
+        user = utils.get_login_user()
         reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
         results = []
         domain_status = self.item_status_filter(kw)
@@ -628,7 +628,7 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
     def _query(self, **kw):
         results = []
         session = Session()
-        user = utils.get_db_user()
+        user = utils.get_login_user()
         #status = self.item_status_filter(kw)
         reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
         query = session.query(domain.Group).join(

@@ -39,7 +39,7 @@ from bungeni.ui.utils import url, debug, date, misc
 from bungeni.utils import common
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
     IAdminSectionLayer
-from bungeni.models.utils import get_db_user_id, get_user, get_member_of_parliament
+from bungeni.models.utils import get_login_user, get_user, get_member_of_parliament
 from bungeni.core.language import get_default_language
 
 
@@ -1152,22 +1152,22 @@ class VocabularyDefaultDropDownWidget(DropdownWidget):
     def getDefaultVocabularyValue(self):
         raise NotImplemented
         
-        user_id = get_db_user_id()
+        user = get_login_user()
         try:
-            self.context.vocabulary.getTerm(user_id)
+            self.context.vocabulary.getTerm(user.user_id)
         except LookupError:
             return None
-        return user_id
+        return user.user_id
 
 class UserDropDownWidget(VocabularyDefaultDropDownWidget):
 
     def getDefaultVocabularyValue(self):
-        user_id = get_db_user_id()
+        user = get_login_user()
         try:
-            self.context.vocabulary.getTerm(user_id)
+            self.context.vocabulary.getTerm(user.user_id)
         except LookupError:
             return None
-        return user_id
+        return user.user_id
 
 class LanguageLookupWidget(VocabularyDefaultDropDownWidget):
 

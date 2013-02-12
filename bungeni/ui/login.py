@@ -16,7 +16,7 @@ from bungeni.core.interfaces import IBungeniMailer
 from bungeni.models.domain import User
 from bungeni.alchemist import Session
 from bungeni.models.domain import PasswordRestoreLink
-from bungeni.models.utils import get_db_user
+from bungeni.models.utils import get_login_user
 from bungeni.ui import vocabulary
 from bungeni.ui import widgets
 from bungeni.core.i18n import _
@@ -272,7 +272,7 @@ class IProfileForm(interface.Interface):
         message = _("error_profile_email_taken", "Email already taken!")
         if users.count() > 1:
             raise interface.Invalid(message,"email")
-        if users.count() == 1 and users.first().user_id != get_db_user().user_id:
+        if users.count() == 1 and users.first().user_id != get_login_user().user_id:
             raise interface.Invalid(message,"email")
         
 
@@ -292,7 +292,7 @@ class Profile(BaseForm):
     
     def __init__(self, *args, **kwargs):
         super(Profile, self).__init__(*args, **kwargs)
-        self.user = get_db_user(self.context)
+        self.user = get_login_user()
         self.context = self.user
             
     def __call__(self):
@@ -395,9 +395,8 @@ class IChangePasswordForm(interface.Interface):
     
     @invariant
     def checkOldPassword(self):
-        if not get_db_user().checkPassword(self.old_password):
-            raise interface.Invalid(_("Old password incorrect"),
-                                      'old_password')
+        if not get_login_user().checkPassword(self.old_password):
+            raise interface.Invalid(_("Old password incorrect"), "old_password")
     
 
 class ChangePasswordForm(BaseForm):
@@ -413,7 +412,7 @@ class ChangePasswordForm(BaseForm):
     def __init__(self, *args, **kwargs):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
         self.session = Session()
-        self.user = get_db_user(self.context)
+        self.user = get_login_user()
             
     def __call__(self):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):

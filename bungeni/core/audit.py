@@ -42,7 +42,7 @@ from zope.security.proxy import removeSecurityProxy
 import sqlalchemy as sa
 from bungeni.alchemist import Session
 
-from bungeni.models.utils import get_db_user_id
+from bungeni.models import utils
 from bungeni.models.interfaces import IFeatureAudit
 from bungeni.models import schema
 from bungeni.models import domain
@@ -238,8 +238,8 @@ class _AuditorFactory(object):
             to date_audit.
         """
         domain.assert_valid_change_action(action)
-        user_id = get_db_user_id()
-        assert user_id is not None, "Audit error. No user logged in."
+        user = utils.get_login_user()
+        assert user is not None, "Audit error. No user logged in."
         # carry over a snapshot of head values
         def get_field_names_to_audit(kls):
             names_to_audit = []
@@ -282,7 +282,7 @@ class _AuditorFactory(object):
         ch = domain.Change()
         ch.seq = 0 # !+ reset below, to avoid sqlalchemy violates not-null constraint
         ch.audit = au # ensures ch.audit_id, ch.note.object_id
-        ch.user_id = user_id
+        ch.user_id = user.user_id
         ch.action = action
         ch.seq = self._get_seq(ch)
         # !+translate_seq(mr, feb-2013) this should be divided by language?

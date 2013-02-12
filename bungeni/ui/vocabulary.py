@@ -690,13 +690,13 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
     def constructQuery(self, context):
         mp_query = super(MemberOfParliamentDelegationSource, 
             self).constructQuery(context)
-        user_id = utils.get_db_user_id()
-        if user_id:
+        user = utils.get_login_user()
+        if user:
             user_ids = [ ud.user_id 
-                for ud in delegation.get_user_delegations(user_id) ]
+                for ud in delegation.get_user_delegations(user) ]
             # current user must also be considered as (a potential MP) delegator
-            if user_id not in user_ids:
-                user_ids.append(user_id)
+            if user.user_id not in user_ids:
+                user_ids.append(user.user_id)
             # the filtered list of MP delegators
             query = mp_query.filter(
                 domain.MemberOfParliament.user_id.in_(user_ids))
@@ -861,7 +861,7 @@ class OwnerOrLoggedInUserSource(SpecializedSource):
             user = removeSecurityProxy(context).owner
             assert user is not None
         except (AttributeError, AssertionError):
-            user = utils.get_db_user()
+            user = utils.get_login_user()
         title_field = self.title_field or self.token_field
         obj = translate_obj(user)
         terms = [
@@ -1199,7 +1199,7 @@ class MotionPoliticalGroupSource(SpecializedSource):
         trusted=removeSecurityProxy(context)
         user_id = getattr(trusted, "owner_id", None)
         if user_id is None:
-            user_id = utils.get_db_user_id()
+            user_id = utils.get_login_user().user_id
         parliament_id = common.getattr_ancestry(trusted, "parliament_id")
         
         if user_id: 

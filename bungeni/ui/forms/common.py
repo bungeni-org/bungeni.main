@@ -43,7 +43,7 @@ from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
     IAttachmentContainer, ISignatoryManager #, ISittingContainer
 from bungeni.models import domain
-from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_login_user
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
     IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer
@@ -928,7 +928,7 @@ class SignOpenDocumentForm(PageForm):
 
     def _can_review_signature(self, action):
         manager = ISignatoryManager(self.context)
-        return manager.is_signatory(get_db_user_id())
+        return manager.is_signatory(get_login_user())
 
     def redirect_to_review(self):
         self.request.response.redirect("./signatory-review")
@@ -939,9 +939,9 @@ class SignOpenDocumentForm(PageForm):
     @formlib.form.action(_(u"Sign Document"), name="sign_document", 
         condition=_can_sign_document)
     def handle_sign_document(self, action, data):
-        user_id = get_db_user_id()
+        user = get_login_user()
         manager = ISignatoryManager(self.context)
-        manager.sign_document(user_id)
+        manager.sign_document(user.user_id)
         self.request.response.redirect(self.nextURL())
 
     @formlib.form.action(_(u"Review Signature"), name="review_signature", 

@@ -164,16 +164,16 @@ class SignatoryValidator(object):
                 self.signatories)
         )
 
-    def is_signatory(self, user_id=None):
-        user_id = user_id or model_utils.get_db_user_id()
-        if user_id:
-            return user_id in [ sgn.user_id for sgn in self.signatories ] 
+    def is_signatory(self, user=None):
+        user = user_id or model_utils.get_login_user()
+        if user:
+            return user.user_id in [ sgn.user_id for sgn in self.signatories ] 
         return False
     
-    def is_consented_signatory(self, user_id=None):
-        user_id = user_id or model_utils.get_db_user_id()
-        if user_id:
-            return user_id in [ sgn.user_id for sgn in 
+    def is_consented_signatory(self, user=None):
+        user = user_id or model_utils.get_login_user()
+        if user:
+            return user.user_id in [ sgn.user_id for sgn in 
                 filter(
                     lambda cs:cs.status in SIGNATORY_CONSENTED_STATES, 
                     self.signatories)
@@ -206,7 +206,7 @@ class SignatoryValidator(object):
         return (
             (model_utils.get_prm_owner_principal_id(self.context) ==
                 common.get_request_login()
-            ) or model_utils.get_db_user() == self.context.owner
+            ) or model_utils.get_login_user() == self.context.owner
         )
 
     def can_sign(self):
