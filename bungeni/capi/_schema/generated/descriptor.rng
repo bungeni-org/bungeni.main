@@ -325,6 +325,8 @@
   <define name="FIELD_RENDER_TYPE">
     <choice>
       <value>text_line</value>
+      <value>text_raw</value>
+      <value>text_schedule_type</value>
       <value>text_box</value>
       <value>rich_text</value>
       <value>date</value>

@@ -958,6 +958,16 @@ class EditorialNote(Entity):
         interfaces.ITranslatable,
     )
 
+class AgendaTextRecord(Entity):
+    """Arbitrary text inserted into schedule
+    """
+    type = u"agenda_text_record"
+    interface.implements(
+        interfaces.IAgendaTextRecord,
+        interfaces.IScheduleText,
+        interfaces.ITranslatable,
+    )
+
 
 class ItemSchedule(Entity):
     """For which sitting was a parliamentary item scheduled.
@@ -1015,8 +1025,14 @@ class ItemSchedule(Entity):
         return IDCDescriptiveProperties(self.item).uri
 
     @property
+    def is_type_text_record(self):
+        return self.get_item_domain() == AgendaTextRecord
+
+    @property
     def type_heading(self):
-        return self.get_item_domain() == Heading
+        if self.get_item_domain() == AgendaTextRecord:
+            return Heading.type == self.item.record_type
+        return False
     
     @property
     def type_document(self):

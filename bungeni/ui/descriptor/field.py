@@ -46,6 +46,8 @@ VALUETYPE = {
 # {str: zope.schema.Field} #!+kw:comma-separated-str
 RENDERTYPE = {
     "text_line": schema.TextLine,
+    "text_raw": schema.TextLine,
+    "text_schedule_type": schema.TextLine,
     "text_box": schema.Text,
     "rich_text": schema.Text,
     "date": schema.Date,
@@ -70,6 +72,11 @@ WIDGETS = {
     ("text", "text_line"):
         (None, None, None, None, 
             listing.truncatable_text_column, None),
+    ("text", "text_raw"):
+        (None, None, None, None, None, None),
+    ("text", "text_schedule_type"):
+        (None, None, None, None, 
+            listing.schedule_type_column, None),
     ("text", "text_box"):
         (None, widgets.TextAreaWidget, widgets.TextAreaWidget, None, 
             listing.truncatable_text_column, None),

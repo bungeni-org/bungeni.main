@@ -271,6 +271,7 @@ TYPE_REGISTRY = [
     ("item_schedule_discussion", TI(None, interfaces.IItemScheduleDiscussion)),
     ("item_schedule_vote", TI(None, interfaces.IItemScheduleVote)),
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
+    ("agenda_text_record", TI(None, interfaces.IAgendaTextRecord)),
     ("sitting_report", TI(None, interfaces.ISittingReport)),
     ("group_membership_role", TI(None, interfaces.IGroupMembershipRole)),
     

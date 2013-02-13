@@ -735,6 +735,14 @@ editorial_note = sa.Table("editorial_note", metadata,
     sa.Column("language", sa.String(5), nullable=False)
 )
 
+#store text record for a sitting or 
+agenda_text_record = sa.Table("agenda_text_record", metadata,
+    sa.Column("text_record_id", sa.Integer, primary_key=True),
+    sa.Column("text", sa.UnicodeText, nullable=False),
+    sa.Column("record_type", sa.String(30), nullable=False),
+    sa.Column("language", sa.String(5), nullable=False),
+)
+
 # to produce the proceedings:
 # capture the discussion on this item
 

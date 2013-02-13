@@ -57,7 +57,7 @@ from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, date
 from bungeni.ui.menu import get_actions
 from bungeni.ui.widgets import LanguageLookupWidget
-from bungeni.ui.container import ContainerJSONListingRaw
+from bungeni.ui.container import ContainerJSONListing
 from bungeni.ui.forms.common import AddForm, DeleteForm, EditForm
 from bungeni.ui.forms.forms import SittingAddForm
 from bungeni.ui.reporting import generators
@@ -532,7 +532,7 @@ class SittingScheduleView(BrowserView):
     name="jsonlisting-schedule",
     protect={"bungeni.item_schedule_discussion.Edit": 
         register.VIEW_DEFAULT_ATTRS})
-class ScheduleJSONListing(ContainerJSONListingRaw):
+class ScheduleJSONListing(ContainerJSONListing):
     """Returns JSON listing with expanded unlisted properties used in
     scheduling user interface setup
     """
@@ -567,7 +567,7 @@ class ScheduleJSONListing(ContainerJSONListingRaw):
     name="jsonlisting-schedule-documents",
     protect={"bungeni.item_schedule.View": 
         register.VIEW_DEFAULT_ATTRS})
-class ScheduleJSONListingDocuments(ContainerJSONListingRaw):
+class ScheduleJSONListingDocuments(ContainerJSONListing):
     """Lists all scheduled documents (excluding headings and notes)
     """
     def query_add_filters(self, query):
@@ -1083,7 +1083,6 @@ class ScheduleAddView(BrowserView):
     def saveSchedule(self):
         session = Session()
         sitting_id = self.sitting.sitting_id
-        group_id = self.sitting.group_id
         record_keys = []
         for (index, data_item) in enumerate(self.data):
             actual_index = index + 1
@@ -1095,12 +1094,12 @@ class ScheduleAddView(BrowserView):
             
             if not data_item_id:
                 # create text record before inserting into schedule
-                kls = capi.get_type_info(data_item_type).domain_model
-                text_record = kls(
+                text_record = domain.AgendaTextRecord(
                     text=data_item_text,
-                    group_id=group_id,
+                    record_type = data_item_type,
                     language=get_default_language()
                 )
+                data_item_type = domain.AgendaTextRecord.type
                 session.add(text_record)
                 session.flush()
                 notify(ObjectCreatedEvent(text_record))
@@ -1140,7 +1139,8 @@ class ScheduleAddView(BrowserView):
                     
                     #update text for text records
                     text_record = removeSecurityProxy(current_record.item)
-                    if model_interfaces.IScheduleText.providedBy(text_record):                        
+                    if model_interfaces.IScheduleText.providedBy(text_record):
+                        data_item_type = domain.AgendaTextRecord.type
                         if text_record.text != data_item_text:
                             text_record.text = data_item_text
                             session.add(text_record)

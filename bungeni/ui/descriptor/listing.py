@@ -32,11 +32,10 @@ from zope.security.proxy import removeSecurityProxy
 import zope.formlib
 from zc.table import column
 
-from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import domain
 from bungeni.models.utils import get_login_user, get_member_of_parliament
-from bungeni.models.interfaces import IOwned, IScheduleText
+from bungeni.models.interfaces import IOwned
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui.utils import common, date, url
 from bungeni.ui.i18n import _
@@ -186,6 +185,16 @@ def user_name_column(name, title, vocabulary=None):
     return column.GetterColumn(title, getter)
 
 
+def schedule_type_column(name, title, vocabulary=None):
+    def getter(scheduling, formatter):
+        # get actual type of text record
+        if scheduling.is_type_text_record:
+            return scheduling.item.record_type
+        return scheduling.item_type 
+    return column.GetterColumn(title, getter)
+
+
+
 '''!+DERIVED_LISTING_FILTERING
 def combined_name_column(name, title, vocabulary=None):
     """An extended name, combining full_name (localized)
@@ -316,29 +325,6 @@ def related_group_column_filter(query, filter_string, sort_dir_func, column=None
     return _multi_attrs_column_filter(
         [domain.Group.full_name, domain.Group.short_name],
         query, filter_string, sort_dir_func)
-
-
-''' !+IDCDP
-def scheduled_item_title_column(name, title):
-    def getter(item, formatter):
-        dc = IDCDescriptiveProperties(item.item)
-        return (dc.description if (IScheduleText.providedBy(item.item) and
-            dc.description) else dc.title
-        )
-    return column.GetterColumn(title, getter)
-
-def scheduled_item_mover_column(name, title):
-    def getter(item, formatter):
-        if hasattr(item.item, "owner"):
-            return IDCDescriptiveProperties(item.item.owner).title
-        return ""
-    return column.GetterColumn(title, getter)
-
-def scheduled_item_uri_column(name, title):
-    def getter(item, formatter):
-        return IDCDescriptiveProperties(item.item).uri
-    return column.GetterColumn(title, getter)
-'''
 
 
 def vocabulary_column(name, title, vocabulary):

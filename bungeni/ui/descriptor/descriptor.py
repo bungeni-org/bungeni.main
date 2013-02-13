@@ -1498,6 +1498,8 @@ class ItemScheduleDescriptor(ModelDescriptor):
             localizable=[
                 show("view listing")
             ],
+            value_type="text",
+            render_type="text_raw",
         ),
         F(name="item_mover", # derived @item_mover
             label="Mover",
@@ -1510,6 +1512,8 @@ class ItemScheduleDescriptor(ModelDescriptor):
             localizable=[
                 show("edit add view listing"), # db-not-null-ui-add, pk
             ],
+            value_type="text",
+            render_type="text_schedule_type",
         ),
         F(name="item_uri", # derived @item_uri
             label="Item URI",
@@ -1539,6 +1543,40 @@ class EditorialNoteDescriptor(ModelDescriptor):
             ],
             value_type="text",
             render_type="rich_text",
+        ),
+        LanguageField("language")
+    ]
+
+class AgendaTextRecordDescriptor(ModelDescriptor):
+    localizable = False
+    fields = [
+        F(name="text_record_id",
+            label="Item",
+            required=True,
+            localizable=[
+                show("edit add view listing"), # db-not-null-ui-add, pk
+            ],
+            value_type="number",
+            render_type="number",
+        ),
+        F(name="text",
+            label="Text",
+            required=True,
+            localizable=[
+                show("view edit add listing")
+            ],
+            value_type="text",
+            render_type="rich_text",
+        ),
+        F(name="record_type",
+            label="Text Record Type",
+            required=True,
+            localizable=[
+                show("add view edit listing"), # db-not-null-ui-add
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="text_record_type",
         ),
         LanguageField("language")
     ]

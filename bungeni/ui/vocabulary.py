@@ -43,6 +43,8 @@ from bungeni.models.interfaces import (
     ITranslatable, 
     ISignatory,
     IVersion,
+    IScheduleText,
+    IScheduleContent
 )
 
 from bungeni.core.translation import translate_obj
@@ -1440,3 +1442,21 @@ class WorkflowedTypeVocabulary(BaseVocabularyFactory):
 workflowed_type_factory = WorkflowedTypeVocabulary()
 component.provideUtility(workflowed_type_factory, IVocabularyFactory, "workflowed_type")
 
+class TextRecordTypesVocabulary(BaseVocabularyFactory):
+    """This is a vocabulary of text records types used in scheduling.
+    """
+    def __call__(self, context=None):
+        terms = []
+        for (type_key, info) in capi.iter_type_info():
+            if (IScheduleText.implementedBy(info.domain_model) 
+                and IScheduleContent.implementedBy(info.domain_model)):
+                    terms.append(
+                        vocabulary.SimpleTerm(
+                            value=type_key,
+                            token=type_key,
+                            title=_i18n_message_factory(
+                                info.descriptor.display_name)
+                        )
+                    )
+text_record_types_factory = TextRecordTypesVocabulary()
+component.provideUtility(text_record_types_factory, IVocabularyFactory, "text_record_type")

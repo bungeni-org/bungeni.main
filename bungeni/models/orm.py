@@ -583,6 +583,7 @@ mapper(domain.ItemSchedule, schema.item_schedule,
 )
 
 mapper(domain.EditorialNote, schema.editorial_note)
+mapper(domain.AgendaTextRecord, schema.agenda_text_record)
 
 mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussion,
     properties={

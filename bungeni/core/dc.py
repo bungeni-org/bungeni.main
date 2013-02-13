@@ -14,7 +14,6 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.role import IRole
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import zope.traversing.interfaces
-from lxml import html
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from bungeni.alchemist import Session, utils
@@ -29,6 +28,7 @@ from bungeni.core.translation import ( is_translation, get_language_by_name,
 
 from bungeni.ui.utils import date, misc
 from bungeni.utils import register
+from bungeni.capi import capi
 
 
 def _merged(context):
@@ -261,11 +261,16 @@ class EditorialNoteDescriptiveProperties(DescriptiveProperties):
         if len(self.context.text.strip())>0:
             return self.context.text
         else:
-            return _(u"Editorial Note")
+            return translate_i18n(
+                capi.get_type_info(self.context).descriptor.display_name)
     
     @property
     def description(self):
         return self.context.text
+
+@register.adapter()
+class AgendaTextRecordDescriptiveProperties(EditorialNoteDescriptiveProperties):
+      component.adapts(interfaces.IAgendaTextRecord)
 
 @register.adapter()
 class VersionDescriptiveProperties(DescriptiveProperties):
@@ -332,7 +337,7 @@ class UserDescriptiveProperties(DescriptiveProperties):
         context = _merged(self.context)
         mp_user = None
         try:
-            mp_user = session.query(domain.MemberOfParliament).filter(
+            mp_user = Session().query(domain.MemberOfParliament).filter(
                 domain.MemberOfParliament.user_id == context.user_id
             ).one()
         except NoResultFound:

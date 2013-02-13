@@ -153,6 +153,8 @@ grammar {
     
     FIELD_RENDER_TYPE = (
         "text_line" |
+        "text_raw" |
+        "text_schedule_type" |
         "text_box" |
         "rich_text" |
         "date" |
