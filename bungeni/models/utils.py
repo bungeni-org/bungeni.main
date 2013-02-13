@@ -64,12 +64,25 @@ def get_context_chamber(context):
     '''
 
 
+def get_group_chamber(group):
+    """Cascade up first group ancestry to chamber, returning it (or None).
+    """
+    return common.getattr_ancestry(group, None, "parent_group",
+        acceptable=interfaces.IParliament.providedBy)
+    ''' !+ equivalent alternative:
+    if group:
+        if group.type == "parliament":
+            return group
+        else:
+            return get_group_chamber(group.parent_group)
+    '''
+
 def get_login_user_chamber():
     user = get_login_user()
-    if user.group_membership:
-        return get_parliament_for_group_id(user.group_membership[0].group.group_id)
-    # !+ what guarantees that "first" [0] group the user is a member of is
-    # the right place to start?
+    if user:
+        for gm in user.group_membership:
+            # cascade up first group ancestry, to chamber (or None)
+            return get_group_chamber(gm.group)
 
 
 def get_login_user():
@@ -94,6 +107,8 @@ def is_current_or_delegated_user(user):
             if d.user_id == user.user_id:
                 return True
     return False
+
+
 
 
 
@@ -274,17 +289,6 @@ def get_group_ids_for_user_in_parliament(user_id, parliament_id):
     for group_id in connection.execute(my_groups):
         my_group_ids.append(group_id[0])
     return my_group_ids
-
-
-def get_parliament_for_group_id(group_id):
-    if group_id is None:
-        return None
-    session = Session()
-    group = session.query(domain.Group).get(group_id)
-    if group.type == "parliament":
-        return group
-    else:
-        return get_parliament_for_group_id(group.parent_group_id)
 
 
 # misc queries

@@ -15,7 +15,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 from zope.security import checkPermission
 from bungeni.models.interfaces import ISignatoryManager
 #from bungeni.models import domain
-from bungeni.models.utils import is_current_or_delegated_user
+from bungeni.models.utils import is_current_or_delegated_user, get_user
 from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
 from bungeni.ui.interfaces import IFormEditLayer
@@ -44,7 +44,15 @@ def user_is_context_owner(context):
     
     A delegate is considered to be an owner of the object.
     """
-    return is_current_or_delegated_user(context.owner)
+    # !+ newly created context, not flushed to the db yet - determine valid user:
+    user = context.owner
+    # context not yet flushed may have "owner_id" set but "owner" not yet updated
+    if user is None:
+        # some contexts do not have "owner_id"
+        if hasattr(context, "owner_id"):
+            user = get_user(context.owner_id)
+    assert user, "user_is_context_owner: user may not be None."
+    return is_current_or_delegated_user(user)
 
 
 @describe(_(u"Require public view access"))

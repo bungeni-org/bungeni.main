@@ -24,7 +24,7 @@ from bungeni.alchemist.interfaces import IContentViewManager
 
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
-from bungeni.models.utils import get_parliament_for_group_id
+from bungeni.models.utils import get_group_chamber
 
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
@@ -345,9 +345,9 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
         if interfaces.IMemberOfParliament.providedBy(self.context):
             parliament_id = trusted.group_id
         else:
-            parliament = get_parliament_for_group_id(trusted.group_id)
-            if parliament:
-                parliament_id = parliament.parliament_id
+            chamber = get_group_chamber(trusted.group)
+            if chamber:
+                parliament_id = chamber.parliament_id
             else:
                 return office_list
         for oh in get_groups_held_for_user_in_parliament(user_id, parliament_id):
