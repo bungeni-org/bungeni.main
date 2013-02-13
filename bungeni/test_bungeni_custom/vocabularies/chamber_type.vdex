@@ -2,9 +2,9 @@
 <vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
     orderSignificant="true" profileType="flatTokenTerms">
     <vocabName>
-        <langstring language="en">parliament type</langstring>
+        <langstring language="en">chamber type</langstring>
     </vocabName>
-    <vocabIdentifier>org.bungeni.metadata.vocabularies.parliament_type</vocabIdentifier>
+    <vocabIdentifier>org.bungeni.metadata.vocabularies.chamber_type</vocabIdentifier>
     <term>
         <termIdentifier>senate</termIdentifier>
         <caption>
@@ -12,9 +12,9 @@
         </caption>
     </term>
     <term>
-        <termIdentifier>house_of_represenatatives</termIdentifier>
+        <termIdentifier>assembly</termIdentifier>
         <caption>
-            <langstring language="en">House of representatives</langstring>
+            <langstring language="en">National Assembly</langstring>
         </caption>
     </term>
 </vdex>

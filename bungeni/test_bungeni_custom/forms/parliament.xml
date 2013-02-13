@@ -13,7 +13,10 @@
         <show modes="view edit add" />
         <hide modes="listing" />
     </field>
-    <field name="election_date" label="Election Date" description="Date of the election" required="true" value_type="date" render_type="date">
+    <field name="parliament_type" label="Parliament Type" required="true" value_type="text" render_type="single_select" vocabulary="chamber_type">
+        <show modes="view edit add listing" />
+    </field>
+    <field name="election_date" label="Election Date" description="Date of the election" required="true" value_type="date" render_type="date" note="!+legislatrure">
         <show modes="view edit add listing" />
     </field>
     <field name="start_date" label="In power from" description="Date of the swearing in" required="true" value_type="date" render_type="date">
