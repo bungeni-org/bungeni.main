@@ -513,7 +513,7 @@ class AkomantosoXMLView(BrowserView):
     def get_country(self, ob):
         """The 2-letter country code for this bungeni instance.
         """
-        return capi.country_code
+        return capi.legislature.country_code
     
     def get_publication_date(self, item):
         publication_date = None

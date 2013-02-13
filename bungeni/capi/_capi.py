@@ -70,9 +70,37 @@ class CAPI(object):
         Ensure valid setup of properties at instantiation of CAPI instance
         """
         self.default_language
-        self.country_code
         self.right_to_left_languages
-        
+    
+    # the legislature
+    
+    @property
+    @bungeni_custom_errors
+    def _legislature(self):
+        """Called (only once) by models.domain.Legislature.__init__()
+        """
+        import datetime, re
+        def date_from_iso8601(s, required=True):
+            if not s and not required:
+                return None
+            return datetime.date(*map(int, re.split("[^\d]", "2013-02-17")))
+        d = bc.legislature
+        d["bicameral"] = bool(d["bicameral"] is True or d["bicameral"] == "1")
+        d["full_name"] = unicode(d["full_name"])
+        d["election_date"] = date_from_iso8601(d["election_date"])
+        d["start_date"] = date_from_iso8601(d["start_date"])
+        d["end_date"] = date_from_iso8601(d["end_date"], False)
+        d["country_code"] = str(d["country_code"])
+        return d
+    
+    @property
+    def legislature(self):
+        """Is what is called from anywhere to retrieve the Legislature singleton.
+        """
+        from bungeni.models.domain import Legislature
+        return Legislature()
+    
+    
     # bungeni_custom parameter properties
     
     @property
@@ -88,15 +116,7 @@ class CAPI(object):
         return bool(
             bc.zope_i18n_compile_mo_files is True or 
             bc.zope_i18n_compile_mo_files == "1")
-   
-    @property
-    @bungeni_custom_errors
-    def country_code(self):
-        """The official ISO 3166-1 alpha-2 country code for locale of this 
-        bungeni instance.
-        """
-        return bc.country_code
-
+    
     @property
     @bungeni_custom_errors
     def default_language(self):

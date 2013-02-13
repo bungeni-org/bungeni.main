@@ -22,6 +22,29 @@ Containing the one line:
 $Id: __init__.py 9809 2012-09-04 15:58:41Z mario.ruggier $
 """
 
+# the legislature instance
+legislature = dict(
+    
+    # whether uni- or bi- cameral legislature, bool
+    bicameral=False,
+    
+    # the full name of the legislature, unicode string
+    full_name="Legislature",
+    
+    # the legislature election_date, iso 8601 date string
+    election_date="2013-02-13",
+    
+    # the legislature start_date, iso 8601 date string
+    start_date="2013-02-15",
+    
+    # the legislature end_date, None or iso 8601 date string
+    end_date=None,
+    
+    # official country code for legislature locale is running - ISO 3166-1 alpha-2
+    country_code="ke"
+)
+
+
 # language ids, either as a space-separated string or as a list of strings
 zope_i18n_allowed_languages = "ar en es" 
 
@@ -30,9 +53,6 @@ zope_i18n_compile_mo_files = True
 
 # string, language identifier, must be one of zope_i18n_allowed_languages
 default_language = "en"
-
-# official country code for locale where bungeni is running - ISO 3166-1 alpha-2
-country_code = "ke"
 
 # language ids for languages written right to left, as a space-separated string
 right_to_left_languages = "ar" 

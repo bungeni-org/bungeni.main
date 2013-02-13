@@ -306,6 +306,35 @@ class SittingAttendance(Entity):
         interfaces.ISittingAttendance,
     )
 
+
+#
+
+class Legislature(object):
+    """The conceptual "parliament" singleton, that may be composed of one or 
+    two chambers. 
+    
+    Always use the bungeni.capi.capi.legislature property to retrieve the same 
+    Legislature singleton instance from anywhere in the application.
+
+    The Legislature type is really just a "placeholder" instance to collect 
+    legislature-related capi parameters.
+    """
+    _instance = None
+    def __new__(cls, *args, **kw):
+        if not cls._instance:
+            cls._instance = super(Legislature, cls).__new__(cls, *args, **kw)
+        return cls._instance
+    
+    def __init__(self):
+        from bungeni.capi import capi
+        _d = capi._legislature
+        self.bicameral = _d["bicameral"] # bool
+        self.full_name = _d["full_name"] # unicode
+        self.election_date = _d["election_date"]
+        self.start_date = _d["start_date"]
+        self.end_date = _d["end_date"]
+        self.country_code = _d["country_code"] # 2-letter
+
 #
 
 class Parliament(Group):
