@@ -89,10 +89,15 @@ def get_login_user():
     """Get the logged in user. Returns None if no user logged in.
     """
     login = common.get_request_login()
-    query = Session().query(domain.User).filter(domain.User.login == login)
-    results = query.all()
-    if len(results) == 1:
-        return results[0]
+    if login:
+        return get_user_for_login(login)
+
+def get_user_for_login(login):
+    """Get the User for this login name.
+    """
+    # !+group_principal(mr, may-2012) and when principal_id is for a group?
+    return Session().query(domain.User).filter(domain.User.login == login).one()
+    # !+ sa.exc InvalidRequestError, NoResultFound, MultipleResultsFound
 
 
 def is_current_or_delegated_user(user):
@@ -109,35 +114,20 @@ def is_current_or_delegated_user(user):
     return False
 
 
-
-
-
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
-def get_prm_owner_principal_id(context):
-    """Get the principal_id, if any, of the bungeni.Owner for context.
-    Raise ValueError if multiple, return None if none.
+def get_owner_user(context):
+    """Get the user who is the bungeni.Owner (via the PrincipalRoleMap) for 
+    the context, if any. Raise ValueError if multiple, return None if none.
     """
-    principal_ids = [ pid for (pid, setting) in 
-        IPrincipalRoleMap(context).getPrincipalsForRole("bungeni.Owner") 
+    logins = [ pid
+        for (pid, setting) 
+        in IPrincipalRoleMap(context).getPrincipalsForRole("bungeni.Owner") 
         if setting ]
-    len_pids = len(principal_ids)
-    if len_pids > 1:
-        # multiple Owner roles, force exception
-        raise ValueError("Ambiguous, multiple Owner roles assigned.")
-    elif len_pids == 1:
-        return principal_ids[0]
-
-
-def get_user_for_principal_id(principal_id):
-    """Get the User for this principal_id.
-    """
-    # !+group_principal(mr, may-2012) and when principal_id is for a group?
-    query = Session().query(domain.User).filter(domain.User.login == principal_id)
-    try:
-        return query.one()
-    except sa.exc.InvalidRequestError:
-        # !+ sqlalchemy.orm.exc NoResultFound, MultipleResultsFound
-        return None
+    if logins:
+        # may only have up to one Owner role assigned
+        if len(logins) > 1:
+            raise ValueError("Ambiguous, multiple Owner roles assigned.")
+        return get_user_for_login(logins[0])
 
 
 def container_getter(parent_container_or_getter, name, query_modifier=None):

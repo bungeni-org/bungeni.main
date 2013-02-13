@@ -793,9 +793,8 @@ class Attachment(HeadParentedMixin, Entity):
     @property # !+OWNERSHIP
     def owner(self):
         from bungeni.models import utils # !+domain should not depend on utils
-        principal_id = utils.get_prm_owner_principal_id(self)
-        return utils.get_user_for_principal_id(principal_id)
-
+        return utils.get_owner_user(self)
+    
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
         """

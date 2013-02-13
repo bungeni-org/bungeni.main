@@ -171,7 +171,7 @@ class SignatoryValidator(object):
         return False
     
     def is_consented_signatory(self, user=None):
-        user = user_id or model_utils.get_login_user()
+        user = user or model_utils.get_login_user()
         if user:
             return user.user_id in [ sgn.user_id for sgn in 
                 filter(
@@ -203,12 +203,11 @@ class SignatoryValidator(object):
         return self.wf_status in self.open_states
 
     def is_owner(self):
+        login_user = model_utils.get_login_user()
         return (
-            (model_utils.get_prm_owner_principal_id(self.context) ==
-                common.get_request_login()
-            ) or model_utils.get_login_user() == self.context.owner
-        )
-
+            (model_utils.get_owner_user(self.context) == login_user) or 
+            (login_user == self.context.owner))
+    
     def can_sign(self):
         """Check if the current user can sign a document.
         """

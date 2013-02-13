@@ -42,7 +42,7 @@ from bungeni.core.emailnotifications import load_email
 from bungeni.core.serialize import serialization_notifications
 from bungeni.ui.utils import url  # !+ core dependency on ui
 from bungeni.capi import capi
-from bungeni.utils import common, register
+from bungeni.utils import common, naming, register
 
 
 
@@ -230,12 +230,14 @@ class AppSetup(object):
         #!+TIMING
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
         # type_info missing container name
-        for key, info in capi.iter_type_info():
-            if model_interfaces.IScheduleContent.implementedBy(info.domain_model):
-                container_name = "%ss" % key
-                container = "%sContainer" % info.domain_model.__name__
-                ws_sched[container_name] = getattr(domain, container)()
-                to_locatable_container(info.domain_model, ws_sched[container_name])
+        for type_key, ti in capi.iter_type_info():
+            if model_interfaces.IScheduleContent.implementedBy(ti.domain_model):
+                container_property_name = naming.plural(type_key)
+                container_class_name = naming.container_class_name(type_key)
+                ws_sched[container_property_name] = \
+                    getattr(domain, container_class_name)()
+                to_locatable_container(
+                    ti.domain_model, ws_sched[container_property_name])
         
         
         ##########
