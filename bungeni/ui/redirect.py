@@ -15,7 +15,7 @@ from zope import interface
 from zope.publisher.interfaces import IPublishTraverse
 
 from bungeni.ui.utils import url, common
-from bungeni.models.utils import get_login_user, get_context_chamber
+from bungeni.models.utils import get_login_user, get_chamber_for_context
 from bungeni.core.workflow.interfaces import IWorkflowController
 
 
@@ -57,7 +57,7 @@ class RedirectToCurrent(BrowserView):
             if self.traverse_subpath[0] == 'parliament':
                 to_url = "%s/parliament/obj-%s/%s?%s" % (
                         root_url,
-                        get_context_chamber(self.context).group_id,
+                        get_chamber_for_context(self.context).group_id,
                         '/'.join(self.traverse_subpath[1:]),
                         qstr)
         return response.redirect(to_url)

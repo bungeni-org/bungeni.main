@@ -20,8 +20,7 @@ from bungeni.utils import common
 
 # legislature and chambers
 
-
-def get_context_chamber(context):
+def get_chamber_for_context(context):
     """Return the chamber in which the context exists.
     """
     # first look for current parliament from context tree
@@ -64,7 +63,7 @@ def get_context_chamber(context):
     '''
 
 
-def get_group_chamber(group):
+def get_chamber_for_group(group):
     """Cascade up first group ancestry to chamber, returning it (or None).
     """
     return common.getattr_ancestry(group, None, "parent_group",
@@ -74,7 +73,7 @@ def get_group_chamber(group):
         if group.type == "parliament":
             return group
         else:
-            return get_group_chamber(group.parent_group)
+            return get_chamber_for_group(group.parent_group)
     '''
 
 def get_login_user_chamber():
@@ -82,22 +81,28 @@ def get_login_user_chamber():
     if user:
         for gm in user.group_membership:
             # cascade up first group ancestry, to chamber (or None)
-            return get_group_chamber(gm.group)
+            return get_chamber_for_group(gm.group)
 
+
+# user, owner
 
 def get_login_user():
-    """Get the logged in user. Returns None if no user logged in.
+    """Get the logged in user, if any.
+    Returns None if no user logged in or no such user.
     """
     login = common.get_request_login()
-    if login:
+    try:
         return get_user_for_login(login)
+    except sa.orm.exc.NoResultFound:
+        return
+
 
 def get_user_for_login(login):
     """Get the User for this login name.
+    Raises sa.orm.exc InvalidRequestError, NoResultFound, MultipleResultsFound
     """
     # !+group_principal(mr, may-2012) and when principal_id is for a group?
     return Session().query(domain.User).filter(domain.User.login == login).one()
-    # !+ sa.exc InvalidRequestError, NoResultFound, MultipleResultsFound
 
 
 def is_current_or_delegated_user(user):
@@ -114,20 +119,29 @@ def is_current_or_delegated_user(user):
     return False
 
 
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-def get_owner_user(context):
+def get_owner_for_context(context):
     """Get the user who is the bungeni.Owner (via the PrincipalRoleMap) for 
     the context, if any. Raise ValueError if multiple, return None if none.
     """
-    logins = [ pid
-        for (pid, setting) 
-        in IPrincipalRoleMap(context).getPrincipalsForRole("bungeni.Owner") 
-        if setting ]
+    logins = get_pids_with_role_on_context(context, "bungeni.Owner")
     if logins:
         # may only have up to one Owner role assigned
         if len(logins) > 1:
             raise ValueError("Ambiguous, multiple Owner roles assigned.")
         return get_user_for_login(logins[0])
+
+
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+def get_pids_with_role_on_context(context, role_id):
+    """Get the principal_ids (via the PrincipalRoleMap) who have the role on
+    the context, if any.
+    """
+    return [ pid for (pid, setting) 
+        in IPrincipalRoleMap(context).getPrincipalsForRole(role_id) 
+        if setting ]
+
+
+#
 
 
 def container_getter(parent_container_or_getter, name, query_modifier=None):
@@ -155,10 +169,11 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     func.__name__ = "get_%s_container" % name
     return func
 
+
 ''' !+UNUSED and adding overhead to refactoring efforts
 def get_context_chamber_governments(parliament=None):
     if parliament is None:
-        parliament = get_context_chamber()
+        parliament = get_chamber_for_context()
     governments = Session().query(domain.Government).filter(
             sql.and_(domain.Government.parent_group_id == parliament.group_id,
                      domain.Government.status == "active")).all()
@@ -169,7 +184,7 @@ def get_context_chamber_governments(parliament=None):
 ''' !+UNUSED and adding overhead to refactoring efforts
 def get_context_chamber_committees(parliament=None):
     if parliament is None:
-        parliament = get_context_chamber(None)
+        parliament = get_chamber_for_context(None)
     committees = Session().query(domain.Committee).filter(
             sql.and_(domain.Committee.parent_group_id == parliament.group_id,
                      domain.Committee.status == "active")).all()

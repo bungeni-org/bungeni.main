@@ -205,7 +205,7 @@ class SignatoryValidator(object):
     def is_owner(self):
         login_user = model_utils.get_login_user()
         return (
-            (model_utils.get_owner_user(self.context) == login_user) or 
+            (model_utils.get_owner_for_context(self.context) == login_user) or 
             (login_user == self.context.owner))
     
     def can_sign(self):

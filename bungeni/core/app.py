@@ -22,7 +22,7 @@ from ore.wsgiapp.interfaces import IWSGIApplicationCreatedEvent
 
 from bungeni.models import domain
 from bungeni.models import interfaces as model_interfaces
-from bungeni.models.utils import get_context_chamber
+from bungeni.models.utils import get_chamber_for_context
 from bungeni.models.utils import container_getter
 
 from bungeni.core import interfaces
@@ -198,7 +198,7 @@ class AppSetup(object):
             default_name="index",
             marker=interfaces.IWorkspaceScheduling)
         ws_sched["committees"] = QueryContent(
-            container_getter(get_context_chamber, "committees"),
+            container_getter(get_chamber_for_context, "committees"),
             title=_("section_scheduling_committees", default=u"Committees"),
             #!+marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules"))
@@ -207,11 +207,11 @@ class AppSetup(object):
             title=_(u"schedulable items"),
             description=_(u"documents available for scheduling"))
         ws_sched["sittings"] = QueryContent(
-            container_getter(get_context_chamber, "sittings"),
+            container_getter(get_chamber_for_context, "sittings"),
             title=_("section_scheduling_sittings", default=u"Sittings"),
             description=_(u"Plenary Sittings"))
         ws_sched["agendaitems"] = QueryContent(
-            container_getter(get_context_chamber, "agendaitems"),
+            container_getter(get_chamber_for_context, "agendaitems"),
             title=_("section_scheduling_agenda_items", 
                 default=u"Agenda items"),
             #marker=interfaces.IAgendaItemAddContext,

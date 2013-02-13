@@ -17,7 +17,7 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 )
 
 import bungeni.models.interfaces as interfaces
-from bungeni.models.utils import get_group_chamber
+from bungeni.models.utils import get_chamber_for_group
 from bungeni.utils import common
 from bungeni.ui.utils import debug
 from bungeni.utils.misc import describe
@@ -173,7 +173,7 @@ def get_group_local_role(group):
 
 def get_group_context(context):
     if interfaces.IOffice.providedBy(context):
-        return get_group_chamber(context)
+        return get_chamber_for_group(context)
     else:
         return context
 

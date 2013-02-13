@@ -306,8 +306,7 @@ class SittingAttendance(Entity):
         interfaces.ISittingAttendance,
     )
 
-
-#############
+#
 
 class Parliament(Group):
     """A parliament.
@@ -793,7 +792,7 @@ class Attachment(HeadParentedMixin, Entity):
     @property # !+OWNERSHIP
     def owner(self):
         from bungeni.models import utils # !+domain should not depend on utils
-        return utils.get_owner_user(self)
+        return utils.get_owner_for_context(self)
     
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
