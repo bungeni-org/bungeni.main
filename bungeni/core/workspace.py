@@ -264,6 +264,10 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)).enable_eagerloads(False)
+            #only display the documents that belong to this user's chamber
+            user_chamber = utils.get_login_user_chamber()
+            query = query.filter(
+                domain_class.parliament_id == user_chamber.group_id)
             #filter on title
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
@@ -520,6 +524,10 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
         for domain_class, status in domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)).enable_eagerloads(False)
+            #only display the documents that belong to this user's chamber
+            user_chamber = utils.get_login_user_chamber()
+            query = query.filter(
+                domain_class.parliament_id == user_chamber.group_id)
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
             query = self.filter_status_date(query, domain_class, kw)
