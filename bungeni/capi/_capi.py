@@ -84,13 +84,14 @@ class CAPI(object):
             if not s and not required:
                 return None
             return datetime.date(*map(int, re.split("[^\d]", s)))
-        d = bc.legislature
-        d["bicameral"] = bool(d["bicameral"] is True or d["bicameral"] == "1")
-        d["full_name"] = unicode(d["full_name"])
-        d["election_date"] = date_from_iso8601(d["election_date"])
-        d["start_date"] = date_from_iso8601(d["start_date"])
-        d["end_date"] = date_from_iso8601(d["end_date"], False)
-        d["country_code"] = str(d["country_code"])
+        bcd = bc.legislature # bungeni custom dict
+        bd = {} # bungeni dict - create a new one to not clobber original dict
+        bd["bicameral"] = bool(bcd["bicameral"] is True or bcd["bicameral"] == "1")
+        bd["full_name"] = unicode(bcd["full_name"])
+        bd["election_date"] = date_from_iso8601(bcd["election_date"])
+        bd["start_date"] = date_from_iso8601(bcd["start_date"])
+        bd["end_date"] = date_from_iso8601(bcd["end_date"], False)
+        bd["country_code"] = str(bcd["country_code"])
         return d
     
     @property

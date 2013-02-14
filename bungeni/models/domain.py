@@ -320,12 +320,17 @@ class Legislature(object):
     legislature-related capi parameters.
     """
     _instance = None
+    _initialized = False
+    
     def __new__(cls, *args, **kw):
         if not cls._instance:
             cls._instance = super(Legislature, cls).__new__(cls, *args, **kw)
         return cls._instance
     
     def __init__(self):
+        if self._initialized:
+            return
+        self._initialized = True
         from bungeni.capi import capi
         _d = capi._legislature
         self.bicameral = _d["bicameral"] # bool
