@@ -23,7 +23,7 @@ from bungeni.ui.forms.validations import (
     validate_government_dates,
     validate_group_membership_dates,
     validate_member_titles,
-    validate_parliament_dates,
+    validate_chamber_dates,
     validate_venues,
     validate_email_availability,
     

@@ -42,12 +42,11 @@ def execute_sql(sql_statement, **kwargs):
 
 # !+ RENAME APPROPIATELY--these "validation" utilities do no actual "validation"!
 
+# !+gen_other_dateranged_objects_overlapping_date
 def validate_date_in_interval(obj, domain_model, date):
-    session = Session()
-    query = session.query(domain_model).filter(
-            sql.expression.between(date, domain_model.start_date, domain_model.end_date)
-            )
-    results = query.all() 
+    query = Session().query(domain_model).filter(sql.expression.between(
+            date, domain_model.start_date, domain_model.end_date))
+    results = query.all()
     if results:
         if obj:
             # the object itself can overlap
@@ -61,11 +60,10 @@ def validate_date_in_interval(obj, domain_model, date):
            for result in results:
                 yield result
 
+
 def validate_open_interval(obj, domain_model):
-    session = Session()
-    query = session.query(domain_model).filter(
-            domain_model.end_date == None)
-    results = query.all() 
+    query = Session().query(domain_model).filter(domain_model.end_date == None)
+    results = query.all()
     if results:
         if obj:
             for result in results:
@@ -77,7 +75,10 @@ def validate_open_interval(obj, domain_model):
            for result in results:
                 yield result
 
-def validate_membership_in_interval(obj, domain_model, date, user_id, group_id=None, parent_id=None, with_parent=False):
+
+def validate_membership_in_interval(obj, domain_model, date, user_id, 
+        group_id=None, parent_id=None, with_parent=False
+    ):
     """ validates the start end for a user in a group or over
     all groups if group_id is not given
     """
@@ -91,7 +92,7 @@ def validate_membership_in_interval(obj, domain_model, date, user_id, group_id=N
         query = query.filter(domain_model.group_id == group_id)
     if with_parent:
         query = query.filter(domain_model.parent_group_id == parent_id)
-    results = query.all() 
+    results = query.all()
     if results:
         if obj:
             for result in results:
@@ -102,6 +103,7 @@ def validate_membership_in_interval(obj, domain_model, date, user_id, group_id=N
         else:
            for result in results:
                 yield result
+
 
 def validate_open_membership(obj, domain_model, user_id, 
         group_id=None, parent_id=None, with_parent=False

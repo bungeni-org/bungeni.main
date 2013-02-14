@@ -15,7 +15,7 @@ import zope.schema
 from zope.interface import Invalid
 from bungeni.utils.misc import describe
 from bungeni.ui.i18n import _
-
+from bungeni.capi import capi
 
 # field constraints
 
@@ -64,12 +64,15 @@ def end_after_start(obj):
         raise Invalid(
             _("End Date must be after Start Date"), "start_date", "end_date")
 
+
 @describe(_(u"Parliament : Start Date for a parliament must be after Election Date"))
-def parliament_start_after_election(obj):
-    """Start Date must be after Election Date."""
-    if obj.election_date >= obj.start_date:
+def chamber_start_after_election(obj):
+    """Start Date must be after Election Date.
+    """
+    if capi.legislature.election_date >= obj.start_date:
         raise Invalid(
-            _("The life of a parliament must start after its election"),
+            _("The life of a chamber must start after legislature election: %s") % (
+                capi.legislature.election_date),
             "election_date",
             "start_date"
         )

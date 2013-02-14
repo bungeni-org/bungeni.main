@@ -24,8 +24,9 @@ from bungeni.ui.i18n import _
 from bungeni.ui.utils import queries
 from bungeni.ui.calendar.utils import generate_dates
 from bungeni.ui.calendar.utils import datetimedict
+from bungeni.capi import capi
 from bungeni.utils.misc import describe
-from zope.security.proxy import removeSecurityProxy
+#from zope.security.proxy import removeSecurityProxy
 from interfaces import Modified
 
 
@@ -201,49 +202,65 @@ def validate_political_group_membership(action, data, context, container):
                 "end_date")) 
     return logged_errors(errors, "validate_political_group_membership")
 
+
 @describe(_(u"Check if the start - end date range of a parliament does not overlap with another parliament"))
-def validate_parliament_dates(action, data, context, container):
-    """Parliaments must not overlap."""
+def validate_chamber_dates(action, data, context, container):
+    """Chambers start must be after start of the Legislature. 
+    The start and end date of *chambers of same type* may not overlap.
+    """
     errors = []
-    start_date = data.get("start_date")
+    start_date = data["start_date"]
     end_date = data.get("end_date")
-    election_date = data.get("election_date")
+    parliament_type = data["parliament_type"]
     if interfaces.IParliament.providedBy(context):
-        parliament = context
+        chamber = context
     else:
-        parliament = None
+        chamber = None
+    
+    # whether uni- or bicameral, chamber dates may NOT overlap with those of 
+    # another chamber of the SAME TYPE
+    
+    def get_others_overlapping_date(chamber, date):
+        return [ result for result in 
+            queries.validate_date_in_interval(chamber, domain.Parliament, date)
+            if result.parliament_type == parliament_type ]
+    
+    legislature = capi.legislature
     if start_date:
-        results = queries.validate_date_in_interval(parliament, 
-            domain.Parliament,  start_date)
-        for result in results:
-            overlaps = result.short_name
+        for res in get_others_overlapping_date(chamber, start_date):
             errors.append(Invalid(
-                _("The start date overlaps with (%s)") % overlaps, "start_date"
-            ))
+                    _("Start date overlaps with (%s)") % res.short_name, 
+                    "start_date"))
+        if start_date < legislature.start_date:
+            errors.append(Invalid(
+                    _("Start date preceeds legislature start (%s)") % (
+                        legislature.start_date), 
+                    "start_date"))
+    
     if end_date:
-        results = queries.validate_date_in_interval(parliament, 
-            domain.Parliament, end_date)
+        for res in get_others_overlapping_date(chamber, end_date):
+            errors.append(
+                Invalid(_("End date overlaps with (%s)") % res.short_name, 
+                    "end_date"))
+        if legislature.end_date:
+            if end_date > legislature.end_date:
+                errors.append(Invalid(
+                        _("End date later legislature end (%s)") % (
+                            legislature.end_date), 
+                        "end_date"))
+    
+    if chamber is None:
+        results = queries.validate_open_interval(chamber, domain.Parliament)
         for result in results:
-            overlaps = result.short_name
-            errors.append(Invalid(
-                    _("The end date overlaps with (%s)") % overlaps, "end_date"
-            ))
-    if election_date:
-        results = queries.validate_date_in_interval(parliament, 
-            domain.Parliament, election_date)
-        for result in results:
-            overlaps = result.short_name
-            errors.append(Invalid(
-                _("The election date overlaps with (%s)") % overlaps, 
-                "election_date"))
-    if parliament is None:
-        results = queries.validate_open_interval(parliament, domain.Parliament)
-        for result in results:
-            overlaps = result.short_name
-            errors.append(Invalid(
-                    _("Another parliament is not yet dissolved (%s)") % overlaps,
-                    "election_date"))
-    return logged_errors(errors, "validate_parliament_dates")
+            if result.parliament_type == parliament_type:
+                errors.append(Invalid(
+                        _("Another chamber is not yet dissolved (%s)") % (
+                            result.short_name),
+                        "election_date"))
+    
+    return logged_errors(errors, "validate_chamber_dates")
+
+
 
 @describe(_(u"Checks if the government start/end dates fall within the start/end dates of the parliament"))
 def validate_government_dates(action, data, context, container):

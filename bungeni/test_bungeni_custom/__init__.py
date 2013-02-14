@@ -26,13 +26,13 @@ $Id: __init__.py 9809 2012-09-04 15:58:41Z mario.ruggier $
 legislature = dict(
     
     # whether uni- or bi- cameral legislature, bool
-    bicameral=False,
+    bicameral=True,
     
     # the full name of the legislature, unicode string
     full_name="Legislature",
     
     # the legislature election_date, iso 8601 date string
-    election_date="2013-02-13",
+    election_date="2012-12-28",
     
     # the legislature start_date, iso 8601 date string
     start_date="2013-02-15",
@@ -41,7 +41,7 @@ legislature = dict(
     end_date=None,
     
     # official country code for legislature locale is running - ISO 3166-1 alpha-2
-    country_code="ke"
+    country_code="ke",
 )
 
 

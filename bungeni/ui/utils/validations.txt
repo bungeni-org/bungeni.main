@@ -90,18 +90,18 @@ High level validations:
 
    >>> parliament_container = MockContainer()
    >>> form_data= {'start_date': today, 'end_date': tomorrow, 'election_date': yesterday}
-   >>> validations.validate_parliament_dates(action=None, data=form_data, 
+   >>> validations.validate_chamber_dates(action=None, data=form_data, 
    ...  context=parliament, container=parliament_container)
    []
    
-   >>> validations.validate_parliament_dates(action=None, data=form_data, 
+   >>> validations.validate_chamber_dates(action=None, data=form_data, 
    ...  context=parliament2, container=parliament_container)
    [Invalid(u'The start date overlaps with (p_1)', 'start_date'), 
    Invalid(u'The end date overlaps with (p_1)', 'end_date')]
    
    >>> parliament.end_date = None
    >>> session.flush() 
-   >>> validations.validate_parliament_dates(action=None, data=form_data, 
+   >>> validations.validate_chamber_dates(action=None, data=form_data, 
    ...  context=parliament2, container=parliament_container)
    [Invalid(u'Another parliament is not yet dissolved (p_1)', 'election_date')]
 
