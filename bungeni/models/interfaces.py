@@ -232,6 +232,7 @@ class IItemScheduleContainer(IAlchemistContainer): pass
 
 class IEditorialNote(interface.Interface):
     """Marker interface for editorial notes in a sitting's agenda"""
+class IEditorialNoteContainer(IAlchemistContainer): pass
 
 class IAgendaTextRecord(interface.Interface):
     """Marker interface for agenda text records in a sitting's agenda"""

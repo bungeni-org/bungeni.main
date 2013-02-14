@@ -114,7 +114,27 @@ to e.g. "bungeni.{type}.Edit").
      permission="bungeni.heading.Add"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
-
+   <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IEditorialNoteContainer"
+     class=".common.AddForm"
+     permission="bungeni.editorial_note.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+   <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IEditorialNote"
+     class=".common.EditForm"
+     permission="bungeni.editorial_note.Edit"
+     layer="..interfaces.IWorkspaceSchedulingSectionLayer"
+     />
+   <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IEditorialNote"
+     class=".common.DeleteForm"
+     permission="bungeni.editorial_note.Delete"
+     layer="..interfaces.IWorkspaceSchedulingSectionLayer"
+     />
    <browser:page
      name="add"
      for="bungeni.models.interfaces.IVenueContainer"

@@ -105,7 +105,7 @@ def get_globals(group_name, **kwargs):
                 sorted(data.get_schedulable_types().iteritems())
              ],
             "discussable_types": [k for k in data.get_schedulable_types(True)],
-            "editable_types": ["editorial_note", "minute"],
+            "editable_types": ["editorial_note", "heading", "minute"],
             "types": {
                 "HEADING": "heading",
                 "EDITORIAL_NOTE": "editorial_note",

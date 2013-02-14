@@ -1526,15 +1526,6 @@ class ItemScheduleDescriptor(ModelDescriptor):
 class EditorialNoteDescriptor(ModelDescriptor):
     localizable = True
     fields = [
-        F(name="editorial_note_id",
-            label="Item",
-            required=True,
-            localizable=[
-                show("edit add view listing"), # db-not-null-ui-add, pk
-            ],
-            value_type="number",
-            render_type="number",
-        ),
         F(name="text",
             label="Text",
             required=True,
@@ -1550,15 +1541,6 @@ class EditorialNoteDescriptor(ModelDescriptor):
 class AgendaTextRecordDescriptor(ModelDescriptor):
     localizable = False
     fields = [
-        F(name="text_record_id",
-            label="Item",
-            required=True,
-            localizable=[
-                show("edit add view listing"), # db-not-null-ui-add, pk
-            ],
-            value_type="number",
-            render_type="number",
-        ),
         F(name="text",
             label="Text",
             required=True,

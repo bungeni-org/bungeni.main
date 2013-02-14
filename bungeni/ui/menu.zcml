@@ -316,12 +316,12 @@
     />
     
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IHeading"
-        title="Edit heading"
+        for="bungeni.models.interfaces.IEditorialNote"
+        title="Edit editorial note"
         action="edit"
         order="10"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
-        permission="bungeni.heading.Edit"
+        permission="bungeni.editorial_note.Edit"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IHeading"
@@ -330,6 +330,14 @@
         order="99"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         permission="bungeni.heading.Delete"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IEditorialNote"
+        title="Delete editorial note"
+        action="delete"
+        order="99"
+        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        permission="bungeni.editorial_note.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IVenue"
@@ -636,6 +644,13 @@
         title="Add heading..."
         action="./add"
         permission="bungeni.heading.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+     />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IEditorialNoteContainer"
+        title="Add editorial note..."
+        action="./add"
+        permission="bungeni.editorial_note.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
     <browser:menuItem menu="plone_contentmenu"

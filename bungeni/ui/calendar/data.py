@@ -17,7 +17,7 @@ from sqlalchemy import orm, sql
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.interfaces import (IParliament, IAgendaItem, 
-    ISchedulingManager)
+    ISchedulingManager, IScheduleText)
 from bungeni.models.utils import get_login_user_chamber
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
@@ -140,9 +140,11 @@ class SchedulableItemsGetter(object):
         return None
     
     def query(self):
-        items_query = Session().query(self.domain_class).filter(
-            self.domain_class.status.in_(self.filter_states)
-        )
+        items_query = Session().query(self.domain_class)
+        if not IScheduleText.implementedBy(self.domain_class):
+            items_query = items_query.filter(
+                self.domain_class.status.in_(self.filter_states)
+            )
         if len(self.item_filters):
             for (key, value) in self.item_filters.iteritems():
                 column = getattr(self.domain_class, key)
@@ -171,6 +173,7 @@ class SchedulableItemsGetter(object):
         return tuple(items_query)
     
     def as_json(self):
+        is_text = IScheduleText.implementedBy(self.domain_class)
         date_formatter = date.getLocaleFormatter(common.get_request(), "date",
             "medium"
         )
@@ -181,7 +184,8 @@ class SchedulableItemsGetter(object):
                     item
                 )[0],
                 item_title = IDCDescriptiveProperties(item).title,
-                status = IWorkflow(item).get_state(item.status).title,
+                status = (IWorkflow(item).get_state(item.status).title 
+                    if not is_text else None),
                 status_date = ( date_formatter.format(item.submission_date) 
                     if (hasattr(item, "submission_date") and 
                         getattr(item, "submission_date")

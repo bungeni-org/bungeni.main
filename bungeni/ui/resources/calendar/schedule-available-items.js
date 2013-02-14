@@ -316,7 +316,8 @@ YAHOO.bungeni.availableitems = function(){
                     label: SGlobals.type_names.editorial_note,
                     content: ("<div id='add-text-record'>" + 
                         "<textarea id='text-record-value' " +
-                         "name='text-record-value'></textarea></div>"
+                         "name='text-record-value'></textarea></div>"+
+                         "<div id='editorial-notes-available'/>"
                     ),
                 }
             );
@@ -350,11 +351,8 @@ YAHOO.bungeni.availableitems = function(){
                 var container = this.get("contentEl");
                 var data_container = Y$.query("div#headings-available", container)[0];
                 var dataSource = new YAHOO.util.DataSource(
-                    SGlobals.schedulable_items_json_url + "?type=heading"
+                    SGlobals.schedulable_items_json_url + "?type=" + SGlobals.types.HEADING;
                 );
-                /*
-                    Heading and editorial poput
-                */
                 dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
                 dataSource.responseSchema = YAHOO.bungeni.config.schemas.available_items;
                 hDt = new YAHOO.widget.DataTable(data_container,
@@ -407,6 +405,50 @@ YAHOO.bungeni.availableitems = function(){
                     value: [ record_value ]
                 }
             }
+            
+            var setEditorMarkup = function(args){
+                text = args.record.getData()[Columns.TITLE];
+                rteEditor.setEditorHTML(text);
+            }
+            
+            var eDt = null;
+            var initAvailableEditorialNotes = function(){
+                var columns = [
+                    {
+                        key:Columns.NUMBER,
+                        label:"",
+                        formatter:Formatters.counter
+                    },
+                    {
+                        key: Columns.TITLE,
+                        label: SGlobals.type_names.editorial_note,
+                    },
+                ]
+                var container = this.get("contentEl");
+                var data_container = Y$.query("div#editorial-notes-available", container)[0];
+                var dataSource = new YAHOO.util.DataSource(
+                    SGlobals.schedulable_items_json_url + "?type="+SGlobals.types.EDITORIAL_NOTE
+                );
+                dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+                dataSource.responseSchema = YAHOO.bungeni.config.schemas.available_items;
+                eDt = new YAHOO.widget.DataTable(data_container,
+                    columns, dataSource, 
+                    { 
+                        selectionMode:"single",
+                        scrollable: true,
+                        initialLoad: true,
+                        width:"100%",
+                        height: "200px",
+                    }
+                );
+                eDt.subscribe("rowMouseoverEvent", hDt.onEventHighlightRow);
+                eDt.subscribe("rowMouseoutEvent", hDt.onEventUnhighlightRow);
+                eDt.subscribe("rowClickEvent", hDt.onEventSelectRow);
+                eDt.subscribe("rowSelectEvent", hDt.onEventSelectRow);
+                eDt.subscribe("rowSelectEvent", setEditorMarkup);
+                this.unsubscribe("activeChange", initAvailableEditorialNotes);
+            }
+            text_tab.on("activeChange", initAvailableEditorialNotes);
             Event.onAvailable("add-text-record", function(event){
                 rteEditor = new YAHOO.widget.SimpleEditor("text-record-value",
                     { 
@@ -421,6 +463,7 @@ YAHOO.bungeni.availableitems = function(){
             this.showEvent.subscribe(function(){
                 if(hDt){ 
                     hDt.unselectAllRows(); 
+                    eDt.unselectAllRows();
                     if(!YAHOO.bungeni.unsavedChanges){
                         //refresh headings
                         hDt.refresh();
