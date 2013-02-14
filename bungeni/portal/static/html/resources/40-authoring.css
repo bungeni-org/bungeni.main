@@ -113,6 +113,10 @@
     padding: 0px;
     display: inline;
 }
+.contentActions, 
+.contentActions * {
+    z-index: 1;
+}
 .actionMenu {
     /*  The spec says we can't put this on an element with a float (although
         Opera is the only one that cares) and we need it in order to catch
@@ -668,6 +672,4 @@ div.formControls input.hidden {
 /*  */
 
 }
-
-
 
