@@ -35,7 +35,7 @@ legislature = dict(
     election_date="2012-12-28",
     
     # the legislature start_date, iso 8601 date string
-    start_date="2013-02-15",
+    start_date="2013-01-01",
     
     # the legislature end_date, None or iso 8601 date string
     end_date=None,

@@ -83,7 +83,7 @@ class CAPI(object):
         def date_from_iso8601(s, required=True):
             if not s and not required:
                 return None
-            return datetime.date(*map(int, re.split("[^\d]", "2013-02-17")))
+            return datetime.date(*map(int, re.split("[^\d]", s)))
         d = bc.legislature
         d["bicameral"] = bool(d["bicameral"] is True or d["bicameral"] == "1")
         d["full_name"] = unicode(d["full_name"])

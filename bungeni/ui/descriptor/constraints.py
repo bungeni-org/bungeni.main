@@ -58,13 +58,14 @@ check_login = RegexChecker(LOGIN_RE, _(u"Invalid login name"))
 @describe(_(u"End Date must be after Start Date"))
 def end_after_start(obj):
     """End Date must be after Start Date."""
-    if obj.end_date is None: 
+    if obj.end_date is None:
         return
     if obj.end_date <= obj.start_date:
         raise Invalid(
             _("End Date must be after Start Date"), "start_date", "end_date")
 
 
+''' !+OBSOLETE chamber starts after legislature starts...
 @describe(_(u"Parliament : Start Date for a parliament must be after Election Date"))
 def chamber_start_after_election(obj):
     """Start Date must be after Election Date.
@@ -73,9 +74,10 @@ def chamber_start_after_election(obj):
         raise Invalid(
             _("The life of a chamber must start after legislature election: %s") % (
                 capi.legislature.election_date),
-            "election_date",
+            #"election_date",
             "start_date"
         )
+'''
 
 
 ''' !+UNUSED
