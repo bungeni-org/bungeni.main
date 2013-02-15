@@ -320,25 +320,20 @@ class Legislature(object):
     legislature-related capi parameters.
     """
     _instance = None
-    _initialized = False
     
     def __new__(cls, *args, **kw):
         if not cls._instance:
             cls._instance = super(Legislature, cls).__new__(cls, *args, **kw)
+            # "once-only" init
+            from bungeni.capi import capi
+            self, d = cls._instance, capi._legislature 
+            self.bicameral = d["bicameral"] # bool
+            self.full_name = d["full_name"] # unicode
+            self.election_date = d["election_date"]
+            self.start_date = d["start_date"]
+            self.end_date = d["end_date"]
+            self.country_code = d["country_code"] # 2-letter
         return cls._instance
-    
-    def __init__(self):
-        if self._initialized:
-            return
-        self._initialized = True
-        from bungeni.capi import capi
-        _d = capi._legislature
-        self.bicameral = _d["bicameral"] # bool
-        self.full_name = _d["full_name"] # unicode
-        self.election_date = _d["election_date"]
-        self.start_date = _d["start_date"]
-        self.end_date = _d["end_date"]
-        self.country_code = _d["country_code"] # 2-letter
 
 #
 

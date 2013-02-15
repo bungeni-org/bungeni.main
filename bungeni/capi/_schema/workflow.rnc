@@ -47,7 +47,8 @@ grammar {
         
         element parameter { # !+ name by feature
             attribute name { SYMBOL_NAME }, # !+ unique name per feature
-            attribute value { text }
+            attribute value { text },
+            attribute note { text }?
         }*
     }
     

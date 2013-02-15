@@ -296,6 +296,13 @@ class CAPI(object):
     
     # type registry
     
+    def has_type_info(self, discriminator):
+        """Is the type enabled i.e. has it been registered?"""
+        try: 
+            return bool(self.get_type_info(discriminator))
+        except KeyError:
+            return False
+    
     def get_type_info(self, discriminator):
         """Get the TypeInfo instance for discriminator (see core.type_info). 
         

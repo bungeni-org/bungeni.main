@@ -115,12 +115,25 @@ def feature_event(kls, feature):
     """Decorator for domain types to support "event" feature.
     For Doc types (other than Event itself).
     """
+    # !+ feature "descriptor/processing/validation", move elsewhere?
+    # parameter "types":
+    # - may "allow" multiple event types
+    # - if none specified, "event" is assumed as the default.
+    feature.params["types"] = feature.params.get("types", "event").split()
+    
     # domain.Event itself may NOT support events
     assert not interfaces.IEvent.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureEvent)
-    add_container_property_to_model(kls, "events", 
-        "bungeni.models.domain.EventContainer", "head_id")
-
+    
+    # container property per enabled event type
+    for event_type_key in feature.params["types"]:
+        if capi.has_type_info(event_type_key):
+            container_property_name = naming.plural(event_type_key)
+            container_class_name = naming.container_class_name(event_type_key)
+            add_container_property_to_model(kls, container_property_name,
+                "bungeni.models.domain.%s" % (container_class_name), "head_id")
+        else:
+            log.warn('IGNORING feature "event" ref to disabled type %r', event_type_key)
 
 def feature_signatory(kls, feature):
     """Decorator for domain types to support "signatory" feature.
@@ -131,6 +144,9 @@ def feature_signatory(kls, feature):
         "bungeni.models.domain.SignatoryContainer", "head_id")
     import bungeni.models.signatories
     bungeni.models.signatories.createManagerFactory(kls, **feature.params)
+
+
+# schedule
 
 class SchedulingManager(object):
     """Store scheduling configuration properties for a known type.
@@ -185,6 +201,8 @@ def feature_schedule(kls, feature):
         log.warning("Scheduling manager was not created for class %s."
             "Check your logs for details",
             kls)
+
+# /schedule
 
 
 def feature_address(kls, feature):

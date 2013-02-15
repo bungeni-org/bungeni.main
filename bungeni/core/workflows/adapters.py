@@ -99,7 +99,8 @@ def register_custom_types():
     def parse_elem(type_elem):
         type_key = misc.xml_attr_str(type_elem, "name")
         workflow_key = misc.xml_attr_str(type_elem, "workflow", default=type_key)
-        archetype_key = type_elem.tag # !+archetype? move to types?
+        # !+archetype? move decl from being on descriptor to being on types!
+        archetype_key = misc.xml_attr_str(type_elem, "archetype", default=type_elem.tag)
         return type_key, workflow_key, archetype_key
     
     def enabled_elems(elems):

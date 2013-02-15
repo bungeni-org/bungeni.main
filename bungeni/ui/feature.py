@@ -66,6 +66,9 @@ def setup_customization_ui():
                 layer="{layer}"
             />"""
     
+    def model_title(type_key):
+        return naming.split_camel(naming.model_name(type_key))
+    
     UI_ZC_DECLS[:] = []
     # we assume that non-custom types have already been set up as needed
     for type_key, ti in capi.iter_type_info(scope="custom"):
@@ -73,7 +76,7 @@ def setup_customization_ui():
             
             <!-- {type_key} -->""".format(type_key=type_key))
         
-        type_title = naming.split_camel(naming.model_name(type_key))
+        type_title = model_title(type_key)
         # model interface is defined, but container interface is not yet
         model_interface_qualname = naming.qualname(ti.interface)
         container_interface_qualname = "bungeni.models.interfaces.%s" % (
@@ -149,10 +152,19 @@ def setup_customization_ui():
         # events
         if ti.workflow.has_feature("event"):
             log.debug("Setting up UI for feature %r for type %r", "event", type_key)
-            title = "Add {t} Event".format(t=type_title)
-            register_menu_item("event", "Add", title, model_interface_qualname, 
-                "./events/add", menu="additems", order=21,
-                layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+            for event_type_key in ti.workflow.get_feature("event").params["types"]:
+                if capi.has_type_info(event_type_key):
+                    container_property_name = naming.plural(event_type_key)
+                    title = "Add {t} {e}".format(t=type_title, e=model_title(event_type_key))
+                    register_menu_item(event_type_key, "Add", title, 
+                        model_interface_qualname, 
+                        "./%s/add" % (container_property_name), 
+                        menu="additems", 
+                        order=21,
+                        layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+                else:
+                    log.warn('IGNORING feature "event" ref to disabled type %r', 
+                        event_type_key)
         
         # address
         if ti.workflow.has_feature("address"):

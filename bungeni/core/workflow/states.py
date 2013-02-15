@@ -59,8 +59,12 @@ class Feature(object):
         self.enabled = enabled
         self.note = note
         self.params = kws
+    def __str__(self):
+        return named__str__(self, self.name)
+    __repr__ = __str__
 
 
+    
 class State(object):
     """A workflow state instance. 
     
@@ -176,6 +180,7 @@ class Transition(object):
     
     def __str__(self):
         return named__str__(self, self.id)
+    __repr__ = __str__
 
 #
 
@@ -493,6 +498,13 @@ class Workflow(object):
             if f.name == name:
                 return f.enabled
         return False
+
+    def get_feature(self, name):
+        """Get the named feature instance, or None.
+        """
+        for f in self.features:
+            if f.name == name:
+                return f
     
     @property
     def states(self):

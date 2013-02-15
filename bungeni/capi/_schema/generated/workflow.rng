@@ -91,6 +91,9 @@
           </attribute>
           <!-- !+ unique name per feature -->
           <attribute name="value"/>
+          <optional>
+            <attribute name="note"/>
+          </optional>
         </element>
       </zeroOrMore>
     </element>
