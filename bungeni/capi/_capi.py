@@ -92,7 +92,7 @@ class CAPI(object):
         bd["start_date"] = date_from_iso8601(bcd["start_date"])
         bd["end_date"] = date_from_iso8601(bcd["end_date"], False)
         bd["country_code"] = str(bcd["country_code"])
-        return d
+        return bd
     
     @property
     def legislature(self):

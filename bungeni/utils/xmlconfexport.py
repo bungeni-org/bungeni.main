@@ -12,10 +12,12 @@ def write_to_custom(where, file_name, contents):
     """
     Helper api to write to bungeni_custom
     """
-    
+    import os
     from bungeni.capi import capi
-    filepath = capi.get_path_for(where, file_name)
-    open(filepath, "w").write(contents)
+    path = capi.get_path_for(where, ".auto")
+    if not os.path.exists(path):
+        os.makedirs(path)
+    open(capi.get_path_for(path, file_name), "w").write(contents)
 
 def write_all():
     """
