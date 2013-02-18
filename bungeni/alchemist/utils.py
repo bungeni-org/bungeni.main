@@ -6,9 +6,9 @@
 $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
-
+import inspect
 from sqlalchemy.orm import class_mapper
-from bungeni.alchemist.traversal import ManagedContainerDescriptor
+from bungeni.alchemist.interfaces import IManagedContainer
 
 
 # type_info - conveniences on capi.get_type_info
@@ -53,13 +53,16 @@ def inisetattr(obj, name, value):
     else:
         setattr(obj, name, value)
 
-def get_managed_containers(domain_model, context):
-    """Get the managed container instances off context for the container 
-    properties intrumented on the domain model class.
+def get_managed_containers(context):
+    """Get the managed container instances off context
     """
-    return [ (key, getattr(context, key))
-        for key, value in domain_model.__dict__.items()
-        # !+ IManagedContainer.providedBy?
-        if isinstance(value, ManagedContainerDescriptor) ]
-    
-
+    attrs = []
+    kls = context.__class__
+    seen = []
+    for class_item in inspect.getmro(kls):
+        for key, value in class_item.__dict__.items():
+            if IManagedContainer.providedBy(value):
+                if key not in seen:
+                    attrs.append((key, getattr(context, key)))
+                    seen.append(key)
+    return attrs

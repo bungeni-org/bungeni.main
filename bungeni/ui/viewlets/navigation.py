@@ -372,8 +372,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             if chain:
                 nodes = self.expand(chain)
             else:
-                kls = context.__class__
-                containers = utils.get_managed_containers(kls, context)
+                containers = utils.get_managed_containers(context)
                 nodes = []
                 self.expand_containers(nodes, containers, _url, chain, None)
             
@@ -404,8 +403,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 elif IReadContainer.providedBy(parent):
                     containers = list(parent.items())
                 else:
-                    kls = type(proxy.removeSecurityProxy(parent))
-                    containers = utils.get_managed_containers(kls, parent)
+                    containers = utils.get_managed_containers(parent)
             else:
                 containers = [(context.__name__, context)]
             self.expand_containers(items, containers, _url, chain, context)
