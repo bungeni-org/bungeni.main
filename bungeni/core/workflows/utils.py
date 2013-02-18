@@ -18,10 +18,12 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 
 import bungeni.models.interfaces as interfaces
 from bungeni.models.utils import get_chamber_for_group
+from bungeni.models import domain
 from bungeni.utils import common
 from bungeni.ui.utils import debug
 from bungeni.utils.misc import describe
 from bungeni.ui.i18n import _
+from bungeni.alchemist import Session
 
 import re
 import dbutils
@@ -61,11 +63,10 @@ def assign_role_owner_to_login(context):
     log.debug("assign_role_owner_to_login [%s] user:%s" % (
         context, current_user_login))
     assign_role("bungeni.Owner", current_user_login, context)
-    # "owner" from direct user/owner field !+why is this needed here?
-    # !+ owner may still be None for types with no such direct field
-    #owner = context.owner
-    #if owner and (owner.login != current_user_login):
-    #    assign_role("bungeni.Owner", owner.login, context)
+    session = Session()
+    owner = session.query(domain.User).get(context.owner_id)
+    if owner and (owner.login != current_user_login):
+        assign_role("bungeni.Owner", owner.login, context)
 
 
 @capi.bungeni_custom_errors

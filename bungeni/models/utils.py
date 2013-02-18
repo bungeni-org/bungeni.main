@@ -76,9 +76,18 @@ def get_chamber_for_group(group):
             return get_chamber_for_group(group.parent_group)
     '''
 
+def user_delegatations(user):
+    session = Session()
+    delegations = session.query(domain.UserDelegation).filter(
+        domain.UserDelegation.delegation_id == user.user_id).all()
+    return delegations
+
 def get_login_user_chamber():
     user = get_login_user()
     if user:
+        user_delegations = user_delegatations(user)
+        if user_delegations:
+            user = user_delegations[0].user
         for gm in user.group_membership:
             # cascade up first group ancestry, to chamber (or None)
             return get_chamber_for_group(gm.group)
