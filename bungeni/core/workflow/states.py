@@ -476,9 +476,10 @@ class Workflow(object):
             ]
             if draft_transitions:
                 tags.add(TAG_DRAFT)
+            view_permission = "bungeni.%s.View" % self.name
             anon_perms = [ bool(setting) for setting, perm, role in 
                 state.permissions if role=="bungeni.Anonymous" and
-                "View" in perm
+                perm==view_permission
             ]
             if True in anon_perms:
                 tags.add(TAG_PUBLIC)
