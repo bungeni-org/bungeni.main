@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <workflow title="Group sitting workflow"
     description="Workflow for a group sitting."
-    tags="draft private public published publishedminutes"
     permission_actions=".View .Edit .Add .Delete"
     >
     
@@ -82,41 +81,41 @@
     </facet>
     
     
-    <state id="sitting" title="Sitting" tags="draft public">
+    <state id="sitting" title="Sitting">
         <facet ref=".all_Clerk" />
     </state>
     
     <state id="draft_agenda" title="Draft Agenda"
             actions="set_real_order"
-            tags="draft public"
+           
         >
         <facet ref=".draft_agenda" />
     </state>
     
     <state id="published_agenda" title="Published Agenda" 
             actions="schedule_sitting_items"
-            tags="public published"
+           
         >
         <facet ref=".published_agenda" />
     </state>
     
-    <state id="published_agenda_internal" title="Published Agenda Internal" tags="public">
+    <state id="published_agenda_internal" title="Published Agenda Internal">
         <facet ref=".published_agenda_internal" />
     </state>
     
-    <state id="draft_minutes" title="Draft Minutes" tags="draft public">
+    <state id="draft_minutes" title="Draft Minutes">
         <facet ref=".draft_minutes" />
     </state>
     
-    <state id="published_minutes" title="Published Minutes" tags="public published publishedminutes">
+    <state id="published_minutes" title="Published Minutes">
         <facet ref=".published_minutes" />
     </state>
     
-    <state id="published_minutes_internal" title="Published Minutes Internal" tags="public">
+    <state id="published_minutes_internal" title="Published Minutes Internal">
         <facet ref=".published_minutes_internal" />
     </state>
     
-    <state id="archived" title="Archive" tags="private">
+    <state id="archived" title="Archive">
         <facet ref=".archived" />
     </state>
     

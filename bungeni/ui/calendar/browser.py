@@ -69,7 +69,6 @@ from bungeni.alchemist import Session
 from bungeni.ui import vocabulary
 
 from bungeni.utils import register, naming
-from bungeni.capi import capi
 
 # Filter key names prefix - for available items listings
 FILTER_PREFIX = "filter_"
@@ -543,10 +542,6 @@ class ScheduleJSONListing(ContainerJSONListing):
             node = nodes[index]
             wfc = IWorkflowController(node.item, None)
             if wfc is None:
-                return
-            #!+SCHEDULING_FILTERS(mb, mar-2012) Find a more elegant way to do this
-            # perhaps as a workflow feature
-            if not len(wfc.workflow.get_state_ids(keys=["draft"], restrict=False)):
                 return
             item["wf_state"] = translate_i18n(
                 wfc.state_controller.get_state().title

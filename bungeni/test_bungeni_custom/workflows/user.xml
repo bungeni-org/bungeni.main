@@ -20,7 +20,7 @@
     </facet>
     
     
-    <state id="A" title="Active User">
+    <state id="A" title="Active User" actions="assign_owner_role">
         <facet ref=".internal" />
         <facet ref="address.internal" />
     </state>

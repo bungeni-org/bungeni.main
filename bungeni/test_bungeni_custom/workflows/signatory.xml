@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <workflow title="Signatory Workflow"
     description="Workflow for Signatory documents"
-    tags="public terminal"
     permission_actions=".View .Edit .Add .Delete .Act .Append"
     >
     <!-- 
@@ -53,15 +52,15 @@
         <facet ref=".draft_Owner" />
     </state>
     
-    <state id="consented" title="Signature Consented" tags="public">
+    <state id="consented" title="Signature Consented">
         <facet ref=".public_frozen" />
     </state>
     
-    <state id="rejected" title="Signature Rejected" tags="terminal">
+    <state id="rejected" title="Signature Rejected">
         <facet ref=".internal_frozen" />
     </state>
     
-    <state id="withdrawn" title="Signature Withdrawn" tags="terminal">
+    <state id="withdrawn" title="Signature Withdrawn">
         <facet ref=".internal_frozen" />
     </state>
     

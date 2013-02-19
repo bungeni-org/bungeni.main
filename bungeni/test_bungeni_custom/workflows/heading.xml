@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <workflow title="Heading Workflow"
     description="Workflow for headings"
-    tags="public tobescheduled"
     permission_actions=".View .Edit .Add .Delete"
     >
 
@@ -23,7 +22,7 @@
         <facet ref=".view_Clerk" />
     </state>
     
-    <state id="public" title="Public" tags="public tobescheduled">
+    <state id="public" title="Public">
         <facet ref=".view" />
     </state>
     

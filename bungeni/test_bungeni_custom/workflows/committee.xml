@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <workflow title="Committee Workflow"
     description="Workflow for Committees"
-    tags="public"
     permission_actions=".View .Edit .Add .Delete"
     >
     
@@ -42,12 +41,18 @@
         <facet ref="address.internal" />
     </state>
     
-    <state id="active" title="Active Committee" tags="public">
+    <state id="active" title="Active Committee" 
+            actions="activate"
+           
+        >
         <facet ref=".public" />
         <facet ref="address.public" />
     </state>
     
-    <state id="dissolved" title="Committee is Dissolved" tags="public">
+    <state id="dissolved" title="Committee is Dissolved" 
+            actions="dissolve"
+           
+        >
         <facet ref=".public_frozen" />
         <facet ref="address.public_frozen" />
     </state>

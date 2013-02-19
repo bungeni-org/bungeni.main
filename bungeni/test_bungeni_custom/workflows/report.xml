@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <workflow title="Report Workflow"
     description="A report"
-    tags="public"
     permission_actions=".View .Edit .Add .Delete"
     >
     
@@ -21,7 +20,7 @@
         <allow permission=".View" roles="Anonymous" />
     </facet>
     
-    <state id="published" title="Published" tags="public"/>
+    <state id="published" title="Published"/>
     
     
     <transition title="Create Report"

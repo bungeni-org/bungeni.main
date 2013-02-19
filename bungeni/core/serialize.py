@@ -476,10 +476,6 @@ def queue_object_serialization(obj):
         log.warning("Could not get workflow state for object %s. "
             "State: %s", obj, wf_state)
         return
-    if wf_state and (
-        wfc.state_controller.get_status() in 
-        wfc.workflow.get_state_ids(tagged=["private"], restrict=False)):
-        return
     unproxied = zope.security.proxy.removeSecurityProxy(obj)
     mapper = object_mapper(unproxied)
     primary_key = mapper.primary_key_from_instance(unproxied)

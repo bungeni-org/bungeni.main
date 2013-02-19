@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <workflow title="Event Workflow"
     description="Workflow for base Event"
-    tags="draft private public"
     permission_actions=".View .Edit .Add .Delete"
     >
     
@@ -11,7 +10,6 @@
     -->
     
     <!-- sub-item: NO global grants -->
-        
     
     <!-- features -->
     <feature name="audit" enabled="true" />
@@ -59,12 +57,12 @@
     </facet>
 
     
-    <state id="draft" title="Draft Event" tags="draft private">
+    <state id="draft" title="Draft Event">
         <facet ref=".draft_Owner" />
         <facet ref="attachment.draft_Owner" />
     </state>
     
-    <state id="attached" title="Event" permissions_from_parent="true" tags="public" />
+    <state id="attached" title="Event" permissions_from_parent="true" />
     <!-- !+event.attachment(mr, dec-2012) NOTE that when an attachment (on this 
     event) is in the "attached" state AND the this event itself is in the "attached" 
     state then the HEAD doc handles all permissions (including all attachment-related 

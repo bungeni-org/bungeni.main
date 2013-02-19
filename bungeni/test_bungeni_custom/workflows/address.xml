@@ -2,7 +2,6 @@
 <workflow title="Address Workflow"
     description="Workflow for addresses"
     note="Used for both bungeni.models types: UserAddress, GroupAddress"
-    tags="draft private public"
     permission_actions=".View .Edit .Add .Delete"
     >
     
@@ -35,11 +34,11 @@
     </facet>
     
     
-    <state id="draft" title="Draft Address" tags="draft private">
+    <state id="draft" title="Draft Address">
         <facet ref=".draft" />
     </state>
     
-    <state id="attached" title="Address" tags="public" permissions_from_parent="true" />
+    <state id="attached" title="Address" permissions_from_parent="true" />
     
     <state id="internal" title="Published Internal" note="Visible to bungeni users">
         <facet ref=".internal" />

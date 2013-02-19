@@ -25,6 +25,7 @@ from bungeni.utils import error
 
 
 GRANT, DENY = 1, 0
+TAG_DRAFT, TAG_PUBLIC, TAG_TERMINAL = TAGS = ["draft", "public", "terminal"]
 
 # we only have 1 or 0 i.e. only Allow or Deny, no Unset.
 IntAsSetting = { 
@@ -74,17 +75,17 @@ class State(object):
     zope.interface.implements(IRolePermissionMap)
     
     def __init__(self, id, title, note, actions, permissions,
-            tags, permissions_from_parent=False, obsolete=False
+            permissions_from_parent=False, obsolete=False
         ):
         self.id = id # status
         self.title = title
         self.note = note
         self.actions = actions # [callable]
         self.permissions = permissions
-        self.tags = tags # [str]
         self.permissions_from_parent = permissions_from_parent # bool
         self.obsolete = obsolete # bool
-    
+        self.tags = []
+            
     @error.exceptions_as(interfaces.WorkflowStateActionError)
     def execute_actions(self, context):
         """Execute the actions associated with this state.
@@ -344,7 +345,7 @@ class Workflow(object):
     initial_state = None
     
     def __init__(self, name, features, facets, states, transitions,
-            tags, title=None, description=None, note=None
+            title=None, description=None, note=None
         ):
         assert not name in self.__class__.singletons, \
             "A workflow singleton %r exists already." % (name)
@@ -355,7 +356,6 @@ class Workflow(object):
         self.__class__.singletons[name] = self
         self.name = name
         self.features = features
-        self.tags = tags # [str]
         self.facets = facets or []
         self.title = title
         self.description = description
@@ -366,6 +366,8 @@ class Workflow(object):
         self._transitions_by_destination = {} # {destination: [Transition]}
         self._transitions_by_grouping_unique_sources = {} # {grouping: [Transition]}
         self.refresh(states, transitions)
+        self.tags = TAGS
+        self.setup_tags()
     
     def refresh(self, states, transitions):
         sbyid = self._states_by_id
@@ -402,8 +404,6 @@ class Workflow(object):
         """
         assert len([ f for f in self.facets if f.default ]) <= 1, \
             "Workflow %r may only have one default facet" % (self.name)
-        assert len(self.tags) == len(set(self.tags)), \
-            "Workflow [%s] duplicates tags: %s" % (self.name, self.tags)
         states = self._states_by_id.values()
         # at least one state
         assert len(states), "Workflow [%s] defines no states" % (self.name) #!+RNC
@@ -428,10 +428,6 @@ class Workflow(object):
                 assert_distinct_permission_scopes(perm, roles, 
                     self.name, "state", s.id)
             # tags
-            _undeclared_tags = [ tag for tag in s.tags if tag not in self.tags ]
-            assert not _undeclared_tags, \
-                "Workflow [%s] State [%s] uses undeclared tags: %s" % (
-                    self.name, s.id, _undeclared_tags)
             assert len(s.tags) == len(set(s.tags)), \
                 "Workflow [%s] State [%s] duplicates tags: %s" % (
                     self.name, s.id, s.tags)
@@ -465,6 +461,28 @@ class Workflow(object):
                 assert len(all_sources)==len(set(all_sources)), "Duplicate " \
                     "sources in grouped transitions [%s] in workflow [%s]" % (
                         grouping, self.name)
+    
+    def setup_tags(self):
+        """Set up state tags used in the system
+        """
+        for state_id in self._states_by_id.keys():
+            state = self.get_state(state_id)
+            tags = set()
+            from_transitions = self.get_transitions_from(state_id)
+            if not from_transitions:
+                tags.add(TAG_TERMINAL)
+            draft_transitions = [transition for transition in 
+                self.get_transitions_to(state_id) if not transition.source
+            ]
+            if draft_transitions:
+                tags.add(TAG_DRAFT)
+            anon_perms = [ bool(setting) for setting, perm, role in 
+                state.permissions if role=="bungeni.Anonymous" and
+                "View" in perm
+            ]
+            if True in anon_perms:
+                tags.add(TAG_PUBLIC)
+            state.tags = list(tags)
     
     @error.exceptions_as(interfaces.InvalidWorkflow)
     def validate_permissions_roles(self):

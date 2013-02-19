@@ -264,7 +264,6 @@ def _load(workflow_name, workflow):
     transitions = []
     states = []
     note = xas(workflow, "note")
-    allowed_tags = xas(workflow, "tags", "").split()
     
     # initial_state, in XML indicated with a transition.@source=""
     initial_state = None
@@ -347,10 +346,7 @@ def _load(workflow_name, workflow):
         state_actions = []
         for action_name in xas(s, "actions", "").split():
             state_actions.append(capi.get_workflow_action(action_name))
-        
-        # @tags
-        tags = xas(s, "tags", "").split()
-        
+                
         # @permissions_from_state
         permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
         # state.@permissions_from_state : to reduce repetition and enhance 
@@ -383,7 +379,7 @@ def _load(workflow_name, workflow):
         states.append(
             State(state_id, state_title,
                 xas(s, "note"),
-                state_actions, permissions, tags,
+                state_actions, permissions,
                 permissions_from_parent,
                 xab(s, "obsolete"),
             )
@@ -486,5 +482,5 @@ def _load(workflow_name, workflow):
     
     return Workflow(workflow_name,
         workflow_features, workflow_facets, states, transitions,
-        allowed_tags, workflow_title, workflow_description, note)
+        workflow_title, workflow_description, note)
 

@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <workflow title="Question Workflow"
     description="A question"
-    tags="draft private public terminal"
     permission_actions=".View .Edit .Add .Delete"
     >
     
@@ -90,7 +89,7 @@
     
     <state id="working_draft" title="Working Draft"
             actions="assign_role_minister_question"
-            tags="draft private"
+           
         >
         <facet ref=".draft_Clerk" />
         <facet ref="attachment.draft_Clerk" />
@@ -100,7 +99,7 @@
     
     <state id="draft" title="Draft" 
             actions="assign_role_minister_question"
-            tags="draft private"
+           
         >
         <facet ref=".draft_Owner" />
         <facet ref="attachment.draft_Owner" />
@@ -131,7 +130,7 @@
     
     <state id="withdrawn_internal" title="Withdrawn" 
             actions="unschedule_doc"
-            tags="terminal"
+           
             note="A question can be withdrawn by the owner, visible as pre-withdrawn, cannot be edited by anyone."
         >
         <facet ref=".internal_Signatory" />
@@ -166,7 +165,7 @@
     
     <state id="admissible" title="Admissible"
             actions="version set_doc_type_number"
-            tags="public"
+           
         >
         <facet ref=".public" />
         <facet ref="attachment.public" />
@@ -174,7 +173,7 @@
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="inadmissible" title="Inadmissible" tags="terminal">
+    <state id="inadmissible" title="Inadmissible">
         <facet ref=".view_Clerk" />
         <facet ref="attachment.internal_frozen" />
         <facet ref="event.internal_frozen" />
@@ -192,51 +191,51 @@
         permissions_from_state="received"  />
     
     <state id="schedule_pending" title="Schedule pending" 
-        permissions_from_state="admissible" tags="public" />
+        permissions_from_state="admissible" />
     
     <state id="scheduled" title="Scheduled" 
-        permissions_from_state="admissible" tags="public" />
+        permissions_from_state="admissible" />
 
     <state id="adjourned" title="Debate adjourned" 
-        permissions_from_state="admissible" tags="public" />
+        permissions_from_state="admissible" />
     
-    <state id="response_pending" title="Pending response" tags="public">
+    <state id="response_pending" title="Pending response">
         <facet ref=".public_response_Minister" />
         <facet ref="attachment.public" />
         <facet ref="event.public" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="response_submitted" title="Response submitted" tags="public">
+    <state id="response_submitted" title="Response submitted">
         <facet ref=".public_response_internal" />
         <facet ref="attachment.public" />
         <facet ref="event.public" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="response_completed" title="Response completed" tags="public terminal">
+    <state id="response_completed" title="Response completed">
         <facet ref=".public_response_public" />
         <facet ref="attachment.public" />
         <facet ref="event.public" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="deferred" title="Deferred" permissions_from_state="admissible" tags="public" />
+    <state id="deferred" title="Deferred" permissions_from_state="admissible" />
     
-    <state id="debated" title="Debated" tags="public terminal">
+    <state id="debated" title="Debated">
         <facet ref=".public" />
         <facet ref="attachment.public_frozen" />
         <facet ref="event.public_frozen" />
         <facet ref="signatory.public_frozen" />
     </state>
     
-    <state id="elapsed" title="Elapsed" permissions_from_state="debated" tags="public terminal" />
+    <state id="elapsed" title="Elapsed" permissions_from_state="debated" />
 
-    <state id="dropped" title="Dropped" permissions_from_state="debated" tags="public terminal" />
+    <state id="dropped" title="Dropped" permissions_from_state="debated" />
     
     <state id="withdrawn" title="Withdrawn" permissions_from_state="debated" 
         actions="unschedule_doc"
-        tags="public terminal" 
+        
         note="A question can be withdrawn by the owner, visible as pre-withdrawn, cannot be edited by anyone."
     />
     
