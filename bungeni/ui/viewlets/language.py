@@ -65,4 +65,9 @@ class ChangeLanguage(BrowserView):
         else:
             response.expireCookie("I18N_LANGUAGE", path="/")
         url =  self.request.get("HTTP_REFERER", "..")
-        return response.redirect(url)
+        # 19-02-2013 - added trusted=True parameter, since the redirect back to the source page
+        # after changing language fails when hosting behind deliverance, since bungeni is on localhost
+        # and is redirecting to the main webhosted url x.bungeni.org, and fails since by default 
+        # trusted = False which prevents redirects to non local domains. Setting trusted=True allows
+        # the redirect to work correctly
+        return response.redirect(url, trusted=True)
