@@ -9,7 +9,6 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.assignment")
 
 
-from sqlalchemy.sql.expression import and_
 from zope.component import getUtility
 from zope.security import checkPermission
 from zope.securitypolicy.interfaces import IRole, IPrincipalRoleMap
@@ -25,8 +24,6 @@ from bungeni.ui.table import TableFormatter
 from bungeni.ui import forms
 from bungeni.ui.utils import url, common
 from bungeni.capi import capi
-from bungeni.alchemist import Session
-from bungeni.models import domain
 from bungeni.models.interfaces import ISubRoleAnnotations
 from bungeni import utils
 
@@ -160,7 +157,7 @@ class UserAssignmentView(forms.common.BaseForm):
     def update(self):
         self.tables = []
         assignable_roles = self.assignable_roles()
-        for role_id in self.get_config_roles("assignable"):
+        for role_id in assignable_roles:
             if role_id in assignable_roles:
                 editable = True
             else:
