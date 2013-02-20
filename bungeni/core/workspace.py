@@ -462,7 +462,7 @@ def load_workspace(file_name, domain_class):
                 "Invalid tab - %s. file: %s, state : %s" % (
                     tab.get("id"), file_name, state.get("id"))
             if tab.get("roles"):
-                roles = tab.get("roles").split()
+                roles = capi.schema.qualified_roles(tab.get("roles"))
                 for role in roles:
                     assert component.queryUtility(IRole, role, None), \
                         "Workspace configuration error : " \

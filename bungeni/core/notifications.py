@@ -464,7 +464,7 @@ def load_notification_config(file_name, domain_class):
     notifications_utility.register_item_type(domain_class, item_type)
     notification_xml = etree.fromstring(open(file_path).read())
     for notify in notification_xml.iterchildren("notify"):
-        roles = notify.get("roles").split()
+        roles = capi.schema.qualified_roles(notify.get("roles"))
         for role in roles:
             assert component.queryUtility(IRole, role, None), \
                 "Notifications configuration error : " \

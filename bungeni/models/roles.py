@@ -7,14 +7,15 @@
 $Id$
 """
 log = __import__("logging").getLogger("bungeni.models.roles")
+import os
 
 import zope.annotation
-from  zope.component import adapts
-from zope.interface import implements
+from zope.component import adapts
+from zope import interface
 from zope.securitypolicy.interfaces import IRole
 from zope.securitypolicy.role import Role
 from bungeni.models import interfaces
-
+from bungeni.capi import capi
 
 # Roles can be divided into two, roles that a principal gets by virtue
 # of his membership to a group and roles that are defined on objects
@@ -26,7 +27,7 @@ ROLES_DIRECTLY_DEFINED_ON_OBJECTS = ["bungeni.Owner", "bungeni.Signatory"]
 
 @zope.annotation.factory
 class SubRoleAnnotations(object):
-    implements(interfaces.ISubRoleAnnotations)
+    interface.implements(interfaces.ISubRoleAnnotations)
     adapts(IRole)
 
     def __init__(self):
@@ -47,9 +48,24 @@ def sub_role_configure(context, id, title, description, role):
     gsm.registerUtility(sub_role, IRole, id)
 
 
-def sub_role_handler(context, **kw):
-    context.action(discriminator=('RegisterSubRoles', kw["id"], kw["role"]),
-                   callable=sub_role_configure,
-                   args=(context, kw["id"], kw["title"], getattr(
-                        kw, "description", None), kw["role"])
-                   )
+class IDummyRoleConfig(interface.Interface):
+    """Dummy interface"""
+
+@capi.bungeni_custom_errors
+def load_roles():
+    path = capi.get_path_for("sys", "acl")
+    file_path = os.path.join(path, "roles.xml")
+    roles_config = capi.schema.validate_file_rng("roles", file_path)
+    gsm = zope.component.getGlobalSiteManager()
+    for role_config in roles_config.iterchildren(tag="role"):
+        role = Role("bungeni."+role_config.get("id"), role_config.get("title"))
+        gsm.registerUtility(role, IRole, "bungeni."+role_config.get("id"))
+        for sub_role_config in role_config.iterchildren(tag="subrole"):
+            sub_role = Role("bungeni."+sub_role_config.get("id"),
+                sub_role_config.get("title"))
+            sub_role_annt = interfaces.ISubRoleAnnotations(sub_role)
+            sub_role_annt.is_sub_role = True
+            sub_role_annt.parent = role
+            gsm.registerUtility(sub_role, IRole,
+                "bungeni."+sub_role_config.get("id"))
+    return None

@@ -9,7 +9,6 @@
     </class>
     <adapter factory="bungeni.models.roles.SubRoleAnnotations"/>
     <!-- custom roles -->
-    <include package="bungeni.models" file="meta.zcml" />
     <role id="zope.Manager" title="Site Manager" />
     <role id="bungeni.Admin" title="Bungeni Admin"/>
     <role id="bungeni.Authenticated" title="All authenticated users" />
@@ -27,7 +26,5 @@
     <role id="bungeni.Government" title="Member of Government" />
     <role id="bungeni.CommitteeMember" title="Committee Member" />
     
-    <!-- load custom roles defined in bungeni_custom -->
-    <include package="bungeni_custom.sys.acl" file="roles.zcml" />
 
 </configure>

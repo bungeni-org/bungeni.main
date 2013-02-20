@@ -38,7 +38,8 @@ def _load_rng(name):
 
 RNG = {
     "workflow": _load_rng("workflow"),
-    "descriptor": _load_rng("descriptor")
+    "descriptor": _load_rng("descriptor"),
+    "roles": _load_rng("roles")
 }
 
 def validate_file_rng(name, file_path):
