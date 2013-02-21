@@ -584,7 +584,7 @@
         for="bungeni.models.interfaces.IUserDelegationContainer"
         title="Add user delegation..."
         action="./add"
-        permission="bungeni.delegation.Add"
+        permission="bungeni.user_delegation.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"

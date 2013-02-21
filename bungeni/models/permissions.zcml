@@ -119,11 +119,11 @@
   <permission id="bungeni.title_type.View" title="View title type" />
   <meta:redefinePermission from="bungeni.title_type.View" to="zope.View" />
     
-  <permission id="bungeni.delegation.Add" title="Add delegation" />
-  <permission id="bungeni.delegation.Edit" title="Edit delegation" />
-  <permission id="bungeni.delegation.Delete" title="Delete delegation" />
-  <permission id="bungeni.delegation.View" title="View delegation" />
-  <meta:redefinePermission from="bungeni.delegation.View" to="zope.View" />
+  <permission id="bungeni.user_delegation.Add" title="Add delegation" />
+  <permission id="bungeni.user_delegation.Edit" title="Edit delegation" />
+  <permission id="bungeni.user_delegation.Delete" title="Delete delegation" />
+  <permission id="bungeni.user_delegation.View" title="View delegation" />
+  <meta:redefinePermission from="bungeni.user_delegation.View" to="zope.View" />
 
   <permission id="bungeni.member_title.Add" title="Add member title" />
   <permission id="bungeni.member_title.Edit" title="Edit member title" />

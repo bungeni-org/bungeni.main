@@ -97,23 +97,23 @@
     <browser:page name="view"
         for="bungeni.models.interfaces.IUserDelegation"
         class=".common.DisplayForm"
-        permission="bungeni.delegation.View"
+        permission="bungeni.user_delegation.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="add" for="bungeni.models.interfaces.IUserDelegationContainer"
         class=".common.AddForm"
-        permission="bungeni.delegation.Add"
+        permission="bungeni.user_delegation.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IUserDelegation"
         class=".common.EditForm"
-        permission="bungeni.delegation.Edit"
+        permission="bungeni.user_delegation.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete"
         for="bungeni.models.interfaces.IUserDelegation"
         class=".common.DeleteForm"
-        permission="bungeni.delegation.Delete"
+        permission="bungeni.user_delegation.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     
