@@ -36,20 +36,9 @@ class SubRoleAnnotations(object):
         self.parent = None
 
 
-def sub_role_configure(context, id, title, description, role):
-    role_annt = interfaces.ISubRoleAnnotations(
-        zope.component.getUtility(IRole, role))
-    role_annt.sub_roles.append(id)
-    sub_role = Role(id, title, description)
-    sub_role_annt = interfaces.ISubRoleAnnotations(sub_role)
-    sub_role_annt.is_sub_role = True
-    sub_role_annt.parent = role
-    gsm = zope.component.getGlobalSiteManager()
-    gsm.registerUtility(sub_role, IRole, id)
-
-
 class IDummyRoleConfig(interface.Interface):
     """Dummy interface"""
+
 
 @capi.bungeni_custom_errors
 def load_roles():
@@ -59,6 +48,7 @@ def load_roles():
     gsm = zope.component.getGlobalSiteManager()
     for role_config in roles_config.iterchildren(tag="role"):
         role = Role("bungeni."+role_config.get("id"), role_config.get("title"))
+        role_annt = interfaces.ISubRoleAnnotations(role)
         gsm.registerUtility(role, IRole, "bungeni."+role_config.get("id"))
         for sub_role_config in role_config.iterchildren(tag="subrole"):
             sub_role = Role("bungeni."+sub_role_config.get("id"),
@@ -66,6 +56,7 @@ def load_roles():
             sub_role_annt = interfaces.ISubRoleAnnotations(sub_role)
             sub_role_annt.is_sub_role = True
             sub_role_annt.parent = role
+            role_annt.sub_roles.append("bungeni."+sub_role_config.get("id"))
             gsm.registerUtility(sub_role, IRole,
                 "bungeni."+sub_role_config.get("id"))
     return None
