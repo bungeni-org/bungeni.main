@@ -79,6 +79,24 @@ def setupStorageDirectory(part_target="xml_db"):
     return store_dir
 
 
+def get_origin_parliament(context):
+    """get the parliament applicable to this object
+    """
+    chamber_id = None
+    group_id = getattr(context, "group_id", None)
+    if group_id:
+        group = Session().query(domain.Group).get(group_id)
+        while group.parent_group_id is not None:
+            group = Session().query(domain.Group).get(group.parent_group_id)
+        if isinstance(group, domain.Parliament):
+            chamber_id = group.group_id
+    else:
+        chamber_id = getattr(context, "parliament_id", None)
+    if not chamber_id:
+        if hasattr(context, "head_id"):
+            return get_origin_parliament(context.head)
+    return chamber_id
+
 def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains
     attachments - XML is saved in zip archive with all attached files. 
@@ -172,6 +190,9 @@ def publish_to_xml(context):
                 )
                 data["attachments"].append(attachment_dict)
 
+    #add explicit origin chamber for this object (used to partition data in
+    #if more than one parliament exists)
+    data["origin_parliament"] = get_origin_parliament(context)
     
     # zipping xml, attached files plus any binary fields
     # also remove the temporary files
