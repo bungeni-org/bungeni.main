@@ -14,8 +14,10 @@
     
     <include package="bungeni.core" file="auth.zcml"/>
     <include package="bungeni.models" file="roles.zcml" />
+    <utility factory="bungeni.models.roles.load_roles"
+             provides="bungeni.models.roles.IDummyRoleConfig"/>
     <include package="bungeni.models" file="permissions.zcml" />
-    
+    <include package="bungeni.core.workflows" file="permissions.zcml" />
     <!-- !+UI_VIEWS(mr, jun-2012) following is a temporary global grant to 
     re-establish (in a more direct way) the exact same permission environment
     as prior to r9370:
@@ -37,9 +39,6 @@
     
     <!-- Anonymous grants -->
     <grant role="bungeni.Anonymous" principal="zope.anybody" />
-    <utility factory="bungeni.models.roles.load_roles"
-             provides="bungeni.models.roles.IDummyRoleConfig"/>
-    <include package="bungeni.core.workflows" file="permissions.zcml" />
     <include package="bungeni_custom.sys.acl" file="parliamentary_meta.zcml" />
     <include package="bungeni_custom.sys.acl" file="parliamentary_content.zcml" />
     <include package="bungeni_custom.sys.acl" file="translation.zcml" /> 
