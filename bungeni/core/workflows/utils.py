@@ -10,11 +10,16 @@ log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
 
+from zope.component import provideUtility
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from bungeni.core.workflow.interfaces import IWorkflowController
-from bungeni.core.workflow.interfaces import (NoTransitionAvailableError, 
-    InvalidStateError
-)
+from zope.securitypolicy.rolepermission import rolePermissionManager as \
+    role_perm_mgr
+from zope.security.interfaces import IPermission
+from zope.security.permission import Permission
+from zope.i18n import translate
+from bungeni.core.workflow.interfaces import IWorkflowController, MANUAL, \
+    SYSTEM, NoTransitionAvailableError, InvalidStateError
+from bungeni.core.workflow.states import Transition
 
 import bungeni.models.interfaces as interfaces
 from bungeni.models.utils import get_chamber_for_group
@@ -250,6 +255,30 @@ def schedule_sitting_items(context):
                             toward=transition.destination)
                         break
 
+@describe(_("retract scheduled items"))
+def retract_scheduled_items(context):
+    for schedule in context.items.values():
+        manager = interfaces.ISchedulingManager(schedule.item, None)
+        if manager is None:
+            continue
+        wfc = IWorkflowController(schedule.item, None)
+        if wfc is None:
+            continue
+        fired = False
+        #try to unschedule (assuming we are redrafting minutes)
+        for state in manager.scheduled_states:
+            transitions = wfc.getFireableTransitionIdsToward(state)
+            if transitions:
+                wfc.fireTransition(transitions[0])
+                fired = True
+                break
+        #take back to schedule pending
+        if not fired:
+            for state in manager.schedulable_states:
+                transitions = wfc.getFireableTransitionIdsToward(state)
+                if transitions:
+                    wfc.fireTransition(transitions[0])
+                    break
 
 def check_agenda_finalized(context):
     def check_finalized(schedule):
@@ -273,3 +302,71 @@ def view_permission(item):
     ti = capi.get_type_info(item)
     return "bungeni.%s.View" % (ti.permission_type_key)
 
+
+def allow_retract(context, **kw):
+    transition = kw.get("transition", None)
+    assert isinstance(transition, Transition)
+    changes = domain.get_changes(context, "workflow")
+    if changes:
+        prev_change = changes[0].seq_previous
+        if prev_change:
+            return transition.destination == prev_change.audit.status
+    return False
+
+def setup_retract_transitions():
+    """Set up any retract transitions (from terminal states) for all workflows
+    """
+    def add_retract_transitions(wf):
+        def getRoles(transition):
+            original_roles = transition.user_data.get("_roles", [])
+            allowed_roles = set()
+            #transitions to  source
+            tx_to_source = wf.get_transitions_to(transition.source)
+            for tx in tx_to_source:
+                if tx.source is None:
+                    allowed_roles.update(set(original_roles))
+                else:
+                    for role in tx.user_data.get("_roles", []):
+                        if role in original_roles:
+                            allowed_roles.add(role)
+            if not len(allowed_roles):
+                allowed_roles = original_roles
+            return allowed_roles
+
+        transitions = wf._transitions_by_id.values()
+        terminal_transitions = [
+            transition for transition in transitions if
+            (wf.get_transitions_from(transition.destination) == [] and
+                transition.source and transition.trigger in [MANUAL, SYSTEM]
+            )
+        ]
+        for transition in terminal_transitions:
+            roles = getRoles(transition)
+            if roles:
+                title = _("revert_transition_title",
+                    default="Undo - ${title}",
+                    mapping={
+                        "title": translate(transition.title, domain="bungeni")
+                    }
+                )
+                title = "Undo - %s" % transition.title 
+                ntransition = Transition(title, transition.destination,
+                    transition.source, 
+                    trigger=MANUAL,
+                    condition=allow_retract,
+                    condition_args=True,
+                    roles=roles)
+                if ntransition.id in wf._transitions_by_id:
+                    continue
+                log.debug("adding transition %s", ntransition.id)
+                pid = "bungeni.%s.wf.%s" % (wf.name, ntransition.id)
+                provideUtility(Permission(pid), IPermission, pid)
+                for role in roles:
+                    role_perm_mgr.grantPermissionToRole(pid, role, check=False)
+                transitions.append(ntransition)
+        wf.refresh(wf._states_by_id.values(), transitions)
+    
+    for type_key, ti in capi.iter_type_info():
+        if ti.workflow:
+            add_retract_transitions(ti.workflow)
+    

@@ -351,7 +351,7 @@ YAHOO.bungeni.availableitems = function(){
                 var container = this.get("contentEl");
                 var data_container = Y$.query("div#headings-available", container)[0];
                 var dataSource = new YAHOO.util.DataSource(
-                    SGlobals.schedulable_items_json_url + "?type=" + SGlobals.types.HEADING;
+                    SGlobals.schedulable_items_json_url + "?type=" + SGlobals.types.HEADING
                 );
                 dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
                 dataSource.responseSchema = YAHOO.bungeni.config.schemas.available_items;

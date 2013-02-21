@@ -46,9 +46,13 @@ def can_schedule(type_key, workflow):
     i.e. if they have the global workflow permission to schedule a document.
     """
     allow = False
+    schedulable_states = get_schedulable_states(type_key)
     scheduled_states = get_scheduled_states(type_key)
-    if scheduled_states:
-        transitions = workflow.get_transitions_to(scheduled_states[0])
+    if schedulable_states and scheduled_states:
+        transitions = workflow.get_transitions_from(schedulable_states[0])
+        transitions = [ trans for trans in transitions if
+            trans.destination == scheduled_states[0]
+         ]
         if transitions:
             allow = checkPermission(
                 transitions[0].permission, get_login_user_chamber())

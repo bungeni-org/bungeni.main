@@ -51,6 +51,9 @@ from bungeni.core.workflows.utils import (
     
     # when a sitting's agenda is published
     schedule_sitting_items,
+    
+    # when a sitting is redrafted or minutes are redrafted,
+    retract_scheduled_items,
 )
 
 

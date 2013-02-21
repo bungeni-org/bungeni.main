@@ -37,6 +37,7 @@ from bungeni.core.workspace import (WorkspaceContainer,
     WorkspaceGroupsContainer,
     WorkspaceSchedulableContainer,
     load_workspaces)
+from bungeni.core.workflows.utils import setup_retract_transitions
 from bungeni.core.notifications import load_notifications
 from bungeni.core.emailnotifications import load_email
 from bungeni.core.serialize import serialization_notifications
@@ -58,6 +59,9 @@ def on_wsgi_application_created_event(application, event):
     for type_key, ti in capi.iter_type_info():
         if ti.workflow:
             ti.workflow.validate_permissions_roles()
+    
+    #set up retract transitions in workflows
+    setup_retract_transitions()
     
     # import events module, registering handlers
     import bungeni.core.workflows.events

@@ -157,6 +157,7 @@ class Transition(object):
             order=0,
             require_confirmation=False,
             note=None,
+            condition_args=False,
             **user_data
         ):
         self.title = title
@@ -169,6 +170,7 @@ class Transition(object):
         self.order = order
         self.require_confirmation = require_confirmation
         self.note = note
+        self.condition_args=condition_args #send all local args to condition
         self.user_data = user_data
     
     @property
@@ -656,7 +658,10 @@ class WorkflowController(object):
                     transition.permission)
         # ensure transition can still work in this context, None always passes
         if transition.condition is not None:
-            transition.condition(self.context) # raises BungeniCustomError
+            if transition.condition_args:
+                transition.condition(self.context, transition=transition)
+            else:
+                transition.condition(self.context) # raises BungeniCustomError
     
     # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):
@@ -736,13 +741,19 @@ class WorkflowController(object):
             self.state_controller.get_status())
         # now filter these transitions to retrieve all possible
         # transitions in this context, and return their ids
-        return [ transition for transition in transitions
-            if ((trigger_ifilter is None or 
-                    transition.trigger == trigger_ifilter) and
-                (not conditional or
-                    # a None condition always passes
-                    (transition.condition is None or 
-                        transition.condition(self.context)))) ]
+        for transition in transitions:
+            if trigger_ifilter:
+                if transition.trigger != trigger_ifilter:
+                    continue
+            if conditional:
+                if transition.condition is not None:
+                    if transition.condition_args:
+                        if not transition.condition(self.context, 
+                            transition=transition):
+                                continue
+                    elif not transition.condition(self.context):
+                        continue
+            yield transition
 
 
 class WorkflowTransitionEvent(zope.component.interfaces.ObjectEvent):
