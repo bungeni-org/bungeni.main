@@ -290,6 +290,7 @@ class Sitting(Entity):
     interface.implements(
         interfaces.ISitting,
         interfaces.ITranslatable,
+        interfaces.IScheduleContent,
     )
     attendance = one2many("attendance",
         "bungeni.models.domain.SittingAttendanceContainer", "sitting_id")

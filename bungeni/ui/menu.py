@@ -20,6 +20,7 @@ from zope.app.component.hooks import getSite
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.browsermenu.interfaces import IBrowserMenu
 import zope.browsermenu
+from zope.publisher.interfaces import IPublishTraverse, NotFound
 from zope.security import proxy, checkPermission
 from zope.i18n import translate
 import z3c.menu.ready2go.item
@@ -602,15 +603,17 @@ class CalendarContentMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         results = []
         unproxied = proxy.removeSecurityProxy(context.__parent__)
-        try:
-            items = unproxied.items()
-        except AttributeError:
-            items = []
-            for key, info in capi.iter_type_info():
-                if IScheduleContent.implementedBy(info.domain_model):
-                    name = naming.plural(key)
-                    if hasattr(unproxied, name):
-                        items.append((name, getattr(unproxied, name)))
+        items = []
+        for key, info in capi.iter_type_info():
+            if IScheduleContent.implementedBy(info.domain_model):
+                name = naming.plural(key)
+                traverser = component.getMultiAdapter((unproxied, request),
+                    IPublishTraverse)
+                try:
+                    item = traverser.publishTraverse(request, name)
+                    items.append((name, item))
+                except NotFound:
+                    continue
         for key, item in items:
             if not IAlchemistContainer.providedBy(item): continue
             if not IScheduleContent.implementedBy(item.domain_model): continue

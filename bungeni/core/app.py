@@ -238,10 +238,11 @@ class AppSetup(object):
             if model_interfaces.IScheduleContent.implementedBy(ti.domain_model):
                 container_property_name = naming.plural(type_key)
                 container_class_name = naming.container_class_name(type_key)
-                ws_sched[container_property_name] = \
-                    getattr(domain, container_class_name)()
-                to_locatable_container(
-                    ti.domain_model, ws_sched[container_property_name])
+                if not ws_sched.has_key(container_property_name):
+                    ws_sched[container_property_name] = \
+                        getattr(domain, container_class_name)()
+                    to_locatable_container(
+                        ti.domain_model, ws_sched[container_property_name])
         
         
         ##########
