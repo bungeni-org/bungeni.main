@@ -634,7 +634,7 @@ class CalendarContentMenu(BrowserMenu):
                 action = url.absoluteURL(item, request),
                 selected=False,
                 icon=None,
-                extra={},
+                extra={"id": "nav_calendar_content_%s" % key},
                 submenu=None
                 
             ))

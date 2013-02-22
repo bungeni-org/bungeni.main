@@ -484,8 +484,9 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
     
     def get_nav_entry_id(self, _url):
         assert _url.startswith(self.top_section_url)
-        _id = "_".join(_url[len(self.top_section_url):].strip("/").split("/"))
-        return "%s_%s" % (self.id_prefix, _id)
+        depth = len(_url[len(self.top_section_url):].split("/"))
+        _id = _url.split("/").pop()
+        return "%s_%s_%d" % (self.id_prefix, _id, depth)
 
 
 class TopLevelContainerNavigation(NavigationTreeViewlet):
