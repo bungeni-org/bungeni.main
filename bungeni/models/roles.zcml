@@ -17,14 +17,5 @@
     <!-- Document roles -->
     <role id="bungeni.Owner" title="Owner" />
     <role id="bungeni.Signatory" title="Document Signatory" />
-    
-    <!-- Group roles -->
-    <!-- !+bungeni_custom -->
-    <role id="bungeni.MP" title="Member of parliament" />
-    <role id="bungeni.Minister" title="Minister" />
-    <role id="bungeni.PoliticalGroupMember" title="Political Group Member" />
-    <role id="bungeni.Government" title="Member of Government" />
-    <role id="bungeni.CommitteeMember" title="Committee Member" />
-    
-
+    <role id="bungeni.GroupMember" title="Group Member" />
 </configure>

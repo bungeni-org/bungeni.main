@@ -11,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows")
 from lxml import etree
 from zope import component
 from zope.interface import classImplements
-import zope.securitypolicy.interfaces
+from zope.securitypolicy.interfaces import IRole, IRolePermissionMap
 from zope.dottedname.resolve import resolve
 from bungeni.models import interfaces
 from bungeni.core.workflow import xmlimport
@@ -63,15 +63,13 @@ def register_generic_workflow_adapters():
     
     # IRolePermissionMap adapter for IWorkflowed objects
     component.provideAdapter(get_object_state_rpm, 
-        (IWorkflowed,),
-        zope.securitypolicy.interfaces.IRolePermissionMap)
+        (IWorkflowed,), IRolePermissionMap)
     # NOTE: the rpm instance returned by IRolePermissionMap(workflowed) is
     # different for different values of workflowed.status
     
     # IRolePermissionMap adapter for a change of an IWorkflowed object
     component.provideAdapter(get_head_object_state_rpm, 
-        (interfaces.IChange,),
-        zope.securitypolicy.interfaces.IRolePermissionMap)
+        (interfaces.IChange,), IRolePermissionMap)
     # NOTE: the rpm instance returned by IRolePermissionMap(change) is
     # different for different values of change.head.status
     
@@ -89,7 +87,7 @@ def register_generic_workflow_adapters():
         WorkflowController, (IWorkflowed,), IWorkflowController)    
 
 
-@capi.bungeni_custom_errors
+#@capi.bungeni_custom_errors
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
     This is called prior to loading of the workflows for these custom types.
@@ -117,6 +115,9 @@ def register_custom_types():
     # group/member types
     for egroup in enabled_elems(etypes.iterchildren("group")):
         type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
+        role = misc.xml_attr_str(egroup, "role", None)
+        if role:
+            ti.role = role
         for emember in enabled_elems(egroup.iterchildren("member")):
             type_key, ti = type_info.register_new_custom_type(*parse_elem(emember))
 

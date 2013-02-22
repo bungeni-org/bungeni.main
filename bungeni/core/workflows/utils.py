@@ -10,8 +10,8 @@ log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
 
-from zope.component import provideUtility
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.component import provideUtility, queryUtility
+from zope.securitypolicy.interfaces import IPrincipalRoleMap, IRole
 from zope.securitypolicy.rolepermission import rolePermissionManager as \
     role_perm_mgr
 from zope.security.interfaces import IPermission
@@ -162,21 +162,18 @@ unschedule_doc = dbutils.unschedule_doc
 
 
 def get_group_local_role(group):
-    if interfaces.IParliament.providedBy(group):
-        return "bungeni.MP"
-    elif interfaces.IMinistry.providedBy(group):
-        return "bungeni.Minister"
-    elif interfaces.ICommittee.providedBy(group): 
-        return "bungeni.CommitteeMember"
-    elif interfaces.IPoliticalGroup.providedBy(group):
-        return "bungeni.PoliticalGroupMember"
-    elif interfaces.IGovernment.providedBy(group):
-        return "bungeni.Government"
-    elif interfaces.IOffice.providedBy(group):
+    if interfaces.IOffice.providedBy(group):
         return group.office_role
     else:
-        # fallback to a generic (but unregistered) group membership role
-        return "bungeni.GroupMember"
+        ti = capi.get_type_info(group)
+        if hasattr(ti, "role"):
+            role = getattr(ti, "role", None)
+            if role:
+                qualified_role = "bungeni.%s" % role
+                assert queryUtility(IRole, qualified_role, None)
+                return qualified_role
+        else:
+            return "bungeni.GroupMember"
 
 def get_group_context(context):
     if interfaces.IOffice.providedBy(context):
