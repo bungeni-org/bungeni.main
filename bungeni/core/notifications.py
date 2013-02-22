@@ -460,10 +460,10 @@ def load_notification_config(file_name, domain_class):
     notifications_utility = component.getUtility(INotificationsUtility)
     path = capi.get_path_for("notifications")
     file_path = os.path.join(path, file_name)
+    notification = capi.schema.validate_file_rng("notifications", file_path)
     item_type = file_name.split(".")[0]
     notifications_utility.register_item_type(domain_class, item_type)
-    notification_xml = etree.fromstring(open(file_path).read())
-    for notify in notification_xml.iterchildren("notify"):
+    for notify in notification.iterchildren("notify"):
         roles = capi.schema.qualified_roles(notify.get("roles"))
         for role in roles:
             assert component.queryUtility(IRole, role, None), \

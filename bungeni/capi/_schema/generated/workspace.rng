@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Bungeni Parliamentary Information System - http://www.bungeni.org/
+  Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+  Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+  
+  RNC Schema for Bungeni Workspace XML Format
+  Created: Miano Njoka, 22-feb-2013
+  
+  Note: Always modify the RNC file - the RNG version is auto-derived from it:
+  one way to auto-derive workflow.rng from this file is:
+    java -jar trang.jar -I rnc -O rng workspace.rnc generated/workspace.rng
+  $Id$
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+  <include href="common.rng"/>
+  <start>
+    <ref name="WORKSPACE"/>
+  </start>
+  <define name="WORKSPACE">
+    <element name="workspace">
+      <attribute name="id"/>
+      <oneOrMore>
+        <ref name="STATE"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="STATE">
+    <element name="state">
+      <attribute name="id"/>
+      <oneOrMore>
+        <ref name="TAB"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="TAB">
+    <element name="tab">
+      <attribute name="id"/>
+      <attribute name="roles">
+        <ref name="SPACE_SEPARATED_TOKENS"/>
+      </attribute>
+    </element>
+  </define>
+</grammar>

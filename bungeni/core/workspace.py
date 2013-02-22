@@ -452,9 +452,9 @@ def load_workspace(file_name, domain_class):
     workspace_utility = component.getUtility(IWorkspaceTabsUtility)
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)
+    workspace = capi.schema.validate_file_rng("workspace", file_path)
     item_type = file_name.split(".")[0]
     workspace_utility.register_item_type(domain_class, item_type)
-    workspace = etree.fromstring(open(file_path).read())
     for state in workspace.iterchildren(tag="state"):
         for tab in state.iterchildren(tag="tab"):
             assert tab.get("id") in capi.workspace_tabs, \
