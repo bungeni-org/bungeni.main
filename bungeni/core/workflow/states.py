@@ -741,6 +741,7 @@ class WorkflowController(object):
             self.state_controller.get_status())
         # now filter these transitions to retrieve all possible
         # transitions in this context, and return their ids
+        filtered_transitions = []
         for transition in transitions:
             if trigger_ifilter:
                 if transition.trigger != trigger_ifilter:
@@ -753,7 +754,8 @@ class WorkflowController(object):
                                 continue
                     elif not transition.condition(self.context):
                         continue
-            yield transition
+            filtered_transitions.append(transition)
+        return filtered_transitions
 
 
 class WorkflowTransitionEvent(zope.component.interfaces.ObjectEvent):
