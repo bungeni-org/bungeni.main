@@ -123,6 +123,18 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 <grant permission="bungeni.item_schedule_vote.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.item_schedule_vote.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.item_schedule_vote.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.session.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.session.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.session.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.session.View" role="bungeni.Anonymous" />
+<grant permission="bungeni.venue.View" role="bungeni.Clerk" />
+<grant permission="bungeni.venue.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.venue.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.venue.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.editorial_note.View" role="bungeni.Clerk" />
+<grant permission="bungeni.editorial_note.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.editorial_note.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.editorial_note.Delete" role="bungeni.Clerk" />
 
 <permission id="bungeni.sitting.wf.sitting.draft_agenda" title="Draft Agenda" />
 <grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />

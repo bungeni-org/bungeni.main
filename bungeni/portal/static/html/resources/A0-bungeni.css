@@ -211,3 +211,9 @@ span.workflow_info { /* inlined workflow info */
 .lt-ie9 .bModal {
     background-color: #000
 }
+
+span.chamber_identity{
+    color:#576341;
+    background-color:#CDE2A7;
+    padding:auto 0.5em;
+}

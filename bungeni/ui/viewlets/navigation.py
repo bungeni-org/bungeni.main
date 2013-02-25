@@ -19,7 +19,7 @@ from zope.proxy import sameProxiedObjects
 from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.browsermenu.interfaces import IBrowserMenu
-from zope.publisher.defaultview import getDefaultViewName, queryDefaultViewName
+from zope.publisher.defaultview import queryDefaultViewName
 #from zope.annotation.interfaces import IAnnotations
 from zope.i18n import translate
 
@@ -35,6 +35,7 @@ from bungeni.core import location
 from bungeni.core.translation import get_request_language
 from bungeni.ui.utils import url, debug
 from bungeni.ui import browser
+from bungeni.models.utils import get_chamber_for_context
 
 
 def _get_context_chain(context):
@@ -252,7 +253,6 @@ class BreadCrumbsViewlet(browser.BungeniViewlet):
         self.manager = manager
         self.path = []
         self.site_url = url.absoluteURL(getSite(), self.request)
-        self.user_name = ""
 
     def _get_path(self, context):
         """Return the current path as a list
@@ -296,11 +296,7 @@ class BreadCrumbsViewlet(browser.BungeniViewlet):
                     "name": self.__parent__.title,
                     "url": None,
                 })
-        
-        try:
-            self.user_name = self.request.principal.login
-        except:
-            pass
+        self.chamber = get_chamber_for_context(self.context)
 
 
 class NavigationTreeViewlet(browser.BungeniViewlet):
