@@ -39,7 +39,5 @@
     
     <!-- Anonymous grants -->
     <grant role="bungeni.Anonymous" principal="zope.anybody" />
-    <include package="bungeni_custom.sys.acl" file="parliamentary_meta.zcml" />
-    <include package="bungeni_custom.sys.acl" file="parliamentary_content.zcml" />
     <include package="bungeni_custom.sys.acl" file="translation.zcml" /> 
 </configure>
