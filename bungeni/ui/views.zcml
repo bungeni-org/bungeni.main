@@ -28,15 +28,6 @@
         permission="zope.Public"
         class=".redirect.Favicon"
     />
-    
-    <!-- Setup Access to Browser Resources on the Application -->
-
-    <browser:page name=""
-        for="bungeni.models.interfaces.IBungeniApplication"
-        class="zope.browserresource.resources.Resources"
-        permission="zope.Public"
-        allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
-    />
 
     <!-- redirects -->
 
