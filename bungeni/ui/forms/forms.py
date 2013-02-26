@@ -293,12 +293,19 @@ class SessionAddForm(AddForm):
 @register.view(ISittingContainer, layer=IBungeniSkin, name="add",
     protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})
 class SittingAddForm(AddForm):
-    def finishConstruction(self, ob):
+    def createAndAdd(self, data):
         """We add the group ID if adding a sitting in contexts
         not bound to groups in traversal hierarchy
         """
-        super(SittingAddForm, self).finishConstruction(ob)
+        ob = super(SittingAddForm, self).createAndAdd(data)
+        scheduling_context = ISchedulingContext(self.context.__parent__)
         if ob.group_id is None:
-            ob.group_id = removeSecurityProxy(
-                ISchedulingContext(self.context.__parent__)).group_id
-
+            ob.group_id = removeSecurityProxy(scheduling_context).group_id
+        if ob.session_id is None:
+            ob.session_id = scheduling_context.get_group().sessions._query.filter(
+                sql.and_(
+                    domain.Session.start_date < ob.start_date,
+                    domain.Session.end_date > ob.end_date
+                )
+            ).one().session_id
+        return ob
