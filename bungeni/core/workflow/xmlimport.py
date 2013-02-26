@@ -8,11 +8,14 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflow.xmlimport")
 
-import re
 import os
 
-from lxml import etree
 from zope.dottedname.resolve import resolve
+from zope.component import provideUtility
+from zope.security.interfaces import IPermission
+from zope.security.permission import Permission
+from zope.securitypolicy.rolepermission import rolePermissionManager as \
+    role_perm_mgr
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
@@ -69,7 +72,6 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 """
 
 
-class ChangedWorkflowsPermissionsZCML(Exception): pass
 def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py).
     """
@@ -88,8 +90,6 @@ def zcml_check_regenerate():
         log.warn("CHANGES to file:\n%s" % (
             misc.unified_diff(persisted, regenerated, filepath, "NEW")))
         open(filepath, "w").write(regenerated.encode("utf-8"))
-        raise ChangedWorkflowsPermissionsZCML(
-            "Must restart system with updated file: %s" % (filepath))
 
 def is_zcml_permissionable(trans_elem):
     # Automatically triggered transitions may not be permissioned.
@@ -99,9 +99,11 @@ def zcml_transition_permission(pid, title, roles):
     ZCML_LINES.append(ZCML_INDENT)
     ZCML_LINES.append('%s<permission id="%s" title="%s" />' % (
         ZCML_INDENT, pid, title))
+    provideUtility(Permission(pid), IPermission, pid)
     for role in roles:
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
+        role_perm_mgr.grantPermissionToRole(pid, role, check=False)
 
 #
 
@@ -309,6 +311,7 @@ def _load(workflow_name, workflow):
         # !+ add to a Workflow.defines_permissions list
         ZCML_LINES.append(
             '%s<permission id="%s" title="%s" />' % (ZCML_INDENT, pid, title))
+        provideUtility(Permission(pid), IPermission, pid)
     
     # global grants
     global_pid_roles = {} # {pid: [role]}
@@ -321,6 +324,7 @@ def _load(workflow_name, workflow):
         # !+ add to a Workflow.global_grants list
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
+        role_perm_mgr.grantPermissionToRole(pid, role, check=False)
         # no real need to check that the permission and role of a global grant 
         # are properly registered in the system -- an error should be raised 
         # by the zcml if either is not defined. 
