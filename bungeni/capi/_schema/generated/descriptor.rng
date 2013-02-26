@@ -384,6 +384,10 @@
       <value>subject_terms</value>
       <value>yes_no</value>
       <value>chamber_type</value>
+      <value>committee_id</value>
+      <value>government_id</value>
+      <value>ministry_id</value>
+      <value>political_group_id</value>
       <!-- dynamic -->
       <value>language</value>
       <value>country</value>

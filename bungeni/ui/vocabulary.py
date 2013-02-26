@@ -319,6 +319,10 @@ marital_status = FlatVDEXVocabularyFactory("marital_status.vdex")
 bool_yes_no = BoolFlatVDEXVocabularyFactory("yes_no.vdex")
 debate_media_type = FlatVDEXVocabularyFactory("debate_media_type.vdex")
 chamber_type = FlatVDEXVocabularyFactory("chamber_type.vdex")
+committee_id = FlatVDEXVocabularyFactory("committee_id.vdex")
+government_id = FlatVDEXVocabularyFactory("government_id.vdex")
+ministry_id = FlatVDEXVocabularyFactory("ministry_id.vdex")
+political_group_id = FlatVDEXVocabularyFactory("political_group_id.vdex")
 #
 
 class OfficeRoleFactory(BaseVocabularyFactory):

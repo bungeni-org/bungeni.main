@@ -204,7 +204,11 @@ grammar {
         "subject_terms" |
         "yes_no" |
         "chamber_type" |
-
+        "committee_id" |
+        "government_id" |
+        "ministry_id" |
+        "political_group_id" |
+        
         # dynamic
         "language" |
         "country" |
