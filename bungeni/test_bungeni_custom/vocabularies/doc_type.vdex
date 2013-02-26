@@ -4,7 +4,7 @@
     <vocabName>
         <langstring language="en">bill type</langstring>
     </vocabName>
-    <vocabIdentifier>org.bungeni.metadata.vocabularies.bill_type</vocabIdentifier>
+    <vocabIdentifier>org.bungeni.metadata.vocabularies.doc_type</vocabIdentifier>
     <term>
         <termIdentifier>government</termIdentifier>
         <caption>

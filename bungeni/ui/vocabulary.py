@@ -94,22 +94,24 @@ class BaseVocabularyFactory(object):
 
 
 # vdex 
-
+VDEX_BOOL_PROFILE_TYPE = "booleanTerms"
 class VDEXManager(imsvdex.vdex.VDEXManager):
     default_language = capi.default_language
     fallback_to_default_language = True
 
+    def isBoolean(self):
+        """
+        returns true if the VDEX profile type denotes a bool type vocabulary
+        """ 
+        vdex = self.tree._root
+        return vdex.get('profileType') == VDEX_BOOL_PROFILE_TYPE
+
 class VDEXVocabularyMixin(object):
     interface.implements(IBaseVocabulary)
     
-    def __init__(self, file_name):
-        self.vdex = VDEXManager(
-            file=open(capi.get_path_for("vocabularies", file_name)))
-        # register each instance as a named utility on IVocabularyFactory
-        assert file_name.endswith(".vdex")
-        # !+tmp to make up for naming inconsistencies e.g. sitting-activity-types.vdex
-        vocabulary_name = file_name[:-len(".vdex")].replace("-", "_")
-        component.provideUtility(self, IVocabularyFactory, vocabulary_name)
+    def __init__(self, manager):
+        assert isinstance(manager, VDEXManager)
+        self.vdex = manager
     
     # zope.schema.interfaces.ISource(Interface)
     
@@ -296,34 +298,6 @@ ISResponse = vocabulary.SimpleVocabulary([
 #    vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
 #])
 '''
-
-# you have to add title_field to the vocabulary.SimpleTerm as only this gets 
-# translated, the token_field will NOT get translated
-
-bill_type = FlatVDEXVocabularyFactory("bill_type.vdex")
-doc_type = bill_type # placeholder vocabulary, use bill_type as dummy value
-component.provideUtility(doc_type, IVocabularyFactory, "doc_type")
-question_type = FlatVDEXVocabularyFactory("question_type.vdex")
-response_type = FlatVDEXVocabularyFactory("response_type.vdex")
-event_type = FlatVDEXVocabularyFactory("event_type.vdex")
-attachment_type = FlatVDEXVocabularyFactory("attachment_type.vdex")
-committee_type = FlatVDEXVocabularyFactory("committee_type.vdex")
-committee_continuity = FlatVDEXVocabularyFactory("committee_continuity.vdex")
-change_procedure = FlatVDEXVocabularyFactory("change_procedure.vdex")
-attendance_type = FlatVDEXVocabularyFactory("attendance_type.vdex")
-member_election_type = FlatVDEXVocabularyFactory("member_election_type.vdex")
-logical_address_type = FlatVDEXVocabularyFactory("logical_address_type.vdex")
-postal_address_type = FlatVDEXVocabularyFactory("postal_address_type.vdex")
-gender = FlatVDEXVocabularyFactory("gender.vdex")
-marital_status = FlatVDEXVocabularyFactory("marital_status.vdex")
-bool_yes_no = BoolFlatVDEXVocabularyFactory("yes_no.vdex")
-debate_media_type = FlatVDEXVocabularyFactory("debate_media_type.vdex")
-chamber_type = FlatVDEXVocabularyFactory("chamber_type.vdex")
-committee_id = FlatVDEXVocabularyFactory("committee_id.vdex")
-government_id = FlatVDEXVocabularyFactory("government_id.vdex")
-ministry_id = FlatVDEXVocabularyFactory("ministry_id.vdex")
-political_group_id = FlatVDEXVocabularyFactory("political_group_id.vdex")
-#
 
 class OfficeRoleFactory(BaseVocabularyFactory):
     def __call__(self, context=None):
@@ -1317,19 +1291,7 @@ def dict_to_dynatree(input_dict, selected):
     return retval
 
 
-subject_terms = TreeVDEXVocabulary("subject_terms.vdex")
-representation = TreeVDEXVocabulary("representation.vdex")
-party = FlatVDEXVocabularyFactory("party.vdex")
 
-#
-# Sitting flat VDEX based vocabularies
-#
-sitting_activity_types = FlatVDEXVocabularyFactory("sitting-activity-types.vdex") # !+naming
-sitting_meeting_types = FlatVDEXVocabularyFactory("sitting-meeting-types.vdex") # !+naming
-sitting_convocation_types = FlatVDEXVocabularyFactory("sitting-convocation-types.vdex") # !+naming
-sitting_schedule_vote_result = FlatVDEXVocabularyFactory("sitting-schedule-vote-result.vdex")
-sitting_schedule_vote_types = FlatVDEXVocabularyFactory("sitting-schedule-vote-types.vdex")
-sitting_schedule_vote_majority_types = FlatVDEXVocabularyFactory("sitting-schedule-vote-majority-types.vdex")
 #
 # Vocabularies for XML configuration based report generation
 #
@@ -1464,3 +1426,29 @@ class TextRecordTypesVocabulary(BaseVocabularyFactory):
                     )
 text_record_types_factory = TextRecordTypesVocabulary()
 component.provideUtility(text_record_types_factory, IVocabularyFactory, "text_record_type")
+
+
+def register_vocabularies():
+    """Register all VDEX vocabularies
+    """
+    vocab_dir = capi.get_path_for("vocabularies")
+    os.chdir(vocab_dir)
+    for file_name in os.listdir(vocab_dir):
+        if file_name.endswith(".vdex"):
+            try:
+                vdex = VDEXManager(open(file_name))
+            except imsvdex.vdex.VDEXError:
+                log.error("Exception while loading VDEX file %s", file_name)
+                continue
+            vocab_class = FlatVDEXVocabularyFactory
+            if not vdex.isFlat():
+                vocab_class = TreeVDEXVocabulary
+            elif vdex.isBoolean():
+                vocab_class = BoolFlatVDEXVocabularyFactory
+            vocabulary_name = file_name[:-len(".vdex")].replace("-", "_")
+            globals()[vocabulary_name] = vocab_class(vdex)
+            component.provideUtility(globals()[vocabulary_name], 
+                IVocabularyFactory, vocabulary_name)
+#!REGISTRATION(mb, Feb-2013) - can't use ZCML to register
+# descriptors seem to be imported before vocabularies are set up
+register_vocabularies()

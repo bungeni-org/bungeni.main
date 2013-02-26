@@ -67,11 +67,11 @@ grammar {
         (
             (
                 attribute render_type { FIELD_RENDER_TYPE }?,
-                attribute vocabulary { VACABULARY_NAME }?
+                attribute vocabulary { SYMBOL_NAME }?
             )
             | (
                 attribute render_type { FIELD_RENDER_TYPE_VOCABULARY }?,
-                attribute vocabulary { VACABULARY_NAME }
+                attribute vocabulary { SYMBOL_NAME }
             )
         )?,
         attribute note { text }?,
@@ -177,66 +177,5 @@ grammar {
         "translated_text" | 
         "datetime"
     )
-    
-    VACABULARY_NAME = (
-        
-        # static 
-        "attachment_type" |
-        "attendance_type" |
-        "doc_type" | # !+ dummy
-        "bill_type" |
-        "change_procedure" |
-        "committee_continuity" |
-        "committee_type" |
-        "event_type" |
-        "gender" |
-        "logical_address_type" |
-        "marital_status" |
-        "member_election_type" |
-        "party" |
-        "postal_address_type" |
-        "question_type" |
-        "representation" |
-        "response_type" |
-        "sitting_activity_types" |
-        "sitting_convocation_types" |
-        "sitting_meeting_types" |
-        "subject_terms" |
-        "yes_no" |
-        "chamber_type" |
-        "committee_id" |
-        "government_id" |
-        "ministry_id" |
-        "political_group_id" |
-        
-        # dynamic
-        "language" |
-        "country" |
-        "workflow_states" |
-        "workflowed_type" |
-        "group" |
-        "committee" |
-        "parliament" |
-        "ministry" |
-        "group_sub_role" |
-        "group_title_types" |
-        "office_role" |
-        "member" |
-        "parliament_member" |
-        "parliament_member_delegation" |
-        "user" |
-        "user_not_mp" |
-        "owner_or_login" |
-        "substitution" |
-        "signatory" |
-        "sitting" |
-        "sitting_attendance" |
-        "report" |
-        "venue" |
-        "sitting_schedule_vote_result" |
-        "sitting_schedule_vote_types" |
-        "sitting_schedule_vote_majority_types"
-    )
-
 }
 

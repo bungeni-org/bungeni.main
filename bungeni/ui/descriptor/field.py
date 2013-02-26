@@ -8,7 +8,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.descriptor.field")
 
-from zope import schema
+from zope import component, schema
 from bungeni.alchemist.descriptor import Field
 from bungeni.ui import widgets
 from bungeni.ui.fields import VocabularyTextField
@@ -258,6 +258,13 @@ def F(name=None, label=None, description=None,
             required=required
         )
         if vocabulary is not None:
+            #check if vocabulary exists
+            try:
+                reg_vocab = component.getUtility(
+                    schema.interfaces.IVocabularyFactory, name=vocabulary)
+            except component.interfaces.ComponentLookupError:
+                raise Exception("Vocabulary named '%s' does not exist. "
+                    "Check your configuration." % vocabulary)
             render_property_kwargs["vocabulary"] = vocabulary
         render_property_kwargs.update(VALUETYPE[value_type])
         render_property = RType(**render_property_kwargs)

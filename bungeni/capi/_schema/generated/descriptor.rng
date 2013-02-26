@@ -146,7 +146,7 @@
             </optional>
             <optional>
               <attribute name="vocabulary">
-                <ref name="VACABULARY_NAME"/>
+                <ref name="SYMBOL_NAME"/>
               </attribute>
             </optional>
           </group>
@@ -157,7 +157,7 @@
               </attribute>
             </optional>
             <attribute name="vocabulary">
-              <ref name="VACABULARY_NAME"/>
+              <ref name="SYMBOL_NAME"/>
             </attribute>
           </group>
         </choice>
@@ -355,66 +355,6 @@
       <value>text</value>
       <value>translated_text</value>
       <value>datetime</value>
-    </choice>
-  </define>
-  <define name="VACABULARY_NAME">
-    <choice>
-      <!-- static -->
-      <value>attachment_type</value>
-      <value>attendance_type</value>
-      <value>doc_type</value>
-      <!-- !+ dummy -->
-      <value>bill_type</value>
-      <value>change_procedure</value>
-      <value>committee_continuity</value>
-      <value>committee_type</value>
-      <value>event_type</value>
-      <value>gender</value>
-      <value>logical_address_type</value>
-      <value>marital_status</value>
-      <value>member_election_type</value>
-      <value>party</value>
-      <value>postal_address_type</value>
-      <value>question_type</value>
-      <value>representation</value>
-      <value>response_type</value>
-      <value>sitting_activity_types</value>
-      <value>sitting_convocation_types</value>
-      <value>sitting_meeting_types</value>
-      <value>subject_terms</value>
-      <value>yes_no</value>
-      <value>chamber_type</value>
-      <value>committee_id</value>
-      <value>government_id</value>
-      <value>ministry_id</value>
-      <value>political_group_id</value>
-      <!-- dynamic -->
-      <value>language</value>
-      <value>country</value>
-      <value>workflow_states</value>
-      <value>workflowed_type</value>
-      <value>group</value>
-      <value>committee</value>
-      <value>parliament</value>
-      <value>ministry</value>
-      <value>group_sub_role</value>
-      <value>group_title_types</value>
-      <value>office_role</value>
-      <value>member</value>
-      <value>parliament_member</value>
-      <value>parliament_member_delegation</value>
-      <value>user</value>
-      <value>user_not_mp</value>
-      <value>owner_or_login</value>
-      <value>substitution</value>
-      <value>signatory</value>
-      <value>sitting</value>
-      <value>sitting_attendance</value>
-      <value>report</value>
-      <value>venue</value>
-      <value>sitting_schedule_vote_result</value>
-      <value>sitting_schedule_vote_types</value>
-      <value>sitting_schedule_vote_majority_types</value>
     </choice>
   </define>
 </grammar>
