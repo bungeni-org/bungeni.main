@@ -641,6 +641,7 @@ venue = sa.Table("venue", metadata,
     sa.Column("short_name", sa.Unicode(512), nullable=False),
     sa.Column("description", sa.UnicodeText),
     sa.Column("language", sa.String(5), nullable=False),
+    sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"))
 )
 
 

@@ -338,13 +338,15 @@ class CalendarView(BungeniBrowserView):
         # 
         # So, the intent and the implementation of the business logic of why 
         # this form is instantiated may need to be reviewed...
-        form = EventPartialForm(domain.Sitting(), self.request)
+        sitting = domain.Sitting()
+        sitting.__parent__ = self
+        form = EventPartialForm(sitting, self.request)
         return form
 
     @property
     def venues_data(self):
         venue_list = [ {"key": venue.value, "label": venue.title}
-            for venue in vocabulary.venue_factory()
+            for venue in vocabulary.venue_factory(self.context)
         ]
         return venue_list
     

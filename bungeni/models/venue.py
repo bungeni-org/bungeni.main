@@ -17,8 +17,10 @@ class BookedVenue(object):
 mapper(BookedVenue, bookedvenues,
     properties={
         "venue_id":[schema.sitting.c.venue_id, schema.venue.c.venue_id],
-        "sitting_short_name":[schema.sitting.c.short_name],
-        "sitting_language":[schema.sitting.c.language],
+        "sitting_short_name": [schema.sitting.c.short_name],
+        "sitting_language": [schema.sitting.c.language],
+        "sitting_group_id": [schema.sitting.c.group_id],
+        "venue_group_id": [schema.venue.c.group_id],
     }
 )
 

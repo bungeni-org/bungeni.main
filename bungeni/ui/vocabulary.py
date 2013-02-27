@@ -458,15 +458,16 @@ class SpecializedSource(BaseVocabularyFactory):
 
 
 class VenueFactory(BaseVocabularyFactory):
-    def __call__(self, context=None):
-        results = Session().query(domain.Venue).all()
+    def __call__(self, context):
+        chamber = utils.get_chamber_for_context(context)
+        results =[ venue for venue in chamber.venues.values() ]
         terms = []
         for ob in results:
             terms.append(
                 vocabulary.SimpleTerm(
                     value=ob.venue_id, 
                     token=ob.venue_id,
-                    title="%s" % IDCDescriptiveProperties(ob).title
+                    title=IDCDescriptiveProperties(ob).title
                 ))
         return vocabulary.SimpleVocabulary(terms)
 venue_factory = VenueFactory()

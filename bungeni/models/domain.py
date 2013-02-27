@@ -342,6 +342,9 @@ class Parliament(Group):
     """A parliament.
     """
     interface.implements(interfaces.IParliament)
+    
+    venues = one2many("venues",
+        "bungeni.models.domain.VenueContainer", "group_id")
 
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
@@ -599,7 +602,12 @@ class Version(Change):
            Audit type/table will be unreachable in this way).
         """
         try:
-            return getattr(self.audit, name)
+            audit = object.__getattribute__(self, "audit")
+            return object.__getattribute__(audit, name)
+        except AttributeError:
+            pass #try to lookup from version instance
+        try:
+            return object.__getattribute__(self, name)
         except AttributeError:
             # !+SA_INCORRECT_TYPE_DEBUG strangely, sometimes the type of 
             # (this change's) self.audit that sqlalchemy returns does not 
