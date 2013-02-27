@@ -344,7 +344,7 @@
         title="Edit venue"
         action="edit"
         order="10"
-        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.venue.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -352,7 +352,7 @@
         title="Delete venue"
         action="delete"
         order="99"
-        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.venue.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -658,7 +658,7 @@
         title="Add venue..."
         action="./add"
         permission="bungeni.venue.Add"
-        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IFeatureAttachment"
