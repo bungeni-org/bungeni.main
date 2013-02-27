@@ -24,7 +24,7 @@ textarea {
     border-color:#666 #ddd #ddd #666;
     color: Black;
     background: White url(input_background.gif) repeat-x;
-    width: 100%;
+    width: 99%;
 }
 input {
     font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
@@ -269,13 +269,17 @@ div.error {
    color: #d00;
 }
   
-
-/* Styles to make the editing widgets look more like their view counterparts */
-#archetypes-fieldname-title input, input#form\.title {
+div.widget input.textType{
     font-size: 160%;
     font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
     font-weight: normal;
     width: 99%;
+}
+/* Styles to make the editing widgets look more like their view counterparts */
+#archetypes-fieldname-title input{
+    font-size: 160%;
+    font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+    font-weight: normal;
 }
 #archetypes-fieldname-description textarea, textarea#form\.description {
     font: 100% "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
