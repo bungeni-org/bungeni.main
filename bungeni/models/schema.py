@@ -340,8 +340,9 @@ group = sa.Table("group", metadata,
     sa.Column("parent_group_id", sa.Integer,
         sa.ForeignKey("group.group_id")
      ),
-     sa.Column("language", sa.String(5), nullable=False),
-    
+    sa.Column("language", sa.String(5), nullable=False),
+    #The role that members of this group get
+    sa.Column("group_role", sa.Unicode(256), nullable=False),
     #custom fields
     sa.Column("custom1", sa.UnicodeText, nullable=True),
     sa.Column("custom2", sa.UnicodeText, nullable=True),
@@ -356,12 +357,7 @@ group_principal_id_index = sa.Index("grp_grpprincipalid_idx",
 office = sa.Table("office", metadata,
     sa.Column("office_id", sa.Integer,
         sa.ForeignKey("group.group_id"),
-        primary_key=True),
-    #The role that members of this office will get
-    sa.Column("office_role", sa.Unicode(256),
-        nullable=False,
-        unique=True
-    ),
+        primary_key=True)
 )
 
 parliament = sa.Table("parliament", metadata,

@@ -63,6 +63,12 @@ def activate(group):
     """
     utils.set_group_local_role(group)
 
+@describe(_(u"Deactivate a group"))
+def deactivate(group):
+    """Perform any actions required to deactivate a group.
+    """
+    utils.unset_group_local_role(group)
+
 
 @describe(_(u"Dissolve a group"))
 def dissolve(group):

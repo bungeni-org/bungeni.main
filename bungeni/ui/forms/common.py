@@ -28,6 +28,8 @@ from zope.container.contained import ObjectRemovedEvent
 import sqlalchemy as sa
 from zope.formlib.interfaces import IDisplayWidget
 from zope.formlib.namedtemplate import NamedTemplate
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.securitypolicy.settings import Allow
 from sqlalchemy.exc import IntegrityError
 
 from bungeni.alchemist import Session
@@ -40,6 +42,7 @@ from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
+from bungeni.core.workflows.utils import set_group_local_role, unset_group_local_role
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
     IAttachmentContainer, ISignatoryManager #, ISittingContainer
 from bungeni.models import domain
@@ -54,7 +57,7 @@ from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import register, naming
 from bungeni.capi import capi
-
+from bungeni.core.workflows.utils import get_group_context
 TRUE_VALS = "true", "1"
 
 
@@ -581,6 +584,23 @@ class EditForm(BaseForm, ui.EditForm):
         if not self._next_url:
             self._next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(self._next_url)
+
+
+class GroupEditForm(EditForm):
+    def _do_save(self, data):
+        group_role_changed = False
+        prm = IPrincipalRoleMap(get_group_context(self.context))
+        if (data["group_role"] != self.context.group_role):
+            if (prm.getSetting(self.context.group_role,
+                self.context.group_principal_id) == Allow):
+                group_role_changed = True
+                unset_group_local_role(self.context)
+        formlib.form.applyChanges(self.context, self.form_fields, data)
+        if group_role_changed:
+            set_group_local_role(self.context)
+        notify(ObjectModifiedEvent(self.context))
+        cascade_modifications(self.context)
+        invalidate_caches_for(self.context.__class__.__name__, "edit")
 
 class TranslateForm(AddForm):
     """Custom translate-form for Bungeni content.

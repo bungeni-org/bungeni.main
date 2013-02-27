@@ -162,18 +162,9 @@ unschedule_doc = dbutils.unschedule_doc
 
 
 def get_group_local_role(group):
-    if interfaces.IOffice.providedBy(group):
-        return group.office_role
-    else:
-        ti = capi.get_type_info(group)
-        if hasattr(ti, "role"):
-            role = getattr(ti, "role", None)
-            if role:
-                qualified_role = "bungeni.%s" % role
-                assert queryUtility(IRole, qualified_role, None)
-                return qualified_role
-        else:
-            return "bungeni.GroupMember"
+    assert interfaces.IBungeniGroup.providedBy(group)
+    return group.group_role
+
 
 def get_group_context(context):
     if interfaces.IOffice.providedBy(context):

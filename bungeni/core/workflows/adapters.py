@@ -87,7 +87,7 @@ def register_generic_workflow_adapters():
         WorkflowController, (IWorkflowed,), IWorkflowController)    
 
 
-#@capi.bungeni_custom_errors
+@capi.bungeni_custom_errors
 def register_custom_types():
     """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
     This is called prior to loading of the workflows for these custom types.
@@ -115,9 +115,6 @@ def register_custom_types():
     # group/member types
     for egroup in enabled_elems(etypes.iterchildren("group")):
         type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
-        role = misc.xml_attr_str(egroup, "role", None)
-        if role:
-            ti.role = role
         for emember in enabled_elems(egroup.iterchildren("member")):
             type_key, ti = type_info.register_new_custom_type(*parse_elem(emember))
 

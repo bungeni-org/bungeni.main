@@ -302,7 +302,11 @@ ISResponse = vocabulary.SimpleVocabulary([
 #])
 '''
 
-class OfficeRoleFactory(BaseVocabularyFactory):
+
+def unqualified_role(role_id):
+    return role_id.split(".")[1]
+
+class GroupRoleFactory(BaseVocabularyFactory):
     def __call__(self, context=None):
         app = common.get_application()
         terms = []
@@ -316,18 +320,15 @@ class OfficeRoleFactory(BaseVocabularyFactory):
                         "bungeni.Signatory",
                         "zope.Manager",
                         "bungeni.Admin",
-                        "bungeni.MP",
-                        "bungeni.Minister",
-                        "bungeni.PoliticalGroupMember",
-                        "bungeni.Government",
-                        "bungeni.CommitteeMember",
                 ]:
                 continue
             if not ISubRoleAnnotations(role).is_sub_role:
-                terms.append(vocabulary.SimpleTerm(name, name, name))
+                terms.append(vocabulary.SimpleTerm(name, name,
+                    unqualified_role(name)))
         return vocabulary.SimpleVocabulary(terms)
-office_role_factory = OfficeRoleFactory()
-component.provideUtility(office_role_factory, IVocabularyFactory, "office_role")
+
+group_role_factory = GroupRoleFactory()
+component.provideUtility(group_role_factory, IVocabularyFactory, "group_role")
 
 
 class GroupSubRoleFactory(BaseVocabularyFactory):

@@ -11,6 +11,7 @@ log = __import__("logging").getLogger("bungeni.ui.feature")
 
 from zope.configuration import xmlconfig
 from bungeni.models import domain
+from bungeni.models.interfaces import IBungeniGroup
 from bungeni.capi import capi
 from bungeni.utils import naming
 
@@ -92,7 +93,15 @@ def setup_customization_ui():
         # edit !+DiffEditForm prior to r10032, doc-archetyped types were being
         # *declared* to use bungeni.ui.forms.forms.DiffEditForm, but this
         # is not the edit view tht was actually being used!
-        register_form_view(type_key, "Edit", "edit", model_interface_qualname,
+        #register_form_view(type_key, "Edit", "edit", model_interface_qualname,
+        #    "bungeni.ui.forms.common.EditForm")
+        if issubclass(ti.interface, IBungeniGroup):
+            register_form_view(type_key, "Edit", "edit",
+                model_interface_qualname,
+                "bungeni.ui.forms.common.GroupEditForm")
+        else:
+            register_form_view(type_key, "Edit", "edit",
+            model_interface_qualname,
             "bungeni.ui.forms.common.EditForm")
         # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,

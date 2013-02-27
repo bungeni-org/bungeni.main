@@ -518,6 +518,14 @@ class GroupDescriptor(ModelDescriptor):
             render_type="single_select",
             vocabulary="workflow_states",
         ),
+        F(name="group_role",
+          label="Group Role",
+          required=True,
+          localizable=[show("listing")],
+          value_type="vocabulary",
+          render_type="single_select",
+          vocabulary="group_role"
+        )
     ]
     schema_invariants = [constraints.end_after_start]
     custom_validators = [validations.validate_date_range_within_parent]
