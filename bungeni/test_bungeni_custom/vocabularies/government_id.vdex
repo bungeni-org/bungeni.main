@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
+    orderSignificant="true" profileType="flatTokenTerms">
+    <vocabName>
+        <langstring language="en">Government Identifiers</langstring>
+    </vocabName>
+    <vocabIdentifier>org.bungeni.metadata.vocabularies.government_id</vocabIdentifier>
+    <term>
+        <termIdentifier>government_01</termIdentifier>
+        <caption>
+            <langstring language="en">Government_01</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_02</termIdentifier>
+        <caption>
+            <langstring language="en">Government_02</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_03</termIdentifier>
+        <caption>
+            <langstring language="en">Government_03</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_04</termIdentifier>
+        <caption>
+            <langstring language="en">Government_04</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_05</termIdentifier>
+        <caption>
+            <langstring language="en">Government_05</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_06</termIdentifier>
+        <caption>
+            <langstring language="en">Government_06</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_07</termIdentifier>
+        <caption>
+            <langstring language="en">Government_07</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_08</termIdentifier>
+        <caption>
+            <langstring language="en">Government_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_08</termIdentifier>
+        <caption>
+            <langstring language="en">Government_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_09</termIdentifier>
+        <caption>
+            <langstring language="en">Government_09</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_10</termIdentifier>
+        <caption>
+            <langstring language="en">Government_10</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_11</termIdentifier>
+        <caption>
+            <langstring language="en">Government_11</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_12</termIdentifier>
+        <caption>
+            <langstring language="en">Government_12</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_13</termIdentifier>
+        <caption>
+            <langstring language="en">Government_13</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_14</termIdentifier>
+        <caption>
+            <langstring language="en">Government_14</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_15</termIdentifier>
+        <caption>
+            <langstring language="en">Government_15</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_16</termIdentifier>
+        <caption>
+            <langstring language="en">Government_16</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_17</termIdentifier>
+        <caption>
+            <langstring language="en">Government_17</langstring>
+        </caption>
+    </term>
+    <term>
+    <term>
+        <termIdentifier>government_18</termIdentifier>
+        <caption>
+            <langstring language="en">Government_18</langstring>
+        </caption>
+    </term>
+        <termIdentifier>government_19</termIdentifier>
+        <caption>
+            <langstring language="en">Government_19</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>government_20</termIdentifier>
+        <caption>
+            <langstring language="en">Government_20</langstring>
+        </caption>
+    </term>
+</vdex>
+

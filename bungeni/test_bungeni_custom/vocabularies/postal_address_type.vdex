@@ -2,7 +2,7 @@
 <vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
     orderSignificant="true" profileType="flatTokenTerms">
     <vocabName>
-        <langstring language="en">postal_address_type</langstring>
+        <langstring language="en">postal address type</langstring>
     </vocabName>
     <vocabIdentifier>org.bungeni.metadata.vocabularies.postal_address_type</vocabIdentifier>
     <term>

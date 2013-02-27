@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
+    orderSignificant="true" profileType="flatTokenTerms">
+    <vocabName>
+        <langstring language="en">Political Groups Identifiers</langstring>
+    </vocabName>
+    <vocabIdentifier>org.bungeni.metadata.vocabularies.pol_group_id</vocabIdentifier>
+    <term>
+        <termIdentifier>pol_group_01</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_01</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_02</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_02</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_03</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_03</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_04</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_04</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_05</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_05</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_06</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_06</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_07</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_07</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_08</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_08</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_09</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_09</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_10</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_10</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_11</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_11</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_12</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_12</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_13</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_13</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_14</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_14</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_15</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_15</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_16</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_16</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_17</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_17</langstring>
+        </caption>
+    </term>
+    <term>
+    <term>
+        <termIdentifier>pol_group_18</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_18</langstring>
+        </caption>
+    </term>
+        <termIdentifier>pol_group_19</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_19</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>pol_group_20</termIdentifier>
+        <caption>
+            <langstring language="en">Political_Group_20</langstring>
+        </caption>
+    </term>
+</vdex>
+

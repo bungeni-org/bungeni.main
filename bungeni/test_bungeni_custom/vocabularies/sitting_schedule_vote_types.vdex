@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
+    orderSignificant="true" profileType="flatTokenTerms">
+   <vocabName>
+      <langstring language="en">Schedule Vote Types</langstring>
+   </vocabName>
+   <vocabIdentifier>org.bungeni.metadata.vocabularies.sittingschedulevotetypes</vocabIdentifier>
+    <term>
+        <termIdentifier>secret_ballot</termIdentifier>
+        <caption>
+            <langstring language="en">secret ballot</langstring>
+        </caption>
+    </term>
+</vdex>

@@ -2,7 +2,7 @@
 <vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
     orderSignificant="true" profileType="flatTokenTerms">
     <vocabName>
-        <langstring language="en">attachment_type</langstring>
+        <langstring language="en">attachment type</langstring>
     </vocabName>
     <vocabIdentifier>org.bungeni.metadata.vocabularies.attachment_type</vocabIdentifier>
     <term>
@@ -12,11 +12,18 @@
         </caption>
     </term>
     <term>
-        <termIdentifier>annex</termIdentifier>
+        <termIdentifier>annex-doc</termIdentifier>
         <caption>
-            <langstring language="en">Annex</langstring>
+            <langstring language="en">Annex (compound document)</langstring>
         </caption>
     </term>
+    <term>
+        <termIdentifier>annex-xml</termIdentifier>
+        <caption>
+            <langstring language="en">Annex (AkomaNtoso xml)</langstring>
+        </caption>
+    </term>
+
     <term>
         <termIdentifier>document</termIdentifier>
         <caption>
@@ -24,11 +31,43 @@
         </caption>
     </term>
     <term>
-        <termIdentifier>bill</termIdentifier>
+        <termIdentifier>main-doc</termIdentifier>
         <caption>
-            <langstring language="en">Bill</langstring>
+            <langstring language="en">Main Document (compound document)</langstring>
         </caption>
     </term>
+    <term>
+        <termIdentifier>main-xml</termIdentifier>
+        <caption>
+            <langstring language="en">Main Document (AkomaNtoso xml)</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>schedule-doc</termIdentifier>
+        <caption>
+            <langstring language="en">Schedule (compound document)</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>schedule-xml</termIdentifier>
+        <caption>
+            <langstring language="en">Schedule (AkomaNtoso xml)</langstring>
+        </caption>
+    </term>
+
+    <term>
+        <termIdentifier>appendix-doc</termIdentifier>
+        <caption>
+            <langstring language="en">Appendix (compound document)</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>appendix-xml</termIdentifier>
+        <caption>
+            <langstring language="en">Appendix (AkomaNtoso xml)</langstring>
+        </caption>
+    </term>
+
     <!--
      !+ATTACHED_FILE_TYPE_SYSTEM(mr, oct-2011) ui/downloaddocument and 
      ui/forms/files.py expects this, but should NOT be presented as an 

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
+    orderSignificant="true" profileType="flatTokenTerms">
+    <vocabName>
+        <langstring language="en">Ministry Identifiers</langstring>
+    </vocabName>
+    <vocabIdentifier>org.bungeni.metadata.vocabularies.ministry_id</vocabIdentifier>
+    <term>
+        <termIdentifier>ministry_01</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_01</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_02</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_02</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_03</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_03</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_04</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_04</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_05</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_05</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_06</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_06</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_07</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_07</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_08</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_08</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_09</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_09</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_10</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_10</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_11</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_11</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_12</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_12</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_13</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_13</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_14</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_14</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_15</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_15</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_16</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_16</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_17</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_17</langstring>
+        </caption>
+    </term>
+    <term>
+    <term>
+        <termIdentifier>ministry_18</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_18</langstring>
+        </caption>
+    </term>
+        <termIdentifier>ministry_19</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_19</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>ministry_20</termIdentifier>
+        <caption>
+            <langstring language="en">Ministry_20</langstring>
+        </caption>
+    </term>
+</vdex>
+

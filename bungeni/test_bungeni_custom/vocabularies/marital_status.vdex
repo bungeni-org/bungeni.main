@@ -2,7 +2,7 @@
 <vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
     orderSignificant="true" profileType="flatTokenTerms">
     <vocabName>
-        <langstring language="en">marital_status</langstring>
+        <langstring language="en">marital status</langstring>
     </vocabName>
     <vocabIdentifier>org.bungeni.metadata.vocabularies.marital_status</vocabIdentifier>
     <term>

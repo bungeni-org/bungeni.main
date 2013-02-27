@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vdex xmlns="http://www.imsglobal.org/xsd/imsvdex_v1p0" 
+    orderSignificant="true" profileType="flatTokenTerms">
+    <vocabName>
+        <langstring language="en">Committees Identifiers</langstring>
+    </vocabName>
+    <vocabIdentifier>org.bungeni.metadata.vocabularies.committee_id</vocabIdentifier>
+    <term>
+        <termIdentifier>committee_00</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_01</langstring>
+        </caption>
+    </term>
+   <term>
+        <termIdentifier>committee_01</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_01</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_02</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_02</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_03</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_03</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_04</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_04</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_05</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_05</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_06</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_06</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_07</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_07</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_08</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_08</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_08</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_09</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_09</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_10</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_10</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_11</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_11</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_12</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_12</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_13</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_13</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_14</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_14</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_15</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_15</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_16</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_16</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_17</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_17</langstring>
+        </caption>
+    </term>
+    <term>
+    <term>
+        <termIdentifier>committee_18</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_18</langstring>
+        </caption>
+    </term>
+        <termIdentifier>committee_19</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_19</langstring>
+        </caption>
+    </term>
+    <term>
+        <termIdentifier>committee_20</termIdentifier>
+        <caption>
+            <langstring language="en">Committee_20</langstring>
+        </caption>
+    </term>
+</vdex>
+

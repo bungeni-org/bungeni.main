@@ -9,6 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.vocabulary")
 
 import os
+import re
 import hashlib
 from lxml import etree
 
@@ -62,6 +63,9 @@ try:
 except ImportError:
     import simplejson as json
 import imsvdex.vdex
+
+#valid vdex filenames
+VDEX_FILE_REGEX = re.compile("^[a-z]+[a-z|_]+\.vdex$")
 
 # !+combined_name?
 def get_translated_group_label(group):
@@ -1426,14 +1430,13 @@ class TextRecordTypesVocabulary(BaseVocabularyFactory):
 text_record_types_factory = TextRecordTypesVocabulary()
 component.provideUtility(text_record_types_factory, IVocabularyFactory, "text_record_type")
 
-
 def register_vocabularies():
     """Register all VDEX vocabularies
     """
     vocab_dir = capi.get_path_for("vocabularies")
     os.chdir(vocab_dir)
     for file_name in os.listdir(vocab_dir):
-        if file_name.endswith(".vdex"):
+        if re.match(VDEX_FILE_REGEX, file_name) is not None:
             try:
                 vdex = VDEXManager(open(file_name))
             except imsvdex.vdex.VDEXError:
@@ -1445,10 +1448,16 @@ def register_vocabularies():
                 vocab_class = FlatVDEXVocabularyFactory
             else:
                 vocab_class = TreeVDEXVocabulary
-            vocabulary_name = file_name[:-len(".vdex")].replace("-", "_")
+            vocabulary_name = file_name[:-len(".vdex")]
             globals()[vocabulary_name] = vocab_class(vdex)
             component.provideUtility(globals()[vocabulary_name], 
                 IVocabularyFactory, vocabulary_name)
+        else:
+            log.warning("Will not process VDEX file named %s. File name is "
+                "not valid. File name must start with a lower case letter, "
+                "may contain underscores and must have a 'vdex' extension",
+                file_name
+            )
 #!REGISTRATION(mb, Feb-2013) - can't use ZCML to register
 # descriptors seem to be imported before vocabularies are set up
 register_vocabularies()
