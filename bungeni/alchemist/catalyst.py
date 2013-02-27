@@ -50,6 +50,20 @@ import bungeni.models.domain as MODEL_MODULE
 import bungeni.models.domain as CONTAINER_MODULE
 #import bungeni.ui.content as UI_MODULE
 
+def validate_required_fields(ti):
+    """Raise an exception if a field is not required in ui but required in db"""
+    mapper = orm.class_mapper(ti.domain_model)
+    if not mapper: return
+    type_name = ti.workflow_key or naming.polymorphic_identity(ti.domain_model)
+    for field_name, field in ti.descriptor_model.fields_by_name.iteritems():
+        if field.property and not field.property.required:
+            column = mapper.columns.get(field_name)
+            if column is not None:
+                if column.nullable == False:
+                    raise Exception("Descriptor Error - %s: Field %s is "
+                        "required in the db. You must set required='true'." %
+                        (type_name, field_name)
+                    )
 
 def catalyse_system_descriptors(module):
     """Catalyze system descriptor classes (with by-name-convention associated 
@@ -128,6 +142,7 @@ def catalyse(ti):
     type_key = naming.polymorphic_identity(ti.domain_model)
     log.info(" ----- CATALYSE: %s -----", type_key) 
     log.debug("ti = %s", ti)
+    validate_required_fields(ti)
     generate_table_schema_interface(ti)
     apply_security(ti)
     generate_container_class(ti)

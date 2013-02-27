@@ -124,6 +124,7 @@ class UserDescriptor(ModelDescriptor):
         ),
         F(name="first_name",
             label="First Name",
+            required=True,
             localizable=[
                 show("add view edit listing"), # db-not-null-ui-add
             ],
@@ -136,6 +137,7 @@ class UserDescriptor(ModelDescriptor):
             ],
         ),
         F(name="last_name",
+            required=True,
             label="Last Name",
             localizable=[
                 show("add view edit listing"), # db-not-null-ui-add
@@ -160,6 +162,7 @@ class UserDescriptor(ModelDescriptor):
         ),
         F(name="login",
             label="Login",
+            required=True,
             description="Must contain only letters, numbers, a period (.) "
                 "and underscore (_). Should start with a letter and be "
                 "between 3 and 20 characters long",
@@ -745,6 +748,7 @@ class AttachmentDescriptor(ModelDescriptor):
         ),
         F(name="title",
             label="Title",
+            required=True,
             localizable=[
                 show("add view edit listing"), # db-not-null-ui-add
             ],
@@ -794,6 +798,7 @@ class AttachmentDescriptor(ModelDescriptor):
         ),
         F(name="status_date",
             label="Status Date",
+            required=True,
             localizable=[
                 show("view listing"),
             ],
@@ -1079,6 +1084,7 @@ class ChangeDescriptor(ModelDescriptor):
     localizable = False
     fields = [
         F(name="audit_id",
+            required=True,
             localizable=[ hide("view listing"), ],
         ),
         F(name="user_id",
@@ -1092,12 +1098,15 @@ class ChangeDescriptor(ModelDescriptor):
             vocabulary="user",
         ),
         F(name="action",
+            required=True,
             localizable=[ show("view listing"), ],
         ),
         F(name="seq",
+            required=True,
             localizable=[ show("view listing"), ],
         ),
         F(name="procedure",
+            required=True,
             localizable=[ show("view listing"), ],
         ),
         F(name="date_audit",
@@ -1509,6 +1518,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
         ),
         F(name="item_type",
             label="Item Type",
+            required=True,
             localizable=[
                 show("edit add view listing"), # db-not-null-ui-add, pk
             ],
