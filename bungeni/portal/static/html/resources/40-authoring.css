@@ -243,25 +243,31 @@ dl#context_workflow dt a {
     "dl#context_actions.actionMenu" selector is the equivalent of simply
     "#context_actions". 
 */
-dl#context_actions.actionMenu .actionMenuHeader {
-	display: none;
+dl#context_actions.actionMenu .actionMenuHeader a:first-child {
+    float:left;
+ 
+}
+dl#context_actions.actionMenu.activated .actionMenuContent {
+    display: none;
+    z-index: 5;
+    position: relative !important;
+    top: 0;
 }
 dl#context_actions.actionMenu.deactivated .actionMenuContent {
-	display: block !important;
+    display: none !important;
+    border-collapse: collapse;
+    border-spacing: 0;
+	/*display: block !important;
 	position: relative;
 	margin: 0;
 	padding: 0;
 	top: auto;
-	left: auto;
+	left: auto;*/
 }
 dl#context_actions.actionMenu .actionMenuContent ul {
 	margin: 0;
 	padding: 0;
 	border: 0 none;
-}
-dl#context_actions.actionMenu .actionMenuContent ul li {
-	float: left;
-	padding: 0 .5em 0 0;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a {
 	padding: 0;
@@ -270,11 +276,12 @@ dl#context_actions.actionMenu .actionMenuContent ul li a {
 	line-height: 1.8em;
 	border: 0 none;
     border-right: 1px solid #aaa;
+    width: auto;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
 dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
 	border-right: 1px solid #090;
-	background-color: #A2CD5A !important;
+	background-color: #74AE0B !important;
 	color: #fff !important;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#view,
@@ -300,7 +307,6 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#sign-open-document,
 dl#context_actions.actionMenu .actionMenuContent ul li a#report-builder{
 	padding: 0 .5em;
 	margin: 0;
-	float: left;
 	display: block;
 	padding-left: 22px;
 	background: transparent 2px 2px no-repeat;

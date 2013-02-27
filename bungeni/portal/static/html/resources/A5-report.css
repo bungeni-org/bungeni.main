@@ -79,3 +79,31 @@ dd.Report div.content-right-column
     width:30px;
     float:right;
 }
+
+
+#report-content .heading {
+    font-weight:bold;
+}
+#report-content .sub-heading {
+    
+}
+#report-content .items {
+    margin-left:10px;
+    list-style-type:none;
+    display:inline;
+}
+#report-content .mover {
+    margin-left:15px;
+}
+#report-content .items .itemtype {
+    font-style:italic;
+}
+#report-content .agendaitems ul {
+    list-style-type:none;
+    list-style-image:none;
+    margin:0;
+    padding:0;
+}
+#report-content .agendaitems ul > li {
+    list-style-type:none;
+}
