@@ -59,7 +59,6 @@ from bungeni.ui.menu import get_actions
 from bungeni.ui.widgets import LanguageLookupWidget
 from bungeni.ui.container import ContainerJSONListing
 from bungeni.ui.forms.common import AddForm, DeleteForm, EditForm
-from bungeni.ui.forms.forms import SittingAddForm
 from bungeni.ui.reporting import generators
 
 from bungeni.models import domain
@@ -722,7 +721,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         data["headless"] = "true"
         self.request.form["venue_id"] = data["venue_id"] = venue_id
         self.request.form["headless"] = "true"
-        add_form = SittingAddForm(self.sittings_container, self.request)
+        add_form = AddForm(self.sittings_container, self.request)
         add_form.update()
         if not add_form.errors:
             initial_sitting = removeSecurityProxy(add_form.created_object)
@@ -753,7 +752,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 
                 request_copy = copy(self.request)
                 request_copy.form = sitting_data
-                add_form = SittingAddForm(self.sittings_container, request_copy)
+                add_form = AddForm(self.sittings_container, request_copy)
                 add_form.update()
                 if not add_form.errors:
                     # use finishConstruction API here
@@ -833,7 +832,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 request_copy = copy(self.request)
                 request_copy.form = sitting_data
                 if is_new:
-                    add_form = SittingAddForm(self.sittings_container, request_copy)
+                    add_form = AddForm(self.sittings_container, request_copy)
                     add_form.update()
                     if add_form.errors:
                         log.error("Could not add sitting in sequence: %s",

@@ -20,8 +20,6 @@
         provides=".interfaces.IBungeniRegistrySettings"
     />
     
-    <subscriber handler=".events.set_parliament_id" />
-    
     <!-- date range adapters -->
     <!-- !+DATERANGEFILTER(mr, dec-2010)
     <adapter for=".domain.Bill"

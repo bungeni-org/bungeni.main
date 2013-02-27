@@ -10,7 +10,6 @@ log = __import__("logging").getLogger("bungeni.ui.forms.forms")
 
 import copy
 
-from zc.resourcelibrary import need
 from zope.formlib import form, namedtemplate
 from zope import schema, interface
 from zope.app.pagetemplate import ViewPageTemplateFile
@@ -23,28 +22,12 @@ from bungeni.alchemist import Session
 
 from bungeni.models import domain
 from bungeni.models import schema as model_schema
-from bungeni.models.utils import get_chamber_for_context
-from bungeni.models.interfaces import ISessionContainer, ISittingContainer
 from bungeni.core.i18n import _
-from bungeni.core.interfaces import ISchedulingContext
 #from bungeni.ui.forms import validations
 from bungeni.ui.forms.common import ReorderForm
 from bungeni.ui.forms.common import PageForm
-from bungeni.ui.forms.common import AddForm
-from bungeni.ui.forms.common import EditForm
 from bungeni.ui.forms.common import DeleteForm
 from bungeni.ui.forms.common import DisplayForm
-from bungeni.ui.interfaces import IBungeniSkin
-
-from interfaces import Modified
-from zope import component
-from zope.formlib.interfaces import IDisplayWidget
-from zope.schema.interfaces import IText, ITextLine
-from bungeni.ui.widgets import IDiffDisplayWidget
-from bungeni.ui.htmldiff import htmldiff
-
-from bungeni.utils import register
-
 
 FormTemplate = namedtemplate.NamedTemplateImplementation(
     ViewPageTemplateFile("templates/form.pt")
@@ -80,37 +63,6 @@ def set_widget_errors(widgets, errors):
                 if widget._error is None:
                     widget._error = error
 
-''' !+UNUSED(mr, nov-2012)
-def flag_changed_widgets(widgets, context, data):
-    for widget in widgets:
-        name = widget.context.getName()
-        # If the field is not in the data, then go on to the next one
-        if name not in data:
-            widget.changed = False
-            continue
-        if data[name] == getattr(context, name):
-            widget.changed = False
-        else:
-            widget.changed = True
-    return []
-'''
-
-''' !+UNUSED(mr, nov-2012)
-class ResponseEditForm(EditForm):
-    """ Answer a Question
-    UI for ministry to input response
-    Display the question when adding the answer.
-    """
-    CustomValidations = validations.null_validator
-
-class ResponseAddForm(AddForm):
-    """
-    Answer a Question
-    UI for ministry to input response
-    Display the question when adding the answer.
-    """
-    CustomValidation = validations.null_validator
-'''
 
 class ItemScheduleContainerReorderForm(ReorderForm):
     """Specialization of the general reorder form for item
@@ -205,107 +157,9 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
             session.delete(i)
         self.request.response.redirect(self.next_url)
 
-''' !+DiffEditForm(mr, nov-2102) prior to r10032, doc-archetyped types were 
-being **ZCML declared** to use bungeni.ui.forms.forms.DiffEditForm, but this
-is not the edit view tht was actually being used!
-
-class DiffEditForm(EditForm):
-    """ Form to display diff view if timestamp was changes.
-    """
-    CustomValidation = validations.diff_validator
-    template = ViewPageTemplateFile("templates/diff-form.pt")
-    
-    def __init__(self, context, request):
-        self.diff_widgets = []
-        self.diff = False
-        self.last_timestamp = None
-        super(DiffEditForm, self).__init__(context, request)
-        need("diff-form")
-    
-    def update(self):
-        """ Checks if we have Modified errors and renders split view 
-            with display widgets for db values and normal for input 
-        """
-        super(DiffEditForm, self).update()
-        for error in self.errors:
-            if error.__class__ == Modified:
-                # Set flag that form is in diff mode
-                if not self.diff:
-                    self.diff=True
-                
-        if self.diff:
-            # Set last timestamp which we store in hidden field because
-            # document may be modified during diff and from.timestamp field
-            # contains old value
-            self.last_timestamp = self.context.timestamp
-            for widget in self.widgets:
-                try:
-                    value = widget.getInputValue()
-                except:
-                    value = ""
-                
-                # Get widget's field    
-                form_field = self.form_fields.get(widget.context.__name__)                    
-                field = form_field.field.bind(self.context)
-                
-                # Form display widget for our field 
-                if form_field.custom_widget is not None:
-                    display_widget = form_field.custom_widget(
-                        field, self.request)                 
-                else:
-                    display_widget = component.getMultiAdapter(
-                        (field, self.request), IDisplayWidget)
-                
-                # If field is Text or TextLine we display HTML diff
-                if IText.providedBy(field) or ITextLine.providedBy(field):
-                    if value:
-                        diff_val = htmldiff(field.get(self.context), value)
-                    else:
-                        diff_val = ""
-                    display_widget = component.getMultiAdapter(
-                        (field, self.request), IDiffDisplayWidget)
-                    display_widget.setRenderedValue(diff_val)
-                else:
-                    display_widget.setRenderedValue(field.get(self.context))
-                display_widget.name = widget.name + ".diff.display"
-                # Add display - input widgets pair to list of diff widgets
-                self.diff_widgets.append((widget, display_widget))
-'''
 
 class UserAddressDisplayForm(DisplayForm):
     
     @property
     def page_title(self):
         return "%s address" % self.context.logical_address_type.title()
-
-
-@register.view(ISessionContainer, layer=IBungeniSkin, name="add",
-    protect={"bungeni.session.Add": register.VIEW_DEFAULT_ATTRS})
-class SessionAddForm(AddForm):
-    def finishConstruction(self, ob):
-        """We add the parliament ID if adding a session in contexts
-        not bound to the the parliament in traversal hierarchy
-        """
-        super(SessionAddForm, self).finishConstruction(ob)
-        if ob.parliament_id is None:
-            ob.parliament_id = get_chamber_for_context(self.context).group_id
-
-@register.view(ISittingContainer, layer=IBungeniSkin, name="add",
-    protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})
-class SittingAddForm(AddForm):
-    def createAndAdd(self, data):
-        """We add the group ID if adding a sitting in contexts
-        not bound to groups in traversal hierarchy
-        """
-        ob = super(SittingAddForm, self).createAndAdd(data)
-        scheduling_context = ISchedulingContext(self.context.__parent__)
-        if ob.group_id is None:
-            ob.group_id = removeSecurityProxy(scheduling_context).group_id
-        if ob.session_id is None:
-            ob.session_id = scheduling_context.get_group().sessions._query.filter(
-                sql.and_(
-                    domain.Session.start_date < ob.start_date,
-                    domain.Session.end_date > ob.end_date
-                )
-            ).one().session_id
-        return ob
