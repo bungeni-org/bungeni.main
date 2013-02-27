@@ -207,7 +207,6 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
         all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
         # self.vdex.getVocabularyDict(lang="*") -> {term_id: ({lang: caption}, children)}
         terms = []
-        assert self.vdex.isFlat() is True
         value_cast = self.__class__.value_cast
         for (key, (caption, children)) in all_terms.iteritems():
             # assert children is None
@@ -1440,11 +1439,12 @@ def register_vocabularies():
             except imsvdex.vdex.VDEXError:
                 log.error("Exception while loading VDEX file %s", file_name)
                 continue
-            vocab_class = FlatVDEXVocabularyFactory
-            if not vdex.isFlat():
-                vocab_class = TreeVDEXVocabulary
-            elif vdex.isBoolean():
+            if vdex.isBoolean():
                 vocab_class = BoolFlatVDEXVocabularyFactory
+            elif vdex.isFlat():
+                vocab_class = FlatVDEXVocabularyFactory
+            else:
+                vocab_class = TreeVDEXVocabulary
             vocabulary_name = file_name[:-len(".vdex")].replace("-", "_")
             globals()[vocabulary_name] = vocab_class(vdex)
             component.provideUtility(globals()[vocabulary_name], 
