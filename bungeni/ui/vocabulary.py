@@ -474,6 +474,22 @@ class VenueFactory(BaseVocabularyFactory):
 venue_factory = VenueFactory()
 component.provideUtility(venue_factory, IVocabularyFactory, "venue")
 
+class SessionFactory(BaseVocabularyFactory):
+    def __call__(self, context):
+        chamber = utils.get_chamber_for_context(context)
+        results =[ sess for sess in chamber.sessions.values() ]
+        terms = []
+        for ob in results:
+            terms.append(
+                vocabulary.SimpleTerm(
+                    value=ob.session_id, 
+                    token=ob.session_id,
+                    title=IDCDescriptiveProperties(ob).title
+                ))
+        return vocabulary.SimpleVocabulary(terms)
+session_factory = SessionFactory()
+component.provideUtility(session_factory, IVocabularyFactory, "session")
+
 
 class GroupTitleTypesFactory(SpecializedSource):
     def __init__(self):

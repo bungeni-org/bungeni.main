@@ -1258,6 +1258,15 @@ class SittingDescriptor(ModelDescriptor):
             value_type="datetime", # !+DURATION, in listing "consumed" by "start_date"
             render_type="datetime",
         ),
+        F(name="session_id",
+            label="Session",
+            localizable=[
+                show("view listing"),
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="session", 
+        ),
         F(name="venue_id",
             label="Venue",
             localizable=[
