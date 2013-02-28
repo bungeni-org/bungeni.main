@@ -61,7 +61,6 @@ setup(name='bungeni',
             #
                         'ore.xapian',
                         'z3c.dav',
-                        'plone.i18n',
                         'plone.transforms',
                         'pika',
             # The following are used by bungeni.ui

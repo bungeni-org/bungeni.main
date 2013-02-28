@@ -28,8 +28,6 @@ from zope.i18n.locales import locales
 
 from sqlalchemy import orm, sql
 
-from plone.i18n.locales.interfaces import ILanguageAvailability
-
 # !+CAPI(mr, feb-2011) the python used to execute this should have previously 
 # set up os.environ["zope_i18n_allowed_languages",
 # the value of which is parliament-specific and set in:
@@ -110,34 +108,33 @@ def get_all_languages(language_filter=None):
 
     To-do: the result of this method should be cached indefinitely.
     """
-    availability = component.getUtility(ILanguageAvailability)
-    _languages = availability.getLanguages(combined=True)
+    #availability = component.getUtility(ILanguageAvailability)
     if language_filter is None:
         language_filter = ALLOWED_LANGUAGES
     # TypeError if filter is not iterable
     def get_lang_data(code):
-        lang_data = _languages[code]
-        if not lang_data.has_key("native"):
+        lang_data = {}
             #try to extract native name from zope
-            lang_parts = code.split("-")
-            lang_code = lang_parts[0]
-            territory = None
-            if len(lang_parts) == 2:
-                territory = lang_parts[1].upper()
-            lang_locale = locales.getLocale(lang_code, territory)
-            if not lang_locale.id.language:
-                return
+        lang_parts = code.split("-")
+        lang_code = lang_parts[0]
+        territory = None
+        if len(lang_parts) == 2:
+            territory = lang_parts[1].upper()
+        lang_locale = locales.getLocale(lang_code, territory)
+        if not lang_locale.id.language:
+            return
+        lang_name = lang_locale.id.language
+        if lang_locale.displayNames and lang_locale.displayNames.languages:
             lang_name = lang_locale.displayNames.languages.get(lang_code, 
                 "").capitalize()
-            if not lang_name:
-                return
-            locale_territory = lang_locale.displayNames.territories.get(
-                territory, ""
-            )
-            if locale_territory:
-                lang_data["native"] = u"%s (%s)" %(lang_name, locale_territory)
-            else:
-                lang_data["native"] = lang_name
+        lang_data["name"] = lang_name
+        locale_territory = lang_locale.displayNames.territories.get(
+            territory, ""
+        )
+        if locale_territory:
+            lang_data["native"] = u"%s (%s)" %(lang_name, locale_territory)
+        else:
+            lang_data["native"] = lang_name
         return lang_data
     return dict([ (name, get_lang_data(name)) for name in language_filter ])
 
