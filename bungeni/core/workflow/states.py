@@ -743,8 +743,7 @@ class WorkflowController(object):
         # transitions in this context, and return their ids
         filtered_transitions = []
         for transition in transitions:
-            if trigger_ifilter:
-                if transition.trigger != trigger_ifilter:
+            if trigger_ifilter != None and transition.trigger != trigger_ifilter:
                     continue
             if conditional:
                 if transition.condition is not None:

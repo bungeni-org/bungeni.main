@@ -155,9 +155,6 @@ class QuestionDescriptiveProperties(DocDescriptiveProperties):
                             context.owner.first_name, context.owner.last_name)
         if context.group:
             text += " to %s" % IDCDescriptiveProperties(context.group).title
-        if context.admissible_date:
-            text += " (%s %s)" % (translate_i18n(_(u"Approved on")),
-                self.formatDate(context.admissible_date))
         return text + "."
 
 
