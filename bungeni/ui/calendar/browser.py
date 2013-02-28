@@ -662,6 +662,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             activity_type = None
             meeting_type = None
             convocation_type = None
+        context.__parent__ = self.context
         self.adapters = {
             interfaces.IDhtmlxCalendarSittingsEditForm: context
         }

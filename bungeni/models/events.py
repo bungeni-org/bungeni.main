@@ -35,12 +35,19 @@ def set_sitting_parent_ids(ob, event):
     """We add the group ID/sesssion id if adding a sitting in contexts
     not bound to groups in traversal hierarchy
     """
-    scheduling_context = ISchedulingContext(ob.__parent__)
+    scheduling_context = ISchedulingContext(ob.__parent__, None)
     if ob.group_id is None:
-        ob.group_id = removeSecurityProxy(scheduling_context).group_id
+        if scheduling_context is not None:
+            ob.group_id = removeSecurityProxy(scheduling_context).group_id
     if ob.session_id is None or IObjectModifiedEvent.providedBy(event):
-        container = removeSecurityProxy(
-            scheduling_context.get_group().sessions)
+        if scheduling_context is not None:
+            container = removeSecurityProxy(
+                scheduling_context.get_group().sessions)
+        else:
+            try:
+                container = ob.group.sessions
+            except AttributeError:
+                return
         try:
             session_id = container._query.filter(
                 sql.and_(

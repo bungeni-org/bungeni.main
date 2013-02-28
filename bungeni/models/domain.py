@@ -908,7 +908,9 @@ class Session(Entity):
     )
 
     sittings = one2many("sittings",
-        "bungeni.models.domain.SittingContainer", "session_id")
+        "bungeni.models.domain.SittingContainer", "session_id",
+        [("group_id","parliament_id")]
+    )
     agendaitems = one2manyindirect("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "parliament_id", 
         "parliament_id")

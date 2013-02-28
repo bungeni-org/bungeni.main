@@ -56,8 +56,10 @@ class ConstraintManager(object):
 
 class One2Many(ConstraintManager):
     
-    def __init__(self, fk):
+    def __init__(self, fk, extra):
         self.fk = fk
+        # list of (target_key, source_key) - extra properties to set from parent
+        self.extra = extra 
     
     def getQueryModifier(self, instance, container):
         mapper = orm.class_mapper(instance.__class__)
@@ -73,6 +75,10 @@ class One2Many(ConstraintManager):
         #column = table.c[ self.fk ]
         #setattr( target, column.name, primary_key )
         setattr(target, self.fk, primary_key)
+        
+        #set extra properties
+        for target_key, source_key in self.extra:
+            setattr(target, target_key, getattr(trusted, source_key))
 
 class One2ManyIndirect(One2Many):
     """
@@ -95,12 +101,25 @@ class One2ManyIndirect(One2Many):
         setattr(target, self.child_key, attr_value)
 
 
-def one2many(name, container, fk):
-    constraint = One2Many(fk)
+def one2many(name, container, fk, extra=[]):
+    """create a container bound to domain model
+        name : name of of the container(traversable)
+        container: a dotted name string of the target container class
+        fk: the foreign key of target container instances to the domain model
+            this is set to the primary_key of the context
+        extra: extra properties to set from the parent domain object
+    """
+    constraint = One2Many(fk, extra)
     container = ManagedContainerDescriptor(name, container, constraint)
     return container
 
 def one2manyindirect(name, container, child_key, parent_key):
+    """create a container bound to domain model
+        name : name of of the container(traversable)
+        container: a dotted name string of the target container class
+        child_key: the key of child items which is set from `parent_key`
+        parent_key: this is the parent property to which `child_key` is set
+    """
     constraint = One2ManyIndirect(child_key, parent_key)
     container = ManagedContainerDescriptor(name, container, constraint)
     return container

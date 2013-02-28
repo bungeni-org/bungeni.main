@@ -10,8 +10,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.models.orm")
 
 import sqlalchemy as sa
-from sqlalchemy.orm import mapper, class_mapper, relation, column_property, \
-    backref
+from sqlalchemy.orm import mapper, relation, column_property, backref
 
 import schema
 import domain
@@ -248,8 +247,9 @@ mapper(domain.Sitting, schema.sitting,
         "group": relation(domain.Group,
             primaryjoin=schema.sitting.c.group_id == schema.group.c.group_id,
             uselist=False,
-            lazy=True
+            lazy=False
         ),
+        "session": relation(domain.Session, lazy=False),
         "start_date": column_property(
             schema.sitting.c.start_date.label("start_date")
         ),
