@@ -3,6 +3,9 @@
     background-image:none !important;
 
 }
+.yui-skin-sam .yui-dt-col-status_date .yui-dt-liner {
+    white-space:nowrap;
+}
 
 .yui-skin-sam th.yui-dt-desc! {
     background-color:#FFFFFF !important;

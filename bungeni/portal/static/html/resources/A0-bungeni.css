@@ -2,9 +2,9 @@
     margin-bottom: 0.5em;
 }
 
-div#workspace table th select#input_type,
-div#workspace table th select#input_status { 
-    width: 200px !important; 
+div#workspace table th.yui-dt-col-status select#input_type,
+div#workspace table th.yui-dt-col-status select#input_status { 
+    max-width:200px !important;
 }
 div#workspace table th:first-child { 
     width: 100% !important; 
