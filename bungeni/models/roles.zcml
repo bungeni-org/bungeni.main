@@ -17,5 +17,4 @@
     <!-- Document roles -->
     <role id="bungeni.Owner" title="Owner" />
     <role id="bungeni.Signatory" title="Document Signatory" />
-    <role id="bungeni.GroupMember" title="Group Member" />
 </configure>

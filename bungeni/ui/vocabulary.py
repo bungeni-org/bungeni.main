@@ -323,9 +323,9 @@ class GroupRoleFactory(BaseVocabularyFactory):
                 ]:
                 continue
             if not ISubRoleAnnotations(role).is_sub_role:
-                terms.append(vocabulary.SimpleTerm(name, name,
-                    unqualified_role(name)))
-        return vocabulary.SimpleVocabulary(terms)
+                terms.append(vocabulary.SimpleTerm(name, name, role.title))
+        return vocabulary.SimpleVocabulary(
+            sorted(terms, key=lambda a: a.title))
 
 group_role_factory = GroupRoleFactory()
 component.provideUtility(group_role_factory, IVocabularyFactory, "group_role")
