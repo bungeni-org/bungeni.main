@@ -10,7 +10,6 @@
     
     <include package="ore.xapian" />
     <include package="ore.xapian" file="meta.zcml" />
-    <include package="plone.i18n" />
     
     <include package="plone.transforms" file="meta.zcml" />
     <include package="plone.transforms" />
