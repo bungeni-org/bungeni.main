@@ -118,7 +118,23 @@ class VDEXVocabularyMixin(object):
         self.vdex = manager
     
     # zope.schema.interfaces.ISource(Interface)
-    
+
+    # zope.schema.interfaces.IIterableVocabulary
+    def __iter__(self):
+        """Return an iterator which provides the 
+        (zope.schema.vocabulary.SimpleTerm) terms from the vocabulary.
+        zope.schema.interfaces.IIterableVocabulary
+        """
+        for term_value in self.vdex.term_dict:
+            yield self.getTerm(term_value)
+
+    def __len__(self):
+        """Return the number of valid terms, or sys.maxint.
+        zope.schema.interfaces.IIterableVocabulary
+        """
+        return len(self.vdex.term_dict)
+
+
     def __contains__(self, value):
         """Is the value available in this source? 
         (zope.schema.interfaces.ISource)
@@ -155,6 +171,23 @@ class VDEXVocabularyMixin(object):
         """
         return self.vdex.getTermCaptionById(value, lang)
 
+
+    value_cast = unicode
+    # zope.schema.interfaces.IVocabularyFactory
+    def __call__(self, context=None):
+        """Return a context-bound instance that implements ISource.
+        zope.schema.interfaces.IVocabularyFactory
+        """
+        # self.vdex.getVocabularyDict(lang="*") -> {term_id: ({lang: caption}, children)}
+        terms = []
+        value_cast = self.__class__.value_cast
+        for key in self.vdex.term_dict.keys():
+            term = self.getTerm(key)
+            caption = self.getTermCaptionById(term)
+            term = vocabulary.SimpleTerm(value_cast(key), key, caption)
+            terms.append(term)
+        return vocabulary.SimpleVocabulary(terms)
+
 # !+NEED_NOT_BE_A_FACTORY, can register on IVocabulary
 class TreeVDEXVocabulary(VDEXVocabularyMixin):
     """Class to generate hierarchical vdex vocabularies
@@ -187,36 +220,6 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     """
     interface.implements(IVocabulary) # IVocabulary(IIterableVocabulary, IBaseVocabulary)
     # !+BaseVocabularyFactory should probably simply include this, instead of IBaseVocabulary?
-    
-    # zope.schema.interfaces.IIterableVocabulary
-    def __iter__(self):
-        """Return an iterator which provides the 
-        (zope.schema.vocabulary.SimpleTerm) terms from the vocabulary.
-        zope.schema.interfaces.IIterableVocabulary
-        """
-        for term_value in self.vdex.term_dict:
-            yield self.getTerm(term_value)
-    def __len__(self):
-        """Return the number of valid terms, or sys.maxint.
-        zope.schema.interfaces.IIterableVocabulary
-        """
-        return len(self.vdex.term_dict)
-    
-    value_cast = unicode
-    # zope.schema.interfaces.IVocabularyFactory
-    def __call__(self, context=None):
-        """Return a context-bound instance that implements ISource.
-        zope.schema.interfaces.IVocabularyFactory
-        """
-        all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
-        # self.vdex.getVocabularyDict(lang="*") -> {term_id: ({lang: caption}, children)}
-        terms = []
-        value_cast = self.__class__.value_cast
-        for (key, (caption, children)) in all_terms.iteritems():
-            # assert children is None
-            term = vocabulary.SimpleTerm(value_cast(key), key, caption)
-            terms.append(term)
-        return vocabulary.SimpleVocabulary(terms)
 
 class BoolFlatVDEXVocabularyFactory(FlatVDEXVocabularyFactory):
     value_cast = staticmethod(misc.as_bool)

@@ -47,6 +47,7 @@ import bungeni.core
 from bungeni.models import interfaces, domain, settings
 from bungeni.models.utils import is_column_binary
 from bungeni.utils import register, naming, common
+from bungeni.ui.interfaces import IVocabularyTextField
 from bungeni.capi import capi
 
 import transaction
@@ -567,7 +568,7 @@ def serialization_notifications():
 
 import collections
 import zope.component
-import zope.schema
+import zope.schema as schema
 from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from sqlalchemy.orm import RelationshipProperty, ColumnProperty
@@ -665,7 +666,9 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                 if (not is_foreign) and (property.key in descriptor.keys()):
                     field = descriptor.get(property.key)
                     if (field and field.property and
-                        (field.property.__class__ == zope.schema.Choice)):
+                        (schema.interfaces.IChoice.providedBy(field.property)
+                            or IVocabularyTextField.providedBy(field.property))
+                        ):
                                 factory = (field.property.vocabulary or 
                                     field.property.source
                                 )
@@ -673,7 +676,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                     vocab_name = getattr(field.property, 
                                         "vocabularyName", None)
                                     factory = zope.component.getUtility(
-                                        zope.schema.interfaces.IVocabularyFactory,
+                                        schema.interfaces.IVocabularyFactory,
                                         vocab_name
                                     )
                                 # !+VOCABULARIES(mb, aug-2012)some vocabularies
