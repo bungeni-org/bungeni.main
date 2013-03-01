@@ -156,7 +156,7 @@ def assign_role_minister_question(question):
     if question.ministry is not None:
         ministry_login_id = question.ministry.group_principal_id
         if ministry_login_id:
-            assign_role("bungeni.Minister", ministry_login_id, question)
+            assign_role(question.ministry.group_role, ministry_login_id, question)
 
 unschedule_doc = dbutils.unschedule_doc
 
