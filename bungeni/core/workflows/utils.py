@@ -10,8 +10,8 @@ log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
 
-from zope.component import provideUtility, queryUtility
-from zope.securitypolicy.interfaces import IPrincipalRoleMap, IRole
+from zope.component import provideUtility
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.securitypolicy.rolepermission import rolePermissionManager as \
     role_perm_mgr
 from zope.security.interfaces import IPermission
@@ -28,7 +28,7 @@ from bungeni.utils import common
 from bungeni.ui.utils import debug
 from bungeni.utils.misc import describe
 from bungeni.ui.i18n import _
-from bungeni.alchemist import Session
+#from bungeni.alchemist import Session
 
 import re
 import dbutils
@@ -294,12 +294,15 @@ def view_permission(item):
 def allow_retract(context, **kw):
     transition = kw.get("transition", None)
     assert isinstance(transition, Transition)
-    changes = domain.get_changes(context, "workflow")
-    if changes:
-        prev_change = changes[0].seq_previous
-        if prev_change:
-            return transition.destination == prev_change.audit.status
-    return False
+    if interfaces.IFeatureAudit.providedBy(context):
+        changes = domain.get_changes(context, "workflow")
+        if changes:
+            prev_change = changes[0].seq_previous
+            if prev_change:
+                allow = transition.destination == prev_change.audit.status
+    else:
+        allow = True
+    return allow
 
 def setup_retract_transitions():
     """Set up any retract transitions (from terminal states) for all workflows
