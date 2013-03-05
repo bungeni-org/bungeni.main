@@ -199,21 +199,23 @@
           </div>
           <div id="scheduler_here" class="dhx_cal_container">
                 <div class="dhx_cal_navline">
-                    <div class="dhx_cal_prev_button">&nbsp;</div>
-                    <div class="dhx_cal_next_button">&nbsp;</div>
-                    <div class="dhx_cal_today_button"></div>
-                    <div class="dhx_minical_icon" id="dhx_minical_icon" 
-                        onclick="javascript:show_minical()">&nbsp;</div>
-                    <div class="dhx_ical_icon" id="dhx_ical_icon"
-                        onclick="javascript:load_ical()">&nbsp;</div>
                     <div class="dhx_cal_date"></div>
-                    <div class="dhx_cal_tab" name="day_tab" id="day_tab"></div>
-                    <div class="dhx_cal_tab" name="week_tab" id="week_tab"></div>
-                    <div class="dhx_cal_tab" name="month_tab" id="month_tab"></div>
-                    <div class="dhx_cal_tab" name="year_tab" id="year_tab"></div>
-                    <div class="dhx_cal_tab" name="week_agenda_tab" id="agenda_tab"></div>
-                    <div class="dhx_cal_tab" name="venues_tab" id="venues_tab"></div>
-                    <div class="dhx_cal_tab" name="committees_tab" id="committees_tab"></div>
+                    <div class="bottom_line">
+                        <div class="dhx_cal_prev_button">&nbsp;</div>
+                        <div class="dhx_cal_next_button">&nbsp;</div>
+                        <div class="dhx_cal_today_button"></div>
+                        <div class="dhx_minical_icon" id="dhx_minical_icon" 
+                            onclick="javascript:show_minical()">&nbsp;</div>
+                        <div class="dhx_ical_icon" id="dhx_ical_icon"
+                            onclick="javascript:load_ical()">&nbsp;</div>
+                        <div class="dhx_cal_tab" name="day_tab" id="day_tab"></div>
+                        <div class="dhx_cal_tab" name="week_tab" id="week_tab"></div>
+                        <div class="dhx_cal_tab" name="month_tab" id="month_tab"></div>
+                        <div class="dhx_cal_tab" name="year_tab" id="year_tab"></div>
+                        <div class="dhx_cal_tab" name="week_agenda_tab" id="agenda_tab"></div>
+                        <div class="dhx_cal_tab" name="venues_tab" id="venues_tab"></div>
+                        <div class="dhx_cal_tab" name="committees_tab" id="committees_tab"></div>
+                    </div>
                 </div>
                 <div class="dhx_cal_header">
                 </div>

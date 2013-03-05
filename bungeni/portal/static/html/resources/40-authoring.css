@@ -73,7 +73,6 @@
     text-align: right;
     text-transform: none;
     padding: 0 0 0 1em;
-    z-index: 2;
     position:relative;
     height: 1.8em !important;
 }
@@ -113,10 +112,10 @@
     padding: 0px;
     display: inline;
 }
-/*.contentActions, 
+.contentActions, 
 .contentActions * {
     z-index: 1;
-}*/
+}
 .actionMenu {
     /*  The spec says we can't put this on an element with a float (although
         Opera is the only one that cares) and we need it in order to catch

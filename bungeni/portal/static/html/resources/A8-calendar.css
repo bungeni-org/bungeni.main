@@ -257,37 +257,25 @@ white-space: normal;
     z-index: 10050; !important;
 } */
 .dhx_cal_prev_button{
-    left:60px;!important;
+    left:10px;!important;
     right:auto;  !important;
 }
-.dhx_cal_next_button{
-    left:600px; !important;
-    right:auto;  !important;
-}
-.dhx_cal_today_button
-{
-    left:630px; !important;
-}
-
-.dhx_cal_navline #dhx_minical_icon{
-    left:710px;
-}
-
-.dhx_cal_navline #dhx_ical_icon{
-    width: 60px;
-    height: 18px;
-    left: 735px;
-    top: 1px;
-    cursor: pointer;
-    background: url(images/ical.png) no-repeat;
-}
-
 .dhx_cal_navline .dhx_cal_date
 {
-    left:800px; !important;
+    padding:0;
+    width:100%;
+    margin:0 auto;
+    text-align:center;
+    left:20px;
+    font-size:1.4em;
 }
 .dhx_cal_navline {
     text-transform:capitalize;
+    display:block;
+    height:46px !important;
+}
+.dhx_cal_navline .bottom_line {
+    top:23px;
 }
 .dhx_cal_larea{
     width:620px;
@@ -322,36 +310,55 @@ white-space: normal;
 }
 
 .dhx_cal_navline #day_tab {
-    left:100px;
+    left:50px;
 }
 
 .dhx_cal_navline #week_tab {
-    left:170px;
+    left:120px;
 }
 
 .dhx_cal_navline #month_tab {
-    left:240px;
+    left:190px;
 }
 
 .dhx_cal_navline #year_tab{
-    left:310px;
+    left:260px;
 }
 
 .dhx_cal_navline #agenda_tab{
-    left:380px;
+    left:330px;
 }
 
 .dhx_cal_navline #timeline_tab{
-    left:450px;
+    left:400px;
 }
 
 .dhx_cal_navline #venues_tab{
-    left:450px;
+    left:400px;
 }
 
 .dhx_cal_navline #committees_tab{
-    left:520px;
-    width:70px;
+    left:470px;
+}
+.dhx_cal_next_button{
+    left:540px; !important;
+    right:auto;  !important;
+}
+.dhx_cal_today_button
+{
+    left:580px; !important;
+}
+.dhx_cal_navline #dhx_minical_icon{
+    left:660px;
+    top:4px;
+}
+.dhx_cal_navline #dhx_ical_icon{
+    width: 60px;
+    height: 18px;
+    left: 685px;
+    top: 6px;
+    cursor: pointer;
+    background: url(images/ical.png) no-repeat;
 }
 
 /* events */

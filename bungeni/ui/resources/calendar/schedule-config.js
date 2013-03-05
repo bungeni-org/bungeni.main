@@ -303,7 +303,7 @@ YAHOO.bungeni.config = function () {
                     "text-records-dialog", {
                     modal: true,
                     visible: false,
-                    width: "90em",
+                    width: "60em",
                     draggable: true,
                     fixedcenter: true,
                     constraintoviewport: false

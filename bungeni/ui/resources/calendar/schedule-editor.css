@@ -110,7 +110,8 @@ span.dt_title_unit{
 
 #minute-editor_c,
 #text-records-dialog_c {
-  left: 10% !important;
+  left:auto !important;
+  margin:25% !important;
 }
 
 #agenda-preview-dialog_c {
