@@ -152,7 +152,7 @@ class VDEXVocabularyMixin(object):
         term = self.getTermById(value)
         title = self.vdex.getTermCaption(term, lang=get_default_language())
         value_cast = self.__class__.value_cast
-        return vocabulary.SimpleTerm(value_cast(value), title, title)
+        return vocabulary.SimpleTerm(value_cast(value), value, title)
     
     # imsvdex.vdex.VDEXManager
     
