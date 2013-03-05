@@ -151,7 +151,8 @@ class VDEXVocabularyMixin(object):
         # and vdex does not define a term for None.
         term = self.getTermById(value)
         title = self.vdex.getTermCaption(term, lang=get_default_language())
-        return vocabulary.SimpleTerm(value, title, title)
+        value_cast = self.__class__.value_cast
+        return vocabulary.SimpleTerm(value_cast(value), title, title)
     
     # imsvdex.vdex.VDEXManager
     
@@ -178,15 +179,7 @@ class VDEXVocabularyMixin(object):
         """Return a context-bound instance that implements ISource.
         zope.schema.interfaces.IVocabularyFactory
         """
-        # self.vdex.getVocabularyDict(lang="*") -> {term_id: ({lang: caption}, children)}
-        terms = []
-        value_cast = self.__class__.value_cast
-        for key in self.vdex.term_dict.keys():
-            term = self.getTerm(key)
-            caption = self.getTermCaptionById(term)
-            term = vocabulary.SimpleTerm(value_cast(key), key, caption)
-            terms.append(term)
-        return vocabulary.SimpleVocabulary(terms)
+        return vocabulary.SimpleVocabulary([term for term in self])
 
 # !+NEED_NOT_BE_A_FACTORY, can register on IVocabulary
 class TreeVDEXVocabulary(VDEXVocabularyMixin):
