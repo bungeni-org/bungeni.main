@@ -155,7 +155,7 @@ def publish_to_xml(context):
     data["permissions"] = get_permissions_dict(permissions)
     data["changes"] = []
     for change in getattr(context, "changes", []):
-        change_dict = obj2dict(change, 0, parent=context)
+        change_dict = obj2dict(change, 0, parent=context, exclude=exclude)
         change_permissions = get_head_object_state_rpm(change).permissions
         change_dict["permissions"] = get_permissions_dict(change_permissions)
         data["changes"].append(change_dict)
