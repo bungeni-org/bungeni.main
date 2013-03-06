@@ -1314,5 +1314,14 @@
      viewName=""
      weight="30"
      /-->
+   <!--OAuth-->
+   <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IOAuthApplicationContainer"
+        title="Add OAuth Application"
+        action="add"
+        permission="bungeni.o_auth_application.Add"
+        layer=".interfaces.IAdminSectionLayer"
+        order="62"
+    />
 </configure>
 

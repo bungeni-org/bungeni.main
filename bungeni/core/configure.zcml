@@ -256,5 +256,16 @@
   <utility
      zcml:condition="have devmode"
      factory=".emailnotifications.BungeniDummySMTPMailer" />
+
+
+  <!-- OAuth -->
+  <class class=".content.APISection">
+    <require permission="bungeni.oauth.View"
+             interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+  </class>
+  <class class=".content.OAuthSection">
+    <require permission="zope.Public"
+             interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+  </class>
 </configure>
 

@@ -9,8 +9,9 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.models.orm")
 
-import sqlalchemy as sa
-from sqlalchemy.orm import mapper, relation, column_property, backref
+import sqlalchemy as rdb
+from sqlalchemy.orm import mapper, class_mapper, relation, column_property, \
+    backref
 
 import schema
 import domain
@@ -64,7 +65,7 @@ mapper(domain.Group, schema.group,
         # orm property, this is now on the schema.
         #"group_principal_id": column_property(
         #    ("group." + schema.groups.c.type + "." +
-        #     sa.cast(schema.group.c.group_id, sa.String)
+        #     rdb.cast(schema.group.c.group_id, rdb.String)
         #    ).label("group_principal_id")
         #),
         "titletypes": relation(domain.TitleType),
@@ -95,14 +96,14 @@ mapper(domain.Group, schema.group,
 mapper(domain.UserDelegation, schema.user_delegation,
     properties={
         "user": relation(domain.User,
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                 schema.user_delegation.c.user_id == schema.user.c.user_id
             ),
             uselist=False,
             lazy=True
         ),
         "delegation": relation(domain.User,
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                 (schema.user_delegation.c.delegation_id ==
                     schema.user.c.user_id),
                 schema.user.c.active_p == "A"
@@ -160,7 +161,7 @@ mapper(domain.Office, schema.office,
 mapper(domain.GroupMembership, schema.user_group_membership,
     properties={
         "user":relation(domain.User,
-            primaryjoin=sa.and_(schema.user_group_membership.c.user_id ==
+            primaryjoin=rdb.and_(schema.user_group_membership.c.user_id ==
                 schema.user.c.user_id),
             uselist=False,
             backref="group_membership",
@@ -247,9 +248,8 @@ mapper(domain.Sitting, schema.sitting,
         "group": relation(domain.Group,
             primaryjoin=schema.sitting.c.group_id == schema.group.c.group_id,
             uselist=False,
-            lazy=False
+            lazy=True
         ),
-        "session": relation(domain.Session, lazy=False),
         "start_date": column_property(
             schema.sitting.c.start_date.label("start_date")
         ),
@@ -293,7 +293,7 @@ mapper(domain.Doc, schema.doc,
     polymorphic_identity=polymorphic_identity(domain.Doc),
     properties={
         "owner": relation(domain.User,
-            primaryjoin=sa.and_(schema.doc.c.owner_id ==
+            primaryjoin=rdb.and_(schema.doc.c.owner_id ==
                 schema.user.c.user_id),
             uselist=False,
             lazy=False),
@@ -313,7 +313,7 @@ mapper(domain.Doc, schema.doc,
         #    lazy=True,
         #),
         "audits": relation(domain.DocAudit, # !+ARCHETYPE_MAPPER
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                 schema.doc.c.doc_id == schema.doc_audit.c.doc_id
             ),
             backref="audit_head",
@@ -324,11 +324,11 @@ mapper(domain.Doc, schema.doc,
             passive_deletes=False, # SA default
         ),
         "versions": relation(domain.DocVersion, # !+ARCHETYPE_MAPPER
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                 schema.doc.c.doc_id == schema.doc_audit.c.doc_id,
             ),
             secondary=schema.doc_audit,
-            secondaryjoin=sa.and_(
+            secondaryjoin=rdb.and_(
                 schema.doc_audit.c.audit_id == schema.change.c.audit_id,
                 # !+NO_INHERIT_VERSION needs this
                 schema.change.c.action == "version",
@@ -372,24 +372,24 @@ mapper(domain.Change, schema.change,
     #polymorphic_identity="*" !+
     properties={
         "audit": relation(domain.Audit,
-            primaryjoin=sa.and_(schema.change.c.audit_id ==
+            primaryjoin=rdb.and_(schema.change.c.audit_id ==
                 schema.audit.c.audit_id),
             backref=backref("change", uselist=False),
             uselist=False,
             lazy=True,
         ),
         "user": relation(domain.User,
-            primaryjoin=sa.and_(schema.change.c.user_id ==
+            primaryjoin=rdb.and_(schema.change.c.user_id ==
                 schema.user.c.user_id),
             uselist=False,
             lazy=False
         ),
         "children": relation(domain.Change,
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                 schema.change.c.audit_id == schema.change_tree.c.parent_id,
             ),
             secondary=schema.change_tree,
-            secondaryjoin=sa.and_(
+            secondaryjoin=rdb.and_(
                 schema.change_tree.c.child_id == schema.change.c.audit_id,
                 # child.action == action, # !+constraint
             ),
@@ -431,11 +431,11 @@ mapper(domain.DocVersion,
     properties={
         # !+ only for versionable doc sub-types that also support "attachment"
         "attachments": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                 schema.change.c.audit_id == schema.change_tree.c.parent_id,
             ),
             secondary=schema.change_tree,
-            secondaryjoin=sa.and_(
+            secondaryjoin=rdb.and_(
                 schema.change_tree.c.child_id == schema.change.c.audit_id,
                 schema.change.c.audit_id == schema.audit.c.audit_id,
                 schema.audit.c.audit_type == polymorphic_identity(domain.Attachment),
@@ -493,7 +493,7 @@ mapper(domain.Event,
     polymorphic_identity=polymorphic_identity(domain.Event),
     properties={
         "head": relation(domain.Doc,
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                schema.doc.c.head_id == schema.doc.c.doc_id,
                # !+unnecessary (explicit constraint of no events on events)
                schema.doc.c.type != polymorphic_identity(domain.Event),
@@ -517,7 +517,7 @@ mapper(domain.Attachment, schema.attachment,
             lazy=False,
         ),
         "audits": relation(domain.AttachmentAudit, # !+ARCHETYPE_MAPPER
-            primaryjoin=sa.and_(schema.attachment.c.attachment_id == 
+            primaryjoin=rdb.and_(schema.attachment.c.attachment_id == 
                 schema.attachment_audit.c.attachment_id),
             backref="audit_head",
             uselist=True,
@@ -527,12 +527,12 @@ mapper(domain.Attachment, schema.attachment,
             passive_deletes=False, # SA default
         ),
         "versions": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
-            primaryjoin=sa.and_(
+            primaryjoin=rdb.and_(
                 schema.attachment.c.attachment_id ==
                     schema.attachment_audit.c.attachment_id,
             ),
             secondary=schema.attachment_audit,
-            secondaryjoin=sa.and_(
+            secondaryjoin=rdb.and_(
                 schema.attachment_audit.c.audit_id == schema.change.c.audit_id,
                 # !+NO_INHERIT_VERSION needs this
                 schema.change.c.action == "version",
@@ -573,7 +573,7 @@ mapper(domain.Heading, schema.heading,
 )
 
 
-# Items scheduled for a sitting expressed as a relation
+#Items scheduled for a sitting expressed as a relation
 # to their item schedule
 
 mapper(domain.ItemSchedule, schema.item_schedule,
@@ -583,7 +583,6 @@ mapper(domain.ItemSchedule, schema.item_schedule,
 )
 
 mapper(domain.EditorialNote, schema.editorial_note)
-mapper(domain.AgendaTextRecord, schema.agenda_text_record)
 
 mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussion,
     properties={
@@ -609,13 +608,13 @@ mapper(domain.Signatory, schema.signatory,
         "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
         "member": relation(domain.MemberOfParliament,
-            primaryjoin=sa.and_(schema.signatory.c.user_id == 
+            primaryjoin=rdb.and_(schema.signatory.c.user_id == 
                 schema.user_group_membership.c.user_id),
             secondary=schema.user_group_membership,
             uselist=False,
         ),
         "audits": relation(domain.SignatoryAudit,
-            primaryjoin=sa.and_(schema.signatory.c.signatory_id == 
+            primaryjoin=rdb.and_(schema.signatory.c.signatory_id == 
                 schema.signatory_audit.c.signatory_id),
             backref="audit_head",
             uselist=True,
@@ -742,6 +741,26 @@ mapper(domain.DebateTake, schema.debate_take,
         "debate_record": relation(domain.DebateRecord, lazy=True)
     }
 )
+
+mapper(domain.OAuthApplication, schema.oauth_application)
+mapper(domain.OAuthAuthorization, schema.oauth_authorization,
+    properties={
+        "user": relation(domain.User, lazy=True)
+    }
+)
+mapper(domain.OAuthAccessToken, schema.oauth_access_token,
+    properties={
+       "user": relation(domain.User,
+            primaryjoin=schema.oauth_access_token.c.authorization_id ==
+                schema.oauth_authorization.c.authorization_id,
+            secondary=schema.oauth_authorization,
+            lazy=True
+        ),
+        "authorization":relation(domain.OAuthAuthorization),
+    }
+)
+
+
 # !+IChange-vertical-properties special case: 
 # class is NOT workflowed, and in any case has no available_dynamic_features, no descriptor
 import bungeni.alchemist.model

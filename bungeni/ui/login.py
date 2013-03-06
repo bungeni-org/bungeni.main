@@ -37,10 +37,12 @@ class ILoginForm(interface.Interface):
         default=u"Username"))
     password = schema.Password(title=_("label_login_form_password", 
         default=u"Password"))
+    camefrom = schema.TextLine(required=False)
 
 
 class Login(form.FormBase):
     form_fields = form.Fields(ILoginForm)
+    form_fields["camefrom"].custom_widget = widgets.HiddenTextWidget
     prefix = ""
     form_name = _("login_form_title", default=u"Login")
     template = NamedTemplate("alchemist.form")
@@ -52,7 +54,7 @@ class Login(form.FormBase):
             self.request.response.redirect(
                         ui_utils.url.absoluteURL(workspace, self.request))
         return super(Login, self).__call__()
-            
+
     @form.action(_("label_login_form_login", default=u"Login"), 
         name="login")
     def handle_login(self, action, data):

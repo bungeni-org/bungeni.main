@@ -1761,3 +1761,33 @@ class ItemScheduleVoteDescriptor(ModelDescriptor):
         ),
         LanguageField("language"),
     ]
+
+class OAuthApplicationDescriptor(ModelDescriptor):
+    localisable = False
+    fields = [
+        F(name="identifier",
+          label="Unique Application Identifier",
+          required=True,
+          value_type="text",
+          render_type="text_line"
+        ),
+        F(name="name",
+          label="Application Name",
+          required=True,
+          value_type="text",
+          render_type="text_line"
+        ),
+        F(name="redirection_endpoint",
+          label="Redirection endpoint",
+          required=True,
+          value_type="text",
+          render_type="text_line"
+        ),
+        F(name="secret",
+          label="Application Secret",
+          localizable=[show("view"), hide("add")],
+          required=True,
+          value_type="text",
+          render_type="text_line"
+        ),
+    ]

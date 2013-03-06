@@ -575,4 +575,11 @@ class GroupMembershipRoleDescriptiveProperties(DescriptiveProperties):
         context = _merged(self.context)
         return component.getUtility(IRole, context.role_id).title
 
+@register.adapter()
+class OAuthApplicationDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IOAuthApplication)
 
+    @property
+    def title(self):
+        context = _merged(self.context)
+        return context.name

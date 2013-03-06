@@ -36,12 +36,12 @@
         permission="zope.Public"
         class=".redirect.RedirectToCurrent"
     />
-    <browser:page name="index"
+    <!--browser:page name="index"
         for="bungeni.models.interfaces.IBungeniApplication"
         permission="bungeni.ui.workspace.View"
         layer=".interfaces.IBungeniAuthenticatedSkin"
         class=".redirect.WorkspaceRootRedirect"
-    />
+    /-->
     <browser:page name="workflow-redirect"
         for="bungeni.core.workflow.interfaces.IWorkflowed"
         permission="bungeni.ui.workspace.View"
@@ -591,5 +591,43 @@
       name="takes"
       class="bungeni.ui.debaterecord.DebateRecordTakes"
       permission="bungeni.debate_takes.View"
+   />
+
+   <!-- OAuth -->
+   <browser:page
+      for="bungeni.core.content.APISection"
+      name="index.html"
+      class="bungeni.ui.api.APIDefaultView"
+      permission="bungeni.oauth.View"
+   />
+   <browser:page
+      for="bungeni.models.domain.OAuthApplicationContainer"
+      name="add"
+      class="bungeni.ui.api.AddOAuthApplication"
+      permission="zope.ManageContent"
+   />
+   <browser:page
+      for="bungeni.core.content.OAuthSection"
+      name="index.html"
+      class="bungeni.ui.api.APIDefaultView"
+      permission="zope.Public"
+   />
+   <browser:page
+      for="bungeni.core.content.OAuthSection"
+      name="authorize"
+      class="bungeni.ui.api.OAuthAuthorization"
+      permission="zope.Public"
+   />
+   <browser:page
+      for="bungeni.core.content.OAuthSection"
+      name="authorize-form"
+      class="bungeni.ui.api.OAuthAuthorizeForm"
+      permission="zope.Public"
+   />
+   <browser:page
+      for="bungeni.core.content.OAuthSection"
+      name="access-token"
+      class="bungeni.ui.api.OAuthAccessToken"
+      permission="zope.Public"
    />
 </configure>

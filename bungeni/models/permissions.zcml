@@ -162,4 +162,14 @@
 
   <permission id="bungeni.debate_takes.View" title="View debate takes" />
   <permission id="bungeni.debate_takes.Edit" title="Edit debate takes" />
+
+  <permission id="bungeni.o_auth_application.View" title="View oauth app" />
+  <permission id="bungeni.o_auth_application.Add" title="Add oauth app" />
+  <permission id="bungeni.o_auth_application.Edit" title="Edit oauth app" />
+  <permission id="bungeni.o_auth_application.Delete" title="Delete oauth app" />
+  <meta:redefinePermission from="bungeni.o_auth_application.View" to="zope.ManageContent" />
+  <meta:redefinePermission from="bungeni.o_auth_application.Add" to="zope.ManageContent" />
+  <meta:redefinePermission from="bungeni.o_auth_application.Edit" to="zope.ManageContent" />
+  <meta:redefinePermission from="bungeni.o_auth_application.Delete" to="zope.ManageContent" />
+  <permission id="bungeni.oauth.View" title="Use oauth api" />
 </configure>

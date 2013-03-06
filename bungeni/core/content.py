@@ -209,7 +209,13 @@ class AdminSection(Section):
 
 class WorkspaceSection(Section):
     pass
-    
+
+class APISection(Section):
+    pass
+
+class OAuthSection(Section):
+    pass
+
 #!+SECURITY (miano, nov-2010) the security checker below does not seem to be
 # used.
 # ensure public security setting for these Section attributes
