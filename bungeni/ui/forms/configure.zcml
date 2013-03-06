@@ -115,6 +115,20 @@ to e.g. "bungeni.{type}.Edit").
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
    <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IHeading"
+     class=".common.EditForm"
+     permission="bungeni.heading.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+   <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IHeading"
+     class=".common.DeleteForm"
+     permission="bungeni.heading.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+   <browser:page
      name="add"
      for="bungeni.models.interfaces.IEditorialNoteContainer"
      class=".common.AddForm"

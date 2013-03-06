@@ -328,8 +328,16 @@
         title="Delete heading"
         action="delete"
         order="99"
-        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.heading.Delete"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IHeading"
+        title="Edit heading"
+        action="edit"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.heading.Edit"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IEditorialNote"

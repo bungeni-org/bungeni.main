@@ -541,6 +541,8 @@ class ScheduleJSONListing(ContainerJSONListing):
         def add_wf_meta(enum):
             index, item = enum
             node = nodes[index]
+            if model_interfaces.IScheduleText.providedBy(node.item):
+                return
             wfc = IWorkflowController(node.item, None)
             if wfc is None:
                 return
