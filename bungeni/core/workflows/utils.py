@@ -243,31 +243,6 @@ def schedule_sitting_items(context):
                             toward=transition.destination)
                         break
 
-@describe(_("retract scheduled items"))
-def retract_scheduled_items(context):
-    for schedule in context.items.values():
-        manager = interfaces.ISchedulingManager(schedule.item, None)
-        if manager is None:
-            continue
-        wfc = IWorkflowController(schedule.item, None)
-        if wfc is None:
-            continue
-        fired = False
-        #try to unschedule (assuming we are redrafting minutes)
-        for state in manager.scheduled_states:
-            transitions = wfc.getFireableTransitionIdsToward(state)
-            if transitions:
-                wfc.fireTransition(transitions[0])
-                fired = True
-                break
-        #take back to schedule pending
-        if not fired:
-            for state in manager.schedulable_states:
-                transitions = wfc.getFireableTransitionIdsToward(state)
-                if transitions:
-                    wfc.fireTransition(transitions[0])
-                    break
-
 def check_agenda_finalized(context):
     def check_finalized(schedule):
         wfc = IWorkflowController(schedule.item, None)
@@ -278,7 +253,7 @@ def check_agenda_finalized(context):
         if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
             manager = interfaces.ISchedulingManager(schedule.item)            
             return (wfc.state_controller.get_status() not in 
-                (manager.schedulable_states + manager.scheduled_states)
+                manager.scheduled_states
             )
         else:
             return True

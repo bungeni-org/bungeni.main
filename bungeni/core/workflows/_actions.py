@@ -52,8 +52,6 @@ from bungeni.core.workflows.utils import (
     # when a sitting's agenda is published
     schedule_sitting_items,
     
-    # when a sitting is redrafted or minutes are redrafted,
-    retract_scheduled_items,
 )
 
 
@@ -83,15 +81,6 @@ def dissolve(group):
     groups = dbutils.endChildGroups(group)
     utils.dissolveChildGroups(groups, group)
     utils.unset_group_local_role(group)
-
-
-# sitting
-@describe(_(u"Apply the planned order of a setting as  the real order"))
-def set_real_order(sitting):
-    """Set real order to planned order.
-    """
-    for item in sitting.item_schedule:
-        item.real_order = item.planned_order
 
 
 # user
