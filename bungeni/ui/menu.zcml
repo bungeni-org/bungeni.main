@@ -841,6 +841,20 @@
         permission="bungeni.agenda_item.Add"
         layer=".interfaces.IWorkspaceSectionLayer"
     />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.core.schedule.WorkspaceSchedulingContext"
+        title="Publications"
+        action="publications"
+        permission="bungeni.report.View"
+        layer=".interfaces.IBungeniSkin"
+    />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.core.schedule.GroupSchedulingContext"
+        title="Publications"
+        action="../../publications"
+        permission="bungeni.report.View"
+        layer=".interfaces.IBungeniSkin"
+    />
 
     <!-- MENU ITEMS -->
     

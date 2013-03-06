@@ -228,6 +228,11 @@ class AppSetup(object):
                 default=u"Agenda items"),
             #marker=interfaces.IAgendaItemAddContext,
             description=_(u"Manage agenda items"))
+        ws_sched["publications"] = QueryContent(
+            container_getter(get_chamber_for_context, "publications"),
+            title=_("section_scheduling_publications", 
+                default=u"Publications"),
+            description=_(u"Publications"))
         
         workspace["groups"] = WorkspaceSection(
             title=_("section_groups", default=u"Groups"),

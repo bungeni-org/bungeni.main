@@ -209,6 +209,9 @@ class Group(Entity):
     available_dynamic_features = ["address"]
     interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
     
+    publications = one2many("publications", 
+        "bungeni.models.domain.ReportContainer", "group_id")
+    
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
         """

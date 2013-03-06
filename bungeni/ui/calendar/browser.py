@@ -351,11 +351,20 @@ class CalendarView(BungeniBrowserView):
     
     @property
     def groups_data(self):
-        group_list = [ {"key": comm.committee_id, 
-            "label": IDCDescriptiveProperties(comm).title}
-            for comm in Session().query(domain.Committee).all()
-            if comm.committee_id is not self.context.group_id
-        ]
+        group_list = []
+        try:
+            group = self.context.get_group()
+            if model_interfaces.ICommittee.providedBy(group):
+                group_container = group.parent_group.committees
+            else:
+                group_container = self.context.get_group().committees
+            group_list = [ {"key": comm.committee_id, 
+                "label": IDCDescriptiveProperties(comm).title}
+                for comm in group_container.values()
+                if comm.committee_id is not self.context.group_id
+            ]
+        except AttributeError:
+            log.warn("Context %s has no committees", self.context)
         return group_list        
     
     @property
