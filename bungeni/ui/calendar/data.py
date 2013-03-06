@@ -16,8 +16,7 @@ from sqlalchemy import orm, sql
 
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
-from bungeni.models.interfaces import (IParliament, IAgendaItem, 
-    ISchedulingManager, IScheduleText)
+from bungeni.models.interfaces import ISchedulingManager, IScheduleText
 from bungeni.models.utils import get_login_user_chamber
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
@@ -102,23 +101,20 @@ class ReportContext(object):
 class SchedulableItemsGetter(object):
     item_type = None
     filter_states = []
-    group_filter = False
+    group_filter = True
     domain_class = None
     
     #!+(SCHEDULING, April-2012) There still needs to be a way to filter 
     # documents per group - at least for documents that may be created
     # in various group contexts e.g. AgendaItems, Headings e.t.c
     def __init__(self, context, type_key, filter_states=None, 
-            group_filter=False, item_filters={}
+            group_filter=True, item_filters={}
         ):
         self.context = context
         self.item_type = type_key
         ti = capi.get_type_info(type_key)
         self.filter_states = get_schedulable_states(type_key)
-        self.group_filter = (group_filter or 
-            not IParliament.providedBy(context.group) or
-            IAgendaItem.implementedBy(ti.domain_model)
-        )
+        self.group_filter = group_filter
         try:
             self.domain_class = get_schedulable_types()[type_key].get(
                 "domain_model")
@@ -169,8 +165,12 @@ class SchedulableItemsGetter(object):
                 else:
                     expression = (column==value)
                 items_query = items_query.filter(expression)
-        if self.group_filter:
-            if hasattr(self.domain_class, "group_id") and self.group_id:
+        if self.group_filter and not IScheduleText.implementedBy(self.domain_class):
+            if hasattr(self.domain_class, "parliament_id") and self.group_id:
+                items_query = items_query.filter(
+                    self.domain_class.parliament_id==self.group_id
+                )
+            elif hasattr(self.domain_class, "group_id") and self.group_id:
                 items_query = items_query.filter(
                     self.domain_class.group_id==self.group_id
                 )

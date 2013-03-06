@@ -1086,6 +1086,7 @@ class ScheduleAddView(BrowserView):
             data_schedule_id = data_item.get("schedule_id")
             data_item_id = data_item.get("item_id")
             data_item_type = data_item.get("item_type")
+            schedule_item_type = data_item_type
             data_item_text = data_item.get("item_text")
             data_item_wf_status = data_item.get("wf_status")
             
@@ -1153,7 +1154,8 @@ class ScheduleAddView(BrowserView):
                     session.add(schedule_record)
                     session.flush()
                     notify(ObjectCreatedEvent(schedule_record))
-            record_keys.append(self.RECORD_KEY % (data_item_type, data_item_id))
+            record_keys.append(self.RECORD_KEY % 
+                (schedule_item_type, data_item_id))
         
         records_to_delete = filter(
             lambda item:(self.RECORD_KEY % (item.item_type, item.item_id)
