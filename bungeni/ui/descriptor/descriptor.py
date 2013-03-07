@@ -781,7 +781,7 @@ class AttachmentDescriptor(ModelDescriptor):
         F(name="name",
             label="Name",
             localizable=[
-                show("view edit add listing"),
+                show("view add"),
             ],
             value_type="text",
             render_type="no_input",
@@ -789,7 +789,7 @@ class AttachmentDescriptor(ModelDescriptor):
         F(name="mimetype",
             label="MIME Type",
             localizable=[
-                show("view edit add listing"),
+                show("view add"),
             ],
             value_type="text",
             render_type="no_input",
@@ -1319,6 +1319,7 @@ class SittingDescriptor(ModelDescriptor):
 class SittingReportDescriptor(ModelDescriptor):
     localizable = True
     sort_on = ["report_id",]
+    sort_dir = "desc"
     fields = [
         F(name="sitting_id",
             label="Sitting",
@@ -1510,15 +1511,6 @@ class ItemScheduleDescriptor(ModelDescriptor):
     # for now providing viewlets with a list of addable objects. TODO:
     # TODO: validate scheduled items
     fields = [
-        F(name="item_id",
-            label="Item",
-            required=True,
-            localizable=[
-                show("edit add view listing"), # db-not-null-ui-add, pk
-            ],
-            value_type="number",
-            render_type="number",
-        ),
         F(name="item_title", # derived @item_title
             label="Title",
             localizable=[

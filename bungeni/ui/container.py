@@ -417,7 +417,9 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 md_field = self.domain_annotation.get(sort_on)
                 if md_field:
                     if not md_field.listing_column_filter:
-                        continue
+                        pass
+                        #continue
+                        #!+SORTING(mb, Mar-2013) why does sorting need a filter?
                 else:
                     # check domain model if this if field is not in descriptor
                     if not hasattr(self.domain_model, sort_on):

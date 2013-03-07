@@ -539,18 +539,22 @@ class SittingScheduleView(BrowserView):
 
 @register.view(model_interfaces.IItemScheduleContainer, 
     name="jsonlisting-schedule",
-    protect={"bungeni.item_schedule_discussion.Edit": 
+    protect={"bungeni.item_schedule_discussion.View": 
         register.VIEW_DEFAULT_ATTRS})
 class ScheduleJSONListing(ContainerJSONListing):
     """Returns JSON listing with expanded unlisted properties used in
     scheduling user interface setup
     """
     def _json_values(self, nodes):
+        include_wf = self.request.form.get("add_wf", None)
         items = super(ScheduleJSONListing, self)._json_values(nodes)
         def add_wf_meta(enum):
             index, item = enum
             node = nodes[index]
+            item["item_id"] = node.item_id
             if model_interfaces.IScheduleText.providedBy(node.item):
+                return
+            if not include_wf:
                 return
             wfc = IWorkflowController(node.item, None)
             if wfc is None:

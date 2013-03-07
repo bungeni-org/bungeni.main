@@ -132,7 +132,7 @@ WIDGETS = {
         (widgets.FileDisplayWidget, widgets.FileEditWidget, widgets.FileAddWidget, None,
             None, None),
     ("user", "no_input"): # !+User.user_id
-        (None, None, None, None,
+        (None, widgets.HiddenTextWidget, widgets.HiddenTextWidget, None,
             listing.user_name_column,
             listing.user_name_column_filter),
     ("user", "single_select"):

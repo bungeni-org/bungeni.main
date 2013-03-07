@@ -255,15 +255,12 @@ class EditorialNoteDescriptiveProperties(DescriptiveProperties):
     
     @property
     def title(self):
-        if len(self.context.text.strip())>0:
-            return self.context.text
-        else:
-            return translate_i18n(
-                capi.get_type_info(self.context).descriptor.display_name)
+        return translate_i18n(
+            capi.get_type_info(self.context).descriptor_model.display_name)
     
     @property
     def description(self):
-        return self.context.text
+        return ""
 
 @register.adapter()
 class AgendaTextRecordDescriptiveProperties(EditorialNoteDescriptiveProperties):

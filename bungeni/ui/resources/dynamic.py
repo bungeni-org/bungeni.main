@@ -120,8 +120,8 @@ def get_globals(group_name, **kwargs):
             "scheduled_item_context_menu_header": i18n(_(u"Modify Item"), 
                 language
             ),
-            "json_listing_url" : "./items/jsonlisting",
-            "json_listing_url_meta" : "./items/jsonlisting-schedule",
+            "json_listing_url" : "./items/jsonlisting-schedule",
+            "json_listing_url_meta" : "./items/jsonlisting-schedule?add_wf=y",
             "save_schedule_url": "./items/save-schedule",
             "discussions_save_url": "discussions/save-discussions",
             "discussion_items_json_url" : "discussions/jsonlisting-raw",

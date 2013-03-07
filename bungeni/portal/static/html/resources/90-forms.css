@@ -227,6 +227,9 @@ input.searchButton {
 .field div {
     margin: .25em 0;
 }
+.widget-noinputwidget{
+    display: none;
+}
 .yui-overlay,
 .yui-panel-container {width: 200px;}
 
