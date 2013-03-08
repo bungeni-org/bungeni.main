@@ -150,6 +150,9 @@ class IOwned(interface.Interface):
         """Get the user instance that is the owner of this item.
         """
 
+class ISerializable(interface.Interface):
+    """Marker interface for serializable types"""
+
 class IBungeniContent(IOwned):
     """Parliamentary content
     

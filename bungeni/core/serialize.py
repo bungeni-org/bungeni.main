@@ -125,7 +125,7 @@ def publish_to_xml(context):
     if interfaces.IFeatureAudit.providedBy(context):
         include.append("event")
     
-    exclude = ["data", "event", "attachments", "changes"]
+    exclude = ["data", "event", "attachments"]
     
     # include binary fields and include them in the zip of files for this object
     for column in class_mapper(context.__class__).columns:
@@ -153,12 +153,6 @@ def publish_to_xml(context):
         data["tags"] = tags
     permissions = get_object_state_rpm(context).permissions
     data["permissions"] = get_permissions_dict(permissions)
-    data["changes"] = []
-    for change in getattr(context, "changes", []):
-        change_dict = obj2dict(change, 0, parent=context, exclude=exclude)
-        change_permissions = get_head_object_state_rpm(change).permissions
-        change_dict["permissions"] = get_permissions_dict(change_permissions)
-        data["changes"].append(change_dict)
     
     # setup path to save serialized data 
     path = os.path.join(setupStorageDirectory(), obj_type)
@@ -177,9 +171,6 @@ def publish_to_xml(context):
                 attachment_dict = obj2dict(attachment, 1,
                     parent=context,
                     exclude=["data", "event", "versions"])
-                permissions = get_object_state_rpm(attachment).permissions
-                attachment_dict["permissions"] = \
-                    get_permissions_dict(permissions)
                 # saving attachment to tmp
                 attached_file = tmp(delete=False)
                 attached_file.write(attachment.data)
@@ -420,9 +411,13 @@ def batch_serialize(type_key="*"):
     #list of domain classes to be serialized
     domain_models = []
     if type_key == "*":
-        for (type_key, info) in capi.iter_type_info():
-            if info.workflow:
-                domain_models.append(info.domain_model)
+        types_vocab = zope.component.getUtility(
+            schema.interfaces.IVocabularyFactory, "serializable_type")
+        for term in types_vocab():
+            if term.value == "*": 
+                continue
+            info = capi.get_type_info(term.value)
+            domain_models.append(info.domain_model)
     else:
         info = capi.get_type_info(type_key)
         if info.workflow:
@@ -443,8 +438,8 @@ def serialization_version_event_handler(event):
     if event.object.procedure == "m":
         queue_object_serialization(event.object.head)
 
-@register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
-@register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
+@register.handler(adapts=(interfaces.ISerializable, IObjectCreatedEvent))
+@register.handler(adapts=(interfaces.ISerializable, IObjectModifiedEvent))
 def serialization_event_handler(obj, event):
     """queues workflowed objects when created or modified"""
     queue_object_serialization(obj)
@@ -452,12 +447,12 @@ def serialization_event_handler(obj, event):
 @register.handler(adapts=(IAlchemistContent, IObjectCreatedEvent))
 @register.handler(adapts=(IAlchemistContent, IObjectModifiedEvent))
 def serialization_event_handler_non_wf(obj, event):
-    """queues serialization of workflowed parent (if any)"""
+    """queues serialization of serializable parent (if any)"""
     #!+SERIALIZATION(mb, Jan-2013) Might change how changes are bubbled up
-    if not IWorkflowed.providedBy(obj):
+    if not interfaces.ISerializable.providedBy(obj):
         # workflowed types will be handled by serialize_event_handler
         wf_parent = obj
-        while not IWorkflowed.providedBy(wf_parent):
+        while not interfaces.ISerializable.providedBy(wf_parent):
             wf_parent = (wf_parent.__parent__ 
                 if hasattr(wf_parent, "__parent__") else None)
             if not wf_parent:
@@ -598,7 +593,12 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
             descriptor = utils.get_descriptor(obj)
         except KeyError:
             log.error("Could not get descriptor for IAlchemistContent %r", obj)
-    
+        
+        if parent is not None and IWorkflowed.providedBy(obj):
+            permissions = get_object_state_rpm(obj).permissions
+            result["permissions"] = get_permissions_dict(permissions)
+            result["tags"] = IStateController(obj).get_state().tags
+        
     # Get additional attributes
     for name in include:
         value = getattr(obj, name, None)
@@ -613,9 +613,6 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                 value = value.values()
             for item in value:
                 i = obj2dict(item, 0, lang=lang)
-                if name == "versions":
-                    permissions = get_head_object_state_rpm(item).permissions
-                    i["permissions"] = get_permissions_dict(permissions)
                 res.append(i)
             result[name] = res
         else:

@@ -243,6 +243,8 @@ mapper(domain.Session, schema.session,
     }
 )
 
+mapper(domain.AgendaTextRecord, schema.agenda_text_record)
+
 mapper(domain.Sitting, schema.sitting,
     properties={
         "group": relation(domain.Group,

@@ -207,7 +207,11 @@ class Group(Entity):
     """An abstract collection of users.
     """
     available_dynamic_features = ["address"]
-    interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
+    interface.implements(
+        interfaces.IBungeniGroup, 
+        interfaces.ITranslatable,
+        interfaces.ISerializable
+    )
     
     publications = one2many("publications", 
         "bungeni.models.domain.ReportContainer", "group_id")
@@ -241,7 +245,10 @@ class GroupMembership(HeadParentedMixin, Entity):
     """
     available_dynamic_features = []
     interface.implements(
-        interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
+        interfaces.IBungeniGroupMembership, 
+        interfaces.ITranslatable,
+        interfaces.ISerializable
+    )
     
     subroles = one2many("subroles", 
         "bungeni.models.domain.GroupMembershipRoleContainer", "membership_id")
@@ -294,6 +301,7 @@ class Sitting(Entity):
         interfaces.ISitting,
         interfaces.ITranslatable,
         interfaces.IScheduleContent,
+        interfaces.ISerializable
     )
     attendance = one2many("attendance",
         "bungeni.models.domain.SittingAttendanceContainer", "sitting_id")
@@ -487,7 +495,8 @@ class Doc(Entity):
     interface.implements(
         interfaces.IBungeniContent,  # IOwned
         interfaces.IDoc,
-        interfaces.ITranslatable
+        interfaces.ITranslatable,
+        interfaces.ISerializable
     )
     
     def on_create(self):
