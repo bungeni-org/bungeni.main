@@ -47,7 +47,7 @@ import bungeni.core
 from bungeni.models import interfaces, domain, settings
 from bungeni.models.utils import is_column_binary
 from bungeni.utils import register, naming, common
-from bungeni.ui.interfaces import IVocabularyTextField
+from bungeni.ui.interfaces import IVocabularyTextField, ITreeVocabulary
 from bungeni.capi import capi
 
 import transaction
@@ -686,6 +686,21 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                                 display_name = None
                                 try:
                                     vocabulary = factory(obj)                             
+                                    #handle vdex hierarchical terms
+                                    if ITreeVocabulary.providedBy(factory):
+                                        values = value.splitlines()
+                                        term_values = []
+                                        for val in values:
+                                            term_values.append(dict(
+                                                name=property.key,
+                                                value=val,
+                                                displayAs=factory.vdex.getTermCaption(
+                                                    factory.getTermById(val),
+                                                    lang
+                                                )
+                                            ))
+                                        result[property.key] = term_values
+                                        continue
                                     term = vocabulary.getTerm(value)
                                     if lang:
                                         if hasattr(factory, "vdex"):
