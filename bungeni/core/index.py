@@ -515,6 +515,8 @@ def setupStorageDirectory(part_target="index"):
     
     return store_dir
 
+""""
+!+DISABLE_XAPIAN
 # create storage directory if not present
 store_dir = setupStorageDirectory() 
 
@@ -538,6 +540,7 @@ if interfaces.DEBUG:
 else:
     searcher.hub.auto_refresh_delta = 10
 
+"""
 
 def main():
     import logging

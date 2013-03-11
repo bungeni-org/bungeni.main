@@ -7,10 +7,11 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="bungeni.core">
-    
+
+    <!-- !+DISABLE_XAPIAN    
     <include package="ore.xapian" />
     <include package="ore.xapian" file="meta.zcml" />
-    
+    -->
     <include package="plone.transforms" file="meta.zcml" />
     <include package="plone.transforms" />
     
@@ -57,6 +58,8 @@
     <!--include file="webdav.zcml" /-->
     
     <!-- Searching -->
+    <!--
+    !+DISABLE_XAPIAN
     <utility component=".index.searcher" />
     
     <adapter for="bungeni.models.interfaces.IBungeniContent"
@@ -79,9 +82,11 @@
     <utility factory=".index.ContentResolver" />
     
     <xapian:queue indexer=".index.indexer" />
-    
+    -->
     <!-- Marker interfaces -->
 
+    <!-- 
+    !+DISABLE_XAPIAN
     <class class="bungeni.models.domain.User">
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
@@ -108,7 +113,7 @@
     <class class="bungeni.models.domain.Committee">
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
-    
+    -->
     <class class=".content.Section">
         <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
     </class>
@@ -124,6 +129,8 @@
     </class>
     -->
     
+    <!--
+     !+DISABLE_XAPIAN
     <class class="bungeni.models.domain.Question">
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
@@ -145,7 +152,7 @@
     <class class="bungeni.models.domain.Report">
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
-    
+    -->
     
     <!-- Pluggable Traversal for Parliamentary Content -->
     <adapter for="bungeni.models.interfaces.IBungeniContent

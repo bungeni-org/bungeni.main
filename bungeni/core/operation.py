@@ -23,7 +23,8 @@ class IndexOperation( object ):
     an async/queued index operation
     """
 
-    interface.implements( interfaces.IIndexOperation )
+    #!+DISABLE_XAPIAN
+    #interface.implements( interfaces.IIndexOperation )
 
     __slots__ = ('oid', 'resolver_id', 'requeue')
     requeue = False
@@ -57,7 +58,8 @@ class IndexOperation( object ):
         return self.oid
 
 class AddOperation( IndexOperation ):
-    
+
+    #!+DISABLE_XAPIAN
     interface.implements( interfaces.IAddOperation )
 
     def process( self, connection ):
@@ -72,7 +74,8 @@ class AddOperation( IndexOperation ):
         
 class ModifyOperation( IndexOperation ):
 
-    interface.implements( interfaces.IModifyOperation )
+    #!+DISABLE_XAPIAN
+    #interface.implements( interfaces.IModifyOperation )
     
     def process( self, connection ):
         if interfaces.DEBUG_LOG: log.info("Modifying %r"%self.document_id )        
@@ -89,7 +92,8 @@ class ModifyOperation( IndexOperation ):
         
 class DeleteOperation( IndexOperation ):
 
-    interface.implements( interfaces.IDeleteOperation )
+    #!+DISABLE_XAPIAN
+    #interface.implements( interfaces.IDeleteOperation )
     
     def process( self, connection ):
         if interfaces.DEBUG_LOG: log.info("Deleting %r"%self.document_id )
@@ -105,7 +109,8 @@ class DeleteOperation( IndexOperation ):
 
 class OperationFactory( object ):
 
-    interface.implements( interfaces.IOperationFactory )
+    #!+DISABLE_XAPIAN
+    #interface.implements( interfaces.IOperationFactory )
 
     __slots__ = ('context',)
 

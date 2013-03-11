@@ -84,7 +84,8 @@ setup(name='bungeni',
     {
     'console_scripts' : [
         'bungeni-reset-db = bungeni.core.schema:reset_database',
-                'bungeni-sync-index = bungeni.core.index:reset_index',
+                # !+DISABLE_XAPIAN
+                #'bungeni-sync-index = bungeni.core.index:reset_index',
     ],
     'paste.app_factory' : [
         'main = bungeni.server.startup:application_factory'

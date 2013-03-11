@@ -47,8 +47,9 @@
   -->
     
     <!-- default indexing setup -->
+    <!-- !+DISABLE_XAPIAN
     <include package="ore.xapian" />
-    
+    -->
     <!-- App Security -->
     <include file="security.zcml" />
     

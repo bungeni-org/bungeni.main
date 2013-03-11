@@ -130,8 +130,9 @@ class AppSetup(object):
             """ % (capi.get_path_for("translations", "bungeni")))
         
         # ensure indexing facilities are setup(lazy)
-        import index
-        index.setupFieldDefinitions(index.indexer)
+        # !+DISABLE_XAPIAN
+        #import index
+        #index.setupFieldDefinitions(index.indexer)
         
         sm = site.LocalSiteManager(self.context)
         self.context.setSiteManager(sm)

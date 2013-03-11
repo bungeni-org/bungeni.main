@@ -14,7 +14,8 @@ from zope.formlib import form, namedtemplate
 from bungeni.alchemist import Session
 from bungeni.alchemist import ui
 from bungeni.models import domain, interfaces
-from bungeni.core.index import IndexReset
+# !+DISABLE_XAPIAN
+#from bungeni.core.index import IndexReset
 from bungeni.core.serialize import batch_serialize
 from bungeni.ui import browser
 from bungeni.ui.interfaces import IBungeniSkin, ISerializationManager
@@ -68,7 +69,9 @@ class XapianSettings(browser.BungeniBrowserView):
     
     def __call__(self):
         if self.request.method == "POST":
-            IndexReset().start()
+            pass
+            # !+DISABLE_XAPIAN
+            #IndexReset().start()
         return self.render()
     
 
