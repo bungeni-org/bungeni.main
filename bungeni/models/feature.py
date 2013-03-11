@@ -135,6 +135,7 @@ def feature_event(kls, feature):
         else:
             log.warn('IGNORING feature "event" ref to disabled type %r', event_type_key)
 
+
 def feature_signatory(kls, feature):
     """Decorator for domain types to support "signatory" feature.
     For Doc types.

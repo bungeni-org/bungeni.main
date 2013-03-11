@@ -17,7 +17,10 @@
     <utility factory="bungeni.models.roles.load_roles"
              provides="bungeni.models.roles.IDummyRoleConfig"/>
     <include package="bungeni.models" file="permissions.zcml" />
-    <!--<include package="bungeni.core.workflows" file="permissions.zcml" />-->
+    <!-- !+permissions.zcml bungeni_custom/worfklows/.auto/permissions.zcml 
+    <include package="bungeni.core.workflows" file="permissions.zcml" />
+    -->
+    
     <!-- !+UI_VIEWS(mr, jun-2012) following is a temporary global grant to 
     re-establish (in a more direct way) the exact same permission environment
     as prior to r9370:

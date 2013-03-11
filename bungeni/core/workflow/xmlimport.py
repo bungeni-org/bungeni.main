@@ -56,12 +56,15 @@ ZCML_BOILERPLATE = """<?xml version="1.0"?>
 
 !! AUTO-GENERATED !! DO NOT MODIFY !!
 
-This file is automatically [re-]generated on startup, after all the 
+This file is automatically [re-]generated on startup after all the 
 workflow XML files have been loaded, see: 
 bungeni.core.workflow.xmlimport.zcml_check_regenerate()
 
-It would need to be regenerated when any workflow transition is modified 
-or added, a condition that is checked for and flagged automatically.
+It is regenerated when any workflow transition is modified or added, 
+a condition that is checked for and flagged automatically.
+
+Note, since r10609, this is written out to disk for DEBUGGING PURPOSES ONLY,
+as all directives here are executed directly on loading workflows.
 
 See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
@@ -76,19 +79,14 @@ def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py).
     """
     #!+permissions.zcml(mr, aug-2011) bypass writing to disk?
-    def get_filepath():
-        # ZCML_FILENAME is under bungeni.core.workflows
-        import bungeni.core.workflows
-        __path__ = os.path.dirname(bungeni.core.workflows.__file__)
-        return os.path.join(__path__, ZCML_FILENAME)
-    filepath = get_filepath()
+    filepath = capi.get_path_for("workflows/.auto/%s" % ZCML_FILENAME)
     # read current file
     persisted = open(filepath, "r").read().decode("utf-8")
     # regenerate, compare, and re-write if needed
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
-        log.warn("CHANGES to file:\n%s" % (
-            misc.unified_diff(persisted, regenerated, filepath, "NEW")))
+        log.warn("CHANGES to file:\n%s", 
+            misc.unified_diff(persisted, regenerated, filepath, "NEW"))
         open(filepath, "w").write(regenerated.encode("utf-8"))
 
 def is_zcml_permissionable(trans_elem):
