@@ -81,7 +81,10 @@ def zcml_check_regenerate():
     #!+permissions.zcml(mr, aug-2011) bypass writing to disk?
     filepath = capi.get_path_for("workflows/.auto/%s" % ZCML_FILENAME)
     # read current file
-    persisted = open(filepath, "r").read().decode("utf-8")
+    try:
+        persisted = open(filepath, "r").read().decode("utf-8")
+    except IOError:
+        persisted = u""
     # regenerate, compare, and re-write if needed
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
