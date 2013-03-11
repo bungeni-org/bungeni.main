@@ -259,7 +259,7 @@ mapper(domain.Sitting, schema.sitting,
             schema.sitting.c.end_date.label("end_date")
         ),
         "item_schedule": relation(domain.ItemSchedule,
-            order_by=schema.item_schedule.c.planned_order,
+            order_by=schema.item_schedule.c.real_order,
             cascade="all"
         ),
         "sa_attendance": relation(domain.SittingAttendance,

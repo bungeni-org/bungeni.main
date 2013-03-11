@@ -78,7 +78,7 @@ to e.g. "bungeni.{type}.Edit").
   <browser:page
      name="delete"
      for="bungeni.models.interfaces.IItemSchedule"
-     class=".forms.DeleteForm"
+     class=".common.DeleteForm"
      permission="bungeni.item_schedule.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
@@ -86,7 +86,7 @@ to e.g. "bungeni.{type}.Edit").
   <browser:page
      name="delete"
      for="bungeni.models.interfaces.IItemScheduleVote"
-     class=".forms.DeleteForm"
+     class=".common.DeleteForm"
      permission="bungeni.item_schedule_vote.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
@@ -171,13 +171,6 @@ to e.g. "bungeni.{type}.Edit").
      layer="..interfaces.IWorkspaceSchedulingSectionLayer"
      />
 
-
-    <browser:page name="delete"
-        for="bungeni.models.interfaces.IItemScheduleContainer"
-        class=".forms.ItemScheduleContainerDeleteForm"
-        permission="bungeni.item_schedule.Delete"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
    <browser:page
      name="add"
      for="bungeni.models.interfaces.ISessionContainer"

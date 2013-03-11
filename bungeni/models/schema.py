@@ -712,9 +712,7 @@ item_schedule = sa.Table("item_schedule", metadata,
         sa.ForeignKey("sitting.sitting_id"),
         nullable=False
     ),
-    sa.Column("planned_order", sa.Integer,
-        sa.Sequence("planned_order", 1, 1)
-    ),
+    sa.Column("planned_order", sa.Integer),
     sa.Column("real_order", sa.Integer),
     # item was discussed on this sitting sitting
     sa.Column("active", sa.Boolean, default=True),

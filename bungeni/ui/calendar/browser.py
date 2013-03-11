@@ -40,10 +40,9 @@ from zc.resourcelibrary import need
 from sqlalchemy import orm
 from sqlalchemy.sql.expression import or_
 
-from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import SittingContainerSchedulingContext
-from bungeni.core.workflow.interfaces import (IWorkflow, 
+from bungeni.core.workflow.interfaces import (
     IWorkflowController, InvalidTransitionError
 )
 from bungeni.core.language import get_default_language
@@ -135,81 +134,8 @@ class EventPartialForm(AddForm):
             yield widget
 
 
-def get_scheduling_actions(context, request):
-    return get_actions("scheduling_actions", context, request)
-
 def get_sitting_actions(context, request):
     return get_actions("sitting_actions", context, request)
-
-def get_discussion_actions(context, request):
-    return get_actions("discussion_actions", context, request)
-
-def get_workflow_actions(context, request):
-    return get_actions("context_workflow", context, request)
-
-def get_sitting_items(sitting, request, include_actions=False):
-    items = []
-    
-    if (sitting.status in IWorkflow(sitting).get_state_ids(
-            keys=["draft_agenda", "published_agenda"])
-        ):
-        order = "planned_order"
-    else:
-        order = "real_order"
-    
-    schedulings = map(
-        removeSecurityProxy,
-        sitting.items.batch(order_by=order, limit=None))
-    for scheduling in schedulings:
-        item = ProxyFactory(location_wrapped(scheduling.item, sitting))
-       
-        props = IDCDescriptiveProperties.providedBy(item) and item or \
-                IDCDescriptiveProperties(item)
-
-        discussions = tuple(scheduling.discussions.values())
-        discussion = discussions and discussions[0] or None
-        truncated_discussion = None
-        if ((discussion is not None) 
-           and (discussion.body is not None)):
-            #truncate discussion to first hundred characters
-            t_discussion = discussion.body[0:100]
-            try:
-                #truncate discussion to first two lines
-                index = t_discussion.index("<br>")
-                index2 = t_discussion.index("<br>", index+4)
-                truncated_discussion = t_discussion[0:index2] + "..."
-            except ValueError:
-                truncated_discussion = t_discussion + "..."
-        state_title = IWorkflow(item).get_state(item.status).title
-        item = removeSecurityProxy(item)
-        record = {
-            "title": props.title,
-            "description": props.description,
-            "name": stringKey(scheduling),
-            "status": item.status,
-            "type": item.type.capitalize,
-            "state_title": state_title,
-            "heading": True if item.type == "heading" else False,
-            #"category_id": scheduling.category_id,
-            #"category": scheduling.category,
-            "discussion": discussion,
-            "truncated_discussion": truncated_discussion,
-            "delete_url": "%s/delete" % url.absoluteURL(scheduling, request),
-            "url": url.absoluteURL(item, request),
-        }
-        
-        if include_actions:
-            record["actions"] = get_scheduling_actions(scheduling, request)
-            record["workflow"] = get_workflow_actions(item, request)
-
-            discussion_actions = get_discussion_actions(discussion, request)
-            if discussion_actions:
-                assert len(discussion_actions) == 1
-                record["discussion_action"] = discussion_actions[0]
-            else:
-                record["discussion_action"] = None
-        items.append(record)
-    return items
 
 def create_sittings_map(sittings, request):
     """Returns a dictionary that maps:
@@ -1096,8 +1022,18 @@ class ScheduleAddView(BrowserView):
         session = Session()
         sitting_id = self.sitting.sitting_id
         record_keys = []
+        planned_index = 1
+
+        def add_planned_index(obj, index):
+            """add planned order key for non text record types
+            """
+            if not (model_interfaces.IScheduleText.providedBy(obj.item)):
+                obj.planned_order = planned_index
+                index = index + 1
+            return index
+
         for (index, data_item) in enumerate(self.data):
-            actual_index = index + 1
+            real_index = index + 1
             data_schedule_id = data_item.get("schedule_id")
             data_item_id = data_item.get("item_id")
             data_item_type = data_item.get("item_type")
@@ -1120,7 +1056,7 @@ class ScheduleAddView(BrowserView):
                 schedule_record = domain.ItemSchedule(
                     item_id=data_item_id,
                     item_type=data_item_type,
-                    planned_order=actual_index,
+                    real_order=real_index,
                     sitting_id=sitting_id
                 )
                 session.add(schedule_record)
@@ -1131,7 +1067,9 @@ class ScheduleAddView(BrowserView):
                     current_record = removeSecurityProxy(
                         self.context.get(getItemKey(data_schedule_id))
                     )
-                    current_record.planned_order = actual_index
+                    current_record.real_order = real_index
+                    planned_index = add_planned_index(current_record, 
+                        planned_index)
                     session.add(current_record)
                     session.flush()
                     notify(ObjectModifiedEvent(current_record))
@@ -1163,9 +1101,10 @@ class ScheduleAddView(BrowserView):
                     schedule_record = domain.ItemSchedule(
                         item_id=data_item_id,
                         item_type=data_item_type,
-                        planned_order=actual_index,
+                        planned_order=real_index,
                         sitting_id=sitting_id
                     )
+                    add_planned_index(schedule_record, planned_index)
                     session.add(schedule_record)
                     session.flush()
                     notify(ObjectCreatedEvent(schedule_record))

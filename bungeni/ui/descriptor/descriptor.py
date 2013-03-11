@@ -1504,7 +1504,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
     localizable = True
     #display_name = "Scheduling"
     #container_name = "Schedulings"
-    sort_on = ["planned_order", ]
+    sort_on = ["real_order", ]
     sort_dir = "asc"
     #!+VOCABULARY(mb, nov-2010) item_id references a variety of content
     # types identified by the type field. Scheduling 'add items' view suffices

@@ -13,7 +13,6 @@ from copy import copy
 from zope.publisher.interfaces import BadRequest
 from zope import component
 from zope import interface
-from zope import schema
 from zope import formlib
 
 from zope.security.proxy import removeSecurityProxy
@@ -792,45 +791,6 @@ class TranslateForm(AddForm):
         #        "?portal_status_message=Translation added")
         
         self._finished_add = True
-
-
-class ReorderForm(PageForm):
-    """Item reordering form.
-
-    We use an intermediate list of ids to represent the item order.
-
-    Note that this form must be subclassed with the ``save_ordering``
-    method overriden.
-    """
-
-    class IReorderForm(interface.Interface):
-        ordering = schema.List(
-            title=u"Ordering",
-            value_type=schema.TextLine())
-
-    template = NamedTemplate("alchemist.form")
-    form_name = _(u"Item reordering")
-    form_fields = formlib.form.Fields(IReorderForm, render_context=True)
-
-    def setUpWidgets(self, ignore_request=False):
-        class context:
-            ordering = list(self.context)
-
-        self.adapters = {
-            self.IReorderForm: context,
-            }
-
-        self.widgets = formlib.form.setUpWidgets(
-            self.form_fields, self.prefix, self.context, self.request,
-            form=self, adapters=self.adapters, ignore_request=ignore_request)
-
-    def save_ordering(self, ordering):
-        raise NotImplementedError("Must be defined by subclass")
-
-    @formlib.form.action(_(u"Save"), name="save")
-    def handle_save(self, action, data):
-        self.save_ordering(data["ordering"])
-
 
 
 @register.view(domain.Attachment, layer=IBungeniSkin, name="delete",
