@@ -145,7 +145,8 @@ class User(Entity):
     """
     available_dynamic_features = ["address"]
     
-    interface.implements(interfaces.IBungeniUser, interfaces.ITranslatable)
+    interface.implements(interfaces.IBungeniUser, interfaces.ITranslatable, 
+        interfaces.ISerializable)
     
     def __init__(self, login=None, **kw):
         if login:
