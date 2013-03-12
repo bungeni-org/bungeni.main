@@ -1048,14 +1048,14 @@ class ScheduleAddView(BrowserView):
                     record_type = data_item_type,
                     language=get_default_language()
                 )
-                data_item_type = domain.AgendaTextRecord.type
                 session.add(text_record)
                 session.flush()
                 notify(ObjectCreatedEvent(text_record))
                 data_item_id = domain.get_mapped_object_id(text_record)
+                schedule_item_type = domain.AgendaTextRecord.type
                 schedule_record = domain.ItemSchedule(
                     item_id=data_item_id,
-                    item_type=data_item_type,
+                    item_type=schedule_item_type,
                     real_order=real_index,
                     sitting_id=sitting_id
                 )
@@ -1091,7 +1091,7 @@ class ScheduleAddView(BrowserView):
                     #update text for text records
                     text_record = removeSecurityProxy(current_record.item)
                     if model_interfaces.IScheduleText.providedBy(text_record):
-                        data_item_type = domain.AgendaTextRecord.type
+                        schedule_item_type = domain.AgendaTextRecord.type
                         if text_record.text != data_item_text:
                             text_record.text = data_item_text
                             session.add(text_record)
@@ -1110,7 +1110,6 @@ class ScheduleAddView(BrowserView):
                     notify(ObjectCreatedEvent(schedule_record))
             record_keys.append(self.RECORD_KEY % 
                 (schedule_item_type, data_item_id))
-        
         records_to_delete = filter(
             lambda item:(self.RECORD_KEY % (item.item_type, item.item_id)
                 not in record_keys
@@ -1119,8 +1118,7 @@ class ScheduleAddView(BrowserView):
         )
         map(session.delete, records_to_delete)
         map(lambda deleted:notify(ObjectRemovedEvent(deleted)), 
-            records_to_delete
-        )
+            records_to_delete)
         
     def __call__(self):
         self.request.response.setHeader("Content-type", "application/json")
