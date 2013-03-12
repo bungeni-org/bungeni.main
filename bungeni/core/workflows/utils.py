@@ -169,6 +169,8 @@ def get_group_local_role(group):
 def get_group_context(context):
     if interfaces.IOffice.providedBy(context):
         return get_chamber_for_group(context)
+    elif interfaces.IGovernment.providedBy(context):
+        return common.get_application()
     else:
         return context
 
