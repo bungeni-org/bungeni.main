@@ -163,10 +163,10 @@ class ErrorPage(BungeniBrowserView):
 
 
 class IOAuthAuthorizeForm(interface.Interface):
-    client_id = schema.TextLine(required=True)
+    client_id = schema.TextLine(required=False)
     state = schema.TextLine(required=False)
-    time = schema.TextLine(required=True)
-    nonce = schema.TextLine(required=True)
+    time = schema.TextLine(required=False)
+    nonce = schema.TextLine(required=False)
 
 
 class OAuthAuthorizeForm(form.FormBase):

@@ -146,6 +146,12 @@ mapper(domain.Committee, schema.committee,
     polymorphic_identity=polymorphic_identity(domain.Committee)
 )
 
+mapper(domain.JointCommittee,
+    inherits=domain.Committee,
+    polymorphic_on=schema.group.c.type,
+    polymorphic_identity=polymorphic_identity(domain.JointCommittee)
+)
+
 mapper(domain.Office, schema.office,
     inherits=domain.Group,
     polymorphic_on=schema.group.c.type,

@@ -404,6 +404,10 @@ class Committee(Group):
     """
     interface.implements(interfaces.ICommittee)
 
+class JointCommittee(Committee):
+    """Joint Committee"""
+    interface.implements(interfaces.IJointCommittee)
+
 class CommitteeMember(GroupMembership):
     """A Member of a committee defined by its membership to a committee (group).
     """

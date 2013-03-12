@@ -92,9 +92,14 @@ class IMinistry(IBungeniGroup):
 class IMinistryContainer(IAlchemistContainer): pass
 
 class ICommittee(IBungeniGroup):
-    """Marker interface for group ministry.
+    """Marker interface for committees.
     """
 class ICommitteeContainer(IAlchemistContainer): pass
+
+class IJointCommittee(ICommittee):
+    """Marker interface for joint committee.
+    """
+class IJointCommitteeContainer(ICommitteeContainer): pass
 
 class IPoliticalGroup(IBungeniGroup):
     """Marker interface for political group (inside parliament).

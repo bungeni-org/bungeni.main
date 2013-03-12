@@ -134,14 +134,6 @@ class SessionViewlet(SubformViewlet):
 class SignatoriesViewlet(SubformViewlet):
     sub_attr_name = "signatories"
 
-@register.viewlet(interfaces.IParliament,
-    manager=IContentViewManager,
-    name="bungeni.viewlet.government",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class GovernmentViewlet(SubformViewlet):
-    sub_attr_name = "governments"
-    weight = 40
-
 
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,

@@ -309,6 +309,9 @@ class AppSetup(object):
         to_locatable_container(domain.Parliament, content[u"parliaments"])
         content[u"governments"] = domain.GovernmentContainer()
         to_locatable_container(domain.Government, content[u"governments"])
+        content[u"joint-committees"] = domain.JointCommitteeContainer()
+        to_locatable_container(domain.JointCommittee,
+            content["joint-committees"])
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
 
