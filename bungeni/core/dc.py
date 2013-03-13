@@ -263,8 +263,16 @@ class EditorialNoteDescriptiveProperties(DescriptiveProperties):
         return ""
 
 @register.adapter()
-class AgendaTextRecordDescriptiveProperties(EditorialNoteDescriptiveProperties):
+class AgendaTextRecordDescriptiveProperties(DescriptiveProperties):
       component.adapts(interfaces.IAgendaTextRecord)
+      
+      @property
+      def title(self):
+          return self.context.text
+
+      @property
+      def description(self):
+          return self.title
 
 @register.adapter()
 class VersionDescriptiveProperties(DescriptiveProperties):
