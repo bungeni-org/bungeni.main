@@ -18,9 +18,18 @@ import domain
 from bungeni.utils.naming import polymorphic_identity
 
 
+mapper(domain.Principal, schema.principal,
+    polymorphic_on=schema.principal.c.principal_type, # polymorphic discriminator
+    polymorphic_identity=polymorphic_identity(domain.Principal),
+    properties={}
+)
+
+
 # Users
 # general representation of a person
 mapper(domain.User, schema.user,
+    inherits=domain.Principal,
+    polymorphic_identity=polymorphic_identity(domain.User),
     properties={
         "user_addresses": relation(domain.UserAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
@@ -59,6 +68,8 @@ mapper(domain.PasswordRestoreLink, schema.password_restore_link,
 
 mapper(domain.Group, schema.group,
     primary_key=[schema.group.c.group_id],
+    inherits=domain.Principal,
+    polymorphic_identity=polymorphic_identity(domain.Group),
     properties={
         "members": relation(domain.GroupMembership),
         # !+GROUP_PRINCIPAL_ID(ah,sep-2011) - removing group_principal_id as 
@@ -70,6 +81,9 @@ mapper(domain.Group, schema.group,
         #),
         "titletypes": relation(domain.TitleType),
         "contained_groups": relation(domain.Group,
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == schema.group.c.parent_group_id
+            ),
             backref=backref("parent_group",
                 remote_side=schema.group.c.group_id)
         ),
@@ -79,8 +93,6 @@ mapper(domain.Group, schema.group,
         ),
         # "keywords": relation(domain.Keyword, secondary=schema.group_keywords)
     },
-    polymorphic_on=schema.group.c.type,
-    polymorphic_identity=polymorphic_identity(domain.Group)
 )
 
 # Keywords for groups

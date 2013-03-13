@@ -164,10 +164,25 @@ def make_audit_table(table, metadata):
 # Users 
 #######################
 
+principal = sa.Table("principal", metadata,
+    sa.Column("principal_id", sa.Integer, PrincipalSequence, primary_key=True),
+    # !+PRINCIPAL_NAME(mr, mar-2013) should really be THE (natural) primary key,
+    # and replace principal_id altogether!
+    # !+principal_name sa.Column("principal_name", sa.Unicode(50), unique=True, nullable=False),
+    # for polymorphic_identity
+    sa.Column("principal_type", sa.String(30), nullable=False),
+)
+
+
 user = sa.Table("user", metadata,
-    sa.Column("user_id", sa.Integer, PrincipalSequence, primary_key=True),
+    sa.Column("user_id", sa.Integer, 
+        sa.ForeignKey("principal.principal_id"),
+        primary_key=True),
     # !+principal(mr, feb-2013) "login" should really be "principal_name" here
-    sa.Column("login", sa.Unicode(80), unique=True, nullable=False),
+    sa.Column("login", sa.Unicode(80), 
+        # !+principal_name sa.ForeignKey("principal.principal_name"),
+        unique=True,
+        nullable=False),
     sa.Column("salutation", sa.Unicode(128)), # !+vocabulary?
     sa.Column("title", sa.Unicode(128)), # !+vocabulary?
     sa.Column("titles", sa.Unicode(32)), # !+TMP to work with preceding demo data 
@@ -318,7 +333,9 @@ country = sa.Table("country", metadata,
 # groups and their relations to other things in the system.
 
 group = sa.Table("group", metadata,
-    sa.Column("group_id", sa.Integer, PrincipalSequence, primary_key=True),
+    sa.Column("group_id", sa.Integer,
+        sa.ForeignKey("principal.principal_id"),
+        primary_key=True),
     sa.Column("short_name", sa.Unicode(512), nullable=False),
     sa.Column("full_name", sa.Unicode(1024)),
     sa.Column("acronym", sa.Unicode(32), nullable=True),
@@ -336,7 +353,10 @@ group = sa.Table("group", metadata,
     sa.Column("sub_type", sa.Unicode(128), nullable=True),
     # !+principal(mr, feb-2013) "group_principal_id" should really be "principal_name"
     # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema
-    sa.Column("group_principal_id", sa.Unicode(50)),
+    sa.Column("group_principal_id", sa.Unicode(50),
+        # !+principal_name sa.ForeignKey("principal.principal_name"),
+        unique=True,
+        nullable=False),
     sa.Column("parent_group_id", sa.Integer,
         sa.ForeignKey("group.group_id")
      ),

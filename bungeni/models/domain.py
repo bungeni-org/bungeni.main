@@ -140,7 +140,12 @@ class Entity(object):
              for c in object_mapper(self).primary_key ]
 
 
-class User(Entity):
+
+class Principal(Entity):
+    """Base model for a Principal, that is a User or a Group.
+    """
+
+class User(Principal):
     """Domain Object For A User. General representation of a person.
     """
     available_dynamic_features = ["address"]
@@ -204,7 +209,7 @@ class UserSubscription(Entity):
 
 ######
 
-class Group(Entity):
+class Group(Principal):
     """An abstract collection of users.
     """
     available_dynamic_features = ["address"]
