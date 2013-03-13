@@ -69,6 +69,7 @@ def set_widget_errors(widgets, errors):
                     widget._error = error
 
 
+#!+CHANGES(mb, Mar-2013) Turned off - has a side effect (multiple serialization)
 def cascade_modifications(obj):
     """Cascade modify events on an object to the direct parent.
     !+NAMING(mr, nov-2012) why cascade (implies down?!) instead of bubble (up, usually)?
@@ -402,7 +403,7 @@ class AddForm(BaseForm, ui.AddForm):
         self.created_object = ob
         # execute domain.Entity on create hook
         removeSecurityProxy(ob).on_create()
-        cascade_modifications(ob)
+        #cascade_modifications(ob)
         return ob
     
     @formlib.form.action(
@@ -557,7 +558,7 @@ class EditForm(BaseForm, ui.EditForm):
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no modify event
         # invalidate caches for this domain object type
         notify(ObjectModifiedEvent(self.context))
-        cascade_modifications(self.context)
+        #cascade_modifications(self.context)
         invalidate_caches_for(self.context.__class__.__name__, "edit")
         
     @formlib.form.action(_(u"Save"), name="save",
@@ -598,7 +599,7 @@ class GroupEditForm(EditForm):
         if group_role_changed:
             set_group_local_role(self.context)
         notify(ObjectModifiedEvent(self.context))
-        cascade_modifications(self.context)
+        #cascade_modifications(self.context)
         invalidate_caches_for(self.context.__class__.__name__, "edit")
 
 class TranslateForm(AddForm):
@@ -865,7 +866,7 @@ class DeleteForm(PageForm):
         # we have to switch our context here otherwise the deleted object will
         # be merged into the session again and reappear magically
         self.context = container
-        cascade_modifications(container)
+        #cascade_modifications(container)
         next_url = self.nextURL()
 
         if next_url is None:

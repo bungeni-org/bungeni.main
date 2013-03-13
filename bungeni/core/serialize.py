@@ -9,7 +9,10 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
 import os
+import functools
 import math
+import string
+import random
 from StringIO import StringIO
 from zipfile import ZipFile
 from threading import Thread, Timer
@@ -31,9 +34,7 @@ from ore.alchemist.container import valueKey
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContent
-from bungeni.core.workflow.states import (get_object_state_rpm, 
-    get_head_object_state_rpm
-)
+from bungeni.core.workflow.states import get_object_state_rpm
 from bungeni.core.interfaces import (
     IMessageQueueConfig, 
     NotificationEvent, 
@@ -59,7 +60,11 @@ MAX_DELAY = 300
 TIMER_DELAYS = {
     "serialize_setup": INITIAL_DELAY
 }
-                
+
+def make_key(length=10):
+    """generate random key using letters"""
+    return "".join([ random.choice(string.letters) for i in xrange(length) ])
+
 def setupStorageDirectory(part_target="xml_db"):
     """ Returns path to store xml files.
     """
@@ -98,6 +103,60 @@ def get_origin_parliament(context):
             return get_origin_parliament(context.head)
     return chamber_id
 
+#!+REFACTORING(mb, Mar-2013) This can be made more general to work in
+# other instances
+class memoized(object):
+    '''Decorator. Caches a function's return value each time it is called.
+    If called later with the same arguments, the cached value is returned
+    (not reevaluated).
+    adapted from http://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
+    '''
+    def __init__(self, func):
+        self.func = func
+        self.cache = {}
+    def __call__(self, *args, **kwargs):
+        key_args = (args[0], kwargs.get("root_key"))
+        if not isinstance(key_args, collections.Hashable):
+            # uncacheable. a list, for instance.
+            # better to not cache than blow up.
+            return self.func(*args, **kwargs)
+        if key_args in self.cache:
+            return self.cache[key_args]
+        else:
+            value = self.func(*args, **kwargs)
+            self.cache[key_args] = value
+            return value
+    def __repr__(self):
+        return self.func.__repr__()
+
+    def __get__(self, obj, objtype):
+        return functools.partial(self.__call__, obj)
+
+class _PersistFiles(object):
+    """save files in the serialization hierarchy"""
+    _saved_files = {}
+    
+    def get_files(self, root_key):
+        return self._saved_files.get(root_key, [])
+    
+    def clear_files(self, root_key):
+        if self._saved_files.has_key(root_key):
+            del self._saved_files[root_key]
+    
+    def store_file(self, context, column, root_key): 
+        content = getattr(context, column.key, None)
+        if content:
+            bfile = tmp(delete=False)
+            bfile.write(content)
+            bfile.flush()
+            bfile.close()
+            file_name = os.path.basename(bfile.name)
+            if not self._saved_files.has_key(root_key):
+                self._saved_files[root_key] = []
+            self._saved_files[root_key].append(bfile.name)
+            return file_name
+PersistFiles = _PersistFiles()
+
 def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains
     attachments - XML is saved in zip archive with all attached files. 
@@ -111,15 +170,14 @@ def publish_to_xml(context):
     except zope.security.interfaces.NoInteraction:
         principal = zope.security.testing.Principal('user', 'manager', ())
         zope.security.management.newInteraction(create_participation(principal))
-
     include = []
-    # list of files to zip
-    files = []
     # data dict to be published
     data = {}
     
     context = zope.security.proxy.removeSecurityProxy(context)
-    
+    #root key (used to cache files to zip)
+    root_key = make_key()
+
     if interfaces.IFeatureVersion.providedBy(context):
         include.append("versions")
     if interfaces.IFeatureAudit.providedBy(context):
@@ -127,24 +185,12 @@ def publish_to_xml(context):
     
     exclude = ["data", "event", "attachments"]
     
-    # include binary fields and include them in the zip of files for this object
-    for column in class_mapper(context.__class__).columns:
-        if is_column_binary(column):
-            exclude.append(column.key)
-            content = getattr(context, column.key, None)
-            if content:
-                bfile = tmp(delete=False)
-                bfile.write(content)
-                files.append(bfile.name)
-                data[column.key] = dict(
-                    saved_file=os.path.basename(bfile.name)
-                )
-                bfile.close()
     data.update(
         obj2dict(context, 1, 
             parent=None,
             include=include,
-            exclude=exclude
+            exclude=exclude,
+            root_key=root_key
         )
     )
     obj_type = IWorkflow(context).name    
@@ -161,6 +207,9 @@ def publish_to_xml(context):
     
     # xml file path
     file_path = os.path.join(path, stringKey(context)) 
+    
+    #files to zip
+    files = []
     
     if interfaces.IFeatureAttachment.providedBy(context):
         attachments = getattr(context, "attachments", None)
@@ -186,6 +235,8 @@ def publish_to_xml(context):
     #if more than one parliament exists)
     data["origin_parliament"] = get_origin_parliament(context)
     
+    #add any additional files to file list
+    files = files + PersistFiles.get_files(root_key)
     # zipping xml, attached files plus any binary fields
     # also remove the temporary files
     if files:
@@ -197,12 +248,11 @@ def publish_to_xml(context):
         zip_file = ZipFile("%s.zip" % (file_path), "w")
         for f in files:
             zip_file.write(f, os.path.basename(f))
-            os.remove(f)
         # write the xml
         zip_file.write(temp_xml.name, "%s.xml" % os.path.basename(file_path))
         zip_file.close()
         #placed remove after zip_file.close !+ZIP_FILE_CRC_FAILURE
-        os.remove(temp_xml.name) 
+        files.append(temp_xml.name)
 
     else:
         # save serialized xml to file
@@ -227,9 +277,13 @@ def publish_to_xml(context):
     
     #clean up - remove any files if zip was created
     if files:
+        map(os.remove, files)
         prev_xml_file = "%s.%s" %(file_path, "xml")
         if os.path.exists(prev_xml_file):
             os.remove(prev_xml_file)
+
+    #clear the cache
+    PersistFiles.clear_files(root_key)
 
 
 def serialize(data, name="object"):
@@ -580,7 +634,8 @@ def get_permissions_dict(permissions):
             "setting": x[0] and "Allow" or "Deny"})
     return results
 
-def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
+@memoized
+def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_key=None):
     """ Returns dictionary representation of a domain object.
     """
     if lang is None:
@@ -612,7 +667,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
             if IAlchemistContainer.providedBy(value):
                 value = value.values()
             for item in value:
-                i = obj2dict(item, 0, lang=lang)
+                i = obj2dict(item, 0, lang=lang, root_key=root_key)
                 res.append(i)
             result[name] = res
         else:
@@ -636,15 +691,17 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                     result[property.key].append(obj2dict(item, 1, 
                             parent=obj,
                             include=[],
-                            exclude=exclude + ["changes"],
-                            lang=lang
+                            exclude=exclude + ["changes", "image"],
+                            lang=lang,
+                            root_key=root_key
                     ))
             else:
                 result[property.key] = obj2dict(value, depth-1, 
                     parent=obj,
                     include=[],
-                    exclude=exclude + ["changes"],
-                    lang=lang
+                    exclude=exclude + ["changes", "image"],
+                    lang=lang,
+                    root_key=root_key
                 )
         else:
             if isinstance(property, RelationshipProperty):
@@ -653,6 +710,12 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
                 columns = property.columns
                 if len(columns) == 1:
                     if is_column_binary(columns[0]):
+                        #save files
+                        result[columns[0].key] = dict(
+                            saved_file=PersistFiles.store_file(
+                                obj, columns[0], root_key
+                            )
+                        )
                         continue
             if descriptor:
                 columns = property.columns
