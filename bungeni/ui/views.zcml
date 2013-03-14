@@ -630,5 +630,18 @@
       class="bungeni.ui.api.OAuthAccessToken"
       permission="zope.Public"
    />
-
+   <browser:page
+      for="bungeni.core.content.WorkspaceSection"
+      name="index"
+      class="bungeni.ui.api.APISectionView"
+      permission="bungeni.ui.workspace.View"
+      layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
+   <browser:page
+      for="bungeni.core.interfaces.IWorkspaceContainer"
+      name="index"
+      class="bungeni.ui.workspace.WorkspaceContainerJSONListing"
+      permission="bungeni.ui.workspace.View"
+      layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
 </configure>

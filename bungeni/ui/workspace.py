@@ -71,10 +71,6 @@ workspace_group_fields = [
 
 @register.view(IWorkspaceContainer, name="jsonlisting",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
-@register.view(IWorkspaceUnderConsiderationContainer, name="jsonlisting",
-    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
-@register.view(IWorkspaceGroupsContainer, name="jsonlisting",
-    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
     """

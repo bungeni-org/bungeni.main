@@ -3,16 +3,21 @@ log = __import__("logging").getLogger("bungeni.core.content")
 import sys
 
 from zope import interface
+from zope import component
 from zope.container.ordered import OrderedContainer
 from zope.container.traversal import ItemTraverser
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.interfaces.browser import IBrowserPublisher
 from zope.publisher.defaultview import getDefaultViewName
 from zope.publisher.interfaces import NotFound
+from zope.security.proxy import removeSecurityProxy
+from zope.app.component.hooks import getSite
+from zope.location.interfaces import ILocation
 
 from bungeni.core.proxy import NavigationProxy
 from bungeni.core.proxy import DublinCoreDescriptivePropertiesProxy
 from bungeni.ui.utils import debug
+from bungeni.ui.interfaces import IBungeniAPILayer
 
 from interfaces import ISection, IAkomaNtosoSection
 from interfaces import IQueryContent
@@ -31,13 +36,6 @@ class Section(OrderedContainer):
     def _get_parent(self):
         return self._parent
     def _set_parent(self, obj):
-        if self._parent is not None and obj is not None:
-            # __parent__ is nullified when deleting a Section from parent container
-            assert self._parent is obj, \
-                "Section parent may not be changed! %s -> %s" % (self._parent, obj)
-            log.warn(" [Section:%s] IGNORING reset of __parent__ to same " \
-                    "value: %s" % (self.title, obj))
-            return
         self._parent = obj
     __parent__ = property(_get_parent, _set_parent)
     
@@ -89,6 +87,8 @@ class Section(OrderedContainer):
         """
         default_name = self.default_name
         if default_name is None:
+            default_name = getDefaultViewName(self, request)
+        if IBungeniAPILayer.providedBy(request):
             default_name = getDefaultViewName(self, request)
         return self, (default_name,)
     
@@ -211,7 +211,22 @@ class WorkspaceSection(Section):
     pass
 
 class APISection(Section):
-    pass
+    def publishTraverse(self, request, name):
+        section = removeSecurityProxy(self)
+        view = component.queryMultiAdapter((section, request), name=name)
+        if view:
+            return view
+        if hasattr(section, name):
+            return getattr(section, name)
+        if name == "workspace":
+            app = getSite()
+            workspace = app["workspace"]
+            workspace.__parent__ = self
+            workspace.__name__ = "workspace"
+            interface.alsoProvides(workspace, ILocation)
+            return workspace
+        raise NotFound(self, name)
+
 
 class OAuthSection(Section):
     pass

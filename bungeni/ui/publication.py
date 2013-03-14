@@ -91,7 +91,6 @@ def remember_traversed_context(event):
 
 mapping_on_path = (
     (re.compile(r'^/$'), interfaces.IHomePageLayer),
-    (re.compile(r'^/archive(/.*)?$'), interfaces.IArchiveSectionLayer),
     (re.compile(r'^/profile(/.*)?$'), 
         interfaces.IWorkspaceSectionLayer
     ), 
@@ -116,9 +115,9 @@ mapping_on_path = (
     (re.compile(r'^/workspace(/.*)?$'),
         interfaces.IWorkspaceMyDocumentsSectionLayer
     ),
-    (re.compile(r'^/members(/.*)?$'), interfaces.IMembersSectionLayer),
     (re.compile(r'^/admin(/.*)?$'), interfaces.IAdminSectionLayer),
-    (re.compile(r'^/bungeni(/.*)?$'), interfaces.IPermalinkSectionLayer)
+    (re.compile(r'^/bungeni(/.*)?$'), interfaces.IPermalinkSectionLayer),
+    (re.compile(r'^/api(/.*)?$'), interfaces.IBungeniAPILayer),
 )
 mapping_on_path_info = (
     (re.compile(r'^/(\+\+)|(@@)'), interfaces.IResourceNonLayer),

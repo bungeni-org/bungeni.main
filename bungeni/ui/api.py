@@ -11,14 +11,18 @@ from sqlalchemy.orm.exc import NoResultFound
 from zope.formlib import form
 from zope import interface
 from zope import schema
+from zope import component
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import BrowserPage
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.formlib.namedtemplate import NamedTemplate
-
+from zope.location.interfaces import ILocation
+from zope.publisher.interfaces import NotFound
+from zope.security.proxy import removeSecurityProxy
 from bungeni.ui.i18n import _
 from bungeni.ui import forms, widgets
 from bungeni.ui.browser import BungeniBrowserView
@@ -142,10 +146,10 @@ class InvalidGrant(OAuthException):
 
     @property
     def error_description(self):
-        return "The provided authorization grant (e.g. authorization" \
-            "code, resource owner credentials) or refresh token is" \
-            "invalid, expired, revoked, does not match the redirection" \
-            "URI used in the authorization request, or was issued to" \
+        return "The provided authorization grant (e.g. authorization " \
+            "code, resource owner credentials) or refresh token is " \
+            "invalid, expired, revoked, does not match the redirection " \
+            "URI used in the authorization request, or was issued to " \
             "another client."
 
 
@@ -369,7 +373,7 @@ class OAuthAccessToken(BrowserPage):
         else:
             raise UnauthorizedClient()
 
-        if parameters["authorization"].expiry > datetime.now():
+        if parameters["authorization"].expiry < datetime.now():
             raise InvalidGrant()
 
         if parameters["authorization"].active is False:
@@ -399,4 +403,16 @@ class OAuthAccessToken(BrowserPage):
                 "expires_in": capi.oauth_access_token_expiry_time,
                 "refresh_token": access_token.refresh_token
         }
+        return simplejson.dumps(data)
+
+
+class APISectionView(BrowserPage):
+    def __call__(self):
+        data = []
+        for key in self.context.keys():
+            item = {}
+            item["id"] = key
+            item["title"] = self.context[key].title
+            item["url"] = url.absoluteURL(self.context[key], self.request)
+            data.append(item)
         return simplejson.dumps(data)

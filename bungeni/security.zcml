@@ -33,7 +33,8 @@
     <grant permission="bungeni.ui.audit.View" role="bungeni.Authenticated" />
     <grant permission="bungeni.ui.version.View" role="bungeni.Authenticated" />
     <grant permission="bungeni.ui.workspace.View" role="bungeni.Authenticated"/>
-    
+    <grant permission="bungeni.oauth.View" role="bungeni.Authenticated" />
+
     <!-- manager grants -->
     <grantAll role="zope.Manager" />
     <grant role="zope.Manager" principal="zope.manager" />
@@ -42,5 +43,5 @@
     
     <!-- Anonymous grants -->
     <grant role="bungeni.Anonymous" principal="zope.anybody" />
-    <grant permission="bungeni.oauth.View" role="bungeni.Authenticated" />
+    
 </configure>
