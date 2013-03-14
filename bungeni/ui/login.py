@@ -61,8 +61,9 @@ class Login(form.FormBase):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):
             self.status = _(u"Invalid account credentials")
         else:
-            site_url = ui_utils.url.absoluteURL(getSite(), self.request)
-            camefrom = self.request.get('camefrom', site_url+'/')
+            camefrom = ui_utils.url.absoluteURL(getSite(), self.request)
+            if self.request.get('camefrom').strip():
+                camefrom = self.request.get('camefrom').strip()
             self.status = _("You are now logged in")
             self.request.response.redirect( camefrom )
 
