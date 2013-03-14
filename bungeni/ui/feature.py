@@ -66,7 +66,18 @@ def setup_customization_ui():
                 permission="bungeni.{type_key}.{privilege}"
                 layer="{layer}"
             />"""
-    
+
+    def register_api_view(type_key, for_):
+        print register_api_view.TMPL.format(**locals())
+        UI_ZC_DECLS.append(register_api_view.TMPL.format(**locals()))
+    register_api_view.TMPL = """
+            <browser:page name="index"
+                for="{for_}"
+                class="bungeni.ui.api.APIObjectView"
+                permission="bungeni.{type_key}.View"
+                layer="bungeni.ui.interfaces.IBungeniAPILayer"
+            />"""
+
     def model_title(type_key):
         return naming.split_camel(naming.model_name(type_key))
     
@@ -90,6 +101,11 @@ def setup_customization_ui():
         # view
         register_form_view(type_key, "View", "view", model_interface_qualname,
             "bungeni.ui.forms.common.DisplayForm")
+        
+        register_api_view(type_key, model_interface_qualname)
+        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        print type_key, model_interface_qualname
+        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx"
         # edit !+DiffEditForm prior to r10032, doc-archetyped types were being
         # *declared* to use bungeni.ui.forms.forms.DiffEditForm, but this
         # is not the edit view tht was actually being used!

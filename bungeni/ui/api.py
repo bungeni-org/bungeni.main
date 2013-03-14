@@ -11,18 +11,14 @@ from sqlalchemy.orm.exc import NoResultFound
 from zope.formlib import form
 from zope import interface
 from zope import schema
-from zope import component
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import BrowserPage
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.formlib.namedtemplate import NamedTemplate
-from zope.location.interfaces import ILocation
-from zope.publisher.interfaces import NotFound
-from zope.security.proxy import removeSecurityProxy
+from bungeni.core.serialize import obj2dict
 from bungeni.ui.i18n import _
 from bungeni.ui import forms, widgets
 from bungeni.ui.browser import BungeniBrowserView
@@ -416,3 +412,11 @@ class APISectionView(BrowserPage):
             item["url"] = url.absoluteURL(self.context[key], self.request)
             data.append(item)
         return simplejson.dumps(data)
+
+
+class APIObjectView(BrowserPage):
+    def __call__(self):
+        dthandler = lambda obj: obj.isoformat() if isinstance(
+            obj, datetime) else obj
+        data = obj2dict(self.context, 0)
+        return simplejson.dumps(data, default=dthandler)
