@@ -154,6 +154,10 @@ class User(Principal):
         interfaces.ISerializable)
     
     def __init__(self, login=None, **kw):
+        # !+PRINCIPAL_TYPE for some reason this always ends up being set up 
+        # correctly for User, but not for Group.
+        #assert not self.principal_type, "principal_type"
+        #self.principal_type = "user"
         if login:
             self.login = login
         super(User, self).__init__(**kw)
@@ -221,6 +225,15 @@ class Group(Principal):
     
     publications = one2many("publications", 
         "bungeni.models.domain.ReportContainer", "group_id")
+    
+    def __init__(self, **kw):
+        super(Group, self).__init__(**kw)
+        # !+PRINCIPAL_TYPE
+        assert not self.principal_type, "principal_type"
+        self.principal_type = "group"
+        # !+GROUP_PRINCIPAL_ID set it here, derive it from identifier?
+        assert not self.group_principal_id, "group_principal_id"
+        self.group_principal_id = "_TMP_INIT_GROUP_PRINCIPAL_ID_"
     
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
@@ -318,7 +331,7 @@ class Sitting(Entity):
 
 
 class SittingAttendance(Entity):
-    """A record of attendance at a meeting .
+    """A record of attendance at a meeting.
     """
     interface.implements(
         interfaces.ISittingAttendance,

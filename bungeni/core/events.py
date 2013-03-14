@@ -49,9 +49,11 @@ def group_created(ob, event):
     out of the group type and group id. This was a computed property in orm.py
     but has been moved here now - so it gets cached in the groups table.
     """
-    assert ob.group_principal_id is None, \
-        "group_principal_id [%s] is already set for group %s" % (
-            ob.group_principal_id, ob.group_id)
+    # !+GROUP_PRINCIPAL_ID move setting this to group init
+    if not ob.group_principal_id in (None, "_TMP_INIT_GROUP_PRINCIPAL_ID_"):
+        log.warn("group_principal_id [%s] is already set for group %s" % (
+                ob.group_principal_id, ob.group_id))
+        return
     ob.group_principal_id = "group.%s.%s" % (ob.type, ob.group_id)
     log.debug("Setting group_principal_id for group %s to %s", 
         ob.group_id, ob.group_principal_id)
