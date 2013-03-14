@@ -8,6 +8,8 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.app")
 
+import copy
+
 from zope.interface import implements
 from zope.interface import implementedBy
 from zope import component
@@ -315,11 +317,14 @@ class AppSetup(object):
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
 
-        self.context["api"] = APISection(
+        api = self.context["api"] = APISection(
             title=_(u"Bungeni API"),
             description=_(u"Bungeni REST API"),
             default_name="index.html",
         )
+
+        api["workspace"] = copy.deepcopy(workspace)
+
         self.context["oauth"] = OAuthSection(
             title=_(u"Bungeni OAuth API"),
             description=_(u"Bungeni OAuth API"),

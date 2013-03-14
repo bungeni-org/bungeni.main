@@ -596,7 +596,7 @@
    <!-- OAuth -->
    <browser:page
       for="bungeni.core.content.APISection"
-      name="index.html"
+      name="index"
       class="bungeni.ui.api.APIDefaultView"
       permission="bungeni.oauth.View"
    />

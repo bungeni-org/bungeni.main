@@ -24,12 +24,12 @@ from interfaces import IQueryContent
 
 class Section(OrderedContainer):
     """A site section, e.g. 'Business'.
-    
+
     Note that items are not persisted.
-    
+
     """
     interface.implements(ISection, IDCDescriptiveProperties, IBrowserPublisher)
-    
+
     # NOTE: __parent__ here is turned into a property for debug/monitoring 
     # purpose -- Section.__parent__ is being set multiple times but, once set, 
     # always to the same value
@@ -38,8 +38,8 @@ class Section(OrderedContainer):
     def _set_parent(self, obj):
         self._parent = obj
     __parent__ = property(_get_parent, _set_parent)
-    
-    
+
+
     def __init__(self, title=None, description=None, default_name=None, 
             marker=None, 
             publishTraverseResolver=None):
@@ -58,13 +58,10 @@ class Section(OrderedContainer):
         # erros. 
         self.publishTraverseResolver = publishTraverseResolver
         log.debug(" __init__ %s (title:%s, default_name:%s)" % (self, title, default_name))
-        
-        
     # !+ section.title is duplicated in ZCML menuItem definitions
     # Section should be modified to just get its title from the associated
     # view descriptor (via default_name)
-    
-    
+
     def __getitem__(self, key):
         item = super(Section, self).__getitem__(key)
         if IQueryContent.providedBy(item):
@@ -75,20 +72,18 @@ class Section(OrderedContainer):
                 title=self.title, description=self.description)
             return obj
         return item
-    
+
     def __setitem__(self, key, value):
         super(Section, self).__setitem__(key, value)
         value.__parent__ = self
         value.__name__ = key
-    
+
     def browserDefault(self, request):
         """See zope.container.traversal.ContainerTraverser.
             -> context, (view_uri,)
         """
         default_name = self.default_name
-        if default_name is None:
-            default_name = getDefaultViewName(self, request)
-        if IBungeniAPILayer.providedBy(request):
+        if default_name is None or IBungeniAPILayer.providedBy(request):
             default_name = getDefaultViewName(self, request)
         return self, (default_name,)
     
@@ -128,8 +123,14 @@ class Section(OrderedContainer):
 
 
 class AkomaNtosoSection(OrderedContainer):
+
+    lang = u""
+    type = u""
+    id = u""
+    date = u""
+
     interface.implements(IAkomaNtosoSection, IDCDescriptiveProperties)
-    
+
     # NOTE: __parent__ here is turned into a property for debug/monitoring 
     # purpose -- Section.__parent__ is being set multiple times but, once set, 
     # always to the same value
@@ -196,36 +197,22 @@ class AkomaNtosoSection(OrderedContainer):
         if default_name is None:
             default_name = getDefaultViewName(self, request)
         return self, (default_name,)
-   
-    
-    lang = u""
-    type = u""
-    id = u""
-    date = u""
-    
-    
+
+
 class AdminSection(Section):
     pass
+
 
 class WorkspaceSection(Section):
     pass
 
+
 class APISection(Section):
-    def publishTraverse(self, request, name):
-        section = removeSecurityProxy(self)
-        view = component.queryMultiAdapter((section, request), name=name)
-        if view:
-            return view
-        if hasattr(section, name):
-            return getattr(section, name)
-        if name == "workspace":
-            app = getSite()
-            workspace = app["workspace"]
-            workspace.__parent__ = self
-            workspace.__name__ = "workspace"
-            interface.alsoProvides(workspace, ILocation)
-            return workspace
-        raise NotFound(self, name)
+
+    def __setitem__(self, key, value):
+        value.__parent__ = self
+        value.__name__ = key
+        super(APISection, self).__setitem__(key, value)
 
 
 class OAuthSection(Section):
