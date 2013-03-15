@@ -29,6 +29,7 @@ mapper(domain.Principal, schema.principal,
 # general representation of a person
 mapper(domain.User, schema.user,
     inherits=domain.Principal,
+    polymorphic_on=schema.principal.c.principal_type, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.User),
     properties={
         "user_addresses": relation(domain.UserAddress,
@@ -69,6 +70,7 @@ mapper(domain.PasswordRestoreLink, schema.password_restore_link,
 mapper(domain.Group, schema.group,
     primary_key=[schema.group.c.group_id],
     inherits=domain.Principal,
+    polymorphic_on=schema.principal.c.principal_type, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Group),
     properties={
         "members": relation(domain.GroupMembership),
@@ -177,6 +179,8 @@ mapper(domain.Office, schema.office,
 # we need to specify join clause for user explicitly because we have multiple fk
 # to the user table.
 mapper(domain.GroupMembership, schema.user_group_membership,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
+    polymorphic_identity=polymorphic_identity(domain.GroupMembership),
     properties={
         "user":relation(domain.User,
             primaryjoin=rdb.and_(schema.user_group_membership.c.user_id ==
@@ -197,21 +201,21 @@ mapper(domain.GroupMembership, schema.user_group_membership,
         "sub_roles":relation(domain.GroupMembershipRole),
         "member_titles":relation(domain.MemberTitle)
     },
-    polymorphic_on=schema.user_group_membership.c.membership_type,
-    polymorphic_identity=polymorphic_identity(domain.GroupMembership)
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMembership.head = domain.GroupMembership.user
 
 mapper(domain.GroupMembershipRole, schema.group_membership_role,
-       properties={
-        "member":relation(domain.GroupMembership)
-        }
+    properties={
+        "member": relation(domain.GroupMembership),
+    }
 )
 
 # !+RENAME ParliamentMember
 mapper(domain.MemberOfParliament, schema.parliament_membership,
     inherits=domain.GroupMembership,
+    polymorphic_on=schema.user_group_membership.c.membership_type,
+    polymorphic_identity=polymorphic_identity(domain.MemberOfParliament),
     primary_key=[schema.user_group_membership.c.membership_id],
     properties={
         "start_date": column_property(
@@ -219,8 +223,6 @@ mapper(domain.MemberOfParliament, schema.parliament_membership,
         "end_date": column_property(
             schema.user_group_membership.c.end_date.label("end_date")),
     },
-    polymorphic_on=schema.user_group_membership.c.membership_type,
-    polymorphic_identity=polymorphic_identity(domain.MemberOfParliament)
 )
 
 mapper(domain.Minister,

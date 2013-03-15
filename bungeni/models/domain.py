@@ -150,8 +150,11 @@ class User(Principal):
     """
     available_dynamic_features = ["address"]
     
-    interface.implements(interfaces.IBungeniUser, interfaces.ITranslatable, 
-        interfaces.ISerializable)
+    interface.implements(
+        interfaces.IBungeniUser, 
+        interfaces.ITranslatable, 
+        interfaces.ISerializable
+    )
     
     def __init__(self, login=None, **kw):
         # !+PRINCIPAL_TYPE for some reason this always ends up being set up 
@@ -192,7 +195,7 @@ class AdminUser(Entity):
     """An admin user"""
 
 class UserDelegation(Entity):
-    """Delgate rights to act on behalf of a user to another user .
+    """Delegate rights to act on behalf of a user to another user.
     """
     interface.implements(interfaces.IUserDelegation)
 

@@ -1088,9 +1088,9 @@ class SubstitutionSource(SpecializedSource):
     
     def constructQuery(self, context):
         session= Session()
-        query = session.query(domain.GroupMembership).order_by(
-            "last_name", "first_name").filter(
-            domain.GroupMembership.active_p == True)
+        query = session.query(domain.GroupMembership
+            #!+PRINCIPAL ).order_by("last_name", "first_name"
+            ).filter(domain.GroupMembership.active_p == True)
         user_id = self._get_user_id(context)
         if user_id:
             query = query.filter(
