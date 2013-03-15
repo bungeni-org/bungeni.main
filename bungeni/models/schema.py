@@ -10,7 +10,6 @@ log = __import__("logging").getLogger("bungeni.models.schema")
 
 import sqlalchemy as sa
 from fields import FSBlob
-from sqlalchemy.sql import text #, functions #!+CATALYSE(mr, nov-2010)
 from datetime import datetime
 
 
@@ -63,7 +62,7 @@ change = sa.Table("change", metadata,
     sa.Column("date_audit", sa.DateTime(timezone=False),
         #!+CATALYSE(mr, nov-2010) fails descriptor catalisation
         #default=functions.current_timestamp(),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     # user-modifiable effective datetime (defaults to audit_time);
@@ -72,7 +71,7 @@ change = sa.Table("change", metadata,
     sa.Column("date_active", sa.DateTime(timezone=False),
         #!+CATALYSE(mr, nov-2010)
         #default=functions.current_timestamp(),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     
@@ -344,7 +343,7 @@ group = sa.Table("group", metadata,
     # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     sa.Column("start_date", sa.Date, nullable=False),
@@ -473,7 +472,7 @@ user_group_membership = sa.Table("user_group_membership", metadata,
     # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     sa.Column("start_date", sa.Date,
@@ -529,45 +528,38 @@ member_title = sa.Table("member_title", metadata,
 # Addresses
 ############
 
-def _make_address_table(metadata, fk_key="user"):
-    assert fk_key in ("user", "group")
-    table_name = "%s_address" % (fk_key) # e.g. user_address
-    fk_col_name = "%s_id" % (fk_key) # e.g. user_id
-    fk_target = "%s.%s_id" % (fk_key, fk_key) # e.g. user.user_id
-    return sa.Table(table_name, metadata,
-        sa.Column("address_id", sa.Integer, primary_key=True),
-        # user|personal or group|official addresses
-        sa.Column(fk_col_name, sa.Integer,
-            sa.ForeignKey(fk_target),
-            nullable=False
-        ),
-        sa.Column("logical_address_type", sa.Unicode(128),
-            default=u'office',
-            nullable=False,
-        ),
-        sa.Column("postal_address_type", sa.Unicode(128),
-            default=u'street',
-            nullable=False,
-        ),
-        sa.Column("street", sa.Unicode(256), nullable=True),
-        sa.Column("city", sa.Unicode(256), nullable=True),
-        sa.Column("zipcode", sa.Unicode(20)),
-        sa.Column("country_id", sa.String(2),
-            sa.ForeignKey("country.country_id"),
-            nullable=True
-        ),
-        sa.Column("phone", sa.Unicode(256)),
-        sa.Column("fax", sa.Unicode(256)),
-        sa.Column("email", sa.String(512)),
-        # Workflow State -> determins visibility
-        sa.Column("status", sa.Unicode(16)),
-        sa.Column("status_date", sa.DateTime(timezone=False),
-            server_default=text("now()"),
-            nullable=False
-        ),
-    )
-group_address = _make_address_table(metadata, "group")
-user_address = _make_address_table(metadata, "user")
+address = sa.Table("address", metadata,
+    sa.Column("address_id", sa.Integer, primary_key=True),
+    # user or group address
+    sa.Column("principal_id", sa.Integer,
+        sa.ForeignKey("principal.principal_id"),
+        nullable=False
+    ),
+    sa.Column("logical_address_type", sa.Unicode(128),
+        default=u"office",
+        nullable=False,
+    ),
+    sa.Column("postal_address_type", sa.Unicode(128),
+        default=u"street",
+        nullable=False,
+    ),
+    sa.Column("street", sa.Unicode(256), nullable=True),
+    sa.Column("city", sa.Unicode(256), nullable=True),
+    sa.Column("zipcode", sa.Unicode(20)),
+    sa.Column("country_id", sa.String(2),
+        sa.ForeignKey("country.country_id"),
+        nullable=True
+    ),
+    sa.Column("phone", sa.Unicode(256)),
+    sa.Column("fax", sa.Unicode(256)),
+    sa.Column("email", sa.String(512)),
+    # Workflow State -> determines visibility
+    sa.Column("status", sa.Unicode(16)),
+    sa.Column("status_date", sa.DateTime(timezone=False),
+        server_default=sa.sql.text("now()"),
+        nullable=False
+    ),
+)
 
 
 ##################
@@ -613,7 +605,7 @@ sitting = sa.Table("sitting", metadata,
     
     sa.Column("status", sa.Unicode(48)),
     sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     # venue for the sitting
@@ -848,7 +840,7 @@ attachment = sa.Table("attachment", metadata,
     # Workflow State
     sa.Column("status", sa.Unicode(48)),
     sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     sa.Column("language", sa.String(5), nullable=False),
@@ -963,7 +955,7 @@ doc = sa.Table("doc", metadata,
     # WORKFLOW
     sa.Column("status", sa.Unicode(48)),
     sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     # group responsible to "handle" this document... involves workflow: the 
@@ -1031,7 +1023,7 @@ doc = sa.Table("doc", metadata,
     
     # DB timestamp of last modification
     sa.Column("timestamp", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
 )
@@ -1137,7 +1129,7 @@ debate_record = sa.Table("debate_record", metadata,
     # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
 )
@@ -1171,7 +1163,7 @@ debate_speech = sa.Table("debate_speech", metadata,
     # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=text("now()"),
+        server_default=sa.sql.text("now()"),
         nullable=False
     ),
     sa.Column("language", sa.String(5), nullable=False)

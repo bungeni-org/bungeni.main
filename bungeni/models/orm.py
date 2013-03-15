@@ -32,9 +32,10 @@ mapper(domain.User, schema.user,
     polymorphic_on=schema.principal.c.principal_type, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.User),
     properties={
+        # !+ADDRESS naming, use addresses
         "user_addresses": relation(domain.UserAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("head", remote_side=schema.user.c.user_id)
+            backref=backref("head", remote_side=schema.principal.c.principal_id)
         ),
         "subscriptions": relation(domain.Doc,
             secondary=schema.user_doc
@@ -89,9 +90,10 @@ mapper(domain.Group, schema.group,
             backref=backref("parent_group",
                 remote_side=schema.group.c.group_id)
         ),
+        # !+ADDRESS naming, use addresses
         "group_addresses": relation(domain.GroupAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("head", remote_side=schema.group.c.group_id)
+            backref=backref("head", remote_side=schema.principal.c.principal_id)
         ),
         # "keywords": relation(domain.Keyword, secondary=schema.group_keywords)
     },
@@ -207,7 +209,7 @@ domain.GroupMembership.head = domain.GroupMembership.user
 
 mapper(domain.GroupMembershipRole, schema.group_membership_role,
     properties={
-        "member": relation(domain.GroupMembership),
+        "member": relation(domain.GroupMembership)
     }
 )
 
@@ -678,12 +680,12 @@ mapper(domain.MemberTitle, schema.member_title,
     }
 )
 
-mapper(domain.UserAddress, schema.user_address,
+mapper(domain.UserAddress, schema.address,
     properties={
         "country": relation(domain.Country, uselist=False, lazy=False),
     },
 )
-mapper(domain.GroupAddress, schema.group_address,
+mapper(domain.GroupAddress, schema.address,
     properties={
         "country": relation(domain.Country, uselist=False, lazy=False),
     },

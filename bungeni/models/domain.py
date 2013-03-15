@@ -463,6 +463,7 @@ class Address(HeadParentedMixin, Entity):
         from bungeni.core.workflows import utils
         utils.assign_role_owner_to_login(self)
 
+# !+ADDRESS get rid of these two classes, just use Address?
 class UserAddress(Address):
     """User address (personal)
     """

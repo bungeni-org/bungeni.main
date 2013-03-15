@@ -213,10 +213,10 @@ def feature_address(kls, feature):
     interface.classImplements(kls, interfaces.IFeatureAddress)
     if issubclass(kls, domain.Group):
         add_container_property_to_model(kls, "addresses",
-            "bungeni.models.domain.GroupAddressContainer", "group_id")
+            "bungeni.models.domain.GroupAddressContainer", "principal_id")
     elif issubclass(kls, domain.User):
         add_container_property_to_model(kls, "addresses",
-            "bungeni.models.domain.UserAddressContainer", "user_id")
+            "bungeni.models.domain.UserAddressContainer", "principal_id")
 
 
 def feature_workspace(kls, feature):
