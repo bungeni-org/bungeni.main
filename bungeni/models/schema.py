@@ -373,12 +373,6 @@ group_principal_id_index = sa.Index("grp_grpprincipalid_idx",
     group.c["group_principal_id"]
 )
 
-office = sa.Table("office", metadata,
-    sa.Column("office_id", sa.Integer,
-        sa.ForeignKey("group.group_id"),
-        primary_key=True)
-)
-
 parliament = sa.Table("parliament", metadata,
     sa.Column("parliament_id", sa.Integer,
         sa.ForeignKey("group.group_id"),

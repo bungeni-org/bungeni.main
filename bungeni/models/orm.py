@@ -162,7 +162,7 @@ mapper(domain.JointCommittee,
     polymorphic_identity=polymorphic_identity(domain.JointCommittee)
 )
 
-mapper(domain.Office, schema.office,
+mapper(domain.Office,
     inherits=domain.Group,
     polymorphic_identity=polymorphic_identity(domain.Office)
 )
@@ -177,24 +177,24 @@ mapper(domain.GroupMembership, schema.user_group_membership,
     polymorphic_identity=polymorphic_identity(domain.GroupMembership),
     polymorphic_on=schema.user_group_membership.c.membership_type,
     properties={
-        "user":relation(domain.User,
+        "user": relation(domain.User,
             primaryjoin=rdb.and_(schema.user_group_membership.c.user_id ==
                 schema.user.c.user_id),
             uselist=False,
             backref="group_membership",
             lazy=False),
-        "group":relation(domain.Group,
+        "group": relation(domain.Group,
             primaryjoin=(schema.user_group_membership.c.group_id ==
                 schema.group.c.group_id),
             uselist=False,
             lazy=True),
-        "replaced":relation(domain.GroupMembership,
+        "replaced": relation(domain.GroupMembership,
             primaryjoin=(schema.user_group_membership.c.replaced_id ==
                 schema.user_group_membership.c.membership_id),
             uselist=False,
             lazy=True),
-        "sub_roles":relation(domain.GroupMembershipRole),
-        "member_titles":relation(domain.MemberTitle)
+        "sub_roles": relation(domain.GroupMembershipRole),
+        "member_titles": relation(domain.MemberTitle)
     },
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
@@ -652,7 +652,7 @@ mapper(domain.SittingAttendance, schema.sitting_attendance,
 )
 
 mapper(domain.TitleType, schema.title_type,
-    properties={ "group": relation(domain.Group, uselist=False, lazy=False) }
+    properties={"group": relation(domain.Group, uselist=False, lazy=False)}
 )
 mapper(domain.MemberTitle, schema.member_title,
     properties={
