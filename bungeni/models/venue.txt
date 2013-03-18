@@ -27,10 +27,13 @@ meeting of the group by the system.
     >>> venue2.language = "en"
     >>> session.add(venue2)
     >>> session.flush()
-    >>> parliament = domain.Parliament( short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
+    >>> parliament = domain.Parliament(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now(), group_role="bungeni.MP")
     >>> parliament.language = "en"
     >>> session.add(parliament)
     >>> session.flush()
+    >>> from bungeni.core.events import group_created #!+GROUP_PRINCIPAL_ID
+    >>> group_created(parliament, None)
+    
     >>> sit1 = domain.Sitting()
     >>> sit1.start_date = datetime.datetime(2000,1,1,2,0)
     >>> sit1.end_date = datetime.datetime(2000,1,1,4,0)

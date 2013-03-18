@@ -27,8 +27,10 @@
     <include package="bungeni.core" file="auth.zcml" />
     <include package="bungeni.models" file="roles.zcml" />
     <include package="bungeni.models" file="permissions.zcml" />
+    <!-- !+permissions.zcml bungeni_custom/worfklows/.auto/permissions.zcml
     <include package="bungeni.core.workflows" file="permissions.zcml" />
-        
+    -->
+    
     <include package="bungeni.alchemist" file="meta.zcml"/>
     <include package="ore.xapian" file="meta.zcml" />
     <include package="ore.xapian" />
