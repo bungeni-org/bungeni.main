@@ -157,6 +157,11 @@ class _PersistFiles(object):
             return file_name
 PersistFiles = _PersistFiles()
 
+def remove_files(paths):
+    """delete files generated/left over after serialization"""
+    rm_files = [ path for path in paths if os.path.exists(path) ]
+    map(os.remove, rm_files)
+
 def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains
     attachments - XML is saved in zip archive with all attached files. 
@@ -275,12 +280,12 @@ def publish_to_xml(context):
         )
     )
     
-    #clean up - remove any files if zip was created
+    #clean up - remove any files if zip was/was not created
     if files:
-        map(os.remove, files)
-        prev_xml_file = "%s.%s" %(file_path, "xml")
-        if os.path.exists(prev_xml_file):
-            os.remove(prev_xml_file)
+        files.append("%s.%s" %(file_path, "xml"))
+    else:
+        files.append("%s.%s" %(file_path, "zip"))
+    remove_files(files)
 
     #clear the cache
     PersistFiles.clear_files(root_key)
@@ -634,6 +639,8 @@ def get_permissions_dict(permissions):
             "setting": x[0] and "Allow" or "Deny"})
     return results
 
+
+INNER_EXCLUDES = ["changes", "image"]
 @memoized
 def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_key=None):
     """ Returns dictionary representation of a domain object.
@@ -691,7 +698,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                     result[property.key].append(obj2dict(item, 1, 
                             parent=obj,
                             include=[],
-                            exclude=exclude + ["changes", "image"],
+                            exclude=exclude + INNER_EXCLUDES,
                             lang=lang,
                             root_key=root_key
                     ))
@@ -699,7 +706,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                 result[property.key] = obj2dict(value, depth-1, 
                     parent=obj,
                     include=[],
-                    exclude=exclude + ["changes", "image"],
+                    exclude=exclude + INNER_EXCLUDES,
                     lang=lang,
                     root_key=root_key
                 )
@@ -710,6 +717,11 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                 columns = property.columns
                 if len(columns) == 1:
                     if is_column_binary(columns[0]):
+                        if (parent and 
+                            interfaces.ISerializable.providedBy(obj)):
+                            #skip serialization of binary fields
+                            #that have already been serialized elsewhere
+                            continue
                         #save files
                         result[columns[0].key] = dict(
                             saved_file=PersistFiles.store_file(
