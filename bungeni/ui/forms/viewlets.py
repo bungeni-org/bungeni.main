@@ -525,7 +525,7 @@ class SchedulingVotesViewlet(SubformViewlet):
     @property
     def for_display(self):
         """Only display viewlet for doc types"""
-        if not interfaces.IDoc.providedBy(self.context.__parent__):
+        if not interfaces.IDoc.providedBy(self.context.__parent__.item):
             return False
         return super(SchedulingVotesViewlet, self).for_display
 
