@@ -233,6 +233,7 @@ def get_request_context_roles(request):
         roles = ["bungeni.Anonymous"]
     else: 
         roles = get_context_roles(context, principal)
+        roles.append("bungeni.Authenticated")
         if is_admin(context):
             roles.append("bungeni.Admin")
     log.debug(""" [get_request_context_roles]
