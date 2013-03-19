@@ -21,7 +21,7 @@ from bungeni.utils.naming import polymorphic_identity
 mapper(domain.Principal, schema.principal,
     # principal should only be created as user or group
     #polymorphic_identity=polymorphic_identity(domain.Principal),
-    polymorphic_on=schema.principal.c.principal_type, # polymorphic discriminator
+    polymorphic_on=schema.principal.c.type, # polymorphic discriminator
     properties={}
 )
 
@@ -69,10 +69,9 @@ mapper(domain.PasswordRestoreLink, schema.password_restore_link,
 # Groups
 
 mapper(domain.Group, schema.group,
-    primary_key=[schema.group.c.group_id],
+    #primary_key=[schema.group.c.group_id], !+needed?
     inherits=domain.Principal,
     polymorphic_identity=polymorphic_identity(domain.Group),
-    polymorphic_on=schema.group.c.type, # polymorphic discriminator
     properties={
         "members": relation(domain.GroupMembership),
         # !+GROUP_PRINCIPAL_ID(ah,sep-2011) - removing group_principal_id as 

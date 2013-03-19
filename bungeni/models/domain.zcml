@@ -896,7 +896,7 @@
                 user_id
                 status
                 login
-                titles
+                title
                 first_name
                 last_name
                 middle_name
@@ -918,7 +918,7 @@
         />
         <require permission="bungeni.user.Edit"
             set_attributes="
-                titles
+                title
                 first_name
                 last_name
                 middle_name

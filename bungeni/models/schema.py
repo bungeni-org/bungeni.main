@@ -169,7 +169,7 @@ principal = sa.Table("principal", metadata,
     # and replace principal_id altogether!
     # !+principal_name sa.Column("principal_name", sa.Unicode(50), unique=True, nullable=False),
     # for polymorphic_identity
-    sa.Column("principal_type", sa.String(30), nullable=False),
+    sa.Column("type", sa.String(30), nullable=False),
 )
 
 
@@ -184,7 +184,6 @@ user = sa.Table("user", metadata,
         nullable=False),
     sa.Column("salutation", sa.Unicode(128)), # !+vocabulary?
     sa.Column("title", sa.Unicode(128)), # !+vocabulary?
-    sa.Column("titles", sa.Unicode(32)), # !+TMP to work with preceding demo data 
     sa.Column("first_name", sa.Unicode(256), nullable=False),
     sa.Column("last_name", sa.Unicode(256), nullable=False),
     sa.Column("middle_name", sa.Unicode(256)),
@@ -348,7 +347,6 @@ group = sa.Table("group", metadata,
     ),
     sa.Column("start_date", sa.Date, nullable=False),
     sa.Column("end_date", sa.Date),
-    sa.Column("type", sa.String(30), nullable=False),
     sa.Column("sub_type", sa.Unicode(128), nullable=True),
     # !+principal(mr, feb-2013) "group_principal_id" should really be "principal_name"
     # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema

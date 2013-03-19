@@ -148,6 +148,7 @@ class Principal(Entity):
 class User(Principal):
     """Domain Object For A User. General representation of a person.
     """
+    principal_type = "user"
     available_dynamic_features = ["address"]
     
     interface.implements(
@@ -157,10 +158,6 @@ class User(Principal):
     )
     
     def __init__(self, login=None, **kw):
-        # !+PRINCIPAL_TYPE for some reason this always ends up being set up 
-        # correctly for User, but not for Group.
-        #assert not self.principal_type, "principal_type"
-        #self.principal_type = "user"
         if login:
             self.login = login
         super(User, self).__init__(**kw)
@@ -219,6 +216,7 @@ class UserSubscription(Entity):
 class Group(Principal):
     """An abstract collection of users.
     """
+    principal_type = "group"
     available_dynamic_features = ["address"]
     interface.implements(
         interfaces.IBungeniGroup, 
@@ -231,9 +229,6 @@ class Group(Principal):
     
     def __init__(self, **kw):
         super(Group, self).__init__(**kw)
-        # !+PRINCIPAL_TYPE
-        assert not self.principal_type, "principal_type"
-        self.principal_type = "group"
         # !+GROUP_PRINCIPAL_ID set it here, derive it from identifier?
         assert not self.group_principal_id, "group_principal_id"
         self.group_principal_id = "_TMP_INIT_GROUP_PRINCIPAL_ID_"
