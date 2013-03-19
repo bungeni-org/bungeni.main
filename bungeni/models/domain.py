@@ -144,6 +144,7 @@ class Entity(object):
 class Principal(Entity):
     """Base model for a Principal, that is a User or a Group.
     """
+    principal_type = None
 
 class User(Principal):
     """Domain Object For A User. General representation of a person.
@@ -229,9 +230,6 @@ class Group(Principal):
     
     def __init__(self, **kw):
         super(Group, self).__init__(**kw)
-        # !+GROUP_PRINCIPAL_ID set it here, derive it from identifier?
-        assert not self.group_principal_id, "group_principal_id"
-        self.group_principal_id = "_TMP_INIT_GROUP_PRINCIPAL_ID_"
     
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.

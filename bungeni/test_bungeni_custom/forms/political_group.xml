@@ -28,7 +28,7 @@
     <field name="description" label="Description" required="false" value_type="text" render_type="rich_text">
         <show modes="view edit add" />
     </field>
-    <field name="identifier" label="Identifier" description="Unique identifier or number for this political group" required="false" value_type="text" render_type="text_line">
+    <field name="principal_name" label="Identifier" description="Unique identifier or number for this political group" required="false" value_type="text" render_type="text_line">
         <show modes="view edit add" />
     </field>
     <field name="logo_data" label="Logo" required="false" value_type="image" render_type="image">

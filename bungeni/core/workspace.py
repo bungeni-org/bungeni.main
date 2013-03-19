@@ -583,8 +583,8 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
     @staticmethod
     def string_key(instance):
         unproxied = removeSecurityProxy(instance)
-        group_principal_id = unproxied.group_principal_id
-        url_id = str(group_principal_id).replace(".", "-")
+        principal_name = unproxied.principal_name
+        url_id = str(principal_name).replace(".", "-")
         return url_id
 
     @staticmethod
@@ -594,8 +594,8 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
         properties = identity_key.split("-")
         if len(properties) != 3:
             raise ValueError
-        group_principal_id = identity_key.replace("-", ".")
-        return domain.Group, group_principal_id
+        principal_name = identity_key.replace("-", ".")
+        return domain.Group, principal_name
 
     def title_column(self, domain_class):
         table = orm.class_mapper(domain_class).mapped_table
@@ -603,20 +603,20 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
         # TODO : update to support other fields
         column = table.columns[utk["full_name"]]
         return column
-
+    
     def get(self, name, default=None):
         try:
-            domain_class, group_principal_id = self.value_key(name)
+            domain_class, principal_name = self.value_key(name)
         except ValueError:
             return default
         session = Session()
         try:
             value = session.query(domain_class).filter(
-                domain_class.group_principal_id == group_principal_id).one()
+                domain_class.principal_name == principal_name).one()
         except orm.exc.NoResultFound:
             return default
         return contained(value, self, name)
-
+    
     def filter_type(self, query, domain_class, kw):
         if kw.get("filter_type", None):
             query = query.filter(domain_class.type == kw.get("filter_type"))
@@ -656,3 +656,4 @@ class WorkspaceSchedulableContainer(WorkspaceUnderConsiderationContainer):
                 states = workflow.get_state_ids(tagged=["public"])
                 domain_status_map[ti.domain_model] = states
         return domain_status_map
+

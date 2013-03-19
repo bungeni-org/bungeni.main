@@ -69,18 +69,10 @@ mapper(domain.PasswordRestoreLink, schema.password_restore_link,
 # Groups
 
 mapper(domain.Group, schema.group,
-    #primary_key=[schema.group.c.group_id], !+needed?
     inherits=domain.Principal,
     polymorphic_identity=polymorphic_identity(domain.Group),
     properties={
         "members": relation(domain.GroupMembership),
-        # !+GROUP_PRINCIPAL_ID(ah,sep-2011) - removing group_principal_id as 
-        # orm property, this is now on the schema.
-        #"group_principal_id": column_property(
-        #    ("group." + schema.groups.c.type + "." +
-        #     rdb.cast(schema.group.c.group_id, rdb.String)
-        #    ).label("group_principal_id")
-        #),
         "titletypes": relation(domain.TitleType),
         "contained_groups": relation(domain.Group,
             primaryjoin=rdb.and_(

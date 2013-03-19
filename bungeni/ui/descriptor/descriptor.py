@@ -1783,3 +1783,4 @@ class OAuthApplicationDescriptor(ModelDescriptor):
           render_type="text_line"
         ),
     ]
+

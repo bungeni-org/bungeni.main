@@ -193,33 +193,33 @@ class Groups(REST):
         if "name" in self.request.keys():
             group_values = session.query(domain.Group).filter(
                 sa.and_(domain.Group.status == "active", 
-                         domain.Group.group_principal_id == self.request["name"])
+                         domain.Group.principal_name == self.request["name"])
                 ).all()
             data ={}
             if len(group_values) == 1:
                 group = group_values[0]
-                data =  {
-                    "group_principal_id": group.group_principal_id,
-                    "groupid" :  group.group_principal_id,
+                data = {
+                    "principal_name": group.principal_name,
+                    "groupid" :  group.principal_name,
                     "title" : group.short_name or u"",
                     "description" : group.description or u"",
                     }
             return self.json_response(data) 
         elif "user_name" in self.request.keys():
             group_values = session.query(domain.Group).filter(
-                domain.Group.group_principal_id == self.request["user_name"]).all()
+                domain.Group.principal_name == self.request["user_name"]).all()
             data ={}
             if len(group_values) == 1:
                 group = group_values[0]
                 data =  {
-                    "groupid" :  group.group_principal_id,
+                    "groupid" :  group.principal_name,
                     "title" : group.short_name or u"",
                     "description" : group.description or u"",
                     }
             return self.json_response(data)                
         else:
             group_values = [
-                (r.group_principal_id) for
+                (r.principal_name) for
                 r in session.query(domain.Group).filter
                 (domain.Group.status == "active").all()
             ]
@@ -241,14 +241,14 @@ class enumerateGroups(REST):
         elif isinstance( gid, (list, tuple)) and exact_match:
             statements = []
             for i in gid:
-                statements.append(domain.Group.group_principal_id == i)
+                statements.append(domain.Group.principal_name == i)
             clause = sa.or_(*statements)
         elif isinstance( gid,(list, tuple)) and not exact_match:
-            clause = sa.or_(*(map(domain.Group.group_principal_id.contains, gid)))
+            clause = sa.or_(*(map(domain.Group.principal_name.contains, gid)))
         elif not exact_match:
-            clause = domain.Group.group_principal_id.contains(gid)
+            clause = domain.Group.principal_name.contains(gid)
         else:
-            clause = domain.Group.group_principal_id == gid
+            clause = domain.Group.principal_name == gid
         query = session.query(domain.Group).filter(
                         sa.and_(clause,
                             domain.Group.status == "active")
@@ -264,7 +264,7 @@ class enumerateGroups(REST):
             
         if max_results !="None" and isinstance(max_results, int):
             query = query.limit(max_results)
-        grouplist = [dict(id=r.group_principal_id,
+        grouplist = [dict(id=r.principal_name,
                                          title=r.short_name,plugin=plugin_id)
                                    for r in query.all()]
         return self.json_response(grouplist)
@@ -375,7 +375,7 @@ class Memberships(REST):
 
     def GET(self):
         session = Session()
-        return self.json_response([r.group_principal_id
+        return self.json_response([r.principal_name
                 for r in session.query(domain.Group).filter(
                     sa.and_(
                         user.c.login == self.request["principal_id"],
@@ -393,13 +393,13 @@ class GroupMembers(REST):
         user_values = session.query(domain.User).filter(
             sa.and_(user.c.user_id == ugm.c.user_id,
                      group.c.group_id == ugm.c.group_id,
-                     domain.Group.group_principal_id == self.request["group_id"],
+                     domain.Group.principal_name == self.request["group_id"],
                      ugm.c.active_p == True)).all()
         return self.json_response([r.login for r in user_values])
     
 
         
-        values=[r.group_principal_id
+        values=[r.principal_name
                 for r in session.query(domain.Group).filter(
                     sa.and_(
                         user.c.login == self.request["principal_id"],

@@ -30,7 +30,7 @@
     <field name="description" label="Description" required="false" value_type="text" render_type="rich_text">
         <show modes="view edit add" />
     </field>
-    <field name="identifier" label="Committee Identifier" description="Unique identifier or number for this Committee" required="false" value_type="text" render_type="text_line">
+    <field name="principal_name" label="Committee Identifier" description="Unique identifier or number for this Committee" required="false" value_type="text" render_type="text_line">
         <show modes="view edit add" />
     </field>
     <field name="sub_type" label="Committee Type" required="false" value_type="vocabulary" render_type="single_select" vocabulary="committee_type">

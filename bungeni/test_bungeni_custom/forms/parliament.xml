@@ -6,7 +6,7 @@
     <field name="short_name" label="Short Name" description="Shorter name for the parliament" required="true" value_type="text" render_type="text_line">
         <show modes="view edit add listing" />
     </field>
-    <field name="identifier" label="Parliament Identifier" description="Unique identifier or number for this Parliament" required="false" value_type="text" render_type="text_line">
+    <field name="principal_name" label="Parliament Identifier" description="Unique identifier or number for this Parliament" required="false" value_type="text" render_type="text_line">
         <show modes="view edit add listing" />
     </field>
     <field name="language" label="Language" required="true" value_type="language" render_type="single_select" vocabulary="language">

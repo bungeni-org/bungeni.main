@@ -28,7 +28,7 @@
     <field name="description" label="Description" required="false" value_type="text" render_type="rich_text">
         <show modes="view edit add" />
     </field>
-    <field name="identifier" label="Ministry Identifier" description="Unique identifier or number for this Ministry" required="false" value_type="text" render_type="text_line">
+    <field name="principal_name" label="Ministry Identifier" description="Unique identifier or number for this Ministry" required="false" value_type="text" render_type="text_line">
         <show modes="view edit add" />
     </field>
     <integrity constraints="end_after_start" validations="validate_date_range_within_parent" />

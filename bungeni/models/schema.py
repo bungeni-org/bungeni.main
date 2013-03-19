@@ -337,7 +337,11 @@ group = sa.Table("group", metadata,
     sa.Column("short_name", sa.Unicode(512), nullable=False),
     sa.Column("full_name", sa.Unicode(1024)),
     sa.Column("acronym", sa.Unicode(32), nullable=True),
-    sa.Column("identifier", sa.Unicode(32), nullable=True),
+    sa.Column("principal_name", sa.Unicode(32), 
+        # !+login_regex - principal_name should also be a valid login name
+        # !+principal_name sa.ForeignKey("principal.principal_name"),
+        unique=True,
+        nullable=False),
     sa.Column("description", sa.UnicodeText),
     # Workflow State
     sa.Column("status", sa.Unicode(32)),
@@ -348,12 +352,6 @@ group = sa.Table("group", metadata,
     sa.Column("start_date", sa.Date, nullable=False),
     sa.Column("end_date", sa.Date),
     sa.Column("sub_type", sa.Unicode(128), nullable=True),
-    # !+principal(mr, feb-2013) "group_principal_id" should really be "principal_name"
-    # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema
-    sa.Column("group_principal_id", sa.Unicode(50),
-        # !+principal_name sa.ForeignKey("principal.principal_name"),
-        unique=True,
-        nullable=False),
     sa.Column("parent_group_id", sa.Integer,
         sa.ForeignKey("group.group_id")
      ),
@@ -365,10 +363,6 @@ group = sa.Table("group", metadata,
     sa.Column("custom2", sa.UnicodeText, nullable=True),
     sa.Column("custom3", sa.UnicodeText, nullable=True),
     sa.Column("custom4", sa.UnicodeText, nullable=True),
-)
-# !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding index on group_principal_id column
-group_principal_id_index = sa.Index("grp_grpprincipalid_idx", 
-    group.c["group_principal_id"]
 )
 
 parliament = sa.Table("parliament", metadata,

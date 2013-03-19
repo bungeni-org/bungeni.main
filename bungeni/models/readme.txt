@@ -79,33 +79,23 @@ different table. Bungeni uses this feature to model parliaments, committees,
 political groups, etc. Let's create some groups in the system to examine how
 they work.
 
-  >>> from bungeni.core.events import group_created #!+GROUP_PRINCIPAL_ID
-  
   >>> parliament = domain.Parliament(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now(), group_role="bungeni.MP")
+  >>> parliament.principal_name = "parl_01"
   >>> parliament.language = "en"
   >>> session.add(parliament)
   >>> session.flush()
-  >>> group_created(parliament, None)
-  >>> parliament.group_principal_id
-  'group.parliament.1'
   
   >>> political_group_a = domain.PoliticalGroup(short_name=u"pp_1", start_date=datetime.datetime.now(), group_role="bungeni.MemberPoliticalGroupAssembly")
+  >>> political_group_a.principal_name = "pga_01"
   >>> political_group_a.parent_group_id = parliament.parliament_id
   >>> political_group_a.language = "en"
   >>> political_group_b = domain.PoliticalGroup(short_name=u"pp_2", start_date=datetime.datetime.now(), group_role="bungeni.MemberPoliticalGroupAssembly")
+  >>> political_group_b.principal_name = "pgb_01"
   >>> political_group_b.parent_group_id = parliament.parliament_id
   >>> political_group_b.language = "en"
   >>> session.add(political_group_a)
-  >>> session.flush()
-  >>> group_created(political_group_a, None)
-  >>> political_group_a.group_principal_id
-  'group.political_group.2'
-  
   >>> session.add(political_group_b)
   >>> session.flush()
-  >>> group_created(political_group_b, None)
-  >>> political_group_b.group_principal_id
-  'group.political_group.3'
 
   >>> session.add(mp_1)
   >>> session.add(mp_2)
@@ -116,17 +106,14 @@ they work.
 The actual committee
 
   >>> committee_a = domain.Committee(short_name=u"committee_1", 
-  ...       start_date=datetime.datetime.now(), 
+  ...       start_date=datetime.datetime.now(),
+  ...       principal_name="com_01",
   ...       group_role="bungeni.CommitteeMember")
   >>> committee_a.parent_group_id = parliament.parliament_id
   >>> committee_a.sub_type = "housekeeping"
   >>> committee_a.group_continuity = "permanent"
   >>> committee_a.language = "en"
   >>> session.add(committee_a)
-  >>> session.flush()
-  >>> group_created(committee_a, None)
-  >>> committee_a.group_principal_id
-  'group.committee.7'
 
 A user is associated to a group via a membership, where we can store additional properties, such
 as a user's role/title in a group.
@@ -188,35 +175,31 @@ Add a group address
 Government
 ----------
   >>> gov = domain.Government(short_name=u"gov_1", start_date=datetime.datetime.now())
+  >>> gov.principal_name = "gov_01"
   >>> gov.group_role = "bungeni.GovernmentMember"
   >>> gov.parent_group_id = parliament.parliament_id
   >>> gov.language = "en"
   >>> session.add(gov)
   >>> session.flush()
-  >>> group_created(gov, None)
-  >>> gov.group_principal_id
-  'group.government.8'
   >>> gov.parent_group
   <bungeni.models.domain.Parliament object at ...>
 
 
 Ministries
 -----------
-  >>> #ministry = domain.Ministry(short_name=u"ministry", start_date=datetime.datetime.now())
-  >>> #ministry.group_role = "bungeni.MinistryMember"
-  >>> #ministry.parent_group_id = gov.group_id
-  >>> #ministry.language = "en"
-  >>> #session.add(ministry) #!+ (_TMP_INIT_GROUP_PRINCIPAL_ID_ already exists !!
-  >>> #session.flush()
-  >>> #group_created(ministry, None)
-  >>> #ministry.group_principal_id
-  #'group.ministry.9'
+  >>> ministry = domain.Ministry(short_name=u"ministry", start_date=datetime.datetime.now())
+  >>> ministry.principal_name = "min_01"
+  >>> ministry.group_role = "bungeni.MinistryMember"
+  >>> ministry.parent_group_id = gov.group_id
+  >>> ministry.language = "en"
+  >>> session.add(ministry)
+  >>> session.flush()
   
-  >>> #ministry.parent_group
-  #<bungeni.models.domain.Government object at ...>
+  >>> ministry.parent_group
+  <bungeni.models.domain.Government object at ...>
   
-  >>> #gov.contained_groups
-  #[<bungeni.models.domain.Ministry object at ...>]
+  >>> gov.contained_groups
+  [<bungeni.models.domain.Ministry object at ...>]
 
 
 Groups in a parliament:
@@ -225,7 +208,7 @@ Groups in a parliament:
   >>> pgroups = get_all_group_ids_in_parliament(parliament.parliament_id)
   
   >>> len(pgroups)
-  5
+  6
 
 
 
@@ -236,11 +219,11 @@ Test office and office role and sub role creation
   >>> speaker_office = domain.Office()
   >>> speaker_office.short_name = u"Speakers office"
   >>> speaker_office.start_date = datetime.datetime.now()
+  >>> speaker_office.principal_name = "so_01"
   >>> speaker_office.group_role = "bungeni.Speaker"
   >>> speaker_office.language = "en"
   >>> session.add(speaker_office)
   >>> session.flush()
-  >>> group_created(speaker_office, None)
 
 Speaker's Office Sub Role
 

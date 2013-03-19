@@ -178,7 +178,7 @@ def get_workspace_roles():
     roles = set()
     user = bungeni.models.utils.get_login_user()
     groups = session.query(bungeni.models.domain.Group).filter(
-        bungeni.models.domain.Group.group_principal_id.in_(
+        bungeni.models.domain.Group.principal_name.in_(
             principal.groups.keys())).all()
     principal_groups = [
         delegate.login for delegate in
@@ -190,7 +190,7 @@ def get_workspace_roles():
         prm = zope.component.queryAdapter(
             context, IPrincipalRoleMap, default=None)
         if prm:
-            pg = principal_groups + [group.group_principal_id]
+            pg = principal_groups + [group.principal_name]
             for principal_id in pg:
                 l_roles = prm.getRolesForPrincipal(principal_id)
                 for role in l_roles:

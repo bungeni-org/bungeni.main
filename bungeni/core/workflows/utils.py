@@ -154,7 +154,7 @@ def assign_role_minister_question(question):
     assert interfaces.IQuestion.providedBy(question), \
         "Not a Question: %s" % (question)
     if question.ministry is not None:
-        ministry_login_id = question.ministry.group_principal_id
+        ministry_login_id = question.ministry.principal_name
         if ministry_login_id:
             assign_role(question.ministry.group_role, ministry_login_id, question)
 
@@ -170,6 +170,7 @@ def get_group_context(context):
     if interfaces.IOffice.providedBy(context):
         return get_chamber_for_group(context)
     elif interfaces.IGovernment.providedBy(context):
+        # !+LEGISLATURE, GLOBAL? 
         return common.get_application()
     else:
         return context
@@ -181,9 +182,9 @@ def _set_group_local_role(context, unset=False):
     role = get_group_local_role(group)
     prm = IPrincipalRoleMap(get_group_context(group))
     if not unset:
-        prm.assignRoleToPrincipal(role, group.group_principal_id)
+        prm.assignRoleToPrincipal(role, group.principal_name)
     else:
-        prm.unsetRoleForPrincipal(role, group.group_principal_id)
+        prm.unsetRoleForPrincipal(role, group.principal_name)
 
 def set_group_local_role(context):
     _set_group_local_role(context, unset=False)

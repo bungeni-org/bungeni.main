@@ -199,11 +199,11 @@ def get_principal_ids(document, roles):
     return principal_ids
 
 
-def get_group_member_ids(group_id):
+def get_group_member_ids(group_principal_name):
     session = Session()
     group = session.query(
         domain.Group).filter(
-        domain.Group.group_principal_id == group_id).one()
+        domain.Group.principal_name == group_principal_name).one()
     if group:
         return [member.user.login for member in group.members]
     return []

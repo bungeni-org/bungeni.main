@@ -28,7 +28,7 @@
     <field name="description" label="Description" required="false" value_type="text" render_type="rich_text">
         <show modes="view edit add" />
     </field>
-    <field name="identifier" label="Office Identifier" description="Unique identifier or number for this Office" required="false" value_type="text" render_type="text_line">
+    <field name="principal_name" label="Office Identifier" description="Unique identifier or number for this Office" required="false" value_type="text" render_type="text_line">
         <show modes="view edit add" />
     </field>
     <field name="office_role" label="Role" description="Role given to members of this office" required="false" value_type="text" render_type="single_select" vocabulary="office_role">
