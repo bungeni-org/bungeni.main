@@ -253,38 +253,46 @@ def get_ministry_ids_for_user_in_government(user_id, government_id):
 
 
 def get_groups_held_for_user_in_parliament(user_id, parliament_id):
-    """ get the Offices (functions/titles) held by a user """
+    """Get the Offices (functions/titles) held by a user.
+    """
     session = Session()
     connection = session.connection(domain.Group)
     group_ids = get_all_group_ids_in_parliament(parliament_id)
     #!+MODELS(miano, 16 march 2011) Why are these queries hardcorded?
-    #TODO:Fix this
-    offices_held = sa.select([schema.group.c.short_name,
-        schema.group.c.full_name,
-        schema.group.c.type,
-        schema.title_type.c.title_name,
-        schema.member_title.c.start_date,
-        schema.member_title.c.end_date,
-        schema.user_group_membership.c.start_date,
-        schema.user_group_membership.c.end_date,
+    offices_held = sa.select([
+            schema.group.c.short_name,
+            schema.group.c.full_name,
+            schema.principal.c.type,
+            schema.title_type.c.title_name,
+            schema.member_title.c.start_date,
+            schema.member_title.c.end_date,
+            schema.user_group_membership.c.start_date,
+            schema.user_group_membership.c.end_date,
         ],
         from_obj=[
-        sa.join(schema.group, schema.user_group_membership,
-        schema.group.c.group_id == schema.user_group_membership.c.group_id
+            sa.join(
+                schema.group, 
+                schema.user_group_membership,
+                schema.group.c.group_id == schema.user_group_membership.c.group_id
             ).outerjoin(
-            schema.member_title, schema.user_group_membership.c.membership_id ==
-            schema.member_title.c.membership_id).outerjoin(
+                schema.member_title,
+                schema.user_group_membership.c.membership_id == 
+                    schema.member_title.c.membership_id
+            ).outerjoin(
                 schema.title_type,
                 schema.member_title.c.title_type_id ==
-                    schema.title_type.c.title_type_id)],
-            whereclause=sa.and_(
+                    schema.title_type.c.title_type_id
+            )
+        ],
+        whereclause=sa.and_(
                 schema.group.c.group_id.in_(group_ids),
                 schema.user_group_membership.c.user_id == user_id),
-            order_by=[schema.user_group_membership.c.start_date,
-                        schema.user_group_membership.c.end_date,
-                        schema.member_title.c.start_date,
-                        schema.member_title.c.end_date]
-            )
+        order_by=[
+            schema.user_group_membership.c.start_date,
+            schema.user_group_membership.c.end_date,
+            schema.member_title.c.start_date,
+            schema.member_title.c.end_date]
+    )
     o_held = connection.execute(offices_held)
     return o_held
 
