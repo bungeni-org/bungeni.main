@@ -103,9 +103,6 @@ def setup_customization_ui():
             "bungeni.ui.forms.common.DisplayForm")
         
         register_api_view(type_key, model_interface_qualname)
-        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-        print type_key, model_interface_qualname
-        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx"
         # edit !+DiffEditForm prior to r10032, doc-archetyped types were being
         # *declared* to use bungeni.ui.forms.forms.DiffEditForm, but this
         # is not the edit view tht was actually being used!
