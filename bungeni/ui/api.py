@@ -30,11 +30,15 @@ from bungeni.ui.utils import url
 
 
 def get_key():
-    """Return a randomly generated key
-    """
+    """Return a randomly generated key"""
     m = hashlib.sha1()
     m.update("".join(random.sample(string.letters + string.digits, 20)))
     return m.hexdigest()
+
+
+def set_json_headers(request):
+    """Set appropriate headers on JSON response"""
+    request.response.setHeader("Content-type", "application/json")
 
 
 class APIDefaultView(BungeniBrowserView):
@@ -264,6 +268,7 @@ def redirect_error(context, request, error):
 def bad_request(context, request, error):
     request.response.setStatus(400)
     data = {"error": error.error, "error_description": error.error_description}
+    set_json_headers(request)
     return simplejson.dumps(data)
 
 
@@ -399,6 +404,7 @@ class OAuthAccessToken(BrowserPage):
                 "expires_in": capi.oauth_access_token_expiry_time,
                 "refresh_token": access_token.refresh_token
         }
+        set_json_headers(self.request)
         return simplejson.dumps(data)
 
 
@@ -411,6 +417,7 @@ class APISectionView(BrowserPage):
             item["title"] = self.context[key].title
             item["url"] = url.absoluteURL(self.context[key], self.request)
             data.append(item)
+        set_json_headers(self.request)
         return simplejson.dumps(data)
 
 
@@ -419,4 +426,5 @@ class APIObjectView(BrowserPage):
         dthandler = lambda obj: obj.isoformat() if isinstance(
             obj, datetime) else obj
         data = obj2dict(self.context, 0)
+        set_json_headers(self.request)
         return simplejson.dumps(data, default=dthandler)
