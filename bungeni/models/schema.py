@@ -1193,6 +1193,7 @@ oauth_authorization = sa.Table("oauth_authorization", metadata,
         sa.ForeignKey("oauth_application.application_id"), nullable=False),
     sa.Column("authorization_code", sa.String(100), nullable=False),
     sa.Column("expiry", sa.DateTime(timezone=False), nullable=False),
+    sa.Column("refresh_token", sa.String(100), nullable=False),
     sa.Column("active", sa.Boolean(), nullable=False)
 )
 
@@ -1200,8 +1201,7 @@ oauth_access_token = sa.Table("oauth_access_token", metadata,
     sa.Column("access_token_id", sa.Integer, primary_key=True),
     sa.Column("authorization_id", sa.Integer,
              sa.ForeignKey("oauth_authorization.authorization_id")),
-    sa.Column("access_token", sa.String(100)),
-    sa.Column("refresh_token", sa.String(100)),
+    sa.Column("access_token", sa.String(100), nullable=False),
     sa.Column("expiry", sa.DateTime(timezone=False), nullable=False),
 )
 
