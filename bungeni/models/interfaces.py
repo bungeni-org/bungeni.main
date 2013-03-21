@@ -181,6 +181,10 @@ class IVersion(interface.Interface):
     """A version of an object is identical in attributes to the actual 
     object, based on that object's domain schema.
     """
+class IDocVersion(IVersion):
+    """A version of a Doc instance.
+    """
+
 ''' !+OBSOLETE_VERSIONING
 class IVersionContainer(IBungeniContainer):
     pass

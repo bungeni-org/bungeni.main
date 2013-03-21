@@ -71,7 +71,7 @@ def get_managed_containers(context):
                     seen.append(key)
     return attrs
 
-def FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(context, name):
+def FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(context, key):
     # !+ just a tmp hack to serve as a reminder as well as to "alleviate" the
     # problem that for some reason the "files" managed container on DocVersion 
     # is not found with getattr(instance, "files") but it is found off class !!

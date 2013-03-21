@@ -719,6 +719,9 @@ class DocAudit(Audit):
 class DocVersion(Version):
     """A version of a document.
     """
+    interface.implements(
+        interfaces.IDocVersion,
+    )
     # !+version_feature_attachment
     # !+FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK note, "declaring" the 
     # container with bungeni.alchemist.model.add_container_property_to_model

@@ -261,7 +261,7 @@ TYPE_REGISTRY = [
     ("member_title", TI(None, interfaces.IMemberTitle)),
     ("change", TI(None, interfaces.IChange)),
     ("doc", TI(None, interfaces.IDoc)),
-    ("doc_version", TI(None, None)), #interfaces.IDocVersion)), #!+IVERSION
+    ("doc_version", TI(None, interfaces.IDocVersion)),
     ("attachment_version", TI(None, None)), #interfaces.IAttachmentVersion)), #!+IVERSION
     ("venue", TI(None, interfaces.IVenue)),
     ("session", TI(None, interfaces.ISession)),
