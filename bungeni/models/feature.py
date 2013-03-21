@@ -98,18 +98,18 @@ def feature_version(kls, feature):
     assert interfaces.IFeatureAudit.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureVersion)
 
-
+    
 def feature_attachment(kls, feature):
     """Decorator for domain types to support "attachment" feature.
     !+ currently assumes that kls is versionable.
     """
-    # !+ domain.Attachment is versionable
     # domain.Attachment itself may NOT support attachments
     assert not interfaces.IAttachment.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureAttachment)
     add_container_property_to_model(kls, "files", 
         "bungeni.models.domain.AttachmentContainer", "head_id")
-
+    # !+ domain.Attachment is versionable
+    
 
 def feature_event(kls, feature):
     """Decorator for domain types to support "event" feature.

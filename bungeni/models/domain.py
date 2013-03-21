@@ -364,13 +364,11 @@ class Legislature(object):
 
 #
 
+# !+RENAME chamber
 class Parliament(Group):
     """A parliament.
     """
     interface.implements(interfaces.IParliament)
-    
-    venues = one2many("venues",
-        "bungeni.models.domain.VenueContainer", "group_id")
 
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
@@ -602,10 +600,12 @@ class ChangeTree(Entity):
 # aspects via the self.audit instance (and its type)?
 class Version(Change):
     """A specialized change type, with the information of a version (a special 
-    kind of change action) of an object.
+    kind of change action) of an object. 
     
     Behaves somewhat like a combined Change and Audit record, as this will 
     automatically try to resolve additional attrs off self.audit before failing.
+    
+    An "abstract" class, not catalysed, and only sub-classes are ever instantiated.
     """
     interface.implements(
         interfaces.IVersion,
@@ -615,31 +615,17 @@ class Version(Change):
     def __name__(self):
         return "ver-%s" % (self.seq)
     
-    # !+version_feature_attachment should only be when type(self.head) is 
-    # attachmentable, would need a version class per type
-    # !+version_feature_event some for other features with sub-types?
-    files = one2many("files",
-        "bungeni.models.domain.AttachmentContainer", "head_id")
-    
     def __getattr__(self, name):
         """Try to pick any attribute (not found on this change record--this 
-        method only gets called when a nonexistent attribute is accessed) off 
+        method only gets called when a non-existent attribute is accessed) off 
         the related audit snapshot record (as every change record is related 
         to a type-dedicated audit record).
 
         !+ should this be on Change i.e. for all change actions?
-        !+ possible issue with attribute hiding, if an type has a 
-           same-named property as one in in Change type/table, then that one
-           will always be retrieved first (and so the one on the related
-           Audit type/table will be unreachable in this way).
         """
+        audit = object.__getattribute__(self, "audit")
         try:
-            audit = object.__getattribute__(self, "audit")
-            return object.__getattribute__(audit, name)
-        except AttributeError:
-            pass #try to lookup from version instance
-        try:
-            return object.__getattribute__(self, name)
+            return getattr(audit, name)
         except AttributeError:
             # !+SA_INCORRECT_TYPE_DEBUG strangely, sometimes the type of 
             # (this change's) self.audit that sqlalchemy returns does not 
@@ -658,7 +644,18 @@ class Version(Change):
                         self.head, self.head_id, 
                         self.audit, audit_id, 
                         self, correctly_typed_change))
+                print "!+SA_INCORRECT_TYPE_DEBUG -- PLEASE REPORT OF YOU SEE THIS"
+                import pdb; pdb.set_trace()
             # !+/SA_INCORRECT_TYPE_DEBUG
+            
+            try:
+                from bungeni.alchemist import utils
+                return utils.FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(self, name)
+            except:
+                import sys
+                from bungeni.ui.utils import debug
+                debug.log_exc(sys.exc_info(), log_handler=log.error)
+            
             raise AttributeError(
                 "%r [audit_id=%r, audit_type=%r] object has no attribute %r" % (
                     self, self.audit_id, self.audit_type, name))
@@ -723,12 +720,17 @@ class DocVersion(Version):
     """A version of a document.
     """
     # !+version_feature_attachment
+    # !+FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK note, "declaring" the 
+    # container with bungeni.alchemist.model.add_container_property_to_model
+    # gives same errors!
     files = one2many("files",
         "bungeni.models.domain.AttachmentVersionContainer", "head_id")
-    #!+!+version_feature_event
+    
+    # !+version_feature_event
     #events = one2many("events",
     #    "bungeni.models.domain.DocVersionContainer", "head_id")
-    
+
+
 #!+CUSTOM
 class AgendaItem(Doc):
     """Generic Agenda Item that can be scheduled on a sitting.

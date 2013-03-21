@@ -79,7 +79,6 @@ def catalyse_system_descriptors(module):
     import sys
     import inspect
     from bungeni.alchemist.descriptor import IModelDescriptor
-    from bungeni.models import domain
     from bungeni.capi import capi
     from bungeni.ui.utils import debug
     
@@ -116,7 +115,7 @@ def catalyse_system_descriptors(module):
         # Associate each descriptor to the dedicated domain type via naming 
         # convention, and only catalysze (descriptor, model) pairs 
         # for which the domain type is mapped. Otherwise, ignore.
-        domain_model = getattr(domain, naming.model_name(type_key), None)
+        domain_model = getattr(MODEL_MODULE, naming.model_name(type_key), None)
         if not (domain_model and is_model_mapped(domain_model)):
             log.warn("Not catalysing: %s", descriptor_name)
             continue

@@ -47,14 +47,15 @@ def get_local_table(kls):
 
 def inisetattr(obj, name, value):
     """A once-only setattr (ensure any subsequent attempts to set are to 
-    the same value."""
+    the same value.
+    """
     if getattr(obj, name, None) is not None:
         assert getattr(obj, name) is value
     else:
         setattr(obj, name, value)
 
 def get_managed_containers(context):
-    """Get the managed container instances off context
+    """Get the managed container instances off context.
     """
     attrs = []
     kls = context.__class__
@@ -63,6 +64,18 @@ def get_managed_containers(context):
         for key, value in class_item.__dict__.items():
             if IManagedContainer.providedBy(value):
                 if key not in seen:
-                    attrs.append((key, getattr(context, key)))
+                    try:
+                        attrs.append((key, getattr(context, key)))
+                    except AttributeError:
+                        attrs.append((key, FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(context, key)))
                     seen.append(key)
     return attrs
+
+def FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(context, name):
+    # !+ just a tmp hack to serve as a reminder as well as to "alleviate" the
+    # problem that for some reason the "files" managed container on DocVersion 
+    # is not found with getattr(instance, "files") but it is found off class !!
+    print "!+FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK:", context, key
+    print "    trying off context.__class__:", context, key, context.__class__
+    return getattr(context.__class__, key)
+

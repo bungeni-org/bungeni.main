@@ -184,10 +184,10 @@ class _ManagedContainer(PartialContainer):
 # alchemist.traversal.collection
 
 class CollectionTraverserTemplate(object):
-    """A traverser that knows how to look up objects by sqlalchemy collections """
-
+    """A traverser that knows how to look up objects by sqlalchemy collections.
+    """
     interface.implements(ITraverserPlugin)
-
+    
     collection_attributes = ()
     
     def __init__(self, container, request):
@@ -195,7 +195,8 @@ class CollectionTraverserTemplate(object):
         self.request = request
     
     def publishTraverse(self, request, name):
-        """See zope.publisher.interfaces.IPublishTraverse"""
+        """See zope.publisher.interfaces.IPublishTraverse.
+        """
         if name in self.collection_attributes:
             container = getattr(self.context, name)
             if ILocation.providedBy(container):
