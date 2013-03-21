@@ -598,7 +598,7 @@
       for="bungeni.core.content.APISection"
       name="index"
       class="bungeni.ui.api.APIDefaultView"
-      permission="bungeni.oauth.View"
+      permission="zope.Public"
    />
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"

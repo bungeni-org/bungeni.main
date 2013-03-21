@@ -267,7 +267,7 @@
 
   <!-- OAuth -->
   <class class=".content.APISection">
-    <require permission="bungeni.oauth.View"
+    <require permission="zope.Public"
              interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
   </class>
   <class class=".content.OAuthSection">
