@@ -146,4 +146,15 @@ def put_env(key, value):
             # ensure that the original object value defines a __repr__ 
             # that can correctly re-instantiate the original object
             assert eval(os.environ[key]) == value
+            
+            
+def get_bungeni_installation_dir():
+    '''
+    Gets the path to the bungeni installation directory 
+    '''
+    current_dir = __file__
+    trailing_file_name = ""
+    while trailing_file_name != "src":
+        current_dir, trailing_file_name = os.path.split(current_dir)
+    return current_dir
 

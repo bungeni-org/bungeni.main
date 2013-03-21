@@ -3,6 +3,7 @@ from threading import RLock
 from zope.component import getUtility
 from zope.component.zcml import handler
 from zope.interface import implements
+from bungeni.utils.misc import get_bungeni_installation_dir
 import os
 
 
@@ -13,10 +14,7 @@ class FileStorageUtility(object):
     implements(IFSUtility)
 
     def __init__(self, fs_path):
-        # Constructing path from the buildout directory
-        cur_dir_path = os.path.dirname(__file__)
-        base_path = os.path.join(cur_dir_path, '../../../../')
-        self.fs_path = os.path.join(base_path, fs_path)
+        self.fs_path = os.path.join(get_bungeni_installation_dir(), fs_path)
         self.lock = RLock()
         if not os.path.exists(self.fs_path):
             raise ValueError("Unable to find storage path: %s" % self.fs_path)
