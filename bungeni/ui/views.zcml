@@ -193,8 +193,13 @@
   <!-- Reporting -->
      <!-- !+Reports(mb, 09-2011) To use one interface for registration. -->
      <browser:page name="create-report"
-        for="*"
+        for="bungeni.core.interfaces.ISchedulingContext"
         permission="bungeni.report.Edit"
+        class=".reports.ReportBuilder"
+    />
+     <browser:page name="create-report"
+        for="bungeni.core.interfaces.IWorkspaceUnderConsideration"
+        permission="bungeni.ui.workspace.View"
         class=".reports.ReportBuilder"
     />
   <!-- Calendar -->

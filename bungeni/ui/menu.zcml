@@ -1174,6 +1174,14 @@
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         order="40"
     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.core.interfaces.IWorkspaceUnderConsiderationContainer"
+        layer=".interfaces.IWorkspaceUnderConsiderationSectionLayer"
+        action="../../create-report"
+        title="Create reports"
+        permission="bungeni.ui.workspace.View"
+        order="40"
+    />
     
    <!--browser:menuItem
      menu="context_actions"

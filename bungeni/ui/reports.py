@@ -22,10 +22,11 @@ from zope.lifecycleevent import ObjectCreatedEvent
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
-from bungeni.models.utils import get_login_user
+from bungeni.models.utils import get_login_user, get_chamber_for_context
 from bungeni.models.interfaces import ISitting
 
-from bungeni.core.interfaces import ISchedulingContext
+from bungeni.core.interfaces import (ISchedulingContext, 
+    IWorkspaceScheduling, IWorkspaceUnderConsideration)
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.core.language import get_default_language
 
@@ -37,7 +38,8 @@ from bungeni.ui.interfaces import IWorkspaceReportGeneration
 from bungeni.ui.reporting import generators
 from bungeni.ui.calendar.data import ExpandedSitting, ReportContext
 
-from bungeni.utils import register
+from bungeni.capi import capi
+from bungeni.utils import register, naming
 
 class DateTimeFormatMixin(object):
     """Helper methods to format and localize date and time objects
@@ -87,13 +89,17 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         interface.declarations.alsoProvides(removeSecurityProxy(self.context), 
             IWorkspaceReportGeneration
         )
+        if IWorkspaceUnderConsideration.providedBy(self.context):
+            #change the vocabulary
+            self.form_fields["report_type"].field.vocabulary=\
+                vocabulary.document_xhtml_template_factory
         super(ReportBuilder, self).__init__(context, request)
     
     def get_end_date(self, start_date, hours):
         end_date = start_date + datetime.timedelta(seconds=hours*3600)
         return end_date
 
-    def buildSittings(self, start_date, end_date):
+    def buildSittings(self):
         if ISitting.providedBy(self.context):
             trusted = removeSecurityProxy(self.context)
             order="real_order"
@@ -101,13 +107,38 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
             self.sittings.append(trusted)
         else:
             sittings = ISchedulingContext(self.context).get_sittings(
-                start_date, end_date
+                self.start_date, self.end_date
             ).values()
             self.sittings = map(removeSecurityProxy, sittings)
         self.sittings = [ ExpandedSitting(sitting) 
             for sitting in self.sittings 
         ]
 
+    def buildContext(self):
+        if IWorkspaceScheduling.providedBy(self.request):
+            self.buildSittings()
+        elif IWorkspaceUnderConsideration.providedBy(self.context):
+            default_filters = {
+                'sort_dir': u'asc', 
+                'filter_status_date': u'%s->%s' %(
+                    self.start_date.isoformat(), self.end_date.isoformat()
+                ), 
+                'sort_on': u'status_date', 
+                'filter_type': u'',
+            }
+            doc_container = self.context.publishTraverse(self.request,
+                "documents")
+            for type_key, ti in capi.iter_type_info():
+                workflow = ti.workflow
+                if workflow and workflow.has_feature("workspace"):
+                    #add generators of various doctypes
+                    container_name = naming.plural(type_key)
+                    filters = dict(default_filters)
+                    filters['filter_type'] = type_key
+                    setattr(self, container_name,
+                        doc_container.query(**filters)[0]
+                    )
+ 
     def generateContent(self, data):
         self.start_date = (data.get("start_date") or 
             datetime.datetime.today().date()
@@ -118,7 +149,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         self.language = generator.language
         self.publication_number = data.get("publication_number")
         self.end_date = self.get_end_date(self.start_date, generator.coverage)
-        self.buildSittings(self.start_date, self.end_date)
+        self.buildContext()
         generator.context = self
         return generator.generateReport()
 
@@ -134,12 +165,16 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
     @form.action(_("publish_report", default=u"Publish"), name="publish")
     def handle_publish(self, action, data):
         self.generated_content = self.generateContent(data)
-        
-        if not hasattr(self.context, "group_id"):
-            context_group_id = ISchedulingContext(self.context).group_id
+        if IWorkspaceScheduling.providedBy(self.request):
+            if not hasattr(self.context, "group_id"):
+                context_group_id = ISchedulingContext(
+                    self.context).group_id
+            else:
+                context_group_id = self.context.group_id
         else:
-            context_group_id = self.context.group_id
-        
+            #get the chamber id
+            context_group_id = get_chamber_for_context(
+                self.context).parliament_id
         report = domain.Report(
             title=self.title,
             start_date=self.start_date,
