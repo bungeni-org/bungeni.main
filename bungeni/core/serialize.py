@@ -61,9 +61,10 @@ TIMER_DELAYS = {
     "serialize_setup": INITIAL_DELAY
 }
 
-def make_key(length=10):
+def make_key(length=64):
     """generate random key using letters"""
-    return "".join([ random.choice(string.letters) for i in xrange(length) ])
+    return "".join(
+        [ random.choice(string.letters) for i in xrange(length) ])
 
 def setupStorageDirectory(part_target="xml_db"):
     """ Returns path to store xml files.
