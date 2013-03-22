@@ -40,8 +40,11 @@ def write_all():
     write_to_custom("forms", "_constraints.xml", output_constraints())
     # list of form derived fields
     write_to_custom("forms", "_derived.xml", output_derived_fields())
+    # list of vocabularies
+    write_to_custom("forms", "_vocabularies.xml", output_vocabularies())
     # list of all roles in system
     write_to_custom("sys", "_roles.xml", output_all_roles())
+
 
 def output_actions():
     """
@@ -181,6 +184,7 @@ def output_constraints():
                 pass
     li_cons.append("</constraints>")
     return ("\n".join(li_cons)).encode("utf-8")
+
         
 def output_derived_fields():
     """
@@ -261,4 +265,26 @@ def output_features():
             li_features.append("  </features>")
     li_features.append("</featuresByType>")                    
     return "\n".join(li_features).encode("utf-8")    
+
+
+def output_vocabularies():
+    """
+    Provides a list of all the vocabularies in the system
+    """
+    
+    from zope.component import getUtilitiesFor
+    from zope.schema.interfaces import IVocabularyFactory
+
+    all_vocabs = getUtilitiesFor(IVocabularyFactory)
+    li_vocabs = []
+    li_vocabs.append("<vocabularies>")
+    for vocab_name, vocab in all_vocabs:
+        vocab_fq_class = "%s.%s" % (vocab.__module__ , vocab.__class__.__name__) 
+        li_vocabs.append(
+        '  <vocabulary name="%s"  type="%s" />' % (
+            vocab_name, vocab_fq_class
+          )
+        )
+    li_vocabs.append("</vocabularies>")
+    return "\n".join(li_vocabs).encode("utf-8")    
 
