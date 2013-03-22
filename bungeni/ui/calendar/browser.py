@@ -1101,10 +1101,11 @@ class ScheduleAddView(BrowserView):
                     schedule_record = domain.ItemSchedule(
                         item_id=data_item_id,
                         item_type=data_item_type,
-                        planned_order=real_index,
+                        real_order=real_index,
                         sitting_id=sitting_id
                     )
-                    add_planned_index(schedule_record, planned_index)
+                    planned_index = add_planned_index(schedule_record, 
+                        planned_index)
                     session.add(schedule_record)
                     session.flush()
                     notify(ObjectCreatedEvent(schedule_record))
