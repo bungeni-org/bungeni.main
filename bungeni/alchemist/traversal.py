@@ -115,7 +115,7 @@ def one2many(name, container, fk, extra=[]):
 
 def one2manyindirect(name, container, child_key, parent_key):
     """create a container bound to domain model
-        name : name of of the container(traversable)
+        name: name of of the container(traversable)
         container: a dotted name string of the target container class
         child_key: the key of child items which is set from `parent_key`
         parent_key: this is the parent property to which `child_key` is set

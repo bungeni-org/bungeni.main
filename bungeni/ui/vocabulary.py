@@ -1475,6 +1475,7 @@ def register_vocabularies():
                 "may contain underscores and must have a 'vdex' extension",
                 file_name
             )
-#!REGISTRATION(mb, Feb-2013) - can't use ZCML to register
+#!+REGISTRATION(mb, feb-2013) - can't use ZCML to register
 # descriptors seem to be imported before vocabularies are set up
 register_vocabularies()
+

@@ -47,7 +47,7 @@ mapper(domain.UserSubscription, schema.user_doc)
 
 mapper(domain.AdminUser, schema.admin_user,
     properties={
-        "user":relation(domain.User)
+        "user": relation(domain.User)
     }
 )
 
@@ -118,6 +118,16 @@ mapper(domain.UserDelegation, schema.user_delegation,
             uselist=False,
             lazy=True
         ),
+    }
+)
+
+mapper(domain.GroupDocumentAssignment, schema.group_document_assignment,
+    properties={
+        "group": relation(domain.Group,
+            primaryjoin=schema.group_document_assignment.c.group_id ==
+                schema.group.c.group_id,
+            uselist=False,
+            lazy=False),
     }
 )
 
@@ -282,13 +292,15 @@ mapper(domain.ResourceBooking, schema.resourcebookings)
 
 mapper(domain.Venue, schema.venue)
 
-##############################
-# Document
 
+# vertical properties
 
 mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)
 mapper(domain.vp.Datetime, schema.vp_datetime)
+
+
+# doc 
 
 mapper(domain.Doc, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
@@ -355,21 +367,15 @@ mapper(domain.Doc, schema.doc,
     }
 )
 
-mapper(domain.GroupDocumentAssignment, schema.group_document_assignment,
-    properties={
-        "group": relation(domain.Group,
-            primaryjoin=schema.group_document_assignment.c.group_id ==
-                schema.group.c.group_id,
-            uselist=False,
-            lazy=False),
-    }
-)
+
+# audit
 
 mapper(domain.Audit, schema.audit,
     polymorphic_on=schema.audit.c.audit_type, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Audit)
 )
 mapper(domain.Change, schema.change,
+    # !+ always created with a concrete {type}_audit record
     #polymorphic_on=schema.change.c.action, # polymorphic discriminator
     #polymorphic_identity="*" !+
     properties={
@@ -410,7 +416,7 @@ mapper(domain.ChangeTree, schema.change_tree)
 mapper(domain.Version,
     inherits=domain.Change,
     polymorphic_on=schema.change.c.action, # polymorphic discriminator
-    polymorphic_identity=polymorphic_identity(domain.Version),
+    polymorphic_identity=polymorphic_identity(domain.Version), #!+only concrete {type}_audit record are created
 )
 # !+polymorphic_identity_multi only allows a single value... e.g. if needed to 
 # add a 2nd value such as "reversion" would not be able to -- but seems we 
@@ -454,6 +460,7 @@ mapper(domain.DocVersion,
         #"sa_events": relation(domain.Event, uselist=True),
     },
 )
+
 
 mapper(domain.AgendaItem,
     inherits=domain.Doc,
@@ -569,8 +576,7 @@ mapper(domain.Heading, schema.heading,
 )
 
 
-#Items scheduled for a sitting expressed as a relation
-# to their item schedule
+# items scheduled for a sitting expressed as a relation to their item schedule
 
 mapper(domain.ItemSchedule, schema.item_schedule,
     properties={
@@ -627,9 +633,6 @@ mapper(domain.SignatoryAudit, schema.signatory_audit,
 )
 
 mapper(domain.Holiday, schema.holiday)
-
-######################
-#
 
 mapper(domain.Country, schema.country)
 
@@ -754,7 +757,7 @@ mapper(domain.OAuthAccessToken, schema.oauth_access_token,
             uselist=False,
             lazy=True
         ),
-        "authorization":relation(domain.OAuthAuthorization, uselist=False),
+        "authorization": relation(domain.OAuthAuthorization, uselist=False),
     }
 )
 

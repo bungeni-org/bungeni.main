@@ -671,9 +671,6 @@ resourcebookings = sa.Table("resourcebookings", metadata,
 )
 '''
 
-#######################
-# Parliament
-#######################
 
 item_vote = sa.Table("item_vote", metadata,
     sa.Column("vote_id", sa.Integer, primary_key=True),
@@ -728,7 +725,7 @@ editorial_note = sa.Table("editorial_note", metadata,
     sa.Column("language", sa.String(5), nullable=False)
 )
 
-#store text record for a sitting or 
+# store text record for a sitting or 
 agenda_text_record = sa.Table("agenda_text_record", metadata,
     sa.Column("text_record_id", sa.Integer, primary_key=True),
     sa.Column("text", sa.UnicodeText, nullable=False),
@@ -1175,7 +1172,8 @@ debate_take = sa.Table("debate_take", metadata,
 )
 
 
-#OAuth
+# OAuth
+
 oauth_application = sa.Table("oauth_application", metadata,
     sa.Column("application_id", sa.Integer, primary_key=True),
     sa.Column("identifier", sa.UnicodeText, nullable=False, 

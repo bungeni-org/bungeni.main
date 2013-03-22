@@ -503,6 +503,7 @@ class vp(object):
         """VerticalProperty of type datetime.
         """
 
+
 class Doc(Entity):
     """Base class for a workflowed parliamentary document.
     """
@@ -644,7 +645,7 @@ class Version(Change):
                         self.head, self.head_id, 
                         self.audit, audit_id, 
                         self, correctly_typed_change))
-                print "!+SA_INCORRECT_TYPE_DEBUG -- PLEASE REPORT OF YOU SEE THIS"
+                print "!+SA_INCORRECT_TYPE_DEBUG -- PLEASE REPORT IF YOU SEE THIS"
                 import pdb; pdb.set_trace()
             # !+/SA_INCORRECT_TYPE_DEBUG
             
@@ -717,7 +718,7 @@ class DocAudit(Audit):
     ]
 
 class DocVersion(Version):
-    """A version of a document.
+    """A version-change of a document.
     """
     interface.implements(
         interfaces.IDocVersion,
@@ -946,7 +947,7 @@ class Session(Entity):
 
     sittings = one2many("sittings",
         "bungeni.models.domain.SittingContainer", "session_id",
-        [("group_id","parliament_id")]
+        [("group_id", "parliament_id")]
     )
     agendaitems = one2manyindirect("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "parliament_id", 
