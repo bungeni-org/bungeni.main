@@ -781,7 +781,7 @@ class AttachmentDescriptor(ModelDescriptor):
         F(name="name",
             label="Name",
             localizable=[
-                show("view add"),
+                show("view edit add"),
             ],
             value_type="text",
             render_type="no_input",
@@ -789,7 +789,7 @@ class AttachmentDescriptor(ModelDescriptor):
         F(name="mimetype",
             label="MIME Type",
             localizable=[
-                show("view add"),
+                show("view edit add"),
             ],
             value_type="text",
             render_type="no_input",

@@ -108,16 +108,13 @@ def CustomRadioWidget(field, request):
     vocabulary = field.vocabulary
     return RadioWidget(field, vocabulary, request)
 
-class ImageInputWidget(FileWidget):
-    """
-    render a inputwidget that displays the current
-    image and lets you choose to delete, replace or just
-    leave the current image as is.
-    """
+class DefaultFileInputWidget(FileWidget):
+    '''
+    This is the default FileInputWidget implementation, 
+    other FileInputWidget types extend this
+    '''
+
     _missing = u""
-
-
-    __call__ = ViewPageTemplateFile("templates/image-widget.pt")
 
     @property
     def update_action_name(self):
@@ -126,10 +123,6 @@ class ImageInputWidget(FileWidget):
     @property
     def upload_name(self):
         return self.name.replace(".", "_") + "_file"
-
-    @property
-    def imageURL(self):
-        return "./file-image/%s" % self.context.__name__
 
     def empty_field(self):
         return self._data is None
@@ -191,6 +184,7 @@ class ImageInputWidget(FileWidget):
             raise NotImplementedError
             return
 
+
     def hasInput(self):
         """
         determins if the widget widget has changed
@@ -207,8 +201,26 @@ class ImageInputWidget(FileWidget):
                 return self.upload_name  in self.request.form
 
 
-class FileInputWidget(ImageInputWidget):
+class ImageInputWidget(DefaultFileInputWidget):
+    '''
+    render a inputwidget that displays the current
+    image and lets you choose to delete, replace or just
+    leave the current image as is.
+    '''
+    __call__ = ViewPageTemplateFile("templates/image-widget.pt")
+
+    @property
+    def imageURL(self):
+        return "./file-image/%s" % self.context.__name__
+
+
+class FileInputWidget(DefaultFileInputWidget):
+    '''
+    Upload file attachments
+    Replace file attachments
+    '''
     fileURL = "./download"
+
     def _toFieldValue(self, (update_action, upload)):
         value = super(FileInputWidget, self
             )._toFieldValue((update_action, upload))
