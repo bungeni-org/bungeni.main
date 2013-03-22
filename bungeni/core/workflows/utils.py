@@ -318,17 +318,20 @@ def setup_retract_transitions():
                         "title": translate(transition.title, domain="bungeni")
                     }
                 )
-                title = "Undo - %s" % transition.title 
+                title = "Undo - %s" % transition.title
+                tid = "%s.%s" % (transition.destination, 
+                    transition.source)
+                pid = "bungeni.%s.wf.%s" % (wf.name, tid)
                 ntransition = Transition(title, transition.destination,
                     transition.source, 
                     trigger=MANUAL,
                     condition=allow_retract,
+                    permission=pid,
                     condition_args=True,
                     roles=roles)
                 if ntransition.id in wf._transitions_by_id:
                     continue
                 log.debug("adding transition %s", ntransition.id)
-                pid = "bungeni.%s.wf.%s" % (wf.name, ntransition.id)
                 provideUtility(Permission(pid), IPermission, pid)
                 for role in roles:
                     role_perm_mgr.grantPermissionToRole(pid, role, check=False)
