@@ -603,7 +603,7 @@
       for="bungeni.core.content.APISection"
       name="index"
       class="bungeni.ui.api.APIDefaultView"
-      permission="zope.Public"
+      permission="bungeni.api.View"
    />
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"

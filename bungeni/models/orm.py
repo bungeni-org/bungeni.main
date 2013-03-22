@@ -743,21 +743,22 @@ mapper(domain.DebateTake, schema.debate_take,
 mapper(domain.OAuthApplication, schema.oauth_application)
 mapper(domain.OAuthAuthorization, schema.oauth_authorization,
     properties={
-        "user": relation(domain.User, uselist=False, lazy=True),
+        "user": relation(domain.User, uselist=False, lazy=False),
         "application": relation(domain.OAuthApplication, uselist=False,
-            lazy=True)
+            lazy=False)
     }
 )
+mapper(domain.OAuthAuthorizationToken, schema.oauth_authorization_token,
+    properties={
+        "authorization": relation(domain.OAuthAuthorization, uselist=False,
+            lazy=False),
+    }
+)
+
 mapper(domain.OAuthAccessToken, schema.oauth_access_token,
     properties={
-       "user": relation(domain.User,
-            primaryjoin=schema.oauth_access_token.c.authorization_id ==
-                schema.oauth_authorization.c.authorization_id,
-            secondary=schema.oauth_authorization,
-            uselist=False,
-            lazy=True
-        ),
-        "authorization": relation(domain.OAuthAuthorization, uselist=False),
+        "authorization_token": relation(domain.OAuthAuthorizationToken,
+            uselist=False, lazy=False),
     }
 )
 

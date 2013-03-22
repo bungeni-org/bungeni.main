@@ -1219,6 +1219,11 @@ class OAuthAuthorization(Entity):
     """
     interface.implements(interfaces.IOAuthAuthorization)
 
+class OAuthAuthorizationToken(Entity):
+    """OAuth authorization tokens
+    """
+    interface.implements(interfaces.IOAuthAuthorizationToken)
+
 class OAuthAccessToken(Entity):
     """OAuth access token
     """

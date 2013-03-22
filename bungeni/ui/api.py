@@ -194,13 +194,22 @@ class OAuthAuthorizeForm(form.FormBase):
         super(OAuthAuthorizeForm, self).__init__(context, request)
 
     def __call__(self):
-        authorization = self.check_authorization()
-        if authorization:
+        authorization_token = self.check_authorization()
+        if authorization_token:
             redirect_uri = self.get_redirect_uri(
-                authorization, self.request.form.get("state", None))
+                authorization_token, self.request.form.get("state", None))
             self.request.response.redirect(redirect_uri, trusted=True)
         else:
             return super(OAuthAuthorizeForm, self).__call__()
+
+    def get_authorization_token(self, authorization):
+        authorization_token = domain.OAuthAuthorizationToken()
+        authorization_token.authorization = authorization
+        authorization_token.authorization_code = get_key()
+        authorization_token.expiry = datetime.now() + timedelta(
+            seconds=capi.oauth_authorization_token_expiry_time)
+        authorization_token.refresh_token = get_key()
+        return authorization_token
 
     def check_authorization(self):
         session = Session()
@@ -214,7 +223,10 @@ class OAuthAuthorizeForm(form.FormBase):
                         domain.OAuthApplication.identifier == client_id,
                         domain.OAuthAuthorization.user_id == user.user_id)
                     ).one()
-                return authorization
+                authorization_token = self.get_authorization_token(
+                    authorization)
+                session.add(authorization_token)
+                return authorization_token
             except NoResultFound:
                 return None
         return None
@@ -248,10 +260,10 @@ class OAuthAuthorizeForm(form.FormBase):
     def handle_failure(self, action, data, errors):
         return ErrorPage(self.context, self.request, errors[0])()
 
-    def get_redirect_uri(self, authorization, state=None):
+    def get_redirect_uri(self, authorization_token, state=None):
         redirect_uri = "{0}?code={1}".format(
-            authorization.application.redirection_endpoint,
-            authorization.authorization_code)
+            authorization_token.authorization.application.redirection_endpoint,
+            authorization_token.authorization_code)
         if state:
             redirect_uri = "{0}&state={1}".format(redirect_uri, state)
         return redirect_uri
@@ -260,21 +272,19 @@ class OAuthAuthorizeForm(form.FormBase):
         validator=verify_data, failure=handle_failure)
     def handle_authorize_app(self, action, data):
         session = Session()
-        oauth_authorization = domain.OAuthAuthorization()
-        oauth_authorization.user_id = get_login_user().user_id
+        authorization = domain.OAuthAuthorization()
+        authorization.user_id = get_login_user().user_id
         app = session.query(domain.OAuthApplication
             ).filter(domain.OAuthApplication.identifier ==
                 data["client_id"]
             ).one()
-        oauth_authorization.application_id = app.application_id
-        oauth_authorization.authorization_code = get_key()
-        oauth_authorization.refresh_token = get_key()
-        oauth_authorization.expiry = datetime.now() + timedelta(
-            seconds=capi.oauth_authorization_token_expiry_time)
-        oauth_authorization.active = True
-        session.add(oauth_authorization)
+        authorization.application_id = app.application_id
+        authorization.active = True
+        session.add(authorization)
+        authorization_token = self.get_authorization_token(authorization)
+        session.add(authorization_token)
         session.flush()
-        redirect_uri = self.get_redirect_uri(oauth_authorization,
+        redirect_uri = self.get_redirect_uri(oauth_authorization_token,
             data["state"])
         self.request.response.redirect(redirect_uri, trusted=True)
 
@@ -398,35 +408,35 @@ class OAuthAccessToken(BrowserPage):
 
             if self.request.form.get("code", None):
                 try:
-                    authorization = session.query(domain.OAuthAuthorization
+                    authorization_token = session.query(domain.OAuthAuthorizationToken
+                        ).join(domain.OAuthAuthorization
                         ).filter(sa.and_(
                             domain.OAuthAuthorization.application_id ==
                             application.application_id,
-                            domain.OAuthAuthorization.authorization_code ==
+                            domain.OAuthAuthorizationToken.authorization_code ==
                             self.request.form.get("code"))
                         ).one()
-                    parameters["authorization"] = authorization
+                    parameters["authorization_token"] = authorization_token
                 except NoResultFound:
                     raise InvalidGrant()
             else:
                 raise InvalidRequest()
 
-            if parameters["authorization"].expiry < datetime.now():
+            if parameters["authorization_token"].expiry < datetime.now():
                 raise InvalidGrant()
 
-            if parameters["authorization"].active is False:
+            if parameters["authorization_token"].authorization.active is False:
                 raise UnauthorizedClient()
 
         elif parameters["grant_type"] == "refresh_token":
             if self.request.form.get("refresh_token", None):
                 try:
-                    authorization = session.query(domain.OAuthAuthorization
-                        ).filter(domain.OAuthAuthorization.refresh_token ==
+                    authorization_token = session.query(domain.OAuthAuthorizationToken
+                        ).filter(domain.OAuthAuthorizationToken.refresh_token ==
                             self.request.form.get("refresh_token")
                         ).one()
-                    paramenters["authorization"] = authorization
-                    parameters["refresh_token"] = self.request.form.get(
-                        "refresh_token")
+                    parameters["authorization_token"] = authorization_token
+                    parameters["refresh_token"] = authorization_token.refresh_token
                 except NoResultFound:
                     raise UnauthorizedClient()
         return parameters
@@ -437,22 +447,20 @@ class OAuthAccessToken(BrowserPage):
             parameters = self.process_parameters()
         except OAuthException as e:
             return bad_request(self.context, self.request, e)
-        authorization = parameters["authorization"]
+        authorization_token = parameters["authorization_token"]
         if parameters["grant_type"] == "authorization_code":
-            authorization.expiry = datetime.now()
+            authorization_token.expiry = datetime.now()
         access_token = domain.OAuthAccessToken()
         access_token.access_token = get_key()
-        access_token.authorization_id = authorization.authorization_id
+        access_token.authorization_token = authorization_token
         t_delta = timedelta(seconds=capi.oauth_access_token_expiry_time)
         access_token.expiry = datetime.now() + t_delta
-        authorization.access_token = access_token
-        session.add(authorization)
         session.add(access_token)
         session.flush()
         data = {"access_token": access_token.access_token,
                 "token_type": "bearer",
                 "expires_in": capi.oauth_access_token_expiry_time,
-                "refresh_token": authorization.refresh_token
+                "refresh_token": access_token.authorization_token.refresh_token
         }
         set_json_headers(self.request)
         return simplejson.dumps(data)

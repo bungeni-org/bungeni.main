@@ -68,10 +68,9 @@ def setup_customization_ui():
             />"""
 
     def register_api_view(type_key, for_):
-        print register_api_view.TMPL.format(**locals())
         UI_ZC_DECLS.append(register_api_view.TMPL.format(**locals()))
     register_api_view.TMPL = """
-            <browser:page name="index"
+            <browser:page name="view"
                 for="{for_}"
                 class="bungeni.ui.api.APIObjectView"
                 permission="bungeni.{type_key}.View"

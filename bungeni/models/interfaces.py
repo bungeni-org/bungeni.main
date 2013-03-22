@@ -607,5 +607,8 @@ class IOAuthApplicationContainer(IAlchemistContainer):
 class IOAuthAuthorization(interface.Interface):
     """Marker interfeace for OAuth authorizations"""
 
+class IOAuthAuthorizationToken(interface.Interface):
+    """Marker interface for OAuth authorization token"""
+
 class IOAuthAccessToken(interface.Interface):
     """Marker interface for OAuth access token"""

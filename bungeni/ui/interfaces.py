@@ -71,7 +71,7 @@ class IWorkspaceSchedulingSectionLayer(IWorkspaceSectionLayer):
 class IWorkspaceGroupsSectionLayer(IWorkspaceSectionLayer):
     """Requests for an object within the scheduling section.""" 
 
-class IBungeniAPILayer(interface.Interface):
+class IBungeniAPILayer(IDefaultBrowserLayer):
     """Requests made through the Bungeni API"""
 class IFeedViewletManager(IViewletManager):
     """Viewlet manager for feed links"""
