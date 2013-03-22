@@ -55,8 +55,7 @@ YAHOO.bungeni.Utils = function () {
      * link
      **/
      var _showURI = function (data) {
-         if ((data.item_uri) && 
-            (SGlobals.editable_types.indexOf(data.item_type)<0)){
+         if (SGlobals.editable_types.indexOf(data.item_type)<0){
              return true;
          }
          return false;

@@ -38,7 +38,7 @@ var timeline_mapping = {
 
 var Y_PROPERTY_MAPPING = {
     venues: "venue",
-    committees: "group_id"
+    combined: "group_id"
 }
 
 /**
@@ -67,15 +67,17 @@ var show_notification = function(message){
  * @function handle_before_change_view
  * @description Handler for scheduler's onBeforeViewChange event
  *  Determines the scope and render mode of timeline views whenever
- *  there is a switch to a timeline view. Switching to the committees timeline 
- *  view also loads committee events.
+ *  there is a switch to a timeline view. Switching to the combined 
+ *  timeline loads events from all committees.
  */
 function handle_before_change_view(old_mode, old_date, new_mode , new_date){
-    if (((new_mode == "venues") && (old_mode != "venues"))
+    var VENUES_MODE = "venues";
+    var COMBINED_MODE = "combined";
+    if (((new_mode == VENUES_MODE) && (old_mode != VENUES_MODE))
         || 
-        ((new_mode == "committees") && (old_mode != "committees"))
+        ((new_mode == COMBINED_MODE) && (old_mode != COMBINED_MODE))
     ){
-        if (new_mode == "committees"){
+        if (new_mode == COMBINED_MODE){
             //load group events to current scheduler instance
             load_groups_events();
         }

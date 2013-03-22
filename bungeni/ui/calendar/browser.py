@@ -283,11 +283,16 @@ class CalendarView(BungeniBrowserView):
             if model_interfaces.ICommittee.providedBy(group):
                 group_container = group.parent_group.committees
             else:
-                group_container = self.context.get_group().committees
-            group_list = [ {"key": comm.committee_id, 
+                group = self.context.get_group()
+                group_container = group.committees
+                group_list.append({
+                    "key": self.context.group_id,
+                    "label": IDCDescriptiveProperties(group).title,
+                })
+            group_list += [ {"key": comm.committee_id, 
                 "label": IDCDescriptiveProperties(comm).title}
                 for comm in group_container.values()
-                if comm.committee_id is not self.context.group_id
+                if checkPermission("bungeni.committee_member.Add", comm)
             ]
         except AttributeError:
             log.warn("Context %s has no committees", self.context)
@@ -332,7 +337,7 @@ class CalendarView(BungeniBrowserView):
             )
         )
         return """var cal_globals = %s;
-            var timeline_data = { venues: %s, committees: %s };
+            var timeline_data = { venues: %s, combined: %s };
             var group_urls= %s;""" %(
             json.dumps(cal_globals), 
             json.dumps(self.venues_data),
@@ -995,7 +1000,7 @@ class DhtmlxCalendarSittingsIcal(DhtmlxCalendarSittings):
                 event_start=sitting.start_date.strftime("%Y%m%dT%H%M%S"),
                 event_end=sitting.end_date.strftime("%Y%m%dT%H%M%S"),
                 event_venue=(IDCDescriptiveProperties(sitting.venue).title if
-                    hasattr(sitting, "venue") else u""
+                    hasattr(sitting, "venue") and sitting.venue else u""
                 ),
                 event_summary=IDCDescriptiveProperties(sitting).verbose_title,
             )
