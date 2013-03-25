@@ -79,7 +79,7 @@ def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py).
     """
     #!+permissions.zcml(mr, aug-2011) bypass writing to disk?
-    filepath = capi.get_path_for("workflows/.auto/%s" % ZCML_FILENAME)
+    filepath = capi.get_path_for(os.path.join("workflows/.auto/", ZCML_FILENAME))
     # read current file
     try:
         persisted = open(filepath, "r").read().decode("utf-8")
@@ -88,6 +88,8 @@ def zcml_check_regenerate():
     # regenerate, compare, and re-write if needed
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
+        if not os.path.exists(os.path.dirname(filepath)):
+            os.makedirs(os.path.dirname(filepath))
         log.warn("CHANGES to file:\n%s", 
             misc.unified_diff(persisted, regenerated, filepath, "NEW"))
         open(filepath, "w").write(regenerated.encode("utf-8"))
