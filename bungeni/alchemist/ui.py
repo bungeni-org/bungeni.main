@@ -126,7 +126,7 @@ def setUpColumns(domain_model):
     field_column_names = \
         descriptor_model and descriptor_model.listing_columns \
         or schema.getFieldNamesInOrder(table_schema)
-    
+
     # quick hack for now, dates are last in listings
     remainder = []
     
@@ -135,12 +135,12 @@ def setUpColumns(domain_model):
             # we can specify additional columns for tables that are not present in the
             # the interface, iff they are fully spec'd as columns in the descriptor/annotation
             if (descriptor_model and 
-                    field_name in descriptor_model and 
-                    descriptor_model[field_name].listing_column
+                    field_name in descriptor_model.fields_by_name and 
+                    descriptor_model.get(field_name).listing_column
                 ):
                 pass
             else:
-                #print "bad field, container", field_name, table_schema.__name__
+                print "bad field, container", field_name, table_schema.__name__
                 continue
         
         info = descriptor_model and descriptor_model.get(field_name) or None

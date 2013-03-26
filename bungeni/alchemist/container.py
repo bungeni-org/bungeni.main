@@ -60,6 +60,15 @@ def stringKey(obj):
     the object.
     """
     unproxied = proxy.removeSecurityProxy(obj)
+    #!+STRING_KEY experimental, to allow for a more useful string key for 
+    # instances, that would be independent of db PK identity but still uniquely
+    # identifies the (at least within the scope of the container). 
+    # Note this key is part of public URLs, so part of public API.
+    # !+valueKey reverse considerations?
+    #
+    # use the obj's preferred string_key formulation, if obj defines one
+    if hasattr(obj, "string_key"):
+        return obj.string_key()
     mapper = orm.object_mapper(unproxied)
     #primary_key = mapper.primary_key_from_instance(unproxied)
     identity_values = [ getattr(unproxied, c.name) for c in mapper.primary_key ]
@@ -137,7 +146,8 @@ def getFields(context, interface=None, annotation=None):
     if annotation is None:
         annotation = utils.get_descriptor(interface)
     for field_name in annotation.listing_columns:
-        yield interface[field_name]
+        if field_name in interface.names(): # !+FIELD_KEYERROR
+            yield interface[field_name]
         # !+FIELD_KEYERROR(mr, jul-2012) throws a KeyError when field_name is 
         # not part of the interface e.g. if we use a "field property" that is 
         # implemented as a domain_model.{property}.

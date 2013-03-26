@@ -92,7 +92,7 @@ def feature_audit(kls, feature):
 def feature_version(kls, feature):
     """Decorator for domain types to support "version" feature.
     """
-    # domain.Version itself may NOT support versions
+    # domain.{Type}Version itself may NOT support versions
     assert not interfaces.IVersion.implementedBy(kls)
     # !+ @version requires @audit
     assert interfaces.IFeatureAudit.implementedBy(kls)

@@ -603,18 +603,58 @@ class Version(Change):
     """A specialized change type, with the information of a version (a special 
     kind of change action) of an object. 
     
-    Behaves somewhat like a combined Change and Audit record, as this will 
-    automatically try to resolve additional attrs off self.audit before failing.
+    Behaves somewhat like a combined Change and Audit record--attributes not 
+    found on self (Change) will only fail if a further attempt to resolve them
+    off self.audit fails. 
     
-    An "abstract" class, not catalysed, and only sub-classes are ever instantiated.
+    This is an "abstract" class, it is not catalysed, and only sub-classes 
+    are ever instantiated.
     """
     interface.implements(
         interfaces.IVersion,
     )
     
-    @property
-    def __name__(self):
-        return "ver-%s" % (self.seq)
+    '''!+
+    def __init__(self, **kw):
+        # !+SA_INCORRECT_TYPE_DEBUG strangely, sometimes the type of 
+        # (this change's) self.audit that sqlalchemy returns does not 
+        # correspond to self.head...
+        super(Version, self).__init__(**kw)
+        audit_id = self.audit_id
+        def get_correctly_typed_change(change):
+            for v in self.head.versions:
+                if v.audit_id == audit_id:
+                    return v
+        correctly_typed_change = get_correctly_typed_change(self)
+        if correctly_typed_change and correctly_typed_change is not self:
+            print ("!+SA_INCORRECT_TYPE_DEBUG \n"
+                "       %s.%s head/id=%s/%s, audit/id=%s/%s \n"
+                "           SA INCORRECT TYPE:%s \n"
+                "           SHOULD HAVE BEEN:%s" % (
+                    type(self).__name__, name, 
+                    self.head, self.head_id, 
+                    self.audit, audit_id, 
+                    self, correctly_typed_change))
+            import pdb; pdb.set_trace()
+        # !+/SA_INCORRECT_TYPE_DEBUG
+    '''
+    
+    #@property
+    #def __name__(self):
+    #    return "ver-%s" % (self.seq)
+    def __name__():
+        doc = "dynamically set __name__ property, with a DEBUG setter"
+        def fget(self):
+            return "ver-%s" % (self.seq)
+        def fset(self, name):
+            # !+CONTAINED can't set attribute
+            # > /home/undesa/cinst/bungeni/src/ore.alchemist/src/ore/alchemist/container.py(76)contained()
+            # -> obj.__name__ = name
+            if not name == self.__name__:
+                print "**RESETTING** domain.Version.name:", self, self.__name__, name
+                import pdb; pdb.set_trace()
+        return locals()
+    __name__ = property(**__name__())    
     
     def __getattr__(self, name):
         """Try to pick any attribute (not found on this change record--this 
@@ -624,31 +664,11 @@ class Version(Change):
 
         !+ should this be on Change i.e. for all change actions?
         """
-        audit = object.__getattribute__(self, "audit")
+        audit = self.audit
         try:
             return getattr(audit, name)
         except AttributeError:
-            # !+SA_INCORRECT_TYPE_DEBUG strangely, sometimes the type of 
-            # (this change's) self.audit that sqlalchemy returns does not 
-            # correspond to self.head...
-            audit_id = self.audit_id
-            def get_correctly_typed_change(change):
-                for v in change.head.versions:
-                    if v.audit_id == audit_id:
-                        return v
-            correctly_typed_change = get_correctly_typed_change(self)
-            if correctly_typed_change and correctly_typed_change is not self:
-                print ("*** %s.%s head/id=%s/%s, audit/id=%s/%s \n"
-                    "    SA INCORRECT TYPE:%s \n"
-                    "    SHOULD HAVE BEEN:%s" % (
-                        type(self).__name__, name, 
-                        self.head, self.head_id, 
-                        self.audit, audit_id, 
-                        self, correctly_typed_change))
-                print "!+SA_INCORRECT_TYPE_DEBUG -- PLEASE REPORT IF YOU SEE THIS"
-                import pdb; pdb.set_trace()
-            # !+/SA_INCORRECT_TYPE_DEBUG
-            
+            # !+DocVersion.filevers
             try:
                 from bungeni.alchemist import utils
                 return utils.FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(self, name)
@@ -727,8 +747,11 @@ class DocVersion(Version):
     # !+FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK note, "declaring" the 
     # container with bungeni.alchemist.model.add_container_property_to_model
     # gives same errors!
-    files = one2many("files",
-        "bungeni.models.domain.AttachmentVersionContainer", "head_id")
+    filevers = one2manyindirect("filevers",
+        "bungeni.models.domain.AttachmentVersionContainer", "head_id", "doc_id")
+    
+    # !+attachment_version.head (->Attachment) and attachment_version.head_id (->Doc) 
+    # discrepancy!
     
     # !+version_feature_event
     #events = one2many("events",
@@ -885,6 +908,14 @@ class AttachmentAudit(Audit):
 class AttachmentVersion(Version):
     """A version of an attachment.
     """
+    #!+STRING_KEY
+    def string_key(self):
+        """A more useful string key for version instances, independent of db 
+        PK identity but still uniquely identifies the attachment version 
+        instance; for use in container listings (bubbles up to public URL).
+        """
+        return "obj-%s-%s" % (self.audit.attachment_id, self.seq)
+
 
 class Heading(Entity):
     """A heading in a report.

@@ -189,8 +189,7 @@ class _AuditorFactory(object):
     
     
     def object_version(self, ob, root=False):
-        """ () -> domain.Version
-        NOTE: versioning of an object is not event based.
+        """NOTE: versioning of an object is not event based.
         """
         # action: ("version")
         change_data = self._get_change_data()
@@ -229,7 +228,8 @@ class _AuditorFactory(object):
             note=None,
             procedure="a",
         ):
-        """
+        """() -> domain.Change
+        
         date_active:
             the UI for some changes allow the user to manually set the 
             date_active -- this is what should be used as the *effective* date 

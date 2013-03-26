@@ -436,8 +436,11 @@ mapper(domain.DocVersion,
     # !+NO_INHERIT_VERSION(mr, apr-2012) inheriting from domain.Version will 
     # always give an empty doc.versions / attachment.versions / ... lists !
     inherits=domain.Change,
+    # !+ messes up DocVersions... will be typed as AttachmentVersion!
+    #polymorphic_identity="version", #!+polymorphic_identity(domain.Version),
     properties={
         # !+ only for versionable doc sub-types that also support "attachment"
+        # !+ rename: attachment_versions
         "attachments": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
             primaryjoin=rdb.and_(
                 schema.change.c.audit_id == schema.change_tree.c.parent_id,
@@ -557,9 +560,28 @@ mapper(domain.AttachmentAudit, schema.attachment_audit,
 )
 mapper(domain.AttachmentVersion,
     inherits=domain.Change, # !+NO_INHERIT_VERSION
-    polymorphic_on=schema.change.c.action,
-    polymorphic_identity=polymorphic_identity(domain.Version),
+    #polymorphic_on=schema.change.c.action,
+    #polymorphic_identity="version", #!+polymorphic_identity(domain.Version),
     properties={
+        # the reverse of DocVersion.attachment_versions
+        # note: this works because when a new doc version is created, there is 
+        # a dedicated entry in change_tree to link the head doc to a version of
+        # each of its attachments
+        # version
+        "doc_versions": relation(domain.DocVersion,
+            primaryjoin=rdb.and_(
+                schema.change.c.audit_id == schema.change_tree.c.child_id,
+            ),
+            secondary=schema.change_tree,
+            secondaryjoin=rdb.and_(
+                schema.change_tree.c.parent_id == schema.change.c.audit_id,
+                schema.change.c.audit_id == schema.doc_audit.c.audit_id,
+            ),
+            uselist=True,
+            lazy=True,
+            order_by=schema.change.c.audit_id.desc(),
+            viewonly=True,
+        ),
         #!+eventable items supporting feature "event":
         #"sa_events": relation(domain.Event, uselist=True),
     },

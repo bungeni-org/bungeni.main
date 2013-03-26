@@ -73,10 +73,10 @@ class One2Many(ConstraintManager):
         #column = target.__class__.c[ self.fk ]
         #table = orm.class_mapper(target.__class__).mapped_table
         #column = table.c[ self.fk ]
-        #setattr( target, column.name, primary_key )
+        #setattr(target, column.name, primary_key)
         setattr(target, self.fk, primary_key)
         
-        #set extra properties
+        # set extra properties
         for target_key, source_key in self.extra:
             setattr(target, target_key, getattr(trusted, source_key))
 
@@ -90,11 +90,11 @@ class One2ManyIndirect(One2Many):
     def __init__(self, child_key, parent_key):
         self.child_key = child_key
         self.parent_key = parent_key
-
+    
     def getQueryModifier(self, instance, container):
         attr_value = getattr(instance, self.parent_key)
         return getattr(container.domain_model, self.child_key) == attr_value
-        
+    
     def setConstrainedValues(self, instance, target):
         #trusted = removeSecurityProxy(instance)
         attr_value = getattr(instance, self.parent_key) 
