@@ -59,14 +59,15 @@ def output_actions():
     for name in dir(actions):
         obj = getattr(actions, name)        
         if inspect.isfunction(obj):
+            desc = ""
             if hasattr(obj, "description"):
-                li_actions.append(
-                    '  <action name="%(name)s">%(desc)s</action>' %
-                    {"name":name,"desc":obj.description}
-                    )
+                desc = obj.description
             else:
-                # dont include items without description
-                pass
+                desc = name
+            li_actions.append(
+                '  <action name="%(name)s">%(desc)s</action>' %
+                {"name": name, "desc": desc}
+                )
     li_actions.append("</actions>")
     return ("\n".join(li_actions)).encode("utf-8")
     
@@ -84,14 +85,15 @@ def output_conditions():
     for name in dir(conds):
         obj = getattr(conds, name)        
         if inspect.isfunction(obj):
+            desc = ""
             if hasattr(obj, "description"):
-                li_conds.append(
-                    '  <condition name="%(name)s">%(desc)s</condition>' %
-                    {"name":name,"desc":obj.description}
-                    )
+                desc = obj.description
             else:
-                # dont include items without description
-                pass
+                desc = name
+            li_conds.append(
+                '  <condition name="%(name)s">%(desc)s</condition>' %
+                {"name": name, "desc": desc}
+                )
     li_conds.append("</conditions>")
     return ("\n".join(li_conds)).encode("utf-8")
 
@@ -109,14 +111,15 @@ def output_validations():
     for name in dir(vals):
         obj = getattr(vals, name)        
         if inspect.isfunction(obj):
+            desc = ""
             if hasattr(obj, "description"):
-                li_vals.append(
-                    '  <validation name="%(name)s">%(desc)s</validation>' %
-                    {"name":name,"desc":obj.description}
-                    )
+                desc = obj.description
             else:
-                # dont include items without description
-                pass
+                desc = name
+            li_vals.append(
+                '  <validation name="%(name)s">%(desc)s</validation>' %
+                {"name": name, "desc": desc}
+                )
     li_vals.append("</validations>")
     return ("\n".join(li_vals)).encode("utf-8")
 
@@ -160,6 +163,7 @@ def output_valuetypes():
              )
     li_widgets.append("</valueTypes>")
     return ("\n".join(li_widgets)).encode("utf-8")
+    
 
 def output_constraints():
     """
@@ -172,16 +176,17 @@ def output_constraints():
     li_cons = []
     li_cons.append("<constraints>")
     for name in dir(cons):
-        obj = getattr(cons, name)        
-        if inspect.isfunction(obj):
+        if not name.startswith("__"):
+            obj = getattr(cons, name)  
+            desc = ""
             if hasattr(obj, "description"):
-                li_cons.append(
-                    '  <constraint name="%(name)s">%(desc)s</constraint>' %
-                    {"name":name,"desc":obj.description}
-                    )
+                desc = obj.description
             else:
-                # dont include items without description
-                pass
+                desc = name
+            li_cons.append(
+                '  <constraint name="%(name)s">%(desc)s</constraint>' %
+                {"name": name, "desc": desc}
+                )
     li_cons.append("</constraints>")
     return ("\n".join(li_cons)).encode("utf-8")
 
@@ -199,14 +204,15 @@ def output_derived_fields():
     for name in dir(dfs):
         obj = getattr(dfs, name)        
         if inspect.isfunction(obj):
+            desc = ""
             if hasattr(obj, "description"):
-                li_dfs.append(
-                    '  <derivedField name="%(name)s">%(desc)s</derivedField>' %
-                    {"name":name,"desc":obj.description}
-                    )
+                desc = obj.description
             else:
-                # dont include items without description
-                pass
+                desc = name        
+            li_dfs.append(
+                '  <derivedField name="%(name)s">%(desc)s</derivedField>' %
+                {"name": name, "desc": desc}
+                )
     li_dfs.append("</derivedFields>")
     return ("\n".join(li_dfs)).encode("utf-8")
     
