@@ -1166,7 +1166,17 @@ class DocVersionDescriptor(VersionDescriptor):
     fields = \
         deepcopy(VersionDescriptor.fields) + \
         deepcopy(DocDescriptor.fields)
-
+    replace_field(fields,
+        F(name="doc_type",
+            label="Document Type",
+            required=True,
+            localizable=[
+                show("view listing"), 
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="doc_version_tmp_aggregated_type",
+        ))
 
 class AttachmentVersionDescriptor(VersionDescriptor):
     """UI Descriptor for Attachment archetype."""

@@ -65,7 +65,9 @@ except ImportError:
     import simplejson as json
 import imsvdex.vdex
 
-#valid vdex filenames
+# valid vdex filenames 
+# !+VDEX_FILE_REGEX what about digits? so, if a number is used in a vdex 
+# filename, the vocab is just not loaded?! Should just use the "symbol" regex.
 VDEX_FILE_REGEX = re.compile("^[a-z]+[a-z|_]+\.vdex$")
 
 # !+combined_name?
@@ -1447,8 +1449,13 @@ class TextRecordTypesVocabulary(BaseVocabularyFactory):
 text_record_types_factory = TextRecordTypesVocabulary()
 component.provideUtility(text_record_types_factory, IVocabularyFactory, "text_record_type")
 
-def register_vocabularies():
-    """Register all VDEX vocabularies
+
+def register_vocabulary_utility(vocabulary_name, vocabulary):
+    globals()[vocabulary_name] = vocabulary
+    component.provideUtility(vocabulary, IVocabularyFactory, vocabulary_name)
+
+def register_vdex_vocabularies():
+    """Register all VDEX vocabularies.
     """
     vocab_dir = capi.get_path_for("vocabularies")
     os.chdir(vocab_dir)
@@ -1466,16 +1473,27 @@ def register_vocabularies():
             else:
                 vocab_class = TreeVDEXVocabulary
             vocabulary_name = file_name[:-len(".vdex")]
-            globals()[vocabulary_name] = vocab_class(vdex)
-            component.provideUtility(globals()[vocabulary_name], 
-                IVocabularyFactory, vocabulary_name)
+            register_vocabulary_utility(vocabulary_name, vocab_class(vdex))
         else:
             log.warning("Will not process VDEX file named %s. File name is "
                 "not valid. File name must start with a lower case letter, "
                 "may contain underscores and must have a 'vdex' extension",
-                file_name
-            )
+                file_name)
 #!+REGISTRATION(mb, feb-2013) - can't use ZCML to register
 # descriptors seem to be imported before vocabularies are set up
-register_vocabularies()
+register_vdex_vocabularies()
+
+# !+VERSION_CLASS_PER_TYPE doc_version_type, an aggregated vdex vocab, of 
+# current defined "{doc}_type" vocabs, that is needed for the "doc_type" field 
+# of doc_version; only needed until a dedicated version classes per version.
+def _doc_version_tmp_aggregated_type():
+    import copy
+    vdex = copy.deepcopy(doc_type.vdex)
+    vdex.term_dict.update(event_type.vdex.term_dict)
+    vdex.term_dict.update(question_type.vdex.term_dict)
+    vdex.term_dict.update(bill_type.vdex.term_dict)
+    vdex.term_dict.update(doc_type.vdex.term_dict)
+    register_vocabulary_utility(
+        "doc_version_tmp_aggregated_type", FlatVDEXVocabularyFactory(vdex))
+_doc_version_tmp_aggregated_type()
 
