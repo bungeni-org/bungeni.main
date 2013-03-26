@@ -89,19 +89,19 @@ def setupStorageDirectory(part_target="xml_db"):
 def get_origin_parliament(context):
     """get the parliament applicable to this object
     """
-    chamber_id = None
-    group_id = getattr(context, "group_id", None)
-    if group_id:
-        group = Session().query(domain.Group).get(group_id)
-        while group.parent_group_id is not None:
-            group = Session().query(domain.Group).get(group.parent_group_id)
-        if isinstance(group, domain.Parliament):
-            chamber_id = group.group_id
-    else:
-        chamber_id = getattr(context, "parliament_id", None)
+    chamber_id = getattr(context, "parliament_id", None)
     if not chamber_id:
-        if hasattr(context, "head_id"):
-            return get_origin_parliament(context.head)
+        group_id = getattr(context, "group_id", None)
+        if group_id:
+            group = Session().query(domain.Group).get(group_id)
+            while group.parent_group_id is not None:
+                group = Session().query(
+                    domain.Group).get(group.parent_group_id)
+            if isinstance(group, domain.Parliament):
+                chamber_id = group.group_id
+        if not chamber_id:
+            if hasattr(context, "head_id") and context.head_id:
+                return get_origin_parliament(context.head)
     return chamber_id
 
 #!+REFACTORING(mb, Mar-2013) This can be made more general to work in
