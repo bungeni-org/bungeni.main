@@ -110,8 +110,17 @@ def register_custom_types():
     etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
     # register enabled types - ignoring not enabled types
     from bungeni.alchemist import type_info
+    # custom "event" types must be loaded prior to custom doc types
+    custom_event_type_keys, custom_doc_type_keys = [], []
     for edoc in enabled_elems(etypes.iterchildren("doc")):
-        type_key, ti = type_info.register_new_custom_type(*parse_elem(edoc))
+        custom_type_keys = parse_elem(edoc)
+        if custom_type_keys[2] == "event": # archetype_key 
+            custom_event_type_keys.append(custom_type_keys)
+        else:
+            custom_doc_type_keys.append(custom_type_keys)
+    for custom_type_keys in custom_event_type_keys + custom_doc_type_keys:
+        type_key, ti = type_info.register_new_custom_type(*custom_type_keys)
+    
     # group/member types
     for egroup in enabled_elems(etypes.iterchildren("group")):
         type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
@@ -140,7 +149,8 @@ def load_workflow(type_key, ti):
             workflow_file_key, workflow_name, ti.workflow))
     except KeyError:
         # load
-        ti.workflow = xmlimport.load(workflow_file_key, workflow_name)
+        ti.workflow = xmlimport.load(workflow_file_key, workflow_name, 
+            tuple(ti.domain_model.available_dynamic_features))
         log.info("Loaded WORKFLOW: %s.xml as %r - %s" % (
             workflow_file_key, workflow_name, ti.workflow))
         # debug info
