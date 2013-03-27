@@ -2,9 +2,7 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Bungeni Alchemist container - [
-    ore.alchemist.container
-]
+"""Bungeni Alchemist container
 
 $Id$
 """
@@ -13,14 +11,13 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # used directly in bungeni
 __all__ = [
-    "valueKey",             # alias -> ore.alchemist.container
-    "stringKey",            # redefn -> ore.alchemist.container
-    "contained",            # redefn -> ore.alchemist.container
-    "AlchemistContainer",   # redefn -> ore.alchemist.container
-    #"PartialContainer",     # redefn -> ore.alchemist.container
-    
-    "ContainerListing",     # redefn -> alchemist.ui.container
-    "getFields",            # redefn -> alchemist.ui.container
+    "valueKey",
+    "stringKey",
+    "contained",
+    "AlchemistContainer",
+    "PartialContainer",
+    "ContainerListing",
+    "getFields",
 ]
 
 
@@ -31,24 +28,20 @@ from bungeni.alchemist import Session, interfaces, utils
 from zope import interface
 from zope.security import proxy
 from zope.proxy import sameProxiedObjects
-from zope.location.interfaces import ILocation
+from zope.location.interfaces import ILocation, ISublocations
 from zope.app.container.contained import Contained, ContainedProxy
 from zope.app.container.interfaces import IContained
 from zope.formlib import form
 from zope.configuration.name import resolve
 from persistent import Persistent
-
 from sqlalchemy import orm, exceptions
+from bungeni.utils import register
 
-
-# ore.alchemist.container
-
-from ore.alchemist.container import valueKey
 
 def stringKey(obj):
-    """Replacement of ore.alchemist.container.stringKey
+    """Get a string identifier for an item conatined in this container.
     
-    The difference is that here the primary_key is not determined by 
+    Note that the primary_key is no longer determined by 
     sqlalchemy.orm.mapper.primary_key_from_instance(obj) but by doing the 
     logically equivalent (but a little more laborious) 
     [ getattr(instance, c.name) for c in mapper.primary_key ].
@@ -74,6 +67,13 @@ def stringKey(obj):
     identity_values = [ getattr(unproxied, c.name) for c in mapper.primary_key ]
     identity_key = "-".join(map(str, identity_values))
     return "obj-%s" % (identity_key)
+
+def valueKey(identity_key):
+    if not isinstance(identity_key, basestring):
+        return identity_key
+    if identity_key.startswith("obj-"):
+        return identity_key.split("-")[1:]
+    raise KeyError
 
 
 # alchemist.ui.container
@@ -153,8 +153,6 @@ def getFields(context, interface=None, annotation=None):
         # implemented as a domain_model.{property}.
 
 
-# ore.alchemist.container
-
 def contained(obj, parent, name=None):
     """An implementation of zope.app.container.contained.contained
     that doesn't generate events, for internal use.
@@ -183,6 +181,18 @@ def contained(obj, parent, name=None):
         obj.__name__ = name
     
     return obj
+
+
+@register.adapter(adapts=(interfaces.IAlchemistContainer,), provides=ISublocations)
+class ContainerSublocations(object):
+    """By default, we do not dispatch to containers, as we can contain 
+    arbitrarily large sets.
+    """ 
+    def __init__(self, container):
+        self.container = container
+    
+    def sublocations(self):
+        return ()
 
 
 class AlchemistContainer(Persistent, Contained):
@@ -289,7 +299,7 @@ class AlchemistContainer(Persistent, Contained):
         except exceptions.DBAPIError:
             return 0
 
-''' !+OBSOLETE_VERSIONING
+
 class PartialContainer(AlchemistContainer):
     """An alchemist container that matches against an arbitrary subset,
     via definition of a query modification function. contents added to this
@@ -311,4 +321,5 @@ class PartialContainer(AlchemistContainer):
     def _query(self):
         query = super(PartialContainer, self)._query 
         return query.filter(self._subset_query)
-'''
+
+

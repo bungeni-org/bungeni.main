@@ -647,8 +647,7 @@ class Version(Change):
         def fget(self):
             return "ver-%s" % (self.seq)
         def fset(self, name):
-            # !+CONTAINED can't set attribute
-            # > /home/undesa/cinst/bungeni/src/ore.alchemist/src/ore/alchemist/container.py(76)contained()
+            # !+CONTAINED can't set attribute - alchemist/container.py contained()
             # -> obj.__name__ = name
             if not name == self.__name__:
                 print "**RESETTING** domain.Version.name:", self, self.__name__, name

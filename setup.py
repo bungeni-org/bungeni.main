@@ -51,7 +51,6 @@ setup(name='bungeni',
                         'zope.schema',
                         'zope.interface',
                         'zope.i18n',
-                        'ore.alchemist',
                         # The following are required by bungeni.portal
             #
                 'pyquery>=0.3.1',

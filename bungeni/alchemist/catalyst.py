@@ -12,11 +12,7 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 # List everything from this module intended for package-external use.
 __all__ = [
     "catalyse_system_descriptors"
-    #"SQLAlchemySchemaTranslator", # alias -> ore.alchemist.sa2zs
-    #"transmute",        # alias -> ore.alchemist.sa2zs !+ALCHEMIST_INTERNAL
 ]
-from ore.alchemist.sa2zs import SQLAlchemySchemaTranslator
-from ore.alchemist.sa2zs import transmute
 
 # from bungeni.alchemist, used only here
 
@@ -28,6 +24,7 @@ from bungeni.alchemist.interfaces import (
 )
 from bungeni.alchemist.container import AlchemistContainer
 from bungeni.alchemist.traversal import CollectionTraverser, ManagedContainerDescriptor
+from bungeni.alchemist.sa2zs import transmute
 from bungeni.alchemist import utils
 
 #

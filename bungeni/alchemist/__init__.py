@@ -4,22 +4,51 @@
 
 """Bungeni Alchemist -- intermediary to all alchemist packages
 
-- all bungeni usage of ore.alchemist and all alchemist.* packages should go 
-    through this package
-- any customizations/enhancements/fixes of ore.alchemist elements should 
-    be done here (as opposed to having forked code sprinkled in various 
-    places over the code). 
-    E.g. of a customization might be as simple as to intercept specific calls 
-    to add logging.
-
 $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
-
 # used directly in bungeni
 __all__ = [
-    "Session",  # alias -> ore.alchemist.session
+    "Session",
 ]
-from ore.alchemist.session import Session
+
+
+"""How do we access the current session in use:
+
+from bungeni.alchemist import Session
+session = Session()
+assert session is Session()
+"""
+
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.scoping import ScopedSession
+from transaction._transaction import Status as ZopeStatus
+import warnings
+from zope.sqlalchemy import ZopeTransactionExtension
+
+TWOPHASE = True
+
+class AlchemistWarning(RuntimeWarning):
+    """Warnings of features that will be removed in a next version.
+    """
+
+class AlchemistTransactionExtension(ZopeTransactionExtension):
+    def before_commit(self, session):
+        # zope.sqlalchemy makes an assert here, to not allow saving the session
+        # directly, so that commits must go through the transaction.
+        # Alchemist's manager worked without this, and so we must provide a
+        # BBB for alchemist users. We change the assert to a mare warning.
+        if self.transaction_manager.get().status != ZopeStatus.COMMITTING: 
+            warnings.warn(
+                "Transaction must be committed using the transaction manager", 
+                AlchemistWarning)
+
+Session = ScopedSession(
+    sessionmaker(
+        autoflush=True, 
+        autocommit=False,
+        extension=AlchemistTransactionExtension(),
+        twophase=TWOPHASE))
+
 

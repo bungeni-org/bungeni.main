@@ -109,14 +109,7 @@ def _get_by_type_key(key):
             return ti
 #def _get_by_interface(iface):
 ''' !+IALCHEMISTCONTENT fails on different interfaces with same name!
-(Pdb) ti.interface
-<InterfaceClass bungeni.models.interfaces.ISession>
-(Pdb) ti.interface.__bases__
-(<InterfaceClass ore.alchemist.interfaces.ITableSchema>, <InterfaceClass ore.alchemist.interfaces.IAlchemistContent>)
-(Pdb) iface
-<InterfaceClass bungeni.models.interfaces.ISession>
-(Pdb) iface.__bases__
-(<InterfaceClass zope.interface.Interface>,)
+    !+mar-2013 is above still true?
 '''
 #    for type_key, ti in _iter():
 #        if iface is ti.interface: #!+issubclass(iface, ti.interface)?

@@ -30,8 +30,7 @@ from bungeni.core.testing import create_participation
 
 from sqlalchemy.orm import class_mapper, object_mapper
 
-from ore.alchemist.container import valueKey
-from bungeni.alchemist.container import stringKey
+from bungeni.alchemist.container import stringKey, valueKey
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.core.workflow.states import get_object_state_rpm

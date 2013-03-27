@@ -296,12 +296,12 @@ def reset_zope_schema_properties_on_model_interface(descriptor_cls):
     type_key = naming.type_key("descriptor_class_name", descriptor_cls.__name__)
     ti = capi.get_type_info(type_key)
     domain_model = ti.domain_model
-    sast = alchemist.catalyst.SQLAlchemySchemaTranslator()
+    sast = alchemist.sa2zs.SQLAlchemySchemaTranslator()
     domain_table = alchemist.utils.get_local_table(domain_model)
     # zope.schema field property map
-    zsfp_map = sast.generateFields(domain_table, descriptor_cls)
+    zsfp_map = sast.generate_fields(domain_table, descriptor_cls)
     # apply manually overridden field properties
-    sast.applyProperties(zsfp_map, descriptor_cls)
+    sast.apply_properties(zsfp_map, descriptor_cls)
     # stuff back onto derived_table_schema
     derived_table_schema = ti.derived_table_schema
     assert set(derived_table_schema.names(all=False)) == set(zsfp_map), \

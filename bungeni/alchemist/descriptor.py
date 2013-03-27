@@ -2,9 +2,7 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Bungeni Alchemist model - [
-    ore.alchemist.model
-]
+"""Bungeni Alchemist Ui Descriptor
 
 $Id$
 """
@@ -13,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.alchemist.descriptor")
 
 # used directly in bungeni
 __all__ = [
-    "ModelDescriptor",          # redefn -> ore.alchemist.model
+    "ModelDescriptor",
     "Field",
     "show",
     "hide",

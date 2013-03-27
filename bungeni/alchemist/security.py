@@ -11,13 +11,13 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # used directly in bungeni
 __all__ = [
-    "schema",                   # redefn -> alchemist.security
-    "metadata",                 # redefn -> alchemist.security.schema
-    "GlobalPrincipalRoleMap",   # redefn -> alchemist.security.role
-    "LocalPrincipalRoleMap",    # redefn -> alchemist.security.role
-    #"GlobalRolePermissionMap",  # alias -> alchemist.security.permission
-    #"LocalRolePermissionMap",   # alias -> alchemist.security.permission
-    "AuthenticatedPrincipalFactory", # redefn -> alchemist.security.auth
+    "schema",
+    "metadata",
+    "GlobalPrincipalRoleMap",
+    "LocalPrincipalRoleMap",
+    #"GlobalRolePermissionMap",
+    #"LocalRolePermissionMap",
+    "AuthenticatedPrincipalFactory",
 ]
 
 

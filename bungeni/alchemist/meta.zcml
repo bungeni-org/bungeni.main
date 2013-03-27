@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
-<configure xmlns='http://namespaces.zope.org/zope'
+<configure xmlns="http://namespaces.zope.org/zope"
     xmlns:meta="http://namespaces.zope.org/meta"
     i18n_domain="zalchemy">
     
     <!-- provides namespaced directives ":engine" and ":bind" 
-    see bungeni_custom/sys/db.zcml -->
-    <include package="ore.alchemist" file="meta.zcml"/>
+         see bungeni_custom/sys/db.zcml 
+    -->
+    <meta:directives namespace="http://namespaces.objectrealms.net/rdb">
+        <meta:directive name="engine"
+            schema="bungeni.alchemist.zcml.IEngineDirective"
+            handler="bungeni.alchemist.zcml.engine"
+        />
+        <meta:directive name="bind"
+            schema="bungeni.alchemist.zcml.IBindDirective"
+            handler="bungeni.alchemist.zcml.bind"
+        />
+    </meta:directives>
 
 </configure>
 

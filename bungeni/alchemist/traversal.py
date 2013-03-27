@@ -17,16 +17,15 @@ __all__ = [
     #!+ALCHEMIST_INTERNAL "One2Many", # redefn -> alchemist.traversal.managed
     #!+ALCHEMIST_INTERNAL "CollectionTraverser", # redefn -> alchemist.traversal.collection
     #"one2manyindirect",             # redefn -> alchemist.traversal.managed
-    "PartialContainer",             # alias -> ore.alchemist.container
 ]
 
-from ore.alchemist.container import PartialContainer
 
 # alchemist.traversal
 
 from bungeni.alchemist.interfaces import (
     IManagedContainer,
 )
+from bungeni.alchemist.container import PartialContainer
 
 #
 
