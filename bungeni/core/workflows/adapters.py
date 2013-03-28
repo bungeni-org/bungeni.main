@@ -149,8 +149,7 @@ def load_workflow(type_key, ti):
             workflow_file_key, workflow_name, ti.workflow))
     except KeyError:
         # load
-        ti.workflow = xmlimport.load(workflow_file_key, workflow_name, 
-            tuple(ti.domain_model.available_dynamic_features))
+        ti.workflow = xmlimport.load(workflow_file_key, workflow_name)
         log.info("Loaded WORKFLOW: %s.xml as %r - %s" % (
             workflow_file_key, workflow_name, ti.workflow))
         # debug info

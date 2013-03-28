@@ -75,7 +75,7 @@ grammar {
                     | attribute permissions_from_parent { xsd:boolean }  # default:false
             )?
             | element facet {
-                attribute ref { token } # [ {workflow_feature.@name} ].{facet.@name}
+                attribute ref { FACET_REFERENCE }
             }*
         )
     }
@@ -95,5 +95,24 @@ grammar {
         attribute note { text }?
     }
     
+
+    # A valid facet reference may be composed of
+    # - (optional) a workflow feature name : SYMBOL_NAME
+    # - (optional) IF a feature name is specified, this may be also qualified 
+    #   further with:
+    #   - a literal "#" char
+    #   - followed by a type_key : SYMBOL_NAME
+    # - a single literal "." char
+    # - a facet name : SYMBOL_NAME
+    # where SYMBOL_NAME is a valid programming language symbol 
+    # (see common.rnc). Leading/trailing white-space is allowed.
+    #
+    # [ {workflow_feature.@name} [ #{qualifier type_key} ] ].{facet.@name}
+    #
+    FACET_REFERENCE = xsd:string { 
+        pattern="\s*([a-zA-Z_][\w_]*([#][a-zA-Z_][\w_]*)?)?\.[a-zA-Z_][\w_]*\s*"
+    }
+
+
 }
 

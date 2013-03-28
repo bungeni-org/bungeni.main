@@ -36,9 +36,7 @@ def configurable_domain(kls, workflow):
     Executed on adapters.load_workflow().
     """
     for feature in workflow.features:
-        assert feature.name in kls.available_dynamic_features, \
-            "Feature %r not one that is available %s for this type %s" % (
-                feature.name, kls.available_dynamic_features, kls)
+        feature.assert_available_for_type(kls)
         if feature.enabled:
             # !+ break decorators up also by archetype?
             feature_decorator = globals()["feature_%s" % (feature.name)]
@@ -97,8 +95,9 @@ def feature_version(kls, feature):
     # !+ @version requires @audit
     assert interfaces.IFeatureAudit.implementedBy(kls)
     interface.classImplements(kls, interfaces.IFeatureVersion)
+    # !+VERSION_CLASS_PER_TYPE
 
-    
+
 def feature_attachment(kls, feature):
     """Decorator for domain types to support "attachment" feature.
     !+ currently assumes that kls is versionable.
@@ -199,9 +198,8 @@ def feature_schedule(kls, feature):
     if manager is not None:
         interface.classImplements(kls, interfaces.IFeatureSchedule)
     else:
-        log.warning("Scheduling manager was not created for class %s."
-            "Check your logs for details",
-            kls)
+        log.warning("Scheduling manager was not created for class %s. "
+            "Check your logs for details", kls)
 
 # /schedule
 
@@ -318,7 +316,7 @@ def configurable_mappings(kls):
             
             # versionable
             if interfaces.IFeatureVersion.implementedBy(kls):
-                pass
+                pass # !+VERSION_CLASS_PER_TYPE
             return mapper_properties
         
         for key, prop in configurable_properties(kls, {}).items():

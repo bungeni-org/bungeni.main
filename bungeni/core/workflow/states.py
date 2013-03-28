@@ -60,11 +60,16 @@ class Feature(object):
         self.enabled = enabled
         self.note = note
         self.params = kws
+    
+    def assert_available_for_type(self, cls):
+        assert self.name in cls.available_dynamic_features, \
+            "Feature %r not one that is available %s for this type %s" % (
+                self.name, cls.available_dynamic_features, cls)
+    
     def __str__(self):
         return named__str__(self, self.name)
     __repr__ = __str__
-
-
+    
     
 class State(object):
     """A workflow state instance. 

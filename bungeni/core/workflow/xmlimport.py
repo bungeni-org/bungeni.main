@@ -128,14 +128,11 @@ def get_loaded_workflow(workflow_name):
         return None # not a "workflowed" feature
 
 
-def load_features(workflow_name, workflow_elem, available_dynamic_features):
+def load_features(workflow_name, workflow_elem):
     # all workflow features (enabled AND disabled)
     workflow_features = []
     for f in workflow_elem.iterchildren("feature"):
         feature_name = xas(f, "name")
-        assert feature_name in available_dynamic_features, \
-            "Feature %r not supported for type workflow %r. May be one of: %s" % (
-                feature_name, workflow_name, available_dynamic_features)
         feature_enabled = xab(f, "enabled")
         
         # !+FEATURE_DEPENDENCIES archetype/feature inter-dep; should be part of feature descriptor
@@ -195,47 +192,57 @@ def resolve_state_facets(workflow_name, workflow_facets,
     """
     state_id = xas(state_elem, "id")
     
-    # first, specified facets by feature
-    used_facets_fq = {} # used facets by (feature, qualifier)
-    for facet in state_elem.iterchildren("facet"):
-        ref = xas(facet, "ref")
-        
-        # parse ref into feature_name, qualifier_type_key (qtk), facet_name
+    def parse_facet_ref(state_facet_elem):
+        """(elem) -> (feature_name, qtk, facet_name)
+        Parse ref into feature_name, qualifier_type_key (qtk), facet_name
+        """
+        ref = xas(state_facet_elem, "ref")
         qualified_feature_name, facet_name = ref.split(".", 1)
         if "#" not in qualified_feature_name:
             qualified_feature_name = qualified_feature_name + "#"
         feature_name, qtk = qualified_feature_name.split("#", 1)
-        # normalize feature_name, qtk i.e. empty strings become None
+        # normalize feature_name, empty strings become None
         feature_name = feature_name if feature_name else None
+        # normalize qtk, empty strings become value of feature_name
         qtk = qtk if qtk else feature_name
         if feature_name is None:
             assert qtk is None, \
-                "May not qualify None feature '#%s' in state %r" % (
+                "Must specify feature name in facet '#%s' in state %r" % (
                     qtk, state_id)
-        # !+ ensure that qtk does correspond to a "valid feature type"?
-
-        # feature_name is None -> this "workflow" facets
+        assert facet_name, \
+            "Facet %r in state %r must specify a valid facet name" % (
+                facet_name, state_id) #!+RNC
+        # !+FEATURE_DEPENDENCIES ensure that qtk does correspond to a "valid feature type"?
+        return feature_name, qtk, facet_name
+    
+    def get_facet_seq(feature_name, qtk):
+        if feature_name is None:
+            return workflow_facets
+        feature_wf = get_loaded_workflow(qtk)
+        if feature_wf:
+            return feature_wf.facets
+        return []
+    
+    # first, specified facets by feature
+    used_facets_fq = {} # used facets by (feature, qualifier)
+    for facet_ref in state_elem.iterchildren("facet"):
+        feature_name, qtk, facet_name = parse_facet_ref(facet_ref)
+        # feature_name is None implies facets of this "workflow"
         assert (feature_name, qtk) not in used_facets_fq, \
             "Duplicate facet %r for feature '%s#%s' in state %r" % (
                 facet_name, feature_name, qtk, state_id)
         
-        assert facet_name, \
-            "Facet %r in state %r must specify a valid facet name" % (
-                facet_name, state_id) #!+RNC
-        
-        # enabled **qualified** features only
+        # enabled features (for enabled types) only
         if feature_name not in enabled_feature_names:
-            log.warn("State %r specifies facet %r for disabled feature '%s#%s'", 
+            log.warn("State %r specifies facet %r ref '%s#%s' but feature is disabled", 
                 state_id, facet_name, feature_name, qtk)
             continue
         if qtk and get_loaded_workflow(qtk) is None:
+            log.warn("State %r specifies facet %r ref '%s#%s' but type is disabled", 
+                state_id, facet_name, feature_name, qtk)
             continue
         
-        if feature_name is None:
-            facet_seq = workflow_facets
-        else:
-            feature_wf = get_loaded_workflow(qtk)
-            facet_seq = feature_wf and feature_wf.facets or []
+        facet_seq = get_facet_seq(feature_name, qtk)
         used_facets_fq[(feature_name, qtk)] = get_named(facet_name, facet_seq)
         assert used_facets_fq[(feature_name, qtk)] is not None, \
             "No facet %r found (workflow %r state %r, for feature '%s#%s')" % (
@@ -245,14 +252,11 @@ def resolve_state_facets(workflow_name, workflow_facets,
     unseen_feature_names = [ feature_name 
         for (feature_name, qtk) in used_facets_fq 
         if feature_name not in enabled_feature_names ]
-    for feature_name in unseen_feature_names:
-        if feature_name is None:
-            facet_seq = workflow_facets
-        else:
-            feature_wf = get_loaded_workflow(feature_name)
-            facet_seq = feature_wf and feature_wf.facets or []
-        used_facets_fq[(feature_name, feature_name)] = get_default_facet(facet_seq)
+    for unseen_fn in unseen_feature_names:
+        facet_seq = get_facet_seq(unseen_fn, unseen_fn)
+        used_facets_fq[(unseen_fn, unseen_fn)] = get_default_facet(facet_seq)
     return used_facets_fq
+
 
 def check_add_assign_permission(workflow_name, permissions, (setting, p, r)):
     """Check that permission (setting==GRANT) may be added to list of 
@@ -272,11 +276,10 @@ def check_add_assign_permission(workflow_name, permissions, (setting, p, r)):
 #
 
 @capi.bungeni_custom_errors
-def load(file_key, workflow_name, available_dynamic_features,
+def load(file_key, workflow_name,
         path_custom_workflows=capi.get_path_for("workflows")
     ):
     """ (type_key:str, file_key:str, workflow_name:str,
-            available_dynamic_features:tuple(str), 
             path_custom_workflows:str) -> Workflow
     
     Loads the workflow XML definition file, returning the correspondingly setup 
@@ -284,9 +287,9 @@ def load(file_key, workflow_name, available_dynamic_features,
     """
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (file_key))
     workflow_doc = capi.schema.validate_file_rng("workflow", file_path)
-    return _load(workflow_name, workflow_doc, available_dynamic_features)
+    return _load(workflow_name, workflow_doc)
 
-def _load(workflow_name, workflow, available_dynamic_features):
+def _load(workflow_name, workflow):
     """ (workflow_name:str, workflow:etree_doc) -> Workflow
     """
     workflow_title = xas(workflow, "title")
@@ -363,8 +366,7 @@ def _load(workflow_name, workflow, available_dynamic_features):
         assert_distinct_permission_scopes(perm, roles, workflow_name, "global grants")
     
     # all workflow features (enabled AND disabled)
-    workflow_features = load_features(workflow_name, workflow, 
-        available_dynamic_features)
+    workflow_features = load_features(workflow_name, workflow)
     enabled_feature_names = [None] + [ 
         f.name for f in workflow_features if f.enabled ]
     # !+EVENT_FEATURE_TYPES add each as enabled_feature_names, or extend the 
