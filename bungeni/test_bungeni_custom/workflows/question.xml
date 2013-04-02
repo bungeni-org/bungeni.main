@@ -87,20 +87,14 @@
     </facet>
 
     
-    <state id="working_draft" title="Working Draft"
-            actions="assign_role_minister_question"
-           
-        >
+    <state id="working_draft" title="Working Draft" actions="assign_role_group">
         <facet ref=".draft_Clerk" />
         <facet ref="attachment.draft_Clerk" />
         <facet ref="event.draft_Clerk" />
         <facet ref="signatory.draft_Clerk" />
     </state>
     
-    <state id="draft" title="Draft" 
-            actions="assign_role_minister_question"
-           
-        >
+    <state id="draft" title="Draft" actions="assign_role_group">
         <facet ref=".draft_Owner" />
         <facet ref="attachment.draft_Owner" />
         <facet ref="event.draft_Owner" />

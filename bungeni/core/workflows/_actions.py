@@ -46,9 +46,6 @@ from bungeni.core.workflows.utils import (
     # when a doc is withdrawn
     unschedule_doc,
     
-    # question !+CUSTOM
-    assign_role_minister_question,
-    
     # when a sitting's agenda is published
     schedule_sitting_items,
     
@@ -86,6 +83,19 @@ def dissolve(group):
 # user
 @describe(_(u"Assign owner role to the user"))
 def assign_owner_role(user):
+    # !+PrincipalRoleMapContextData infer role from context data
     utils.assign_role("bungeni.Owner", user.login, user)
     user.date_of_death = None
+
+
+# doc
+@describe(_(u"Assign the group role to the doc"))
+def assign_role_group(doc):
+    """Assign the role of the doc's group, to the group itself, onto doc.
+    """
+    # !+PrincipalRoleMapContextData infer role from context data
+    from bungeni.models.interfaces import IDoc
+    assert IDoc.providedBy(doc), "Not a Doc: %s" % (doc)
+    if doc.group is not None:
+        utils.assign_role(doc.group.group_role, doc.group.principal_name, doc)
 

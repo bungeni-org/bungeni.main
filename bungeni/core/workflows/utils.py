@@ -146,18 +146,6 @@ def set_doc_type_number(doc):
 is_pi_scheduled = dbutils.is_pi_scheduled
 
 
-# question
-# !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
-# !+CUSTOM
-@describe(_(u"Grant the ministry access to a question"))
-def assign_role_minister_question(question):
-    assert interfaces.IQuestion.providedBy(question), \
-        "Not a Question: %s" % (question)
-    if question.ministry is not None:
-        ministry_login_id = question.ministry.principal_name
-        if ministry_login_id:
-            assign_role(question.ministry.group_role, ministry_login_id, question)
-
 unschedule_doc = dbutils.unschedule_doc
 
 
