@@ -13,12 +13,14 @@
   $Id$
 -->
 <grammar xmlns="http://relaxng.org/ns/structure/1.0">
-  <include href="common.rng"/>
   <start>
     <ref name="ROLES"/>
   </start>
   <define name="ROLES">
     <element name="roles">
+      <optional>
+        <attribute name="note"/>
+      </optional>
       <oneOrMore>
         <ref name="ROLE"/>
       </oneOrMore>
@@ -28,6 +30,9 @@
     <element name="role">
       <attribute name="id"/>
       <attribute name="title"/>
+      <optional>
+        <attribute name="note"/>
+      </optional>
       <zeroOrMore>
         <ref name="SUBROLE"/>
       </zeroOrMore>
@@ -37,6 +42,9 @@
     <element name="subrole">
       <attribute name="id"/>
       <attribute name="title"/>
+      <optional>
+        <attribute name="note"/>
+      </optional>
     </element>
   </define>
 </grammar>

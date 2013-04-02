@@ -14,18 +14,23 @@ grammar {
     start = ROLES
     
     ROLES = element roles {
+        attribute note { text }?,
+        
         ROLE+
     }
     
     ROLE = element role {
         attribute id { text },
         attribute title { text },
+        attribute note { text }?,
         
         SUBROLE*
     }
     
     SUBROLE = element subrole {
         attribute id { text },
-        attribute title { text }
+        attribute title { text },
+        attribute note { text }?
     }
-}    
+}
+

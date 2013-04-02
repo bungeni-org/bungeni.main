@@ -43,7 +43,7 @@ def write_all():
     # list of vocabularies
     write_to_custom("forms", "_vocabularies.xml", output_vocabularies())
     # list of all roles in system
-    write_to_custom("sys", "_roles.xml", output_all_roles())
+    write_to_custom("", "_roles.xml", output_all_roles())
 
 
 def output_actions():
