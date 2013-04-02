@@ -170,11 +170,13 @@ class SittingScheduleViewlet(SubformViewlet):
 class MinistersViewlet(SubformViewlet):
     sub_attr_name = "ministers"
 
+''' !+MINISTRY_DOCS(mr, apr-2013)
 class BillsViewlet(SubformViewlet):
     sub_attr_name = "bills"
 
 class QuestionsViewlet(SubformViewlet):
     sub_attr_name = "questions"
+'''
 
 class AgendaItemsViewlet(SubformViewlet):
     sub_attr_name = "agendaitems"

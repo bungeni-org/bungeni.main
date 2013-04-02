@@ -478,6 +478,7 @@ to e.g. "bungeni.{type}.Edit").
      weight="20"
      />
 
+    <!-- !+MINISTRY_DOCS
   <browser:viewlet
      name="bungeni.viewlet.minstery-bills"
      manager=".interfaces.ISubFormViewletManager"
@@ -495,7 +496,8 @@ to e.g. "bungeni.{type}.Edit").
      permission="zope.Public"
      weight="40"
      />
-
+    -->
+    
     <browser:viewlet name="bungeni.viewlet.minister-titles"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.OfficesHeldViewlet"
