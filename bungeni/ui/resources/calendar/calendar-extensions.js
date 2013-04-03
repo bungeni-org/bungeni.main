@@ -280,3 +280,71 @@ function scheduler_resized(){
     }
     return true;
 }
+
+
+session_events = new Array();
+/**
+ * @method event_loading
+ * @description fires when loading an event (store all sessions)
+ **/
+function event_loading(event){
+    if (event.event_type=="session"){
+        session_events.push(event);
+    }
+    return true;
+}
+
+/**
+ * @function reset_sessions
+ * @description reset sessions array
+ **/
+function reset_sessions(){
+    session_events = new Array();
+}
+
+
+/**
+ * @function block_span
+ * @description block timespan on scheduler
+ **/
+ function block_span(start_date, end_date){
+    scheduler.addMarkedTimespan({
+        start_date: start_date,
+        end_date: end_date,
+        css: "gray_section",
+        type: "dhx_time_block",
+        zones: "fullday"
+    });
+}
+ 
+/**
+ * @function block_times
+ * @description limit event adding to sessions
+ **/
+function block_times(){
+    scheduler.deleteMarkedTimespan();
+    end_date = null;
+    last_index = session_events.length-1;
+    prev_end_date = null;
+    for (index in session_events){
+        session = session_events[index];
+        start_date = null;
+        if(index == 0){
+            start_date = scheduler.date.add(scheduler._date, -1, "year");
+            end_date = session.start_date;
+            scheduler.config.limit_start = session.start_date;
+        } else {
+            start_date = scheduler.date.add(prev_end_date, 1, "day");
+            end_date = session.start_date;
+        }
+        prev_end_date = session.end_date;
+        block_span(start_date, end_date);
+        if (index == last_index){
+            start_date = scheduler.date.add(session.end_date, 1, "day");
+            end_date = scheduler.date.add(scheduler._date, 1, "year");
+            scheduler.config.limit_end = session.end_date;
+            block_span(start_date, end_date);
+        }
+    }
+    scheduler.updateView();
+}

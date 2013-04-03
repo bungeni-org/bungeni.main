@@ -166,6 +166,9 @@
                 scheduler.attachEvent("onEventCollision", 
                     collission_handler
                 );
+                scheduler.attachEvent("onEventLoading", event_loading);
+                scheduler.attachEvent("onXLS", reset_sessions);
+                scheduler.attachEvent("onXLE", block_times);
                 scheduler.attachEvent("onBeforeLightbox", handle_lightbox);
                 scheduler.attachEvent("onBeforeDrag", handle_lightbox);
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
