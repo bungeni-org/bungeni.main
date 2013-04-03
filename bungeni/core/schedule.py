@@ -167,7 +167,7 @@ class ParliamentSchedulingContext(GroupSchedulingContext):
     component.adapts(IParliament)
 
 
-class SessionSchedulingContext(GroupSchedulingContext):
+class SessionSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ISession)
     
     @property

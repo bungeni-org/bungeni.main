@@ -982,10 +982,7 @@ class Session(Entity):
         "bungeni.models.domain.SittingContainer", "session_id",
         [("group_id", "parliament_id")]
     )
-    agendaitems = one2manyindirect("agendaitems",
-        "bungeni.models.domain.AgendaItemContainer", "parliament_id", 
-        "parliament_id")
-    
+
     @property
     def group_id(self):
         return self.parliament_id
@@ -1183,6 +1180,8 @@ class SittingReport(Entity):
     """
     interface.implements(
         interfaces.ISittingReport,
+        interfaces.IBungeniContent,
+        interfaces.IFeatureDownload,
     )
     
     def __getattr__(self, name):
@@ -1191,9 +1190,9 @@ class SittingReport(Entity):
             return super(SittingReport, self).__getattr__(name)
         except AttributeError:
             try:
-                return getattr(self.report, name)
+                return object.__getattribute__(self.report, name)
             except AttributeError:
-                return getattr(self.sitting, name)
+                return object.__getattribute__(self.sitting, name)
 
 # !+ this should really be called "FieldTranslation", and docstring should be pertinent!!
 class ObjectTranslation(object):

@@ -835,7 +835,7 @@
 
     <!-- scheduling agenda items -->
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.core.schedule.PrincipalGroupSchedulingContext"
+        for="bungeni.core.schedule.WorkspaceSchedulingContext"
         title="Add agenda item..."
         action="./agendaitems/add"
         permission="bungeni.agenda_item.Add"

@@ -221,7 +221,10 @@ class SittingDescriptiveProperties(DescriptiveProperties):
             default=u"Sitting of ${group_name} @ ${sitting_venue}",
             mapping = {
                 "group_name": IDCDescriptiveProperties(context.group).title,
-                "sitting_venue": IDCDescriptiveProperties(context.venue).title
+                "sitting_venue": (
+                    IDCDescriptiveProperties(context.venue).title 
+                    if context.venue else translate_i18n(_(u"no venue"))
+                )
             }
         )
         return translate_i18n(sitting_title)
@@ -497,6 +500,9 @@ class ReportDescriptiveProperties(DescriptiveProperties):
     def description(self):
         return self.title
 
+@register.adapter()
+class SittingReportDescriptiveProperties(ReportDescriptiveProperties):
+    component.adapts(interfaces.ISittingReport)
 
 @register.adapter()
 class UserDelegationDescriptiveProperties(DescriptiveProperties):

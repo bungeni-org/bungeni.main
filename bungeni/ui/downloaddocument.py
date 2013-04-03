@@ -167,7 +167,8 @@ class DownloadDocument(BrowserView):
         """Generates ODT/PDF doc"""
         tempFileName = os.path.dirname(__file__) + "/tmp/%f-%f.%s" % (
                             time.time(),random.random(),self.document_type)
-        if interfaces.IReport.providedBy(self.document):
+        if (interfaces.IReport.providedBy(self.document) or 
+            interfaces.ISittingReport.providedBy(self.document)):
             document_text = self.bodyText()
         else:
             document_text = self.generateDocumentText()
