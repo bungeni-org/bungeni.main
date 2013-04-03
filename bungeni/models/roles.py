@@ -21,7 +21,8 @@ from bungeni.capi import capi
 # eg. bungeni.Owner and bungeni.Signatory
 # These are defined here for use in the workspace, notifications
 # or any other code that needs to compute the principals/permissions on objects
-ROLES_DIRECTLY_DEFINED_ON_OBJECTS = ["bungeni.Owner", "bungeni.Signatory"]
+ROLES_DIRECTLY_DEFINED_ON_OBJECTS = [
+    "bungeni.Owner", "bungeni.Drafter", "bungeni.Signatory"]
 
 
 @zope.annotation.factory

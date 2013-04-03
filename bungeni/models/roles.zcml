@@ -3,11 +3,13 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:bungeni="http://namespaces.bungeni.org/zope"
     i18n_domain="bungeni">
+    
     <include package="zope.annotation" />
     <class class="zope.securitypolicy.role.Role">
         <implements interface="zope.annotation.interfaces.IAttributeAnnotatable"/>
     </class>
     <adapter factory="bungeni.models.roles.SubRoleAnnotations"/>
+    
     <!-- custom roles -->
     <role id="zope.Manager" title="Site Manager" />
     <role id="bungeni.Admin" title="Bungeni Admin"/>
@@ -15,6 +17,9 @@
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
     
     <!-- Document roles -->
-    <role id="bungeni.Owner" title="Owner" />
+    <role id="bungeni.Owner" title="Document Owner" />
+    <role id="bungeni.Drafter" title="Document Drafter (Original Editor)" />
     <role id="bungeni.Signatory" title="Document Signatory" />
+
 </configure>
+

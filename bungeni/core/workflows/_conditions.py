@@ -44,14 +44,7 @@ def user_is_context_owner(context):
     
     A delegate is considered to be an owner of the object.
     """
-    # !+ newly created context, not flushed to the db yet - determine valid user:
-    user = context.owner
-    # context not yet flushed may have "owner_id" set but "owner" not yet updated
-    if user is None:
-        # some contexts do not have "owner_id"
-        if hasattr(context, "owner_id"):
-            user = get_user(context.owner_id)
-    assert user, "user_is_context_owner: user may not be None."
+    user = utils._determine_related_user(context, user_attr_name="owner")
     return is_current_or_delegated_user(user)
 
 

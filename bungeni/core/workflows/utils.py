@@ -22,7 +22,7 @@ from bungeni.core.workflow.interfaces import IWorkflowController, MANUAL, \
 from bungeni.core.workflow.states import Transition
 
 import bungeni.models.interfaces as interfaces
-from bungeni.models.utils import get_chamber_for_group
+from bungeni.models.utils import get_chamber_for_group, get_user
 from bungeni.models import domain
 from bungeni.utils import common
 from bungeni.ui.utils import debug
@@ -73,6 +73,36 @@ def assign_role_owner_to_login(context):
     #    owner = session.query(domain.User).get(context.owner_id)
     #    if owner and (owner.login != current_user_login):
     #        assign_role("bungeni.Owner", owner.login, context)
+
+def assign_ownership(doc):
+    """Assign roles bungeni.Owner (to doc.owner) and bungeni.Drafter (to the 
+    current user editing the draft) on doc.
+    """
+    # bungeni.Drafter
+    current_user_login = common.get_request_login()
+    log.debug("assign_ownership: role 'bungeni.Drafter' to user %r on [%s]" % (
+        current_user_login, doc))
+    assign_role("bungeni.Drafter", current_user_login, doc)
+    # bungeni.Owner
+    owner_login = _determine_related_user(doc).login
+    assign_role("bungeni.Owner", owner_login, doc)
+
+
+def _determine_related_user(context, user_attr_name="owner"):
+    """Get the user instance that is the value of the {user_attr_name} attribute.
+    
+    The context may be newly created, not yet flushed to db (so may have 
+    "owner_id" set but "owner" not yet updated).
+    """
+    user = getattr(context, user_attr_name)
+    # context not yet flushed may have "X_id" set but "X" not yet updated
+    if user is None:
+        # !+ some contexts define an "X" but not an "X_id"!
+        user_id_attr_name = "%s_id" % (user_attr_name)
+        if hasattr(context, user_id_attr_name):
+            user = get_user(getattr(context, user_id_attr_name))
+    assert user, "User (as %r on %s) may not be None" % (user_attr_name, context)
+    return user
 
 
 @capi.bungeni_custom_errors

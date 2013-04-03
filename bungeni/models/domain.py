@@ -523,7 +523,7 @@ class Doc(Entity):
         """
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
-        utils.assign_role_owner_to_login(self)
+        utils.assign_ownership(self)
         # !+utils.setParliamentId(self)
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
