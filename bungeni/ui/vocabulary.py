@@ -811,7 +811,7 @@ class MinistrySource(SpecializedSource):
                         title = get_translated_group_label(ob)
                 ))
         return vocabulary.SimpleVocabulary(terms)
-ministry = MinistrySource("ministry_id")
+ministry = MinistrySource("group_id")
 component.provideUtility(ministry, IVocabularyFactory, "ministry")
 
 

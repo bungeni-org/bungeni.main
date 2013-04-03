@@ -507,7 +507,7 @@ Question conditions
     >>> _conditions.is_written_response(question)
     False
     
-    >>> question.ministry_id = ministry.group_id
+    >>> question.group_id = ministry.group_id
     >>> _conditions.is_written_response(question)
     True
 

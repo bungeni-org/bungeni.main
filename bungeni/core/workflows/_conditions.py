@@ -94,14 +94,14 @@ def sitting_dummy(context):
 # question
 
 @describe(_(u"question: Require a written response"))
-def is_written_response(context):
-    return (context.ministry_id is not None and 
-        context.response_type == "written"
+def is_written_response(question):
+    return (question.group_id is not None and 
+        question.response_type == "written"
     )
     
 @describe(_(u"question: Require an oral response"))
-def is_oral_response(context):
-    return context.response_type == "oral"
+def is_oral_response(question):
+    return question.response_type == "oral"
 
 @describe(_(u"question: Require the response to be submitted in the current context"))
 def response_allow_submit(context):

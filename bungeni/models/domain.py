@@ -778,9 +778,10 @@ class Bill(Doc):
     
     #!+doc_type: default="government", nullable=False,
     
-    # !+BILL_MINISTRY(fz, oct-2011) the ministry field here logically means the 
-    # bill is presented by the Ministry and so... Ministry should be the author,
-    # not a "field" 
+    # !+BILL_MINISTRY(fz, oct-2011) the Bill ministry (group) field here 
+    # logically means the bill is presented by the Ministry and so... 
+    # Ministry should really be the author, not a "field" 
+    '''
     # !+MINISTRY_ID should be removed or made simply an alias to the
     # sqlalchemy.orm.attributes.InstrumentedAttribute Bill.group_id
     def ministry_id():
@@ -794,6 +795,7 @@ class Bill(Doc):
             self.group_id = None
         return locals()
     ministry_id = property(**ministry_id())
+    '''
     
     extended_properties = [
         #("short_title", vp.TranslatedText),
@@ -821,6 +823,7 @@ class Question(Doc):
     #!+doc_type: default="ordinary", nullable=False,
     #!+response_type: default="oral", nullable=False,
     
+    '''
     # !+MINISTRY_ID same as for Bill!
     def ministry_id():
         doc = "Related group must be a ministry."
@@ -833,7 +836,7 @@ class Question(Doc):
             self.group_id = None
         return locals()
     ministry_id = property(**ministry_id())
-    
+    '''
     extended_properties = [
         #("response_type", vp.Text),
         #("response_text", vp.TranslatedText),

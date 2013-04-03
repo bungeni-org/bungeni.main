@@ -358,13 +358,13 @@ class QuestionIndexer(ContentIndexer):
     def index(self, doc):    
         # index schema fields
         super(QuestionIndexer, self).index(doc)
-        if self.context.ministry_id:
-            doc.fields.append(xappy.Field('ministry_id', str(self.context.ministry_id)))
+        if self.context.group_id:
+            doc.fields.append(xappy.Field("group_id", str(self.context.group_id)))
     
     @classmethod
     def defineIndexes(self, indexer):
-        indexer.add_field_action('ministry_id', xappy.FieldActions.INDEX_EXACT)
-        indexer.add_field_action('ministry_id', xappy.FieldActions.STORE_CONTENT)
+        indexer.add_field_action("group_id", xappy.FieldActions.INDEX_EXACT)
+        indexer.add_field_action("group_id", xappy.FieldActions.STORE_CONTENT)
         super(QuestionIndexer, self).defineIndexes(indexer)
 
 class GroupIndexer(ContentIndexer):

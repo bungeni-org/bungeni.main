@@ -101,8 +101,8 @@ def getActiveItemSchedule(doc):
 
 #
 
-def get_ministry(ministry_id):
-    return Session().query(domain.Ministry).get(ministry_id)
+def get_ministry(group_id):
+    return Session().query(domain.Ministry).get(group_id)
 
 #!+UNUSED(miano, oct 2012)
 '''class _Minister(object):
