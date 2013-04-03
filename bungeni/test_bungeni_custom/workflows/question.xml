@@ -11,10 +11,6 @@
     <!-- features -->
     <feature name="audit" enabled="true" />
     <feature name="version" enabled="true" />
-    <!-- NOTE on Feature Facet Permissions: Sub-item permissions (apart from the
-    Add permission, that is by defn unbound to an *existing* item) that are 
-    allowed within a *feature facet* apply only for when the (workflowed, always)
-    sub-item itself is in a permissions_from_parent="true" state. -->
     <feature name="attachment" enabled="true" />
     <feature name="event" enabled="true" />
     <feature name="signatory" enabled="true">
@@ -86,6 +82,19 @@
         <allow permission="response.View" roles="Authenticated Anonymous" />
     </facet>
 
+    
+    <!-- NOTE on Feature Facet Permissions:
+    
+    Feature "sub-type" permissions specified in workflow states of a head type: 
+    
+    - ALWAYS apply to the *head instance*
+    - apply to the *sub-item* ONLY when the sub-item itself is in a state
+    that sets permissions_from_parent="true".
+    
+    In addition note that the Add permission is somewhat special, as it only 
+    applies to a "container" (or global); it is, by definition, unbound to any
+    *yet-to-exist* item.
+    -->
     
     <state id="working_draft" title="Working Draft" actions="assign_role_group">
         <facet ref=".draft_Clerk" />

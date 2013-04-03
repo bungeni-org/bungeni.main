@@ -12,10 +12,6 @@
     <!-- features -->
     <feature name="audit" enabled="true" />
     <feature name="version" enabled="true" />
-    <!-- NOTE on Feature Facet Permissions: Sub-item permissions (apart from the
-    Add permission, that is by defn unbound to an *existing* item) that are 
-    allowed within a *feature facet* apply only for when the (workflowed, always)
-    sub-item itself is in a permissions_from_parent="true" state. -->
     <feature name="attachment" enabled="true" />
     <feature name="event" enabled="true" />
     <feature name="signatory" enabled="true">
