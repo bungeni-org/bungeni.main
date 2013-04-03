@@ -17,8 +17,8 @@
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
     
     <!-- Document roles -->
-    <role id="bungeni.Owner" title="Document Owner" />
     <role id="bungeni.Drafter" title="Document Drafter (Original Editor)" />
+    <role id="bungeni.Owner" title="Document Owner" />
     <role id="bungeni.Signatory" title="Document Signatory" />
 
 </configure>

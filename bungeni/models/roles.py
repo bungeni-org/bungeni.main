@@ -22,7 +22,7 @@ from bungeni.capi import capi
 # These are defined here for use in the workspace, notifications
 # or any other code that needs to compute the principals/permissions on objects
 ROLES_DIRECTLY_DEFINED_ON_OBJECTS = [
-    "bungeni.Owner", "bungeni.Drafter", "bungeni.Signatory"]
+    "bungeni.Drafter", "bungeni.Owner", "bungeni.Signatory"]
 
 
 @zope.annotation.factory
