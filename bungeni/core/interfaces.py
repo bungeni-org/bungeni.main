@@ -358,7 +358,9 @@ class IMessageQueueConfigSchema(interface.Interface):
         title=u"Channel Max",
         description=u"Maximum number of channels to allow",
         required=True,
-        default=0
+        min=1,
+        max= 65535,
+        default=1
         )
     frame_max=schema.Int(
         title=u"Max frame size",
@@ -366,11 +368,10 @@ class IMessageQueueConfigSchema(interface.Interface):
         required=True,
         default=131072
         )
-    heartbeat=fields.Bool(
+    heartbeat=schema.Int(
         title=u"Heartbeat",
-        description=u"Turn heartbeat checking on or off",
-        required=True,
-        default=False
+        description=u"How often to send hearbeats",
+        required=False,
         )
     number_of_workers=schema.Int(
         title=u"Number of worker processes",

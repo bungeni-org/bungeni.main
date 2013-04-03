@@ -120,7 +120,7 @@ def get_mq_parameters():
         credentials=credentials,
         channel_max=mq_utility.get_channel_max(),
         frame_max=mq_utility.get_frame_max(),
-        heartbeat=mq_utility.get_heartbeat()
+        heartbeat_interval=mq_utility.get_heartbeat()
     )
     return connection_parameters
 
