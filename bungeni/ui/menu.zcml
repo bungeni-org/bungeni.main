@@ -297,7 +297,8 @@
         title="Respond to question"
         order="11"		
         permission="bungeni.response.Edit"		
-    />		
+    /><!-- !+CUSTOM -->
+    
     <browser:menuItem menu="context_actions" 
         for="bungeni.models.interfaces.IEvent"
         action="edit"

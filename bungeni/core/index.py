@@ -346,27 +346,6 @@ class AgendaItemIndexer(ContentIndexer):
 class PoliticalGroupIndexer(ContentIndexer):
     domain_model = domain.PoliticalGroup
 
-class BillIndexer(ContentIndexer):
-    domain_model = domain.Bill
-    
-class MotionIndexer(ContentIndexer):
-    domain_model = domain.Motion
-
-class QuestionIndexer(ContentIndexer):
-    domain_model = domain.Question
-    
-    def index(self, doc):    
-        # index schema fields
-        super(QuestionIndexer, self).index(doc)
-        if self.context.group_id:
-            doc.fields.append(xappy.Field("group_id", str(self.context.group_id)))
-    
-    @classmethod
-    def defineIndexes(self, indexer):
-        indexer.add_field_action("group_id", xappy.FieldActions.INDEX_EXACT)
-        indexer.add_field_action("group_id", xappy.FieldActions.STORE_CONTENT)
-        super(QuestionIndexer, self).defineIndexes(indexer)
-
 class GroupIndexer(ContentIndexer):
     domain_model = domain.Group
 
@@ -376,9 +355,6 @@ class CommitteeIndexer(ContentIndexer):
 class ParliamentIndexer(ContentIndexer):
     domain_model = domain.Parliament
     
-class TabledDocumentIndexer(ContentIndexer):
-    domain_model = domain.TabledDocument
-
 class AttachmentIndexer(ContentIndexer):
     domain_model = domain.Attachment
     

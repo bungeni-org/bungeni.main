@@ -8,6 +8,8 @@
 
     <!-- Workspace section -->
     
+
+    <!-- !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.IQuestion"
         name="get_url"
@@ -39,7 +41,8 @@
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         permission="zope.Public"
         />
-
+    -->
+    
     <browser:view
         for="bungeni.models.interfaces.IAgendaItem"
         name="get_url"
@@ -74,7 +77,8 @@
         layer="bungeni.ui.interfaces.IBusinessSectionLayer"
         permission="zope.Public"
         />
-                
+    
+    <!-- !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.IBill"
         name="get_url"
@@ -106,7 +110,8 @@
         layer="bungeni.ui.interfaces.IBusinessSectionLayer"
         permission="zope.Public"
         />
-
+    -->
+    
     <browser:view
         for="bungeni.models.interfaces.IAgendaItem"
         name="get_url"
@@ -162,6 +167,7 @@
         permission="zope.Public"
         />
 
+    <!-- !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.IQuestion"
         name="get_url"
@@ -169,7 +175,8 @@
         layer=".interfaces.IArchiveSectionLayer"
         permission="zope.Public"
         />
-
+    -->
+    
     <browser:view
         for="bungeni.models.interfaces.IReport"
         name="get_url"
@@ -178,6 +185,7 @@
         permission="zope.Public"
         />    
 
+    <!-- !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.ITabledDocument"
         name="get_url"
@@ -201,7 +209,8 @@
         layer=".interfaces.IArchiveSectionLayer"
         permission="zope.Public"
         />
-
+    -->
+    
     <browser:view
         for="bungeni.models.interfaces.IMemberOfParliament"
         name="get_url"
@@ -238,6 +247,7 @@
         permission="zope.Public"
         />
 
+    <!-- !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.IQuestion"
         name="get_url"
@@ -245,7 +255,8 @@
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
         />
-
+    -->
+    
     <browser:view
         for="bungeni.models.interfaces.IReport"
         name="get_url"
@@ -254,6 +265,7 @@
         permission="zope.Public"
         />    
 
+    <!-- !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.ITabledDocument"
         name="get_url"
@@ -261,7 +273,7 @@
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
         />
-
+    
     <browser:view
         for="bungeni.models.interfaces.IMotion"
         name="get_url"
@@ -277,7 +289,8 @@
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
         />
-
+    -->
+    
     <browser:view
         for="bungeni.models.interfaces.ICommittee"
         name="get_url"

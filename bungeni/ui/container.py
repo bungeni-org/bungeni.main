@@ -554,18 +554,18 @@ JSLCaches = {
     #    JSLCache(49, mfaces.IGroupAddress, ["GroupAddress"]),
     "committees": 
         JSLCache(49, mfaces.ICommittee, ["Committee"]),
-    "bills": 
-        JSLCache(99, mfaces.IBill, ["Bill"]),
-     "signatories": 
-        JSLCache(49, mfaces.ISignatory, 
-            ["Signatory", "Bill", "Motion", "Question"]
-        ),
-    "questions": 
-        JSLCache(199, mfaces.IQuestion, ["Question", "Ministry"]),
-    "motions": 
-        JSLCache(99, mfaces.IMotion, ["Motion"]),
-    "tableddocuments": 
-        JSLCache(99, mfaces.ITabledDocument, ["TabledDocument"]),
+    #"bills": 
+    #    JSLCache(99, mfaces.IBill, ["Bill"]),
+    #"signatories": 
+    #    JSLCache(49, mfaces.ISignatory, 
+    #        ["Signatory", "Bill", "Motion", "Question"]
+    #    ),
+    #"questions": 
+    #    JSLCache(199, mfaces.IQuestion, ["Question", "Ministry"]),
+    #"motions": 
+    #    JSLCache(99, mfaces.IMotion, ["Motion"]),
+    #"tableddocuments": 
+    #    JSLCache(99, mfaces.ITabledDocument, ["TabledDocument"]),
     "agendaitems": 
         JSLCache(99, mfaces.IAgendaItem, ["AgendaItem"]),
     "preports": 

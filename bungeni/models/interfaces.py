@@ -208,30 +208,10 @@ class IDoc(IBungeniContent):
     """Doc - dedicated interface.
     """
 
+# !+CUSTOM
 class IQuestion(IBungeniContent):
     """Parliamentary Question.
     """
-class IQuestionContainer(IBungeniContainer): pass
-# !+IITEMVersion
-#class IQuestionVersion(IQuestion): pass
-#!+OBSOLETE_VERSIONING class IQuestionVersionContainer(IVersionContainer): pass
-
-class IBill(IBungeniContent):
-    """Parliamentary Bill.
-    """
-class IBillContainer(IBungeniContainer): pass
-# !+IITEMVersion
-#class IBillVersion(IBill): pass
-#!+OBSOLETE_VERSIONING class IBillVersionContainer(IVersionContainer): pass
-
-class IMotion(IBungeniContent):
-    """Parliamentary Motion.
-    """
-class IMotionContainer(IBungeniContainer): pass
-# !+IITEMVersion
-#class IMotionVersion(IMotion): pass
-#!+OBSOLETE_VERSIONING class IMotionVersionContainer(IVersionContainer): pass
-
 
 class ISitting(interface.Interface): pass
 class ISittingReport(interface.Interface): pass
@@ -265,13 +245,6 @@ class IItemScheduleDiscussionContainer(IAlchemistContainer): pass
 class IItemScheduleVote(interface.Interface): pass
 class IItemScheduleVoteContainer(IAlchemistContainer): pass
 
-class ITabledDocument(IBungeniContent):
-    """Tabled document.
-    """
-class ITabledDocumentContainer(IBungeniContainer): pass
-# !+IITEMVersion
-#class ITabledDocumentVersion(ITabledDocument): pass
-#!+OBSOLETE_VERSIONING class ITabledDocumentVersionContainer(IVersionContainer): pass
 
 class IAgendaItem(IBungeniContent): pass
 class IAgendaItemContainer(IBungeniContainer): pass

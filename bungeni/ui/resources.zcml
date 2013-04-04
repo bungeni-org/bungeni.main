@@ -48,6 +48,7 @@
       permission="zope.Public"
       class="zope.viewlet.manager.WeightOrderedViewletManager"
       />
+    <!-- !+CUSTOM
      <browser:viewlet
      name="rss-viewlet"
      for="bungeni.models.interfaces.IBillContainer"
@@ -57,6 +58,7 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
+    -->
      <browser:viewlet
      name="rss-viewlet"
      for="bungeni.models.interfaces.ICommitteeContainer"
@@ -66,6 +68,7 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
+    <!-- !+CUSTOM
      <browser:viewlet
      name="rss-viewlet"
      for="bungeni.models.interfaces.IQuestionContainer"
@@ -93,6 +96,7 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
+    -->
      <browser:viewlet
      name="rss-viewlet"
      for="bungeni.models.interfaces.IAgendaItemContainer"
@@ -119,6 +123,7 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
+    <!-- !+CUSTOM
      <browser:viewlet
      name="rss-viewlet"
      for="bungeni.models.interfaces.IQuestion"
@@ -146,6 +151,7 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
+    -->
      <browser:viewlet
      name="rss-viewlet"
      for="bungeni.models.interfaces.IAgendaItem"

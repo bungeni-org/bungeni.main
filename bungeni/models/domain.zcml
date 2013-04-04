@@ -203,17 +203,6 @@
         />
     </class>
     
-    <!-- !+DECL tmp special case -->
-    <class class=".domain.Question">
-        <require like_class=".domain.Doc" />
-        <require permission="bungeni.response.View"
-            attributes="response_text"
-        />
-        <require permission="bungeni.response.Edit"
-            set_attributes="response_text" 
-        />
-    </class>
-    
     
     <class class=".domain.Heading">
         <require permission="bungeni.heading.Edit"

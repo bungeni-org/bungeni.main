@@ -470,29 +470,6 @@ mapper(domain.AgendaItem,
     polymorphic_identity=polymorphic_identity(domain.AgendaItem),
 )
 
-mapper(domain.Bill,
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.Bill),
-)
-
-mapper(domain.Motion, 
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.Motion),
-)
-
-mapper(domain.Question,
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.Question),
-    properties={ #!+
-        "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
-    }
-)
-
-mapper(domain.TabledDocument,
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.TabledDocument),
-)
-
 
 mapper(domain.Event,
     inherits=domain.Doc,

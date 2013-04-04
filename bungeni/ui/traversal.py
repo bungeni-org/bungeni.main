@@ -6,7 +6,7 @@ from zope.traversing.browser import AbsoluteURL
 
 from bungeni.core.content import AkomaNtosoSection
 from bungeni.alchemist import Session
-from bungeni.models.domain import Doc, Bill
+from bungeni.models.domain import Doc
 
 from sqlalchemy import extract
 
@@ -81,6 +81,7 @@ class SiteTraverser(ContainerTraverser):
         date = datetime.date(int(d[0]), int(d[1]), int(d[2]))
         
         if content_type == "bill":
+            from bungeni.models.domain import Bill # !+CUSTOM
             return self.session.query(Bill).filter(Bill.registry_number==id).\
                                             filter(Bill.publication_date==date).\
                                             filter(Bill.language==lang)

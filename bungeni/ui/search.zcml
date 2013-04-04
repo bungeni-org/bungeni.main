@@ -12,6 +12,7 @@
       provides=".search.ISearchResult"
   />
 
+    <!-- !+CUSTOM
   <adapter
       for="bungeni.models.interfaces.IQuestion"
       factory=".search.ParliamentaryItemToSearchResult"
@@ -35,7 +36,7 @@
       permission="zope.Public"
       provides=".search.ISearchResult"
   />
-
+    -->
   <adapter
       for="bungeni.models.interfaces.IAgendaItem"
       factory=".search.ParliamentaryItemToSearchResult"
@@ -43,7 +44,8 @@
       permission="zope.Public"
       provides=".search.ISearchResult"
   />
-
+    
+    <!-- !+CUSTOM
   <adapter
       for="bungeni.models.interfaces.ITabledDocument"
       factory=".search.ParliamentaryItemToSearchResult"
@@ -51,7 +53,7 @@
       permission="zope.Public"
       provides=".search.ISearchResult"
   />
-
+    -->
   <adapter
       for="bungeni.models.interfaces.IReport"
       factory=".search.ParliamentaryItemToSearchResult"

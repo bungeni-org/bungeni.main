@@ -144,6 +144,7 @@ class DocDescriptiveProperties(DescriptiveProperties):
         return self.translate(doc, "description")
 
 
+''' !+CUSTOM
 @register.adapter()
 class QuestionDescriptiveProperties(DocDescriptiveProperties):
     component.adapts(interfaces.IQuestion)
@@ -186,6 +187,7 @@ class MotionDescriptiveProperties(DocDescriptiveProperties):
             text += " (%s %s)" % (translate_i18n(_(u"notice given on")),
                                   self.formatDate(context.notice_date))
         return text + "."
+'''
 
 # AgendaItem
 # TabledDocument
