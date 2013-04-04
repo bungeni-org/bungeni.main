@@ -76,12 +76,6 @@
      class=".file.FileDownload"
      />
 
-    <browser:view for="bungeni.models.interfaces.IAttachment"
-        permission="bungeni.attachment.wf.attached.inactive"
-        name="deactivate"
-        class=".file.FileDeactivate"
-    /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->
-
   <browser:view
      for="bungeni.models.interfaces.IItemScheduleVote"
      permission="bungeni.item_schedule_vote.View"

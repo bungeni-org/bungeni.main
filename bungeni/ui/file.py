@@ -78,18 +78,6 @@ class FileDownload(BrowserView):
             raise NotFound(context, "", self.request)
 
 
-class FileDeactivate(BrowserView):
-    """ Changes attached file state to "inactive"
-    """
-
-    def __call__(self):
-        trusted = removeSecurityProxy(self.context)
-        sc = IStateController(trusted)
-        sc.set_status("inactive")
-        redirect_url = self.request.getURL().replace("/deactivate", "")
-        return self.request.response.redirect(redirect_url)
-
-
 # listing view, viewlet
 
 from bungeni.ui.audit import TableFormatter
