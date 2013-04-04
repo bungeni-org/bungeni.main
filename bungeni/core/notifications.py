@@ -14,8 +14,6 @@ import os
 import pika
 import simplejson
 import datetime
-import socket
-from lxml import etree
 from threading import Thread
 from sqlalchemy import orm
 from zope.interface import implements
@@ -128,7 +126,7 @@ def get_mq_parameters():
 def get_mq_connection():
     try:
         return pika.BlockingConnection(parameters=get_mq_parameters())
-    except socket.error:
+    except pika.exceptions.AMQPConnectionError:
         log.error(
             "Unable to connect to AMQP server. Notifications will not be sent")
 
