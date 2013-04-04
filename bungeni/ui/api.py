@@ -284,7 +284,7 @@ class OAuthAuthorizeForm(form.FormBase):
         authorization_token = self.get_authorization_token(authorization)
         session.add(authorization_token)
         session.flush()
-        redirect_uri = self.get_redirect_uri(oauth_authorization_token,
+        redirect_uri = self.get_redirect_uri(authorization_token,
             data["state"])
         self.request.response.redirect(redirect_uri, trusted=True)
 
@@ -436,9 +436,12 @@ class OAuthAccessToken(BrowserPage):
                             self.request.form.get("refresh_token")
                         ).one()
                     parameters["authorization_token"] = authorization_token
+                    
                     parameters["refresh_token"] = authorization_token.refresh_token
                 except NoResultFound:
                     raise UnauthorizedClient()
+        else:
+            raise InvalidRequest()
         return parameters
 
     def __call__(self):

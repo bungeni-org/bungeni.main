@@ -229,6 +229,28 @@ class SittingDescriptiveProperties(DescriptiveProperties):
         )
         return translate_i18n(sitting_title)
 
+@register.adapter()
+class DebateRecordDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IDebateRecord)
+
+    @property
+    def title(self):
+        context = _merged(self.context)
+        return "%s %s, %s %s %s" % (translate_i18n(_(u"Debate Record:")), 
+                self.translate(context.sitting, "short_name"), 
+                context.sitting.start_date.strftime('%Y-%m-%d, %H:%M'), 
+                _(u"to"), 
+                context.sitting.end_date.strftime('%H:%M'))
+    
+    @property
+    def description(self):
+        context = _merged(self.context)
+        return "%s %s (%s %s %s)" % (translate_i18n(_(u"Debate record of ")),
+                self.translate(context.sitting, "short_name"),
+                context.sitting.start_date.strftime('%Y-%m-%d %H:%M'), 
+                _(u"to"),
+                context.sitting.end_date.strftime('%H:%M'))
+
 
 @register.adapter()
 class ItemScheduleDescriptiveProperties(DescriptiveProperties):

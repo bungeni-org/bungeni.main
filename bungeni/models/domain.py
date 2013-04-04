@@ -1213,6 +1213,8 @@ class DebateRecord(Entity):
     media = one2many("media",
         "bungeni.models.domain.DebateMediaContainer", "debate_record_id")
 
+    type = "debate_record"
+
 class DebateRecordItem(Entity):
     """Items that may be included in a debate record
     """
