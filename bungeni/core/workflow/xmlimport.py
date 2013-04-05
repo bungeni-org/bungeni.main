@@ -357,10 +357,11 @@ def _load(workflow_name, workflow):
         # !+ add to a Workflow.global_grants list
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
-        rpm.grantPermissionToRole(pid, role, check=False)
         # no real need to check that the permission and role of a global grant 
         # are properly registered in the system -- an error should be raised 
-        # by the zcml if either is not defined. 
+        # by the zcml if either is not defined.
+        rpm.grantPermissionToRole(pid, role, check=False)
+
     for perm, roles in global_pid_roles.items():
         # assert roles mix limitations for state permissions
         assert_distinct_permission_scopes(perm, roles, workflow_name, "global grants")
@@ -522,6 +523,5 @@ def _load(workflow_name, workflow):
                 workflow_name, source or "", destination, kw))
     
     return Workflow(workflow_name,
-        workflow_features, workflow_facets, states, transitions,
+        workflow_features, workflow_facets, states, transitions, global_grants,
         workflow_title, workflow_description, note)
-

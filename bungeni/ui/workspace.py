@@ -313,7 +313,8 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
         for type_key, ti in capi.iter_type_info():
             workflow = ti.workflow
             if workflow and workflow.has_feature("workspace"):
-                name = ti.descriptor_model.display_name
+                name = ti.descriptor_model.display_name if \
+                    ti.descriptor_model else ti.workflow_key
                 result[ti.workflow_key] = translate(name, context=self.request)
         return result
 

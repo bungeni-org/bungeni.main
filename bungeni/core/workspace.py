@@ -483,13 +483,16 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
 
     def domain_status(self):
         domain_status_map = {}
+        workspace_roles = set(get_workspace_roles())
         for type_key, ti in capi.iter_type_info():
             workflow = ti.workflow
-            if workflow and workflow.has_feature("workspace"):
+            if (workflow and workflow.has_feature("workspace") and
+                (not workspace_roles.isdisjoint(set(workflow.roles_used)))):
                 states = workflow.get_state_ids(
                     tagged=["public"], not_tagged=["terminal"],
                     conjunction="AND")
                 domain_status_map[ti.domain_model] = states
+        print domain_status_map
         return domain_status_map
 
     def item_status_filter(self, kw):

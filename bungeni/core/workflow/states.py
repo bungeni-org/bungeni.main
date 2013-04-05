@@ -352,7 +352,7 @@ class Workflow(object):
     initial_state = None
     
     def __init__(self, name, features, facets, states, transitions,
-            title=None, description=None, note=None
+            global_grants, title=None, description=None, note=None
         ):
         assert not name in self.__class__.singletons, \
             "A workflow singleton %r exists already." % (name)
@@ -373,8 +373,12 @@ class Workflow(object):
         self._transitions_by_destination = {} # {destination: [Transition]}
         self._transitions_by_grouping_unique_sources = {} # {grouping: [Transition]}
         self.refresh(states, transitions)
+        self.global_grants = global_grants
         self.tags = TAGS
         self.setup_tags()
+        self.roles_used = []
+        self.setup_roles_used()
+        
     
     def refresh(self, states, transitions):
         sbyid = self._states_by_id
@@ -468,7 +472,21 @@ class Workflow(object):
                 assert len(all_sources)==len(set(all_sources)), "Duplicate " \
                     "sources in grouped transitions [%s] in workflow [%s]" % (
                         grouping, self.name)
-    
+
+    def setup_roles_used(self):
+        """Setup up a list of all the roles used in this workflow
+        Sample use case -> determining if a document moves from one
+        chamber to another
+        """
+        roles = set()
+        for state_id in self._states_by_id.keys():
+            state = self.get_state(state_id)
+            for setting, perm, role in state.permissions:
+                roles.add(role)
+        for setting, perm, role in self.global_grants:
+            roles.add(role)
+        self.roles_used = list(roles)
+
     def setup_tags(self):
         """Set up state tags used in the system
         """
