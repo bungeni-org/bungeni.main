@@ -502,7 +502,23 @@ def batch_serialize(type_key="*"):
         map(queue_object_serialization, objects)
         serialized_count += len(objects)
     return serialized_count
-    
+
+def get_serializable_parent(obj):
+    """Get serializable parent object
+    """
+    serializable_obj = None
+    if not interfaces.ISerializable.providedBy(obj):
+        parent = obj
+        while not interfaces.ISerializable.providedBy(parent):
+            parent = (parent.__parent__ 
+                if hasattr(parent, "__parent__") else None)
+            if not parent:
+                break
+        if parent:
+            serializable_obj = parent
+    else:
+        serializable_obj = obj
+    return serializable_obj
 
 @register.handler(adapts=(IVersionCreatedEvent,))
 def serialization_version_event_handler(event):
@@ -510,7 +526,9 @@ def serialization_version_event_handler(event):
     """
     # we only want to serialize manually created versions
     if event.object.procedure == "m":
-        queue_object_serialization(event.object.head)
+        serializable_obj = get_serializable_parent(event.object.head)
+        if serializable_obj:
+            queue_object_serialization(serializable_obj)
 
 @register.handler(adapts=(interfaces.ISerializable, IObjectCreatedEvent))
 @register.handler(adapts=(interfaces.ISerializable, IObjectModifiedEvent))
@@ -520,19 +538,11 @@ def serialization_event_handler(obj, event):
 
 @register.handler(adapts=(IAlchemistContent, IObjectCreatedEvent))
 @register.handler(adapts=(IAlchemistContent, IObjectModifiedEvent))
-def serialization_event_handler_non_wf(obj, event):
+def serialization_event_handler_parent(obj, event):
     """queues serialization of serializable parent (if any)"""
-    #!+SERIALIZATION(mb, Jan-2013) Might change how changes are bubbled up
-    if not interfaces.ISerializable.providedBy(obj):
-        # workflowed types will be handled by serialize_event_handler
-        wf_parent = obj
-        while not interfaces.ISerializable.providedBy(wf_parent):
-            wf_parent = (wf_parent.__parent__ 
-                if hasattr(wf_parent, "__parent__") else None)
-            if not wf_parent:
-                break
-        if wf_parent:
-            queue_object_serialization(wf_parent)
+    serializable_obj = get_serializable_parent(obj)
+    if serializable_obj is not None:
+        queue_object_serialization(serializable_obj)
 
 def queue_object_serialization(obj):
     """Send a message to the serialization queue for non-draft documents
