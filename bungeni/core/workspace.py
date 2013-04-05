@@ -492,7 +492,6 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
                     tagged=["public"], not_tagged=["terminal"],
                     conjunction="AND")
                 domain_status_map[ti.domain_model] = states
-        print domain_status_map
         return domain_status_map
 
     def item_status_filter(self, kw):
