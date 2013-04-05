@@ -22,7 +22,12 @@ from bungeni.core.workflow.interfaces import IWorkflowController, MANUAL, \
 from bungeni.core.workflow.states import Transition
 
 import bungeni.models.interfaces as interfaces
-from bungeni.models.utils import get_chamber_for_group, get_user
+from bungeni.models.utils import (
+    get_chamber_for_group, 
+    is_current_or_delegated_user, 
+    get_user,
+)
+
 from bungeni.models import domain
 from bungeni.utils import common
 from bungeni.ui.utils import debug
@@ -42,7 +47,6 @@ import os
 def formatted_user_email(user):
     return '"%s %s" <%s>' % (user.first_name, user.last_name, user.email)
 
-# parliamentary item
 
 def assign_role(role_id, principal_id, context):
     """Add or activate implied role on this context, for implied principal.
@@ -87,6 +91,17 @@ def assign_ownership(doc):
     owner_login = _determine_related_user(doc).login
     assign_role("bungeni.Owner", owner_login, doc)
 
+
+def user_is_context_owner(context):
+    """Test if current user is the context owner e.g. to check if someone 
+    manipulating the context object is other than the owner of the object.
+    
+    Assumption: context is IOwned.
+    
+    A delegate is considered to be an owner of the object.
+    """
+    user = _determine_related_user(context, user_attr_name="owner")
+    return is_current_or_delegated_user(user)
 
 def _determine_related_user(context, user_attr_name="owner"):
     """Get the user instance that is the value of the {user_attr_name} attribute.

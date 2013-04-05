@@ -19,15 +19,7 @@ log = __import__("logging").getLogger("bungeni_custom.workflows")
 
 from bungeni.core.workflows._conditions import (
     
-    # common
-    # the condition for the creation transition from "" (None) to either 
-    # "draft" or to "working_draft" seems to need the explicit condition (and 
-    # negation of condition) on each of the two transition options 
-    user_is_not_context_owner, 
-    user_is_context_owner,
-    context_is_public,
-    
-    # parliamentary items
+    # doc
     is_scheduled,
     
     # group

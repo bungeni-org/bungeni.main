@@ -165,7 +165,7 @@ def localize_descriptor(descriptor_elem, is_init, scope="system"):
             if xas(descriptor_elem, "sort_on"):
                 cls.sort_on = xas(descriptor_elem, "sort_on").split()
                 # !+ assert each name is a field in the descriptor
-            if xas(descriptor_elem, "sort_dir"):
+            if xas(descriptor_elem, "sort_dir"): # default cls.sort_dir: "desc"
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
             naming.MSGIDS.add(cls.display_name)
             naming.MSGIDS.add(cls.container_name)

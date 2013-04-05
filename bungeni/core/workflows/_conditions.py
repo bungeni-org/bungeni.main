@@ -15,7 +15,6 @@ log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 from zope.security import checkPermission
 from bungeni.models.interfaces import ISignatoryManager
 #from bungeni.models import domain
-from bungeni.models.utils import is_current_or_delegated_user, get_user
 from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
 from bungeni.ui.interfaces import IFormEditLayer
@@ -24,40 +23,21 @@ from bungeni.ui.utils import common
 from bungeni.utils import naming
 from bungeni.utils.misc import describe
 
+
 # common
 
 
-# the condition for the transition from "" (None) to either "draft" or to 
-# "working_draft" seems to need the explicit condition (and negation of 
-# condition) on each of the two transition options 
-@describe(_(u"Require current user to not be the owner"))
-def user_is_not_context_owner(context):
-    return not user_is_context_owner(context)
-
-
-@describe(_(u"Require current user to be the owner"))
-def user_is_context_owner(context):
-    """Test if current user is the context owner e.g. to check if someone 
-    manipulating the context object is other than the owner of the object.
-    
-    Assumption: context is IOwned.
-    
-    A delegate is considered to be an owner of the object.
-    """
-    user = utils._determine_related_user(context, user_attr_name="owner")
-    return is_current_or_delegated_user(user)
-
-
-@describe(_(u"Require public view access"))
 def context_is_public(context):
     """Is the context public i.e. can Anonymous see it?
+    !+ logic here is now incorrect !!!
     """
     state = get_object_state(context)
     # also return False for None (Unset)
     return bool(state.getSetting("zope.View", "bungeni.Anonymous"))
 
 
-# parliamentary items
+# doc
+
 @describe(_(u"Require document to be scheduled"))
 def is_scheduled(doc):
     """Is doc scheduled?
@@ -164,9 +144,17 @@ def user_may_edit_context_parent(context):
 
 
 # signatory
+
+#!+INCORRENTLY named... only checks that owner of child is same as of parent!
 @describe(_(u"signatory: Require the user to be the owner of the parent document"))
 def user_is_parent_document_owner(context):
     return context.owner.login == context.head.owner.login
+
+@describe(_(u"signatory: Require the user not to be the owner of the parent document"))
+def user_is_not_parent_document_owner(context):
+    return not user_is_parent_document_owner(context)
+
+
 
 @describe(_(u"signatory: Require the owner to be the signatory. Auto-signs the document"))
 def signatory_auto_sign(context):
@@ -183,7 +171,7 @@ def signatory_auto_sign(context):
     # if user adding signatory is not parent document owner, then auto sign
     #!+SIGNATORIES(mb, aug-2011) this could be tricky versus checking if parent
     # document is in a 'working_draft' state
-    if user_is_not_context_owner(context.head):
+    if not utils.user_is_context_owner(context.head):
         return True
     #!+(mb, Jul-2012) move all signatory logic to signatory manager
     if ISignatoryManager(context.head).auto_sign():
@@ -193,10 +181,6 @@ def signatory_auto_sign(context):
 @describe(_(u"signatory: Require the signatory to manually sign the document"))
 def signatory_manual_sign(context):
     return not signatory_auto_sign(context)
-
-@describe(_(u"signatory: Require the user not to be the owner of the parent document"))
-def user_is_not_parent_document_owner(context):
-    return not user_is_parent_document_owner(context)
 
 @describe(_(u"signatory: Require signatories"))
 def pi_has_signatories(context):
@@ -239,7 +223,7 @@ def pi_unsign_signature(context):
 def pi_allow_signature(context):
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return user_is_context_owner(context) and manager.allow_signature()
+        return utils.user_is_context_owner(context) and manager.allow_signature()
     return False
 
 @describe(_(u"signatory: Require the signatory to be allowed to withdraw or reject"))
@@ -248,7 +232,7 @@ def pi_allow_signature_actions(context):
     """
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return (user_is_context_owner(context) and 
+        return (utils.user_is_context_owner(context) and 
             (manager.document_submitted() or manager.auto_sign()) and
                 user_is_not_parent_document_owner(context))
     return False
@@ -276,8 +260,8 @@ def user_is_state_creator(context):
     return is_state_creator
 
 def user_is_state_creator_and_owner(context):
-    return user_is_state_creator(context) and user_is_context_owner(context)
+    return user_is_state_creator(context) and utils.user_is_context_owner(context)
 
 def user_is_state_creator_not_owner(context):
-    return user_is_state_creator(context) and user_is_not_context_owner(context)
+    return user_is_state_creator(context) and not utils.user_is_context_owner(context)
 '''
