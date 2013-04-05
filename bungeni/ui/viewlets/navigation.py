@@ -434,25 +434,18 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             items.extend(self.expand(chain))
         return items
     
-    def _sort_containers(self, key_containers):
-        """Sort each container by its domain_model's descriptor order.
-        """
-        dsu = [
-            (utils.get_descriptor(kc[1].domain_model).order, kc)
-            for kc in key_containers ]
-        dsu.sort()
-        return [ kc for (order, kc) in dsu ]
-    
     def expand_containers(self, items, containers, _url, chain=(), context=None):
         #seen_context = False
         _url = _url.rstrip("/")
         current = False
         
-        for key, container in self._sort_containers(containers):
+        for key, container in containers:
             assert IAlchemistContainer.providedBy(container)
             label = container.domain_model.__name__
             descriptor = utils.get_descriptor(container.domain_model)
+            order = 999
             if descriptor:
+                order = descriptor.order
                 label = getattr(descriptor, "container_name", None) or \
                     getattr(descriptor, "display_name", None)
             
@@ -468,6 +461,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             key_url = "%s/%s" % (_url, key)
             items.append({
                     "id": self.get_nav_entry_id(key_url),
+                    "order": order,
                     "label": translate(label, 
                         target_language=get_request_language(request=self.request),
                         domain="bungeni"),
@@ -477,6 +471,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     "kind": "container",
                     "nodes": nodes,
                 })
+        items.sort(key=lambda item:(item['order'], item['label']))
     
     def get_nav_entry_id(self, _url):
         assert _url.startswith(self.top_section_url)
