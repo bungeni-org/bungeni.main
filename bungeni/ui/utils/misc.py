@@ -152,3 +152,8 @@ def text_snippet(text, length):
                 parts.pop()
                 title = u" ".join(parts).strip()
     return title.strip()
+
+
+def set_json_headers(request):
+    """Set appropriate headers on JSON response"""
+    request.response.setHeader("Content-type", "application/json")

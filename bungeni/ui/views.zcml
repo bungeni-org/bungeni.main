@@ -592,7 +592,7 @@
       permission="bungeni.debate_takes.View"
    />
    
-   <!-- OAuth -->
+   <!-- Bungeni API -->
    <browser:page
       for="bungeni.core.content.APISection"
       name="index"
@@ -600,33 +600,9 @@
       permission="bungeni.api.View"
    />
    <browser:page
-      for="bungeni.models.domain.OAuthApplicationContainer"
-      name="add"
-      class="bungeni.ui.api.AddOAuthApplication"
-      permission="zope.ManageContent"
-   />
-   <browser:page
       for="bungeni.core.content.OAuthSection"
       name="index.html"
       class="bungeni.ui.api.APIDefaultView"
-      permission="zope.Public"
-   />
-   <browser:page
-      for="bungeni.core.content.OAuthSection"
-      name="authorize"
-      class="bungeni.ui.api.OAuthAuthorization"
-      permission="zope.Public"
-   />
-   <browser:page
-      for="bungeni.core.content.OAuthSection"
-      name="authorize-form"
-      class="bungeni.ui.api.OAuthAuthorizeForm"
-      permission="zope.Public"
-   />
-   <browser:page
-      for="bungeni.core.content.OAuthSection"
-      name="access-token"
-      class="bungeni.ui.api.OAuthAccessToken"
       permission="zope.Public"
    />
    <browser:page
@@ -642,5 +618,31 @@
       class="bungeni.ui.workspace.WorkspaceContainerJSONListing"
       permission="bungeni.ui.workspace.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
+
+   <!-- OAuth -->
+   <browser:page
+      for="bungeni.models.domain.OAuthApplicationContainer"
+      name="add"
+      class="bungeni.ui.oauth.AddOAuthApplication"
+      permission="zope.ManageContent"
+   />
+   <browser:page
+      for="bungeni.core.content.OAuthSection"
+      name="authorize"
+      class="bungeni.ui.oauth.OAuthAuthorization"
+      permission="zope.Public"
+   />
+   <browser:page
+      for="bungeni.core.content.OAuthSection"
+      name="authorize-form"
+      class="bungeni.ui.oauth.OAuthAuthorizeForm"
+      permission="zope.Public"
+   />
+   <browser:page
+      for="bungeni.core.content.OAuthSection"
+      name="access-token"
+      class="bungeni.ui.oauth.OAuthAccessToken"
+      permission="zope.Public"
    />
 </configure>
