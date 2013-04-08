@@ -208,11 +208,6 @@ class IDoc(IBungeniContent):
     """Doc - dedicated interface.
     """
 
-# !+CUSTOM
-class IQuestion(IBungeniContent):
-    """Parliamentary Question.
-    """
-
 class ISitting(interface.Interface): pass
 class ISittingReport(interface.Interface): pass
 

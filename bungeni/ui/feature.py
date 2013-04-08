@@ -176,8 +176,9 @@ def setup_customization_ui():
             for event_type_key in ti.workflow.get_feature("event").params["types"]:
                 if capi.has_type_info(event_type_key):
                     container_property_name = naming.plural(event_type_key)
-                    title = "Add {t} {e}".format(t=type_title, e=model_title(event_type_key))
-                    register_menu_item(event_type_key, "Add", title, 
+                    # add menu item
+                    title = "{t} {e}".format(t=type_title, e=model_title(event_type_key))
+                    register_menu_item(event_type_key, "Add", "Add %s" %(title),
                         model_interface_qualname, 
                         "./%s/add" % (container_property_name), 
                         menu="additems", 
@@ -186,6 +187,24 @@ def setup_customization_ui():
                 else:
                     log.warn('IGNORING feature "event" ref to disabled type %r', 
                         event_type_key)
+        
+        # register other non-workspace menu items for custom types (only once)
+        # custom events !+GET_ARCHETYPE
+        if issubclass(ti.domain_model, domain.Event):
+            # edit menu item
+            register_menu_item(type_key, "Edit", "Edit {t}".format(t=type_title),
+                model_interface_qualname,
+                "edit",
+                menu="context_actions",
+                order=10,
+                layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+            # delete menu item
+            register_menu_item(type_key, "Delete", "Delete {t}".format(t=type_title),
+                model_interface_qualname,
+                "delete",
+                menu="context_actions",
+                order=99,
+                layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
         
         # address
         if ti.workflow.has_feature("address"):

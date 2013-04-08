@@ -76,9 +76,6 @@
   <permission id="bungeni.editorial_note.View" title="View editorial note" />
   <meta:redefinePermission from="bungeni.editorial_note.View" to="zope.View" />
     
-  <permission id="bungeni.response.Edit" title="Edit Response" />
-  <permission id="bungeni.response.View" title="View Response" />
-  
   <!-- !+NO_REDEFINE_PERMISSION to be removed -->
   <meta:redefinePermission from="bungeni.group_membership.View" to="zope.View" />
   

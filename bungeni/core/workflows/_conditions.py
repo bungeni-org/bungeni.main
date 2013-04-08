@@ -71,14 +71,14 @@ def agenda_finalized(context):
 def sitting_dummy(context):
     return context.recurring_type == 'none'
 
+
 # question
 
+#!+NECESSARY?
 @describe(_(u"question: Require a written response"))
 def is_written_response(question):
-    return (question.group_id is not None and 
-        question.response_type == "written"
-    )
-    
+    return question.group_id is not None and question.response_type == "written"
+
 @describe(_(u"question: Require an oral response"))
 def is_oral_response(question):
     return question.response_type == "oral"

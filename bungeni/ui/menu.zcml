@@ -290,15 +290,8 @@
         order="22"
     />
     
-    <browser:menuItem menu="context_actions"		
-        for="bungeni.models.interfaces.IQuestion"		
-	layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        action="respond" 
-        title="Respond to question"
-        order="11"		
-        permission="bungeni.response.Edit"		
-    /><!-- !+CUSTOM -->
     
+    <!-- event archetype -->
     <browser:menuItem menu="context_actions" 
         for="bungeni.models.interfaces.IEvent"
         action="edit"
@@ -315,6 +308,7 @@
         permission="bungeni.event.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
+    
     
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IEditorialNote"

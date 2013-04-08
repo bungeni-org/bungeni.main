@@ -97,13 +97,12 @@ class SubformRssSubscriptionViewletManager(manager.WeightOrderedViewletManager):
     """Displays rss subscription data."""
     interface.implements(ISubformRssSubscriptionViewletManager)
 
-# IBill, IQuestion, ITabledDocument, IAgendaItem, IMotion, ...
+# !+ IDoc but not IEvent
 @register.viewlet(interfaces.IBungeniParliamentaryContent, 
     layer=IBungeniAuthenticatedSkin, 
     manager=ISubformRssSubscriptionViewletManager,
     name="keep-zca-happy-rsslink",
-    protect=register.PROTECT_VIEWLET_PUBLIC
-    )
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class RssLinkViewlet(viewlet.ViewletBase):
     """Simply renders link for users to subscribe to current paliamentary item.
     """
@@ -306,25 +305,6 @@ class DocMinutesViewlet(browser.BungeniItemsViewlet):
     def update(self):
         self.items = self._get_items()
         super(DocMinutesViewlet, self).update()
-
-class WrittenQuestionResponseViewlet(browser.BungeniViewlet):
-
-    mode = "view"
-    for_display = True
-    form_name = _(u"Response")
-    render = ViewPageTemplateFile("templates/written-question-response.pt")
-
-    def __init__(self, context, request, view, manager):
-        self.request = request
-        self.context = context
-        self.manager = manager
-        self.question = removeSecurityProxy(context)
-        # Check type of question. Only written questions get this viewlet
-        if self.question.response_type == "oral":
-            self.for_display = False
-        else:
-            if self.question.response_text in (None, ""):
-                self.for_display = False
 
 
 class OfficesHeldViewlet(browser.BungeniItemsViewlet):
