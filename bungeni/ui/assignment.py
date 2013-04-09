@@ -195,3 +195,4 @@ class UserAssignmentView(forms.common.BaseForm):
     def handle_cancel(self, action, data):
         next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(next_url)
+

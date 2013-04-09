@@ -432,6 +432,11 @@ group_membership_role = sa.Table("group_membership_role", metadata,
     sa.Column("is_global", sa.Boolean, default=False),
 )
 
+# !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment, to 
+# be able to guarantee/constrain the intended action of the assignment to the
+# appropriate group e.g. imagine a doc is assigned to one group for a 
+# "2nd opinion" and again to another (or same!) for a "response"... and a user 
+# to carry out the implied actions, who may be a member of both assigned groups
 group_document_assignment = sa.Table("group_document_assignment", metadata,
     sa.Column("group_id", sa.Integer,
         sa.ForeignKey("group.group_id"),

@@ -245,12 +245,16 @@ def feature_download(kls, feature):
 def feature_user_assignment(kls, feature):
     """Decorator for domain types that support "user_assignment" feature.
     """
+    # !+params: "assigner_roles", "assignable_roles"
     interface.classImplements(kls, interfaces.IFeatureUserAssignment)
 
 
 def feature_group_assignment(kls, feature):
     """Decorator for domain types that support "group_assignment" feature.
     """
+    # !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment!
+    # Or, alternatively, each "group_assignment" enabling needs to be "part of" 
+    # a qualified "event" feature.
     interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
     add_container_property_to_model(kls, "group_assignments",
         "bungeni.models.domain.GroupDocumentAssignmentContainer", "doc_id")
