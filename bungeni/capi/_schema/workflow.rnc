@@ -74,9 +74,20 @@ grammar {
                 attribute permissions_from_state { SYMBOL_NAME }  # state.id
                     | attribute permissions_from_parent { xsd:boolean }  # default:false
             )?
-            | element facet {
-                attribute ref { FACET_REFERENCE }
-            }*
+            | 
+            (
+                # up to one "anonymous" workflow facet (in lieu of referring to one from same workflow)
+                element facet { 
+                    attribute note { text }?,
+                    ALLOW*
+                }?,
+                # one ref to a workflow facet (if an anonymous facet is NOT present),
+                # plus up to one facet ref per feature
+                element facet {
+                    attribute ref { FACET_REFERENCE },
+                    attribute note { text }?
+                }*
+            )
         )
     }
     

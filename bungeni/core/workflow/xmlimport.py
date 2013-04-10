@@ -120,12 +120,12 @@ def get_default_facet(facet_seq):
             return facet
 
 def get_loaded_workflow(workflow_name):
-    """Retrieve the previously loaded workflow.
+    """Retrieve the previously loaded named workflow.
     """
     try:
         return Workflow.get_singleton(workflow_name)
     except KeyError:
-        return None # not a "workflowed" feature
+        return None # no such workflow (or workflow not yet loaded)
 
 
 def load_features(workflow_name, workflow_elem):
@@ -223,35 +223,51 @@ def resolve_state_facets(workflow_name, workflow_facets,
             return feature_wf.facets
         return []
     
+    def is_facet_ref(state_facet_elem):
+        """Return True if facet is a ref, False for an anonymous facet.
+        """
+        return bool(xas(state_facet_elem, "ref"))
+    
     # first, specified facets by feature
     used_facets_fq = {} # used facets by (feature, qualifier)
-    for facet_ref in state_elem.iterchildren("facet"):
-        feature_name, qtk, facet_name = parse_facet_ref(facet_ref)
+    for state_facet_elem in state_elem.iterchildren("facet"):
+        if is_facet_ref(state_facet_elem):
+            # facet ref
+            feature_name, qtk, facet_name = parse_facet_ref(state_facet_elem)
+            # enabled features (for enabled types) only
+            if feature_name not in enabled_feature_names:
+                log.warn("State %r specifies facet %r ref '%s#%s' but feature is disabled", 
+                    state_id, facet_name, feature_name, qtk)
+                continue
+            if qtk and get_loaded_workflow(qtk) is None:
+                log.warn("State %r specifies facet %r ref '%s#%s' but type is disabled", 
+                    state_id, facet_name, feature_name, qtk)
+                continue
+            facet_seq = get_facet_seq(feature_name, qtk)
+            facet = get_named(facet_name, facet_seq)
+            assert facet is not None, \
+                "No facet %r found (workflow %r state %r, for feature '%s#%s')" % (
+                    facet_name, workflow_name, state_id, feature_name, qtk)
+        else:
+            # anonymous facet
+            feature_name, qtk = None, None
+            facet_name = "_ANONYMOUS_"
+            facet_note = xas(state_facet_elem, "note")
+            facet_perms = get_permissions_from_allows(workflow_name, state_facet_elem)
+            facet = Facet(facet_name, facet_note, facet_perms, default=False)
+        # add to state facets, ensuring only one facet per (feature_name, qtk)
         # feature_name is None implies facets of this "workflow"
         assert (feature_name, qtk) not in used_facets_fq, \
             "Duplicate facet %r for feature '%s#%s' in state %r" % (
                 facet_name, feature_name, qtk, state_id)
-        
-        # enabled features (for enabled types) only
-        if feature_name not in enabled_feature_names:
-            log.warn("State %r specifies facet %r ref '%s#%s' but feature is disabled", 
-                state_id, facet_name, feature_name, qtk)
-            continue
-        if qtk and get_loaded_workflow(qtk) is None:
-            log.warn("State %r specifies facet %r ref '%s#%s' but type is disabled", 
-                state_id, facet_name, feature_name, qtk)
-            continue
-        
-        facet_seq = get_facet_seq(feature_name, qtk)
-        used_facets_fq[(feature_name, qtk)] = get_named(facet_name, facet_seq)
-        assert used_facets_fq[(feature_name, qtk)] is not None, \
-            "No facet %r found (workflow %r state %r, for feature '%s#%s')" % (
-                facet_name, workflow_name, state_id, feature_name, qtk)
+        used_facets_fq[(feature_name, qtk)] = facet
     
     # second, any remaining enabled features
+    seen_feature_names = [ feature_name 
+        for (feature_name, qtk) in used_facets_fq ]
     unseen_feature_names = [ feature_name 
-        for (feature_name, qtk) in used_facets_fq 
-        if feature_name not in enabled_feature_names ]
+        for feature_name in enabled_feature_names 
+        if feature_name not in seen_feature_names  ]
     for unseen_fn in unseen_feature_names:
         facet_seq = get_facet_seq(unseen_fn, unseen_fn)
         used_facets_fq[(unseen_fn, unseen_fn)] = get_default_facet(facet_seq)
@@ -525,3 +541,4 @@ def _load(workflow_name, workflow):
     return Workflow(workflow_name,
         workflow_features, workflow_facets, states, transitions, global_grants,
         workflow_title, workflow_description, note)
+
