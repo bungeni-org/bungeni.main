@@ -172,7 +172,7 @@
     <!-- group assignment-->
     <browser:page name="add" for="bungeni.models.interfaces.IGroupDocumentAssignmentContainer"
         class=".common.AddForm"
-        permission="bungeni.government.Add"
+        permission="bungeni.group_assignment.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IGroupDocumentAssignment"
