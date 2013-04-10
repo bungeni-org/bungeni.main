@@ -482,7 +482,8 @@ class Workflow(object):
         for state_id in self._states_by_id.keys():
             state = self.get_state(state_id)
             for setting, perm, role in state.permissions:
-                roles.add(role)
+                if perm.startswith("bungeni.%s." % self.name):
+                    roles.add(role)
         for setting, perm, role in self.global_grants:
             roles.add(role)
         self.roles_used = list(roles)
