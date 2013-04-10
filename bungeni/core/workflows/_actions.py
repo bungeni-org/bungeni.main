@@ -80,14 +80,6 @@ def dissolve(group):
     utils.unset_group_local_role(group)
 
 
-# user
-@describe(_(u"Assign owner role to the user"))
-def assign_owner_role(user):
-    # !+PrincipalRoleMapContextData infer role from context data
-    utils.assign_role("bungeni.Owner", user.login, user)
-    user.date_of_death = None
-
-
 # doc
 @describe(_(u"Assign the group role to the doc"))
 def assign_role_group(doc):

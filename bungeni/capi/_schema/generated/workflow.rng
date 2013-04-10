@@ -143,7 +143,7 @@
         </attribute>
       </optional>
       <!-- default:false -->
-      <!-- if (permissions_from state | permissions_from_parent) -> then NO facets -->
+      <!-- if (permissions_from_state | permissions_from_parent) -> then NO facets -->
       <choice>
         <optional>
           <!-- may have EITHER permissions_from_state OR permissions_from_parent -->
@@ -160,7 +160,15 @@
         </optional>
         <group>
           <optional>
-            <!-- up to one "anonymous" workflow facet (in lieu of referring to one from same workflow) -->
+            <!--
+              anonymous facet:
+              - there may be only one anonymous facet per state 
+                (that would be instead of referring to one from same workflow)
+              - an anonymous state facet is NOT available for re-use from any 
+                other state (in same or other workflow)
+              - an anonymous facet may (of course) NOT be the set as the default
+                facet for the workflow
+            -->
             <element name="facet">
               <optional>
                 <attribute name="note"/>

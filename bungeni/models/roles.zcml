@@ -10,15 +10,18 @@
     </class>
     <adapter factory="bungeni.models.roles.SubRoleAnnotations"/>
     
-    <!-- custom roles -->
+    <!-- bungeni system roles -->
     <role id="zope.Manager" title="Site Manager" />
     <role id="bungeni.Admin" title="Bungeni Admin"/>
     <role id="bungeni.Authenticated" title="All authenticated users" />
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
     
-    <!-- Document roles -->
-    <role id="bungeni.Drafter" title="Document Drafter (Original Editor)" />
-    <role id="bungeni.Owner" title="Document Owner" />
+    <!-- document roles:
+    Drafter: Editorial Owner, applies to all types (the user who actually creates an item)
+    Owner: Legal Owner, applies only to legal documents (other types should NEVER have this role assigned on them)
+    -->
+    <role id="bungeni.Drafter" title="Document Drafter (Editorial Owner)" />
+    <role id="bungeni.Owner" title="Document Owner (Legal Owner)" />
     <role id="bungeni.Signatory" title="Document Signatory" />
 
 </configure>

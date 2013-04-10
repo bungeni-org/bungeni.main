@@ -164,6 +164,10 @@ class User(Principal):
         super(User, self).__init__(**kw)
         self.salt = self._makeSalt()
     
+    def on_create(self):
+        from bungeni.core.workflows import utils
+        utils.assign_ownership(self)
+    
     def _makeSalt(self):
         return "".join(random.sample(string.letters[:52], 12))
     
@@ -236,7 +240,7 @@ class Group(Principal):
         """
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
-        utils.assign_role_owner_to_login(self)
+        utils.assign_ownership(self)
         utils.unset_group_local_role(self)
     
     def active_membership(self, user_id):
@@ -452,7 +456,7 @@ class Address(HeadParentedMixin, Entity):
         """
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
-        utils.assign_role_owner_to_login(self)
+        utils.assign_ownership(self)
 
 # !+ADDRESS get rid of these two classes, just use Address?
 class UserAddress(Address):
@@ -762,7 +766,7 @@ class AgendaItem(Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
     interface.implements(
-        interfaces.IBungeniParliamentaryContent,
+        interfaces.IBungeniParliamentaryContent, # !+only used by AgendaItem?! Get rid of it, or rename accordingly
         interfaces.IAgendaItem,
     )
 #AgendaItemAudit
@@ -802,7 +806,7 @@ class Attachment(HeadParentedMixin, Entity):
         """
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
-        utils.assign_role_owner_to_login(self)
+        utils.assign_ownership(self)
 
 class AttachmentAudit(Audit):
     """An audit record for an attachment.
@@ -851,7 +855,10 @@ class Signatory(Entity):
     @property
     def owner(self):
         return self.user
-        
+    
+    # !+OWNER_TO_DRAFTER(mr, apr-2013) switch current Owner role to 
+    # Drafter for (editorial owner only) signatories
+    
     @property
     def party(self):
         return self.member.party

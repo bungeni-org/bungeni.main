@@ -138,7 +138,8 @@ def hide(modes=None, roles=None):
 # Default list of roles that are guaranteed to always be there in Bungeni 
 SYSTEM_ROLES = (
     "bungeni.Admin", # parliament, has all privileges
-    "bungeni.Owner", # instance + special objects with no mp context
+    "bungeni.Owner", # legal owner, parliamentary documents
+    "bungeni.Drafter", # all types, editorial owner, all types
     "bungeni.Anonymous", # unauthenticated user, anonymous
     "bungeni.Signatory",
 )

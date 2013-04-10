@@ -27,7 +27,7 @@ from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTrans
 CONFIGURABLE_PARAMS = ("max_signatories", "min_signatories", "submitted_states",
     "draft_states", "expire_states", "open_states"
 )
-OWNER_ROLE = "bungeni.Owner"
+OWNER_ROLE = "bungeni.Owner"  # !+OWNER_TO_DRAFTER
 SIGNATORY_ROLE = "bungeni.Signatory"
 SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
 SIGNATORY_CONSENTED_STATES = [u"consented"]

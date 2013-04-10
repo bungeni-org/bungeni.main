@@ -65,6 +65,7 @@ def unset_role(role_id, principal_id, context):
     IPrincipalRoleMap(context).unsetRoleForPrincipal(role_id, principal_id)
 
 
+''' !+OBSOLETED replaced with more generic assign_ownership
 def assign_role_owner_to_login(context):
     """Assign bungeni.Owner role on context to the currently logged in user.
     """
@@ -77,19 +78,35 @@ def assign_role_owner_to_login(context):
     #    owner = session.query(domain.User).get(context.owner_id)
     #    if owner and (owner.login != current_user_login):
     #        assign_role("bungeni.Owner", owner.login, context)
+'''
 
-def assign_ownership(doc):
-    """Assign roles bungeni.Owner (to doc.owner) and bungeni.Drafter (to the 
-    current user editing the draft) on doc.
+def assign_ownership(context):
+    """Assign editorial (all context types) and legal (only legal types)
+    "ownership" roles.
+    
+    The actual (current) user creating the context is always granted the 
+    "editorial ownership" for the item i.e. "bungeni.Drafter".
+    
+    If context is a "legal doc", then the user who would be the legal owner of
+    the doc is determined and granted "legal ownership" i.e. "bungeni.Owner".
     """
-    # bungeni.Drafter
+    
+    # bungeni.Drafter - all types
     current_user_login = common.get_request_login()
-    log.debug("assign_ownership: role 'bungeni.Drafter' to user %r on [%s]" % (
-        current_user_login, doc))
-    assign_role("bungeni.Drafter", current_user_login, doc)
-    # bungeni.Owner
-    owner_login = _determine_related_user(doc).login
-    assign_role("bungeni.Owner", owner_login, doc)
+    log.debug("assign_ownership: role %r to user %r on [%s]" % (
+        "bungeni.Drafter", current_user_login, context))
+    assign_role("bungeni.Drafter", current_user_login, context)
+    
+    # bungeni.Owner - legal documents only
+    def is_legal_doc(context):
+        # doc (but not event) types are legal documents
+        return (interfaces.IDoc.providedBy(context) and 
+            not interfaces.IEvent.providedBy(context))
+    if is_legal_doc(context):
+        owner_login = _determine_related_user(context).login
+        log.debug("assign_ownership: role %r to user %r on [%s]" % (
+            "bungeni.Owner", owner_login, context))
+        assign_role("bungeni.Owner", owner_login, context)
 
 
 def user_is_context_owner(context):

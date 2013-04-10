@@ -132,6 +132,7 @@ def get_owner_for_context(context):
     """Get the user who is the bungeni.Owner (via the PrincipalRoleMap) for 
     the context, if any. Raise ValueError if multiple, return None if none.
     """
+    # !+OWNER_TO_DRAFTER
     logins = get_pids_with_role_on_context(context, "bungeni.Owner")
     if logins:
         # may only have up to one Owner role assigned

@@ -67,7 +67,7 @@ grammar {
         attribute note { text }?,
         attribute obsolete { xsd:boolean }?, # default:false
         
-        # if (permissions_from state | permissions_from_parent) -> then NO facets
+        # if (permissions_from_state | permissions_from_parent) -> then NO facets
         (
             # may have EITHER permissions_from_state OR permissions_from_parent
             (
@@ -76,7 +76,13 @@ grammar {
             )?
             | 
             (
-                # up to one "anonymous" workflow facet (in lieu of referring to one from same workflow)
+                # anonymous facet:
+                # - there may be only one anonymous facet per state 
+                #   (that would be instead of referring to one from same workflow)
+                # - an anonymous state facet is NOT available for re-use from any 
+                #   other state (in same or other workflow)
+                # - an anonymous facet may (of course) NOT be the set as the default
+                #   facet for the workflow
                 element facet { 
                     attribute note { text }?,
                     ALLOW*
@@ -106,7 +112,7 @@ grammar {
         attribute note { text }?
     }
     
-
+    
     # A valid facet reference may be composed of
     # - (optional) a workflow feature name : SYMBOL_NAME
     # - (optional) IF a feature name is specified, this may be also qualified 

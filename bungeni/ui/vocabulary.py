@@ -312,9 +312,10 @@ class GroupRoleFactory(BaseVocabularyFactory):
         roles = getUtilitiesFor(IRole, app)
         for name, role in roles:
             # Roles that must not be assigned to users in an office
-            # !+ need better role qualifiers, to make this dynamic from conf
+            # !+ROLE_QUALIFIER need better role qualifiers, to make this dynamic from conf
             if name in ["bungeni.Anonymous",
                         "bungeni.Authenticated",
+                        "bungeni.Drafter",
                         "bungeni.Owner",
                         "bungeni.Signatory",
                         "zope.Manager",
