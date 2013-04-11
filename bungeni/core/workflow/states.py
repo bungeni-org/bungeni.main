@@ -80,14 +80,14 @@ class State(object):
     zope.interface.implements(IRolePermissionMap)
     
     def __init__(self, id, title, note, actions, permissions,
-            permissions_from_parent=False, obsolete=False
+            parent_permissions=False, obsolete=False
         ):
         self.id = id # status
         self.title = title
         self.note = note
         self.actions = actions # [callable]
         self.permissions = permissions
-        self.permissions_from_parent = permissions_from_parent # bool
+        self.parent_permissions = parent_permissions # bool
         self.obsolete = obsolete # bool
         self.tags = []
             
@@ -277,7 +277,7 @@ def get_object_state_rpm(context):
         log.error(""" ***get_object_state_rpm/%s:%s [%s] %s """ % (
             type(context).__name__, context.pk, cls.__name__, exc))
         return NONE_STATE_RPM
-    if state.permissions_from_parent:
+    if state.parent_permissions:
         # this state delegates permissions to parent, 
         # so just recurse passing parent item instead
         head = context.head
@@ -419,9 +419,9 @@ class Workflow(object):
         # at least one state
         assert len(states), "Workflow [%s] defines no states" % (self.name) #!+RNC
         for s in states:
-            if s.permissions_from_parent:
+            if s.parent_permissions:
                 assert not len(s.permissions), "Workflow state [%s -> %s] " \
-                    "with permissions_from_parent may not specify any own " \
+                    "with parent_permissions may not specify any own " \
                     "permissions" % (self.name, s.id) #!+RNC
                 continue
             _permission_role_mixes = {}
@@ -518,10 +518,10 @@ class Workflow(object):
         """
         permission_ids, role_ids = set(), set()
         for s in self._states_by_id.values():
-            # presumably every state (not with permissions_from_parent="true") 
+            # presumably every state (not with parent_permissions="true") 
             # defines exactly the same set of all (permission, role) pairs, so
             # we just need to verify a first such state.
-            if s.permissions_from_parent:
+            if s.parent_permissions:
                 continue
             for setting, permission_id, role_id in s.permissions:
                 permission_ids.add(permission_id)

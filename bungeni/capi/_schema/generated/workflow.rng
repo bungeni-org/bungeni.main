@@ -143,16 +143,21 @@
         </attribute>
       </optional>
       <!-- default:false -->
-      <!-- if (permissions_from_state | permissions_from_parent) -> then NO facets -->
+      <!-- if (permissions_from_state | parent_permissions) -> then NO facets -->
       <choice>
         <optional>
-          <!-- may have EITHER permissions_from_state OR permissions_from_parent -->
+          <!-- may have EITHER permissions_from_state OR parent_permissions -->
           <choice>
+            <!-- use exact permissions as specified by the name state -->
             <attribute name="permissions_from_state">
               <ref name="SYMBOL_NAME"/>
             </attribute>
             <!-- state.id -->
-            <attribute name="permissions_from_parent">
+            <!--
+              use the exact permissions as explicitly specified by the parent 
+              (in its current state) for this child document type
+            -->
+            <attribute name="parent_permissions">
               <data type="boolean"/>
             </attribute>
           </choice>
@@ -161,12 +166,12 @@
         <group>
           <optional>
             <!--
-              anonymous facet:
+              anonymous same-workflow facet:
               - there may be only one anonymous facet per state 
                 (that would be instead of referring to one from same workflow)
               - an anonymous state facet is NOT available for re-use from any 
                 other state (in same or other workflow)
-              - an anonymous facet may (of course) NOT be the set as the default
+              - an anonymous facet may (of course) NOT be set as the default
                 facet for the workflow
             -->
             <element name="facet">

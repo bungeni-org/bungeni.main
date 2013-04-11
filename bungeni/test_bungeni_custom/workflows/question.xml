@@ -89,7 +89,7 @@
     
     - ALWAYS apply to the *head instance*
     - apply to the *sub-item* ONLY when the sub-item itself is in a state
-    that sets permissions_from_parent="true".
+    that sets parent_permissions="true".
     
     In addition note that the Add permission is somewhat special, as it only 
     applies to a "container" (or global); it is, by definition, unbound to any

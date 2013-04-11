@@ -343,7 +343,7 @@ Attendance
 
 Motions
 -------
-  >>> motion = domain.Motion()
+  >>> motion = domain.AssemblyMotion()
   >>> motion.title = u"Motion"
   >>> motion.language = 'en'
   >>> motion.owner = mp_1
@@ -357,7 +357,7 @@ Questions
 
 Note that the questions workflow is tested separated (see workflows/question.txt).
 
-  >>> question = domain.Question()
+  >>> question = domain.AssemblyQuestion()
   >>> question.title = u"question"
   >>> question.language = 'en'
   >>> question.owner = mp_2
@@ -372,7 +372,7 @@ Note that the questions workflow is tested separated (see workflows/question.txt
 Bill
 ----
 
-  >>> bill = domain.Bill()
+  >>> bill = domain.AssemblyBill()
   >>> bill.title = u"Bill"
   >>> bill.doc_type = "member"
   >>> bill.language = 'en'
@@ -393,11 +393,11 @@ we may either add the id only:
   >>> session.add(item_schedule)
   >>> session.flush()
   >>> item_schedule.item
-  <bungeni.models.domain.Bill object at ...>
+  <bungeni.models.domain.AssemblyBill object at ...>
   >>> item_schedule.item.title
   u'Bill'
   >>> item_schedule.item.type
-  'bill'
+  'assembly_bill'
       
 or we can add an object: 
   >>> item_schedule = domain.ItemSchedule()
@@ -408,14 +408,14 @@ or we can add an object:
   >>> session.add(item_schedule)
   >>> session.flush()
   >>> item_schedule.item
-  <bungeni.models.domain.Question object at ...>
+  <bungeni.models.domain.AssemblyQuestion object at ...>
   
   >>> item_schedule.item_id == question.doc_id
   True
   >>> item_schedule.item.title
   u'question'
   >>> item_schedule.item.type
-  'question'
+  'assembly_question'
   
   
   

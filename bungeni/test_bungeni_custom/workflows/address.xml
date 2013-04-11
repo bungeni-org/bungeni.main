@@ -38,7 +38,7 @@
         <facet ref=".draft" />
     </state>
     
-    <state id="attached" title="Address" permissions_from_parent="true" />
+    <state id="attached" title="Address" parent_permissions="true" />
     
     <state id="internal" title="Published Internal" note="Visible to bungeni users">
         <facet ref=".internal" />

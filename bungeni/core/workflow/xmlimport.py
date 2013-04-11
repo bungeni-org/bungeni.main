@@ -410,8 +410,8 @@ def _load(workflow_name, workflow):
         # permissions defined by the specified state. NO other permissions 
         # may be specified by this state. 
         from_state = get_from_state(xas(s, "permissions_from_state"))
-        permissions_from_parent = xab(s, "permissions_from_parent")
-        if permissions_from_parent:
+        parent_permissions = xab(s, "parent_permissions")
+        if parent_permissions:
             pass # no own permission definitions allowed
         elif from_state:
             # assimilate (no more no less) the state's permissions !+tuple, use same?
@@ -438,7 +438,7 @@ def _load(workflow_name, workflow):
             State(state_id, state_title,
                 xas(s, "note"),
                 state_actions, permissions,
-                permissions_from_parent,
+                parent_permissions,
                 xab(s, "obsolete"),
             )
         )

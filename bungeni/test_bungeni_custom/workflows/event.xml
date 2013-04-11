@@ -25,7 +25,7 @@
     a *facet* apply only for when:
     - the parent doc is in a state that uses this same facet
     - the "feature" sub-item (that is always worklfowed) itself is in a 
-      state that sets permissions_from_parent="true". 
+      state that sets parent_permissions="true". 
     -->
     <facet name="draft_Clerk">
         <allow permission=".View" roles="Clerk" />
@@ -62,7 +62,7 @@
         <facet ref="attachment.draft_Owner" />
     </state>
     
-    <state id="attached" title="Event" permissions_from_parent="true" />
+    <state id="attached" title="Event" parent_permissions="true" />
     <!-- !+event.attachment(mr, dec-2012) NOTE that when an attachment (on this 
     event) is in the "attached" state AND the this event itself is in the "attached" 
     state then the HEAD doc handles all permissions (including all attachment-related 

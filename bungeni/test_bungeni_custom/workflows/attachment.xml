@@ -60,12 +60,12 @@
         <facet ref=".draft_Owner" />
     </state>
     
-    <state id="attached" title="Attachment" permissions_from_parent="true" />
+    <state id="attached" title="Attachment" parent_permissions="true" />
     
-    <state id="review" title="Review" permissions_from_parent="true" />
+    <state id="review" title="Review" parent_permissions="true" />
     
     
-    <state id="review_complete" title="Review Complete" permissions_from_parent="true" />
+    <state id="review_complete" title="Review Complete" parent_permissions="true" />
     
     
     <state id="internal" title="Published Internal">
