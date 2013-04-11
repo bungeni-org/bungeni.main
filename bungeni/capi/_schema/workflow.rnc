@@ -63,7 +63,6 @@ grammar {
         attribute id { SYMBOL_NAME },
         attribute title { text }, # i18n msgid
         attribute actions { SPACE_SEPARATED_SYMBOLS }?,
-        attribute tags { SPACE_SEPARATED_SYMBOLS }?,
         attribute note { text }?,
         attribute obsolete { xsd:boolean }?, # default:false
         

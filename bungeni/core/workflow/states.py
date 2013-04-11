@@ -25,7 +25,7 @@ from bungeni.utils import error
 
 
 GRANT, DENY = 1, 0
-TAG_DRAFT, TAG_PUBLIC, TAG_TERMINAL = TAGS = ["draft", "public", "terminal"]
+TAG_DRAFT, TAG_PUBLIC, TAG_TERMINAL = "draft", "public", "terminal"
 
 # we only have 1 or 0 i.e. only Allow or Deny, no Unset.
 IntAsSetting = { 
@@ -374,11 +374,9 @@ class Workflow(object):
         self._transitions_by_grouping_unique_sources = {} # {grouping: [Transition]}
         self.refresh(states, transitions)
         self.global_grants = global_grants
-        self.tags = TAGS
-        self.setup_tags()
-        self.roles_used = []
-        self.setup_roles_used()
-        
+        self.tags = TAG_DRAFT, TAG_PUBLIC, TAG_TERMINAL
+        self.setup_state_tags()
+        self.roles_used = self.get_roles_used()
     
     def refresh(self, states, transitions):
         sbyid = self._states_by_id
@@ -472,9 +470,9 @@ class Workflow(object):
                 assert len(all_sources)==len(set(all_sources)), "Duplicate " \
                     "sources in grouped transitions [%s] in workflow [%s]" % (
                         grouping, self.name)
-
-    def setup_roles_used(self):
-        """Setup up a list of all the roles used in this workflow
+    
+    def get_roles_used(self):
+        """Get the list of all the roles used in this workflow
         Sample use case -> determining if a document moves from one
         chamber to another
         """
@@ -486,10 +484,10 @@ class Workflow(object):
                     roles.add(role)
         for setting, perm, role in self.global_grants:
             roles.add(role)
-        self.roles_used = list(roles)
-
-    def setup_tags(self):
-        """Set up state tags used in the system
+        return list(roles)
+    
+    def setup_state_tags(self):
+        """Determine and set the system-inferred tags on each state.
         """
         for state_id in self._states_by_id.keys():
             state = self.get_state(state_id)
@@ -497,16 +495,14 @@ class Workflow(object):
             from_transitions = self.get_transitions_from(state_id)
             if not from_transitions:
                 tags.add(TAG_TERMINAL)
-            draft_transitions = [transition for transition in 
-                self.get_transitions_to(state_id) if not transition.source
-            ]
+            draft_transitions = [ transition for transition in 
+                self.get_transitions_to(state_id) if not transition.source ]
             if draft_transitions:
                 tags.add(TAG_DRAFT)
             view_permission = "bungeni.%s.View" % self.name
-            anon_perms = [ bool(setting) for setting, perm, role in 
-                state.permissions if role=="bungeni.Anonymous" and
-                perm==view_permission
-            ]
+            anon_perms = [ bool(setting)
+                for setting, perm, role in state.permissions 
+                if role == "bungeni.Anonymous" and perm == view_permission ]
             if True in anon_perms:
                 tags.add(TAG_PUBLIC)
             state.tags = list(tags)
@@ -543,7 +539,7 @@ class Workflow(object):
             if f.name == name:
                 return f.enabled
         return False
-
+    
     def get_feature(self, name):
         """Get the named feature instance, or None.
         """

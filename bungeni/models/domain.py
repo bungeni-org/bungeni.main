@@ -171,11 +171,14 @@ class User(Principal):
     def _makeSalt(self):
         return "".join(random.sample(string.letters[:52], 12))
     
-    def setPassword(self, password):
-        self.password = self.encode(password)
-    def getPassword(self):
-        return None
-    _password = property(getPassword, setPassword)
+    def _password():
+        doc = "Set the password, encrypting it. Cannot retrieve."
+        def fget(self):
+            return None
+        def fset(self, password):
+            self.password = self.encode(password)
+        return locals()
+    _password = property(**_password())
     
     def encode(self, password):
         return md5.md5(password + self.salt).hexdigest()
@@ -184,11 +187,14 @@ class User(Principal):
         attempt = self.encode(password_attempt)
         return attempt == self.password
     
-    def _get_status(self):
-        return self.active_p
-    def _set_status(self, value):
-        self.active_p = value
-    status = property(_get_status, _set_status)
+    def status():
+        doc = """A "status" attribute as alias onto "active_p" attribute."""
+        def fget(self):
+            return self.active_p
+        def fset(self, value):
+            self.active_p = value
+        return locals()
+    status = property(**status())
     
     delegations = one2many("delegations",
         "bungeni.models.domain.UserDelegationContainer", "user_id")

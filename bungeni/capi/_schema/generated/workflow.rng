@@ -130,11 +130,6 @@
         </attribute>
       </optional>
       <optional>
-        <attribute name="tags">
-          <ref name="SPACE_SEPARATED_SYMBOLS"/>
-        </attribute>
-      </optional>
-      <optional>
         <attribute name="note"/>
       </optional>
       <optional>
