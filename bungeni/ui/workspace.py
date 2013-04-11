@@ -195,23 +195,14 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
                 result[value] = translate(name, context=self.request)
         return result
 
-    def get_status(self, item_type):
-        # !+ why does item_type not use the standard type_key name as everywhere else?
-        type_key = item_type
-        # !+ what is this method supposed to do?
-        # !+ why does something named "get_status" return a (translated) dict?
+    def get_status(self, type_key):
         translated = dict()
         if not type_key:
             return translated
-        # !+ why is item_type allowed to be / is the empty string?
-        # !+ why was domain_model being INSTANTIATED IN A LOOP to just get the workflow for it ?!?
-        
         ti = capi.get_type_info(type_key)
         workflow, domain_model = ti.workflow, ti.domain_model
-        
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         roles = get_workspace_roles() + ROLES_DIRECTLY_DEFINED_ON_OBJECTS
-        #domain_class = workspace_config.get_domain(item_type)
         results = set()
         for role in roles:
             status = workspace_config.get_status(
@@ -220,14 +211,13 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
                 for s in status:
                     results.add(s)
         for result in results:
-            #workflow = IWorkflow(domain_model())
             status_title = translate(
                 workflow.get_state(result).title,
                 domain="bungeni",
                 context=self.request)
             translated[result] = status_title
         return translated
-    
+
     def getDataTableConfig(self):
         config = super(WorkspaceDataTableFormatter, self).getDataTableConfig()
         item_types = self.get_item_types()
