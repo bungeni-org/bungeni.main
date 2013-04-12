@@ -43,7 +43,7 @@ grammar {
     )
     
     UI = element ui {
-        attribute roles { SPACE_SEPARATED_TOKENS }, # (un/qualified) roles
+        #!+ROLES attribute roles { SPACE_SEPARATED_TOKENS }, # (un/qualified) roles
         
         DESCRIPTOR+
     }

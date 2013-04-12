@@ -24,6 +24,7 @@ from bungeni.alchemist.interfaces import (
     IModelDescriptor,
     IModelDescriptorField
 )
+from bungeni.models import roles
 from bungeni.ui.utils import common
 from bungeni.utils import naming
 
@@ -93,6 +94,7 @@ class show(object):
         self.modes = Field.validated_modes(modes, nullable=True)
         self.roles = Field.validated_roles(roles, nullable=False)
         self._from_hide = False
+    
     def _repr_map(self):
         if not self._from_hide:
             return dict(tag="show", modes=self.modes, roles=self.roles)
@@ -135,15 +137,6 @@ def hide(modes=None, roles=None):
 # - Field.property.required: by default required=True for all schema.Field
 
  
-# Default list of roles that are guaranteed to always be there in Bungeni 
-SYSTEM_ROLES = (
-    "bungeni.Admin", # parliament, has all privileges
-    "bungeni.Owner", # legal owner, parliamentary documents
-    "bungeni.Drafter", # all types, editorial owner, all types
-    "bungeni.Anonymous", # unauthenticated user, anonymous
-    "bungeni.Signatory",
-)
-
 class Field(object):
     interface.implements(IModelDescriptorField)
     
@@ -152,7 +145,7 @@ class Field(object):
     @classmethod
     def validated_modes(cls, modes, nullable=False):
         return validated_set("modes", cls._modes, modes, nullable=nullable)
-    _roles = list(SYSTEM_ROLES)
+    _roles = list(roles.SYSTEM_ROLES)
     
     @classmethod
     def validated_roles(cls, roles, nullable=False):
@@ -362,7 +355,7 @@ class Field(object):
                 for role in user_roles:
                     if role in loc.roles:
                         return True
-                    elif loc.roles == SYSTEM_ROLES:
+                    elif loc.roles == roles.SYSTEM_ROLES:
                         #!+FIELDS(mb, Dec-2012) workaround to display fields
                         # for non-localizable types see thread: http://goo.gl/6B7fo
                         if not loc._from_hide:

@@ -39,6 +39,13 @@ def get_chamber_for_group(group):
     """
     return common.getattr_ancestry(group, None, "parent_group",
         acceptable=interfaces.IParliament.providedBy)
+    ''' !+ equivalent alternative:
+    if group:
+        if group.type == "parliament":
+            return group
+        else:
+            return get_chamber_for_group(group.parent_group)
+    '''
 
 
 def user_delegatations(user):

@@ -815,8 +815,7 @@ class AttachmentDescriptor(ModelDescriptor):
         ),
         LanguageField("language"), # [user-req]
     ]
-
-
+    
 ''' !+VERSION_CLASS_PER_TYPE
 class AttachedFileVersionDescriptor(ModelDescriptor):
     localizable = True

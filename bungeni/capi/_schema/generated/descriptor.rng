@@ -80,11 +80,8 @@
   </start>
   <define name="UI">
     <element name="ui">
-      <attribute name="roles">
-        <ref name="SPACE_SEPARATED_TOKENS"/>
-      </attribute>
       <oneOrMore>
-        <!-- (un/qualified) roles -->
+        <!-- !+ROLES attribute roles { SPACE_SEPARATED_TOKENS }, # (un/qualified) roles -->
         <ref name="DESCRIPTOR"/>
       </oneOrMore>
     </element>

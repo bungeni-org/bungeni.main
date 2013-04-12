@@ -17,6 +17,7 @@ from bungeni.alchemist.descriptor import (
     show, hide,
     #norm_sorted,
 )
+from bungeni.models import roles
 from bungeni.ui.descriptor import field
 from bungeni.capi import capi
 from bungeni.utils import naming, misc
@@ -114,7 +115,8 @@ def localize_descriptors(file_path, is_init):
     descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
     # make the value of <ui.@roles> as *the* bungeni default list of roles
     global ROLES_DEFAULT
-    Field._roles[:] = capi.schema.qualified_roles(descriptor_doc.get("roles", ROLES_DEFAULT))
+    #!+ROLES Field._roles[:] = capi.schema.qualified_roles(descriptor_doc.get("roles", ROLES_DEFAULT))
+    Field._roles[:] = roles.SYSTEM_ROLES + roles.CUSTOM_ROLES
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
     for edescriptor in descriptor_doc.findall("descriptor"):

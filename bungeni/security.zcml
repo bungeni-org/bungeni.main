@@ -14,7 +14,7 @@
     
     <include package="bungeni.core" file="auth.zcml"/>
     <include package="bungeni.models" file="roles.zcml" />
-    <utility factory="bungeni.models.roles.load_roles"
+    <utility factory="bungeni.models.roles.load_custom_roles"
              provides="bungeni.models.roles.IDummyRoleConfig"/>
     <include package="bungeni.models" file="permissions.zcml" />
     <!-- !+permissions.zcml bungeni_custom/worfklows/.auto/permissions.zcml 

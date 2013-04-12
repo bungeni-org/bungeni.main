@@ -9,28 +9,11 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 
-from zope.component import getUtilitiesFor
-from zope.securitypolicy.interfaces import IRole
-from zope.configuration import xmlconfig
 from bungeni.utils import naming, misc
 from bungeni.ui.descriptor import localization
 
 INDENT = " " * 4
 
-
-def get_defined_roles():
-    zcml_slug = """<configure xmlns="http://namespaces.zope.org/zope">
-        <include package="zope.component" file="meta.zcml" />
-        <includeOverrides package="repoze.whooze" file="overrides.zcml" />
-        <include package="zope.app.security" />
-        <include package="bungeni.server" />
-        <include package="bungeni" file="security.zcml"/>
-    </configure>
-    """
-    xmlconfig.string(zcml_slug)
-    system_roles = ["zope.Manager"]
-    return [ name for name, role in getUtilitiesFor(IRole)
-        if name not in system_roles ]
 
 def serialize_roles(roles):
     """(roles:[qualified_role_id] -> space-separated-str of names
@@ -162,15 +145,14 @@ def serialize_module(module, depth=0):
     
     acc = []
     ind = INDENT * depth
-    roles = get_defined_roles()
     if _acc:
         acc.append('%s<?xml version="1.0"?>' % (ind))
-        acc.append('%s<ui roles="%s">' % (ind, serialize_roles(roles)))
+        acc.append("%s<ui>" % (ind))
         acc.extend(_acc)
         acc.append(ind)
         acc.append("%s</ui>" % (ind))
     else:
-        acc.append('%s<ui roles="%s" />' % (ind, serialize_roles(roles)))
+        acc.append("%s<ui />" % (ind))
     acc.append(ind) # blank line at end of file
     acc.append(ind)
     return acc
@@ -190,10 +172,12 @@ def dump_i18n_message_ids():
     # ensure localization files are loaded (and naming.MSGIDS correctly primed)
     from bungeni.ui import feature
     feature.setup_customization_ui()
-    localization.check_reload_localization(None)
+    #localization.check_reload_localization(None) #!+ AssertionError from custom roles...
     from os import path
+    import bungeni.ui # !+ simply using __file__ gives erroneous abspath!
     msgids_py_source_file_path = path.join(
-        path.dirname(path.abspath(__file__)), "_dumped_msgids.py")
+        path.dirname(path.abspath(bungeni.ui.__file__)), "descriptor", "_dumped_msgids.py")
+    
     print
     print "Processing UI Field i18n MSGID file: %s" % (msgids_py_source_file_path)
     msgids_py_source_preamble = [
