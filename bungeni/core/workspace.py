@@ -437,12 +437,11 @@ component.provideUtility(WorkspaceTabsUtility())
 
 def load_workspaces():
     for type_key, ti in capi.iter_type_info():
-        workflow = ti.workflow
-        if workflow and workflow.has_feature("workspace"):
-            load_workspace("%s.xml" % type_key, ti.domain_model)
+        if ti.workflow and ti.workflow.has_feature("workspace"):
+            load_workspace("%s.xml" % type_key, ti.domain_model, ti.workflow)
 
 @capi.bungeni_custom_errors
-def load_workspace(file_name, domain_class):
+def load_workspace(file_name, domain_class, workflow):
     """Loads the workspace configuration for each documemnt.
     """
     workspace_utility = component.getUtility(IWorkspaceTabsUtility)
@@ -452,6 +451,9 @@ def load_workspace(file_name, domain_class):
     item_type = file_name.split(".")[0]
     workspace_utility.register_item_type(domain_class, item_type)
     for state in workspace.iterchildren(tag="state"):
+        # Raises invalid state error if there is no such state defined in the
+        # workflow
+        workflow.get_state(state.get("id"))
         for tab in state.iterchildren(tag="tab"):
             assert tab.get("id") in capi.workspace_tabs, \
                 "Workspace configuration error : " \
