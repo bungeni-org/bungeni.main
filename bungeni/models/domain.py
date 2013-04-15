@@ -282,6 +282,9 @@ class GroupMembership(HeadParentedMixin, Entity):
     def image(self):
         return self.user.image
 
+# !+ alias, as "mapping" of archetype key 
+Member = GroupMembership
+
 
 class OfficesHeld(Entity):
     """Offices held by this group member.
@@ -538,7 +541,7 @@ class Doc(Entity):
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id
-        
+    
     def _get_workflow_date(self, *states):
         """ (states:seq(str) -> date
         Get the date of the most RECENT workflow transition to any one of 

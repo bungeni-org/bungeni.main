@@ -817,7 +817,7 @@ attachment = sa.Table("attachment", metadata,
     ),
     # attachment_type #!+attached_file_type
     sa.Column("type", sa.Unicode(128),
-        default=u'document',
+        default=u"document",
         nullable=False,
     ),
     sa.Column("title", sa.Unicode(255), nullable=False), #!+file
@@ -853,7 +853,7 @@ doc = sa.Table("doc", metadata,
     # conceptually distinct while still being related:
     # - the general sense of parliament_id seems to be that of the 
     # "root_container" group (currently this may only be a parliament) in 
-    # which the doc "exists" in
+    # which the doc "exists"
     # - while the general sense of group_id seems to be that of a kind of
     # "custodian" group, to which the doc is "assigned to" for handling.
     # !+PARLIAMENT_ID should be nullable=False, but fails on creating an Event...

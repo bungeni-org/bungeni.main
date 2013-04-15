@@ -21,9 +21,7 @@ grammar {
             attribute order { xsd:integer }?,
             attribute note { text }?,
             
-            # Attrs only in custom descriptors:
-            
-            attribute archetype { SYMBOL_NAME }, # an archetype key, custom types MUST specify this
+            # Attrs only in custom descriptors: !+ mv all these to types?
             
             # Note: if label/container_label present, the mechanism to 
             # auto-derive the display_name/container_name from name->type_key 

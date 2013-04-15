@@ -97,30 +97,25 @@ def register_custom_types():
     def parse_elem(type_elem):
         type_key = misc.xml_attr_str(type_elem, "name")
         workflow_key = misc.xml_attr_str(type_elem, "workflow", default=type_key)
-        # !+archetype? move decl from being on descriptor to being on types!
-        archetype_key = misc.xml_attr_str(type_elem, "archetype", default=type_elem.tag)
-        return type_key, workflow_key, archetype_key
+        custom_archetype_key = misc.xml_attr_str(type_elem, "archetype", default=type_elem.tag)
+        sys_archetype_key = type_elem.tag
+        return type_key, workflow_key, custom_archetype_key, sys_archetype_key
     
     def enabled_elems(elems):
         for elem in elems:
             if misc.xml_attr_bool(elem, "enabled", default=True):
                 yield elem
     
-    # load XML file
+    # load types.xml
     etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
     # register enabled types - ignoring not enabled types
     from bungeni.alchemist import type_info
-    # custom "event" types must be loaded prior to custom doc types
-    custom_event_type_keys, custom_doc_type_keys = [], []
-    for edoc in enabled_elems(etypes.iterchildren("doc")):
-        custom_type_keys = parse_elem(edoc)
-        if custom_type_keys[2] == "event": # archetype_key 
-            custom_event_type_keys.append(custom_type_keys)
-        else:
-            custom_doc_type_keys.append(custom_type_keys)
-    for custom_type_keys in custom_event_type_keys + custom_doc_type_keys:
-        type_key, ti = type_info.register_new_custom_type(*custom_type_keys)
-    
+    # custom "event" types (must be loaded prior to custom "doc" types)
+    for etype in enabled_elems(etypes.iterchildren("event")):
+        type_key, ti = type_info.register_new_custom_type(*parse_elem(etype))
+    # custom "doc" types
+    for etype in enabled_elems(etypes.iterchildren("doc")):
+        type_key, ti = type_info.register_new_custom_type(*parse_elem(etype))
     # group/member types
     for egroup in enabled_elems(etypes.iterchildren("group")):
         type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
@@ -166,7 +161,8 @@ def load_workflow(type_key, ti):
 
 def retrieve_domain_model(type_key):
     """Infer and retrieve the target domain model class from the type key.
-    Raise Attribute error if not defined on domain.
+    Raise AttributeError if not defined on model module.
+    !+ mv to catalyst.utils?
     """
     return resolve("%s.%s" % (MODEL_MODULE.__name__, naming.model_name(type_key)))
 

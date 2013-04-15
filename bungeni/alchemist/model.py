@@ -98,10 +98,9 @@ def vertical_property(object_type, vp_name, vp_type, *args, **kw):
     return property(fget=fget, fset=fset, fdel=fdel, doc=doc)
 
 
-def add_extended_property_to_model(domain_model, name, extended_type, archetype_key):
+def add_extended_property_to_model(domain_model, name, extended_type):
     assert not hasattr(domain_model, name), \
-        "May not add %r as extended field, already defined in archetype %r" % (
-            name, archetype_key)
+        "May not add %r as extended field, already defined in archetype" % (name)
     log.info("Adding %r extended field %r to domain model %s",
         extended_type, name, domain_model)
     vp_kls = get_vp_kls(extended_type)
@@ -151,10 +150,9 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
     )
 
 
-def instrument_extended_properties(cls, object_type, from_class=None):
-    # !+class not yet mapped
-    #from sqlalchemy.orm import class_mapper
-    #object_type = class_mapper(cls).local_table.name 
+def instrument_extended_properties(cls, object_type=None, from_class=None):
+    if object_type is None:
+        object_type = utils.get_local_table(cls).name
     if from_class is None:
         from_class = cls
     # ensure cls.__dict__.extended_properties
@@ -217,17 +215,12 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
         "May not re-localize [%s] domain model from descriptor" % (type_key)
     localize_domain_model_from_descriptor_class.DONE.append(type_key)
     
-    #!+GET_ARCHETYPE
-    #!+archetype_key = naming.polymorphic_identity(domain_model.__bases__[0]) multiple inheritance...
-    archetype_key = naming._type_key_from_descriptor_class_name(
-            descriptor_cls.__bases__[0].__name__)
-    
     for field in descriptor_cls.fields:
         
         # extended
         if field.extended is not None:
             add_extended_property_to_model(domain_model, 
-                field.name, field.extended, archetype_key)
+                field.name, field.extended)
         
         # derived
         if field.derived is not None:
@@ -235,8 +228,7 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
                 field.name, field.derived)
     
     # !+if domain_model.extended_properties: ?
-    # !+instrument_extended_properties, archetype_key => table...
-    instrument_extended_properties(domain_model, archetype_key)
+    instrument_extended_properties(domain_model)
     mapper_add_relation_vertical_properties(domain_model)
     # !+AUDIT_EXTENDED_ATTRIBUTES as audit class was created prior to 
     # extended attributes being updated on domain type, need to push onto 
@@ -245,10 +237,7 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
         # either defined manually or created dynamically in feature_audit()
         audit_kls = getattr(MODEL_MODULE, "%sAudit" % (domain_model.__name__))
         # propagate any extended attributes on head kls also to its audit_kls
-        import bungeni.models.domain
-        audit_table_name = bungeni.models.domain.get_audit_table_name(domain_model)
-        instrument_extended_properties(
-            audit_kls, audit_table_name, from_class=domain_model)
+        instrument_extended_properties(audit_kls, from_class=domain_model)
     
     # containers
     from bungeni.capi import capi

@@ -155,7 +155,7 @@ def localize_descriptor(descriptor_elem, is_init, scope="system"):
                 fields, info_containers, constraints, validations)
         except AttributeError:
             # first time around, no such descriptor - so create a new custom descriptor
-            archetype_key = xas(descriptor_elem, "archetype")
+            archetype_key = naming.polymorphic_identity(ti.archetype)
             cls = new_descriptor_cls(type_key, archetype_key, order, 
                 fields, info_containers, constraints, validations)
             # only "push" onto cls (hiding same-named properties or overriding 

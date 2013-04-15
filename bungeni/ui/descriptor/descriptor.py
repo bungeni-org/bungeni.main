@@ -89,6 +89,7 @@ def AdmissibleDateField(name="admissible_date"):
 # of the value itself or of any label that may be associated with it).
 
 
+# !+ should derive from PrincipalDescriptor
 class UserDescriptor(ModelDescriptor):
     order = 4 # top
     localizable = True
@@ -436,6 +437,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
         return naming.plural(display_name) # !+unicode
 
 
+# !+ should derive from PrincipalDescriptor 
 class GroupDescriptor(ModelDescriptor):
     localizable = True # !+ARCHETYPE_LOCALIZATION
     scope = "archetype"
