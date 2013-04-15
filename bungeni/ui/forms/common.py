@@ -592,15 +592,14 @@ class GroupEditForm(EditForm):
         prm = IPrincipalRoleMap(get_group_context(self.context))
         if (data["group_role"] != self.context.group_role):
             if (prm.getSetting(self.context.group_role,
-                self.context.group_principal_id) == Allow):
+                self.context.principal_name) == Allow):
                 group_role_changed = True
                 unset_group_local_role(self.context)
         formlib.form.applyChanges(self.context, self.form_fields, data)
         if group_role_changed:
             set_group_local_role(self.context)
         notify(ObjectModifiedEvent(self.context))
-        #cascade_modifications(self.context)
-        invalidate_caches_for(self.context.__class__.__name__, "edit")
+
 
 class TranslateForm(AddForm):
     """Custom translate-form for Bungeni content.

@@ -454,5 +454,5 @@ class OAuthAccessToken(BrowserPage):
             "expires_in": capi.oauth_access_token_expiry_time,
             "refresh_token": access_token.authorization_token.refresh_token
         }
-        set_json_headers(self.request)
+        misc.set_json_headers(self.request)
         return simplejson.dumps(data)

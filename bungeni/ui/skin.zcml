@@ -9,8 +9,4 @@
         type="zope.publisher.interfaces.browser.IBrowserSkinType"
         name="bungeni"
     />
-    <subscriber handler=".skin.handle_authenticated_principal_created_event"
-        for="repoze.whooze.interfaces.IPrincipalCreated"
-    />
-
 </configure>
