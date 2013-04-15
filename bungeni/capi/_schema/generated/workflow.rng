@@ -13,6 +13,10 @@
   
   $Id$
 -->
+<!--
+  the local namespace is an empty string 
+  namespace local=""
+-->
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <include href="common.rng"/>
   <start>
@@ -38,13 +42,14 @@
           <ref name="SPACE_SEPARATED_TOKENS"/>
         </attribute>
       </optional>
+      <!--
+        type-relative permission actions
+        i.e. each included action allowed to be in the form [type_key].{Action}, 
+        with the optional type_key defaulting to the type_key of the type 
+        "owning" this workflow.
+      -->
+      <ref name="FOREIGN_NS_ATTRS"/>
       <zeroOrMore>
-        <!--
-          type-relative permission actions
-          i.e. each included action allowed to be in the form [type_key].{Action}, 
-          with the optional type_key defaulting to the type_key of the type 
-          "owning" this workflow.
-        -->
         <ref name="ALLOW"/>
       </zeroOrMore>
       <zeroOrMore>
@@ -83,6 +88,7 @@
       <optional>
         <attribute name="note"/>
       </optional>
+      <ref name="FOREIGN_NS_ATTRS"/>
       <zeroOrMore>
         <element name="parameter">
           <!-- !+ name by feature -->
@@ -112,6 +118,7 @@
         <!-- default:false, may be true only once -->
         <attribute name="note"/>
       </optional>
+      <ref name="FOREIGN_NS_ATTRS"/>
       <zeroOrMore>
         <ref name="ALLOW"/>
       </zeroOrMore>

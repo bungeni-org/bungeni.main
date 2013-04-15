@@ -11,6 +11,8 @@
 #
 # $Id$
 
+# declare the local namespace, its blank
+namespace local=""
 
 # a space-separated string value !+pattern for un/qualified permission_actions, roles
 SPACE_SEPARATED_TOKENS = list { token+ }
@@ -23,3 +25,7 @@ SPACE_SEPARATED_SYMBOLS = list { SYMBOL_NAME+ }
 # numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
 SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][\w_]*" }
 
+# allow foreign attributes from foreign namespaces, 
+# do not allow in the local namespace
+# foreign attributes are used by the config editor
+FOREIGN_NS_ATTRS = attribute * - local:* { string }*
