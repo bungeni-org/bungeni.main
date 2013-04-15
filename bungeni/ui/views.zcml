@@ -387,11 +387,6 @@
         template="templates/generic-container.pt"
         class="bungeni.alchemist.container.ContainerListing"
     />
-    <browser:page name="json"
-        for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.Public"
-        class=".container.ContainerJSONListing"
-    />
     <browser:defaultView name="index"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
     />
@@ -619,7 +614,21 @@
       permission="bungeni.ui.workspace.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
-
+   <browser:page
+      for="bungeni.alchemist.interfaces.IAlchemistContainer"
+      name="index"
+      class="bungeni.ui.container.ContainerJSONListingRaw"
+      permission="zope.Public"
+      layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
+   <!--!+(miano, apr 2013) change view name to index + everywhere else -->
+   <browser:page
+      for="bungeni.models.interfaces.IUser"
+      name="view" 
+      class="bungeni.ui.api.APIObjectView"
+      permission="bungeni.user.View"
+      layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
    <!-- OAuth -->
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"
