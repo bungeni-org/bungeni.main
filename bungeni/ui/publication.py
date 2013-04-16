@@ -14,11 +14,12 @@ from zope import interface
 from zope import component
 from zope.app.publication.interfaces import IBeforeTraverseEvent
 from zope.app.publication.interfaces import IEndRequestEvent
+from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.annotation.interfaces import IAnnotations
 
 from bungeni.alchemist import Session
 
-from bungeni.ui import interfaces, skin
+from bungeni.ui import interfaces
 from bungeni.ui.utils import url, common
 from bungeni.utils.common import has_feature
 from bungeni.ui.descriptor.localization import check_reload_localization
@@ -56,7 +57,9 @@ def on_before_traverse(event):
     log.debug("IBeforeTraverseEvent:%s:%s:%s" % (
         id(event.request), event.request.getURL(), event.object))
     apply_request_layer_by_url(event)
-    skin.handle_authenticated_principal_created_event(event)
+    if not IUnauthenticatedPrincipal.providedBy(event.request.principal):
+        interface.alsoProvides(event.request,
+            interfaces.IBungeniAuthenticatedSkin)
     remember_traversed_context(event)
     if has_feature("devmode"):
         check_reload_localization(event)
