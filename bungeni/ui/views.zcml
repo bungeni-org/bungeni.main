@@ -580,12 +580,12 @@
       permission="bungeni.debate_record.View"
    />
    
-   <browser:page
+   <!--browser:page
       for="bungeni.models.interfaces.IDebateRecord"
       name="takes"
       class="bungeni.ui.debaterecord.DebateRecordTakes"
       permission="bungeni.debate_takes.View"
-   />
+   /-->
    
    <!-- Bungeni API -->
    <browser:page
@@ -629,6 +629,14 @@
       permission="bungeni.user.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
+   <browser:page
+      for="bungeni.models.domain.UserContainer"
+      name="current" 
+      class="bungeni.ui.api.APICurrentUserView"
+      permission="bungeni.user.View"
+      layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
+
    <!-- OAuth -->
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"
