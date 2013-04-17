@@ -28,7 +28,7 @@ from bungeni.capi import capi
 #import bungeni.ui.versions # !+REGISTER
 
 
-''' !+UNUSED(mr, jan-2012) but time wasted on it anyway.
+''' !+UNUSED(mr, jan-2012)
 from zope import component
 class BillAnnotationAdaptor(object):
     """Annotation Adaptor for Bills."""

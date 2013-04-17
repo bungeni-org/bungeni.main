@@ -1,15 +1,17 @@
 import simplejson
-from datetime import datetime
+from datetime import datetime, date, time
+from zope import component
 from zope.publisher.browser import BrowserPage
+from zope.publisher.interfaces import NotFound
+from zope.security.proxy import removeSecurityProxy
+from zope.app.publication.traversers import SimpleComponentTraverser
 from bungeni.core.serialize import obj2dict
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.utils import url, misc
 from bungeni.models.utils import get_login_user
 
-
-dthandler = lambda obj: obj.isoformat() if isinstance(
-    obj, datetime) else obj
-
+dthandler = lambda obj: obj.isoformat() if type(obj) in \
+    (date, time, datetime) else obj
 
 class APIDefaultView(BungeniBrowserView):
     def __call__(self):
@@ -37,9 +39,29 @@ class APIObjectView(BrowserPage):
         return simplejson.dumps(data, default=dthandler)
 
 
-class APICurrentUserView(BrowserPage):
+class APIUserView(BrowserPage):
     def __call__(self):
-        data = obj2dict(get_login_user(), 0, exclude=["salt", "_password",
+        data = obj2dict(self.context, 0, exclude=["salt", "_password",
             "password", "active_p", "principal_id", "user_id", "type"])
         misc.set_json_headers(self.request)
         return simplejson.dumps(data, default=dthandler)
+
+
+class APIUserContainerTraverser(SimpleComponentTraverser):
+    """Traverser for workspace containers"""
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def publishTraverse(self, request, name):
+        if name == "current":
+            return get_login_user()
+        trusted = removeSecurityProxy(self.context)
+        view = component.queryMultiAdapter((trusted, request), name=name)
+        if view:
+            return view
+        ob = trusted.get(name)
+        if ob:
+            return ob
+        raise NotFound(self.context, name)

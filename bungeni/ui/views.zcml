@@ -196,22 +196,6 @@
         permission="bungeni.ui.workspace.View"
         class=".reports.ReportBuilder"
     />
-  <!-- Calendar -->
-
-  <browser:page
-     name="view"
-     for="bungeni.core.interfaces.IDailySchedulingContext"
-     permission="zope.Public"
-     class=".calendar.browser.DailyCalendarView"
-     />
-
-    <!--
-    <browser:page
-     for="bungeni.models.interfaces.IBungeniApplication"
-     permission="zope.Public"
-     name="calendar"
-     class=".calendar.browser.DhtmlxCalendarScheduleView"
-    /> -->
     
     <browser:page
      for="bungeni.models.interfaces.IBungeniContent"
@@ -391,7 +375,7 @@
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
     />
     <!-- Default Content View -->
-    <browser:defaultView name="view"
+    <browser:defaultView name="index"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
     />
     
@@ -569,24 +553,10 @@
    <!-- Debate Record -->
    <browser:page
       for="bungeni.models.interfaces.IDebateRecord"
-      name="index.html"
+      name="index"
       class="bungeni.ui.debaterecord.DebateRecordView"
       permission="bungeni.debate_record.View"
    />
-   <browser:page
-      for="bungeni.models.interfaces.IDebateRecord"
-      name="view"
-      class="bungeni.ui.debaterecord.DebateRecordView"
-      permission="bungeni.debate_record.View"
-   />
-   
-   <!--browser:page
-      for="bungeni.models.interfaces.IDebateRecord"
-      name="takes"
-      class="bungeni.ui.debaterecord.DebateRecordTakes"
-      permission="bungeni.debate_takes.View"
-   /-->
-   
    <!-- Bungeni API -->
    <browser:page
       for="bungeni.core.content.APISection"
@@ -596,7 +566,7 @@
    />
    <browser:page
       for="bungeni.core.content.OAuthSection"
-      name="index.html"
+      name="index"
       class="bungeni.ui.api.APIDefaultView"
       permission="zope.Public"
    />
@@ -618,25 +588,16 @@
       for="bungeni.alchemist.interfaces.IAlchemistContainer"
       name="index"
       class="bungeni.ui.container.ContainerJSONListingRaw"
-      permission="zope.Public"
+      permission="bungeni.api.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
-   <!--!+(miano, apr 2013) change view name to index + everywhere else -->
    <browser:page
       for="bungeni.models.interfaces.IUser"
-      name="view" 
-      class="bungeni.ui.api.APIObjectView"
+      name="index" 
+      class="bungeni.ui.api.APIUserView"
       permission="bungeni.user.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
-   <browser:page
-      for="bungeni.models.domain.UserContainer"
-      name="current" 
-      class="bungeni.ui.api.APICurrentUserView"
-      permission="bungeni.user.View"
-      layer="bungeni.ui.interfaces.IBungeniAPILayer"
-   />
-
    <!-- OAuth -->
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"

@@ -727,20 +727,6 @@
      factory=".menu.TranslationSubMenuItem"
      provides="ploned.ui.interfaces.IContentMenuItem" /-->
 
-  <!-- calendar actions -->
-
-    <browser:defaultView name="view"
-        for="bungeni.core.interfaces.IDailySchedulingContext"
-    />
-    
-    <browser:menuItem menu="context_actions"
-        for="bungeni.core.interfaces.IDailySchedulingContext"
-        action="view"
-        title="View"
-        order="0"
-        permission="bungeni.sitting.View"
-    />
-
   <browser:menuItem
      menu="discussion_actions"
      for="bungeni.models.interfaces.IItemScheduleDiscussion"
@@ -919,7 +905,7 @@
         for="bungeni.alchemist.interfaces.IAlchemistContent"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         >
-        <browser:menuItem action="view" title="View" order="0" />
+        <browser:menuItem action="index" title="View" order="0" />
     </browser:menuItems>
     <browser:menuItems menu="context_actions"
         for="bungeni.core.workflow.interfaces.IWorkflowed"
@@ -1207,7 +1193,7 @@
     <!-- group assignment -->
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupDocumentAssignment"
-        action="view"
+        action="index"
         title="View"
         order="0"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -1246,7 +1232,7 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IDebateRecord"
-        action="view"
+        action="index"
         title="View"
         order="1"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"

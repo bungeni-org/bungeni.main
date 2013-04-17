@@ -214,29 +214,3 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     def get_group(self, name=None):
         assert name is None
         return get_chamber_for_context(self.__parent__)
-
-
-class DailySchedulingContext(object):
-    interface.implements(IDailySchedulingContext, IDCDescriptiveProperties)
-
-    description = None
-    
-    def __init__(self, context, date):
-        self.context = context
-        self.date = date
-        
-    @property
-    def title(self):
-        return _(u"$x", mapping=self.date)
-
-    @property
-    def label(self):
-        return self.context.label
-    
-    def get_group(self):
-        return self.context.get_group()
-    
-    def get_sittings(self):
-        return self.context.get_sittings(
-            start_date=self.date, end_date=self.date + datetime.timedelta(days=1))
-    

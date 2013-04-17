@@ -220,14 +220,6 @@
         <allow interface="zope.publisher.interfaces.IPublishTraverse" />
     </class>
     
-    <class class=".schedule.DailySchedulingContext">
-        <require permission="zope.Public"
-            interface=".interfaces.IDailySchedulingContext"
-            set_schema=".interfaces.IDailySchedulingContext"
-        />
-        <allow interface="zope.publisher.interfaces.IPublishTraverse" />
-    </class>
-    
     <!-- browser resource adapters -->
     <view name="rh" 
         type="*"

@@ -320,7 +320,7 @@ class AppSetup(object):
         api = self.context[u"api"] = APISection(
             title=_(u"Bungeni API"),
             description=_(u"Bungeni REST API"),
-            default_name="index.html",
+            default_name="index",
         )
 
         api[u"workspace"] = copy.deepcopy(workspace)
@@ -330,7 +330,7 @@ class AppSetup(object):
         self.context["oauth"] = OAuthSection(
             title=_(u"Bungeni OAuth API"),
             description=_(u"Bungeni OAuth API"),
-            default_name="index.html",
+            default_name="index",
         )
         admin[u"applications"] = domain.OAuthApplicationContainer()
         to_locatable_container(domain.OAuthApplication, admin[u"applications"])

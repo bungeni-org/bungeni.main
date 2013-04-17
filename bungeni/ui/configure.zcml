@@ -118,4 +118,9 @@
         factory=".debaterecord.DebateRecordTraverser"
         provides="zope.publisher.interfaces.IPublishTraverse"
     />
+    <adapter for="bungeni.models.domain.UserContainer
+                  bungeni.ui.interfaces.IBungeniAPILayer"
+         factory=".api.APIUserContainerTraverser"
+         provides="zope.publisher.interfaces.IPublishTraverse"
+     />
 </configure>

@@ -70,7 +70,7 @@ def setup_customization_ui():
     def register_api_view(type_key, for_):
         UI_ZC_DECLS.append(register_api_view.TMPL.format(**locals()))
     register_api_view.TMPL = """
-            <browser:page name="view"
+            <browser:page name="index"
                 for="{for_}"
                 class="bungeni.ui.api.APIObjectView"
                 permission="bungeni.{type_key}.View"
@@ -98,7 +98,7 @@ def setup_customization_ui():
         register_form_view(type_key, "Add", "add", container_interface_qualname,
             "bungeni.ui.forms.common.AddForm")
         # view
-        register_form_view(type_key, "View", "view", model_interface_qualname,
+        register_form_view(type_key, "View", "index", model_interface_qualname,
             "bungeni.ui.forms.common.DisplayForm")
         
         register_api_view(type_key, model_interface_qualname)
