@@ -138,7 +138,7 @@ class TI(object):
                 defaults to the type_key for workflowed types that DO NOT specify
                 is None for non-workflowed types
             workflow 
-                same workflow insatnce may be used by multiple types
+                a same workflow instance may be used by multiple (non-custom) types
                 is None for non-workflowed types
             interface
                 the manually applied application-dedicated model interface 

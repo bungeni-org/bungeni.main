@@ -22,6 +22,8 @@ import zope.lifecycleevent
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
 from bungeni.utils import error
+from bungeni.ui.interfaces import IFormEditLayer
+from bungeni.ui.utils import common
 
 
 GRANT, DENY = 1, 0
@@ -36,6 +38,15 @@ IntAsSetting = {
 def named__str__(self, name):
     return "<%s.%s '%s' object at %s>" % (
         self.__module__, type(self).__name__, name, hex(id(self)))
+
+def in_edit_mode():
+    """Is current UI view in mode "edit" i.e. are we modifying bungeni content?
+    
+    As general practice, to avoid user surprises, we do not allow a workflow 
+    transition when UI is displaying the doc in "edit" mode (and possibly with
+    unsaved modifications).
+    """
+    return IFormEditLayer.providedBy(common.get_request())
 
 
 class Facet(object):
@@ -175,7 +186,7 @@ class Transition(object):
         self.order = order
         self.require_confirmation = require_confirmation
         self.note = note
-        self.condition_args=condition_args #send all local args to condition
+        self.condition_args=condition_args # send all local args to condition
         self.user_data = user_data
     
     @property
@@ -755,17 +766,21 @@ class WorkflowController(object):
     def _get_transitions(self, trigger_ifilter=None, conditional=False):
         """Retrieve all possible transitions from current status.
         If trigger_ifilter is not None, filter on trigger interface.
-        If conditional, then only transitions that pass the condition.
+        If conditional, then only if not in edit mode, and only transitions 
+        that pass the condition.
         """
         transitions = self.workflow.get_transitions_from(
             self.state_controller.get_status())
         # now filter these transitions to retrieve all possible
         # transitions in this context, and return their ids
         filtered_transitions = []
+        IN_EDIT_MODE = in_edit_mode()
         for transition in transitions:
-            if trigger_ifilter != None and transition.trigger != trigger_ifilter:
-                    continue
+            if trigger_ifilter is not None and transition.trigger != trigger_ifilter:
+                continue
             if conditional:
+                if IN_EDIT_MODE:
+                    continue
                 if transition.condition is not None:
                     if transition.condition_args:
                         if not transition.condition(self.context, 
