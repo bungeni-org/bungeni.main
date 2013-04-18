@@ -1,0 +1,19 @@
+ul.search-results{
+    margin-top: 0.5em;
+}
+
+ul.search-results li{
+    padding-bottom: 0.5em;
+    list-style-type:none;
+    list-style-image:none;
+    border-top: 1px solid #eee;
+}
+
+ul.search-results li span.search-result-title{
+    color:#333;
+}
+
+ul.search-results li span.search-result-meta{
+    color:#999;
+    font-size:95%;
+}

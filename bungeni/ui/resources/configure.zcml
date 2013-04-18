@@ -132,28 +132,28 @@
     />
   </resourceLibrary>
   <!-- Search Page resources --> 
-	 <resourceLibrary name="highlight">
-	 	 <directory
-			 source="search/highlight"
-			 include="jquery-highlight-min.js highlight.css"
-		 />
-	 </resourceLibrary>
-	 <resourceLibrary name="advanced-search"
-	                  require="jquery">
-	   <directory
-	    source="search"
-	    include="advanced-search.js"
-	   />
-	 </resourceLibrary>
-	 <resourceLibrary
-	    name="tiny-mce-config"
-	    require="tiny-mce">
-	    <directory
-	      source="tinymceconfig"
-	      include="tinymce_config.js"
-	      />
-	 </resourceLibrary>
-	 <resourceLibrary name="debate-css">
+     <resourceLibrary name="highlight">
+          <directory
+             source="search/highlight"
+             include="jquery-highlight-min.js highlight.css"
+         />
+     </resourceLibrary>
+     <resourceLibrary name="search-css">
+       <directory
+        source="search"
+        include="search.css"
+       />
+     </resourceLibrary>  
+
+     <resourceLibrary
+        name="tiny-mce-config"
+        require="tiny-mce">
+        <directory
+          source="tinymceconfig"
+          include="tinymce_config.js"
+          />
+     </resourceLibrary>
+     <resourceLibrary name="debate-css">
       <directory source="debate"
           include="debate.css"/>       
    </resourceLibrary>

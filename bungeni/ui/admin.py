@@ -14,13 +14,12 @@ from zope.formlib import form, namedtemplate
 from bungeni.alchemist import Session
 from bungeni.alchemist import ui
 from bungeni.models import domain, interfaces
-# !+DISABLE_XAPIAN
-#from bungeni.core.index import IndexReset
 from bungeni.core.serialize import batch_serialize
 from bungeni.ui import browser
 from bungeni.ui.interfaces import IBungeniSkin, ISerializationManager
-from bungeni.utils import register
+from bungeni.ui.widgets import TextWidget
 from bungeni.ui.i18n import _
+from bungeni.utils import register
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="email-settings",
     protect={"zope.ManageSite": register.VIEW_DEFAULT_ATTRS})
@@ -33,6 +32,18 @@ class EmailSettings(ui.EditForm):
             component.getUtility(interfaces.IBungeniEmailSettings)()
         self.adapters = {interfaces.IBungeniEmailSettings : settings}
         super(EmailSettings, self).update()
+
+@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="search-settings",
+    protect={"zope.ManageSite": register.VIEW_DEFAULT_ATTRS})
+class SearchSettings(ui.EditForm):
+    
+    form_fields = form.Fields(interfaces.ISearchSettings)
+    form_fields["search_uri"].custom_widget = TextWidget
+    
+    def update(self):
+        settings = component.getUtility(interfaces.ISearchSettings)()
+        self.adapters = {interfaces.ISearchSettings : settings}
+        super(SearchSettings, self).update()
 
 
 
@@ -57,23 +68,6 @@ class UserSettings(ui.EditForm):
         self.adapters = {interfaces.IBungeniUserSettings : settings,
                           interfaces.IUser : user}
         super(UserSettings, self).update()
-
-@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="xapian-settings",
-    like_class=EmailSettings)
-class XapianSettings(browser.BungeniBrowserView):
-    
-    render = ViewPageTemplateFile("templates/xapian-settings.pt")
-    
-    def __init__(self, context, request):
-        return super(XapianSettings, self).__init__(context, request)
-    
-    def __call__(self):
-        if self.request.method == "POST":
-            pass
-            # !+DISABLE_XAPIAN
-            #IndexReset().start()
-        return self.render()
-    
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="registry-settings",
     like_class=EmailSettings)

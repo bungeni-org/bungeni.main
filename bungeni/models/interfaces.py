@@ -323,6 +323,12 @@ class IBungeniEmailSettings(interface.Interface):
         default = False,
     )
 
+class ISearchSettings(interface.Interface):
+    search_uri = schema.TextLine(
+        title=_("Full URL to eXist REST search."),
+        default=u"http://localhost:8088/exist/restxq/ontology_bungeni"
+    )
+
 class IAttachment(IOwned): pass
 class IAttachmentContainer(IAlchemistContainer): pass
 # !+VERSION_CLASS_PER_TYPE

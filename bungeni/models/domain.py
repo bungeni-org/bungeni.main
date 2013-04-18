@@ -17,7 +17,6 @@ import datetime
 
 from zope import interface, location
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-import ore.xapian.interfaces
 from bungeni import alchemist
 from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
@@ -802,7 +801,6 @@ class Attachment(HeadParentedMixin, Entity):
         "email"]
     interface.implements(
         interfaces.IAttachment, # IOwned
-        ore.xapian.interfaces.IIndexable, # !+bungeni_custom
     )
     
     @property # !+OWNERSHIP

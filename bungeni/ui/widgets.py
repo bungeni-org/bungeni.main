@@ -25,7 +25,7 @@ import zope.security.proxy
 import zope.traversing
 from zope.formlib.widgets import (TextAreaWidget, FileWidget, RadioWidget,
     DropdownWidget)
-from zope.formlib.itemswidgets import (ItemsEditWidgetBase, ItemDisplayWidget)
+from zope.formlib import itemswidgets
 from zope.formlib import form
 from zope.formlib.namedtemplate import NamedTemplate
 from zope.i18n import translate
@@ -102,6 +102,12 @@ class MultiDateTextAreaWidget(TextAreaWidget):
         if value:
             return u"\n".join(date.strftime("%F") for date in value)
         return u""
+
+
+class MultiCheckBoxWidget(itemswidgets.MultiCheckBoxWidget):
+    def __init__(self, field, request):
+        itemswidgets.MultiCheckBoxWidget.__init__(self, 
+            field, field.value_type.vocabulary, request)
 
 def CustomRadioWidget(field, request):
     """ to replace the default combo box widget for a schema.choice field"""
@@ -882,7 +888,7 @@ class IAutoCompleteWidget(interface.Interface):
     """Markup interface for autocomplete widget
     """
 
-class _AutoCompleteWidget(ItemsEditWidgetBase):
+class _AutoCompleteWidget(itemswidgets.ItemsEditWidgetBase):
     """Zope3 Implementation of YUI autocomplete widget.
     Can be used with common ChoiceProperty. remote_data - parameter to choose
     type of datasourse, if False (by default, when local) else True when remote
@@ -1294,7 +1300,7 @@ class TermsDisplayWidget(zope.formlib.widget.UnicodeDisplayWidget):
             "".join([ "<li>%s</li>" % (t) for t in term_texts ]))
 
 
-class YesNoDisplayWidgetBase(ItemDisplayWidget):
+class YesNoDisplayWidgetBase(itemswidgets.ItemDisplayWidget):
 
     def __call__(self):
         value = self._getFormValue()

@@ -7,19 +7,6 @@ import zope.security.testing
 from bungeni.models.testing import setup_db
 
 
-''' !+UNUSED(mr, may-2012)
-def setup_indexer():
-    import index
-    store_dir = index.setupStorageDirectory() + "-test"
-    # search connection hub
-    searcher = index.search.IndexSearch(store_dir)
-    # async indexer 
-    indexer = index.xappy.IndexerConnection(store_dir)
-    # field definitions
-    index.setupFieldDefinitions(indexer)
-'''
-
-
 def create_principal(id="manager", title="Manager", groups=()):
     return zope.security.testing.Principal(id, title, groups)
 

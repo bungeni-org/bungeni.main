@@ -23,6 +23,7 @@
     
     <!-- pakage for resource registration -->
     <include package=".resources" />
+    <include package=".search" />
     
     <!-- Javascript -->
     <include package="ore.yui"/>
@@ -38,7 +39,6 @@
     <include file="resources.zcml"/>
     <include package=".admin"/>
     <!-- -->
-    <include file="search.zcml" />
     <include file="views.zcml" />
     <include package=".viewlets" />
     <include package=".forms"/>

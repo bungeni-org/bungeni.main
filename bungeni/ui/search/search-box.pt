@@ -1,0 +1,12 @@
+<div id="portal-search" i18n:domain="bungeni">
+  <form tal:attributes="action view/action_url"
+        method="get" id="search-form" class="section-form">
+    <p>
+      <input tal:attributes="value python: request.form.get('form.search', '')"
+             class="textType" id="form.search" name="form.search"
+             size="20" type="text" value=""/>
+      <input type="submit" class="context" id="form.actions.execute-search"
+             name="form.actions.execute-search" i18n:attributes="value" value="Search"/>
+    </p>
+  </form>
+</div>

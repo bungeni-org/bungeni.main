@@ -43,13 +43,6 @@
         permission="zope.Public"
         weight="30"
     />
-    <browser:viewlet name="bungeni.navigation.search"
-        for="*"
-        manager="ploned.ui.interfaces.IPortalHeaderManager"
-        class=".search.SearchViewlet"
-        permission="zope.Public"
-        weight="10000"
-    />
     <!--
         IPortalHeaderManager ViewletManager defined in ploned/ui/viewlet.zcml
     -->

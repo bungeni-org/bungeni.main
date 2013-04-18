@@ -58,7 +58,6 @@ setup(name='bungeni',
                 #'chameleon.html',
             # The following are used by bungeni.core
             #
-                        'ore.xapian',
                         'z3c.dav',
                         'plone.transforms',
                         'pika',
@@ -83,8 +82,6 @@ setup(name='bungeni',
     {
     'console_scripts' : [
         'bungeni-reset-db = bungeni.core.schema:reset_database',
-                # !+DISABLE_XAPIAN
-                #'bungeni-sync-index = bungeni.core.index:reset_index',
     ],
     'paste.app_factory' : [
         'main = bungeni.server.startup:application_factory'

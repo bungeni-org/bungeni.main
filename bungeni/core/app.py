@@ -127,11 +127,6 @@ class AppSetup(object):
             </configure>
             """ % (capi.get_path_for("translations", "bungeni")))
         
-        # ensure indexing facilities are setup(lazy)
-        # !+DISABLE_XAPIAN
-        #import index
-        #index.setupFieldDefinitions(index.indexer)
-        
         sm = site.LocalSiteManager(self.context)
         self.context.setSiteManager(sm)
         
@@ -271,13 +266,13 @@ class AppSetup(object):
             description=_(u"Manage bungeni settings"),
             default_name="admin-index",
             marker=model_interfaces.IBungeniAdmin)
-        alsoProvides(admin, interfaces.ISearchableSection)
         
         content = admin["content"] = Section(
             title=_(u"Content"),
             description=_(u"browse bungeni content"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="browse-admin")
+        alsoProvides(content, interfaces.ISearchableSection)
         
         admin["email-settings"] = Section(
             title=_(u"email settings"),
@@ -285,11 +280,11 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="email-settings")
         
-        admin["xapian-settings"] = Section(
-            title=_(u"search index settings"),
-            description=_(u"manage search index settings"),
+        admin["search-settings"] = Section(
+            title=_(u"search settings"),
+            description=_(u"manage bungeni email settings"),
             marker=model_interfaces.IBungeniAdmin,
-            default_name="xapian-settings")
+            default_name="search-settings")
         
         admin["registry-settings"] = Section(
             title=_(u"registry settings"),

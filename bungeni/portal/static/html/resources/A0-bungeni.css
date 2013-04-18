@@ -122,16 +122,6 @@ table.side-by-side th span.fieldRequired {
     overflow: auto;
 }
 
-.widget-multicheckboxwidget .widget label {
-  display: inline;
-  margin-right: 1em;
-    font-size: 0.9em;
-}
-
-.widget-multicheckboxwidget br {
-   display: none;
-}
-
 div.content-left-column{
 float: left;
 width : 30%;

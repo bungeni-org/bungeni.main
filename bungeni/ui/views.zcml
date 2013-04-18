@@ -127,61 +127,12 @@
         permission="bungeni.user.Edit"
         allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
         />
-	
-    <!-- Content Search Form -->
-
-    <!--<browser:page name="search"
-        for="bungeni.core.interfaces.ISection"
-        permission="!+VIEW_PERMISSION"
-        class=".search.PagedSearch"
-    />-->
     
-    <browser:page name="search"
-        for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.Public"
-        class=".search.PagedSearch"
-    />
-    
-    <browser:page name="search"
-        for="bungeni.core.interfaces.ISearchableSection"
-        permission="zope.Public"
-        class=".search.PagedSearch"
-    />
-
-
-    <!-- Advanced search form -->
-    <browser:page name="advanced-search"
-        for="bungeni.core.interfaces.ISearchableSection"
-        permission="zope.Public"
-        class=".search.AdvancedPagedSearch"
-    />
-
-    <browser:page
-     for="*"
-     name="ajax_get_class_statuses"
-     permission="zope.Public"
-     class=".search.AjaxGetClassStatuses"
-    />
-
     <!-- signatories -->
     <browser:page name="signatory-review"
         for="bungeni.models.interfaces.IFeatureSignatory"
         permission="bungeni.signatory.Act"
         class=".redirect.SignatoryReview"
-    />
-
-    <browser:page
-     for="*"
-     name="ajax_get_class_fields"
-     permission="zope.Public"
-     class=".search.AjaxGetClassFields"
-    />
-
-    <!-- View for item in search results -->
-    <browser:page name="searchresult"
-        for="ore.xapian.interfaces.IIndexable"
-        permission="zope.Public"
-        class=".search.SearchResultItem"
     />
 
   <!-- Reporting -->
@@ -305,33 +256,6 @@
      permission="bungeni.sitting_attendance.Edit"
      />
      
-  <!-- Similar Content -->
-
-  <browser:page
-    for="bungeni.models.interfaces.IBungeniContent"
-    permission="zope.Public"
-    name="similar"
-    class=".search.Similar"
-    />
-    
-    
-    <!-- business -->
-    <browser:page name="business-index"
-        for="*"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".redirect.BusinessIndexRedirect"
-        permission="zope.Public"
-    />
-
-  <!-- members -->
-
-    <browser:page
-        name="members-index"
-        for="*"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".redirect.MembersIndexRedirect"
-        permission="zope.Public"
-    />
 
   <!-- archive -->
 

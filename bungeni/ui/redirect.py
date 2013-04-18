@@ -81,13 +81,6 @@ class _IndexRedirect(BrowserView):
         log.warn("%s: %s -> %s" % (
             self.__class__.__name__, request.getURL(), self.index_name))
         request.response.redirect(self.index_name)
-class WorkspaceContainerIndexRedirect(_IndexRedirect):
-    # !+TRAILING_SLASH(mr, sep-2010) this is still needed?
-    index_name = url.set_url_context("pi")
-class BusinessIndexRedirect(_IndexRedirect):
-    index_name = "whats-on"
-class MembersIndexRedirect(_IndexRedirect):
-    index_name = "current"
 class ArchiveIndexRedirect(_IndexRedirect):
     index_name = "browse"
 class AdminIndexRedirect(_IndexRedirect):

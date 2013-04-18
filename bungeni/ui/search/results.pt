@@ -1,0 +1,46 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      i18n_domain="bungeni" tal:omit-tag="">
+  <div class="search_results">
+    <tal:results tal:repeat="doc view/search_results/items"
+        tal:condition="view/search_results/items|nothing">
+        <ul class="search-results">
+                <li>
+                    <span class="search-result-title">
+                        <tal:link tal:condition="doc/url">
+                            <a  tal:condition="doc/url" 
+                                tal:attributes="href doc/url" 
+                                    tal:content="doc/title"/><br/>
+                        </tal:link>
+                        <tal:nolink tal:condition="not:doc/url">
+                            <span tal:content="doc/title"/>
+                            <span i18n:translate="">(unknown location)</span><br/>
+                        </tal:nolink>
+                    </span>
+                        <span class="search-result-meta">
+                        <span tal:content="doc/type"/>
+                        <span> · </span>
+                        <span tal:content="doc/author|nothing"/>
+                        <span> · </span>
+                        <span tal:content="doc/status"/>
+                        <span> · </span>
+                        <span tal:content="doc/status_date|nothing"/>
+                        <span> · </span>
+                    </span>
+                </li>
+        </ul>
+    </tal:results>
+    <div tal:condition="view/search_results/items|nothing"
+        tal:define="current_page view/search_results/current_page;">
+        <span tal:repeat="page view/search_results/pages"
+            tal:define="href_base string: ${request/PATH_INFO}?${view/search_results/page_query_string}">
+            <a tal:attributes="href string:${href_base}&page=${page}"
+                tal:content="page" tal:condition="python:current_page!=page">
+            </a>
+            <span tal:condition="python:current_page==page"
+                tal:content="page">
+            </span>
+        </span>
+    </div>
+  </div>
+</html>
