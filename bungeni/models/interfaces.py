@@ -208,6 +208,13 @@ class IDoc(IBungeniContent):
     """Doc - dedicated interface.
     """
 
+# !+IBungeniParliamentaryContent clean out deteriorated usage, clarify 
+# intention for these two as well as IBungeniContent, get rid of at least one
+def is_legal_doc(context):
+    # doc (but not event) types are legal documents
+    return IDoc.providedBy(context) and not IEvent.providedBy(context)
+
+
 class ISitting(interface.Interface): pass
 class ISittingReport(interface.Interface): pass
 

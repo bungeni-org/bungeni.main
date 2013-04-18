@@ -14,7 +14,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.core.workflow.interfaces import IWorkflowController, \
     NoTransitionAvailableError, InvalidStateError
 
-import bungeni.models.interfaces as interfaces
+from bungeni.models import interfaces
 from bungeni.models.utils import (
     get_chamber_for_group, 
     is_current_or_delegated_user, 
@@ -90,11 +90,7 @@ def assign_ownership(context):
     assign_role("bungeni.Drafter", current_user_login, context)
     
     # bungeni.Owner - legal documents only
-    def is_legal_doc(context):
-        # doc (but not event) types are legal documents
-        return (interfaces.IDoc.providedBy(context) and 
-            not interfaces.IEvent.providedBy(context))
-    if is_legal_doc(context):
+    if interfaces.is_legal_doc(context):
         owner_login = _determine_related_user(context).login
         log.debug("assign_ownership: role %r to user %r on [%s]" % (
             "bungeni.Owner", owner_login, context))

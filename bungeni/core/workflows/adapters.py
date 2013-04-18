@@ -93,7 +93,7 @@ def register_custom_types():
     This is called prior to loading of the workflows for these custom types.
     Returns (type_key, TI) for the newly created TI instance.
     """
-        
+    
     def parse_elem(type_elem):
         type_key = misc.xml_attr_str(type_elem, "name")
         workflow_key = misc.xml_attr_str(type_elem, "workflow", default=type_key)

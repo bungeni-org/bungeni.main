@@ -51,50 +51,48 @@ class ChangeDataProvider(object):
         """
         interaction = getInteraction()
         changes = []
-
+        
         def append_visible_changes_on_item(item):
             permission = view_permission(item)
             for c in domain.get_changes(item, *self.include_change_actions):
                 if checkPermission(permission, c):
                     changes.append(c)
-    
+        
+        def include_feature_changes(wf, feature_name):
+            # !+ interfaces.IFeatureX.providedBy(self.head)
+            return wf.has_feature(feature_name) and \
+                feature_name in self.include_change_types
+            
         # changes direct on head item
         if "head" in self.include_change_types:
             append_visible_changes_on_item(self.head)
         
-        # changes on sub-items -- only Parliamentary Content may have sub-items
-        if interfaces.IBungeniParliamentaryContent.providedBy(self.head):
-            hwf = IWorkflow(self.head)
-            
-            # changes on item signatories
-            if "signatory" in self.include_change_types:
-                signatories = [ s for s in self.head.item_signatories
-                    if interaction.checkPermission("bungeni.signatory.View", s)
-                ]
-                for s in signatories:
-                    append_visible_changes_on_item(s)
-            
-            # changes on item attachments
-            if ("attachment" in self.include_change_types 
-                    and hwf.has_feature("attachment") #!+IFeatureAttachment?
-                ):
-                attachments = [ f for f in self.head.attachments
-                    if interaction.checkPermission("bungeni.attachment.View", f)
-                ]
-                for f in attachments:
-                    append_visible_changes_on_item(f)
-            
-            # changes on item events
-            if ("event" in self.include_change_types 
-                    # and workflow.has_feature("event"): #!+IEventable?
-                    # at least no recursion, on events on events...
-                    and not interfaces.IEvent.providedBy(self.head)
-                ):
-                events = [ e for e in self.head.sa_events
-                    if interaction.checkPermission("bungeni.event.View", e)
-                ]
-                for e in events:
-                    append_visible_changes_on_item(e)
+        # changes on sub-items
+        hwf = IWorkflow(self.head)
+        
+        # changes on item signatories
+        if include_feature_changes(hwf, "signatory"):
+            signatories = [ s for s in self.head.item_signatories
+                if interaction.checkPermission("bungeni.signatory.View", s)
+            ]
+            for s in signatories:
+                append_visible_changes_on_item(s)
+        
+        # changes on item attachments
+        if include_feature_changes(hwf, "attachment"):
+            attachments = [ f for f in self.head.attachments
+                if interaction.checkPermission("bungeni.attachment.View", f)
+            ]
+            for f in attachments:
+                append_visible_changes_on_item(f)
+        
+        # changes on item events
+        if include_feature_changes(hwf, "event"):
+            events = [ e for e in self.head.sa_events
+                if interaction.checkPermission("bungeni.event.View", e)
+            ]
+            for e in events:
+                append_visible_changes_on_item(e)
         
         # sort aggregated changes by date_active
         changes = [ dc[1] for dc in 
