@@ -236,7 +236,6 @@ SEARCH_VIEW = "search"
 @register.view(ISearchableSection, ui_ifaces.IBungeniSkin, 
     name=SEARCH_VIEW, protect={ "zope.Public": register.VIEW_DEFAULT_ATTRS })
 class Search(form.PageForm, browser.BungeniBrowserView):
-    zope.interface.implements(interfaces.ISearchResults)
     action_method="get"
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.FormFields(interfaces.ISearchRequest)
