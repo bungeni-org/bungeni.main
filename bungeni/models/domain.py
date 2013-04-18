@@ -1128,7 +1128,8 @@ class DebateRecord(Entity):
     interface.implements(interfaces.IDebateRecord)
     media = one2many("media",
         "bungeni.models.domain.DebateMediaContainer", "debate_record_id")
-
+    takes = one2many("takes",
+        "bungeni.models.domain.DebateTakeContainer", "debate_record_id")
     type = "debate_record"
 
 class DebateRecordItem(Entity):

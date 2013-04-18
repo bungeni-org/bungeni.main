@@ -475,11 +475,20 @@
    />
       
    <!-- Debate Record -->
+   <browser:defaultView name="index"
+        for="bungeni.models.interfaces.IDebateRecord"
+    />
    <browser:page
       for="bungeni.models.interfaces.IDebateRecord"
       name="index"
       class="bungeni.ui.debaterecord.DebateRecordView"
       permission="bungeni.debate_record.View"
+   />
+   <browser:page
+      for="bungeni.models.interfaces.IDebateRecord"
+      name="generate-takes"
+      class="bungeni.ui.debaterecord.GenerateDebateRecordTakes"
+      permission="bungeni.debate_take.Edit"
    />
    <!-- Bungeni API -->
    <browser:page

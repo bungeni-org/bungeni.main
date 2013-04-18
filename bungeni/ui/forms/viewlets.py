@@ -18,6 +18,7 @@ from zc.resourcelibrary import need
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import sqlalchemy.sql.expression as sql
 
+from ploned.ui.interfaces import IAboveContentManager
 #from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
 from bungeni.alchemist import Session
 from bungeni.alchemist import utils
@@ -53,6 +54,14 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
             (name, viewlet) for name, viewlet in viewlets
             if viewlet.for_display ]
 
+
+class AboveContentViewletManager(manager.ViewletManagerBase):
+    interface.implements(IAboveContentManager)
+
+    def filter(self, viewlets):
+        viewlets = super(AboveContentViewletManager, self).filter(viewlets)
+        return [(name, viewlet) for name, viewlet in viewlets if
+            viewlet.available]
 
 class SubformViewlet(table.AjaxContainerListing):
     """A container listing of the items indicated by "sub_attr_name".

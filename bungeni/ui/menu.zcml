@@ -1224,7 +1224,7 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ISitting"
-        action="debate/view"
+        action="debate"
         title="Debate Record"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -1276,7 +1276,7 @@
         title="Takes"
         order="3"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.debate_takes.View"
+        permission="bungeni.debate_take.View"
     />
    <browser:viewlet
      name="login"

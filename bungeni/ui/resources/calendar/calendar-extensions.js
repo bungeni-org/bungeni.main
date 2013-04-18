@@ -179,7 +179,7 @@ function handle_lightbox(event_id){
 function render_event_url(event){
     //get actual event id
     ev_id = event.id.split("-").pop();
-    url = cal_globals.view_url + "/sittings/obj-" + ev_id + "/view";
+    url = cal_globals.view_url + "/sittings/obj-" + ev_id;
     return ("&nbsp;<a class='quick-view' href='" + url + "'>" + 
         cal_globals.text_view + "</a>&nbsp;");
 }

@@ -1611,6 +1611,36 @@ class DebateMediaDescriptor(ModelDescriptor):
         ),
     ]
 
+class DebateTakeDescriptor(ModelDescriptor):
+    localisable = False
+    fields = [
+        F(name="start_date",
+          label="Start Date",
+          required=True,
+          value_type="date",
+          render_type="date"
+        ),
+        F(name="end_date",
+          label="End Date",
+          required=True,
+          value_type="date",
+          render_type="date"
+        ),
+        F(name="debate_take_name",
+          label="Debate Take Name",
+          required=True,
+          value_type="text",
+          render_type="rich_text",
+        ),
+        F(name="transcriber_id",
+          label="Transcriber",
+          required=True,
+          value_type="user",
+          render_type="single_select",
+          vocabulary="user"
+        ),
+    ]
+
 class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     localizable = True
     #display_name = "Discussion"

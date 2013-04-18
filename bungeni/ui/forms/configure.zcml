@@ -254,58 +254,6 @@ to e.g. "bungeni.{type}.Edit").
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
 
-
-<!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
-  <browser:viewlet
-     name="bungeni.viewlet.user_id"
-     manager="ploned.ui.interfaces.IAboveContentManager"
-     class=".viewlets.UserIdViewlet"
-     for="bungeni.models.interfaces.IGroupMembership"
-     permission="!+VIEW_PERMISSION"
-     weight="10"
-     />
-  for some reasons committee memberships need to be treated explicitly
-  <browser:viewlet
-     name="bungeni.viewlet.user_id"
-     manager="ploned.ui.interfaces.IAboveContentManager"
-     class=".viewlets.UserIdViewlet"
-     for="bungeni.models.interfaces.ICommitteeMember"
-     permission="!+VIEW_PERMISSION"
-     weight="10"
-     />
--->
-
-  <!--browser:viewlet
-     name="bungeni.viewlet.ws-user_id"
-     manager="ploned.ui.interfaces.IAboveContentManager"
-     class=".viewlets.UserIdViewlet"
-     for="bungeni.ui.workspace.WorkspaceView"
-     permission="!+VIEW_PERMISSION"
-     weight="10"
-     /-->
-
-
-  <!--browser:viewlet
-     name="bungeni.viewlet.user_id"
-     manager="ploned.ui.interfaces.IAboveContentManager"
-     class=".viewlets.GroupIdViewlet"
-     for="bungeni.models.interfaces.ICommittee"
-     permission="!+VIEW_PERMISSION"
-     weight="10"
-     /-->
-
-<!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
-  <browser:viewlet
-     name="bungeni.viewlet.group_id"
-     manager="ploned.ui.interfaces.IAboveContentManager"
-     class=".viewlets.GroupIdViewlet"
-     for="bungeni.models.interfaces.IGroup"
-     permission="!+VIEW_PERMISSION"
-     weight="10"
-     />
--->
-
-
   <!-- Sitting -->
 
   <browser:viewlet

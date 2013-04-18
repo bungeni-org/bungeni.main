@@ -5,7 +5,13 @@
     i18n_domain="bungeni">
 
     <include file="workspace.zcml" />
-
+    <browser:viewletManager
+       name="plone.abovecontent"
+       class="bungeni.ui.forms.viewlets.AboveContentViewletManager"
+       provides="ploned.ui.interfaces.IAboveContentManager"
+       layer="bungeni.ui.interfaces.IBungeniSkin"
+       permission="zope.Public"
+     />
     <!--
     <browser:viewlet
         name="bungeni.content-actions-portlet"
@@ -94,5 +100,11 @@
         permission="bungeni.report.View"
         manager="ploned.ui.interfaces.IBelowContentManager"
         class=".reports.ReportPreview"
+    />
+    <browser:viewlet name="bungeni.debate_takes"
+        for="bungeni.models.domain.DebateTakeContainer"
+        class="bungeni.ui.debaterecord.GenerateTakesViewlet"
+        manager="ploned.ui.interfaces.IAboveContentManager"
+        permission="bungeni.debate_take.Add"
     />
 </configure>

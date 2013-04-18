@@ -256,6 +256,7 @@ TYPE_REGISTRY = [
     # non-workflowed
     ("o_auth_application", TI(None, interfaces.IOAuthApplication, domain.OAuthApplication, None)),
     ("debate_media", TI(None, interfaces.IDebateMedia, domain.DebateMedia, None)),
+    ("debate_take", TI(None, interfaces.IDebateTake, domain.DebateTake, None)),
     ("user_delegation", TI(None, interfaces.IUserDelegation, domain.UserDelegation, None)),
     ("title_type", TI(None, interfaces.ITitleType, domain.TitleType, None)),
     ("member_title", TI(None, interfaces.IMemberTitle, domain.MemberTitle, None)),

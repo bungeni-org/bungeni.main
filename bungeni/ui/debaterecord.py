@@ -8,17 +8,17 @@ from zope.app.security.settings import Allow
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.publisher.interfaces import NotFound
 from zc.resourcelibrary import need
-from zc.table import column
+from zope.formlib.namedtemplate import NamedTemplate
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
+from bungeni.models.interfaces import IDebateTakeContainer
 from bungeni.ui.i18n import _
 from bungeni.ui import forms
-from bungeni.ui.table import TableFormatter
 from bungeni.core.interfaces import IDebateRecordConfig
-from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.ui.utils import url, date, common
+from bungeni.ui.utils import url, common
 from bungeni.ui.browser import BungeniBrowserView
+
 
 class DebateRecordView(BungeniBrowserView):
     template = ViewPageTemplateFile("templates/debate-record.pt")
@@ -39,6 +39,7 @@ class DebateRecordView(BungeniBrowserView):
                 return media.media_path
         return None
 
+
 class DebateRecordTraverser(SimpleComponentTraverser):
     """Traverser for debate record objects"""
 
@@ -57,61 +58,45 @@ class DebateRecordTraverser(SimpleComponentTraverser):
             return view
         if hasattr(debate, name):
             return getattr(debate, name)
-        raise NotFound(workspace, name)
+        raise NotFound(debate, name)
 
 
-class DebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
+class GenerateTakesViewlet(object):
+    available = True
+    render = ViewPageTemplateFile("templates/debate-takes.pt")
+
+    def __init__(self, context, request, view, manager):
+        self.context = context
+        self.request = request
+        trusted = removeSecurityProxy(self.context)
+        if len(trusted.__parent__.debate_takes) > 0:
+            self.available = False
+
+    def update(self):
+        self.form = GenerateDebateRecordTakes(self.context, self.request)
+
+
+class GenerateDebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
     """View to generate takes
     """
     form_fields = []
-    render = ViewPageTemplateFile("templates/debate-takes.pt")
+    template = NamedTemplate("alchemist.subform")
 
     def __init__(self, context, request):
-        self.context = removeSecurityProxy(context)
+        if IDebateTakeContainer.providedBy(context):
+            self.context = removeSecurityProxy(context).__parent__
+        else:
+            self.context = removeSecurityProxy(context)
         self.prm = IPrincipalRoleMap(self.context)
-        super(DebateRecordTakes, self).__init__(context, request)
-
-    def __call__(self):
-        self.update()
-        self.listing = self.formatted_listing()
-        return self.render()
-
-    def columns(self):
-        date_formatter = date.getLocaleFormatter(common.get_request(),
-            "dateTime", "medium")
-        listing_columns = [
-            column.GetterColumn(
-                title=_("Take start time"),
-                getter=lambda i,f: date_formatter.format(i.start_date)
-            ),
-            column.GetterColumn(
-                title=_("Take end time"),
-                getter=lambda i,f: date_formatter.format(i.end_date)
-            ),
-            column.GetterColumn(
-                title=_("Take name"),
-                getter=lambda i,f: i.debate_take_name
-            ),
-            column.GetterColumn(
-                title=_("Take transcriber"),
-                getter=lambda i,f: IDCDescriptiveProperties(i.user).title
-            ),
-        ]
-        return listing_columns
-
-    def formatted_listing(self):
-        formatter = TableFormatter(self.context, self.request,
-            self.context.debate_takes, columns=self.columns()
-        )
-        formatter.updateBatching()
-        return formatter()
+        self.request = request
+        #super(GenerateDebateRecordTakes, self).__init__(context, request)
 
     def get_take_duration(self):
         return component.getUtility(IDebateRecordConfig).get_take_duration()
 
     def get_transcriber_role(self):
         return component.getUtility(IDebateRecordConfig).get_transcriber_role()
-    
+
     def get_transcribers(self):
         transcribers = []
         transcriber_role = self.get_transcriber_role()
@@ -131,17 +116,19 @@ class DebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
         b_take_count = take_count
         while (take_count / 26):
             take_count = take_count / 26
-            take_name_prefix = take_name_prefix + chr(64+take_count)
-        return take_name_prefix + chr(65+(b_take_count%26))
+            take_name_prefix = take_name_prefix + chr(64 + take_count)
+        return take_name_prefix + chr(65 + (b_take_count % 26))
 
     def has_no_takes(self, action=None):
         return False if len(self.context.debate_takes) > 0 else True
-    
 
     @formlib.form.action(label=_("Generate takes"), name="generate",
         condition=has_no_takes)
     def handle_generate_takes(self, action, data):
         transcribers = self.get_transcribers()
+        next_url = url.absoluteURL(self.context, self.request)
+        if not transcribers:
+            return self.request.response.redirect(next_url + "/takes")
         sitting = self.context.sitting
         take_time_delta = datetime.timedelta(seconds=self.get_take_duration())
         current_end_time = sitting.start_date
@@ -162,8 +149,7 @@ class DebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
             take.transcriber_id = transcribers[
                 take_count % len(transcribers)].user_id
             take.debate_take_name = self.get_take_name(take_count)
-            take_count = take_count+1
+            take_count = take_count + 1
             session.add(take)
         session.flush()
-        next_url = url.absoluteURL(self, self.request)
-        self.request.response.redirect(next_url)
+        return self.request.response.redirect(next_url + "/takes")
