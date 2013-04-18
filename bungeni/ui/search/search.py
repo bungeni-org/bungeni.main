@@ -245,11 +245,7 @@ class Search(form.PageForm, browser.BungeniBrowserView):
     form_description = _(u"Search Documents in Bungeni")
     show_results = False
 
-    def __init__(self, context, request, show_results=True):
-        if show_results:
-            zope.interface.declarations.alsoProvides(
-                context, interfaces.ISearchResults
-            )
+    def __init__(self, context, request):
         super(Search, self).__init__(context, request)
 
     def setUpWidgets(self, ignore_request=False):
@@ -283,7 +279,7 @@ class Search(form.PageForm, browser.BungeniBrowserView):
         need("search-css")
         return super(Search, self).__call__()
 
-@register.viewlet(interfaces.ISearchResults, layer=ui_ifaces.IBungeniSkin,
+@register.viewlet(ISearchableSection, layer=ui_ifaces.IBungeniSkin,
     manager=IBelowContentManager, name="bungeni.exist-search",
     protect=register.PROTECT_VIEWLET_PUBLIC)
 class SearchResults(browser.BungeniViewlet):
@@ -297,8 +293,8 @@ class SearchResults(browser.BungeniViewlet):
 
     @property
     def available(self):
-        return self._parent.show_results
-    for_display = available
+        return (isinstance(self._parent, Search) and 
+            self._parent.show_results)
 
 class SearchBox(browser.BungeniViewlet):
     """Search box Viewlet"""

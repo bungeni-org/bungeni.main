@@ -5,11 +5,6 @@ from bungeni.ui.vocabulary import BaseVocabularyFactory
 from bungeni.utils import naming
 from bungeni.capi import capi
 
-class ISearchResults(Interface):
-    """Marker interface for results layer
-    """
-    pass
-
 DEFAULT_LIMIT = 10
 
 GROUP_TYPES = [ ("*", _(u"documents and people")), 
