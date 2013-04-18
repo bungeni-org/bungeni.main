@@ -10,16 +10,9 @@ log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
 
-from zope.component import provideUtility
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from zope.securitypolicy.rolepermission import rolePermissionManager as \
-    role_perm_mgr
-from zope.security.interfaces import IPermission
-from zope.security.permission import Permission
-from zope.i18n import translate
-from bungeni.core.workflow.interfaces import IWorkflowController, MANUAL, \
-    SYSTEM, NoTransitionAvailableError, InvalidStateError
-from bungeni.core.workflow.states import Transition
+from bungeni.core.workflow.interfaces import IWorkflowController, \
+    NoTransitionAvailableError, InvalidStateError
 
 import bungeni.models.interfaces as interfaces
 from bungeni.models.utils import (
@@ -28,7 +21,6 @@ from bungeni.models.utils import (
     get_user,
 )
 
-from bungeni.models import domain
 from bungeni.utils import common
 from bungeni.ui.utils import debug
 from bungeni.utils.misc import describe
@@ -319,76 +311,3 @@ def view_permission(item):
     return "bungeni.%s.View" % (ti.permission_type_key)
 
 
-def allow_retract(context, **kw):
-    transition = kw.get("transition", None)
-    assert isinstance(transition, Transition)
-    if interfaces.IFeatureAudit.providedBy(context):
-        changes = domain.get_changes(context, "workflow")
-        if changes:
-            prev_change = changes[0].seq_previous
-            if prev_change:
-                allow = transition.destination == prev_change.audit.status
-    else:
-        allow = True
-    return allow
-
-def setup_retract_transitions():
-    """Set up any retract transitions (from terminal states) for all workflows
-    """
-    def add_retract_transitions(wf):
-        def getRoles(transition):
-            original_roles = transition.user_data.get("_roles", [])
-            allowed_roles = set()
-            #transitions to  source
-            tx_to_source = wf.get_transitions_to(transition.source)
-            for tx in tx_to_source:
-                if tx.source is None:
-                    allowed_roles.update(set(original_roles))
-                else:
-                    for role in tx.user_data.get("_roles", []):
-                        if role in original_roles:
-                            allowed_roles.add(role)
-            if not len(allowed_roles):
-                allowed_roles = original_roles
-            return allowed_roles
-
-        transitions = wf._transitions_by_id.values()
-        terminal_transitions = [
-            transition for transition in transitions if
-            (wf.get_transitions_from(transition.destination) == [] and
-                transition.source and transition.trigger in [MANUAL, SYSTEM]
-            )
-        ]
-        for transition in terminal_transitions:
-            roles = getRoles(transition)
-            if roles:
-                title = _("revert_transition_title",
-                    default="Undo - ${title}",
-                    mapping={
-                        "title": translate(transition.title, domain="bungeni")
-                    }
-                )
-                title = "Undo - %s" % transition.title
-                tid = "%s.%s" % (transition.destination, 
-                    transition.source)
-                pid = "bungeni.%s.wf.%s" % (wf.name, tid)
-                ntransition = Transition(title, transition.destination,
-                    transition.source, 
-                    trigger=MANUAL,
-                    condition=allow_retract,
-                    permission=pid,
-                    condition_args=True,
-                    roles=roles)
-                if ntransition.id in wf._transitions_by_id:
-                    continue
-                log.debug("adding transition %s", ntransition.id)
-                provideUtility(Permission(pid), IPermission, pid)
-                for role in roles:
-                    role_perm_mgr.grantPermissionToRole(pid, role, check=False)
-                transitions.append(ntransition)
-        wf.refresh(wf._states_by_id.values(), transitions)
-    
-    for type_key, ti in capi.iter_type_info():
-        if ti.workflow:
-            add_retract_transitions(ti.workflow)
-    

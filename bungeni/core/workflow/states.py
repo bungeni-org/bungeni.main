@@ -148,6 +148,10 @@ class State(object):
     #        self.getSetting(permission, role)]
 
 
+def get_tid(source, destination):
+    """Derive the id for a transition, source may be valid status_id or None."""
+    return "%s-%s" % (source or "", destination)
+
 class Transition(object):
     """A workflow transition from source status to destination.
     
@@ -157,7 +161,7 @@ class Transition(object):
     multiple transitions). 
     
     Each Transition ID is automatically determined from the source and 
-    destination states in the following predictable way:
+    destination states in the following predictable way (see get_tid):
     
         id = "%s-%s" % (source or "", destination)
     
@@ -173,7 +177,6 @@ class Transition(object):
             order=0,
             require_confirmation=False,
             note=None,
-            condition_args=False,
             **user_data
         ):
         self.title = title
@@ -186,13 +189,11 @@ class Transition(object):
         self.order = order
         self.require_confirmation = require_confirmation
         self.note = note
-        self.condition_args=condition_args # send all local args to condition
         self.user_data = user_data
     
     @property
     def id(self):
-        # source may be either a valid starus_id or None
-        return "%s-%s" % (self.source or "", self.destination)
+        return get_tid(self.source, self.destination)
     
     def __cmp__(self, other):
         return cmp(self.order, other.order)
@@ -462,8 +463,8 @@ class Workflow(object):
         # and that every obsolete state is NOT reachable
         tbyd = self._transitions_by_destination
         for dest_id, sources in tbyd.items():
-            log.debug("Workflow [%s] sources %s -> destination [%s]" % (
-                self.name, [t.source for t in sources], dest_id))
+            log.debug("Workflow [%s] transition [%s]: sources %s -> destination [%s]" % (
+                self.name, t.id, [t.source for t in sources], dest_id))
             if self.get_state(dest_id).obsolete:
                 assert not sources, \
                     "Reachable obsolete state [%s] in Workflow [%s]" % (
@@ -689,10 +690,7 @@ class WorkflowController(object):
                     transition.permission)
         # ensure transition can still work in this context, None always passes
         if transition.condition is not None:
-            if transition.condition_args:
-                transition.condition(self.context, transition=transition)
-            else:
-                transition.condition(self.context) # raises BungeniCustomError
+            transition.condition(self.context) # raises BungeniCustomError
     
     # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):
@@ -782,11 +780,7 @@ class WorkflowController(object):
                 if IN_EDIT_MODE:
                     continue
                 if transition.condition is not None:
-                    if transition.condition_args:
-                        if not transition.condition(self.context, 
-                            transition=transition):
-                                continue
-                    elif not transition.condition(self.context):
+                    if not transition.condition(self.context):
                         continue
             filtered_transitions.append(transition)
         return filtered_transitions

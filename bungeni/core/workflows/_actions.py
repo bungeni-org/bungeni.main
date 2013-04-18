@@ -81,15 +81,15 @@ def dissolve(group):
 
 
 # doc
-@describe(_(u"Assign the group role to the doc"))
+
 def assign_role_group(doc):
     """Assign the role of the doc's group, to the group itself, onto doc.
     """
+    # !+ should be part of application logic
     # !+PrincipalRoleMapContextData infer role from context data
     from bungeni.models.interfaces import IDoc
     assert IDoc.providedBy(doc), "Not a Doc: %s" % (doc)
-    if doc.group is not None:
-        utils.assign_role(doc.group.group_role, doc.group.principal_name, doc)
+    utils.assign_role(doc.group.group_role, doc.group.principal_name, doc)
 
 def propagate_parent_assigned_group_role(child_doc):
     """Propagate the role of the group that is assigned to the parent doc of 

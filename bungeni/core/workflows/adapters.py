@@ -20,7 +20,7 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
 from bungeni.core.workflow.states import StateController, WorkflowController, \
     Workflow, get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
-from bungeni.alchemist import utils
+from bungeni.alchemist.utils import inisetattr
 from bungeni.utils import naming, misc
 from bungeni.capi import capi
 from bungeni.alchemist.catalyst import (
@@ -182,7 +182,7 @@ def _setup_all():
     # system and archetypes
     for type_key, ti in capi.iter_type_info():
         # retrieve the domain class and associate domain class with this type
-        utils.inisetattr(ti, "domain_model", retrieve_domain_model(type_key))
+        inisetattr(ti, "domain_model", retrieve_domain_model(type_key))
         # load/get workflow instance (if any) and associate with type
         load_workflow(type_key, ti)
     

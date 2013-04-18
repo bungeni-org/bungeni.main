@@ -39,21 +39,21 @@ def bungeni_custom_errors(f):
 
 def wrapped_callable(unwrapped):
     assert callable(unwrapped), unwrapped
-    def wrapped(*args):
-        log.debug("Calling %s with args: %s" % (unwrapped, args))
-        try:
-            return unwrapped(*args)
-        except:
-            # intercept exc, to re-raise it *unchanged*, only for debugging
-            # e.g. constraints raise numerous (expected?) NoInputData errors
-            exc = sys.exc_info()[1]
-            log.debug("BungeniCustomRuntimeError [%r] in wrapped_callable: %s %s",
-                    exc, wrapped, args)
-            raise
-    # remember original unwrapped callable
+    # Can re-use wrapped versions of *same* function -- on current config
+    # (apr-2013), each wrapped function (on total of 45) is used more than 
+    # 5 times; with this each is created only once, as opposed to an 
+    # average of 5+ times. So, a little reduction in app runtime memory.
+    if unwrapped in wrapped_callable.REUSE:
+        wrapped_callable.REUSE_COUNT += 1
+        return wrapped_callable.REUSE[unwrapped]
+    wrapped = error.exceptions_as(BungeniCustomRuntimeError)(unwrapped)
+    # remember original unwrapped callable/details
     wrapped._unwrapped = unwrapped
     wrapped.__name__ = unwrapped.__name__
+    wrapped_callable.REUSE[unwrapped] = wrapped
     return wrapped
+wrapped_callable.REUSE = {}
+wrapped_callable.REUSE_COUNT = 0
 
 
 # capi (singleton)

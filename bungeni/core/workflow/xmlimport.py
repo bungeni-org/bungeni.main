@@ -10,17 +10,21 @@ log = __import__("logging").getLogger("bungeni.core.workflow.xmlimport")
 
 import os
 
+from zope.i18n import translate
 from zope.dottedname.resolve import resolve
 from zope.component import provideUtility
 from zope.security.interfaces import IPermission
 from zope.security.permission import Permission
 from zope.securitypolicy.rolepermission import rolePermissionManager as rpm
+from bungeni.models import domain
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
-from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow
+from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow, get_tid
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
+
 from bungeni.capi import capi
 from bungeni.utils import naming, misc
+
 
 #
 
@@ -505,11 +509,7 @@ def _load(workflow_name, workflow):
             # path from any given *source* to any given *destination* state, 
             # it suffices to use only the first source element + the destination 
             # to guarantee a unique identifier for an XML transition element.
-            #
-            # Note: the "-" char is not allowed within a permission id 
-            # (so we use "." also here).
-            #
-            tid = "%s.%s" % (sources[0] or "", destination)
+            tid = get_tid(sources[0] or "", destination)
             pid = "bungeni.%s.wf.%s" % (workflow_name, tid)
             if not ZCML_PROCESSED:
                 zcml_transition_permission(pid, title, roles)
@@ -538,7 +538,82 @@ def _load(workflow_name, workflow):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 workflow_name, source or "", destination, kw))
     
-    return Workflow(workflow_name,
+    wf = Workflow(workflow_name,
         workflow_features, workflow_facets, states, transitions, global_grants,
         workflow_title, workflow_description, note)
+    add_retract_transitions(wf)
+    return wf
+
+
+
+reusable_retract_conditions = {}
+def add_retract_transitions(wf):
+    """Set up any retract transitions (from terminal states) for all workflows.
+    """
+    def get_retract_is_allowed(from_state_id):
+        if from_state_id in reusable_retract_conditions:
+            return reusable_retract_conditions[from_state_id]
+        def retract_is_allowed(context):
+            """A workflow condition, for system use only, for auto "retract" transition.
+            """
+            if interfaces.IFeatureAudit.providedBy(context):
+                changes = domain.get_changes(context, "workflow")
+                if changes:
+                    prev_change = changes[0].seq_previous
+                    if prev_change:
+                        return from_state_id == prev_change.audit.status
+            return True
+        reusable_retract_conditions[from_state_id] = retract_is_allowed
+        return retract_is_allowed
+
+    def get_roles(transition):
+        original_roles = transition.user_data.get("_roles", [])
+        allowed_roles = set()
+        # transitions to source
+        tx_to_source = wf.get_transitions_to(transition.source)
+        for tx in tx_to_source:
+            if tx.source is None:
+                allowed_roles.update(original_roles)
+            else:
+                for role in tx.user_data.get("_roles", []):
+                    if role in original_roles:
+                        allowed_roles.add(role)
+        if not len(allowed_roles):
+            allowed_roles = original_roles
+        return allowed_roles
+    
+    transitions = wf._transitions_by_id.values()
+    terminal_transitions = [ 
+        transition for transition in transitions
+        if (wf.get_transitions_from(transition.destination) == [] and
+            transition.source and 
+            transition.trigger in [interfaces.MANUAL, interfaces.SYSTEM])
+    ]
+    from bungeni.ui.i18n import _
+    for transition in terminal_transitions:
+        roles = get_roles(transition)
+        if roles:
+            tid = get_tid(transition.destination, transition.source)
+            if tid in wf._transitions_by_id:
+                # we already have reverse transition, skip...
+                continue
+            title = _("revert_transition_title",
+                default="Undo - ${title}",
+                mapping={
+                    "title": translate(transition.title, domain="bungeni")
+                }
+            )
+            title = "Undo - %s" % (transition.title)
+            pid = "bungeni.%s.wf.%s" % (wf.name, tid)
+            ntransition = Transition(title, transition.destination,
+                transition.source, 
+                trigger=interfaces.MANUAL,
+                condition=get_retract_is_allowed(transition.destination),
+                permission=pid,
+                roles=roles)
+            transitions.append(ntransition)
+            zcml_transition_permission(pid, title, roles)
+            log.debug("Workflow [%s] adding retract transition: %r", 
+                    wf.name, ntransition.id)
+    wf.refresh(wf._states_by_id.values(), transitions)
 
