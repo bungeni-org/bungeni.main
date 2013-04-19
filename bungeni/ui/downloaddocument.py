@@ -85,7 +85,8 @@ class DocumentGenerationError(Exception):
 class DownloadDocument(BrowserView):
     """Abstact base class for ODT and PDF views"""
     #path to the odt template. Must be set by sub-class
-    oo_template_file = None
+    oo_template_file = os.path.dirname(__file__) + "/templates/bungenicontent.odt"  
+    template = ViewPageTemplateFile("templates/bungeni-content.pt")
     #Error page in case of failure to generate document
     error_template = ViewPageTemplateFile("templates/report-error.pt")
     #Custom Template selection UI
@@ -110,8 +111,12 @@ class DownloadDocument(BrowserView):
         self.request.response.setHeader("Content-disposition", 
             'attachment;filename="%s"' % self.file_name
         )
+
     def bodyText(self):
-        """Returns body text of document. Must be implemented by subclass"""
+        if not hasattr(self.document,"group"):
+            session = Session()
+            self.document.group = session.query(domain.Group).get(self.document.parliament_id)
+        return self.template()
 
     @property
     def file_name(self):
@@ -258,36 +263,11 @@ class DownloadDocument(BrowserView):
             if os.path.exists(template_path):
                 self.oo_template_file = template_path
 
+        
+    def publishTraverse(self, request, doc_type):
+        self.document_type = doc_type
+        return self
+
     def __call__(self):
         self.setupTemplate();
         return self.documentData(cached=False)
-        
-        
-
-#The classes below generate ODT and PDF documents of bungeni content items
-#TODO:This implementation displays a default set of the content item's attributes
-#once the localisation API is complete it should get info on which attributes
-#to display from there.
-class BungeniContentODT(DownloadDocument):
-    oo_template_file = os.path.dirname(__file__) + "/templates/bungenicontent.odt"  
-    template = ViewPageTemplateFile("templates/bungeni-content.pt")
-    document_type = "odt"
-    
-    def bodyText(self):
-        if not hasattr(self.document,"group"):
-            session = Session()
-            self.document.group = session.query(domain.Group).get(self.document.parliament_id)
-        return self.template()
-    
-            
-class BungeniContentPDF(DownloadDocument):
-    oo_template_file = os.path.dirname(__file__) + "/templates/bungenicontent.odt"  
-    template = ViewPageTemplateFile("templates/bungeni-content.pt")
-    document_type = "pdf"
-    
-    def bodyText(self):
-        if not hasattr(self.document,"group"):
-            session = Session()
-            self.document.group = session.query(domain.Group).get(self.document.parliament_id)
-        return self.template()
-    

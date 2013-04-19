@@ -470,6 +470,31 @@ class IFeatureGroupAssignment(IFeature):
     """
 #
 
+DOWNLOAD_TYPES = [
+    ("pdf", _("as pdf")),
+    ("odt", _("as open document")),
+    ("doc", _("as MS Word")),
+    ("docx", _("as MS Word 2007+")),
+    ("txt", _("as text")),
+    ("rtf", _("as rich text")),
+    ("htm", _("as html")),
+]
+DOWNLOAD_TYPE_KEYS = [ k for k,v in DOWNLOAD_TYPES]
+def validate_download_types(obj):
+    assert set(obj.allowed_types).issubset(DOWNLOAD_TYPE_KEYS), \
+        ("allowed download types:  %s. you entered: %s" 
+            %(", ".join(DOWNLOAD_TYPE_KEYS),
+                ", ".join(obj.allowed_types)))
+
+class IDownloadManager(interface.Interface):
+    """schema for download manager config adapters"""
+    allowed_types = interface.Attribute("""allowed download types""")
+
+    interface.invariant(validate_download_types)
+    
+    def get_allowed_types():
+        """get a subset of DOWNLOAD_TYPES"""
+    
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood
 class IDateRangeFilter(interface.Interface):
     """Adapts a model container instance and a SQLAlchemy query

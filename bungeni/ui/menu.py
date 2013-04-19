@@ -32,7 +32,9 @@ from bungeni.models.interfaces import (
     IVersion, 
     IScheduleContent, 
     IFeatureAudit,
-    IFeatureDownload
+    IFeatureDownload,
+    IDownloadManager,
+    DOWNLOAD_TYPES,
 )
 
 from bungeni.core.translation import (get_language, get_all_languages, 
@@ -476,14 +478,12 @@ class DownloadDocumentSubMenuItem(BrowserSubMenuItem):
     def selected(self):
         return False
 
-i18n_pdf = _(u"Download PDF")
-i18n_odt = _(u"Download ODT")
-i18n_akomantoso = _(u"Akoma Ntoso")
-i18n_rss = _(u"RSS")
-document_types = ["pdf", "odt"]
+i18n_pdf = _(u"As PDF")
+i18n_odt = _(u"As ODT")
+
 TYPE_RSS = "rss"
 TYPE_AKOMANTOSO = "akomantoso"
-xml_types = [TYPE_RSS, TYPE_AKOMANTOSO]
+XML_TYPES = [ (TYPE_RSS, _(u"RSS")), (TYPE_AKOMANTOSO, _(u"Akoma Ntoso"))]
 
 class DownloadDocumentMenu(BrowserMenu):
 
@@ -522,14 +522,15 @@ class DownloadDocumentMenu(BrowserMenu):
         _url = url.absoluteURL(context, request)
         if IFeatureDownload.providedBy(context):
             doc_templates = self.documentTemplates(request.locale)
-            for doc_type in document_types:
+            manager = IDownloadManager(context)
+            for doc_type, title in manager.get_allowed_types():
                 if doc_templates:
                     for template in doc_templates:
-                        i18n_title = translate_i18n(globals()["i18n_%s" % doc_type])
+                        i18n_title = translate_i18n(title)
                         results.append(dict(
                             title="%s [%s]" % (i18n_title,template.get("title")),
                             description="",
-                            action="%s/%s?template=%s" % (_url, doc_type, 
+                            action="%s/download/%s?template=%s" % (_url, doc_type, 
                                 template.get("location")),
                             selected=False,
                             extra = {
@@ -553,7 +554,7 @@ class DownloadDocumentMenu(BrowserMenu):
                         submenu=None
                     ))
         if interfaces.IRSSRepresentationLayer.providedBy(request):
-            for doc_type in xml_types:
+            for doc_type, title in XML_TYPES:
                 if doc_type == TYPE_AKOMANTOSO:
                     if IAlchemistContainer.providedBy(context):
                         if not IFeatureDownload.implementedBy(
@@ -571,7 +572,7 @@ class DownloadDocumentMenu(BrowserMenu):
                         ):
                         continue
                 results.append(dict(
-                        title = globals()["i18n_%s" % doc_type],
+                        title = title,
                         description="",
                         action = "%s/feed.%s" %(_url, doc_type),
                         selected=False,

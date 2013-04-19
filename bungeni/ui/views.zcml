@@ -151,14 +151,8 @@
     <browser:page
      for="bungeni.models.interfaces.IBungeniContent"
      permission="zope.Public"
-     name="odt"
-     class=".downloaddocument.BungeniContentODT"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IBungeniContent"
-     permission="zope.Public"
-     name="pdf"
-     class=".downloaddocument.BungeniContentPDF"
+     name="download"
+     class=".downloaddocument.DownloadDocument"
     />
     
     <browser:page

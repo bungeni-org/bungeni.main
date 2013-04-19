@@ -149,7 +149,7 @@ def feature_signatory(kls, feature):
 # schedule
 
 class SchedulingManager(object):
-    """Store scheduling configuration properties for a known type.
+    """Store scheduling configuration properties for a schedulable type.
     """
     interface.implements(interfaces.ISchedulingManager)
     
@@ -159,42 +159,59 @@ class SchedulingManager(object):
     def __init__(self, context):
         self.context = context
 
-def create_scheduling_manager(domain_class, **params):
+class DownloadManager(object):
+    """ Store download feature properties for a downloadable type.
+    """
+    interface.implements(interfaces.IDownloadManager)
+    
+    allowed_types = ()
+    
+    def get_allowed_types(self):
+        if len(self.allowed_types):
+            return filter(lambda typ: typ[0] in self.allowed_types,
+                interfaces.DOWNLOAD_TYPES)
+        else:
+            return interfaces.DOWNLOAD_TYPES
+    
+    def __init__(self, context):
+        self.context = context
+
+def create_feature_manager(domain_class, base_class, manager_iface, suffix, **params):
     """Instantiate a scheduling manager instance for `domain_class`.
     """
-    manager_name = "%sSchedulingManager" % domain_class.__name__
+    manager_name = "%s%s" % (domain_class.__name__, suffix)
     if manager_name in globals().keys():
-        log.error("Scheduling manager named %s already exists", manager_name)
+        log.error("Feature manager named %s already exists", manager_name)
         return
 
     ti = capi.get_type_info(domain_class)
     domain_iface = ti.interface
-    if domain_iface is None:
-        log.error("No model interface for class %s", domain_class)
-        log.error("Skipping scheduling manager setup for for class %s", domain_class)
-        return
 
-    globals()[manager_name] = type(manager_name, (SchedulingManager,), {})
+    globals()[manager_name] = type(manager_name, (base_class,), {})
     manager = globals()[manager_name]
-    known_params = interfaces.ISchedulingManager.names()
+    known_params = manager_iface.names()
     for config_name, config_value in params.iteritems():
-        assert config_name in known_params, ("Check your scheduling "
-            "feature configuration for %s. Only these parameters may be "
+        assert config_name in known_params, ("Check your feature "
+            "configuration for %s. Only these parameters may be "
             "configured %s" % (domain_class.__name__, known_params))
         config_type = type(getattr(manager, config_name))
         if config_type in (tuple, list):
             config_value = map(str.strip, config_value.split())
         setattr(manager, config_name, config_type(config_value))
+    manager_iface.validateInvariants(manager)
     
     gsm = getGlobalSiteManager()
-    gsm.registerAdapter(manager, (domain_iface,), interfaces.ISchedulingManager)
+    gsm.registerAdapter(manager, (domain_iface,), manager_iface)
     return manager_name
 
 def feature_schedule(kls, feature):
     """Decorator for domain types to support "schedule" feature.
     For Doc types, means support for being scheduled in a group sitting.
     """
-    manager = create_scheduling_manager(kls, **feature.params)
+    manager = create_feature_manager(kls, SchedulingManager,
+        interfaces.ISchedulingManager, "SchedulingManager", 
+        **feature.params
+    )
     if manager is not None:
         interface.classImplements(kls, interfaces.IFeatureSchedule)
     else:
@@ -239,8 +256,15 @@ def feature_download(kls, feature):
     """Decorator for domain types that support downloading as 
     pdf/odt/rss/akomantoso.
     """
-    interface.classImplements(kls, interfaces.IFeatureDownload)
-
+    manager = create_feature_manager(kls, DownloadManager,
+        interfaces.IDownloadManager, "DownloadManager", 
+        **feature.params
+    )
+    if manager:
+        interface.classImplements(kls, interfaces.IFeatureDownload)
+    else:
+        log.warning("Download manager was not created for class %s. "
+            "Downloads will be unavailable for this type.", kls)
 
 def feature_user_assignment(kls, feature):
     """Decorator for domain types that support "user_assignment" feature.
