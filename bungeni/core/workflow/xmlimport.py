@@ -17,6 +17,7 @@ from zope.security.interfaces import IPermission
 from zope.security.permission import Permission
 from zope.securitypolicy.rolepermission import rolePermissionManager as rpm
 from bungeni.models import domain
+from bungeni.models.interfaces import IFeatureAudit
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow, get_tid
@@ -556,7 +557,7 @@ def add_retract_transitions(wf):
         def retract_is_allowed(context):
             """A workflow condition, for system use only, for auto "retract" transition.
             """
-            if interfaces.IFeatureAudit.providedBy(context):
+            if IFeatureAudit.providedBy(context):
                 changes = domain.get_changes(context, "workflow")
                 if changes:
                     prev_change = changes[0].seq_previous
