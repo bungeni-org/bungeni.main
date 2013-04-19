@@ -11,10 +11,10 @@
 # 
 # $Id$
 
-# the local namespace is an empty string 
-#namespace local=""
+
 grammar {
     include "common.rnc"
+    
     start = WORKFLOW
     
     WORKFLOW = element workflow {
@@ -26,7 +26,7 @@ grammar {
         # i.e. each included action allowed to be in the form [type_key].{Action}, 
         # with the optional type_key defaulting to the type_key of the type 
         # "owning" this workflow.
-        FOREIGN_NS_ATTRS,
+        
         ALLOW*,
         FEATURE*,
         FACET*,
@@ -39,12 +39,12 @@ grammar {
         attribute roles { SPACE_SEPARATED_TOKENS },
         attribute note { text }?
     }
-
+    
     FEATURE = element feature {
         attribute name { SYMBOL_NAME },
         attribute enabled { xsd:boolean },
         attribute note { text }?,
-        FOREIGN_NS_ATTRS,
+        
         element parameter { # !+ name by feature
             attribute name { SYMBOL_NAME }, # !+ unique name per feature
             attribute value { text },
@@ -56,7 +56,6 @@ grammar {
         attribute name { SYMBOL_NAME },
         attribute default { xsd:boolean }?, # default:false, may be true only once
         attribute note { text }?,
-        FOREIGN_NS_ATTRS,
         ALLOW*
     }
     
