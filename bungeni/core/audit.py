@@ -280,6 +280,7 @@ class _AuditorFactory(object):
         # change/audit record
         # !+version Version instances are created as Change instances!
         ch = domain.Change()
+        ch.seq = 0 # !+ reset below, to avoid sqlalchemy violates not-null constraint
         ch.audit = au # ensures ch.audit_id, ch.note.object_id
         ch.user_id = user.user_id
         ch.action = action
