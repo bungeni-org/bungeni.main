@@ -17,10 +17,12 @@ __all__ = ["exceptions_as"]
 import sys
 import traceback
 
-def exceptions_as(exc_kls):
+def exceptions_as(exc_kls, other_than=()):
     def _exceptions_as(f):
-        """Decorator to intercept any error raised by function f and 
-        re-raise it as a exc_kls. 
+        """Decorator to intercept any error raised by function f and
+        EITHER re-raise it as a `exc_kls`
+        OR re-raise UNCHANGED if this kind of error is not a sub-type of any
+            errors specified in  the `other_than` sequence of error classes.
         """
         def _errorable_f(*args, **kw):
             try: 
@@ -30,7 +32,10 @@ def exceptions_as(exc_kls):
                 m = "%r in CALL to %s.%s (%s) WITH args=%r AND kw=%r" % (
                     e_inst, f.__module__, f.__name__, hex(id(f)), args, kw)
                 log.debug(traceback.format_exc(e_traceback))
-                raise exc_kls, m, e_traceback
+                if isinstance(e_inst, other_than):
+                    raise # re-raise unchanged
+                else:
+                    raise exc_kls, m, e_traceback
         return _errorable_f
     return _exceptions_as
 

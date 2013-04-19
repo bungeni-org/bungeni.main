@@ -6,7 +6,8 @@
 
 Constraint API:
     constraint(context) -> None # OK
-        failure raises zope.interface.Invalid
+        failure raises zope.interface.Invalid 
+        (or a sub-class thereof e.g NoInputData)
 
 $Id$
 """

@@ -280,13 +280,12 @@ class _AuditorFactory(object):
         # change/audit record
         # !+version Version instances are created as Change instances!
         ch = domain.Change()
-        ch.seq = 0 # !+ reset below, to avoid sqlalchemy violates not-null constraint
         ch.audit = au # ensures ch.audit_id, ch.note.object_id
         ch.user_id = user.user_id
         ch.action = action
         ch.seq = self._get_seq(ch)
         # !+translate_seq(mr, feb-2013) this should be divided by language?
-        # !+translate_action(mr, feb-2013) shoudl there be an action per 
+        # !+translate_action(mr, feb-2013) should there be an action per 
         # language e.g. translate-fr for translations to french (resolves the 
         # noted translate_seq issue)
         ch.procedure = procedure

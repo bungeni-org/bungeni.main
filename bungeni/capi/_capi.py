@@ -13,6 +13,7 @@ log = __import__("logging").getLogger("bungeni.capi")
 import sys
 import time
 import os
+import zope.interface
 from zope.dottedname.resolve import resolve
 from zope.cachedescriptors import property as cached_property
 from bungeni.utils import error
@@ -46,7 +47,12 @@ def wrapped_callable(unwrapped):
     if unwrapped in wrapped_callable.REUSE:
         wrapped_callable.REUSE_COUNT += 1
         return wrapped_callable.REUSE[unwrapped]
-    wrapped = error.exceptions_as(BungeniCustomRuntimeError)(unwrapped)
+    wrapped = error.exceptions_as(BungeniCustomRuntimeError, 
+            # a variety of sub-types of such an exception is *normal* and 
+            # expected and part of the internal implementation of zope.formlib
+            # e.g. checkInvariants! So, may not re-raise them as another type...
+            other_than=(zope.interface.Invalid,)
+        )(unwrapped)
     # remember original unwrapped callable/details
     wrapped._unwrapped = unwrapped
     wrapped.__name__ = unwrapped.__name__
