@@ -206,9 +206,8 @@ class ContainerJSONListing(ContainerJSONBrowserView):
 
     filter_property_fields = []
 
-    def string_listing_filter(self, 
-            query, filter_string, sort_dir_func, column
-        ):
+    def string_listing_filter(self, query, filter_string, sort_dir_func,
+        column):
         filter_strings = filter_string.lower().split()
         attr = getattr(self.domain_model, column)
         for fs in filter_strings:
@@ -216,9 +215,8 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 sql.or_(sql.func.lower(attr).like("%%%s%%" % fs)))
         return query.order_by(sort_dir_func(attr))
 
-    def exact_string_listing_filter(self, 
-            query, filter_string, sort_dir_func, column
-        ):
+    def exact_string_listing_filter(self, query, filter_string, sort_dir_func,
+        column):
         attr = getattr(self.domain_model, column)
         query = query.filter(attr == filter_string)
         return query.order_by(sort_dir_func(attr))

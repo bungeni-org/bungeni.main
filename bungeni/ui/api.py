@@ -8,7 +8,10 @@ from zope.app.publication.traversers import SimpleComponentTraverser
 from bungeni.core.serialize import obj2dict
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.utils import url, misc
+from bungeni.ui.container import ContainerJSONListingRaw
 from bungeni.models.utils import get_login_user
+from bungeni.models import domain
+
 
 dthandler = lambda obj: obj.isoformat() if type(obj) in \
     (date, time, datetime) else obj
@@ -65,3 +68,12 @@ class APIUserContainerTraverser(SimpleComponentTraverser):
         if ob:
             return ob
         raise NotFound(self.context, name)
+
+
+class APITranscriberListing(ContainerJSONListingRaw):
+
+    def query_add_filters(self, query):
+        login = self.request.get("filter_transcriber_login", None)
+        if login:
+            query = query.join(domain.User).filter(domain.User.login == login)
+        return query
