@@ -734,7 +734,7 @@ mapper(domain.DebateMedia, schema.debate_media)
 
 mapper(domain.DebateTake, schema.debate_take,
     properties={
-        "user": relation(domain.User, lazy=True),
+        "transcriber": relation(domain.User, lazy=True),
         "debate_record": relation(domain.DebateRecord, lazy=True)
     }
 )

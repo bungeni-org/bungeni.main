@@ -1594,13 +1594,13 @@ class AgendaTextRecordDescriptor(ModelDescriptor):
     ]
 
 class DebateMediaDescriptor(ModelDescriptor):
-    localisable = False
+    localizable = False
     fields = [
         F(name="media_path",
           label="Media Path",
           required=True,
           value_type="text",
-          render_type="text_line"
+          render_type="text_line",
         ),
         F(name="media_type",
           label="Media Type",
@@ -1612,8 +1612,18 @@ class DebateMediaDescriptor(ModelDescriptor):
     ]
 
 class DebateTakeDescriptor(ModelDescriptor):
-    localisable = False
+    localizable = False
     fields = [
+        F(name="transcriber_id",
+          label="Transcriber",
+          required=True,
+          value_type="user",
+          render_type="single_select",
+          vocabulary="user",
+          localizable=[
+                show("view listing"),
+          ],
+        ),
         F(name="start_date",
           label="Start Date",
           required=True,
@@ -1631,13 +1641,6 @@ class DebateTakeDescriptor(ModelDescriptor):
           required=True,
           value_type="text",
           render_type="rich_text",
-        ),
-        F(name="transcriber_id",
-          label="Transcriber",
-          required=True,
-          value_type="user",
-          render_type="single_select",
-          vocabulary="user"
         ),
     ]
 
