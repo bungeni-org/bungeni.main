@@ -39,8 +39,8 @@ def _iter():
     
     Usage: capi.iter_type_info()
     """
-    for type_key, ti in TYPE_REGISTRY:
-        yield type_key, ti
+    for ti in TYPE_REGISTRY:
+        yield ti.type_key, ti
 
 def _get(discriminator):
     """Get the TypeInfo instance for discriminator, that may be any of:
@@ -93,7 +93,7 @@ def _get(discriminator):
             return ti
         else:
             m = "No type registered for discriminator: %r" % (discriminator)
-    else: 
+    else:
         m = "Invalid type info lookup discriminator: %r" % (discriminator)
     from bungeni.ui.utils import debug
     log.debug(debug.interfaces(discriminator))
@@ -133,6 +133,9 @@ def _get_by_descriptor_model(descriptor_model):
 
 class TI(object):
     """TypeInfo, associates together the following attributes for a given type:
+            type_key
+                unique for each type, is the underscore-separated lowercase 
+                name of the domain_model (the domain class)
             workflow_key 
                 the workflow file name
                 defaults to the type_key for workflowed types that DO NOT specify
@@ -151,6 +154,9 @@ class TI(object):
                 the domain model for:
                 a) either the (system or custom) archetype of the custom type
                 b) or the (mapped) base type of the system type, or None
+            descriptor_key
+                the descriptor file name
+                defaults to the type_key for types that DO NOT specify
             descriptor_model
                 the descriptor model for UI views for the type
             container_class
@@ -158,13 +164,15 @@ class TI(object):
             container_interface
                 interface for the container class for domain_model
     """
-    def __init__(self, workflow_key, iface, domain_model, archetype):
+    def __init__(self, type_key, workflow_key, iface, domain_model, archetype):
+        self.type_key = type_key
         self.workflow_key = workflow_key
+        self.workflow = None
         self.interface = iface
         self.derived_table_schema = None # provides IIModelInterface
-        self.workflow = None
         self.domain_model = domain_model
         self.archetype = archetype
+        self.descriptor_key = None
         self.descriptor_model = None
         self.container_class = None
         self.container_interface = None
@@ -200,12 +208,8 @@ class TI(object):
             return self.workflow.name
         # system types ALWAYS use workflow_key - even if multiple types use the 
         # same workflow e.g. UserAddress & GroupAddress. 
-        # if no workflow, compute type_key from domain_model
-        # #!+REDUNDANT(mb, 2012) This type key is already known during type
-        # setup i.e. TYPE_REGISTRY
-        return (self.workflow_key or 
-            naming.type_key("model_name", self.domain_model.__name__)
-        )
+        # if no workflow, use type_key
+        return self.workflow_key or self.type_key
 
 '''
 !+TYPE_REGISTRY externalize further to bungeni_custom, currently:
@@ -226,55 +230,51 @@ Usage:
     capi.get_type_info(discriminator) -> TypeInfo
     capi.iter_type_info() -> iterator of all registered (key, TypeInfo)
 '''
+# [ti] - order is relevant (dictates loading order)
 TYPE_REGISTRY = [
-    # (key, ti)
-    # - the type key, unique for each type, is the underscore-separated 
-    #   lowercase name of the domain_model (the domain class)
-    # - order is relevant (dictates workflow loading order)
-    
     # feature "support" types, system types, required
     
     # workflowed
-    ("user_address", TI("address", interfaces.IUserAddress, domain.UserAddress, domain.Address)),
-    ("group_address", TI("address", interfaces.IGroupAddress, domain.GroupAddress, domain.Address)),
+    TI("user_address", "address", interfaces.IUserAddress, domain.UserAddress, domain.Address),
+    TI("group_address", "address", interfaces.IGroupAddress, domain.GroupAddress, domain.Address),
     # !+Attachment (mr, jul-2011)
     # a) must be loaded before any other type that *may* support attachments!
     # b) MUST support versions
-    ("attachment", TI("attachment", interfaces.IAttachment, domain.Attachment, None)),
-    ("event", TI("event", interfaces.IEvent, domain.Event, domain.Doc)),
-    ("sitting", TI("sitting", interfaces.ISitting, domain.Sitting, None)),
-    ("heading", TI("heading", interfaces.IHeading, domain.Heading, None)),
-    ("user", TI("user", interfaces.IBungeniUser, domain.User, domain.Principal)),
-    ("signatory", TI("signatory", interfaces.ISignatory, domain.Signatory, None)),
+    TI("attachment", "attachment", interfaces.IAttachment, domain.Attachment, None),
+    TI("event", "event", interfaces.IEvent, domain.Event, domain.Doc),
+    TI("sitting", "sitting", interfaces.ISitting, domain.Sitting, None),
+    TI("heading", "heading", interfaces.IHeading, domain.Heading, None),
+    TI("user", "user", interfaces.IBungeniUser, domain.User, domain.Principal),
+    TI("signatory", "signatory", interfaces.ISignatory, domain.Signatory, None),
     
     # !+NAMING: member-related -> Group name + "Member" (no + "ship")
-    ("group", TI("group", interfaces.IBungeniGroup, domain.Group, domain.Principal)),
-    ("group_membership", TI("group_membership", interfaces.IBungeniGroupMembership, domain.GroupMembership, None)),
-    ("group_document_assignment", 
-        TI("group_assignment", interfaces.IGroupDocumentAssignment, domain.GroupDocumentAssignment, None)),
-    ("debate_record", TI("debate_record", interfaces.IDebateRecord, domain.DebateRecord, None)),
+    TI("group", "group", interfaces.IBungeniGroup, domain.Group, domain.Principal),
+    TI("group_membership", "group_membership", interfaces.IBungeniGroupMembership, domain.GroupMembership, None),
+    TI("group_document_assignment", 
+        "group_assignment", interfaces.IGroupDocumentAssignment, domain.GroupDocumentAssignment, None),
+    TI("debate_record", "debate_record", interfaces.IDebateRecord, domain.DebateRecord, None),
     # non-workflowed
-    ("o_auth_application", TI(None, interfaces.IOAuthApplication, domain.OAuthApplication, None)),
-    ("debate_media", TI(None, interfaces.IDebateMedia, domain.DebateMedia, None)),
-    ("debate_take", TI(None, interfaces.IDebateTake, domain.DebateTake, None)),
-    ("user_delegation", TI(None, interfaces.IUserDelegation, domain.UserDelegation, None)),
-    ("title_type", TI(None, interfaces.ITitleType, domain.TitleType, None)),
-    ("member_title", TI(None, interfaces.IMemberTitle, domain.MemberTitle, None)),
-    ("change", TI(None, interfaces.IChange, domain.Change, None)),
-    ("doc", TI(None, interfaces.IDoc, domain.Doc, None)),
-    ("doc_version", TI(None, interfaces.IDocVersion, domain.DocVersion, domain.Change)),
-    ("attachment_version", TI(None, None, domain.AttachmentVersion, domain.Change)), #interfaces.IAttachmentVersion)), #!+IVERSION
-    ("venue", TI(None, interfaces.IVenue, domain.Venue, None)),
-    ("session", TI(None, interfaces.ISession, domain.Session, None)),
-    ("sitting_attendance", TI(None, interfaces.ISittingAttendance, domain.SittingAttendance, None)),
-    ("country", TI(None, interfaces.ICountry, domain.Country, None)),
-    ("item_schedule", TI(None, interfaces.IItemSchedule, domain.ItemSchedule, None)),
-    ("item_schedule_discussion", TI(None, interfaces.IItemScheduleDiscussion, domain.ItemScheduleDiscussion, None)),
-    ("item_schedule_vote", TI(None, interfaces.IItemScheduleVote, domain.ItemScheduleVote, None)),
-    ("editorial_note", TI(None, interfaces.IEditorialNote, domain.EditorialNote, None)),
-    ("agenda_text_record", TI(None, interfaces.IAgendaTextRecord, domain.AgendaTextRecord, None)),
-    ("sitting_report", TI(None, interfaces.ISittingReport, domain.SittingReport, None)),
-    ("group_membership_role", TI(None, interfaces.IGroupMembershipRole, domain.GroupMembershipRole, None)),
+    TI("o_auth_application", None, interfaces.IOAuthApplication, domain.OAuthApplication, None),
+    TI("debate_media", None, interfaces.IDebateMedia, domain.DebateMedia, None),
+    TI("debate_take", None, interfaces.IDebateTake, domain.DebateTake, None),
+    TI("user_delegation", None, interfaces.IUserDelegation, domain.UserDelegation, None),
+    TI("title_type", None, interfaces.ITitleType, domain.TitleType, None),
+    TI("member_title", None, interfaces.IMemberTitle, domain.MemberTitle, None),
+    TI("change", None, interfaces.IChange, domain.Change, None),
+    TI("doc", None, interfaces.IDoc, domain.Doc, None),
+    TI("doc_version", None, interfaces.IDocVersion, domain.DocVersion, domain.Change),
+    TI("attachment_version", None, None, domain.AttachmentVersion, domain.Change), #interfaces.IAttachmentVersion)), #!+IVERSION
+    TI("venue", None, interfaces.IVenue, domain.Venue, None),
+    TI("session", None, interfaces.ISession, domain.Session, None),
+    TI("sitting_attendance", None, interfaces.ISittingAttendance, domain.SittingAttendance, None),
+    TI("country", None, interfaces.ICountry, domain.Country, None),
+    TI("item_schedule", None, interfaces.IItemSchedule, domain.ItemSchedule, None),
+    TI("item_schedule_discussion", None, interfaces.IItemScheduleDiscussion, domain.ItemScheduleDiscussion, None),
+    TI("item_schedule_vote", None, interfaces.IItemScheduleVote, domain.ItemScheduleVote, None),
+    TI("editorial_note", None, interfaces.IEditorialNote, domain.EditorialNote, None),
+    TI("agenda_text_record", None, interfaces.IAgendaTextRecord, domain.AgendaTextRecord, None),
+    TI("sitting_report", None, interfaces.ISittingReport, domain.SittingReport, None),
+    TI("group_membership_role", None, interfaces.IGroupMembershipRole, domain.GroupMembershipRole, None),
     
     # additional custom types are loaded dynamically from bungeni_custom/types.xml
 ]
@@ -284,12 +284,14 @@ TYPE_REGISTRY = [
 
 # register custom types
 
-def register_new_custom_type(type_key, workflow_key, 
-        custom_archetype_key, sys_archetype_key
+def register_new_custom_type(type_key, workflow_key, descriptor_key,
+        sys_archetype_key, custom_archetype_key
     ):
     """Retrieve (create if needed) a domain interface and model for type_key,
     and register as new entry on TYPE_REGISTER.
     """
+    if custom_archetype_key is None:
+        custom_archetype_key = sys_archetype_key
     archetype_model = resolve("%s.%s" % (
             MODEL_MODULE.__name__, naming.model_name(custom_archetype_key)))
     # validate that custom archetype uses correct system archetype
@@ -316,10 +318,16 @@ def register_new_custom_type(type_key, workflow_key,
     except ImportError:
         domain_model = new_custom_domain_model(type_key, domain_iface, custom_archetype_key)
     
+    if workflow_key is None:
+        workflow_key = type_key
+    if descriptor_key is None:
+        descriptor_key = type_key    
+    
     # type_info entry
-    ti = TI(workflow_key, domain_iface, domain_model, archetype_model)
+    ti = TI(type_key, workflow_key, domain_iface, domain_model, archetype_model)
+    ti.descriptor_key = descriptor_key
     ti.custom = True
-    TYPE_REGISTRY.append((type_key, ti))
+    TYPE_REGISTRY.append(ti)
     
     log.info("Registered custom type [%s]: %s" % (custom_archetype_key, type_key))
     return type_key, ti

@@ -48,12 +48,12 @@ def is_descriptor(cls):
         return False
     '''
 
-def get_localizable_descriptor_class(module, type_key):
+def get_localizable_descriptor_class(module, descriptor_key):
     """Retrieve an existing localizable descriptor class from module.
     AttributeError -> not existing, descriptor to be created.
     AssertionError -> exists but either not a descriptor cls or not localizable.
     """
-    descriptor_cls_name = naming.descriptor_class_name(type_key)
+    descriptor_cls_name = naming.descriptor_class_name(descriptor_key)
     cls = getattr(module, descriptor_cls_name) # raises AttributeError
     assert is_descriptor(cls), \
         "Invalid descriptor [%s]" % (descriptor_cls_name)
@@ -96,7 +96,20 @@ def check_reload_localization(event):
     if capi.is_modified_since(PATH_UI_FORMS_SYSTEM):
         localize_descriptors(PATH_UI_FORMS_SYSTEM, is_init)
     for type_key, ti in capi.iter_type_info(scope="custom"):
-        check_reload_descriptor_file(type_key, is_init)
+        if ti.descriptor_key != type_key:
+            if is_init:
+                # must be the descriptor_key for a descriptor of a previously
+                # loaded type (and, altho there may be others, the type with
+                # same type_key as this descriptor MUST have this descriptor).
+                # OK, just retrieve that descriptor and set it here...
+                assert ti.descriptor_model is None
+                ti.descriptor_model = get_localizable_descriptor_class(
+                        DESCRIPTOR_MODULE, ti.descriptor_key)
+                #!+CATALYSE_SYSTEM_DESCRIPTORS -- all (model, descriptor) pairs 
+                # that re-use a descriptor are catalysed here!
+                alchemist.catalyst.catalyse(ti)
+        else:
+            check_reload_descriptor_file(type_key, is_init)
 
 
 def check_reload_descriptor_file(type_key, is_init):
@@ -105,9 +118,9 @@ def check_reload_descriptor_file(type_key, is_init):
     #!+get_descriptor_elem
     file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
     if capi.is_modified_since(file_path):
-        descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
-        assert xas(descriptor_doc, "name") == type_key, type_key
-        descriptor_cls = localize_descriptor(descriptor_doc, is_init, scope="custom")
+        descriptor_elem = capi.schema.validate_file_rng("descriptor", file_path)
+        descriptor_cls = localize_descriptor(
+            type_key, descriptor_elem, is_init, scope="custom")
 
 def localize_descriptors(file_path, is_init):
     """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
@@ -120,14 +133,14 @@ def localize_descriptors(file_path, is_init):
     # and reset global "constant" !+DECL ui.@roles must be set only once!
     ROLES_DEFAULT = " ".join(Field._roles)
     for edescriptor in descriptor_doc.findall("descriptor"):
-        descriptor_cls = localize_descriptor(edescriptor, is_init)
+        type_key = xas(edescriptor, "name")
+        descriptor_cls = localize_descriptor(type_key, edescriptor, is_init)
 
 
-def localize_descriptor(descriptor_elem, is_init, scope="system"):
+def localize_descriptor(type_key, descriptor_elem, is_init, scope="system"):
     """Localize descriptor from descriptor XML element.
     Return the created/modified descriptor class.
     """
-    type_key = xas(descriptor_elem, "name")
     ti = capi.get_type_info(type_key)
     
     # !+ ensure domain_model has already been set
@@ -173,7 +186,7 @@ def localize_descriptor(descriptor_elem, is_init, scope="system"):
             naming.MSGIDS.add(cls.container_name)
             # this is guarenteed to execute maximum once per type_key
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
-            #!+CATALYSE_SYSTEM_DESCRIPTORS -- all custom types are catalysed here!
+            #!+CATALYSE_SYSTEM_DESCRIPTORS -- all new custom types are catalysed here!
             alchemist.catalyst.catalyse(ti)
     else:
         # non-custom
@@ -252,14 +265,13 @@ def new_descriptor_cls(type_key, archetype_key, order,
     ):
     """Generate and setup new custom descriptor from configuration.
     """
-    assert archetype_key, \
-        "Custom descriptor %r does not specify an archetype" % (type_key)
-    archetype = get_localizable_descriptor_class(DESCRIPTOR_MODULE, archetype_key)
-    assert archetype.scope in ("archetype", "custom"), \
+    ti_archetype = capi.get_type_info(archetype_key)
+    descriptor_archetype = ti_archetype.descriptor_model
+    assert descriptor_archetype.scope in ("archetype", "custom"), \
         "Custom descriptor %r specifies an invalid archetype %r" % (
             type_key, archetype_key)
     descriptor_cls_name = naming.descriptor_class_name(type_key)
-    cls = type(descriptor_cls_name, (archetype,), {
+    cls = type(descriptor_cls_name, (descriptor_archetype,), {
             "scope": "custom",
             "__module__": DESCRIPTOR_MODULE.__name__,
             "order": order,

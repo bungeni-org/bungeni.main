@@ -19,6 +19,7 @@ not be logged also as changes on the parent.
     workflow
     remove
     version (includes reversion)
+    translate
 
 - Each single "logical" change should only generate a single change record 
 e.g. a workflow change implies a modify change but should only be logged once 

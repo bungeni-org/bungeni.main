@@ -17,7 +17,6 @@ grammar {
     start = ( UI |
         # custom descriptor, in own file
         element descriptor {
-            attribute name { SYMBOL_NAME }, # type_key
             attribute order { xsd:integer }?,
             attribute note { text }?,
             

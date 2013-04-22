@@ -96,10 +96,11 @@ def register_custom_types():
     
     def parse_elem(type_elem):
         type_key = misc.xml_attr_str(type_elem, "name")
-        workflow_key = misc.xml_attr_str(type_elem, "workflow", default=type_key)
-        custom_archetype_key = misc.xml_attr_str(type_elem, "archetype", default=type_elem.tag)
+        workflow_key = misc.xml_attr_str(type_elem, "workflow")
+        descriptor_key = misc.xml_attr_str(type_elem, "descriptor")
         sys_archetype_key = type_elem.tag
-        return type_key, workflow_key, custom_archetype_key, sys_archetype_key
+        custom_archetype_key = misc.xml_attr_str(type_elem, "archetype")
+        return type_key, workflow_key, descriptor_key, sys_archetype_key, custom_archetype_key
     
     def enabled_elems(elems):
         for elem in elems:

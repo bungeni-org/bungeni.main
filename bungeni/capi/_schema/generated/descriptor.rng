@@ -20,11 +20,7 @@
       <ref name="UI"/>
       <!-- custom descriptor, in own file -->
       <element name="descriptor">
-        <attribute name="name">
-          <ref name="SYMBOL_NAME"/>
-        </attribute>
         <optional>
-          <!-- type_key -->
           <attribute name="order">
             <data type="integer"/>
           </attribute>

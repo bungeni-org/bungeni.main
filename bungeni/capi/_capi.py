@@ -233,13 +233,13 @@ class CAPI(object):
         for tab in tabs.iterchildren(tag="tab"):
             ws_tabs.append(tab.attrib["id"])
         return ws_tabs    
-
+    
     @cached_property.cachedIn("__oauth_access_token_expiry_time__")
     @bungeni_custom_errors
     def oauth_access_token_expiry_time(self):
         """time in seconds before an access token expires"""
-        return (bc.oauth_access_token_expiry_time)
-
+        return int(bc.oauth_access_token_expiry_time)
+    
     @cached_property.cachedIn("__oauth_authorization_token_expiry_time__")
     @bungeni_custom_errors
     def oauth_authorization_token_expiry_time(self):
@@ -247,13 +247,14 @@ class CAPI(object):
         max recommended time is 10min
         """
         return int(bc.oauth_authorization_token_expiry_time)
-
+    
     @cached_property.cachedIn("__oauth_hmac_key__")
     @bungeni_custom_errors
     def oauth_hmac_key(self):
         """String used to to generate nonces. KEEP SECRET.
         """
         return bc.oauth_hmac_key
+    
     # utility methods
     
     def get_root_path(self):
@@ -265,7 +266,7 @@ class CAPI(object):
     def get_path_for(self, *path_components):
         """Get absolute path, under bungeni_custom, for path_components.
         """
-        return os.path.join(*(self.get_root_path(),)+path_components)
+        return os.path.join(self.get_root_path(), *path_components)
     
     def put_env(self, key):
         """Set capi value for {key} as the environment variable {key}
