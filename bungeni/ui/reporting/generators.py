@@ -89,7 +89,32 @@ def empty_element(element):
 def drop_element(element):
     """Remove an element from the document tree"""
     element.getparent().remove(element)
-    
+
+def add_empty_listing_node(listing_node):
+    """add an empty node to template output
+    """
+    no_items_tag = "p"
+    no_items_node = etree.Element(no_items_tag)
+    no_items_node.text = translate_i18n(_(u"No items found"))
+
+    #add to previous element of listing node - then drop it
+    prev_element = listing_node.getprevious()
+    add_after = None
+    if prev_element:
+        drop_element(listing_node)
+        add_after = prev_element
+    else:
+        if listing_node.tag in ["tr", "tbody"]:
+            parent_table = None
+            for prn in listing_node.iterancestors("table"):
+                parent_table = prn
+                break
+            if parent_table is not None:
+                #assumption: there's a title element
+                add_after = parent_table.getprevious()
+                drop_element(parent_table)
+    if add_after is not None:
+        add_after.addnext(no_items_node)
 
 class _BaseGenerator(object):
     """Base generator class. Child classes implement actual functionality"""
@@ -225,19 +250,13 @@ class ReportGeneratorXHTML(_BaseGenerator):
                                     common.list_container_items(listing) 
                                 ]
                             len_listing = len(listing)
-                            expanded_children = [ deepcopy(children) 
-                                for x in range(len_listing)
-                            ]
-                            empty_element(child)
                             if len(listing) == 0:
-                                no_items_tag = "p"
-                                if child.tag == "tr":
-                                    no_items_tag = "td"
-                                no_items_node = etree.SubElement(child, no_items_tag)
-                                no_items_node.text = translate_i18n(
-                                    _(u"No items found")
-                                )
+                                add_empty_listing_node(child)
                             else:
+                                expanded_children = [ deepcopy(children) 
+                                    for x in range(len_listing)
+                                ]
+                                empty_element(child)
                                 for (index, item) in enumerate(listing):
                                     for inner_element in expanded_children[index]:
                                         iroot = process_document_tree(inner_element, 
