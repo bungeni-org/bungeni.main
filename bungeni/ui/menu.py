@@ -523,12 +523,16 @@ class DownloadDocumentMenu(BrowserMenu):
         if IFeatureDownload.providedBy(context):
             doc_templates = self.documentTemplates(request.locale)
             manager = IDownloadManager(context)
+            add_template_to_title = len(doc_templates) > 1
             for doc_type, title in manager.get_allowed_types():
                 if doc_templates:
                     for template in doc_templates:
                         i18n_title = translate_i18n(title)
+                        if add_template_to_title:
+                            title="%s [%s]" % (i18n_title, 
+                                template.get("title")),
                         results.append(dict(
-                            title="%s [%s]" % (i18n_title,template.get("title")),
+                            title=title,
                             description="",
                             action="%s/download/%s?template=%s" % (_url, doc_type, 
                                 template.get("location")),
