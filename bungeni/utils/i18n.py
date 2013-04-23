@@ -110,11 +110,8 @@ class I18n(object):
 
         # Generate i18nstats
 
-        arguments = ['%sstats'% self.name,
-                     '-l', os.path.join(self.options['location'],
-                                        self.options.get('output', 'locales'),
-                                       ),
-                    ]
+        arguments = os.path.join(self.options['location'],
+            self.options.get('output', 'locales'))
         generated.extend(
             zc.buildout.easy_install.scripts(
                 [('%sstats'% self.name,
@@ -122,7 +119,7 @@ class I18n(object):
                   'main')],
                 ws, self.options['executable'], 'bin',
                 extra_paths = extra_paths,
-                arguments = arguments,
+                arguments = """'%s'""" % arguments,
             ))
 
         return generated
