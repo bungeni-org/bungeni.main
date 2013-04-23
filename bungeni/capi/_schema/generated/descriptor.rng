@@ -26,23 +26,11 @@
           </attribute>
         </optional>
         <optional>
+          <!-- !+ mv to types? -->
           <attribute name="note"/>
         </optional>
         <optional>
-          <!-- Attrs only in custom descriptors: !+ mv all these to types? -->
-          <!--
-            Note: if label/container_label present, the mechanism to 
-            auto-derive the display_name/container_name from name->type_key 
-            will be "hidden" by the specified fixed value.
-          -->
-          <attribute name="label"/>
-        </optional>
-        <optional>
-          <!-- i18n msgid, descriptor.display_name -->
-          <attribute name="container_label"/>
-        </optional>
-        <optional>
-          <!-- i18n msgid, descriptor.container_name -->
+          <!-- Attrs only in custom descriptors: !+ mv all to types? -->
           <!-- default sorting settings -->
           <attribute name="sort_on">
             <ref name="SPACE_SEPARATED_TOKENS"/>

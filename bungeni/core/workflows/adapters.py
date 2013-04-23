@@ -93,22 +93,27 @@ def register_custom_types():
     This is called prior to loading of the workflows for these custom types.
     Returns (type_key, TI) for the newly created TI instance.
     """
-    
+    xas, xab = misc.xml_attr_str, misc.xml_attr_bool
     def parse_elem(type_elem):
-        type_key = misc.xml_attr_str(type_elem, "name")
-        workflow_key = misc.xml_attr_str(type_elem, "workflow")
-        descriptor_key = misc.xml_attr_str(type_elem, "descriptor")
+        type_key = xas(type_elem, "name")
+        workflow_key = xas(type_elem, "workflow")
+        descriptor_key = xas(type_elem, "descriptor")
         sys_archetype_key = type_elem.tag
-        custom_archetype_key = misc.xml_attr_str(type_elem, "archetype")
-        return type_key, workflow_key, descriptor_key, sys_archetype_key, custom_archetype_key
+        custom_archetype_key = xas(type_elem, "archetype")
+        label = xas(type_elem, "label", None)
+        container_label = xas(type_elem, "container_label", None)
+        return (type_key, sys_archetype_key, custom_archetype_key, 
+            workflow_key, descriptor_key, 
+            label, container_label)
     
     def enabled_elems(elems):
         for elem in elems:
-            if misc.xml_attr_bool(elem, "enabled", default=True):
+            if xab(elem, "enabled", default=True):
                 yield elem
     
     # load types.xml
-    etypes = etree.fromstring(misc.read_file(capi.get_path_for("types.xml")))
+    file_path = capi.get_path_for("types.xml")
+    etypes = capi.schema.validate_file_rng("types", file_path)
     # register enabled types - ignoring not enabled types
     from bungeni.alchemist import type_info
     # custom "event" types (must be loaded prior to custom "doc" types)

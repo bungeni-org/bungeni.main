@@ -163,6 +163,10 @@ class TI(object):
                 container class for domain_model
             container_interface
                 interface for the container class for domain_model
+            label
+                the i18n msgid display label for the type (descriptor)
+            container_label
+                the i18n msgid display label for the container of the type (descriptor)
     """
     def __init__(self, type_key, workflow_key, iface, domain_model, archetype):
         self.type_key = type_key
@@ -176,6 +180,8 @@ class TI(object):
         self.descriptor_model = None
         self.container_class = None
         self.container_interface = None
+        self.label = None
+        self.container_label = None
         self.custom = False # type loaded from custom configuration 
         # NOTE: only needed temporarily during loading (until descriptor_model 
         # is set) -- but from then on ti.custom must not be inconsistent with 
@@ -284,8 +290,9 @@ TYPE_REGISTRY = [
 
 # register custom types
 
-def register_new_custom_type(type_key, workflow_key, descriptor_key,
-        sys_archetype_key, custom_archetype_key
+def register_new_custom_type(type_key, sys_archetype_key, custom_archetype_key, 
+        workflow_key, descriptor_key,
+        label, container_label
     ):
     """Retrieve (create if needed) a domain interface and model for type_key,
     and register as new entry on TYPE_REGISTER.
@@ -326,6 +333,8 @@ def register_new_custom_type(type_key, workflow_key, descriptor_key,
     # type_info entry
     ti = TI(type_key, workflow_key, domain_iface, domain_model, archetype_model)
     ti.descriptor_key = descriptor_key
+    ti.label = label
+    ti.container_label = container_label
     ti.custom = True
     TYPE_REGISTRY.append(ti)
     

@@ -171,19 +171,25 @@ def localize_descriptor(type_key, descriptor_elem, is_init, scope="system"):
             archetype_key = naming.polymorphic_identity(ti.archetype)
             cls = new_descriptor_cls(type_key, archetype_key, order, 
                 fields, info_containers, constraints, validations)
-            # only "push" onto cls (hiding same-named properties or overriding 
-            # inherited setting) if set in the descriptor AND only on cls creation:
-            if xas(descriptor_elem, "label"):
-                cls.display_name = xas(descriptor_elem, "label")
-            if xas(descriptor_elem, "container_label"):
-                cls.container_name = xas(descriptor_elem, "container_label")
+            # only "push" label/container_label onto descriptor cls (hiding 
+            # same-named properties or overriding inherited setting) if set 
+            # on type info AND only on cls creation:
+            if ti.label is not None:
+                cls.display_name = ti.label
+            if ti.container_label is not None:
+                cls.container_name = ti.container_label
+            
             if xas(descriptor_elem, "sort_on"):
                 cls.sort_on = xas(descriptor_elem, "sort_on").split()
                 # !+ assert each name is a field in the descriptor
             if xas(descriptor_elem, "sort_dir"): # default cls.sort_dir: "desc"
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
+            
+            # register i18n msgids for descriptor display_name (label) and 
+            # container_name (container_label)
             naming.MSGIDS.add(cls.display_name)
             naming.MSGIDS.add(cls.container_name)
+            
             # this is guarenteed to execute maximum once per type_key
             alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
             #!+CATALYSE_SYSTEM_DESCRIPTORS -- all new custom types are catalysed here!

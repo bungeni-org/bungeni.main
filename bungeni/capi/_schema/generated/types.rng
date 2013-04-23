@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Bungeni Parliamentary Information System - http://www.bungeni.org/
+  Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+  Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+  
+  RNC Schema for Bungeni Workflow XML Format
+  Created: Mario Ruggier, 23-apr-2013
+  
+  Note: Always modify the RNC file - the RNG version is auto-derived from it:
+  one way to auto-derive types.rng from this file is:
+    java -jar trang.jar -I rnc -O rng types.rnc generated/types.rng
+  
+  $Id$
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <include href="common.rng"/>
+  <start>
+    <ref name="TYPES"/>
+  </start>
+  <define name="TYPES">
+    <element name="types">
+      <optional>
+        <attribute name="note"/>
+      </optional>
+      <!--
+        The (base) system "archetype" of a custom type is indicated by a 
+        dedicated tag name. [Having a dedicated tag name per system archetype
+        allows for the possibility that different types could have different 
+        attributes (even if as yet the XML attrs for all sys archetype tags 
+        are the *same*) e.g. a group and/or a membership could specify an 
+        associated role (even if such info could well be specified elsewhere).]
+      -->
+      <interleave>
+        <zeroOrMore>
+          <ref name="EVENT"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="DOC"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="GROUP"/>
+        </zeroOrMore>
+      </interleave>
+    </element>
+  </define>
+  <define name="EVENT">
+    <element name="event">
+      <ref name="TYPE.attlist"/>
+    </element>
+  </define>
+  <define name="DOC">
+    <element name="doc">
+      <ref name="TYPE.attlist"/>
+    </element>
+  </define>
+  <define name="GROUP">
+    <element name="group">
+      <ref name="TYPE.attlist"/>
+      <zeroOrMore>
+        <ref name="MEMBER"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="MEMBER">
+    <element name="member">
+      <ref name="TYPE.attlist"/>
+    </element>
+  </define>
+  <define name="TYPE.attlist">
+    <!-- the type name used throughout the system as the type key -->
+    <attribute name="name">
+      <ref name="SYMBOL_NAME"/>
+    </attribute>
+    <optional>
+      <!--
+        the "custom" archetype key (name of a custom sub-type of the system 
+        archetype specified via the *same* element tag name).
+      -->
+      <attribute name="archetype">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+    </optional>
+    <optional>
+      <!--
+        the worklow key (the name of the workflow definition file, in 
+        `workflows/` folder); if not set, defaults to @name
+      -->
+      <attribute name="workflow">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+    </optional>
+    <optional>
+      <!--
+        the descriptor key (either the name of the descriptor definition file
+        in the `forms/` folder, or the descriptor name of a system archetype);
+        if not set, defaults to @name
+      -->
+      <attribute name="descriptor">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+    </optional>
+    <optional>
+      <!--
+        disabling a type means the type will not be registered, and all 
+        associated configuration e.g. workflow, descriptor, workspace, etc, 
+        will NOT be loaded
+      -->
+      <attribute name="enabled">
+        <data type="boolean"/>
+      </attribute>
+    </optional>
+    <optional>
+      <!-- "true" | "false", default is "true" -->
+      <!--
+        custom i18n msgids for the descriptor display_name (label) and 
+        container_name (container_label); defaults are auto-derived from @name
+        i.e. if label/container_label are present, the mechanism to auto-derive 
+        the display_name/container_name from @name (as type_key) will be 
+        "hidden" by the specified fixed value.
+      -->
+      <attribute name="label"/>
+    </optional>
+    <optional>
+      <!-- i18n msgid, descriptor.display_name -->
+      <attribute name="container_label"/>
+    </optional>
+    <optional>
+      <!-- i18n msgid, descriptor.container_name -->
+      <attribute name="note"/>
+    </optional>
+  </define>
+</grammar>

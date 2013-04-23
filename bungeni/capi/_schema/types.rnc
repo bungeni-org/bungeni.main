@@ -1,0 +1,75 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+#
+# RNC Schema for Bungeni Workflow XML Format
+# Created: Mario Ruggier, 23-apr-2013
+# 
+# Note: Always modify the RNC file - the RNG version is auto-derived from it:
+# one way to auto-derive types.rng from this file is:
+#   java -jar trang.jar -I rnc -O rng types.rnc generated/types.rng
+# 
+# $Id$
+
+
+grammar {
+    include "common.rnc"
+    
+    start = TYPES
+    
+    TYPES = element types {
+        attribute note { text }?,
+        
+        # The (base) system "archetype" of a custom type is indicated by a 
+        # dedicated tag name. [Having a dedicated tag name per system archetype
+        # allows for the possibility that different types could have different 
+        # attributes (even if as yet the XML attrs for all sys archetype tags 
+        # are the *same*) e.g. a group and/or a membership could specify an 
+        # associated role (even if such info could well be specified elsewhere).]
+        (EVENT* & DOC* & GROUP*)
+    }
+    
+    EVENT = element event { TYPE.attlist }
+    DOC = element doc { TYPE.attlist }
+    GROUP = element group { 
+        TYPE.attlist,
+        
+        MEMBER*
+    }
+    MEMBER = element member { TYPE.attlist }
+    
+    
+    TYPE.attlist =
+        
+        # the type name used throughout the system as the type key
+        attribute name { SYMBOL_NAME }, 
+        
+        # the "custom" archetype key (name of a custom sub-type of the system 
+        # archetype specified via the *same* element tag name).
+        attribute archetype { SYMBOL_NAME }?,
+        
+        # the worklow key (the name of the workflow definition file, in 
+        # `workflows/` folder); if not set, defaults to @name
+        attribute workflow { SYMBOL_NAME }?,
+        
+        # the descriptor key (either the name of the descriptor definition file
+        # in the `forms/` folder, or the descriptor name of a system archetype);
+        # if not set, defaults to @name
+        attribute descriptor { SYMBOL_NAME }?,
+        
+        # disabling a type means the type will not be registered, and all 
+        # associated configuration e.g. workflow, descriptor, workspace, etc, 
+        # will NOT be loaded
+        attribute enabled { xsd:boolean }?, # "true" | "false", default is "true"
+        
+        # custom i18n msgids for the descriptor display_name (label) and 
+        # container_name (container_label); defaults are auto-derived from @name
+        # i.e. if label/container_label are present, the mechanism to auto-derive 
+        # the display_name/container_name from @name (as type_key) will be 
+        # "hidden" by the specified fixed value.
+        attribute label { text }?, # i18n msgid, descriptor.display_name
+        attribute container_label { text }?, # i18n msgid, descriptor.container_name
+        
+        attribute note { text }?
+
+}

@@ -17,21 +17,14 @@ grammar {
     start = ( UI |
         # custom descriptor, in own file
         element descriptor {
-            attribute order { xsd:integer }?,
+            attribute order { xsd:integer }?, # !+ mv to types?
             attribute note { text }?,
             
-            # Attrs only in custom descriptors: !+ mv all these to types?
-            
-            # Note: if label/container_label present, the mechanism to 
-            # auto-derive the display_name/container_name from name->type_key 
-            # will be "hidden" by the specified fixed value.
-            attribute label { text }?, # i18n msgid, descriptor.display_name
-            attribute container_label { text }?, # i18n msgid, descriptor.container_name
+            # Attrs only in custom descriptors: !+ mv all to types?
             
             # default sorting settings
             attribute sort_on { SPACE_SEPARATED_TOKENS }?, # field names
             attribute sort_dir { "asc" | "desc" }?,
-            
             
             FIELD*,
             CONTAINER*, # only in custom descriptor

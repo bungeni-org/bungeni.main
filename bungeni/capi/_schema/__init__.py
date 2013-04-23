@@ -37,9 +37,10 @@ def _load_rng(name):
     return etree.RelaxNG(etree.parse(open(rng_path)))
 
 RNG = {
+    "types": _load_rng("types"),
+    "roles": _load_rng("roles"),
     "workflow": _load_rng("workflow"),
     "descriptor": _load_rng("descriptor"),
-    "roles": _load_rng("roles"),
     "workspace": _load_rng("workspace"),
     "notifications": _load_rng("notifications")
 }
