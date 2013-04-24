@@ -343,6 +343,7 @@ group = sa.Table("group", metadata,
         unique=True,
         nullable=False),
     sa.Column("description", sa.UnicodeText),
+    sa.Column("body", sa.UnicodeText),
     # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
@@ -639,6 +640,7 @@ venue = sa.Table("venue", metadata,
     sa.Column("venue_id", sa.Integer, primary_key=True),
     sa.Column("short_name", sa.Unicode(512), nullable=False),
     sa.Column("description", sa.UnicodeText),
+    sa.Column("body", sa.UnicodeText),
     sa.Column("language", sa.String(5), nullable=False),
     sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"))
 )
@@ -822,6 +824,7 @@ attachment = sa.Table("attachment", metadata,
     ),
     sa.Column("title", sa.Unicode(255), nullable=False), #!+file
     sa.Column("description", sa.UnicodeText), #!+file
+    sa.Column("body", sa.UnicodeText),
     sa.Column("data", FSBlob(32)), #!+file
     sa.Column("name", sa.String(200)), #!+file
     sa.Column("mimetype", sa.String(127)), #!+file
@@ -931,11 +934,13 @@ doc = sa.Table("doc", metadata,
     # The name given to the resource. Typically, a Title will be a name
     # by which the resource is formally known.
     sa.Column("title", sa.Unicode(1024), nullable=False),
+    sa.Column("sub_title", sa.Unicode(1024), nullable=True),
     # description <=> dc:Description !+DescriptiveProperties(mr, jan-2011)
     # An account of the content of the resource. Description may include but is
     # not limited to: an abstract, table of contents, reference to a graphical
     # representation of content or a free-text account of the content.
     sa.Column("description", sa.UnicodeText, nullable=True),
+    sa.Column("summary", sa.UnicodeText, nullable=True),
     # original language of the document
     sa.Column("language", sa.String(5), nullable=False),
     sa.Column("body", sa.UnicodeText),
@@ -946,6 +951,7 @@ doc = sa.Table("doc", metadata,
         server_default=sa.sql.text("now()"),
         nullable=False
     ),
+    sa.Column("doc_date", sa.DateTime(timezone=False), nullable=True),
     # group responsible to "handle" this document... involves workflow: the 
     # precise meaning, and validation constraints of this is defined by each 
     # sub-type e.g. ministry for bill & question, group for agendaitem, ...
@@ -992,6 +998,7 @@ doc = sa.Table("doc", metadata,
     # Value uses same micro format as for "subject".
     sa.Column("coverage", sa.UnicodeText, nullable=True),
     sa.Column("geolocation", sa.UnicodeText, nullable=True),
+    sa.Column("doc_urgency", sa.Unicode(length=128), nullable=True),
     # !+DC(mr, jan-2011) consider addition of:
     # - Format
     # - Date, auto derive from workflow audit log
@@ -1014,6 +1021,24 @@ doc = sa.Table("doc", metadata,
         server_default=sa.sql.text("now()"),
         nullable=False
     ),
+    
+    # Dublin Core Metadata Fields
+    sa.Column("source_title", sa.Unicode(1024), nullable=True),
+    sa.Column("source_creator", sa.Unicode(1024), nullable=True),
+    sa.Column("source_subject", sa.UnicodeText, nullable=True),
+    sa.Column("source_description", sa.UnicodeText, nullable=True),
+    sa.Column("source_publisher", sa.UnicodeText, nullable=True),
+    sa.Column("source_publisher_address", sa.UnicodeText, nullable=True),
+    sa.Column("source_contributors", sa.UnicodeText, nullable=True),
+    sa.Column("source_date", sa.DateTime(timezone=False), nullable=True),
+    sa.Column("source_type", sa.Unicode(128), nullable=True),
+    sa.Column("source_format", sa.Unicode(128), nullable=True),
+    sa.Column("source_doc_source", sa.UnicodeText, nullable=True),
+    sa.Column("source_language", sa.Unicode(5), nullable=True),
+    sa.Column("source_relation", sa.UnicodeText, nullable=True),
+    sa.Column("source_coverage", sa.UnicodeText, nullable=True),
+    sa.Column("source_rights", sa.UnicodeText, nullable=True),
+
 )
 doc_index = sa.Index("doc_status_idx", doc.c["status"])
 doc_audit = make_audit_table(doc, metadata)

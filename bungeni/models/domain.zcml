@@ -38,17 +38,37 @@
                 uri
                 acronym
                 title
+                sub_title
                 description
+                summary
                 language
                 body
                 status
                 status_date
                 group_id
                 subject
+                doc_date
                 coverage
+                doc_urgency
                 geolocation
                 head_id
                 timestamp
+                
+                source_title
+                source_creator
+                source_subject
+                source_description
+                source_publisher
+                source_publisher_address
+                source_contributors
+                source_date
+                source_type
+                source_format
+                source_doc_source
+                source_language
+                source_relation
+                source_coverage
+                source_rights
             "
         />
         <require permission="zope.ManageContent"
@@ -60,16 +80,36 @@
                 uri
                 acronym
                 title
+                sub_title
                 description
+                summary
                 language
                 body
                 status
                 status_date
                 group_id
                 subject
+                doc_date
                 coverage
+                doc_urgency
                 geolocation
                 head_id
+
+                source_title
+                source_creator
+                source_subject
+                source_description
+                source_publisher
+                source_publisher_address
+                source_contributors
+                source_date
+                source_type
+                source_format
+                source_doc_source
+                source_language
+                source_relation
+                source_coverage
+                source_rights
             "
         /><!-- !+DOC_ATTRIBUTE_ACCESS(mr, may-2012)
         the following attrs are NEVER modified after creation (and so access
@@ -124,18 +164,37 @@
                 uri
                 acronym
                 title
+                sub_title
                 description
+                summary
                 language
                 body
                 status
                 status_date
                 group_id
                 subject
+                doc_date
+                doc_urgency
                 coverage
                 geolocation
                 head_id
                 timestamp
-                event_date
+
+                source_title
+                source_creator
+                source_subject
+                source_description
+                source_publisher
+                source_publisher_address
+                source_contributors
+                source_date
+                source_type
+                source_format
+                source_doc_source
+                source_language
+                source_relation
+                source_coverage
+                source_rights
             "
         />
         <require permission="bungeni.event.Edit"
@@ -147,17 +206,36 @@
                 uri
                 acronym
                 title
+                sub_title
                 description
+                summary
                 language
                 body
                 status
                 status_date
                 group_id
                 subject
+                doc_date
+                doc_urgency
                 coverage
                 geolocation
                 head_id
-                event_date
+                
+                source_title
+                source_creator
+                source_subject
+                source_description
+                source_publisher
+                source_publisher_address
+                source_contributors
+                source_date
+                source_type
+                source_format
+                source_doc_source
+                source_language
+                source_relation
+                source_coverage
+                source_rights
             "
         />
     </class>
@@ -172,6 +250,7 @@
                 type
                 title
                 description
+                body
                 data
                 name
                 mimetype
@@ -191,6 +270,7 @@
                 type
                 title
                 description
+                body
                 data
                 name
                 mimetype
@@ -235,6 +315,7 @@
                 acronym
                 principal_name
                 description
+                body
                 status
                 status_date
                 start_date
@@ -266,6 +347,7 @@
                 acronym
                 principal_name
                 description
+                body
                 status
                 status_date
                 start_date
@@ -754,6 +836,7 @@
                 venue_id
                 short_name
                 description
+                body
                 language
             "
         />
@@ -762,6 +845,7 @@
                 venue_id
                 short_name
                 description
+                body
                 language
             "
         />
@@ -896,6 +980,7 @@
                 image
                 receive_notification
                 language
+                home_language
             "
         />
         <require permission="bungeni.user.Edit"
@@ -915,6 +1000,7 @@
                 image
                 receive_notification
                 language
+                home_language
             "
         />
     </class>
