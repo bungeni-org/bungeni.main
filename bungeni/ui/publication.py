@@ -22,7 +22,7 @@ from bungeni.alchemist import Session
 from bungeni.ui import interfaces
 from bungeni.ui.utils import url, common
 from bungeni.utils.common import has_feature
-from bungeni.ui.descriptor.localization import check_reload_localization
+from bungeni.ui.descriptor.localization import forms_localization_check_reload
 
 
 # !+IStartRequestEvent(mr, jun-2011) the once_per_request() below is a 
@@ -43,7 +43,7 @@ def once_per_request(event_handler):
 
 
 # guard event handlers to be called only ONCE per request
-check_reload_localization = once_per_request(check_reload_localization)
+forms_localization_check_reload = once_per_request(forms_localization_check_reload)
 
 
 # event subscribers, dispatch co-ordinators
@@ -62,7 +62,7 @@ def on_before_traverse(event):
             interfaces.IBungeniAuthenticatedSkin)
     remember_traversed_context(event)
     if has_feature("devmode"):
-        check_reload_localization(event)
+        forms_localization_check_reload(event)
 
 @component.adapter(IEndRequestEvent)
 def on_end_request(event):

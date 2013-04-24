@@ -87,62 +87,103 @@ def is_stale_info(bval, cval, message):
 '''
 
 
-@capi.bungeni_custom_errors
-def check_reload_localization(event):
-    """Called once on IWSGIApplicationCreatedEvent and (if in DEVMODE)
-    once_per_request on IBeforeTraverseEvent events (ui.publication).
+def update_new_descriptor_cls_from_ti(ti):
+    # only "push" label/container_label onto descriptor cls (hiding 
+    # same-named properties or overriding inherited setting) if set 
+    # on type info AND only on cls creation:
+    cls = ti.descriptor_model
+    # display_name
+    if ti.label is not None:
+        cls.display_name = ti.label
+        # register i18n msgid for descriptor display_name
+        naming.MSGIDS.add(cls.display_name)
+    else:
+        # !+TypeError: 'dictproxy' object does not support item deletion
+        assert "display_name" not in cls.__dict__, \
+            "Type %r re-use of descriptor must re-set @label" % (ti.type_key)
+        # clear any "cloned over' customization of this
+        if cls.__dict__.has_key("display_name"):
+            del cls.__dict__["display_name"]
+    # container_name
+    if ti.container_label is not None:
+        cls.container_name = ti.container_label
+        # register i18n msgid for descriptor container_name
+        naming.MSGIDS.add(cls.container_name)
+    else:
+        # !+TypeError
+        assert "container_name" not in cls.__dict__, \
+            "Type %r re-use of descriptor must re-set @container_label" % (ti.type_key)
+
+
+def forms_localization_init():
+    """Called once on IWSGIApplicationCreatedEvent.
     """
-    is_init = (event is None)
-    if capi.is_modified_since(PATH_UI_FORMS_SYSTEM):
-        localize_descriptors(PATH_UI_FORMS_SYSTEM, is_init)
+    # first create / update descriptor classes as per config
+    forms_localization_check_reload(None)
+    
+    # then, do the once-only update of each domain model
+    for type_key, ti in capi.iter_type_info(scope="system"):
+        alchemist.model.localize_domain_model_from_descriptor_class(
+            ti.domain_model, ti.descriptor_model)
+        #!+CATALYSE_SYSTEM_DESCRIPTORS -- all non-custom types have already 
+        # catalysed on import of ui.descriptor, and may not "catalyse twice"
+        # so just working around it by "calling" less of alchemist.catalyst.catalyse(ti)
+        # Make ui.descriptor.catalyse_system_descriptors to be more selective,
+        # and then catalyse remaining support types here?
+        #alchemist.catalyst.catalyse(ti)
+        #!+re-apply_security breaks edit event view (fields shown in view mode!)
+        #alchemist.catalyst.apply_security(ti)
+        alchemist.catalyst.generate_collection_traversal(ti)
+    
     for type_key, ti in capi.iter_type_info(scope="custom"):
-        if ti.descriptor_key != type_key:
-            if is_init:
-                # must be the descriptor_key for a descriptor of a previously
-                # loaded type (and, altho there may be others, the type with
-                # same type_key as this descriptor MUST have this descriptor).
-                # OK, just retrieve that descriptor and set it here...
-                assert ti.descriptor_model is None
-                ti.descriptor_model = get_localizable_descriptor_class(
-                        DESCRIPTOR_MODULE, ti.descriptor_key)
-                #!+CATALYSE_SYSTEM_DESCRIPTORS -- all (model, descriptor) pairs 
-                # that re-use a descriptor are catalysed here!
-                alchemist.catalyst.catalyse(ti)
+        alchemist.model.localize_domain_model_from_descriptor_class(
+            ti.domain_model, ti.descriptor_model)
+        alchemist.catalyst.catalyse(ti)
+
+
+@capi.bungeni_custom_errors
+def forms_localization_check_reload(event):
+    """Called once from forms_localization_init() and (if in DEVMODE)
+    once_per_request on IBeforeTraverseEvent events (ui.publication).
+    !+ note: switching descriptor on a type config requires restart!
+    """
+    # a cache of descriptor elems, to be able to update "re-used" descriptors
+    DESC_ELEMS_MODIFIED_SINCE = {}
+    # "sys" descriptors, if PATH_UI_FORMS_SYSTEM is modified (or not yet loaded)
+    if capi.is_modified_since(PATH_UI_FORMS_SYSTEM):
+        descriptor_doc = capi.schema.validate_file_rng("descriptor", PATH_UI_FORMS_SYSTEM)
+        Field._roles[:] = roles.SYSTEM_ROLES + roles.CUSTOM_ROLES
+        # reset global "constant" ROLES_DEFAULT
+        global ROLES_DEFAULT
+        ROLES_DEFAULT = " ".join(Field._roles)
+        for edescriptor in descriptor_doc.findall("descriptor"):
+            type_key = xas(edescriptor, "name")
+            descriptor_cls = localize_descriptor(type_key, edescriptor)
+            DESC_ELEMS_MODIFIED_SINCE[type_key] = edescriptor
+    # "custom" descriptors
+    for type_key, ti in capi.iter_type_info(scope="custom"):
+        # only check "dedicated" descriptor files
+        if ti.descriptor_key == type_key:
+            # ok, check if dedicated descriptor file has been modified (or not yet loaded)
+            #!+get_descriptor_elem
+            file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
+            if capi.is_modified_since(file_path):
+                descriptor_elem = capi.schema.validate_file_rng("descriptor", file_path)
+                descriptor_cls = localize_descriptor(type_key, descriptor_elem, scope="custom")
+                DESC_ELEMS_MODIFIED_SINCE[type_key] = descriptor_elem
         else:
-            check_reload_descriptor_file(type_key, is_init)
+            # re-using another descriptor...
+            if ti.descriptor_key in DESC_ELEMS_MODIFIED_SINCE:
+                descriptor_elem = DESC_ELEMS_MODIFIED_SINCE[ti.descriptor_key]
+                descriptor_cls = localize_descriptor(type_key, descriptor_elem, scope="custom")
+    DESC_ELEMS_MODIFIED_SINCE.clear()
 
 
-def check_reload_descriptor_file(type_key, is_init):
-    """Check if a singel file has been modified and needs reloading.
-    """
-    #!+get_descriptor_elem
-    file_path = capi.get_path_for("forms", "%s.xml" % (type_key))
-    if capi.is_modified_since(file_path):
-        descriptor_elem = capi.schema.validate_file_rng("descriptor", file_path)
-        descriptor_cls = localize_descriptor(
-            type_key, descriptor_elem, is_init, scope="custom")
-
-def localize_descriptors(file_path, is_init):
-    """Localizes descriptors from {file_path} [{bungeni_custom}/forms/..].
-    """
-    descriptor_doc = capi.schema.validate_file_rng("descriptor", file_path)
-    # make the value of <ui.@roles> as *the* bungeni default list of roles
-    global ROLES_DEFAULT
-    #!+ROLES Field._roles[:] = capi.schema.qualified_roles(descriptor_doc.get("roles", ROLES_DEFAULT))
-    Field._roles[:] = roles.SYSTEM_ROLES + roles.CUSTOM_ROLES
-    # and reset global "constant" !+DECL ui.@roles must be set only once!
-    ROLES_DEFAULT = " ".join(Field._roles)
-    for edescriptor in descriptor_doc.findall("descriptor"):
-        type_key = xas(edescriptor, "name")
-        descriptor_cls = localize_descriptor(type_key, edescriptor, is_init)
-
-
-def localize_descriptor(type_key, descriptor_elem, is_init, scope="system"):
+def localize_descriptor(type_key, descriptor_elem, scope="system"):
     """Localize descriptor from descriptor XML element.
     Return the created/modified descriptor class.
     """
     ti = capi.get_type_info(type_key)
-    
     # !+ ensure domain_model has already been set
     assert ti.domain_model, type_key
     
@@ -171,49 +212,17 @@ def localize_descriptor(type_key, descriptor_elem, is_init, scope="system"):
             archetype_key = naming.polymorphic_identity(ti.archetype)
             cls = new_descriptor_cls(type_key, archetype_key, order, 
                 fields, info_containers, constraints, validations)
-            # only "push" label/container_label onto descriptor cls (hiding 
-            # same-named properties or overriding inherited setting) if set 
-            # on type info AND only on cls creation:
-            if ti.label is not None:
-                cls.display_name = ti.label
-            if ti.container_label is not None:
-                cls.container_name = ti.container_label
-            
             if xas(descriptor_elem, "sort_on"):
                 cls.sort_on = xas(descriptor_elem, "sort_on").split()
                 # !+ assert each name is a field in the descriptor
             if xas(descriptor_elem, "sort_dir"): # default cls.sort_dir: "desc"
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
-            
-            # register i18n msgids for descriptor display_name (label) and 
-            # container_name (container_label)
-            naming.MSGIDS.add(cls.display_name)
-            naming.MSGIDS.add(cls.container_name)
-            
-            # this is guarenteed to execute maximum once per type_key
-            alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
-            #!+CATALYSE_SYSTEM_DESCRIPTORS -- all new custom types are catalysed here!
-            alchemist.catalyst.catalyse(ti)
+            update_new_descriptor_cls_from_ti(ti)
     else:
         # non-custom
         cls = update_descriptor_cls(type_key, order, 
             fields, info_containers, constraints, validations)
-        # ensures that this executes a maximum once per type_key
-        if type_key in alchemist.model.localize_domain_model_from_descriptor_class.DONE:
-            log.warn("Ignoring attempt to re-localize model [scope=%r] "
-                "from descriptor for type %r", scope, type_key)
-        else:
-            alchemist.model.localize_domain_model_from_descriptor_class(domain_model, cls)
-            #!+CATALYSE_SYSTEM_DESCRIPTORS -- all non-custom types have already 
-            # catalysed on import of ui.descriptor, and may not "catalyse twice"
-            # so just working around it by "calling" less of alchemist.catalyst.catalyse(ti)
-            # Make ui.descriptor.catalyse_system_descriptors to be more selective,
-            # and then catalyse remaining support types here?
-            #alchemist.catalyst.catalyse(ti)
-            #!+re-apply_security breaks edit event view (fields shown in view mode!)
-            #alchemist.catalyst.apply_security(ti)
-            alchemist.catalyst.generate_collection_traversal(ti)
-    log.debug("Localized [init=%s] descriptor [%s] %s", is_init, type_key, ti)
+    log.debug("Localized descriptor [%s] %s", type_key, ti)
     return cls
 
 
@@ -271,8 +280,10 @@ def new_descriptor_cls(type_key, archetype_key, order,
     ):
     """Generate and setup new custom descriptor from configuration.
     """
-    ti_archetype = capi.get_type_info(archetype_key)
-    descriptor_archetype = ti_archetype.descriptor_model
+    archetype_ti = capi.get_type_info(archetype_key)
+    archetype_descriptor_key = archetype_ti.descriptor_key or archetype_ti.type_key
+    descriptor_archetype = \
+        get_localizable_descriptor_class(DESCRIPTOR_MODULE, archetype_descriptor_key)
     assert descriptor_archetype.scope in ("archetype", "custom"), \
         "Custom descriptor %r specifies an invalid archetype %r" % (
             type_key, archetype_key)

@@ -32,7 +32,7 @@ def on_wsgi_application_created_event(application, event):
     
     # load and apply-back UI descriptor customizations
     from bungeni.ui.descriptor import localization
-    localization.check_reload_localization(None)
+    localization.forms_localization_init()
     
     bungeni.ui.feature.apply_customization_ui()
 

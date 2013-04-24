@@ -214,6 +214,8 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     assert type_key not in localize_domain_model_from_descriptor_class.DONE, \
         "May not re-localize [%s] domain model from descriptor" % (type_key)
     localize_domain_model_from_descriptor_class.DONE.append(type_key)
+    log.info("localize_domain_model_from_descriptor_class: (%s, %s)", 
+            domain_model.__name__, descriptor_cls.__name__)
     
     for field in descriptor_cls.fields:
         

@@ -211,7 +211,8 @@ class DynamicFields(object):
         """
         domain_model = self.getDomainModel()
         self.form_fields = setUpFields(domain_model, self.mode)
-        super(DynamicFields, self).update()
+        super_update = super(DynamicFields, self).update #!+crazy method resolution!
+        super_update()
         def setWidgetErrors(widgets, errors):
             for widget in widgets:
                 name = widget.context.getName()
