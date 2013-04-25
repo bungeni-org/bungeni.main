@@ -549,7 +549,7 @@
     
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IUser"
-        title="Edit user"
+        title="Edit profile"
         action="./edit-profile"
         permission="bungeni.user.Edit"
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"

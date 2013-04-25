@@ -76,7 +76,7 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     
-	<!-- User -->
+    <!-- User -->
     <browser:page name="edit-profile" for="bungeni.models.interfaces.IUser"
         class="bungeni.ui.login.Profile"
         permission="bungeni.user.Edit"

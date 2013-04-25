@@ -98,6 +98,20 @@ class UILanguage(BaseLanguageProvider):
         except zope.security.interfaces.NoInteraction:
             return None
 
+@register.utility(provides=ILanguageProvider, name="User Preferred Language")
+class UserLanguage(BaseLanguageProvider):
+    PRECEDENCE = 6
+    def getLanguage(self):
+        try:
+            request = get_request()
+            if request:
+                identity = request.environment.get('repoze.who.identity')
+                if identity:
+                    return identity.get("home_language")
+        except zope.security.interfaces.NoInteraction:
+            return None
+
+
 def get_default_language():
     # !+LANGUAGE(murithi, mar2011) need to integrate precedence values in registration
     # of utilities but overriding/new classes can also reorder negotiation
