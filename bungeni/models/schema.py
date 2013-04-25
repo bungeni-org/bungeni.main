@@ -229,6 +229,7 @@ user = sa.Table("user", metadata,
     #!+receive_notification comment out for now - will be used for user preferences
     sa.Column("receive_notification", sa.Boolean, default=True),
     sa.Column("language", sa.String(5), nullable=False),
+    sa.Column("home_language", sa.String(5), nullable=True),
 )
 
 admin_user = sa.Table("admin_user", metadata,
