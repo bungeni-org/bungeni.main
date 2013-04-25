@@ -44,6 +44,8 @@ def write_all():
     write_to_custom("forms", "_vocabularies.xml", output_vocabularies())
     # list of all roles in system
     write_to_custom("", "_roles.xml", output_all_roles())
+    # list of all download types provided
+    write_to_custom("workflows", "_downtypes.xml", output_downloadtypes())
 
 
 def output_actions():
@@ -293,4 +295,18 @@ def output_vocabularies():
         )
     li_vocabs.append("</vocabularies>")
     return "\n".join(li_vocabs).encode("utf-8")    
+
+def output_downloadtypes():
+    """
+    Provides a list of downloadable types (used in the allowed_types parameter of the download
+    feature )
+    """
+
+    from bungeni.models.interfaces import DOWNLOAD_TYPES
+
+    li_dntypes = ["<downloadTypes>"]
+    for k,v in DOWNLOAD_TYPES:
+        li_dntypes.append('<downloadType name="%s" description="%s" />' % (k,v))
+    li_dntypes.append("</downloadTypes>")
+    return "\n".join(li_dntypes).encode("utf-8")
 
