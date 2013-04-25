@@ -59,8 +59,8 @@ Content creation
     >>> set_interaction(clerk)
   >>> from bungeni.models.testing import add_content
 
-  >>> parliament = add_content(
-  ...    domain.Parliament,
+  >>> chamber = add_content(
+  ...    domain.Chamber,
   ...    short_name=u"p_1",
   ...    language="en",
   ...    start_date=yesterday,
@@ -71,7 +71,7 @@ Content creation
   ...    short_name=u"gov_1",
   ...    language="en",
   ...    start_date=yesterday,
-  ...    parliament_id=parliament.parliament_id)
+  ...    parliament_id=chamber.parliament_id)
   
   >>> ministry = add_content(
   ...    domain.Ministry,
@@ -80,7 +80,7 @@ Content creation
   ...    start_date=yesterday,
   ...    parent_group_id=gov.group_id)
 
-We need a parliament, government ministry and ministers to whom we can
+We need a chamber, government ministry and ministers to whom we can
 send the question notifications.
 
   >>> country = add_content(
@@ -160,12 +160,12 @@ that is created via the UI form.
   ...     language="en",
   ...     doc_type="ordinary",
   ...     response_type="written",
-  ...     parliament_id=parliament.parliament_id)
+  ...     parliament_id=chamber.parliament_id)
     
   >>> question.__parent__ = app
   
   >>> from bungeni.models.testing import create_sitting
-  >>> sitting = create_sitting(parliament.parliament_id, "en")
+  >>> sitting = create_sitting(chamber.parliament_id, "en")
 
 Set up a security mapping.
 
@@ -211,7 +211,7 @@ PRINCIPAL: member
   'member'
 
 -------------------------------------
-Transition: "create" - assigns the role of "Owner" and sets the parliament id.
+Transition: "create" - assigns the role of "Owner" and sets the chamber id.
 
 !+ generalize these tests to not assume predefined transition names / sequence!
 
@@ -222,7 +222,7 @@ auto-kick-in on question creation, as in application, via the event handlers?
   >>> question.status
   'draft'
 
-  >>> question.parliament_id==parliament.parliament_id
+  >>> question.parliament_id==chamber.parliament_id
   True
   
   >>> tuple(qprm.getRolesForPrincipal("member"))
@@ -491,7 +491,7 @@ Question conditions
   False
 
   >>> from bungeni.models.testing import create_sitting
-  >>> sitting = create_sitting(parliament.parliament_id)
+  >>> sitting = create_sitting(chamber.parliament_id)
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,

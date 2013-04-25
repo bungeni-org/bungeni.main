@@ -187,8 +187,8 @@
      class=".calendar.browser.CalendarView"
     />
   <browser:page
-     for="bungeni.models.interfaces.IParliament"
-     permission="bungeni.parliament.View"
+     for="bungeni.models.interfaces.IChamber"
+     permission="bungeni.chamber.View"
      name="schedule"
      class=".calendar.browser.CalendarView"
     />

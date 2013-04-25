@@ -114,10 +114,10 @@
     />
     <!-- !+BUNGENI_CUSTOM -->
     <browser:subMenuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IParliament"
+        for="bungeni.models.interfaces.IChamber"
         title="Add parliamentary content..."
         action="add_parliamentary_content"
-        permission="bungeni.parliament.View"
+        permission="bungeni.chamber.View"
         layer=".interfaces.IAdminSectionLayer"
         submenu="context_add_parliamentary_content"
     />
@@ -996,12 +996,12 @@
     </browser:menuItems>
 
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IParliament"
+        for="bungeni.models.interfaces.IChamber"
         action="edit"
         title="Edit parliament"
         order="10"
         layer=".interfaces.IAdminSectionLayer"
-        permission="bungeni.parliament.Edit"
+        permission="bungeni.chamber.Edit"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IOffice"
@@ -1028,11 +1028,11 @@
         permission="bungeni.political_group.Edit"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IParliament"
+        for="bungeni.models.interfaces.IChamber"
         action="delete"
         title="Delete parliament"
         order="99"
-        permission="bungeni.parliament.Delete"
+        permission="bungeni.chamber.Delete"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="context_actions"

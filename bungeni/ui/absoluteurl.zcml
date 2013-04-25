@@ -144,7 +144,7 @@
      <!-- Archive section -->
    
     <browser:view
-        for="bungeni.models.interfaces.IParliament"
+        for="bungeni.models.interfaces.IChamber"
         name="get_url"
         class=".absoluteurl.ParliamentsArchiveAbsoluteURLView"
         layer=".interfaces.IArchiveSectionLayer"
@@ -240,7 +240,7 @@
     <!-- Admin section -->
 
     <browser:view
-        for="bungeni.models.interfaces.IParliament"
+        for="bungeni.models.interfaces.IChamber"
         name="get_url"
         class=".absoluteurl.ParliamentAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"

@@ -18,14 +18,14 @@ Sittings
 any group can schedule a sitting, a sitting is treated as a physical
 meeting of the group by the system. 
 
-  >>> parliament = domain.Parliament( short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
-  >>> parliament.language = "en"
-  >>> session.add(parliament)
+  >>> chamber = domain.Chamber( short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
+  >>> chamber.language = "en"
+  >>> session.add(chamber)
   >>> session.flush()
   >>> sit1 = domain.Sitting()
   >>> sit1.start_date = datetime.datetime(2000,1,1,2,0)
   >>> sit1.end_date = datetime.datetime(2000,1,1,4,0)
-  >>> sit1.group_id = parliament.group_id
+  >>> sit1.group_id = chamber.group_id
   >>> sit1.language = "en"
   >>> session.add(sit1)
   >>> session.flush()
@@ -33,7 +33,7 @@ meeting of the group by the system.
   >>> sit11 = domain.Sitting()
   >>> sit11.start_date = datetime.datetime(2000,1,1,2,0)
   >>> sit11.end_date = datetime.datetime(2000,1,1,4,0)
-  >>> sit11.group_id = parliament.group_id
+  >>> sit11.group_id = chamber.group_id
   >>> sit11.language = "en"
   >>> session.add(sit11)
   >>> session.flush()
@@ -41,7 +41,7 @@ meeting of the group by the system.
   >>> sit2 = domain.Sitting()
   >>> sit2.start_date = datetime.datetime(2000,1,1,5,0)
   >>> sit2.end_date = datetime.datetime(2000,1,1,8,0)
-  >>> sit2.group_id = parliament.group_id
+  >>> sit2.group_id = chamber.group_id
   >>> sit2.language = "en"
   >>> session.add(sit2)
   >>> session.flush()
@@ -49,7 +49,7 @@ meeting of the group by the system.
   >>> sit21 = domain.Sitting()
   >>> sit21.start_date = datetime.datetime(2000,1,1,5,0)
   >>> sit21.end_date = datetime.datetime(2000,1,1,8,0)
-  >>> sit21.group_id = parliament.group_id
+  >>> sit21.group_id = chamber.group_id
   >>> sit21.language = "en"
   >>> session.add(sit21)
   >>> session.flush()

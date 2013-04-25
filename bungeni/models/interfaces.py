@@ -77,10 +77,10 @@ class IBungeniContainer(IAlchemistContainer):
     """Parliamentary container.
     """
 
-class IParliament(IBungeniGroup):
-    """Marker interface for group parliament.
+class IChamber(IBungeniGroup):
+    """Marker interface for parliament chamber group.
     """
-class IParliamentContainer(IAlchemistContainer): pass
+class IChamberContainer(IAlchemistContainer): pass
 
 class IGovernment(IBungeniGroup):
     """Marker interface for group Government.
@@ -160,6 +160,7 @@ class ISerializable(interface.Interface):
 
 class IBungeniContent(IOwned):
     """Parliamentary content
+    !+IAlchemistContent merge?
     
     !+IBungeniContent(mr, nov-2011) clarify distinction, 
     in intention and use, between the following interfaces: 

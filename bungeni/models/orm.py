@@ -138,9 +138,9 @@ mapper(domain.Government,
     polymorphic_identity=polymorphic_identity(domain.Government)
 )
 
-mapper(domain.Parliament, schema.parliament,
+mapper(domain.Chamber, schema.parliament,
     inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Parliament)
+    polymorphic_identity="parliament" #polymorphic_identity(domain.Chamber)
 )
 
 mapper(domain.PoliticalGroup, schema.political_group,
@@ -207,7 +207,7 @@ mapper(domain.GroupMembershipRole, schema.group_membership_role,
     }
 )
 
-# !+RENAME ParliamentMember
+# !+RENAME Member
 mapper(domain.MemberOfParliament, schema.parliament_membership,
     inherits=domain.GroupMembership,
     polymorphic_identity=polymorphic_identity(domain.MemberOfParliament),
@@ -249,7 +249,7 @@ mapper(domain.CommitteeStaff,
 
 mapper(domain.Session, schema.session,
     properties={
-        "group": relation(domain.Parliament, lazy=False),
+        "group": relation(domain.Chamber, lazy=False),
     }
 )
 

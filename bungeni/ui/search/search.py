@@ -58,14 +58,14 @@ def get_parl_container(context, chamber_id):
     parl = None
     chamber_key = container_obj_key(chamber_id)
     container = getattr_ancestry(context, None, 
-        acceptable=model_ifaces.IParliamentContainer.providedBy)
+        acceptable=model_ifaces.IChamberContainer.providedBy)
     if container:
         parl = container[chamber_key]
     else:
         #check locally for container
         containers = get_managed_containers(context) or context.items()
         for key, container in containers:
-            if model_ifaces.IParliamentContainer.providedBy(container):
+            if model_ifaces.IChamberContainer.providedBy(container):
                 return container[chamber_key]
     return parl
 

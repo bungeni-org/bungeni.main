@@ -132,9 +132,9 @@ class ArchiveAbsoluteURLView(CustomAbsoluteURL):
 
 
 class ParliamentsArchiveAbsoluteURLView(ArchiveAbsoluteURLView):
-    """ Custom absolute url for parliaments in archive section
+    """ Custom absolute url for chambers in archive section
     """
-    subsection = "parliaments"
+    subsection = "chambers"
 
 
 class PoliticalGroupsArchiveAbsoluteURLView(ArchiveAbsoluteURLView):
@@ -156,7 +156,7 @@ class ArchiveSectionParliamentItem(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+        return '%s/archive/browse/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.parliament_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
@@ -175,7 +175,7 @@ class ReportArchiveAbsoluteURLView(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+        return '%s/archive/browse/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.group_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
@@ -206,7 +206,7 @@ class MemberOfParliamentArchiveAbsoluteURLView(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+        return '%s/archive/browse/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.group_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
@@ -219,7 +219,7 @@ class OfficeArchiveAbsoluteURLView(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+        return '%s/archive/browse/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.parent_group_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
@@ -235,11 +235,11 @@ class AgendaItemArchiveAbsoluteURLView(ArchiveSectionParliamentItem):
 """ Admin section
 """
 class ParliamentAdminAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for parliaments in admin section
+    """ Custom absolute url for chambers in admin section
     """   
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/parliaments/%s' % (base_url, stringKey(self.context))
+        return '%s/admin/content/chambers/%s' % (base_url, stringKey(self.context))
 
     __call__ = __str__
     
@@ -251,7 +251,7 @@ class AdminSectionParliamentItem(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/parliaments/obj-%s/%s/%s' % \
+        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.parliament_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
@@ -270,7 +270,7 @@ class ReportAdminAbsoluteURLView(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/parliaments/obj-%s/%s/%s' % \
+        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.group_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
@@ -301,7 +301,7 @@ class CommitteeAdminAbsoluteURLView(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/parliaments/obj-%s/%s/%s' % \
+        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.parent_group_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
@@ -314,7 +314,7 @@ class MemberOfParliamentAdminAbsoluteURLView(AbsoluteURL):
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/parliaments/obj-%s/%s/%s' % \
+        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
                (base_url, self.context.group_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__

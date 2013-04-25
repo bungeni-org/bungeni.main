@@ -24,8 +24,12 @@ from zope.app.publication.traversers import SimpleComponentTraverser
 
 from sqlalchemy import sql
 
-from bungeni.models.interfaces import (IBungeniApplication, IParliament, 
-    IBungeniGroup, ISittingContainer, ISession
+from bungeni.models.interfaces import (
+    IBungeniApplication, 
+    IChamber, 
+    IBungeniGroup, 
+    ISittingContainer, 
+    ISession
 )
 from bungeni.models import domain
 from bungeni.models.utils import get_chamber_for_context
@@ -137,8 +141,10 @@ class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
         """
         return get_chamber_for_context(self.__parent__).group_id
 
+
+# !+ParliamentSchedulingContext why is this redefined further below?
 class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
-    component.adapts(IParliament)
+    component.adapts(IChamber)
     
     @property
     def group_id(self):
@@ -164,7 +170,7 @@ class GroupSchedulingContext(PrincipalGroupSchedulingContext):
         return self.__parent__
 
 class ParliamentSchedulingContext(GroupSchedulingContext):
-    component.adapts(IParliament)
+    component.adapts(IChamber)
 
 
 class SessionSchedulingContext(PrincipalGroupSchedulingContext):
@@ -214,3 +220,4 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     def get_group(self, name=None):
         assert name is None
         return get_chamber_for_context(self.__parent__)
+

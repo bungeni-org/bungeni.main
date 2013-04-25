@@ -972,7 +972,7 @@ class DhtmlxCalendarSittings(BrowserView):
                     )
                 )
                 event_list.append(trusted)
-        if model_interfaces.IParliament.providedBy(self.context.get_group()):
+        if model_interfaces.IChamber.providedBy(self.context.get_group()):
             return event_list + self.get_sessions()
         else:
             return event_list

@@ -45,7 +45,7 @@
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_filter" 
     /-:->
-    <adapter for=".domain.Parliament"
+    <adapter for=".domain.Chamber"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_filter"
     />

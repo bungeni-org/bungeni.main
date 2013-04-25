@@ -63,8 +63,8 @@ Content creation
 
   >>> from bungeni.models.testing import add_content
   
-  >>> parliament = add_content(
-  ...    domain.Parliament,
+  >>> chamber = add_content(
+  ...    domain.Chamber,
   ...    short_name=u"p_1",
   ...    language="en",
   ...    start_date=yesterday,
@@ -105,10 +105,10 @@ Actions
   <bungeni.core.workflow.states.WorkflowController object at ...>
   >>> wf = wfc.workflow
   
-"Create". This action sets the submission date and parliament id.
+"Create". This action sets the submission date and chamber id.
 
   >>> actions.create(bill)
-  >>> bill.parliament_id == parliament.parliament_id
+  >>> bill.parliament_id == chamber.parliament_id
   True
 
 !+FIRETRANSITION(mr, dec-2010) workflow transitions (only partly) executed in 
@@ -152,7 +152,7 @@ Conditions
   False
 
   >>> from bungeni.models.testing import create_sitting
-  >>> sitting = create_sitting(parliament.parliament_id)
+  >>> sitting = create_sitting(chamber.parliament_id)
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,

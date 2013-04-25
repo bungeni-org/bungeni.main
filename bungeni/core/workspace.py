@@ -221,8 +221,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
     @property
     def parliament_id(self):
-        """Vocabularies in the forms get the parliament id from the context,
-        this property returns the id of the parliament the currently logged in
+        """Vocabularies in the forms get the chamber id from the context,
+        this property returns the id of the chamber the currently logged in
         user is a member of
         """
         chamber = utils.get_login_user_chamber()
@@ -240,7 +240,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
     # in One2Many sets the foreign key of an item to the
     # primary key of the container when an item is added.
     # This does the same for the workspace containers
-    # This sets the foreign key of the doc to the parliament the currently
+    # This sets the foreign key of the doc to the chamber the currently
     # logged in member is a user
 
     def __setitem__(self, name, item):

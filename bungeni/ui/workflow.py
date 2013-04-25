@@ -154,7 +154,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             #
             # If a workflowed item is in draft state, we do NOT take the 
             # date_active of its last change as the min_date_active, but
-            # let that min fallback to parliament's creation date...
+            # let that min fallback to chamber's creation date...
             if not is_workflowed_and_draft(instance):
                 changes = get_changes(instance, "workflow")
                 if changes:
@@ -163,11 +163,11 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         
         if not min_date_active:
             # ok, try determine a min_date_active in another way, namely via the
-            # start_date of the "parliament" the instance "lives" in...
-            parliament = models.utils.get_parliament(
+            # start_date of the "chamber" the instance "lives" in...
+            chamber = models.utils.get_parliament(
                 common.getattr_ancestry(instance, "parliament_id")) #!+parent_ref="head"?
             min_date_active = datetime.datetime.combine(
-                parliament.start_date, datetime.time())
+                chamber.start_date, datetime.time())
         
         # As the precision of the UI-submitted datetime is only to the minute, 
         # we adjust min_date_active by a margin of 59 secs earlier to avoid 

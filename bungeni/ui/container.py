@@ -574,8 +574,8 @@ JSLCaches = {
         JSLCache(99, mfaces.IMemberOfParliament, ["MemberOfParliament"]),
     "political-groups": # alias: "politicalgroups"
         JSLCache(49, mfaces.IPoliticalGroup, ["PoliticalGroup"]),
-    "parliaments": 
-        JSLCache(49, mfaces.IParliament, ["Parliament"]),
+    "chambers":
+        JSLCache(49, mfaces.IChamber, ["Chamber"]),
     "governments": 
         JSLCache(49, mfaces.IGovernment, ["Government"]),
     "sessions": 

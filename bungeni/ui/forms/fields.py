@@ -8,7 +8,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.forms.fields")
 
-from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope import security
 from zope import interface
@@ -28,6 +27,7 @@ from bungeni.ui import browser
 from bungeni.models.interfaces import ITranslatable
 from bungeni.core.translation import get_translation_for, get_all_languages
 from copy import copy
+
 
 def filterFields(context, form_fields):
     omit_names = []

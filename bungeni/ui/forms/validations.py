@@ -212,7 +212,7 @@ def validate_chamber_dates(action, data, context, container):
     start_date = data["start_date"]
     end_date = data.get("end_date")
     parliament_type = data["parliament_type"]
-    if interfaces.IParliament.providedBy(context):
+    if interfaces.IChamber.providedBy(context):
         chamber = context
     else:
         chamber = None
@@ -222,7 +222,7 @@ def validate_chamber_dates(action, data, context, container):
     
     def get_others_overlapping_date(chamber, date):
         return [ result for result in 
-            queries.validate_date_in_interval(chamber, domain.Parliament, date)
+            queries.validate_date_in_interval(chamber, domain.Chamber, date)
             if result.parliament_type == parliament_type ]
     
     legislature = capi.legislature
@@ -250,7 +250,7 @@ def validate_chamber_dates(action, data, context, container):
                         "end_date"))
     
     if chamber is None:
-        results = queries.validate_open_interval(chamber, domain.Parliament)
+        results = queries.validate_open_interval(chamber, domain.Chamber)
         for result in results:
             if result.parliament_type == parliament_type:
                 errors.append(Invalid(
@@ -274,7 +274,7 @@ def validate_government_dates(action, data, context, container):
     if container.__parent__.end_date is not None and start_date:
         if start_date > container.__parent__.end_date:
             errors.append(Invalid(
-                    "%s %s" % (_("Start date cannot be after the parliaments"
+                    "%s %s" % (_("Start date cannot be after the chambers"
                             " dissolution"), container.__parent__.end_date), 
                     "start_date"))
     if start_date and container.__parent__.start_date > start_date:

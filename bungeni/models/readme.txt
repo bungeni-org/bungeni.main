@@ -75,23 +75,23 @@ Groups
 
 Bungeni uses groups to model any collection of users. The relational inheritance
 features of sqlalchemy to allow for subclassing group, with value storage in a 
-different table. Bungeni uses this feature to model parliaments, committees, 
+different table. Bungeni uses this feature to model chambers, committees,
 political groups, etc. Let's create some groups in the system to examine how
 they work.
 
-  >>> parliament = domain.Parliament(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now(), group_role="bungeni.MP")
-  >>> parliament.principal_name = "parl_01"
-  >>> parliament.language = "en"
-  >>> session.add(parliament)
+  >>> chamber = domain.Chamber(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now(), group_role="bungeni.MP")
+  >>> chamber.principal_name = "parl_01"
+  >>> chamber.language = "en"
+  >>> session.add(chamber)
   >>> session.flush()
   
   >>> political_group_a = domain.PoliticalGroup(short_name=u"pp_1", start_date=datetime.datetime.now(), group_role="bungeni.MemberPoliticalGroupAssembly")
   >>> political_group_a.principal_name = "pga_01"
-  >>> political_group_a.parent_group_id = parliament.parliament_id
+  >>> political_group_a.parent_group_id = chamber.parliament_id
   >>> political_group_a.language = "en"
   >>> political_group_b = domain.PoliticalGroup(short_name=u"pp_2", start_date=datetime.datetime.now(), group_role="bungeni.MemberPoliticalGroupAssembly")
   >>> political_group_b.principal_name = "pgb_01"
-  >>> political_group_b.parent_group_id = parliament.parliament_id
+  >>> political_group_b.parent_group_id = chamber.parliament_id
   >>> political_group_b.language = "en"
   >>> session.add(political_group_a)
   >>> session.add(political_group_b)
@@ -109,7 +109,7 @@ The actual committee
   ...       start_date=datetime.datetime.now(),
   ...       principal_name="com_01",
   ...       group_role="bungeni.CommitteeMember")
-  >>> committee_a.parent_group_id = parliament.parliament_id
+  >>> committee_a.parent_group_id = chamber.parliament_id
   >>> committee_a.sub_type = "housekeeping"
   >>> committee_a.group_continuity = "permanent"
   >>> committee_a.language = "en"
@@ -159,7 +159,7 @@ Add a user address
 
 Add a group address
   >>> group_address_1 = domain.GroupAddress()
-  >>> group_address_1.principal_id = parliament.group_id
+  >>> group_address_1.principal_id = chamber.group_id
   >>> group_address_1.logical_address_type = "home"
   >>> group_address_1.postal_address_type = "street"
   >>> group_address_1.street = u"Parliament Road"
@@ -169,7 +169,7 @@ Add a group address
   >>> session.flush()
   >>> int(group_address_1.address_id)
   2
-  >>> len(list(parliament.addresses))
+  >>> len(list(chamber.addresses))
   1
 
 Government
@@ -177,12 +177,12 @@ Government
   >>> gov = domain.Government(short_name=u"gov_1", start_date=datetime.datetime.now())
   >>> gov.principal_name = "gov_01"
   >>> gov.group_role = "bungeni.GovernmentMember"
-  >>> gov.parent_group_id = parliament.parliament_id
+  >>> gov.parent_group_id = chamber.parliament_id
   >>> gov.language = "en"
   >>> session.add(gov)
   >>> session.flush()
   >>> gov.parent_group
-  <bungeni.models.domain.Parliament object at ...>
+  <bungeni.models.domain.Chamber object at ...>
 
 
 Ministries
@@ -202,10 +202,10 @@ Ministries
   [<bungeni.models.domain.Ministry object at ...>]
 
 
-Groups in a parliament:
------------------------
+Groups in a chamber:
+-------------------
   >>> from bungeni.models.utils import get_all_group_ids_in_parliament
-  >>> pgroups = get_all_group_ids_in_parliament(parliament.parliament_id)
+  >>> pgroups = get_all_group_ids_in_parliament(chamber.parliament_id)
   
   >>> len(pgroups)
   6
@@ -264,10 +264,10 @@ Speaker's Office Title with Sub role
 Members of parliament
 ----------------------
 Members of parliament are defined by their membership in
-the parliaments group and additional attributes.
+the chamber group and additional attributes.
 
   >>> mp4 = domain.MemberOfParliament()
-  >>> mp4.group_id = parliament.group_id
+  >>> mp4.group_id = chamber.group_id
   >>> mp4.user_id = mp_1.user_id
   >>> mp4.start_date = datetime.datetime.now()
   >>> mp4.representation = "r1::p2::c3"
@@ -310,7 +310,7 @@ Sessions
 A parliamentary Session
 
  >>> sess = domain.Session()
- >>> sess.parliament_id = parliament.parliament_id
+ >>> sess.parliament_id = chamber.parliament_id
  >>> sess.short_name = u"First Session"
  >>> sess.full_name = u"First Session XXXX"
  >>> sess.start_date = datetime.datetime.now()
@@ -325,7 +325,7 @@ A parliamentary Session
 Sitting in this session 
  
  >>> ssit = domain.Sitting()
- >>> ssit.group_id = parliament.parliament_id
+ >>> ssit.group_id = chamber.parliament_id
  >>> ssit.start_date = datetime.datetime.now()
  >>> ssit.end_date = datetime.datetime.now()
  >>> ssit.language = "en"

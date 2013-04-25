@@ -400,7 +400,7 @@ committee = sa.Table("committee", metadata,
 # can approximately provide it, and is what should be used. 
 
 
-# political group (inside the parliament)
+# political group
 political_group = sa.Table("political_group", metadata,
     sa.Column("group_id", sa.Integer,
         sa.ForeignKey("group.group_id"), primary_key=True),
@@ -497,7 +497,7 @@ user_group_membership = sa.Table("user_group_membership", metadata,
 # Titles
 ##############
 # To indicate the title a persons has in a specific context (Ministry, 
-# Committee, Parliament, ...) and for what period (from - to)
+# Committee, Chamber, ...) and for what period (from - to)
 
 member_title = sa.Table("member_title", metadata,
     sa.Column("member_title_id", sa.Integer, primary_key=True),
@@ -875,12 +875,14 @@ doc = sa.Table("doc", metadata,
     
     # OWNERSHIP
     # owner <=> no dc equivalent
-    # The bungeni user that submits (either directly, or someone else submits 
-    # on his/her behalf) the document to Parliament. This is the "data owner" 
-    # of the item (and not necessarily the conceptual owner, that may be an 
-    # entity outside of Parliament). 
+    # The bungeni user that submits (either directly, as the conceptual/legal 
+    # "Owner" or someone else submits on his/her behalf as the "Drafter") the 
+    # document to the chamber in Parliament. This is the Bungeni user/group who
+    # is the conceptual owner of the document.
+    # Note: an "external" Owner, an entity that is outside of Parliament, 
+    # should also be supported.
     sa.Column("owner_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
+        sa.ForeignKey("user.user_id"), #!+principal
         nullable=False
     ),
     

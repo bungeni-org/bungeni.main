@@ -6,7 +6,7 @@ from zope.formlib import form
 from zope.formlib.namedtemplate import NamedTemplate
 from zope.app.pagetemplate import ViewPageTemplateFile
 
-from bungeni.models.interfaces import IParliament
+from bungeni.models.interfaces import IChamber
 
 from bungeni.ui.i18n import _
 from bungeni.ui import cookies
@@ -43,7 +43,7 @@ class ArchiveDatesForm(form.PageForm):
 
     def is_in_parliament(self, context):
         parent = context
-        while not IParliament.providedBy(parent):
+        while not IChamber.providedBy(parent):
             parent = getattr(parent, "__parent__", None)
             if parent is None:
                 return False

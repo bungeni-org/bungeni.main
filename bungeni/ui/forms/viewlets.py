@@ -130,7 +130,7 @@ class RssLinkViewlet(viewlet.ViewletBase):
 
 #
 
-@register.viewlet(interfaces.IParliament,
+@register.viewlet(interfaces.IChamber,
     manager=IContentViewManager,
     name="bungeni.viewlet.session",
     protect=register.PROTECT_VIEWLET_PUBLIC)
@@ -142,7 +142,7 @@ class SignatoriesViewlet(SubformViewlet):
     sub_attr_name = "signatories"
 
 
-@register.viewlet(interfaces.IParliament,
+@register.viewlet(interfaces.IChamber,
     manager=IContentViewManager,
     name="bungeni.viewlet.member-of-parliament",
     protect=register.PROTECT_VIEWLET_PUBLIC)
@@ -191,7 +191,7 @@ class AgendaItemsViewlet(SubformViewlet):
 class MinistriesViewlet(SubformViewlet):
     sub_attr_name = "ministries"
 
-@register.viewlet(interfaces.IParliament,
+@register.viewlet(interfaces.IChamber,
     manager=IContentViewManager,
     name="bungeni.viewlet.committees",
     protect=register.PROTECT_VIEWLET_PUBLIC)
@@ -218,7 +218,7 @@ class AddressesViewlet(SubformViewlet):
         return _(u"Contacts")
 
 
-@register.viewlet(interfaces.IParliament,
+@register.viewlet(interfaces.IChamber,
     manager=IContentViewManager,
     name="bungeni.viewlet.political-groups",
     protect=register.PROTECT_VIEWLET_PUBLIC)

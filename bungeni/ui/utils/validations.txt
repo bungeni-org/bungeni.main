@@ -19,91 +19,91 @@ Note that we only test the overlap of 'peers' here.
 refer to test_dates.py to test  that contained objects are inside
 their parents dates
    
-Parliaments
+Chambers
 -----------
 low level validations:
    
-   >>> parliament = domain.Parliament( short_name=u"p_1", start_date=today, election_date=yesterday, end_date=tomorrow)
-   >>> session.add( parliament)
+   >>> chamber = domain.Chamber(short_name=u"p_1", start_date=today, election_date=yesterday, end_date=tomorrow)
+   >>> session.add(chamber)
    >>> session.flush()
-   >>> list(utils.validate_date_in_interval( None, domain.Parliament, yesterday))
+   >>> list(utils.validate_date_in_interval(None, domain.Chamber, yesterday))
    []
-   >>> list(utils.validate_date_in_interval( None, domain.Parliament, today))
-   [<bungeni.models.domain.Parliament object at ...>]
+   >>> list(utils.validate_date_in_interval(None, domain.Chamber, today))
+   [<bungeni.models.domain.Chamber object at ...>]
 
-   >>> list(utils.validate_date_in_interval( None, domain.Parliament, tomorrow))
-   [<bungeni.models.domain.Parliament object at ...>]
+   >>> list(utils.validate_date_in_interval(None, domain.Chamber, tomorrow))
+   [<bungeni.models.domain.Chamber object at ...>]
 
-   >>> list(utils.validate_date_in_interval( parliament, domain.Parliament, today))
+   >>> list(utils.validate_date_in_interval(chamber, domain.Chamber, today))
    []
-   >>> list(utils.validate_date_in_interval( parliament,domain.Parliament, tomorrow))
+   >>> list(utils.validate_date_in_interval(chamber, domain.Chamber, tomorrow))
    []
-   >>> list(utils.validate_date_in_interval( None, domain.Parliament, dayat))
+   >>> list(utils.validate_date_in_interval(None, domain.Chamber, dayat))
    []
    
-Before you can add a new parliament all others must be closed
+Before you can add a new chamber others must be closed
    
-   >>> list(utils.validate_open_interval( None, domain.Parliament))
+   >>> list(utils.validate_open_interval(None, domain.Chamber))
    []
    
         
-Add a new (open ended) parliament
-   >>> parliament2 = domain.Parliament( short_name=u"p_2", start_date=tomorrow, election_date=today, end_date=None)
-   >>> session.add( parliament2)
+Add a new (open ended) chamber
+   >>> chamber2 = domain.Chamber(short_name=u"p_2", start_date=tomorrow, election_date=today, end_date=None)
+   >>> session.add(chamber2)
    >>> session.flush()
    
-   >>> list(utils.validate_open_interval( None, domain.Parliament))
-   [<bungeni.models.domain.Parliament object at ...>]
+   >>> list(utils.validate_open_interval(None, domain.Chamber))
+   [<bungeni.models.domain.Chamber object at ...>]
  
-give the 2nd parliament an end date and save
-   >>> parliament2.end_date = dayat
+give the 2nd chamber an end date and save
+   >>> chamber2.end_date = dayat
    >>> session.flush() 
    
-No open parliaments  anymore 
-   >>> list(utils.validate_open_interval( None, domain.Parliament))
+No open chambers  anymore 
+   >>> list(utils.validate_open_interval(None, domain.Chamber))
    []
       
-Now check for overlapping dates but not for the current (edited) parliament
+Now check for overlapping dates but not for the current (edited) chamber
    
-   >>> list(utils.validate_date_in_interval( parliament2, domain.Parliament, today))
-   [<bungeni.models.domain.Parliament object at ...>]
+   >>> list(utils.validate_date_in_interval(chamber2, domain.Chamber, today))
+   [<bungeni.models.domain.Chamber object at ...>]
    
-   >>> list(utils.validate_date_in_interval( parliament2 , domain.Parliament, dayat))
+   >>> list(utils.validate_date_in_interval(chamber2 , domain.Chamber, dayat))
    []
-   >>> list(utils.validate_date_in_interval(parliament, domain.Parliament, dayat))
-   [<bungeni.models.domain.Parliament object at ...>]
+   >>> list(utils.validate_date_in_interval(chamber, domain.Chamber, dayat))
+   [<bungeni.models.domain.Chamber object at ...>]
    
-   >>> list(utils.validate_date_in_interval( parliament, domain.Parliament, yesterday)) 
+   >>> list(utils.validate_date_in_interval(chamber, domain.Chamber, yesterday)) 
    []
-   >>> list(utils.validate_date_in_interval( parliament, domain.Parliament, today))
+   >>> list(utils.validate_date_in_interval(chamber, domain.Chamber, today))
    []
    
-give the 2nd parliament an end date and save
-   >>> parliament2.end_date = dayat
+give the 2nd chamber an end date and save
+   >>> chamber2.end_date = dayat
    >>> session.flush() 
    
-No open parliaments  anymore 
-   >>> list(utils.validate_open_interval( None, domain.Parliament)) 
+No open chambers  anymore 
+   >>> list(utils.validate_open_interval(None, domain.Chamber)) 
    []
 
 High level validations:
 
-   >>> parliament_container = MockContainer()
+   >>> chamber_container = MockContainer()
    >>> form_data= {'start_date': today, 'end_date': tomorrow, 'election_date': yesterday}
    >>> validations.validate_chamber_dates(action=None, data=form_data, 
-   ...  context=parliament, container=parliament_container)
+   ...  context=chamber, container=chamber_container)
    []
    
    >>> validations.validate_chamber_dates(action=None, data=form_data, 
-   ...  context=parliament2, container=parliament_container)
+   ...  context=chamber2, container=chamber_container)
    [Invalid(u'The start date overlaps with (p_1)', 'start_date'), 
    Invalid(u'The end date overlaps with (p_1)', 'end_date')]
    
-   >>> parliament.end_date = None
+   >>> chamber.end_date = None
    >>> session.flush() 
    >>> validations.validate_chamber_dates(action=None, data=form_data, 
-   ...  context=parliament2, container=parliament_container)
-   [Invalid(u'Another parliament is not yet dissolved (p_1)', 'election_date')]
+   ...  context=chamber2, container=chamber_container)
+   [Invalid(u'Another chamber is not yet dissolved (p_1)', 'election_date')]
 
 Government:
 ------------
@@ -111,21 +111,21 @@ Government:
   >>> government = domain.Government()
   >>> government.start_date = today
   >>> government_container = MockContainer()
-  >>> government_container.__parent__ = parliament
+  >>> government_container.__parent__ = chamber
   >>> validations.validate_government_dates(action=None, data=form_data,
   ...   context=government, container=government_container)
   []
   
-  >>> government.parliament_id = parliament.parliament_id
+  >>> government.parliament_id = chamber.parliament_id
   >>> government.short_name = u"gov1"
   >>> session.add(government)
   >>> session.flush()
   >>> government.end_date
   
-  >>> government_container.__parent__ = parliament2
+  >>> government_container.__parent__ = chamber2
   >>> validations.validate_government_dates(action=None, data=form_data,
   ...   context=government, container=government_container)
-  [Invalid(u'Start date must start after the swearing in of the parliament (...)', 'start_date')]
+  [Invalid(u'Start date must start after the swearing in of the chamber (...)', 'start_date')]
   
   >>> government2 = domain.Government()
   >>> list(utils.validate_open_interval(government2, domain.Government))
@@ -133,16 +133,16 @@ Government:
   
   >>> validations.validate_government_dates(action=None, data=form_data,
   ...   context=government2, container=government_container)
-  [Invalid(u'Start date must start after the swearing in of the parliament (...)', 'start_date'), 
+  [Invalid(u'Start date must start after the swearing in of the chamber (...)', 'start_date'), 
   Invalid(u'Another Government is not yet dissolved (gov1)', 'start_date')]
   
-  >>> government_container.__parent__ = parliament
-  >>> parliament.end_date = tomorrow
+  >>> government_container.__parent__ = chamber
+  >>> chamber.end_date = tomorrow
   >>> session.flush()
   >>> form_data['start_date'] = dayat
   >>> validations.validate_government_dates(action=None, data=form_data,
   ...   context=government, container=government_container)
-   [Invalid(u'Start date cannot be after the parliaments dissolution (...)', 'start_date')]
+   [Invalid(u'Start date cannot be after the chambers dissolution (...)', 'start_date')]
   
   >>> government.end_date = tomorrow
   >>> session.flush()
@@ -185,11 +185,11 @@ User group memberships:
   >>> session.add(mp_3)
   >>> membership = domain.GroupMembership()
   >>> membership.user = mp_1
-  >>> membership.group = parliament
-  >>> session.add( membership )
+  >>> membership.group = chamber
+  >>> session.add(membership)
   >>> session.flush()
   >>> group_container = MockContainer()
-  >>> group_container.__parent__ = parliament
+  >>> group_container.__parent__ = chamber
 
   
 

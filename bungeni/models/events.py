@@ -43,7 +43,7 @@ def set_sitting_parent_ids(ob, event):
     if ob.session_id is None or IObjectModifiedEvent.providedBy(event):
         if scheduling_context is not None:
             group = scheduling_context.get_group()
-            if interfaces.IParliament.providedBy(group):
+            if interfaces.IChamber.providedBy(group):
                 container = removeSecurityProxy(group).sessions
             else:
                 return

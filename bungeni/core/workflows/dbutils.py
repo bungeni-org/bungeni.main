@@ -65,7 +65,7 @@ def unschedule_doc(doc):
 def get_next_reg():
     session = Session()
     sequence = sa.Sequence("registry_number_sequence")
-    connection = session.connection(domain.ParliamentaryItem)
+    connection = session.connection(domain.Doc)
     return connection.execute(sequence)
 def get_next_prog(context):
     session = Session()
@@ -192,7 +192,7 @@ def endChildGroups(group):
     session = Session()
     end_date = group.end_date
     assert(end_date != None)
-    if interfaces.IParliament.providedBy(group):
+    if interfaces.IChamber.providedBy(group):
         parliament_id = group.parliament_id
         committees = _end_parliament_group(
             domain.Committee, parliament_id, end_date)

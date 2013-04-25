@@ -51,8 +51,8 @@ Content creation
   ...        language="en",
   ...        gender='M')
 
-  >>> parliament = add_content(
-  ...    domain.Parliament,
+  >>> chamber = add_content(
+  ...    domain.Chamber,
   ...    short_name=u"p_1",
   ...    language="en",
   ...    start_date=yesterday,
@@ -91,10 +91,10 @@ convention adopted for internal transition ids composed of:
   >>> wf = wfc.workflow
   
 "Create". This action assigns the role of "Owner" and sets the
-parliament id.
+chamber id.
   
   >>> actions.create(motion)
-  >>> motion.parliament_id == parliament.parliament_id
+  >>> motion.parliament_id == chamber.parliament_id
   True
 
   >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
@@ -113,7 +113,7 @@ Conditions
   False
 
   >>> from bungeni.models.testing import create_sitting
-  >>> sitting = create_sitting(parliament.parliament_id)
+  >>> sitting = create_sitting(chamber.parliament_id)
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,

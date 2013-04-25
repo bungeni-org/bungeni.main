@@ -37,11 +37,11 @@ Create a participation
 Initialise Group
 ----------------
 
-  >>> parliament = domain.Parliament(short_name=u"p_1",
+  >>> chamber = domain.Chamber(short_name=u"p_1",
   ...                               start_date=datetime.datetime.now(), 
   ...                               election_date=datetime.datetime.now())
-  >>> parliament.language = "en"
-  >>> session.add( parliament )
+  >>> chamber.language = "en"
+  >>> session.add(chamber)
   >>> session.flush()
 
 Initialise a report
@@ -56,7 +56,7 @@ Initialise a report
    >>> report.owner = mp_1
    >>> report.language = "en"
    >>> report.created_date = datetime.datetime.now()
-   >>> report.group = parliament
+   >>> report.group = chamber
    >>> session.add(report)
    >>> session.flush()
 
@@ -95,7 +95,7 @@ Initialise a Bill
    >>> bill.doc_type = "government"
    >>> bill.language = "en"
    >>> bill.created_date = datetime.datetime.now()
-   >>> bill.group = parliament
+   >>> bill.group = chamber
    >>> session.add(bill)
    >>> session.flush()
 
@@ -125,7 +125,7 @@ Initialise a Motion
    >>> motion.owner = mp_1
    >>> motion.language = "en"
    >>> motion.created_date = datetime.datetime.now()
-   >>> motion.group = parliament
+   >>> motion.group = chamber
    >>> session.add(motion)
    >>> session.flush()
 
@@ -155,7 +155,7 @@ Initialise a Tabled Document
    >>> tableddocument.owner = mp_1
    >>> tableddocument.language = "en"
    >>> tableddocument.created_date = datetime.datetime.now()
-   >>> tableddocument.group = parliament
+   >>> tableddocument.group = chamber
    >>> session.add(tableddocument)
    >>> session.flush()
 
@@ -185,7 +185,7 @@ Initialise an Agenda Item
    >>> agendaitem.owner = mp_1
    >>> agendaitem.language = "en"
    >>> agendaitem.created_date = datetime.datetime.now()
-   >>> agendaitem.group = parliament
+   >>> agendaitem.group = chamber
    >>> session.add(agendaitem)
    >>> session.flush()
 
@@ -217,7 +217,7 @@ Initialise a Question
    >>> question.language = "en"
    >>> question.question_type = "ordinary"
    >>> question.created_date = datetime.datetime.now()
-   >>> question.group = parliament
+   >>> question.group = chamber
    >>> session.add(question)
    >>> session.flush()
 

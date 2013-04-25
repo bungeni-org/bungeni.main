@@ -332,8 +332,8 @@
         />
     </class>
     
-    <class class=".domain.Parliament">
-        <require permission="bungeni.parliament.View"
+    <class class=".domain.Chamber">
+        <require permission="bungeni.chamber.View"
             attributes="
                 addresses
                 
@@ -379,7 +379,7 @@
                 election_date
             "
         />
-        <require permission="bungeni.parliament.Edit"
+        <require permission="bungeni.chamber.Edit"
             set_attributes="
                 short_name
                 full_name

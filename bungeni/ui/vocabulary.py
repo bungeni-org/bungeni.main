@@ -398,7 +398,7 @@ class DatabaseSource(BaseVocabularyFactory):
 
 
 parliament_factory = DatabaseSource(
-    domain.Parliament, "short_name", "parliament_id",
+    domain.Chamber, "short_name", "parliament_id",
     title_getter=lambda ob: "%s (%s-%s)" % (
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
@@ -537,7 +537,7 @@ class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):
 workflow_states = WorkflowStatesVocabularyFactory()
 component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 
-
+# !+ why not domain.MemberOfParliament ?
 class MemberOfParliament(object):
     """Member of Parliament = user join group membership join parliament"""
     

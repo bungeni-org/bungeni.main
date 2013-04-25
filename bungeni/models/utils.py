@@ -24,9 +24,9 @@ from bungeni.utils import common
 def get_chamber_for_context(context):
     """Return the chamber in which the context exists.
     """
-    # first look for current parliament from context tree
+    # first look for current chamber from context tree
     chamber = common.getattr_ancestry(context, None, "__parent__",
-        acceptable=interfaces.IParliament.providedBy)
+        acceptable=interfaces.IChamber.providedBy)
     # !+ should this ever be None here?
     if chamber is None:
         # check logged in user's chamber
@@ -38,7 +38,7 @@ def get_chamber_for_group(group):
     """Cascade up first group ancestry to chamber, returning it (or None).
     """
     return common.getattr_ancestry(group, None, "parent_group",
-        acceptable=interfaces.IParliament.providedBy)
+        acceptable=interfaces.IChamber.providedBy)
     ''' !+ equivalent alternative:
     if group:
         if group.type == "parliament":
@@ -147,7 +147,7 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
 
 
 def get_all_group_ids_in_parliament(parliament_id):
-    """ get all groups (group_ids) in a parliament
+    """ get all groups (group_ids) in a chamber
     including the sub (e.g. ministries) groups """
     session = Session()
     group_ids = [parliament_id, ]
@@ -165,7 +165,7 @@ def get_all_group_ids_in_parliament(parliament_id):
 # parliament_id column, but not parliament mapper property... add it?
 # !+rename get_chamber_by_id
 def get_parliament(parliament_id):
-    return Session().query(domain.Parliament).get(parliament_id)            
+    return Session().query(domain.Chamber).get(parliament_id)            
 
 
 def get_member_of_parliament(user_id):

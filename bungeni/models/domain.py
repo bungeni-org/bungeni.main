@@ -376,12 +376,15 @@ class Legislature(object):
 
 #
 
-# !+RENAME chamber
-class Parliament(Group):
-    """A parliament.
-    """
-    interface.implements(interfaces.IParliament)
 
+class Chamber(Group):
+    """A chamber in parliament.
+    """
+    interface.implements(interfaces.IChamber)
+
+
+#!+rename GroupMembership -> GroupMember
+#!+rename MemberOfParliament -> Member
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
     """
@@ -935,11 +938,6 @@ class MemberTitle(Entity):
         interfaces.IMemberTitle,
         interfaces.ITranslatable
     )
-
-
-class MinistryInParliament(object):
-    """Auxilliary class to get the parliament and government for a ministry.
-    """
 
 
 class EditorialNote(Entity):

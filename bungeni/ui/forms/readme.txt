@@ -15,46 +15,46 @@ Note that we only test the overlap of 'peers' here.
 refer to test_dates.py to test  that contained objects are inside
 their parents dates
    
-Parliaments
------------
+Chambers
+--------
    
-   >>> parliament = model.Parliament( short_name=u"p_1", start_date=today, election_date=yesterday, end_date=tomorrow)
-   >>> parliament.language = "en"
-   >>> session.add( parliament)
+   >>> chamber = model.Chamber(short_name=u"p_1", start_date=today, election_date=yesterday, end_date=tomorrow)
+   >>> chamber.language = "en"
+   >>> session.add(chamber)
    >>> session.flush()
    
-   >>> int(parliament.parliament_id) 
+   >>> int(chamber.parliament_id) 
    1
    
    >>> from bungeni.ui.forms import validations
 
    
-Before you can add a new parliament all others must be closed
+Before you can add a new chamber others must be closed
    
    
-Add a new (open ended) parliament
-   >>> parliament2 = model.Parliament( short_name=u"p_2", start_date=tomorrow, election_date=today, end_date=None)
-   >>> parliament2.language = "en"
-   >>> session.add( parliament2)
+Add a new (open ended) chamber
+   >>> chamber2 = model.Chamber(short_name=u"p_2", start_date=tomorrow, election_date=today, end_date=None)
+   >>> chamber2.language = "en"
+   >>> session.add(chamber2)
    >>> session.flush()
    
 Note that the date yesterday is well ouside our p_2 so it does not matter.
 
-give the 2nd parliament an end date and save
-   >>> parliament2.end_date = dayat
+give the 2nd chamber an end date and save
+   >>> chamber2.end_date = dayat
    >>> session.flush() 
    
-No open parliaments  anymore 
+No open chambers  anymore 
 
    
-Now check for overlapping dates but not for the current (edited) parliament
+Now check for overlapping dates but not for the current (edited) chamber
    
 
    
 Add a governmemt:
 
    >>> gov = model.Government(short_name=u"gov_1", start_date=today, end_date=tomorrow )
-   >>> gov.parent_group_id = parliament.parliament_id
+   >>> gov.parent_group_id = chamber.parliament_id
    >>> gov.language = "en"
    >>> session.add( gov )
    >>> session.flush() 
@@ -64,7 +64,7 @@ Add a governmemt:
 Add a second government
 
    >>> gov2 = model.Government(short_name=u"gov_2", start_date=tomorrow, end_date=dayat )
-   >>> gov2.parent_group_id = parliament.parliament_id
+   >>> gov2.parent_group_id = chamber.parliament_id
    >>> gov2.language = "en"
    >>> session.add( gov2 )
    >>> session.flush()
@@ -75,7 +75,7 @@ Sessions
 A parliamentary Session
 
    >>> sess = model.Session()
-   >>> sess.parliament_id = parliament.parliament_id
+   >>> sess.parliament_id = chamber.parliament_id
    >>> sess.short_name = u"First Session"
    >>> sess.full_name = u"First Session"
    >>> sess.start_date = yesterday
@@ -92,7 +92,7 @@ A parliamentary Session
 A second session
  
    >>> sess2 = model.Session()
-   >>> sess2.parliament_id = parliament.parliament_id
+   >>> sess2.parliament_id = chamber.parliament_id
    >>> sess2.short_name = u"2nd Session"
    >>> sess2.full_name = u"2nd Session"
    >>> sess2.start_date = tomorrow
@@ -107,7 +107,7 @@ Sittings
 ---------
  
     >>> ssit = model.Sitting()
-    >>> ssit.group_id = parliament.parliament_id
+    >>> ssit.group_id = chamber.parliament_id
     >>> ssit.start_date = today
     >>> ssit.end_date = tomorrow
     >>> ssit.language = "en"
@@ -122,7 +122,7 @@ Just check if we get something back because the return value depends on the time
 For Edit we need to be sure we do not check for the current data itself.
    
     >>> ssit2 = model.Sitting()
-    >>> ssit2.group_id = parliament.parliament_id
+    >>> ssit2.group_id = chamber.parliament_id
     >>> ssit2.start_date = yesterday
     >>> ssit2.end_date = today
     >>> ssit2.language = "en"
@@ -133,7 +133,7 @@ Just a quick check that the above validation for yesterday now fails
 
 and the real check
             
-Parliament members
+Parliament Chamber members
 
 add some users:
     >>> mp_1 = model.User(u"mp_1", 
@@ -155,7 +155,7 @@ add some users:
     >>> session.flush()
     
     >>> mp1 = model.MemberOfParliament()
-    >>> mp1.group_id = parliament.group_id
+    >>> mp1.group_id = chamber.group_id
     >>> mp1.user_id = mp_1.user_id
     >>> mp1.start_date = today
     >>> mp1.provenace = "r1::p1::c1"
@@ -165,7 +165,7 @@ add some users:
     >>> session.flush()
     
     >>> mp2 = model.MemberOfParliament()
-    >>> mp2.group_id = parliament.group_id
+    >>> mp2.group_id = chamber.group_id
     >>> mp2.user_id = mp_2.user_id
     >>> mp2.start_date = today
     >>> mp2.representation = "r1::p1::c1"

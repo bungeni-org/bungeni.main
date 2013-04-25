@@ -86,7 +86,7 @@ def setupStorageDirectory(part_target="xml_db"):
 
 
 def get_origin_parliament(context):
-    """get the parliament applicable to this object
+    """get the chamber applicable to this object
     """
     chamber_id = getattr(context, "parliament_id", None)
     if not chamber_id:
@@ -96,7 +96,7 @@ def get_origin_parliament(context):
             while group.parent_group_id is not None:
                 group = Session().query(
                     domain.Group).get(group.parent_group_id)
-            if isinstance(group, domain.Parliament):
+            if isinstance(group, domain.Chamber):
                 chamber_id = group.group_id
         if not chamber_id:
             if hasattr(context, "head_id") and context.head_id:
@@ -253,8 +253,8 @@ def publish_to_xml(context):
                     )
                     data["attachments"].append(attachment_dict)
 
-        #add explicit origin chamber for this object (used to partition data in
-        #if more than one parliament exists)
+        # add explicit origin chamber for this object (used to partition data
+        # in if more than one chamber exists)
         data["origin_parliament"] = get_origin_parliament(context)
         
         #add any additional files to file list

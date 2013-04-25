@@ -298,8 +298,8 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="serialization-manager")
         
-        content[u"parliaments"] = domain.ParliamentContainer()
-        to_locatable_container(domain.Parliament, content[u"parliaments"])
+        content[u"chambers"] = domain.ChamberContainer()
+        to_locatable_container(domain.Chamber, content[u"chambers"])
         content[u"governments"] = domain.GovernmentContainer()
         to_locatable_container(domain.Government, content[u"governments"])
         content[u"joint-committees"] = domain.JointCommitteeContainer()
