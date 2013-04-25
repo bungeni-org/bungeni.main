@@ -5,6 +5,7 @@ from zope.publisher.browser import BrowserPage
 from zope.publisher.interfaces import NotFound
 from zope.security.proxy import removeSecurityProxy
 from zope.app.publication.traversers import SimpleComponentTraverser
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 from bungeni.core.serialize import obj2dict
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.utils import url, misc
@@ -28,8 +29,6 @@ class APISectionView(BrowserPage):
             item = {}
             item["id"] = key
             item["title"] = self.context[key].title
-            item["url"] = url.absoluteURL(
-                self.context[key], self.request)
             data.append(item)
         misc.set_json_headers(self.request)
         return simplejson.dumps(data)
@@ -39,6 +38,17 @@ class APIObjectView(BrowserPage):
     def __call__(self):
         data = obj2dict(self.context, 0)
         misc.set_json_headers(self.request)
+        return simplejson.dumps(data, default=dthandler)
+
+
+class APIDebateRecordView(BrowserPage):
+    def __call__(self):
+        data = obj2dict(self.context, 0)
+        data["start_date"] = self.context.sitting.start_date
+        data["end_date"] = self.context.sitting.end_date
+        data["title"] = IDCDescriptiveProperties(self.context).title
+        data["url"] = url.absoluteURL(self.context, self.request)
+        data["media"] = obj2dict(self.context.debate_media, 0)
         return simplejson.dumps(data, default=dthandler)
 
 
@@ -77,3 +87,4 @@ class APITranscriberListing(ContainerJSONListingRaw):
         if login:
             query = query.join(domain.User).filter(domain.User.login == login)
         return query
+

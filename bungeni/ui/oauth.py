@@ -405,9 +405,9 @@ class OAuthAccessToken(BrowserPage):
                             domain.OAuthAuthorizationToken.authorization_code ==
                             self.request.form.get("code"))
                         ).one()
-                    parameters["authorization_token"] = authorization_token
                 except NoResultFound:
                     raise InvalidGrant()
+                parameters["authorization_token"] = authorization_token
             else:
                 raise InvalidRequest()
 

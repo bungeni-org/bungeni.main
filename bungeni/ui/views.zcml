@@ -532,6 +532,13 @@
       permission="bungeni.user.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
+   <browser:page
+      for="bungeni.models.interfaces.IDebateRecord"
+      name="index" 
+      class="bungeni.ui.api.APIDebateRecordView"
+      permission="bungeni.debate_record.View"
+      layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
    <!-- OAuth -->
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"

@@ -1841,14 +1841,14 @@ class DebateTakeDescriptor(ModelDescriptor):
         F(name="start_date",
           label="Start Date",
           required=True,
-          value_type="date",
-          render_type="date"
+          value_type="datetime",
+          render_type="datetime"
         ),
         F(name="end_date",
           label="End Date",
           required=True,
-          value_type="date",
-          render_type="date"
+          value_type="datetime",
+          render_type="datetime"
         ),
         F(name="debate_take_name",
           label="Debate Take Name",

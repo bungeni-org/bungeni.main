@@ -485,10 +485,12 @@ class ContainerJSONListingRaw(ContainerJSONListing):
                 fn = field.__name__
                 d[fn] = getattr(node, fn, None)
                 v = d[fn]
-                if isinstance(v, datetime.datetime):
-                    d[fn] = v.strftime("%F %I:%M %p")
-                elif isinstance(v, datetime.date):
-                    d[fn] = v.strftime("%F")
+                if type(v) in (datetime.date, datetime.time, datetime.datetime):
+                    d[fn] = v.isoformat()
+                #if isinstance(v, datetime.datetime):
+                #    d[fn] = v.strftime("%F %I:%M %p")
+                #elif isinstance(v, datetime.date):
+                #    d[fn] = v.strftime("%F")
 
             d["object_id"] = url.set_url_context(container.stringKey(node))
             values.append(d)

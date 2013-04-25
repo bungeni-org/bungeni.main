@@ -425,6 +425,13 @@ class IDebateRecordConfigSchema(interface.Interface):
         description=u"Role for the members of staff who do the transcription",
         required=True,
         )
+    media_type = schema.Text(
+        title=u"Media type used for transcription",
+        description=u"A debate record can have different media files \
+             associated with it, this setting specifies which one is used for \
+             transcription",
+        required=True,
+        )
     take_duration = schema.Int(
         title=u"Duration of takes",
         description=u"Take duration",
