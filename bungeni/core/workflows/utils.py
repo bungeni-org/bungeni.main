@@ -89,13 +89,17 @@ def assign_ownership(context):
         "bungeni.Drafter", current_user_login, context))
     assign_role("bungeni.Drafter", current_user_login, context)
     
-    # bungeni.Owner - legal documents only
+    # bungeni.Owner - selected types
+    owner_login = None
     if interfaces.is_legal_doc(context):
         owner_login = _determine_related_user(context).login
+    elif interfaces.IUser.providedBy(context):
+        owner_login = context.login
+    if owner_login is not None:
         log.debug("assign_ownership: role %r to user %r on [%s]" % (
             "bungeni.Owner", owner_login, context))
         assign_role("bungeni.Owner", owner_login, context)
-
+    
 
 def user_is_context_owner(context):
     """Test if current user is the context owner e.g. to check if someone 

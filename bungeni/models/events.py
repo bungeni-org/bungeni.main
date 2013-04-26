@@ -11,7 +11,6 @@ $Id$
 log = __import__("logging").getLogger("bungeni.models.domain")
 
 from zope.security.proxy import removeSecurityProxy
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.lifecycleevent.interfaces import IObjectCreatedEvent, \
     IObjectModifiedEvent
 from sqlalchemy import sql, orm
@@ -64,8 +63,3 @@ def set_sitting_parent_ids(ob, event):
             log.error("Could not determine session for sitting %s", ob)
 
 
-@register.handler(adapts=(interfaces.IUser, IObjectCreatedEvent))
-def set_user_obj_owner(user, event):
-    """Set the role bungeni.Owner on a user record on creation"""
-    prm = IPrincipalRoleMap(user)
-    prm.assignRoleToPrincipal("bungeni.Owner", user.login)
