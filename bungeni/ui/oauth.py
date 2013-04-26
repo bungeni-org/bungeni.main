@@ -371,7 +371,6 @@ class OAuthAccessToken(BrowserPage):
     def process_parameters(self):
         parameters = {}
         session = Session()
-
         if self.request.form.get("grant_type", None):
             if self.request.form.get("grant_type") == "authorization_code":
                 parameters["grant_type"] = "authorization_code"
@@ -428,6 +427,8 @@ class OAuthAccessToken(BrowserPage):
                     parameters["refresh_token"] = authorization_token.refresh_token
                 except NoResultFound:
                     raise UnauthorizedClient()
+            else:
+                raise InvalidRequest()
         else:
             raise InvalidRequest()
         return parameters
