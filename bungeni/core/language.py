@@ -136,7 +136,6 @@ def get_default_language():
 
 DEFAULT_LANGUAGE_KEY = "bungeni.ui.default_language"
 class Negotiator(Negotiator):
-    @profile
     def getLanguage(self, langs, env):
         annotations = IAnnotations(env, None)
         if annotations:
