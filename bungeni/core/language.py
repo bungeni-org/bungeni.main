@@ -13,6 +13,7 @@ from zope import interface
 import zope.security
 from zope.app.zapi import getUtilitiesFor
 from zope.publisher.browser import BrowserLanguages
+from zope.annotation.interfaces import IAnnotations
 from zope.i18n.negotiator import Negotiator, normalize_lang
 from zope.i18n import translate
 
@@ -108,7 +109,7 @@ class UserLanguage(BaseLanguageProvider):
                 identity = request.environment.get('repoze.who.identity')
                 if identity:
                     return identity.get("home_language")
-        except zope.security.interfaces.NoInteraction:
+        except (zope.security.interfaces.NoInteraction, AttributeError):
             return None
 
 
@@ -133,10 +134,19 @@ def get_default_language():
             break
     return default_language
 
-
+DEFAULT_LANGUAGE_KEY = "bungeni.ui.default_language"
 class Negotiator(Negotiator):
+    @profile
     def getLanguage(self, langs, env):
-        return get_default_language()
+        annotations = IAnnotations(env, None)
+        if annotations:
+            lang = annotations.get(DEFAULT_LANGUAGE_KEY)
+            if lang is None:
+                annotations[DEFAULT_LANGUAGE_KEY] = get_default_language()
+            lang = annotations.get(DEFAULT_LANGUAGE_KEY)
+        else:
+            lang = get_default_language()
+        return lang
 
 i18n_negotiator = Negotiator()
 
