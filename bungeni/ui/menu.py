@@ -34,12 +34,10 @@ from bungeni.models.interfaces import (
     IFeatureAudit,
     IFeatureDownload,
     IDownloadManager,
-    DOWNLOAD_TYPES,
 )
 
-from bungeni.core.translation import (get_language, get_all_languages, 
-    get_available_translations, translate_i18n
-)
+from bungeni.core.translation import get_available_translations, translate_i18n
+from bungeni.core.language import get_language, get_all_languages
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core import schedule
 

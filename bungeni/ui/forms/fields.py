@@ -25,7 +25,8 @@ from bungeni.ui.i18n import _
 from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.models.interfaces import ITranslatable
-from bungeni.core.translation import get_translation_for, get_all_languages
+from bungeni.core.translation import get_translation_for
+from bungeni.core.language import get_all_languages, get_default_language
 from copy import copy
 
 
@@ -103,7 +104,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         self.form_fields = self.form_fields.omit(*omit_names)
         context = self.context
         if ITranslatable.providedBy(self.context):
-            lang = self.request.locale.getLocaleID()
+            lang = get_default_language()
             try:
                 translation = get_translation_for(self.context, lang)
             except:

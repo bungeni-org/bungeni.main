@@ -15,6 +15,7 @@ from bungeni.alchemist.container import contained
 from bungeni.alchemist.ui import createInstance
 from bungeni.alchemist import utils, Session
 from bungeni.core import translation
+from bungeni.core.language import get_default_language
 from bungeni.core.content import WorkspaceSection
 from bungeni.core.i18n import _
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
@@ -128,7 +129,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
         """ Translate container items if translatable
         """
         if lang is None:
-            lang = translation.get_request_language(request=self.request)
+            lang = get_default_language()
         for index, node in enumerate(nodes):
             if ITranslatable.providedBy(node):
                 nodes[index] = translation.translate_obj(node, lang)
@@ -159,7 +160,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
 
     def __call__(self):
         start, limit = self.get_offsets()  # ? start=0&limit=25
-        lang = self.request.locale.getLocaleID()
+        lang = get_default_language()
         return self.json_batch(start, limit, lang)
 
 

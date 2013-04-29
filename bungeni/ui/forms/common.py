@@ -36,11 +36,10 @@ from bungeni.alchemist import ui
 from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from bungeni.core.interfaces import TranslationCreatedEvent
-from bungeni.core.translation import get_language_by_name
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
-from bungeni.core.translation import CurrentLanguageVocabulary
+from bungeni.core.language import CurrentLanguageVocabulary, get_language_by_name
 from bungeni.core.workflows.utils import set_group_local_role, unset_group_local_role
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
     IAttachmentContainer, ISignatoryManager #, ISittingContainer

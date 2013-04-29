@@ -32,7 +32,7 @@ from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from bungeni.alchemist import utils
 from bungeni.core.interfaces import IWorkspaceContainer, ISection
 from bungeni.core import location
-from bungeni.core.translation import get_request_language
+from bungeni.core.language import get_default_language
 from bungeni.ui.utils import url, debug
 from bungeni.ui import browser
 from bungeni.models.utils import get_chamber_for_context
@@ -463,7 +463,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     "id": self.get_nav_entry_id(key_url),
                     "order": order,
                     "label": translate(label, 
-                        target_language=get_request_language(request=self.request),
+                        target_language=get_default_language(),
                         domain="bungeni"),
                     "url": key_url,
                     "current": current,

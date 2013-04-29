@@ -10,38 +10,137 @@ $URL$
 log = __import__("logging").getLogger("bungeni.core.language")
 
 from zope import interface
+from zope import component
+from zope.interface import implements
+from zope.app.schema.vocabulary import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
+from zope.publisher.interfaces.http import IHTTPRequest
 import zope.security
 from zope.app.zapi import getUtilitiesFor
 from zope.publisher.browser import BrowserLanguages
 from zope.annotation.interfaces import IAnnotations
 from zope.i18n.negotiator import Negotiator, normalize_lang
-from zope.i18n import translate
+from zope.i18n.locales import locales
 
 from locale import getdefaultlocale
 
 from bungeni.core.interfaces import ILanguageProvider
 from bungeni.capi import capi
-from bungeni.core.translation import get_request_language
-from bungeni.ui.utils.common import get_request # !+CORE_UI_DEPENDENCY
 from bungeni.utils import register
+from bungeni.utils.common import get_request
 from ploned.ui.interfaces import ITextDirection
 
-class TranslateUtility(object):
-    """
-    Factory for translation utilities
-    Wraps around `zope.i18n.translate` tied to context(request)
-    """
-    context = None
-    domain = None
+ALLOWED_LANGUAGES = capi.zope_i18n_allowed_languages
+I18N_COOKIE_NAME = 'I18N_LANGUAGE'
+
+
+def get_request_language(request=None, default=capi.default_language):
+    """Get current request's language; if no request use specified default.
     
-    def __init__(self, context, domain="bungeni"):
-        self.context = context
-        self.domain = domain
-    
-    def __call__(self, source_string):
-        return translate(source_string, domain=self.domain,
-            context=self.context
+    If the request instance is handy, it may be passed in as a parameter thus
+    avoidng the need to call for it.
+    """
+    if request is None:
+        request = get_request()
+    if IHTTPRequest.providedBy(request):
+        return request.locale.getLocaleID()
+    return default
+
+
+class BrowserFormLanguages(BrowserLanguages):
+    '''See interface zope.i18n.interfaces.IUserPreferredLanguages'''
+
+    def getPreferredLanguages(self):
+        '''get preferred user language - inject cookie language if any'''
+        langs = super(BrowserFormLanguages, self).getPreferredLanguages()
+        # use same cookie as linguaplone 
+        form_lang = self.request.getCookies().get(I18N_COOKIE_NAME)
+        if form_lang is not None:
+            langs.insert(0, form_lang)
+        return langs
+
+class LanguageVocabulary(object):
+    """This is a simple vocabulary of available languages.
+    The generated terms are composed of the language code and the localized
+    name for that language if there is a a request object.
+    """
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        try:
+            request = get_request()
+        except zope.security.interfaces.NoInteraction:
+            request = None
+        def get_locale_lang(code):
+            if request and hasattr(request, "locale"):
+                return request.locale.displayNames.languages.get(code)
+            return None
+        languages = get_all_languages()
+        items = [ 
+            (
+                lang, 
+                (request and get_locale_lang(lang) or languages[lang]["name"])
+            )
+            for lang in languages.keys()
+        ]
+        items.sort(key=lambda language: language[1])
+        items = [ SimpleTerm(i[0], i[0], i[1]) for i in items ]
+        return SimpleVocabulary(items)
+
+language_vocabulary_factory = LanguageVocabulary()
+component.provideUtility(language_vocabulary_factory, IVocabularyFactory, "language")
+
+class CurrentLanguageVocabulary(LanguageVocabulary):
+    def __call__(self, context):
+        language = get_language(context)
+        languages = get_all_languages([language])
+        items = [ (l, languages[l].get("name", l)) for l in languages ]
+        items = [ SimpleTerm(i[0], i[0], i[1]) for i in items ]
+        return SimpleVocabulary(items)
+
+
+def get_language_by_name(name):
+    return dict(get_all_languages())[name]
+
+def get_language(translatable):
+    return translatable.language
+
+def get_all_languages(language_filter=None):
+    """Build a list of all languages.
+
+    To-do: the result of this method should be cached indefinitely.
+    """
+    #availability = component.getUtility(ILanguageAvailability)
+    if language_filter is None:
+        language_filter = ALLOWED_LANGUAGES
+    # TypeError if filter is not iterable
+    def get_lang_data(code):
+        lang_data = {}
+            #try to extract native name from zope
+        lang_parts = code.split("-")
+        lang_code = lang_parts[0]
+        territory = None
+        if len(lang_parts) == 2:
+            territory = lang_parts[1].upper()
+        lang_locale = locales.getLocale(lang_code, territory)
+        if not lang_locale.id.language:
+            return
+        lang_name = lang_locale.id.language
+        if lang_locale.displayNames and lang_locale.displayNames.languages:
+            lang_name = lang_locale.displayNames.languages.get(lang_code, 
+                "").capitalize()
+        lang_data["name"] = lang_name
+        locale_territory = lang_locale.displayNames.territories.get(
+            territory, ""
         )
+        if locale_territory:
+            lang_data["native"] = u"%s (%s)" %(lang_name, locale_territory)
+        else:
+            lang_data["native"] = lang_name
+        return lang_data
+    return dict([ (name, get_lang_data(name)) for name in language_filter ])
+
 
 class BaseLanguageProvider(object):
     interface.implements(ILanguageProvider)
@@ -112,14 +211,18 @@ class UserLanguage(BaseLanguageProvider):
         except (zope.security.interfaces.NoInteraction, AttributeError):
             return None
 
+@register.utility(provides=ILanguageProvider, name="Cookie Language")
+class SelectedLanguage(BaseLanguageProvider):
+    PRECEDENCE = 5
+    def getLanguage(self):
+        try:
+            request = get_request()
+            if request:
+                return request.getCookies().get(I18N_COOKIE_NAME)
+        except zope.security.interfaces.NoInteraction:
+            return None
 
 def get_default_language():
-    # !+LANGUAGE(murithi, mar2011) need to integrate precedence values in registration
-    # of utilities but overriding/new classes can also reorder negotiation
-    # !+LANGUAGE(mr, apr-2011) what is the relation of this with:
-    #   a) capi.default_language ?
-    #   b) request.get("language") ?
-    #   c) request.getCookies().get("I18N_LANGUAGE") ?
     default_language = None
     language_providers = getUtilitiesFor(ILanguageProvider)
     provider_list = [(p[0], p[1]) for p in language_providers]
@@ -150,13 +253,8 @@ class Negotiator(Negotiator):
 i18n_negotiator = Negotiator()
 
 def get_base_direction():
-    request = get_request()
-    ui_lang = request.getCookies().get("I18N_LANGUAGE")
-    if ui_lang is not None:
-        language = ui_lang
-    else:
-        language = capi.default_language
-    if language[:2] in capi.right_to_left_languages:
+    ui_lang = get_default_language()
+    if ui_lang in capi.right_to_left_languages:
         return "rtl"
     else:
         return "ltr"

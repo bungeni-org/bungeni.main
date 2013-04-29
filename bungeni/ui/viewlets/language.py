@@ -5,7 +5,8 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
 from zope.i18n.negotiator import normalize_lang
 
-from bungeni.core.translation import get_all_languages
+from bungeni.core.language import (get_all_languages, I18N_COOKIE_NAME, 
+    get_default_language)
 from bungeni.core.translation import get_available_translations
 import bungeni.ui.utils as ui_utils
 
@@ -36,7 +37,7 @@ class LanguageViewlet(object):
         if hasattr(self.context, "language"):
             translations[self.context.language] = None
         languages = get_all_languages()
-        selected = normalize_lang(self.request.locale.getLocaleID())
+        selected = normalize_lang(get_default_language())
         url = ui_utils.url.absoluteURL(getSite(), self.request)
         
         self.languages = sorted([
@@ -61,9 +62,9 @@ class ChangeLanguage(BrowserView):
         response = self.request.response
         lang = self.request.get("language", None)
         if lang:
-            response.setCookie("I18N_LANGUAGE", lang, path="/")
+            response.setCookie(I18N_COOKIE_NAME, lang, path="/")
         else:
-            response.expireCookie("I18N_LANGUAGE", path="/")
+            response.expireCookie(I18N_COOKIE_NAME, path="/")
         url =  self.request.get("HTTP_REFERER", "..")
         # 19-02-2013 - added trusted=True parameter, since the redirect back to the source page
         # after changing language fails when hosting behind deliverance, since bungeni is on localhost

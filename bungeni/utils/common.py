@@ -34,13 +34,24 @@ def has_feature(feature_name):
     return getConfigContext().hasFeature(feature_name)
 
 
-def get_request_principal():
-    """ () -> either(zope.security.interfaces.IGroupAwarePrincipal, None)
+def get_request():
+    """ () -> either(IRequest, None)
+    
+    Raises zope.security.interfaces.NoInteraction if no interaction (and no 
+    request).
     """
+    # use queryInteraction() to raise 
     interaction = getInteraction()
     for participation in interaction.participations:
         if IRequest.providedBy(participation):
-            return participation.principal
+            return participation
+
+def get_request_principal():
+    """ () -> either(zope.security.interfaces.IGroupAwarePrincipal, None)
+    """
+    request = get_request()
+    if request:
+        return request.principal
 
 def get_request_login():
     """ () -> either(str, None), login name of current principal, or None.

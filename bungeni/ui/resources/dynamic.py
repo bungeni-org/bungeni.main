@@ -1,14 +1,20 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Python code for JavaScript resources.
+
+$Id$
+"""
 import json
 import zope.interface
 from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
 import zope.cachedescriptors.property
-from bungeni.capi import capi
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, common
-from bungeni.core.translation import (translate_i18n as i18n, 
-    get_request_language
-)
+from bungeni.core.translation import translate_i18n as i18n
+from bungeni.core.language import get_default_language
 from bungeni.ui.calendar import data
 
 class CachedProperties(object):
@@ -285,7 +291,7 @@ class DynamicDirectoryFactory(object):
     def __init__(self, source, checker, name):
         self.name = name
         self.__Security_checker__ = checker
-        self.request_language = capi.default_language
+        self.language = None
     
     def __call__(self, name):
         return self
@@ -297,16 +303,16 @@ class DynamicDirectoryFactory(object):
         request.response.setHeader("Content-type", 
             RESOURCE_HEADERS.get(name, "text/javascript")
         )
-        self.request_language = get_request_language()
+        self.language = get_default_language()
         return getattr(self, RESOURCE_MAPPING.get(name))
     
     def scheduler_globals(self):
         return """var scheduler_globals = %s;""" % json.dumps(
-            get_globals("SCHEDULER_GLOBALS", language=self.request_language)
+            get_globals("SCHEDULER_GLOBALS", language=self.language)
         )
 
     def calendar_globals(self):
         return """var calendar_globals = %s;""" % json.dumps(
-            get_globals("CALENDAR_GLOBALS", language=self.request_language)
+            get_globals("CALENDAR_GLOBALS", language=self.language)
         )
 

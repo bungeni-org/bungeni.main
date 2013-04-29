@@ -6,7 +6,7 @@
     <adapter factory="bungeni.alchemist.security.AuthenticatedPrincipalFactory" />
     
     <!-- Cookie based language negotiation like linguaplone -->
-    <adapter factory="bungeni.core.translation.BrowserFormLanguages" />
+    <adapter factory="bungeni.core.language.BrowserFormLanguages" />
 
     <utility
       provides="zope.i18n.interfaces.INegotiator"

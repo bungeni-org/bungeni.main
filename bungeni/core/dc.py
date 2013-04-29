@@ -22,9 +22,9 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.i18n import _
-from bungeni.core.translation import ( is_translation, get_language_by_name,
-    get_request_language, get_translation_for, translate_i18n
-)
+from bungeni.core.translation import ( is_translation,get_translation_for,
+    translate_i18n)
+from bungeni.core.language import get_default_language, get_language_by_name
 
 from bungeni.ui.utils import date, misc
 from bungeni.utils import register
@@ -91,15 +91,15 @@ class DescriptiveProperties(object):
     def translate(self, context, name):
         """Gets translated field values
         """
-        lang = (get_request_language(default=None) or 
-            getattr(context, "language", None))
+        lang = get_default_language()
         if not lang:
             return getattr(context, name, "")
         if interfaces.ITranslatable.providedBy(context):
             if context.language != lang:
                 translation = get_translation_for(context, lang)
-                translation = filter(lambda tr:tr.field_name==name, translation)
                 if translation:
+                    translation = filter(lambda tr:tr.field_name==name, 
+                        translation)
                     if translation[0].field_text:
                         return translation[0].field_text
         return getattr(context, name)

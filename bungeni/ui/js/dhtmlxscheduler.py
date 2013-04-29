@@ -12,6 +12,7 @@ log = __import__("logging").getLogger("bungeni.ui")
 from zope.viewlet.viewlet import JavaScriptViewlet
 from zope.traversing import api
 from zope.location.interfaces import LocationError
+from bungeni.core.language import get_default_language
 
 class JSViewlet(JavaScriptViewlet("")):
     """We override the render method here to handle a case where
@@ -34,8 +35,7 @@ class DhtmlxSchedulerMainLanguage(JSViewlet):
     
     def __init__(self, *args, **kwargs):
         super(DhtmlxSchedulerMainLanguage, self).__init__(*args, **kwargs)
-        if self.request.get("I18N_LANGUAGE"):
-            self.language = self.request.get("I18N_LANGUAGE")
+        self.language = get_default_language()
         self._path = self.setPath()
 
     def getPath(self):

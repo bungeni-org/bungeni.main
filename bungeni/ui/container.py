@@ -21,6 +21,7 @@ from bungeni.models import domain
 
 from bungeni.core.workflows.utils import view_permission
 from bungeni.core import translation
+from bungeni.core.language import get_default_language
 
 from bungeni.ui import interfaces as ufaces
 from bungeni.ui.utils import url, date
@@ -353,7 +354,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             return nodes
         # !+ lang should always be valid here... make not optional, assert?
         if lang is None:
-            lang = translation.get_request_language(request=self.request)
+            lang = get_default_language()
         return [ translation.translate_obj(node, lang) for node in nodes ]
 
     def _json_values(self, nodes):
@@ -466,7 +467,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     def __call__(self):
         # prepare required parameters
         start, limit = self.get_offsets()  # ? start=0&limit=25
-        lang = translation.get_request_language(request=self.request)
+        lang = get_default_language()
         return self.json_batch(start, limit, lang)
 
 
