@@ -31,8 +31,8 @@ class ArchiveDatesForm(form.PageForm):
 
         parliament = schema.Choice(
             title=_(u"Or select"),
-            description=_(u"Set date range to that of a given particular parliament"),
-            vocabulary=vocabulary.parliament_factory,
+            description=_(u"Set date range to that of a given chamber"),
+            vocabulary=vocabulary.chamber_factory,
             required=False)
 
     template = NamedTemplate("alchemist.subform")

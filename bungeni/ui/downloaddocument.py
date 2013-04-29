@@ -115,7 +115,7 @@ class DownloadDocument(BrowserView):
     def bodyText(self):
         if not hasattr(self.document,"group"):
             session = Session()
-            self.document.group = session.query(domain.Group).get(self.document.parliament_id)
+            self.document.group = session.query(domain.Group).get(self.document.chamber_id)
         return self.template()
 
     @property

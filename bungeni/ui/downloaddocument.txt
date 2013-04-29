@@ -37,9 +37,7 @@ Create a participation
 Initialise Group
 ----------------
 
-  >>> chamber = domain.Chamber(short_name=u"p_1",
-  ...                               start_date=datetime.datetime.now(), 
-  ...                               election_date=datetime.datetime.now())
+  >>> chamber = domain.Chamber(short_name=u"p_1", start_date=datetime.datetime.now())
   >>> chamber.language = "en"
   >>> session.add(chamber)
   >>> session.flush()

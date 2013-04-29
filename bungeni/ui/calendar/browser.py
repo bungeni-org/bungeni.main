@@ -248,7 +248,7 @@ class CalendarView(BungeniBrowserView):
     @property
     def partial_event_form(self):
         # !+PERMISSIONS_ON_PARTIAL_CONTEXT the sitting instance below is only
-        # partially defined (e.g. no sitting_id, parliament_id, status), plus 
+        # partially defined (e.g. no sitting_id, chamber_id, status), plus 
         # not being in any traversal context -- so checking of 
         # permissions/roles on it will give incorrect results.
         # 

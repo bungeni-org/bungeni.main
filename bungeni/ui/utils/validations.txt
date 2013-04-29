@@ -23,7 +23,7 @@ Chambers
 -----------
 low level validations:
    
-   >>> chamber = domain.Chamber(short_name=u"p_1", start_date=today, election_date=yesterday, end_date=tomorrow)
+   >>> chamber = domain.Chamber(short_name=u"p_1", start_date=today, end_date=tomorrow)
    >>> session.add(chamber)
    >>> session.flush()
    >>> list(utils.validate_date_in_interval(None, domain.Chamber, yesterday))
@@ -48,7 +48,7 @@ Before you can add a new chamber others must be closed
    
         
 Add a new (open ended) chamber
-   >>> chamber2 = domain.Chamber(short_name=u"p_2", start_date=tomorrow, election_date=today, end_date=None)
+   >>> chamber2 = domain.Chamber(short_name=u"p_2", start_date=tomorrow, end_date=None)
    >>> session.add(chamber2)
    >>> session.flush()
    
@@ -86,10 +86,10 @@ No open chambers  anymore
    >>> list(utils.validate_open_interval(None, domain.Chamber)) 
    []
 
-High level validations:
+High level validations: !+review
 
    >>> chamber_container = MockContainer()
-   >>> form_data= {'start_date': today, 'end_date': tomorrow, 'election_date': yesterday}
+   >>> form_data= {'start_date': today, 'end_date': tomorrow}
    >>> validations.validate_chamber_dates(action=None, data=form_data, 
    ...  context=chamber, container=chamber_container)
    []
@@ -116,7 +116,7 @@ Government:
   ...   context=government, container=government_container)
   []
   
-  >>> government.parliament_id = chamber.parliament_id
+  >>> government.parliament_id = chamber.group_id #!+?
   >>> government.short_name = u"gov1"
   >>> session.add(government)
   >>> session.flush()

@@ -66,8 +66,8 @@ class BodyCSSClass(object):
         # Add custom css classes to the list below
         chamber_type = "default"
         chamber = utils.get_login_user_chamber()
-        if chamber and chamber.parliament_type:
-            chamber_type = chamber.parliament_type
+        if chamber and chamber.sub_type:
+            chamber_type = chamber.sub_type
         classes = ["yui-skin-sam", "section-bungeni-%s" % get_section_name(),
                    "chamber-%s" % chamber_type]
         return " ".join(classes)

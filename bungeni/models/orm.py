@@ -138,9 +138,9 @@ mapper(domain.Government,
     polymorphic_identity=polymorphic_identity(domain.Government)
 )
 
-mapper(domain.Chamber, schema.parliament,
+mapper(domain.Chamber,
     inherits=domain.Group,
-    polymorphic_identity="parliament" #polymorphic_identity(domain.Chamber)
+    polymorphic_identity=polymorphic_identity(domain.Chamber)
 )
 
 mapper(domain.PoliticalGroup, schema.political_group,

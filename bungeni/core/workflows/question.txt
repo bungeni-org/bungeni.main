@@ -63,15 +63,14 @@ Content creation
   ...    domain.Chamber,
   ...    short_name=u"p_1",
   ...    language="en",
-  ...    start_date=yesterday,
-  ...    election_date=yesterday)
+  ...    start_date=yesterday)
   
   >>> gov = add_content(
   ...    domain.Government,
   ...    short_name=u"gov_1",
   ...    language="en",
   ...    start_date=yesterday,
-  ...    parliament_id=chamber.parliament_id)
+  ...    chamber_id=chamber.group_id)
   
   >>> ministry = add_content(
   ...    domain.Ministry,
@@ -145,9 +144,9 @@ send the question notifications.
     ...    language="en",
     ...    gender="F")
 
-!+setParliamentId(mr, mar-2011) we manually set the parliament_id here and 
+!+setParliamentId(mr, mar-2011) we manually set the chamber_id here and 
 remove the call to setParliamentId() when creating the question -- the 
-parliament_id is automatically set on a question (when saved to the db) 
+chamber_id is automatically set on a question (when saved to the db) 
 that is created via the UI form. 
     
     >>> set_interaction(member)
@@ -160,12 +159,12 @@ that is created via the UI form.
   ...     language="en",
   ...     doc_type="ordinary",
   ...     response_type="written",
-  ...     parliament_id=chamber.parliament_id)
+  ...     chamber_id=chamber.group_id)
     
   >>> question.__parent__ = app
   
   >>> from bungeni.models.testing import create_sitting
-  >>> sitting = create_sitting(chamber.parliament_id, "en")
+  >>> sitting = create_sitting(chamber.group_id, "en")
 
 Set up a security mapping.
 
@@ -222,7 +221,7 @@ auto-kick-in on question creation, as in application, via the event handlers?
   >>> question.status
   'draft'
 
-  >>> question.parliament_id==chamber.parliament_id
+  >>> question.chamber_id==chamber.group_id
   True
   
   >>> tuple(qprm.getRolesForPrincipal("member"))
@@ -491,7 +490,7 @@ Question conditions
   False
 
   >>> from bungeni.models.testing import create_sitting
-  >>> sitting = create_sitting(chamber.parliament_id)
+  >>> sitting = create_sitting(chamber.group_id)
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,

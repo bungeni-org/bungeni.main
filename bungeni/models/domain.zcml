@@ -27,7 +27,7 @@
                 group
                 
                 doc_id
-                parliament_id
+                chamber_id
                 owner_id
                 type
                 
@@ -114,7 +114,7 @@
         /><!-- !+DOC_ATTRIBUTE_ACCESS(mr, may-2012)
         the following attrs are NEVER modified after creation (and so access
         declarations for them should NOT be overridden by sub-types):
-            doc_id / parliament_id / owner_id / type
+            doc_id / chamber_id / owner_id / type
         timestamp is a special case, handled separately (and sub-types should
             not need to override).
         all other Doc base attributes (columns on doc table or properties on 
@@ -153,7 +153,7 @@
                 group
                 
                 doc_id
-                parliament_id
+                chamber_id
                 owner_id
                 type
                 
@@ -375,8 +375,6 @@
                 preports
                 title_types
                 
-                parliament_id
-                election_date
             "
         />
         <require permission="bungeni.chamber.Edit"
@@ -389,7 +387,6 @@
                 description
                 start_date
                 end_date
-                election_date
             "
         />
     </class>

@@ -85,10 +85,10 @@ def setupStorageDirectory(part_target="xml_db"):
     return store_dir
 
 
-def get_origin_parliament(context):
+def get_origin_chamber(context):
     """get the chamber applicable to this object
     """
-    chamber_id = getattr(context, "parliament_id", None)
+    chamber_id = getattr(context, "chamber_id", None)
     if not chamber_id:
         group_id = getattr(context, "group_id", None)
         if group_id:
@@ -100,7 +100,7 @@ def get_origin_parliament(context):
                 chamber_id = group.group_id
         if not chamber_id:
             if hasattr(context, "head_id") and context.head_id:
-                return get_origin_parliament(context.head)
+                return get_origin_chamber(context.head)
     return chamber_id
 
 #!+REFACTORING(mb, Mar-2013) This can be made more general to work in
@@ -255,7 +255,7 @@ def publish_to_xml(context):
 
         # add explicit origin chamber for this object (used to partition data
         # in if more than one chamber exists)
-        data["origin_parliament"] = get_origin_parliament(context)
+        data["origin_chamber"] = get_origin_chamber(context)
         
         #add any additional files to file list
         files = files + PersistFiles.get_files(root_key)

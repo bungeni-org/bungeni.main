@@ -383,11 +383,11 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
         super(MemberItemsViewlet, self).__init__(
             context, request, view, manager)
         user_id = self.context.user_id
-        parliament_id = self.context.group_id
+        chamber_id = self.context.group_id
         self.query = Session().query(domain.Doc).filter(
             sql.and_(
                 domain.Doc.owner_id == user_id,
-                domain.Doc.parliament_id == parliament_id,
+                domain.Doc.chamber_id == chamber_id,
                 domain.Doc.status.in_(self.states),
             ))
         #self.for_display = (self.query.count() > 0)
@@ -395,7 +395,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     
     def update(self):
         user_id = self.context.user_id
-        parliament_id = self.context.group_id
+        chamber_id = self.context.group_id
         wf = capi.get_type_info("signatory").workflow
         session = Session()
         # add cosigned items
@@ -412,7 +412,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
             self.query = self.query.union(
                 session.query(domain.Doc).filter(
                     sql.and_(
-                        domain.Doc.parliament_id == parliament_id,
+                        domain.Doc.chamber_id == chamber_id,
                         domain.Doc.status.in_(self.states),
                         domain.Doc.doc_id.in_(
                             signed_pi_ids

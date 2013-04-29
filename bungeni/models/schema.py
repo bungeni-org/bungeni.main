@@ -295,7 +295,7 @@ parliament_membership = sa.Table("parliament_membership", metadata,
     ),
     # The region/province/constituency (divisions and order may be in any way 
     # as appropriate for the given parliamentary territory) for the 
-    # representation of this member of parliament.
+    # representation of this member of chamber.
     # Hierarchical Controlled Vocabulary Micro Data Format: 
     # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
     # which is a double-colon "::" separated sequence of *key phrases*.
@@ -353,6 +353,8 @@ group = sa.Table("group", metadata,
     ),
     sa.Column("start_date", sa.Date, nullable=False),
     sa.Column("end_date", sa.Date),
+    # !+ rename to "group_type" (consistent with doc table: type/doc_type?
+    # or rename doc.doc_type to doc.sub_type?
     sa.Column("sub_type", sa.Unicode(128), nullable=True),
     sa.Column("parent_group_id", sa.Integer,
         sa.ForeignKey("group.group_id")
@@ -367,14 +369,6 @@ group = sa.Table("group", metadata,
     sa.Column("custom4", sa.UnicodeText, nullable=True),
 )
 
-parliament = sa.Table("parliament", metadata,
-    sa.Column("parliament_id", sa.Integer,
-        sa.ForeignKey("group.group_id"),
-        primary_key=True
-    ),
-   sa.Column("parliament_type", sa.String(30), nullable=True),
-   sa.Column("election_date", sa.Date, nullable=False),
-)
 
 committee = sa.Table("committee", metadata,
     sa.Column("committee_id", sa.Integer,
@@ -561,8 +555,8 @@ address = sa.Table("address", metadata,
 
 session = sa.Table("session", metadata,
     sa.Column("session_id", sa.Integer, primary_key=True),
-    sa.Column("parliament_id", sa.Integer, # group_id
-        sa.ForeignKey("parliament.parliament_id"),
+    sa.Column("chamber_id", sa.Integer, # group_id
+        sa.ForeignKey("group.group_id"),
         nullable=False
     ),
     sa.Column("short_name", sa.Unicode(512), nullable=False), #!+ACRONYM
@@ -848,26 +842,23 @@ doc = sa.Table("doc", metadata,
     # DB id
     sa.Column("doc_id", sa.Integer, doc_sequence, primary_key=True),
     
-    # PARLIAMENT
-    # parliament <=> dc:Publisher
+    # CHAMBER
+    # chamber <=> dc:Publisher
     # The entity responsible for making the resource available. 
     # Examples of a Publisher include a person, an organization, or a service.
     # Typically, the name of a Publisher should be used to indicate the entity.
-    # !+CONTAINER_CUSTODIAN_GROUPS(mr, apr-2011) parliament_id and group_id are
+    # !+CONTAINER_CUSTODIAN_GROUPS(mr, apr-2011) chamber_id and group_id are
     # conceptually distinct while still being related:
-    # - the general sense of parliament_id seems to be that of the 
-    # "root_container" group (currently this may only be a parliament) in 
+    # - the general sense of chamber_id seems to be that of the 
+    # "root_container" group (currently this may only be a chamber) in 
     # which the doc "exists"
     # - while the general sense of group_id seems to be that of a kind of
     # "custodian" group, to which the doc is "assigned to" for handling.
-    # !+PARLIAMENT_ID should be nullable=False, but fails on creating an Event...
-    sa.Column("parliament_id", sa.Integer,
-        sa.ForeignKey("parliament.parliament_id"),
+    # !+CHAMBER_ID should be nullable=False, but fails on creating an Event...
+    sa.Column("chamber_id", sa.Integer,
+        sa.ForeignKey("group.group_id"),
         nullable=True
     ),
-    # !+bicameral(mr, feb-2012) should parliament_id simply always be 
-    # chamber_id, and then have the concept of a chamber group, each of which
-    # related to the singleton parliament group?
     #sa.Column("origin_chamber_id", sa.Integer,
     #    sa.ForeignKey("groups.group_id"), # !+ group (singular), chamber
     #    nullable=True

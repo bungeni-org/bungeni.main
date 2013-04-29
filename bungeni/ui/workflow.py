@@ -164,8 +164,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         if not min_date_active:
             # ok, try determine a min_date_active in another way, namely via the
             # start_date of the "chamber" the instance "lives" in...
-            chamber = models.utils.get_parliament(
-                common.getattr_ancestry(instance, "parliament_id")) #!+parent_ref="head"?
+            chamber = models.utils.get_chamber(
+                common.getattr_ancestry(instance, "chamber_id")) #!+parent_ref="head"?
             min_date_active = datetime.datetime.combine(
                 chamber.start_date, datetime.time())
         

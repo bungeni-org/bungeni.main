@@ -41,7 +41,7 @@ def get_chamber_for_group(group):
         acceptable=interfaces.IChamber.providedBy)
     ''' !+ equivalent alternative:
     if group:
-        if group.type == "parliament":
+        if group.type == "chamber":
             return group
         else:
             return get_chamber_for_group(group.parent_group)
@@ -146,13 +146,13 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     return func
 
 
-def get_all_group_ids_in_parliament(parliament_id):
+def get_all_group_ids_in_chamber(chamber_id):
     """ get all groups (group_ids) in a chamber
     including the sub (e.g. ministries) groups """
     session = Session()
-    group_ids = [parliament_id, ]
+    group_ids = [chamber_id,]
     query = session.query(domain.Group).filter(
-        domain.Group.parent_group_id == parliament_id).options(
+        domain.Group.parent_group_id == chamber_id).options(
             eagerload("contained_groups"))
     results = query.all()
     for result in results:
@@ -161,14 +161,14 @@ def get_all_group_ids_in_parliament(parliament_id):
             group_ids.append(group.group_id)
     return group_ids
 
-# !+parliament_mapper_property(mr, jan-2013) some types/tables define a 
-# parliament_id column, but not parliament mapper property... add it?
+# !+chamber_mapper_property(mr, jan-2013) some types/tables define a 
+# chamber_id column, but not chamber mapper property... add it?
 # !+rename get_chamber_by_id
-def get_parliament(parliament_id):
-    return Session().query(domain.Chamber).get(parliament_id)            
+def get_chamber(chamber_id):
+    return Session().query(domain.Chamber).get(chamber_id)            
 
 
-def get_member_of_parliament(user_id):
+def get_member_of_chamber(user_id):
     """Get the MemberOfParliament instance for user_id.
     Raises sqlalchemy.orm.exc.NoResultFound
     """

@@ -220,7 +220,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
             return default
 
     @property
-    def parliament_id(self):
+    def chamber_id(self):
         """Vocabularies in the forms get the chamber id from the context,
         this property returns the id of the chamber the currently logged in
         user is a member of
@@ -246,7 +246,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
     def __setitem__(self, name, item):
         session = Session()
         chamber = utils.get_login_user_chamber()
-        item.parliament_id = chamber.parliament_id
+        item.chamber_id = chamber.group_id
         session.add(item)
 
 

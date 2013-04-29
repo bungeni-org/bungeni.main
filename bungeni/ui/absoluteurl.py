@@ -157,7 +157,7 @@ class ArchiveSectionParliamentItem(AbsoluteURL):
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
         return '%s/archive/browse/chambers/obj-%s/%s/%s' % \
-               (base_url, self.context.parliament_id, self.subsection, stringKey(self.context))
+               (base_url, self.context.chamber_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
 
@@ -252,7 +252,7 @@ class AdminSectionParliamentItem(AbsoluteURL):
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
         return '%s/admin/content/chambers/obj-%s/%s/%s' % \
-               (base_url, self.context.parliament_id, self.subsection, stringKey(self.context))
+               (base_url, self.context.chamber_id, self.subsection, stringKey(self.context))
 
     __call__ = __str__
 

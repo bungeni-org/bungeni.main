@@ -174,7 +174,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         else:
             #get the chamber id
             context_group_id = get_chamber_for_context(
-                self.context).parliament_id
+                self.context).chamber_id
         report = domain.Report(
             title=self.title,
             start_date=self.start_date,

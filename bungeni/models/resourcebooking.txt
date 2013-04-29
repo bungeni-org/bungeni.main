@@ -18,7 +18,7 @@ Sittings
 any group can schedule a sitting, a sitting is treated as a physical
 meeting of the group by the system. 
 
-  >>> chamber = domain.Chamber( short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
+  >>> chamber = domain.Chamber( short_name=u"p_1", start_date=datetime.datetime.now())
   >>> chamber.language = "en"
   >>> session.add(chamber)
   >>> session.flush()

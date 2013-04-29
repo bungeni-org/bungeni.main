@@ -873,7 +873,7 @@ class DocDescriptor(ModelDescriptor):
         "doc_type",
         #"doc_procedure",
         #"doc_id", # DB_REQUIRED
-        "parliament_id",
+        "chamber_id",
         "owner_id", # DB_REQUIRED
         "registry_number",
         "uri",
@@ -924,15 +924,15 @@ class DocDescriptor(ModelDescriptor):
         # attachments
         # events
         # doc_id
-        F(name="parliament_id",
-            label="Parliament",
+        F(name="chamber_id",
+            label="Chamber",
             required=True,
             localizable=[
                 hide("view listing"),
             ],
             value_type="text",
             render_type="single_select",
-            vocabulary="parliament",
+            vocabulary="chamber",
         ),
         F(name="owner_id",
             label="Moved by",
@@ -946,7 +946,7 @@ class DocDescriptor(ModelDescriptor):
             ],
             value_type="member", # !+user: constrained by "parent group" OR vocabulary
             render_type="single_select",
-            vocabulary="parliament_member_delegation",
+            vocabulary="chamber_member_delegation",
         ),
         # type
         F(name="doc_type",

@@ -18,12 +18,12 @@ their parents dates
 Chambers
 --------
    
-   >>> chamber = model.Chamber(short_name=u"p_1", start_date=today, election_date=yesterday, end_date=tomorrow)
+   >>> chamber = model.Chamber(short_name=u"p_1", start_date=today, end_date=tomorrow)
    >>> chamber.language = "en"
    >>> session.add(chamber)
    >>> session.flush()
    
-   >>> int(chamber.parliament_id) 
+   >>> int(chamber.group_id) 
    1
    
    >>> from bungeni.ui.forms import validations
@@ -33,7 +33,7 @@ Before you can add a new chamber others must be closed
    
    
 Add a new (open ended) chamber
-   >>> chamber2 = model.Chamber(short_name=u"p_2", start_date=tomorrow, election_date=today, end_date=None)
+   >>> chamber2 = model.Chamber(short_name=u"p_2", start_date=tomorrow, end_date=None)
    >>> chamber2.language = "en"
    >>> session.add(chamber2)
    >>> session.flush()
@@ -54,7 +54,7 @@ Now check for overlapping dates but not for the current (edited) chamber
 Add a governmemt:
 
    >>> gov = model.Government(short_name=u"gov_1", start_date=today, end_date=tomorrow )
-   >>> gov.parent_group_id = chamber.parliament_id
+   >>> gov.parent_group_id = chamber.group_id
    >>> gov.language = "en"
    >>> session.add( gov )
    >>> session.flush() 
@@ -64,7 +64,7 @@ Add a governmemt:
 Add a second government
 
    >>> gov2 = model.Government(short_name=u"gov_2", start_date=tomorrow, end_date=dayat )
-   >>> gov2.parent_group_id = chamber.parliament_id
+   >>> gov2.parent_group_id = chamber.group_id
    >>> gov2.language = "en"
    >>> session.add( gov2 )
    >>> session.flush()
@@ -75,7 +75,7 @@ Sessions
 A parliamentary Session
 
    >>> sess = model.Session()
-   >>> sess.parliament_id = chamber.parliament_id
+   >>> sess.chamber_id = chamber.group_id
    >>> sess.short_name = u"First Session"
    >>> sess.full_name = u"First Session"
    >>> sess.start_date = yesterday
@@ -92,7 +92,7 @@ A parliamentary Session
 A second session
  
    >>> sess2 = model.Session()
-   >>> sess2.parliament_id = chamber.parliament_id
+   >>> sess2.chamber_id = chamber.group_id
    >>> sess2.short_name = u"2nd Session"
    >>> sess2.full_name = u"2nd Session"
    >>> sess2.start_date = tomorrow
@@ -107,7 +107,7 @@ Sittings
 ---------
  
     >>> ssit = model.Sitting()
-    >>> ssit.group_id = chamber.parliament_id
+    >>> ssit.group_id = chamber.group_id
     >>> ssit.start_date = today
     >>> ssit.end_date = tomorrow
     >>> ssit.language = "en"
@@ -122,7 +122,7 @@ Just check if we get something back because the return value depends on the time
 For Edit we need to be sure we do not check for the current data itself.
    
     >>> ssit2 = model.Sitting()
-    >>> ssit2.group_id = chamber.parliament_id
+    >>> ssit2.group_id = chamber.group_id
     >>> ssit2.start_date = yesterday
     >>> ssit2.end_date = today
     >>> ssit2.language = "en"

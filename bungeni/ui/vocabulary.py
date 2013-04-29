@@ -397,13 +397,13 @@ class DatabaseSource(BaseVocabularyFactory):
         return vocabulary.SimpleVocabulary(terms)
 
 
-parliament_factory = DatabaseSource(
-    domain.Chamber, "short_name", "parliament_id",
+chamber_factory = DatabaseSource(
+    domain.Chamber, "short_name", "group_id",
     title_getter=lambda ob: "%s (%s-%s)" % (
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
-component.provideUtility(parliament_factory, IVocabularyFactory, "parliament")
+component.provideUtility(chamber_factory, IVocabularyFactory, "chamber")
 
 committee_factory = DatabaseSource(
     domain.Committee, "short_name", "committee_id",
@@ -537,16 +537,16 @@ class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):
 workflow_states = WorkflowStatesVocabularyFactory()
 component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 
-# !+ why not domain.MemberOfParliament ?
+
+# !+ MemberOfParliamentCLEANUP! why not use domain.MemberOfParliament ?!
 class MemberOfParliament(object):
     """Member of Parliament = user join group membership join parliament"""
-    
+
 member_of_parliament = sa.join(schema.user_group_membership, 
     schema.user,
     schema.user_group_membership.c.user_id == schema.user.c.user_id
-).join(schema.parliament,
-    schema.user_group_membership.c.group_id ==
-        schema.parliament.c.parliament_id)
+)#!+.join(schema.group,
+#    schema.user_group_membership.c.group_id == schema.group.c.group_id)
 
 mapper(MemberOfParliament, member_of_parliament,
     properties = {
@@ -566,6 +566,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
         self.value_field = value_field
     
     def constructQuery(self, context):
+        # !+ is this method every called ?!
         session = Session()
         trusted = removeSecurityProxy(context)
         user_id = getattr(trusted, self.value_field, None)
@@ -579,11 +580,10 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
                 )
             return query
         else:
-            parliament_id = common.getattr_ancestry(trusted, "parliament_id")
-            if parliament_id:
+            chamber_id = common.getattr_ancestry(trusted, "chamber_id")
+            if chamber_id:
                 query = session.query(MemberOfParliament).filter(
-                    sql.and_(MemberOfParliament.group_id ==
-                            parliament_id,
+                    sql.and_(MemberOfParliament.group_id == chamber_id,
                             MemberOfParliament.active_p == True)
                    ).order_by(MemberOfParliament.last_name,
                             MemberOfParliament.first_name,
@@ -610,7 +610,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
         user_id = getattr(context, self.value_field, None) 
         if user_id:
             if len(query.filter(schema.user.c.user_id == user_id).all()) == 0:
-                # The user is not a member of this parliament. 
+                # The user is not a member of this chamber. 
                 # This should not happen in real life
                 # but if we do not add it her the view form will 
                 # throw an exception 
@@ -626,22 +626,21 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
 
 
 class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
-    """ you may change the user in this context """
+    """You may change the user in this context.
+    """
     def constructQuery(self, context):
         session = Session()
         trusted = removeSecurityProxy(context)
         user_id = getattr(trusted, self.value_field, None)
-        parliament_id = common.getattr_ancestry(trusted, "parliament_id")
+        chamber_id = common.getattr_ancestry(trusted, "chamber_id")
         if user_id:
-            if parliament_id:
+            if chamber_id:
                 query = session.query(MemberOfParliament
                        ).filter(
                         sql.or_(
-                        sql.and_(MemberOfParliament.user_id == user_id,
-                                MemberOfParliament.group_id ==
-                                parliament_id),
-                        sql.and_(MemberOfParliament.group_id ==
-                                parliament_id,
+                            sql.and_(MemberOfParliament.user_id == user_id,
+                                MemberOfParliament.group_id == chamber_id),
+                        sql.and_(MemberOfParliament.group_id == chamber_id,
                                 MemberOfParliament.active_p ==
                                 True)
                         )).order_by(
@@ -656,12 +655,10 @@ class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
                             MemberOfParliament.middle_name).filter(
                                 MemberOfParliament.active_p == True)
         else:
-            if parliament_id:
+            if chamber_id:
                 query = session.query(MemberOfParliament).filter(
-                    sql.and_(MemberOfParliament.group_id ==
-                            parliament_id,
-                            MemberOfParliament.active_p ==
-                            True)).order_by(
+                    sql.and_(MemberOfParliament.group_id == chamber_id,
+                            MemberOfParliament.active_p == True)).order_by(
                                 MemberOfParliament.last_name,
                                 MemberOfParliament.first_name,
                                 MemberOfParliament.middle_name)
@@ -671,8 +668,10 @@ class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
                             domain.User.first_name,
                             domain.User.middle_name)
         return query
-parliament_member = MemberOfParliamentSource("user_id")
-component.provideUtility(parliament_member, IVocabularyFactory, "parliament_member")
+chamber_member = MemberOfParliamentSource("user_id")
+component.provideUtility(chamber_member, IVocabularyFactory, "chamber_member")
+
+# !+ /MemberOfParliamentCLEANUP
 
 # !+rename MemberOfParliamentOrMPDelegatorSource ?
 class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
@@ -686,7 +685,7 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
     to the Clerk, the Clerk "loses" the full list of MPs!
     
     A logged in User will only be able to choose himself if he is a member
-    of parliament or those Persons who gave him rights to act on his behalf.
+    of chamber or those Persons who gave him rights to act on his behalf.
     """
     def constructQuery(self, context):
         mp_query = super(MemberOfParliamentDelegationSource, 
@@ -705,9 +704,9 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
             if len(query.all()) > 0:
                 return query
         return mp_query
-parliament_member_delegation = MemberOfParliamentDelegationSource("owner_id")
-component.provideUtility(parliament_member_delegation, IVocabularyFactory,
-    "parliament_member_delegation")
+chamber_member_delegation = MemberOfParliamentDelegationSource("owner_id")
+component.provideUtility(chamber_member_delegation, IVocabularyFactory,
+    "chamber_member_delegation")
 
 
 class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
@@ -739,7 +738,7 @@ component.provideUtility(signatory, IVocabularyFactory, "signatory")
 
 
 class MinistrySource(SpecializedSource):
-    """Ministries in the current parliament.
+    """Ministries in the current chamber.
     """
     
     def __init__(self, value_field):
@@ -749,11 +748,11 @@ class MinistrySource(SpecializedSource):
         session= Session()
         trusted=removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
-        parliament_id = common.getattr_ancestry(trusted, "parliament_id")
-        if parliament_id:
+        chamber_id = common.getattr_ancestry(trusted, "chamber_id")
+        if chamber_id:
             governments = session.query(domain.Government).filter(
                 sql.and_(
-                    domain.Government.parent_group_id == parliament_id,
+                    domain.Government.parent_group_id == chamber_id,
                     domain.Government.status == u"active"
                 ))
             government = governments.all()
@@ -956,9 +955,9 @@ class UserNotMPSource(SpecializedSource):
     def constructQuery(self, context):
         session = Session()
         trusted = removeSecurityProxy(context)
-        parliament_id = common.getattr_ancestry(trusted, "parliament_id")
+        chamber_id = common.getattr_ancestry(trusted, "chamber_id")
         mp_user_ids = sql.select([schema.user_group_membership.c.user_id], 
-            schema.user_group_membership.c.group_id == parliament_id)
+            schema.user_group_membership.c.group_id == chamber_id)
         query = session.query(domain.User).filter(sql.and_(
             sql.not_(domain.User.user_id.in_(mp_user_ids)),
             domain.User.active_p == "A")).order_by(

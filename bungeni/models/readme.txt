@@ -79,7 +79,7 @@ different table. Bungeni uses this feature to model chambers, committees,
 political groups, etc. Let's create some groups in the system to examine how
 they work.
 
-  >>> chamber = domain.Chamber(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now(), group_role="bungeni.MP")
+  >>> chamber = domain.Chamber(short_name=u"p_1", start_date=datetime.datetime.now(), group_role="bungeni.MP")
   >>> chamber.principal_name = "parl_01"
   >>> chamber.language = "en"
   >>> session.add(chamber)
@@ -87,11 +87,11 @@ they work.
   
   >>> political_group_a = domain.PoliticalGroup(short_name=u"pp_1", start_date=datetime.datetime.now(), group_role="bungeni.MemberPoliticalGroupAssembly")
   >>> political_group_a.principal_name = "pga_01"
-  >>> political_group_a.parent_group_id = chamber.parliament_id
+  >>> political_group_a.parent_group_id = chamber.group_id
   >>> political_group_a.language = "en"
   >>> political_group_b = domain.PoliticalGroup(short_name=u"pp_2", start_date=datetime.datetime.now(), group_role="bungeni.MemberPoliticalGroupAssembly")
   >>> political_group_b.principal_name = "pgb_01"
-  >>> political_group_b.parent_group_id = chamber.parliament_id
+  >>> political_group_b.parent_group_id = chamber.group_id
   >>> political_group_b.language = "en"
   >>> session.add(political_group_a)
   >>> session.add(political_group_b)
@@ -109,7 +109,7 @@ The actual committee
   ...       start_date=datetime.datetime.now(),
   ...       principal_name="com_01",
   ...       group_role="bungeni.CommitteeMember")
-  >>> committee_a.parent_group_id = chamber.parliament_id
+  >>> committee_a.parent_group_id = chamber.group_id
   >>> committee_a.sub_type = "housekeeping"
   >>> committee_a.group_continuity = "permanent"
   >>> committee_a.language = "en"
@@ -177,7 +177,7 @@ Government
   >>> gov = domain.Government(short_name=u"gov_1", start_date=datetime.datetime.now())
   >>> gov.principal_name = "gov_01"
   >>> gov.group_role = "bungeni.GovernmentMember"
-  >>> gov.parent_group_id = chamber.parliament_id
+  >>> gov.parent_group_id = chamber.group_id
   >>> gov.language = "en"
   >>> session.add(gov)
   >>> session.flush()
@@ -204,8 +204,8 @@ Ministries
 
 Groups in a chamber:
 -------------------
-  >>> from bungeni.models.utils import get_all_group_ids_in_parliament
-  >>> pgroups = get_all_group_ids_in_parliament(chamber.parliament_id)
+  >>> from bungeni.models.utils import get_all_group_ids_in_chamber
+  >>> pgroups = get_all_group_ids_in_chamber(chamber.group_id)
   
   >>> len(pgroups)
   6
@@ -261,9 +261,9 @@ Speaker's Office Title with Sub role
   >>> office_title.title_type_id = title_type.title_type_id
   >>> office_title.start_date = datetime.datetime.now()
 
-Members of parliament
-----------------------
-Members of parliament are defined by their membership in
+Chamber Members
+---------------
+Chamber Members are defined by their membership in
 the chamber group and additional attributes.
 
   >>> mp4 = domain.MemberOfParliament()
@@ -310,7 +310,7 @@ Sessions
 A parliamentary Session
 
  >>> sess = domain.Session()
- >>> sess.parliament_id = chamber.parliament_id
+ >>> sess.chamber_id = chamber.group_id
  >>> sess.short_name = u"First Session"
  >>> sess.full_name = u"First Session XXXX"
  >>> sess.start_date = datetime.datetime.now()
@@ -325,7 +325,7 @@ A parliamentary Session
 Sitting in this session 
  
  >>> ssit = domain.Sitting()
- >>> ssit.group_id = chamber.parliament_id
+ >>> ssit.group_id = chamber.group_id
  >>> ssit.start_date = datetime.datetime.now()
  >>> ssit.end_date = datetime.datetime.now()
  >>> ssit.language = "en"

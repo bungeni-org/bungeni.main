@@ -137,7 +137,7 @@ class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     
     @property
     def group_id(self):
-        """Return current parliament's group id.
+        """Return current chamber's group id.
         """
         return get_chamber_for_context(self.__parent__).group_id
 
@@ -148,7 +148,7 @@ class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
     
     @property
     def group_id(self):
-        """Returns parliament's group id.
+        """Returns chamber's group id.
         """
         return self.__parent__.group_id
 
@@ -194,7 +194,7 @@ class SessionSchedulingContext(PrincipalGroupSchedulingContext):
 
     @property
     def group_id(self):
-        return self.__parent__.parliament_id
+        return self.__parent__.chamber_id
 
 class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ISittingContainer)

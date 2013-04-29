@@ -39,7 +39,7 @@ from bungeni.ui.utils import url, debug, date, misc
 from bungeni.utils import common
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
     IAdminSectionLayer
-from bungeni.models.utils import get_login_user, get_user, get_member_of_parliament
+from bungeni.models.utils import get_login_user, get_user, get_member_of_chamber
 from bungeni.core.language import get_default_language
 
 
@@ -799,7 +799,7 @@ def _render_link_to_mp_or_user(user_id, context, request):
     For use by forms in "view" mode.
     """
     try:
-        mp = get_member_of_parliament(user_id)
+        mp = get_member_of_chamber(user_id)
         return mp.user.combined_name
         #!+BUSINESS(mb, feb-2013) is deprecated - how to render
         # bicameral installation
@@ -807,7 +807,7 @@ def _render_link_to_mp_or_user(user_id, context, request):
         #    contents=mp.user.combined_name,
         #    href="/workspace/members/obj-%s/" % (mp.membership_id))
     except NoResultFound:
-        # not a member of parliament 
+        # not a member of chamber 
         #
         # Note that self.context is the field.property instance, while 
         # self.context.context is the actual model instance with a "user" 

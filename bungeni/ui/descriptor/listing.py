@@ -34,7 +34,7 @@ from zc.table import column
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import domain
-from bungeni.models.utils import get_login_user, get_member_of_parliament
+from bungeni.models.utils import get_login_user, get_member_of_chamber
 from bungeni.models.interfaces import IOwned
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui.utils import common, date, url
@@ -282,7 +282,7 @@ def member_linked_name_column(name, title, vocabulary=None):
         else:
             #!+BUSINESS(mb, feb-2013) is deprecated
             # else we link direct to the MP's "public" view
-            #mp = get_member_of_parliament(related_user.user_id)
+            #mp = get_member_of_chamber(related_user.user_id)
             #href = "/members/current/obj-%s/" % (mp.membership_id)
             return related_user.combined_name
         return zope.formlib.widget.renderElement("a",

@@ -20,13 +20,13 @@ from bungeni.utils import register
 
 @register.handler(adapts=(interfaces.IAgendaItem, IObjectCreatedEvent))
 @register.handler(adapts=(interfaces.ISession, IObjectCreatedEvent))
-def set_parliament_id(context, event):
-    """Set parliament_id when objects are added outside of parliament context
+def set_chamber_id(context, event):
+    """Set chamber_id when objects are added outside of chamber context
     """
-    if context.parliament_id is None:
-        if context.parliament_id is None:
+    if context.chamber_id is None:
+        if context.chamber_id is None:
             chamber = utils.get_chamber_for_group(context.group)
-            context.parliament_id = chamber.group_id
+            context.chamber_id = chamber.group_id
 
 
 @register.handler(adapts=(interfaces.ISitting, IObjectCreatedEvent))

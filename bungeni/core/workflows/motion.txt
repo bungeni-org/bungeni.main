@@ -55,8 +55,7 @@ Content creation
   ...    domain.Chamber,
   ...    short_name=u"p_1",
   ...    language="en",
-  ...    start_date=yesterday,
-  ...    election_date=yesterday)
+  ...    start_date=yesterday)
 
   >>> motion = add_content(
   ...     domain.Motion,
@@ -94,7 +93,7 @@ convention adopted for internal transition ids composed of:
 chamber id.
   
   >>> actions.create(motion)
-  >>> motion.parliament_id == chamber.parliament_id
+  >>> motion.chamber_id == chamber.group_id
   True
 
   >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
@@ -113,7 +112,7 @@ Conditions
   False
 
   >>> from bungeni.models.testing import create_sitting
-  >>> sitting = create_sitting(chamber.parliament_id)
+  >>> sitting = create_sitting(chamber.group_id)
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,

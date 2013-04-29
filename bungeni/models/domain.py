@@ -319,7 +319,7 @@ class GroupDocumentAssignment(Entity):
 
 # auditable (by default), but not a Doc
 class Sitting(Entity):
-    """Scheduled meeting for a group (parliament, committee, etc).
+    """Scheduled meeting for a group (chamber, committee, etc).
     """
     available_dynamic_features = ["audit", "version", "attachment",
         "notification", "email"]
@@ -786,7 +786,7 @@ class AgendaItem(Doc):
 class Event(HeadParentedMixin, Doc):
     """Base class for an event on a document.
     """
-    #!+parliament_id is (has always been) left null for events, how best to 
+    #!+chamber_id is (has always been) left null for events, how best to 
     # handle this, possible related constraint e.g. head_id must NOT be null, 
     # validation, ... ?
     available_dynamic_features = ["audit", "version", "attachment",
@@ -899,12 +899,12 @@ class Session(Entity):
 
     sittings = one2many("sittings",
         "bungeni.models.domain.SittingContainer", "session_id",
-        [("group_id", "parliament_id")]
+        [("group_id", "chamber_id")]
     )
 
     @property
     def group_id(self):
-        return self.parliament_id
+        return self.chamber_id
 
 ''' !+SUBSCRIPTIONS(mr, jun-2012) unused
 class ObjectSubscriptions(object):

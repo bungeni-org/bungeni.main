@@ -203,7 +203,7 @@ def validate_political_group_membership(action, data, context, container):
     return logged_errors(errors, "validate_political_group_membership")
 
 
-@describe(_(u"Check if the start - end date range of a parliament does not overlap with another parliament"))
+@describe(_(u"Check if the start - end date range of a chamber does not overlap with another chamber"))
 def validate_chamber_dates(action, data, context, container):
     """Chambers start must be after start of the Legislature. 
     The start and end date of *chambers of same type* may not overlap.
@@ -211,7 +211,7 @@ def validate_chamber_dates(action, data, context, container):
     errors = []
     start_date = data["start_date"]
     end_date = data.get("end_date")
-    parliament_type = data["parliament_type"]
+    sub_type = data["sub_type"]
     if interfaces.IChamber.providedBy(context):
         chamber = context
     else:
@@ -223,7 +223,7 @@ def validate_chamber_dates(action, data, context, container):
     def get_others_overlapping_date(chamber, date):
         return [ result for result in 
             queries.validate_date_in_interval(chamber, domain.Chamber, date)
-            if result.parliament_type == parliament_type ]
+            if result.sub_type == sub_type ]
     
     legislature = capi.legislature
     if start_date:
@@ -252,16 +252,16 @@ def validate_chamber_dates(action, data, context, container):
     if chamber is None:
         results = queries.validate_open_interval(chamber, domain.Chamber)
         for result in results:
-            if result.parliament_type == parliament_type:
+            if result.sub_type == sub_type:
                 errors.append(Invalid(
                         _("Another chamber is not yet dissolved (%s)") % (
                             result.short_name),
-                        "election_date"))
+                        "end_date"))
     
     return logged_errors(errors, "validate_chamber_dates")
 
 
-
+# !+ ?! 
 @describe(_(u"Checks if the government start/end dates fall within the start/end dates of the parliament"))
 def validate_government_dates(action, data, context, container):
     errors = []

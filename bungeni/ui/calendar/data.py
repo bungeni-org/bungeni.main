@@ -166,9 +166,9 @@ class SchedulableItemsGetter(object):
                     expression = (column==value)
                 items_query = items_query.filter(expression)
         if self.group_filter and not IScheduleText.implementedBy(self.domain_class):
-            if hasattr(self.domain_class, "parliament_id") and self.group_id:
+            if hasattr(self.domain_class, "chamber_id") and self.group_id:
                 items_query = items_query.filter(
-                    self.domain_class.parliament_id==self.group_id
+                    self.domain_class.chamber_id==self.group_id
                 )
             elif hasattr(self.domain_class, "group_id") and self.group_id:
                 items_query = items_query.filter(
