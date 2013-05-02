@@ -145,7 +145,7 @@ class VersionCreatedEvent(ObjectEvent):
     interface.implements(IVersionCreatedEvent)
 
 
-class ITranslatonCreatedEvent(IObjectEvent):
+class ITranslationCreatedEvent(IObjectEvent):
     """A translation of an instance was added.
     """
     language = interface.interface.Attribute(
@@ -153,7 +153,7 @@ class ITranslatonCreatedEvent(IObjectEvent):
     translated_attribute_names = interface.interface.Attribute(
         "The list of attribute names that have changed by this translation.")
 class TranslationCreatedEvent(ObjectEvent):
-    interface.implements(ITranslatonCreatedEvent)
+    interface.implements(ITranslationCreatedEvent)
     def __init__(self, obj, language, translated_attribute_names):
         self.object = obj
         self.language = language

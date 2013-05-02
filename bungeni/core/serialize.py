@@ -37,7 +37,8 @@ from bungeni.core.workflow.states import get_object_state_rpm
 from bungeni.core.interfaces import (
     IMessageQueueConfig, 
     NotificationEvent, 
-    IVersionCreatedEvent
+    IVersionCreatedEvent,
+    ITranslationCreatedEvent
 )
 from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
     IWorkflowed, IWorkflowController, InvalidStateError
@@ -532,6 +533,7 @@ def serialization_version_event_handler(event):
 
 @register.handler(adapts=(interfaces.ISerializable, IObjectCreatedEvent))
 @register.handler(adapts=(interfaces.ISerializable, IObjectModifiedEvent))
+@register.handler(adapts=(interfaces.ISerializable, ITranslationCreatedEvent))
 def serialization_event_handler(obj, event):
     """queues workflowed objects when created or modified"""
     queue_object_serialization(obj)
