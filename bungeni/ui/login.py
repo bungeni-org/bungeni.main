@@ -22,6 +22,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.component import getUtility
 
 from bungeni.core.interfaces import IBungeniMailer
+from bungeni.core.language import I18N_COOKIE_NAME
 
 from bungeni.alchemist import Session
 from bungeni.models.domain import User
@@ -74,7 +75,8 @@ class Login(form.FormBase):
 
 class Logout(BrowserView):
     def __call__( self ):
-        self.request.response.expireCookie( "wc.cookiecredentials" )
+        self.request.response.expireCookie("wc.cookiecredentials")
+        self.request.response.expireCookie(I18N_COOKIE_NAME)
         site_url = ui_utils.url.absoluteURL(getSite(), self.request)
         self.request.response.redirect( site_url )
 
