@@ -278,8 +278,14 @@ class GroupMembership(HeadParentedMixin, Entity):
         "bungeni.models.domain.GroupMembershipRoleContainer", "membership_id")
     
     @property
-    def image(self):
+    def image(self): 
         return self.user.image
+    @property
+    def first_name(self):
+        return self.user.first_name
+    @property
+    def last_name(self):
+        return self.user.last_name
 
 # !+ alias, as "mapping" of archetype key 
 Member = GroupMembership

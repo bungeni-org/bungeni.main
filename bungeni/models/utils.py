@@ -188,3 +188,5 @@ def is_column_binary(column):
     """Return true if column is binary - assumption (one column).
     """
     return isinstance(column.type, sa.types.Binary)
+
+

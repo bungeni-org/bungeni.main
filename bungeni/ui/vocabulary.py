@@ -34,20 +34,26 @@ import sqlalchemy.sql.expression as sql
 from bungeni.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
-from bungeni.alchemist.interfaces import IAlchemistContainer
-from bungeni.alchemist.interfaces import IAlchemistContent
+from bungeni.alchemist.interfaces import (
+    IAlchemistContainer,
+    IAlchemistContent
+)
 
 from bungeni.models import schema, domain, utils, delegation
 from bungeni.models.interfaces import (
     ISubRoleAnnotations,
     IBungeniGroup,
+    IBungeniGroupMembership,
+    IDoc, 
     ITranslatable, 
     ISignatory,
+    ISignatoryContainer, 
     IVersion,
     IScheduleText,
     IScheduleContent,
     ISerializable
 )
+from bungeni.core.interfaces import IWorkspaceContainer
 
 from bungeni.core.translation import translate_obj
 from bungeni.core.language import get_default_language
@@ -302,9 +308,6 @@ ISResponse = vocabulary.SimpleVocabulary([
 '''
 
 
-def unqualified_role(role_id):
-    return role_id.split(".")[1]
-
 class GroupRoleFactory(BaseVocabularyFactory):
     def __call__(self, context=None):
         app = common.get_application()
@@ -324,11 +327,9 @@ class GroupRoleFactory(BaseVocabularyFactory):
                 continue
             if not ISubRoleAnnotations(role).is_sub_role:
                 terms.append(vocabulary.SimpleTerm(name, name, role.title))
-        return vocabulary.SimpleVocabulary(
-            sorted(terms, key=lambda a: a.title))
-
+        return vocabulary.SimpleVocabulary(sorted(terms, key=lambda a: a.title))
 group_role_factory = GroupRoleFactory()
-component.provideUtility(group_role_factory, IVocabularyFactory, "group_role")
+component.provideUtility(GroupRoleFactory(), IVocabularyFactory, "group_role")
 
 
 class GroupSubRoleFactory(BaseVocabularyFactory):
@@ -346,6 +347,7 @@ class GroupSubRoleFactory(BaseVocabularyFactory):
         return vocabulary.SimpleVocabulary(terms)
 group_sub_role_factory = GroupSubRoleFactory()
 component.provideUtility(group_sub_role_factory, IVocabularyFactory, "group_sub_role")
+
 
 # database sources
 
@@ -374,14 +376,14 @@ class DatabaseSource(BaseVocabularyFactory):
         self.title_getter = title_getter
         self.order_by = order_by
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         query = Session().query(self.domain_model)
         if self.order_by:
             query = query.order_by(self.order_by)
         return query
     
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         title_field = self.title_field or self.token_field
@@ -440,11 +442,11 @@ class SpecializedSource(BaseVocabularyFactory):
         self.title_field = title_field
         self.value_field = value_field
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         raise NotImplementedError("Must be implemented by subclass.")
     
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         title_field = self.title_field or self.token_field
@@ -495,7 +497,7 @@ class GroupTitleTypesFactory(SpecializedSource):
     def __init__(self):
         pass
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         return session.query(domain.TitleType) \
                 .filter(schema.title_type.c.group_id == context.group_id)
@@ -505,7 +507,7 @@ class GroupTitleTypesFactory(SpecializedSource):
             context = context.__parent__
             if not context:
                 raise NotImplementedError("Context does not implement IBungeniGroup")
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         for ob in results:
@@ -538,203 +540,215 @@ workflow_states = WorkflowStatesVocabularyFactory()
 component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 
 
-# !+ MemberOfParliamentCLEANUP! why not use domain.MemberOfParliament ?!
-class MemberOfParliament(object):
-    """Member of Parliament = user join group membership join parliament"""
+# Chamber Member vocabularies
 
-member_of_parliament = sa.join(schema.user_group_membership, 
-    schema.user,
-    schema.user_group_membership.c.user_id == schema.user.c.user_id
-)#!+.join(schema.group,
-#    schema.user_group_membership.c.group_id == schema.group.c.group_id)
-
-mapper(MemberOfParliament, member_of_parliament,
-    properties = {
-        "user_id":[
-            schema.user_group_membership.c.user_id, schema.user.c.user_id
-        ],
-        "user_active_p":[schema.user.c.active_p],
-        "user_language":[schema.user.c.language],    
-    }    
-)
-
-class MemberOfParliamentImmutableSource(SpecializedSource):
-    """If a user is already assigned to the context 
-    the user will not be editable.
+class SpecializedMemberSource(BaseVocabularyFactory):
+    """Base class for Member vocabularies for various scenarios.
     """
-    def __init__(self, value_field):
-        self.value_field = value_field
+    chamber = None # set in self.construct_query
+    context_user = None # set in self.construct_query
     
-    def constructQuery(self, context):
-        # !+ is this method every called ?!
+    def __call__(self, context=None):
+        query = self.construct_query(removeSecurityProxy(context))
+        results = query.all() # either([Member], [User])
+        terms = [
+            vocabulary.SimpleTerm(
+                value=ob.user_id,
+                token=ob.user_id,
+                title="%s %s" % (ob.first_name, ob.last_name))
+            for ob in results
+        ]
+        
+        # only for Doc/Member/User contexts
+        if not IAlchemistContainer.providedBy(context):
+            user = self.context_user
+            # !+ self.chamber.active_membership(user.user_id) ?
+            if user not in [ m.user for m in self.chamber.members ]:
+                raise ValueError("%s: context user %r not a member of chamber %r" % (
+                    self, user.login, self.chamber.principal_name))
+                # !+ check if context user is NOT a member of this chamber -- should never happen!
+                # !+ still true? must add user, to avoid exception from view form
+                terms.append(vocabulary.SimpleTerm(
+                        value=user.user_id,
+                        token=user.user_id,
+                        title="(%s %s)" % (user.first_name, user.last_name)))
+        return vocabulary.SimpleVocabulary(terms)
+    
+    def construct_query(self, ctx):
+        raise NotImplementedError("Must be implemented by subclass.")
+
+
+class MemberSource(SpecializedMemberSource):
+    """The list of Users (Group Container context) or Members (Member context).
+    
+    ASSUMPTION:
+    "chamber_member" vocabulary, for "user_id" of Committee, PoliticalGroup, ...
+    So, context here is EITHER a MemberContainer OR a Member.
+    """
+    
+    def construct_query(self, ctx):
         session = Session()
-        trusted = removeSecurityProxy(context)
-        user_id = getattr(trusted, self.value_field, None)
-        if user_id:
+        if IAlchemistContainer.providedBy(ctx):
+            # MemberContainer - "add" member (Committee, PoliticalGroup)
+            assert IBungeniGroupMembership.implementedBy(ctx.domain_model), ctx
+            # the group is the context's __parent__
+            assert IBungeniGroup.providedBy(ctx.__parent__), ctx
+            self.chamber = utils.get_chamber_for_group(ctx.__parent__)
+            # potentials to become Members are all Users who ARE already members of the Chamber
+            # !+ this logic is for groups within a chamber... 
+            member_user_ids = [ m.user_id for m in self.chamber.members ]
             query = session.query(domain.User
-                ).filter(domain.User.user_id == user_id
+                ).filter(
+                    #sql.not_( !+negation with ColumnOperators.in_(), method notin_ in v0.8
+                    domain.MemberOfParliament.user_id.in_(member_user_ids)
                 ).order_by(
                     domain.User.last_name,
                     domain.User.first_name,
-                    domain.User.middle_name
-                )
-            return query
+                    domain.User.middle_name)
         else:
-            chamber_id = common.getattr_ancestry(trusted, "chamber_id")
-            if chamber_id:
-                query = session.query(MemberOfParliament).filter(
-                    sql.and_(MemberOfParliament.group_id == chamber_id,
-                            MemberOfParliament.active_p == True)
-                   ).order_by(MemberOfParliament.last_name,
-                            MemberOfParliament.first_name,
-                            MemberOfParliament.middle_name) 
-            else:
-                query = session.query(domain.User).order_by(
-                            domain.User.last_name,
-                            domain.User.first_name,
-                            domain.User.middle_name)
+            # Member - "view" member
+            assert IBungeniGroupMembership.providedBy(ctx), ctx
+            assert IBungeniGroup.providedBy(ctx.group), ctx
+            self.chamber = utils.get_chamber_for_group(ctx.group)   
+            chamber_id = self.chamber.group_id
+            self.context_user = ctx.user
+            user_id = ctx.user_id
+            # all active Members of this Chamber
+            query = session.query(domain.MemberOfParliament
+                ).filter(
+                    sql.or_(
+                        sql.and_(
+                            domain.MemberOfParliament.user_id == user_id,
+                            domain.MemberOfParliament.group_id == chamber_id),
+                        sql.and_(
+                            domain.MemberOfParliament.group_id == chamber_id,
+                            domain.MemberOfParliament.active_p == True)
+                    )).distinct()
         return query
+        
+component.provideUtility(
+    MemberSource(), IVocabularyFactory, "chamber_member")
+
+
+class MemberDelegationSource(MemberSource):
+    """MemberSource filtered down to either:
     
-    def __call__(self, context=None):
-        query = self.constructQuery(context)
-        results = query.all()
-        terms = []
-        for ob in results:
-            terms.append(
-                vocabulary.SimpleTerm(
-                    value = getattr(ob, "user_id"), 
-                    token = getattr(ob, "user_id"),
-                    title = "%s %s" % (getattr(ob, "first_name"),
-                            getattr(ob, "last_name"))
-                ))
-        user_id = getattr(context, self.value_field, None) 
-        if user_id:
-            if len(query.filter(schema.user.c.user_id == user_id).all()) == 0:
-                # The user is not a member of this chamber. 
-                # This should not happen in real life
-                # but if we do not add it her the view form will 
-                # throw an exception 
-                session = Session()
-                ob = session.query(domain.User).get(user_id)
-                terms.append(vocabulary.SimpleTerm(
-                    value = getattr(ob, "user_id"), 
-                    token = getattr(ob, "user_id"),
-                    title = "(%s %s)" % (getattr(ob, "first_name"),
-                            getattr(ob, "last_name"))
-                ))
-        return vocabulary.SimpleVocabulary(terms)
-
-
-class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
-    """You may change the user in this context.
-    """
-    def constructQuery(self, context):
-        session = Session()
-        trusted = removeSecurityProxy(context)
-        user_id = getattr(trusted, self.value_field, None)
-        chamber_id = common.getattr_ancestry(trusted, "chamber_id")
-        if user_id:
-            if chamber_id:
-                query = session.query(MemberOfParliament
-                       ).filter(
-                        sql.or_(
-                            sql.and_(MemberOfParliament.user_id == user_id,
-                                MemberOfParliament.group_id == chamber_id),
-                        sql.and_(MemberOfParliament.group_id == chamber_id,
-                                MemberOfParliament.active_p ==
-                                True)
-                        )).order_by(
-                            MemberOfParliament.last_name,
-                            MemberOfParliament.first_name,
-                            MemberOfParliament.middle_name).distinct()
-                return query
-            else:
-                query = session.query(MemberOfParliament).order_by(
-                            MemberOfParliament.last_name,
-                            MemberOfParliament.first_name,
-                            MemberOfParliament.middle_name).filter(
-                                MemberOfParliament.active_p == True)
-        else:
-            if chamber_id:
-                query = session.query(MemberOfParliament).filter(
-                    sql.and_(MemberOfParliament.group_id == chamber_id,
-                            MemberOfParliament.active_p == True)).order_by(
-                                MemberOfParliament.last_name,
-                                MemberOfParliament.first_name,
-                                MemberOfParliament.middle_name)
-            else:
-                query = session.query(domain.User).order_by(
-                            domain.User.last_name,
-                            domain.User.first_name,
-                            domain.User.middle_name)
-        return query
-chamber_member = MemberOfParliamentSource("user_id")
-component.provideUtility(chamber_member, IVocabularyFactory, "chamber_member")
-
-# !+ /MemberOfParliamentCLEANUP
-
-# !+rename MemberOfParliamentOrMPDelegatorSource ?
-class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
-    """MemberOfParliamentSource filtered down to either:
-    a) EITHER only include only those MPs who have delegated to current logged 
-       in user if any (and, current user, if an MP, must also be included as
-       one of the delegators)
-    b) OR, if no-one has delegated to current logged in user, then include all MPs !
-    
-    !+DELEGATION_TO_CLERK consequence of above logic is that if an MP delegates 
-    to the Clerk, the Clerk "loses" the full list of MPs!
+    a) EITHER only include only those Members who have delegated to current 
+        logged in user if any (and, current user, if an MP, must also be 
+        included as one of the delegators)
+    b) OR, if no-one has delegated to current logged in user (a typical example
+        would be when current logged in user is admin) then include all MPs!
     
     A logged in User will only be able to choose himself if he is a member
     of chamber or those Persons who gave him rights to act on his behalf.
+    
+    ASSUMPTION:
+    "chamber_member_delegation" vocabulary, for "owner_id" of Bill, Question, ...
+    So, context here is EITHER a {Doc}Container OR a {Doc}.
+    
+    !+DELEGATION_TO_NON_MP consequence of above logic is that if an MP delegates 
+    to the Clerk (or Admin), the Clerk (or Admin) "loses" the full list of MPs!
     """
-    def constructQuery(self, context):
-        mp_query = super(MemberOfParliamentDelegationSource, 
-            self).constructQuery(context)
+    
+    def construct_query(self, ctx):
+        
+        if IAlchemistContainer.providedBy(ctx):
+            if IWorkspaceContainer.providedBy(ctx):
+                self.chamber = utils.get_login_user_chamber()
+            else:
+                # {Doc}Container - "add" doc
+                assert IDoc.implementedBy(ctx.domain_model), ctx
+                # chamber is a __parent__ ancestor
+                # !+ in admin, the chamber is the context's __parent__
+                assert IBungeniGroup.providedBy(ctx.__parent__), ctx
+                self.chamber = utils.get_chamber_for_group(ctx.__parent__)
+        else:
+            # {Doc} - "view" a doc
+            assert IDoc.providedBy(ctx), ctx
+            # chamber is a doc.chamber
+            assert IBungeniGroup.providedBy(ctx.chamber), ctx
+            self.chamber = ctx.chamber
+            self.context_user = ctx.owner
+        
+        # all active Members of this Chamber
+        chamber_id = self.chamber.group_id
+        all_mp_query = Session().query(domain.MemberOfParliament
+            ).filter(
+                sql.and_(
+                    domain.MemberOfParliament.group_id == chamber_id,
+                    domain.MemberOfParliament.active_p == True)
+            )
+        
+        # user delegations
         user = utils.get_login_user()
-        if user:
-            user_ids = [ ud.user_id 
-                for ud in delegation.get_user_delegations(user) ]
-            # current user must also be considered as (a potential MP) delegator
-            if user.user_id not in user_ids:
-                user_ids.append(user.user_id)
-            # the filtered list of MP delegators
-            query = mp_query.filter(
+        user_ids = [ ud.user_id 
+            for ud in delegation.get_user_delegations(user) ]
+        # current user must also be considered as (a potential MP) delegator
+        if user.user_id not in user_ids:
+            user_ids.append(user.user_id)
+        
+        delegated_mp_query = all_mp_query.filter(
                 domain.MemberOfParliament.user_id.in_(user_ids))
-            # !+DELEGATION_TO_CLERK in this case query.all() will not be empty!
-            if len(query.all()) > 0:
-                return query
-        return mp_query
-chamber_member_delegation = MemberOfParliamentDelegationSource("owner_id")
-component.provideUtility(chamber_member_delegation, IVocabularyFactory,
-    "chamber_member_delegation")
+        
+        # if no-one has delegated to current logged in user (e.g. admin),
+        # then include all MPs. !+DELEGATION_TO_NON_MP
+        if len(delegated_mp_query.all()) == 0:
+            return all_mp_query
+        else:
+            return delegated_mp_query
+component.provideUtility(
+    MemberDelegationSource(), IVocabularyFactory, "chamber_member_delegation")
 
 
-class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
-    """Vocabulary for selection of signatories - Other MPs
-       excluding pre-selected signatories and item owner
+class MemberSignatorySource(MemberSource):
+    """Vocabulary for selection of signatories - other MPs excluding 
+    any pre-selected signatories and the doc owner.
+    
+    ASSUMPTION:
+    "signatory" vocabulary, for "user_id" of Signatory
+    So, context here is EITHER a SignatoryContainer OR a Signatory
     """
-    def constructQuery(self, context):
-        mp_query = super(MemberOfParliamentSignatorySource, 
-                self).constructQuery(context)
-        trusted = removeSecurityProxy(context)
-        if ISignatory.providedBy(context):
-            trusted = removeSecurityProxy(trusted.__parent__)
-        if IContainer.providedBy(trusted):
-            exclude_ids = set(
-                [ member.user_id for member in trusted.values() ]
+    
+    def construct_query(self, ctx):
+        if IAlchemistContainer.providedBy(ctx):
+            # SignatoryContainer - "add" signatory
+            assert ISignatoryContainer.providedBy(ctx), ctx
+            signatory_container = ctx
+            # __parent__ is the doc
+            assert IDoc.providedBy(ctx.__parent__), ctx
+            head_doc = ctx.__parent__
+            # chamber is a doc.chamber
+            assert IBungeniGroup.providedBy(ctx.__parent__.chamber), ctx
+            self.chamber = ctx.__parent__.chamber
+        else:
+            # Signatory - "view" a signatory
+            assert ISignatory.providedBy(ctx), ctx
+            # __parent__ is the signatory container
+            assert ISignatoryContainer.providedBy(ctx.__parent__), ctx
+            signatory_container = ctx.__parent__
+            head_doc = ctx.head
+            # chamber is a head.chamber
+            self.chamber = ctx.head.chamber
+            self.context_user = ctx.user
+        
+        # all active Members of this Chamber
+        chamber_id = self.chamber.group_id
+        all_mp_query = Session().query(domain.MemberOfParliament
+            ).filter(
+                sql.and_(
+                    domain.MemberOfParliament.group_id == chamber_id,
+                    domain.MemberOfParliament.active_p == True)
             )
-            if trusted.__parent__ is not None:
-                trusted_parent = removeSecurityProxy(trusted.__parent__)
-                exclude_ids.add(trusted_parent.owner_id)
-            return mp_query.filter(
-                sql.not_(domain.MemberOfParliament.user_id.in_(
-                        list(exclude_ids)
-                    )
-                )
-            )
-        return mp_query
-signatory = MemberOfParliamentSignatorySource("user_id")
-component.provideUtility(signatory, IVocabularyFactory, "signatory")
+        # exclude head doc owner and current signatories
+        exclude_ids = set(
+            [ sgn.user_id for sgn in signatory_container.values() ])
+        exclude_ids.add(head_doc.owner_id)
+        return all_mp_query.filter(sql.not_(
+                domain.MemberOfParliament.user_id.in_(list(exclude_ids))))
+component.provideUtility(
+    MemberSignatorySource(), IVocabularyFactory, "signatory")
+
+
 
 
 class MinistrySource(SpecializedSource):
@@ -744,7 +758,7 @@ class MinistrySource(SpecializedSource):
     def __init__(self, value_field):
         self.value_field = value_field
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
@@ -784,7 +798,7 @@ class MinistrySource(SpecializedSource):
         return query
                
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         trusted = removeSecurityProxy(context)
@@ -828,7 +842,7 @@ class MemberTitleSource(SpecializedSource):
             user_type = self._get_user_type(context.__parent__)
         return user_type
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
         user_type = self._get_user_type(trusted)
@@ -838,7 +852,7 @@ class MemberTitleSource(SpecializedSource):
         return titles
     
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         for ob in results:
@@ -882,7 +896,7 @@ component.provideUtility(owner_or_login, IVocabularyFactory, "owner_or_login")
 class UserSource(SpecializedSource):
     """All active users.
     """
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session = Session()
         users = session.query(domain.User).order_by(
             domain.User.last_name, domain.User.first_name).filter(
@@ -900,14 +914,14 @@ class GroupSource(SpecializedSource):
     """All active groups.
     """
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         # !+GROUP_FILTERS, refine, check for active, ...
         groups = Session().query(domain.Group).order_by(
             domain.Group.short_name, domain.Group.full_name)
         return groups
     
     def __call__(self, context=None):
-        results = self.constructQuery(context).all()
+        results = self.construct_query(context).all()
         terms = []
         for ob in results:
             terms.append(
@@ -928,10 +942,8 @@ component.provideUtility(group, IVocabularyFactory, "group")
 class MembershipUserSource(UserSource):
     """Filter out users already added to a membership container
     """
-    def constructQuery(self, context):
-        users = super(MembershipUserSource, self).constructQuery(
-            context
-        )
+    def construct_query(self, context):
+        users = super(MembershipUserSource, self).construct_query(context)
         trusted = removeSecurityProxy(context)
         exclude_ids = set()
         if IContainer.providedBy(trusted):
@@ -952,7 +964,7 @@ component.provideUtility(member, IVocabularyFactory, "member")
 class UserNotMPSource(SpecializedSource):
     """ All users that are NOT a MP """
         
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session = Session()
         trusted = removeSecurityProxy(context)
         chamber_id = common.getattr_ancestry(trusted, "chamber_id")
@@ -965,7 +977,7 @@ class UserNotMPSource(SpecializedSource):
         return query
 
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         for ob in results:
@@ -1007,7 +1019,7 @@ class UserNotStaffSource(SpecializedSource):
 class SittingAttendanceSource(SpecializedSource):
     """All members of this group who do not have an attendance record yet.
     """
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
         user_id = getattr(trusted, self.value_field, None)
@@ -1037,7 +1049,7 @@ class SittingAttendanceSource(SpecializedSource):
             return query
                  
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         for ob in results:
@@ -1088,7 +1100,7 @@ class SubstitutionSource(SpecializedSource):
             user_id = getattr(trusted.__parent__, "user_id", None)
         return user_id
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         query = session.query(domain.GroupMembership
             #!+PRINCIPAL ).order_by("last_name", "first_name"
@@ -1104,7 +1116,7 @@ class SubstitutionSource(SpecializedSource):
         return query
     
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         tdict = {}
         for ob in results:
@@ -1157,7 +1169,7 @@ class PIAssignmentSource(SpecializedSource):
             not_tagged=["private", "fail", "terminal"], restrict=False)
     )
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
         parliament_id = common.getattr_ancestry(context, "parliament_id")
@@ -1181,7 +1193,7 @@ class PIAssignmentSource(SpecializedSource):
 ''' !+UNUSED
 class CommitteeSource(SpecializedSource):
 
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         parliament_id = common.getattr_ancestry(context, "parliament_id")
         query = session.query(domain.Committee).filter(
@@ -1194,7 +1206,7 @@ class CommitteeSource(SpecializedSource):
 ''' !+UNUSED
 class MotionPoliticalGroupSource(SpecializedSource):
 
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
         user_id = getattr(trusted, "owner_id", None)
@@ -1250,7 +1262,7 @@ class QuerySource(object):
         self.order_by_field = order_by_field
         self.filter_value = filter_value
     
-    def constructQuery(self, context):
+    def construct_query(self, context):
         session = Session()
         trusted=removeSecurityProxy(context)
         if self.filter_value:
@@ -1269,7 +1281,7 @@ class QuerySource(object):
         return query
         
     def __call__(self, context=None):
-        query = self.constructQuery(context)
+        query = self.construct_query(context)
         results = query.all()
         terms = []
         title_field = self.title_field or self.token_field
