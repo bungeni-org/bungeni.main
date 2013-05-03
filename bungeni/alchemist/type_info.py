@@ -134,35 +134,46 @@ def _get_by_descriptor_model(descriptor_model):
 class TI(object):
     """TypeInfo, associates together the following attributes for a given type:
             type_key
-                unique for each type, is the underscore-separated lowercase 
-                name of the domain_model (the domain class)
+                the type identifier, the underscore-separated lowercase name of 
+                the domain_model (the domain class)
+                (UNIQUE for each type)
             workflow_key 
                 the workflow file name
                 defaults to the type_key for workflowed types that DO NOT specify
-                is None for non-workflowed types
+                is None for non-workflowed types 
+                (NOT unique for each type)
             workflow 
                 a same workflow instance may be used by multiple (non-custom) types
                 is None for non-workflowed types
+                (once instantiated, UNIQUE for each type)
             interface
                 the manually applied application-dedicated model interface 
                 (if any) for the type
+                (UNIQUE for each type)
             derived_table_schema
                 auto-generated db schema interface, provides IIModelInterface
+                (UNIQUE for each type)
             domain_model
                 the domain class
+                (UNIQUE for each type)
             archetype
                 the domain model for:
                 a) either the (system or custom) archetype of the custom type
                 b) or the (mapped) base type of the system type, or None
+                (NOT unique for each type)
             descriptor_key
                 the descriptor file name
                 defaults to the type_key for types that DO NOT specify
+                (NOT unique for each type)
             descriptor_model
                 the descriptor model for UI views for the type
+                (once instantiated, UNIQUE for each type)
             container_class
                 container class for domain_model
+                (UNIQUE for each type)
             container_interface
                 interface for the container class for domain_model
+                (UNIQUE for each type)
             label
                 the i18n msgid display label for the type (descriptor)
             container_label
@@ -175,7 +186,7 @@ class TI(object):
         self.interface = iface
         self.derived_table_schema = None # provides IIModelInterface
         self.domain_model = domain_model
-        self.archetype = archetype
+        self.archetype = archetype # cls
         self.descriptor_key = None
         self.descriptor_model = None
         self.container_class = None
@@ -224,7 +235,6 @@ class TI(object):
   loading workflows and descriptors
 - type_key IS the underscore-separated lowercase of the domain cls name 
   i.e. utils.naming.polymorphic_identity(domain_model)
-- !+ ti.workflow_key SHOULD always be equal to type_key
 - !+ corresponding Container/Version/X interfaces should ALWAYS be auto-generated
 - !+ dedicated interfaces for archetype incantations should be auto-generated, 
     from specific workflow name/attr... e.g. via:
@@ -255,9 +265,10 @@ TYPE_REGISTRY = [
     
     # !+NAMING: member-related -> Group name + "Member" (no + "ship")
     TI("group", "group", interfaces.IBungeniGroup, domain.Group, domain.Principal),
-    TI("group_membership", "group_membership", interfaces.IBungeniGroupMembership, domain.GroupMembership, None),
-    TI("group_document_assignment", 
-        "group_assignment", interfaces.IGroupDocumentAssignment, domain.GroupDocumentAssignment, None),
+    TI("group_membership", "group_membership", 
+        interfaces.IBungeniGroupMembership, domain.GroupMembership, None),
+    TI("group_document_assignment", "group_assignment",
+        interfaces.IGroupDocumentAssignment, domain.GroupDocumentAssignment, None),
     TI("debate_record", "debate_record", interfaces.IDebateRecord, domain.DebateRecord, None),
     # non-workflowed
     TI("o_auth_application", None, interfaces.IOAuthApplication, domain.OAuthApplication, None),
@@ -269,18 +280,21 @@ TYPE_REGISTRY = [
     TI("change", None, interfaces.IChange, domain.Change, None),
     TI("doc", None, interfaces.IDoc, domain.Doc, None),
     TI("doc_version", None, interfaces.IDocVersion, domain.DocVersion, domain.Change),
-    TI("attachment_version", None, None, domain.AttachmentVersion, domain.Change), #interfaces.IAttachmentVersion)), #!+IVERSION
+    TI("attachment_version", None, None, domain.AttachmentVersion, domain.Change),
+    #interfaces.IAttachmentVersion)), #!+IVERSION
     TI("venue", None, interfaces.IVenue, domain.Venue, None),
     TI("session", None, interfaces.ISession, domain.Session, None),
     TI("sitting_attendance", None, interfaces.ISittingAttendance, domain.SittingAttendance, None),
     TI("country", None, interfaces.ICountry, domain.Country, None),
     TI("item_schedule", None, interfaces.IItemSchedule, domain.ItemSchedule, None),
-    TI("item_schedule_discussion", None, interfaces.IItemScheduleDiscussion, domain.ItemScheduleDiscussion, None),
+    TI("item_schedule_discussion", None,
+        interfaces.IItemScheduleDiscussion, domain.ItemScheduleDiscussion, None),
     TI("item_schedule_vote", None, interfaces.IItemScheduleVote, domain.ItemScheduleVote, None),
     TI("editorial_note", None, interfaces.IEditorialNote, domain.EditorialNote, None),
     TI("agenda_text_record", None, interfaces.IAgendaTextRecord, domain.AgendaTextRecord, None),
     TI("sitting_report", None, interfaces.ISittingReport, domain.SittingReport, None),
-    TI("group_membership_role", None, interfaces.IGroupMembershipRole, domain.GroupMembershipRole, None),
+    TI("group_membership_role", None, 
+        interfaces.IGroupMembershipRole, domain.GroupMembershipRole, None),
     
     # additional custom types are loaded dynamically from bungeni_custom/types.xml
 ]

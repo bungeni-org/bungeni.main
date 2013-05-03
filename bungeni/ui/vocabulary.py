@@ -548,6 +548,7 @@ class SpecializedMemberSource(BaseVocabularyFactory):
     chamber = None # set in self.construct_query
     context_user = None # set in self.construct_query
     
+    # !+ why context optional?
     def __call__(self, context=None):
         query = self.construct_query(removeSecurityProxy(context))
         results = query.all() # either([Member], [User])
@@ -562,16 +563,27 @@ class SpecializedMemberSource(BaseVocabularyFactory):
         # only for Doc/Member/User contexts
         if not IAlchemistContainer.providedBy(context):
             user = self.context_user
-            # !+ self.chamber.active_membership(user.user_id) ?
-            if user not in [ m.user for m in self.chamber.members ]:
-                raise ValueError("%s: context user %r not a member of chamber %r" % (
-                    self, user.login, self.chamber.principal_name))
-                # !+ check if context user is NOT a member of this chamber -- should never happen!
-                # !+ still true? must add user, to avoid exception from view form
-                terms.append(vocabulary.SimpleTerm(
-                        value=user.user_id,
-                        token=user.user_id,
-                        title="(%s %s)" % (user.first_name, user.last_name)))
+            
+            # consider only if not yet included in terms
+            if user.user_id not in [ t.value for t in terms ]:
+                
+                # !+ conditional on GroupMembership.root_container (declarative spec) ?
+                # i.e. a user must be a member of root_container to be eligible...
+                # !+ self.chamber.active_membership(user.user_id) ?
+                if user not in [ m.user for m in self.chamber.members ]:
+                    log.warn("Adding chamber [%s] non-member user [%s] to "
+                        "vocabulary [%s] terms for context [%s]",
+                            self.chamber.group_id, user.user_id, self, context)
+                    #raise ValueError("%s: context user %r not a member of chamber %r" % (
+                    #    self, user.login, self.chamber.principal_name))
+                    
+                    # !+ check if context user is NOT a member of this chamber -- should never happen?
+                    # !+ still true? must add user, to avoid exception from view form
+                    terms.append(vocabulary.SimpleTerm(
+                            value=user.user_id,
+                            token=user.user_id,
+                            title="(%s %s)" % (user.first_name, user.last_name)))
+        
         return vocabulary.SimpleVocabulary(terms)
     
     def construct_query(self, ctx):
@@ -625,7 +637,6 @@ class MemberSource(SpecializedMemberSource):
                             domain.MemberOfParliament.active_p == True)
                     )).distinct()
         return query
-        
 component.provideUtility(
     MemberSource(), IVocabularyFactory, "chamber_member")
 
@@ -749,6 +760,39 @@ component.provideUtility(
     MemberSignatorySource(), IVocabularyFactory, "signatory")
 
 
+class UserNotMPSource(SpecializedMemberSource):
+    """All active Users who are NOT Members.
+    
+    ASSUMPTION:
+    "user_not_mp" vocabulary, for "user_id" of Committee Staff, Office Member
+    So, context here is EITHER a MemberContainer OR a Member.
+    """
+    def construct_query(self, ctx):
+        if IAlchemistContainer.providedBy(ctx):
+            # MemberContainer - "add" member (Committee, Office)
+            assert IBungeniGroupMembership.implementedBy(ctx.domain_model), ctx
+            # the group is the context's __parent__
+            assert IBungeniGroup.providedBy(ctx.__parent__), ctx
+            self.chamber = utils.get_chamber_for_group(ctx.__parent__)
+        else:
+            # Member - "view" member
+            assert IBungeniGroupMembership.providedBy(ctx), ctx
+            assert IBungeniGroup.providedBy(ctx.group), ctx
+            self.chamber = utils.get_chamber_for_group(ctx.group)   
+            self.context_user = ctx.user
+        
+        mp_user_ids = sql.select(
+            [schema.user_group_membership.c.user_id], 
+            schema.user_group_membership.c.group_id == self.chamber.group_id)
+        query = Session().query(domain.User).filter(
+            sql.and_(
+                sql.not_(domain.User.user_id.in_(mp_user_ids)),
+                domain.User.active_p == "A")
+            ).order_by(
+                domain.User.last_name,
+                domain.User.first_name)
+        return query
+component.provideUtility(UserNotMPSource(), IVocabularyFactory, "user_not_mp")
 
 
 class MinistrySource(SpecializedSource):
@@ -762,11 +806,11 @@ class MinistrySource(SpecializedSource):
         session= Session()
         trusted=removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
-        chamber_id = common.getattr_ancestry(trusted, "chamber_id")
-        if chamber_id:
+        chamber = utils.get_chamber_for_context(trusted)
+        if chamber:
             governments = session.query(domain.Government).filter(
                 sql.and_(
-                    domain.Government.parent_group_id == chamber_id,
+                    domain.Government.parent_group_id == chamber.group_id,
                     domain.Government.status == u"active"
                 ))
             government = governments.all()
@@ -960,61 +1004,7 @@ member = MembershipUserSource(
 )
 component.provideUtility(member, IVocabularyFactory, "member")
 
-
-class UserNotMPSource(SpecializedSource):
-    """ All users that are NOT a MP """
-        
-    def construct_query(self, context):
-        session = Session()
-        trusted = removeSecurityProxy(context)
-        chamber_id = common.getattr_ancestry(trusted, "chamber_id")
-        mp_user_ids = sql.select([schema.user_group_membership.c.user_id], 
-            schema.user_group_membership.c.group_id == chamber_id)
-        query = session.query(domain.User).filter(sql.and_(
-            sql.not_(domain.User.user_id.in_(mp_user_ids)),
-            domain.User.active_p == "A")).order_by(
-                domain.User.last_name, domain.User.first_name)
-        return query
-
-    def __call__(self, context=None):
-        query = self.construct_query(context)
-        results = query.all()
-        terms = []
-        for ob in results:
-            terms.append(
-                vocabulary.SimpleTerm(
-                    value = getattr(ob, "user_id"), 
-                    token = getattr(ob, "user_id"),
-                    title = "%s %s" % (getattr(ob, "first_name"),
-                            getattr(ob, "last_name"))
-                   ))
-        user_id = getattr(context, self.value_field, None) 
-        if user_id:
-            if query.filter(domain.GroupMembership.user_id == user_id).count() == 0:
-                # The user is not a member of this group. 
-                # This should not happen in real life
-                # but if we do not add it her the view form will 
-                # throw an exception 
-                session = Session()
-                ob = session.query(domain.User).get(user_id)
-                terms.append(
-                vocabulary.SimpleTerm(
-                    value = getattr(ob, "user_id"), 
-                    token = getattr(ob, "user_id"),
-                    title = "(%s %s)" % (getattr(ob, "first_name"),
-                            getattr(ob, "last_name"))
-                   ))
-        return vocabulary.SimpleVocabulary(terms)
-user_not_mp = UserNotMPSource(
-    token_field="user_id",
-    title_field="combined_name",
-    value_field="user_id"
-)
-component.provideUtility(user_not_mp, IVocabularyFactory, "user_not_mp")
-
                 
-class UserNotStaffSource(SpecializedSource):
-    """ all users that are NOT staff """
 
 class SittingAttendanceSource(SpecializedSource):
     """All members of this group who do not have an attendance record yet.

@@ -31,6 +31,8 @@ def get_chamber_for_context(context):
     if chamber is None:
         # check logged in user's chamber
         chamber = get_login_user_chamber()
+        log.warn(" !+ CONTEXT [%s] HAS NO ANCESTOR CHAMBER... trying via "
+            "login_user: [%s]", context, chamber)
     return chamber
 
 
