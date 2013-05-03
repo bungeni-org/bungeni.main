@@ -143,6 +143,15 @@ class CAPI(object):
     
     @property
     @bungeni_custom_errors
+    def pivot_languages(self):
+        pv_langs = tuple(bc.pivot_languages.split())
+        assert set(pv_langs).issubset(set(self.zope_i18n_allowed_languages)),\
+            "Pivot languages [%s] not in allowed languages [%s]" % (
+                bc.pivot_languages, self.zope_i18n_allowed_languages)
+        return pv_langs
+    
+    @property
+    @bungeni_custom_errors
     def check_auto_reload_localization(self):
         """ () -> int
         minimum number of seconds to wait between checks for whether a 

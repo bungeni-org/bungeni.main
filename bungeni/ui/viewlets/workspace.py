@@ -16,6 +16,8 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
 from bungeni.models.interfaces import ISignatoryManager
+from bungeni.core import translation
+from bungeni.capi import capi
 
 
 class WorkspaceContextNavigation(StructureAwareViewlet):
@@ -53,29 +55,36 @@ class WorkspaceUnderConsiderationNavigation(WorkspaceContextNavigation):
     folder = "under-consideration"
     css_class = "workspace-under-consideration"
 
-class SignatoriesStatus(object):
-    """Shows the signature status of a document - e.g. number required
+class MessageViewlet(object):
+    """display a message with optional level info
     """
     available = True
 
-    render = ViewPageTemplateFile("templates/signatories-status.pt")
+    render = ViewPageTemplateFile("templates/messages.pt")
 
     def update(self):
-        self.signature_status = self.getMessage()
-        if self.signature_status.get("message_text") == u"":
+        self.messages = self.getMessages()
+        if not len(self.messages):
             self.available = False
 
-    def getMessage(self):
-        """Check signatories validator and generate status message
-        of the form {"level": <level> , "message_text": "<i18n_message>"}
+    def getMessages(self):
+        """Return a list of messages of the form
+        of the form {"level": <level> , "header": "<i18n_message>",
+        "text": "<i18n_message>"}
         """
-        message = {"level": "info", "message_text": u""}
+        raise NotImplementedError("Child class must implement this")
+
+
+class SignatoriesStatus(MessageViewlet):
+    """Display a message on signatories status (if threshold is met or otherwise)
+    """
+    def getMessages(self):
+        messages = []
+        message = {"level": "info", "header": _("Signatories"), "text": u""}
         validator = ISignatoryManager(self.context, None)
-        if validator is None:
-            return message
-        if validator.require_signatures():
+        if validator and validator.require_signatures():
             if validator.validate_consented_signatories():
-                message["message_text"] = _("signature_requirement_met",
+                message["text"] = _("signature_requirement_met",
                     default=(u"This document has the required number of "
                         u"signatories. ${signed_members} member(s) have signed"
                         u". ${required_members} signature(s) required."
@@ -87,7 +96,7 @@ class SignatoriesStatus(object):
                 )
             else:
                 message["level"] = "warning"
-                message["message_text"] = _("signature_requirements_not_met",
+                message["text"] = _("signature_requirements_not_met",
                         default=(u"This document does not have the required "
                             u"number of signatories. Requires "
                             u"${required_members} signature(s). " 
@@ -98,4 +107,27 @@ class SignatoriesStatus(object):
                             "signed_members": validator.consented_signatories
                         }
                 )
-        return message
+            messages.append(message)
+        return messages
+
+class TranslationStatus(MessageViewlet):
+    def getMessages(self):
+        """display a message indicating that a doc needs translation to pivot"""
+        messages = []
+        if capi.pivot_languages:
+            is_translated = False
+            context_lang = self.context.language
+            for lang in capi.pivot_languages:
+                if lang == context_lang:
+                    is_translated = True
+                    break
+                trans = translation.get_translation_for(self.context, lang)
+                if trans:
+                    is_translated = True
+                    break
+            if not is_translated:
+                messages.append(
+                    {"level": "warning", "header": _("Pivot Translation"), 
+                        "text": u"This document has no pivot translation."}
+                )
+        return messages

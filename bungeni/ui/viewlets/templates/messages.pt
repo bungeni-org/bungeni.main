@@ -1,0 +1,12 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      i18n_domain="bungeni" tal:omit-tag="">
+    <div>
+        <tal:msgs tal:repeat="msg view/messages">
+            <dl tal:attributes="class string:portalMessage ${msg/level}">
+                <dt tal:content="msg/header"/>
+                <dd tal:content="msg/text"/>
+            </dl>
+        </tal:msgs>
+    </div>
+</html>

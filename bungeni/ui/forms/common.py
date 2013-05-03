@@ -712,7 +712,17 @@ class TranslateForm(AddForm):
         # for translations, add a ``render_original`` method to each
         # widget, which will render the display widget bound to the
         # original (HEAD) document
+        # render pivot language as source if there is a translation
         head = self.context
+        if capi.pivot_languages:
+            for plang in capi.pivot_languages:
+                trans = get_translation_for(head, plang)
+                if trans:
+                    head = copy(removeSecurityProxy(head))
+                    for field_translation in trans:
+                        setattr(head, field_translation.field_name,
+                                field_translation.field_text)
+                    break
         form_fields = ui.setUpFields(self.context.__class__, "view")
         for widget in self.widgets:
             form_field = form_fields.get(widget.context.__name__)

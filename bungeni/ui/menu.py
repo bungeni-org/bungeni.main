@@ -200,6 +200,12 @@ class TranslateMenu(BrowserMenu):
     def current_language(self):
         return "en"
 
+    def get_languages(self):
+        langs = [(name, obj, (name in capi.pivot_languages)) 
+            for name, obj in get_all_languages().items()]
+        langs.sort(key=lambda lg:not lg[2])
+        return langs
+
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
         _url = url.absoluteURL(context, request)
@@ -207,7 +213,7 @@ class TranslateMenu(BrowserMenu):
             language = get_language(context)
             available = get_available_translations(context)
             results = []
-            for name, obj in get_all_languages().items():
+            for name, obj, is_pivot_lang in self.get_languages():
                 title = obj["name"]
                 # skip the current language
                 if name == language:
@@ -216,12 +222,12 @@ class TranslateMenu(BrowserMenu):
                 extra = {
                     "id": "translation-action-%s" % name,
                     "separator": None,
-                    "class": ""
+                    "class": "pivot_lang" if is_pivot_lang else ""
                 }
                 translation_id = available.get(name)
                 results.append(
                     dict(title=title,
-                         description="",
+                         description=_("Pivot Language") if is_pivot_lang else "",
                          action=action_url,
                          selected=translation_id is not None,
                          icon=None,

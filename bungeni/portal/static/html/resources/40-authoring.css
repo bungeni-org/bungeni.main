@@ -189,7 +189,10 @@
     white-space: nowrap;
     margin: 0;
     padding: 0 .25em;
-	border: 0 none;
+    border: 0 none;
+}
+.actionMenu .actionMenuContent li a.pivot_lang {
+    background-color:#FFA500;
 }
 .actionMenu .actionMenuContent .selected {
     display: block;

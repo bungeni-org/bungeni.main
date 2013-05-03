@@ -26,11 +26,19 @@
         weight="1"
     />
     <browser:viewlet name="bungeni.workspace_signatory_status"
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
-        layer="..interfaces.IWorkspaceSectionLayer"
+        for="bungeni.models.interfaces.IFeatureSignatory"
+        layer="..interfaces.IWorkspaceOrAdminSectionLayer"
         class=".workspace.SignatoriesStatus"
         manager="ploned.ui.interfaces.IAboveContentManager"
-        permission="bungeni.signatory.View"
+        permission="bungeni.signatory.Add"
+        weight="99"
+    />
+    <browser:viewlet name="bungeni.workspace_translation_notice"
+        for="bungeni.models.interfaces.ITranslatable"
+        layer="..interfaces.IWorkspaceOrAdminSectionLayer"
+        class=".workspace.TranslationStatus"
+        manager="ploned.ui.interfaces.IAboveContentManager"
+        permission="bungeni.ui.workspace.View"
         weight="99"
     />
 </configure>
