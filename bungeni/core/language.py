@@ -217,7 +217,7 @@ class SelectedLanguage(BaseLanguageProvider):
     def getLanguage(self):
         try:
             request = get_request()
-            if request:
+            if request and IHTTPRequest.providedBy(request):
                 return request.getCookies().get(I18N_COOKIE_NAME)
         except zope.security.interfaces.NoInteraction:
             return None
