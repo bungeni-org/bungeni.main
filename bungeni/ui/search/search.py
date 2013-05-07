@@ -59,14 +59,17 @@ def get_parl_container(context, chamber_id):
     chamber_key = container_obj_key(chamber_id)
     container = getattr_ancestry(context, None, 
         acceptable=model_ifaces.IChamberContainer.providedBy)
-    if container:
-        parl = container[chamber_key]
-    else:
+    if not container:
         #check locally for container
         containers = get_managed_containers(context) or context.items()
-        for key, container in containers:
-            if model_ifaces.IChamberContainer.providedBy(container):
-                return container[chamber_key]
+        for key, local_container in containers:
+            if model_ifaces.IChamberContainer.providedBy(local_container):
+                container = local_container
+                break
+    try:
+        parl = container[chamber_key]
+    except KeyError:
+        log.error("No such chamber was found with key %s", chamber_key)
     return parl
 
 @common.request_cached
@@ -314,3 +317,4 @@ class SearchBox(browser.BungeniViewlet):
     def update(self):
         self.action_url =  "/".join([
             absoluteURL(self.search_section, self.request), SEARCH_VIEW])
+        self.show_advanced_link = (self.action_url != self.request.getURL())
