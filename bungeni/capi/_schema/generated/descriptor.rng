@@ -332,6 +332,7 @@
       <value>text</value>
       <value>translated_text</value>
       <value>datetime</value>
+      <value>binary</value>
     </choice>
   </define>
 </grammar>

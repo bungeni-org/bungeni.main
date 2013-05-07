@@ -143,7 +143,7 @@ mapper(domain.Chamber,
     polymorphic_identity=polymorphic_identity(domain.Chamber)
 )
 
-mapper(domain.PoliticalGroup, schema.political_group,
+mapper(domain.PoliticalGroup,
     inherits=domain.Group,
     polymorphic_identity=polymorphic_identity(domain.PoliticalGroup)
 )
@@ -298,6 +298,7 @@ mapper(domain.Venue, schema.venue)
 mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)
 mapper(domain.vp.Datetime, schema.vp_datetime)
+mapper(domain.vp.Binary, schema.vp_binary)
 
 
 # doc 

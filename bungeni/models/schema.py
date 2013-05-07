@@ -41,6 +41,12 @@ vp_datetime = sa.Table("vp_datetime", metadata,
     sa.Column("name", sa.String(50), primary_key=True, nullable=False,),
     sa.Column("value", sa.DateTime(timezone=False)),
 )
+vp_binary = sa.Table("vp_binary", metadata,
+    sa.Column("object_id", sa.Integer, primary_key=True, nullable=False),
+    sa.Column("object_type", sa.String(32), primary_key=True, nullable=False),    
+    sa.Column("name", sa.String(50), primary_key=True, nullable=False,),
+    sa.Column("value", sa.Binary),
+)
 
 
 # audit 
@@ -376,7 +382,7 @@ committee = sa.Table("committee", metadata,
         primary_key=True
     ),
     sa.Column("group_continuity", sa.Unicode(128),
-        default=u'permanent',
+        default="permanent",
         nullable=False,
     ),
     sa.Column("num_members", sa.Integer),
@@ -393,15 +399,6 @@ committee = sa.Table("committee", metadata,
 # still be needed, the planned and more generic "group.root_container" idea 
 # can approximately provide it, and is what should be used. 
 
-
-# political group
-political_group = sa.Table("political_group", metadata,
-    sa.Column("group_id", sa.Integer,
-        sa.ForeignKey("group.group_id"), primary_key=True),
-    sa.Column("logo_data", sa.Binary),
-    sa.Column("logo_name", sa.String(127)),
-    sa.Column("logo_mimetype", sa.String(127)),
-)
 
 ###
 #  the personal role of a user in terms of their membership this group

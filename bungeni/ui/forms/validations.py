@@ -140,6 +140,9 @@ class AllPoliticalGroupMemberships(object):
     """Helper class to get all political_group memberships for all users.
     """
 
+
+''' !+validate_political_group_membership rework or drop !
+
 all_political_group_memberships = sa.join(
     schema.user_group_membership, schema.group).join(schema.political_group)
         
@@ -201,6 +204,7 @@ def validate_political_group_membership(action, data, context, container):
                 _("The person is a member in (%s) at that date") % overlaps, 
                 "end_date")) 
     return logged_errors(errors, "validate_political_group_membership")
+'''
 
 
 @describe(_(u"Check if the start - end date range of a chamber does not overlap with another chamber"))

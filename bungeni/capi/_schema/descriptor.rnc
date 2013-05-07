@@ -165,7 +165,8 @@ grammar {
     EXTENDED_PROPERTY_TYPE = (
         "text" | 
         "translated_text" | 
-        "datetime"
+        "datetime" | 
+        "binary"
     )
 }
 

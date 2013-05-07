@@ -523,6 +523,9 @@ class vp(object):
     class Datetime(VerticalProperty):
         """VerticalProperty of type datetime.
         """
+    class Binary(VerticalProperty):
+        """VerticalProperty of type binary.
+        """
 
 
 class Doc(Entity):

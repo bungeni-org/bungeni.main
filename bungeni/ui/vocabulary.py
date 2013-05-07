@@ -142,8 +142,7 @@ class VDEXVocabularyMixin(object):
         zope.schema.interfaces.IIterableVocabulary
         """
         return len(self.vdex.term_dict)
-
-
+    
     def __contains__(self, value):
         """Is the value available in this source? 
         (zope.schema.interfaces.ISource)
