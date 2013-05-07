@@ -51,26 +51,32 @@ class Login(form.FormBase):
     prefix = ""
     form_name = _("login_form_title", default=u"Login")
     template = NamedTemplate("alchemist.form")
-    
+
     def __call__(self):
         if not IUnauthenticatedPrincipal.providedBy(self.request.principal):
             app = getSite()
             workspace = app["workspace"]
             self.request.response.redirect(
-                        ui_utils.url.absoluteURL(workspace, self.request))
+                ui_utils.url.absoluteURL(workspace, self.request))
         return super(Login, self).__call__()
 
-    @form.action(_("label_login_form_login", default=u"Login"), 
+    @form.action(_("label_login_form_login", default=u"Login"),
         name="login")
     def handle_login(self, action, data):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):
             self.status = _(u"Invalid account credentials")
         else:
-            camefrom = ui_utils.url.absoluteURL(getSite(), self.request)
-            if self.request.get('camefrom').strip():
-                camefrom = self.request.get('camefrom').strip()
+            if data.get("camefrom", None) and data.get("camefrom").strip():
+                camefrom = data["camefrom"].strip()
+            else:
+                camefrom = ui_utils.url.absoluteURL(getSite(), self.request)
             self.status = _("You are now logged in")
-            self.request.response.redirect( camefrom )
+            self.request.response.redirect(camefrom)
+
+    def update(self):
+        self.form_fields["camefrom"].field.default = self.request.get(
+            "camefrom")
+        super(Login, self).update()
 
 
 class Logout(BrowserView):
