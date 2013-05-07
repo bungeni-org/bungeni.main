@@ -521,7 +521,7 @@
    <browser:page
       for="bungeni.models.interfaces.IDebateTakeContainer"
       name="index"
-      class="bungeni.ui.api.APITranscriberListing"
+      class="bungeni.ui.api.APITakeListing"
       permission="bungeni.api.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
