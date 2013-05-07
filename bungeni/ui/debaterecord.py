@@ -33,7 +33,7 @@ class DebateRecordView(BungeniBrowserView):
         need("debate-css")
         return self.template()
 
-    def get_transctiption_video(self):
+    def get_transcription_video(self):
         for media in self.context.debate_media:
             if media.media_type == "transcription":
                 return media.media_path
