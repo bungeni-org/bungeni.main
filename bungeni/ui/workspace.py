@@ -55,7 +55,9 @@ workspace_doc_fields = [
     WorkspaceField("status", 
         _("workspace_column_status", default="status")),
     WorkspaceField("status_date", 
-        _("workspace_column_status_date", default="status date"))
+        _("workspace_column_status_date", default="status date")),
+    WorkspaceField("translation_status", 
+        _("workspace_column_translation_status", default="missing translations"))
     ]
 
 
@@ -164,6 +166,18 @@ class WorkspaceContainerJSONListing(BrowserPage):
         return self.json_batch(start, limit, lang)
 
 
+COLUMN_DEFS = {
+    "default_first": """{label:"%(label)s", key:"sort_%(key)s",
+        formatter:"%(formatter)sCustom", sortable:true, resizeable:true ,
+        children: [{ key:"%(key)s", sortable:false}]}""",
+    "default": """{label:"%(label)s", key:"sort_%(key)s",
+        sortable:true, resizeable:true,
+        children: [{key:"%(key)s", sortable:false}]}""",
+    "translation_status": """{label:"%(label)s", key:"%(key)s",
+        sortable:false, resizeable:false,
+        children: [{key:"%(key)s", label:"&nbsp;", sortable:false}]}""",
+}
+
 class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
     workspace_fields = workspace_doc_fields
@@ -237,25 +251,22 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     def getFieldColumns(self):
         column_model = []
         field_model = []
+        default_format = COLUMN_DEFS.get("default")
+        default_format_first = COLUMN_DEFS.get("default_first")
         for field in self.workspace_fields:
             coldef = {
                 "key": field.name,
                 "label": translate(_(field.title), context=self.request),
                 "formatter": self.context.__name__
                 }
+            coldef_format = COLUMN_DEFS.get(field.name, None)
             if column_model == []:
-                column_model.append(
-                    """{label:"%(label)s", key:"sort_%(key)s",
-                    formatter:"%(formatter)sCustom", sortable:true,
-                    resizeable:true ,
-                    children: [{ key:"%(key)s", sortable:false}]}""" % coldef
-                    )
+                if not coldef_format:
+                    coldef_format = default_format_first
             else:
-                column_model.append(
-                    """{label:"%(label)s", key:"sort_%(key)s",
-                    sortable:true, resizeable:true,
-                    children: [{key:"%(key)s", sortable:false}]}""" % coldef
-                    )
+                if not coldef_format:
+                    coldef_format = default_format
+            column_model.append(coldef_format % coldef)
             field_model.append('{key:"%s"}' % (field.name))
         return ",".join(column_model), ",".join(field_model)
 
