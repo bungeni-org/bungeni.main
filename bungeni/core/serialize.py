@@ -144,8 +144,8 @@ class _PersistFiles(object):
         if self._saved_files.has_key(root_key):
             del self._saved_files[root_key]
     
-    def store_file(self, context, column, root_key): 
-        content = getattr(context, column.key, None)
+    def store_file(self, context, key, root_key):
+        content = getattr(context, key, None)
         if content:
             bfile = tmp(delete=False)
             bfile.write(content)
@@ -710,6 +710,9 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
     # Get mapped attributes
     mapper = class_mapper(obj.__class__)
     for property in mapper.iterate_properties:
+        if property.key.startswith("_vp"):
+            #skip vertical props
+            continue
         if property.key in exclude:
             continue
         value = getattr(obj, property.key)
@@ -752,7 +755,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                         #save files
                         result[columns[0].key] = dict(
                             saved_file=PersistFiles.store_file(
-                                obj, columns[0], root_key
+                                obj, columns[0].key, root_key
                             )
                         )
                         continue
@@ -857,9 +860,16 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                                     continue
             result[property.key] = value
     
+    extended_props = []
     for prop_name, prop_type in obj.__class__.extended_properties:
         try:
-            result[prop_name] = getattr(obj, prop_name)
+            if prop_type == domain.vp.Binary:
+                saved_file=PersistFiles.store_file(obj, prop_name, root_key)
+                if saved_file:
+                    result[prop_name] = dict(saved_file=saved_file)
+            else:
+                result[prop_name] = getattr(obj, prop_name)
+            extended_props.append(prop_name)
         except zope.security.interfaces.NoInteraction:
             log.error("Extended property %s requires an interaction.",
                 prop_name)
@@ -868,7 +878,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
     # any additional attributes - this allows us to capture any derived attributes
     if IAlchemistContent.providedBy(obj):
         seen_keys = ( [ prop.key for prop in mapper.iterate_properties ] + 
-            include + exclude)
+            include + exclude + extended_props)
         try:
             domain_schema = utils.get_derived_table_schema(type(obj))
             known_names = [ k for k, d in 
