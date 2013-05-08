@@ -149,20 +149,18 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
         # lazy load operation of attribute '_vp_response_type' cannot proceed
     )
 
-
 def instrument_extended_properties(cls, object_type=None, from_class=None):
     if object_type is None:
         object_type = utils.get_local_table(cls).name
     if from_class is None:
         from_class = cls
-    # ensure cls.__dict__.extended_properties
-    cls.extended_properties = cls.extended_properties[:]
+        # update extended_properties (retaining same list instance)
+        #cls.extended_properties = from_class.extended_properties[:]
     for vp_name, vp_type in from_class.extended_properties:
         if (vp_name, vp_type) not in cls.extended_properties:
             cls.extended_properties.append((vp_name, vp_type))
         setattr(cls, vp_name, vertical_property(object_type, vp_name, vp_type))
         mapper_add_relation_vertical_property(cls, vp_name, vp_type)
-
 
 # derived properties
 
@@ -216,6 +214,9 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     localize_domain_model_from_descriptor_class.DONE.append(type_key)
     log.info("localize_domain_model_from_descriptor_class: (%s, %s)", 
             domain_model.__name__, descriptor_cls.__name__)
+    
+    # ensure cls.__dict__.extended_properties (cls has own dedicated property)
+    domain_model.extended_properties = domain_model.extended_properties[:]
     
     for field in descriptor_cls.fields:
         
