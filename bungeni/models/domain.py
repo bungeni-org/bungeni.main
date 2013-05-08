@@ -461,6 +461,7 @@ class OfficeMember(GroupMembership):
         interfaces.IOfficeMember,
     )
 
+
 class Address(HeadParentedMixin, Entity):
     """Address base class
     !+ note corresponding tbls exist only for subclasses
@@ -525,6 +526,9 @@ class vp(object):
         """
     class Binary(VerticalProperty):
         """VerticalProperty of type binary.
+        """
+    class Number(VerticalProperty):
+        """VerticalProperty of type number (integer).
         """
 
 

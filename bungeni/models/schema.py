@@ -47,6 +47,12 @@ vp_binary = sa.Table("vp_binary", metadata,
     sa.Column("name", sa.String(50), primary_key=True, nullable=False,),
     sa.Column("value", sa.Binary),
 )
+vp_integer = sa.Table("vp_integer", metadata,
+    sa.Column("object_id", sa.Integer, primary_key=True, nullable=False),
+    sa.Column("object_type", sa.String(32), primary_key=True, nullable=False),    
+    sa.Column("name", sa.String(50), primary_key=True, nullable=False,),
+    sa.Column("value", sa.Integer),
+)
 
 
 # audit 
@@ -366,38 +372,11 @@ group = sa.Table("group", metadata,
         sa.ForeignKey("group.group_id")
      ),
     sa.Column("language", sa.String(5), nullable=False),
-    #The role that members of this group get
+    # the role that members of this group get
     sa.Column("group_role", sa.Unicode(256), nullable=False),
-    #custom fields
-    sa.Column("custom1", sa.UnicodeText, nullable=True),
-    sa.Column("custom2", sa.UnicodeText, nullable=True),
-    sa.Column("custom3", sa.UnicodeText, nullable=True),
-    sa.Column("custom4", sa.UnicodeText, nullable=True),
+    # is the group "permament", "temporary", ... ?
+    sa.Column("group_mandate", sa.Unicode(128)),
 )
-
-
-committee = sa.Table("committee", metadata,
-    sa.Column("committee_id", sa.Integer,
-        sa.ForeignKey("group.group_id"),
-        primary_key=True
-    ),
-    sa.Column("group_continuity", sa.Unicode(128),
-        default="permanent",
-        nullable=False,
-    ),
-    sa.Column("num_members", sa.Integer),
-    sa.Column("min_num_members", sa.Integer),
-    sa.Column("quorum", sa.Integer),
-    sa.Column("num_clerks", sa.Integer),
-    sa.Column("num_researchers", sa.Integer),
-    sa.Column("proportional_representation", sa.Boolean),
-    sa.Column("default_chairperson", sa.Boolean),
-    sa.Column("reinstatement_date", sa.Date),
-)
-# !+TYPES_CUSTOM_life_span(mr, oct-2011) the old and unused column "life_span" 
-# on committee_types (values: "parliament", "annual"). But, if concept will
-# still be needed, the planned and more generic "group.root_container" idea 
-# can approximately provide it, and is what should be used. 
 
 
 ###

@@ -153,7 +153,7 @@ mapper(domain.Ministry,
     polymorphic_identity=polymorphic_identity(domain.Ministry)
 )
 
-mapper(domain.Committee, schema.committee,
+mapper(domain.Committee,
     inherits=domain.Group,
     polymorphic_identity=polymorphic_identity(domain.Committee)
 )
@@ -299,6 +299,7 @@ mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)
 mapper(domain.vp.Datetime, schema.vp_datetime)
 mapper(domain.vp.Binary, schema.vp_binary)
+mapper(domain.vp.Number, schema.vp_integer)
 
 
 # doc 

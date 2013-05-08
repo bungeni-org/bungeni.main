@@ -407,7 +407,7 @@ chamber_factory = DatabaseSource(
 component.provideUtility(chamber_factory, IVocabularyFactory, "chamber")
 
 committee_factory = DatabaseSource(
-    domain.Committee, "short_name", "committee_id",
+    domain.Committee, "short_name", "group_id",
     title_getter=lambda ob: get_translated_group_label(ob)
 )
 component.provideUtility(committee_factory, IVocabularyFactory, "committee")

@@ -111,7 +111,7 @@ The actual committee
   ...       group_role="bungeni.CommitteeMember")
   >>> committee_a.parent_group_id = chamber.group_id
   >>> committee_a.sub_type = "housekeeping"
-  >>> committee_a.group_continuity = "permanent"
+  >>> committee_a.group_mandate = "permanent"
   >>> committee_a.language = "en"
   >>> session.add(committee_a)
 

@@ -324,10 +324,6 @@
                 sub_type
                 parent_group_id
                 language
-                custom1
-                custom2
-                custom3
-                custom4
             "
         />
     </class>
@@ -356,11 +352,7 @@
                 sub_type
                 parent_group_id
                 language
-                custom1
-                custom2
-                custom3
-                custom4
-
+                
                 sessions
                 committees
                 governments
@@ -414,10 +406,6 @@
                 sub_type
                 parent_group_id
                 language
-                custom1
-                custom2
-                custom3
-                custom4
             "
         />
     </class>
@@ -445,11 +433,7 @@
                 sub_type
                 parent_group_id
                 language
-                custom1
-                custom2
-                custom3
-                custom4
-
+                
                 ministers
                 questions
                 bills
@@ -493,11 +477,7 @@
                 sub_type
                 parent_group_id
                 language
-                custom1
-                custom2
-                custom3
-                custom4
-
+                
                 officemembers
                 title_types
                 
@@ -541,11 +521,7 @@
                 sub_type
                 parent_group_id
                 language
-                custom1
-                custom2
-                custom3
-                custom4
-
+                
                 committeemembers
                 committeestaff
                 agendaitems
@@ -553,17 +529,7 @@
                 assigneditems
                 title_types
                 
-                group_continuity
-                
-                committee_id
-                num_members
-                min_num_members
-                quorum
-                num_clerks
-                num_researchers
-                proportional_representation
-                default_chairperson
-                reinstatement_date
+                group_mandate
             "
         />
         <require permission="bungeni.committee.Edit"
@@ -577,16 +543,7 @@
                 end_date
                 
                 sub_type
-                group_continuity
-
-                num_members
-                min_num_members
-                quorum
-                num_clerks
-                num_researchers
-                proportional_representation
-                default_chairperson
-                reinstatement_date
+                group_mandate
             "
         />
     </class>
@@ -614,10 +571,6 @@
                 sub_type
                 parent_group_id
                 language
-                custom1
-                custom2
-                custom3
-                custom4
                 
                 logo_data
                 logo_name

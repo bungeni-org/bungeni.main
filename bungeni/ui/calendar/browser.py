@@ -289,7 +289,7 @@ class CalendarView(BungeniBrowserView):
                     "key": self.context.group_id,
                     "label": IDCDescriptiveProperties(group).title,
                 })
-            group_list += [ {"key": comm.committee_id, 
+            group_list += [ {"key": comm.group_id,
                 "label": IDCDescriptiveProperties(comm).title}
                 for comm in group_container.values()
                 if checkPermission("bungeni.committee_member.Add", comm)

@@ -22,7 +22,10 @@ from zope.component import getGlobalSiteManager
 import sqlalchemy as sa
 from sqlalchemy.orm import mapper, class_mapper, relation
 from bungeni.alchemist.catalyst import MODEL_MODULE
-from bungeni.alchemist.model import add_container_property_to_model
+from bungeni.alchemist.model import (
+    add_container_property_to_model,
+    mapper_add_relation_vertical_property
+)
 from bungeni.models import interfaces, domain, orm, schema
 from bungeni.core import audit
 from bungeni.utils import naming
@@ -303,7 +306,7 @@ def configurable_mappings(kls):
                 audit_kls, domain.Audit)
         # propagate any extended attributes on head kls also to its audit_kls
         for vp_name, vp_type in kls.extended_properties:
-            orm.mapper_add_relation_vertical_property(audit_kls, vp_name, vp_type)
+            mapper_add_relation_vertical_property(audit_kls, vp_name, vp_type)
         # !+NOTE: capi.get_type_info(kls).descriptor_model is still None
     
     # add any properties to the head kls itself
