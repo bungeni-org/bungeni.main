@@ -144,18 +144,24 @@ class _PersistFiles(object):
         if self._saved_files.has_key(root_key):
             del self._saved_files[root_key]
     
-    def store_file(self, context, key, root_key):
-        content = getattr(context, key, None)
-        if content:
-            bfile = tmp(delete=False)
-            bfile.write(content)
-            bfile.flush()
-            bfile.close()
-            file_name = os.path.basename(bfile.name)
-            if not self._saved_files.has_key(root_key):
-                self._saved_files[root_key] = []
-            self._saved_files[root_key].append(bfile.name)
-            return file_name
+    def store_file(self, context, parent, key, root_key):
+        """Store file.
+        Skipped if file is serialized elsewhere (other serializable context).
+        This ensures attachments are not serialized multiple times in document
+        hierarchies.
+        """
+        if not(parent and interfaces.ISerializable.providedBy(context)):
+            content = getattr(context, key, None)
+            if content:
+                bfile = tmp(delete=False)
+                bfile.write(content)
+                bfile.flush()
+                bfile.close()
+                file_name = os.path.basename(bfile.name)
+                if not self._saved_files.has_key(root_key):
+                    self._saved_files[root_key] = []
+                self._saved_files[root_key].append(bfile.name)
+                return file_name
 PersistFiles = _PersistFiles()
 
 getter_lock = RLock()
@@ -747,17 +753,10 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                 columns = property.columns
                 if len(columns) == 1:
                     if is_column_binary(columns[0]):
-                        if (parent and 
-                            interfaces.ISerializable.providedBy(obj)):
-                            #skip serialization of binary fields
-                            #that have already been serialized elsewhere
-                            continue
-                        #save files
-                        result[columns[0].key] = dict(
-                            saved_file=PersistFiles.store_file(
-                                obj, columns[0].key, root_key
-                            )
-                        )
+                        fname = PersistFiles.store_file(obj, parent, 
+                            columns[0].key, root_key)
+                        if fname:
+                            result[columns[0].key] = dict(saved_file=fname)
                         continue
             if descriptor:
                 columns = property.columns
@@ -864,9 +863,9 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
     for prop_name, prop_type in obj.__class__.extended_properties:
         try:
             if prop_type == domain.vp.Binary:
-                saved_file=PersistFiles.store_file(obj, prop_name, root_key)
-                if saved_file:
-                    result[prop_name] = dict(saved_file=saved_file)
+                fname=PersistFiles.store_file(obj, parent, prop_name, root_key)
+                if fname:
+                    result[prop_name] = dict(saved_file=fname)
             else:
                 result[prop_name] = getattr(obj, prop_name)
             extended_props.append(prop_name)
@@ -890,7 +889,6 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                 except zope.security.interfaces.NoInteraction:
                     log.error("Attribute %s requires an interaction.",
                         prop_name)
-
         except KeyError:
             log.warn("Could not find table schema for %s", obj)
     
