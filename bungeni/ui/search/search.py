@@ -14,16 +14,17 @@ import urllib
 import dateutil.parser
 import zope.interface
 import zope.component
-from zope.formlib import form, namedtemplate
+from zope.formlib import form, namedtemplate, widget
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zc.resourcelibrary import need
 from ploned.ui.interfaces import IBelowContentManager
 
+from sqlalchemy.util import OrderedDict
 from bungeni.alchemist.utils import get_managed_containers
 from bungeni.core.interfaces import IWorkspaceTabsUtility, ISearchableSection
 
 from bungeni.ui import interfaces as ui_ifaces, browser
-from bungeni.ui.widgets import MultiCheckBoxWidget
+from bungeni.ui.widgets import MultiCheckBoxWidget, TextWidget
 from bungeni.ui.utils import common, date
 from bungeni.ui.utils.url import absoluteURL
 from bungeni.ui.i18n import _
@@ -36,6 +37,19 @@ from bungeni.models.settings import SearchSettings
 from bungeni.utils import register
 from bungeni.utils.common import getattr_ancestry
 from bungeni.capi import capi
+
+class SearchTextWidget(TextWidget):
+    def __call__(self):
+        displayWidth = 90
+        button_el = widget.renderElement("span", contents="&nbsp;", 
+            id="advanced_options_button")
+        advanced_input = widget.renderElement("input", name="advanced",
+            value="true", contents="&nbsp;", hidden="true")
+        return "%s<br/>%s" %(super(SearchTextWidget, self).__call__(),
+            widget.renderElement("a", contents="%s%s%s" %(button_el, 
+                advanced_input, _("advanced options")),
+                id="show_advanced_options", href="javascript:;")
+        )
 
 def container_obj_key(key):
     return "obj-%s" % key
@@ -242,6 +256,7 @@ class Search(form.PageForm, browser.BungeniBrowserView):
     action_method="get"
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.FormFields(interfaces.ISearchRequest)
+    form_fields["search"].custom_widget = SearchTextWidget
     form_fields["type"].custom_widget = MultiCheckBoxWidget
     #form_fields["group"].custom_widget = MultiCheckBoxWidget
     form_name = _(u"Bungeni Search")
@@ -256,6 +271,16 @@ class Search(form.PageForm, browser.BungeniBrowserView):
             self.form_fields, self.prefix, self.context, self.request,
             ignore_request=ignore_request,
             )
+
+    def widget_groups(self):
+        wdgt_groups = OrderedDict()
+        wdgt_groups["search_text"] = [ self.widgets.get("search") ]
+        wdgt_groups["advanced_opts"] = [ widget for widget in self.widgets if
+            widget.context.getName() != "search" ]
+        return wdgt_groups
+
+    def legends(self):
+        return { "advanced_opts": _("advanced options") }
 
     @form.action(_(u"Search"), name="execute-search")
     def handle_search(self, action, data):
@@ -279,6 +304,7 @@ class Search(form.PageForm, browser.BungeniBrowserView):
         return form.getWidgetsData(self.widgets, self.prefix, data)
     
     def __call__(self):
+        need("search-js")
         need("search-css")
         return super(Search, self).__call__()
 

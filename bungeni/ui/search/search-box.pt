@@ -7,7 +7,7 @@
             <input type="submit" class="context" id="form.actions.execute-search"
                 name="form.actions.execute-search" 
                 i18n:attributes="value" value="Search"/>
-            <a tal:attributes="href view/action_url"
+            <a tal:attributes="href string:${view/action_url}?advanced=true"
                 tal:condition="view/show_advanced_link"
                 i18n:translate="">advanced search</a>
         </p>

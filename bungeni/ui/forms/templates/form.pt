@@ -69,8 +69,9 @@
                                       groups view/widget_groups|fallback;
                                       legends view/legends|nothing"
                               repeat="name groups">
-                    <fieldset tal:define="legend python: legends and legends.get(name)"
-                              tal:omit-tag="not: legend">
+                    <fieldset tal:define="legend python: legends and legends.get(name);
+                            fieldset_id python: legends and name or 'form-fieldset'"
+                              tal:attributes="id fieldset_id" tal:omit-tag="not: legend">
                       <legend tal:condition="legend"
                               tal:content="legend"
                               i18n:translate="" />

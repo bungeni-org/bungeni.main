@@ -144,6 +144,12 @@
         include="search.css"
        />
      </resourceLibrary>  
+     <resourceLibrary name="search-js" require="jquery">
+       <directory
+        source="search"
+        include="search.js"
+       />
+     </resourceLibrary>  
 
      <resourceLibrary
         name="tiny-mce-config"

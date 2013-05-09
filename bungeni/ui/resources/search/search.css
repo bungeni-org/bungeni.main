@@ -10,10 +10,23 @@ ul.search-results li{
 }
 
 ul.search-results li span.search-result-title{
-    color:#333;
+    color: #333;
 }
 
 ul.search-results li span.search-result-meta{
-    color:#999;
-    font-size:95%;
+    color: #999;
+    font-size: 95%;
+}
+
+a#show_advanced_options{
+    padding: 0.2em;
+    border-bottom: 1px solid #CDE2A7;
+    background-color:#F1FAE1;
+    text-decoration: none;
+    margin-top: 0.5em;
+    display: inline-block;
+}
+
+span#advanced_options_button{
+    display:inline-block;
 }
