@@ -139,9 +139,12 @@ class FileListingMixin(object):
         formatter.cssClasses["table"] = "listing grid"
         return formatter()
 
-
+# !+ATTACHMENTS(miano, may 2013) Temporarily commenting out the view and viewlet
+# below in order to use the descriptor mechanism already in place
+# TODO: create a version listing viewlet that also uses the descriptor mech. 
+'''
 @register.view(IAttachmentContainer, name="index",
-    protect=register.PROTECT_VIEW_PUBLIC)
+    protect=register.PROTECT_VIEW_PUBLIC)'''
 class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 
     __call__ = ViewPageTemplateFile("templates/listing-view.pt")
@@ -154,9 +157,9 @@ class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 
 
 # for_, layer, view, manager
-@register.viewlet(IFeatureAttachment, manager=ISubFormViewletManager, 
+'''@register.viewlet(IFeatureAttachment, manager=ISubFormViewletManager, 
     name="keep-zca-happy-attachments",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
+    protect=register.PROTECT_VIEWLET_PUBLIC)'''
 class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
     """Viewlet to list attachments of a given document (head).
     """

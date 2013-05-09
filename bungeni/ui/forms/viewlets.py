@@ -235,6 +235,20 @@ class PoliticalGroupMembersViewlet(SubformViewlet):
 class SittingsViewlet(SubformViewlet):
     sub_attr_name = "sittings"
 
+@register.viewlet(interfaces.IFeatureAttachment,
+    manager=ISubFormViewletManager,
+    name="keep-zca-happy-attachments",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
+class FileListingViewlet(SubformViewlet):
+    """Viewlet to list attachments of a given document (head).
+    """
+    # An Attachment is a record in the attachment table.
+    view_title = "Attachments"
+    view_id = "attachments"
+    weight = 50
+    sub_attr_name = "files"
+
+
 # BungeniAttributeDisplay
 # !+BungeniViewlet(mr) make these inherit from browser.BungeniViewlet
 
