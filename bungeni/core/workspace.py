@@ -633,10 +633,10 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
         #status = self.item_status_filter(kw)
         reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
         query = session.query(domain.Group).join(
-            domain.GroupMembership).filter(
+            domain.GroupMember).filter(
             expression.and_(
-                    domain.GroupMembership.user_id == user.user_id,
-                    domain.GroupMembership.active_p == True,
+                    domain.GroupMember.user_id == user.user_id,
+                    domain.GroupMember.active_p == True,
                     #domain.Group.status.in_(status)
                     ))
         query = self.filter_title(query, domain.Group, kw)

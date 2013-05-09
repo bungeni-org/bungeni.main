@@ -11,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.ui.feature")
 
 from zope.configuration import xmlconfig
 from bungeni.models import domain
-from bungeni.models.interfaces import IBungeniGroup
+from bungeni.models.interfaces import IGroup
 from bungeni.capi import capi
 from bungeni.utils import naming
 
@@ -107,7 +107,7 @@ def setup_customization_ui():
         # is not the edit view tht was actually being used!
         #register_form_view(type_key, "Edit", "edit", model_interface_qualname,
         #    "bungeni.ui.forms.common.EditForm")
-        if issubclass(ti.interface, IBungeniGroup):
+        if issubclass(ti.interface, IGroup):
             register_form_view(type_key, "Edit", "edit",
                 model_interface_qualname,
                 "bungeni.ui.forms.common.GroupEditForm")

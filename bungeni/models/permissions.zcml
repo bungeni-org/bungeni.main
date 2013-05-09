@@ -75,41 +75,7 @@
   <permission id="bungeni.editorial_note.Delete" title="Delete editorial note" />
   <permission id="bungeni.editorial_note.View" title="View editorial note" />
   <meta:redefinePermission from="bungeni.editorial_note.View" to="zope.View" />
-    
-  <!-- !+NO_REDEFINE_PERMISSION to be removed -->
-  <meta:redefinePermission from="bungeni.group_membership.View" to="zope.View" />
-  
-  <meta:redefinePermission from="bungeni.office_member.View" to="bungeni.group_membership.View" />
-  <meta:redefinePermission from="bungeni.office_member.Add" to="bungeni.group_membership.Add" />
-  <meta:redefinePermission from="bungeni.office_member.Edit" to="bungeni.group_membership.Edit" />
-  <meta:redefinePermission from="bungeni.office_member.Delete" to="bungeni.group_membership.Delete" />
-  
-    <meta:redefinePermission from="bungeni.member_of_parliament.View" to="bungeni.group_membership.View" />
-    <meta:redefinePermission from="bungeni.member_of_parliament.Add" to="bungeni.group_membership.Add" />
-    <meta:redefinePermission from="bungeni.member_of_parliament.Edit" to="bungeni.group_membership.Edit" />
-    <meta:redefinePermission from="bungeni.member_of_parliament.Delete" to="bungeni.group_membership.Delete" />
-
-  <meta:redefinePermission from="bungeni.minister.View" to="bungeni.group_membership.View" />
-  <meta:redefinePermission from="bungeni.minister.Add" to="bungeni.group_membership.Add" />
-  <meta:redefinePermission from="bungeni.minister.Edit" to="bungeni.group_membership.Edit" />
-  <meta:redefinePermission from="bungeni.minister.Delete" to="bungeni.group_membership.Delete" />
-  
-  <meta:redefinePermission from="bungeni.committee_member.View" to="bungeni.group_membership.View" />
-  <meta:redefinePermission from="bungeni.committee_member.Add" to="bungeni.group_membership.Add" />
-  <meta:redefinePermission from="bungeni.committee_member.Edit" to="bungeni.group_membership.Edit" />
-  <meta:redefinePermission from="bungeni.committee_member.Delete" to="bungeni.group_membership.Delete" />
-
-  <meta:redefinePermission from="bungeni.committee_staff.View" to="bungeni.group_membership.View" />
-  <meta:redefinePermission from="bungeni.committee_staff.Add" to="bungeni.group_membership.Add" />
-  <meta:redefinePermission from="bungeni.committee_staff.Edit" to="bungeni.group_membership.Edit" />
-  <meta:redefinePermission from="bungeni.committee_staff.Delete" to="bungeni.group_membership.Delete" />
-
-  <meta:redefinePermission from="bungeni.political_group_member.View" to="bungeni.group_membership.View" />
-  <meta:redefinePermission from="bungeni.political_group_member.Add" to="bungeni.group_membership.Add" />
-  <meta:redefinePermission from="bungeni.political_group_member.Edit" to="bungeni.group_membership.Edit" />
-  <meta:redefinePermission from="bungeni.political_group_member.Delete" to="bungeni.group_membership.Delete" />
-  <!-- !+/NO_REDEFINE_PERMISSION -->
-  
+      
   <permission id="bungeni.title_type.Add" title="Add title type" />
   <permission id="bungeni.title_type.Edit" title="Edit title type" />
   <permission id="bungeni.title_type.Delete" title="Delete title type" />
@@ -128,11 +94,11 @@
   <permission id="bungeni.member_title.View" title="View member title" />
   <meta:redefinePermission from="bungeni.member_title.View" to="zope.View" />
 
-  <permission id="bungeni.group_membership_role.Add" title="Add Member Role" />
-  <permission id="bungeni.group_membership_role.Edit" title="Edit Member Role" />
-  <permission id="bungeni.group_membership_role.Delete" title="Delete Member Role" />
-  <permission id="bungeni.group_membership_role.View" title="View member Role" />
-  <meta:redefinePermission from="bungeni.group_membership_role.View" to="zope.View" />
+  <permission id="bungeni.group_member_role.Add" title="Add Member Role" />
+  <permission id="bungeni.group_member_role.Edit" title="Edit Member Role" />
+  <permission id="bungeni.group_member_role.Delete" title="Delete Member Role" />
+  <permission id="bungeni.group_member_role.View" title="View member Role" />
+  <meta:redefinePermission from="bungeni.group_member_role.View" to="zope.View" />
 
 <!--
      who is able to amend, comment? Actually, here we have two steps

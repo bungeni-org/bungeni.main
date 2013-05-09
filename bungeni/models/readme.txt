@@ -121,12 +121,12 @@ as a user's role/title in a group.
 Let's create some memberships and see what we can do with them.
 
   >>> for mp in [ mp_1, mp_2, mp_3 ]:
-  ...    membership = domain.GroupMembership()
+  ...    membership = domain.GroupMember()
   ...    membership.user = mp
   ...    membership.group = committee_a
   ...    membership.language = "en"
   ...    session.add(membership)
-  ...    membership = domain.GroupMembership()
+  ...    membership = domain.GroupMember()
   ...    membership.user = mp
   ...    membership.group = political_group_a
   ...    membership.language = "en"
@@ -136,7 +136,7 @@ Let's create some memberships and see what we can do with them.
 Check that we can access the membership through the containment object
 
   >>> session.flush()
-  >>> len(list(committee_a.members))
+  >>> len(list(committee_a.group_members))
   3
 
 Group and user addresses
@@ -266,7 +266,7 @@ Chamber Members
 Chamber Members are defined by their membership in
 the chamber group and additional attributes.
 
-  >>> mp4 = domain.MemberOfParliament()
+  >>> mp4 = domain.Member()
   >>> mp4.group_id = chamber.group_id
   >>> mp4.user_id = mp_1.user_id
   >>> mp4.start_date = datetime.datetime.now()

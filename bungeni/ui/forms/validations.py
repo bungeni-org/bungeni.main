@@ -136,12 +136,13 @@ def validate_date_range_within_parent(action, data, context, container):
     errors = errors + validate_end_date_within_parent(container.__parent__, data)
     return logged_errors(errors, "validate_date_range_within_parent")
 
+
+''' !+validate_political_group_membership rework or drop !
+
+
 class AllPoliticalGroupMemberships(object):
     """Helper class to get all political_group memberships for all users.
     """
-
-
-''' !+validate_political_group_membership rework or drop !
 
 all_political_group_memberships = sa.join(
     schema.user_group_membership, schema.group).join(schema.political_group)
@@ -315,7 +316,7 @@ def validate_government_dates(action, data, context, container):
 
 
 @describe(_(u"Checks if a user is already a member of the group in a particular date range"))
-def validate_group_membership_dates(action, data, context, container):
+def validate_group_member_dates(action, data, context, container):
     """A User must be member of a group only once at a time.
     """
     group_id = container.__parent__.group_id
@@ -323,17 +324,17 @@ def validate_group_membership_dates(action, data, context, container):
     start_date = data.get("start_date")
     end_date = data.get("end_date")
     # !+ADD actions means context is categorically None 
-    if interfaces.IBungeniGroupMembership.providedBy(context):
-        group_membership = context
+    if interfaces.IGroupMember.providedBy(context):
+        group_member = context
     else:
-        group_membership = None
+        group_member = None
     #!+IMPROVE(murithi, apr-2011) VALIDATION
     if user_id is None:
         return []
     errors = []
     if start_date:
-        for r in queries.validate_membership_in_interval(group_membership, 
-                    domain.GroupMembership, 
+        for r in queries.validate_membership_in_interval(group_member, 
+                    domain.GroupMember, 
                     start_date,
                     user_id, group_id):
             overlaps = r.group.short_name
@@ -341,8 +342,8 @@ def validate_group_membership_dates(action, data, context, container):
                     _("The person is a member in (%s) at that date") % overlaps, 
                     "start_date", "user_id"))
     if end_date:
-        for r in queries.validate_membership_in_interval(group_membership, 
-                    domain.GroupMembership, 
+        for r in queries.validate_membership_in_interval(group_member, 
+                    domain.GroupMember, 
                     end_date,
                     user_id, group_id):
             overlaps = r.group.short_name
@@ -350,12 +351,12 @@ def validate_group_membership_dates(action, data, context, container):
                     _("The person is a member in (%s) at that date") % overlaps, 
                     "end_date", "user_id"))
     for r in queries.validate_open_membership(
-        group_membership, domain.GroupMembership, user_id, group_id):
+        group_member, domain.GroupMember, user_id, group_id):
         overlaps = r.group.short_name
         errors.append(Invalid(
                     _("The person is a member in (%s) at that date") % overlaps, 
                     "end_date", "user_id"))
-    return logged_errors(errors, "validate_group_membership_dates")
+    return logged_errors(errors, "validate_group_member_dates")
                  
 
 class GroupMemberTitle(object):

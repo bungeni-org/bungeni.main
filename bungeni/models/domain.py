@@ -229,7 +229,7 @@ class Group(Principal):
     principal_type = "group"
     available_dynamic_features = ["address"]
     interface.implements(
-        interfaces.IBungeniGroup, 
+        interfaces.IGroup,
         interfaces.ITranslatable,
         interfaces.ISerializable
     )
@@ -250,11 +250,11 @@ class Group(Principal):
     
     def active_membership(self, user_id):
         session = alchemist.Session()
-        query = session.query(GroupMembership).filter(
+        query = session.query(GroupMember).filter(
             sql.and_(
-                GroupMembership.group_id == self.group_id,
-                GroupMembership.user_id == user_id,
-                GroupMembership.active_p == True
+                GroupMember.group_id == self.group_id,
+                GroupMember.user_id == user_id,
+                GroupMember.active_p == True
             )
         )
         if query.count() == 0:
@@ -263,19 +263,19 @@ class Group(Principal):
             return True
 
 
-class GroupMembership(HeadParentedMixin, Entity):
+class GroupMember(HeadParentedMixin, Entity):
     """A user's membership in a group-abstract basis for 
     ministers, committeemembers, etc.
     """
     available_dynamic_features = []
     interface.implements(
-        interfaces.IBungeniGroupMembership, 
+        interfaces.IGroupMember,
         interfaces.ITranslatable,
         interfaces.ISerializable
     )
     
     subroles = one2many("subroles", 
-        "bungeni.models.domain.GroupMembershipRoleContainer", "membership_id")
+        "bungeni.models.domain.GroupMemberRoleContainer", "membership_id")
     
     @property
     def image(self): 
@@ -287,25 +287,22 @@ class GroupMembership(HeadParentedMixin, Entity):
     def last_name(self):
         return self.user.last_name
 
-# !+ alias, as "mapping" of archetype key 
-Member = GroupMembership
-
 
 class OfficesHeld(Entity):
     """Offices held by this group member.
     """
 
-class CommitteeStaff(GroupMembership):
+class CommitteeStaff(GroupMember):
     """Committee Staff.
     """
     interface.implements(interfaces.ICommitteeStaff)
 
 
-class GroupMembershipRole(Entity):
+class GroupMemberRole(Entity):
     """Association between an group member and subroles
        that are granted when a document is assigned to a user
     """
-    interface.implements(interfaces.IGroupMembershipRole)
+    interface.implements(interfaces.IGroupMemberRole)
     
     @property
     def group(self):
@@ -388,13 +385,10 @@ class Chamber(Group):
     """
     interface.implements(interfaces.IChamber)
 
-
-#!+rename GroupMembership -> GroupMember
-#!+rename MemberOfParliament -> Member
-class MemberOfParliament(GroupMembership):
-    """Defined by groupmembership and additional data.
+class Member(GroupMember):
+    """Member of a Chamber i.e. of "Parliament")
     """
-    interface.implements(interfaces.IMemberOfParliament)
+    interface.implements(interfaces.IMember)
 
 class PoliticalGroup(Group):
     """A political group in a parliament.
@@ -404,7 +398,7 @@ class PoliticalGroup(Group):
         interfaces.ITranslatable
     )
 
-class PoliticalGroupMember(GroupMembership):
+class PoliticalGroupMember(GroupMember):
     """Member of a political group, defined by its group membership.
     """
     interface.implements(
@@ -424,7 +418,7 @@ class Ministry(Group):
     interface.implements(
         interfaces.IMinistry,
     )
-class Minister(GroupMembership):
+class Minister(GroupMember):
     """A Minister defined by its user_group_membership in a ministry (group).
     """
     interface.implements(
@@ -441,7 +435,7 @@ class JointCommittee(Committee):
     """Joint Committee"""
     interface.implements(interfaces.IJointCommittee)
 
-class CommitteeMember(GroupMembership):
+class CommitteeMember(GroupMember):
     """A Member of a committee defined by its membership to a committee (group).
     """
     interface.implements(interfaces.ICommitteeMember)
@@ -454,7 +448,7 @@ class Office(Group):
         interfaces.IOffice,
     )
 
-class OfficeMember(GroupMembership):
+class OfficeMember(GroupMember):
     """Clerks, .... 
     """
     interface.implements(

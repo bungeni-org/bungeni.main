@@ -97,7 +97,7 @@
    <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
         for="bungeni.models.interfaces.IBungeniContent"/>
    <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
-        for="bungeni.models.interfaces.IBungeniGroup"/>
+        for="bungeni.models.interfaces.IGroup"/>
    <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
         for="bungeni.models.interfaces.IDebateRecord"/>
    <!-- Login Page restore password links -->

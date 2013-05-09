@@ -199,7 +199,7 @@
      class=".calendar.browser.CalendarView"
     />
   <browser:page
-     for="bungeni.models.interfaces.IBungeniGroup"
+     for="bungeni.models.interfaces.IGroup"
      permission="bungeni.group.View"
      name="schedule"
      class=".calendar.browser.CalendarView"

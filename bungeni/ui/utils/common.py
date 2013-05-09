@@ -203,15 +203,15 @@ def get_workspace_roles():
                 for role in l_roles:
                     if role[1] == Allow:
                         roles.add(role[0])
-    group_memberships = session.query(
-        bungeni.models.domain.GroupMembership).filter(
-        bungeni.models.domain.GroupMembership.user_id == user.user_id).all()
-    group_membership_roles = []
-    for group_membership in group_memberships:
-        for sub_role in group_membership.sub_roles:
-            group_membership_roles.append(sub_role.role_id)
-    for group_membership_role in group_membership_roles:
-        roles.add(group_membership_role)
+    group_membership = session.query(
+        bungeni.models.domain.GroupMember).filter(
+        bungeni.models.domain.GroupMember.user_id == user.user_id).all()
+    group_member_roles = []
+    for group_member in group_membership:
+        for sub_role in group_member.sub_roles:
+            group_member_roles.append(sub_role.role_id)
+    for group_member_role in group_member_roles:
+        roles.add(group_member_role)
     return list(roles)
 
 
@@ -289,9 +289,9 @@ def list_container_items(container_instance, permission=None):
 
 def get_users(role_id):
     session = bungeni.alchemist.Session()
-    gmrs = session.query(bungeni.models.domain.GroupMembershipRole).filter(
+    gmrs = session.query(bungeni.models.domain.GroupMemberRole).filter(
         sql.and_(
-            bungeni.models.domain.GroupMembershipRole.role_id == role_id,
-            bungeni.models.domain.GroupMembershipRole.is_global == False)).all()
+            bungeni.models.domain.GroupMemberRole.role_id == role_id,
+            bungeni.models.domain.GroupMemberRole.is_global == False)).all()
     return [gmr.member.user for gmr in gmrs]
 

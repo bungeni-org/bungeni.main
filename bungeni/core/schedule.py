@@ -27,7 +27,7 @@ from sqlalchemy import sql
 from bungeni.models.interfaces import (
     IBungeniApplication, 
     IChamber, 
-    IBungeniGroup, 
+    IGroup, 
     ISittingContainer, 
     ISession
 )
@@ -157,7 +157,7 @@ class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
 
     
 class GroupSchedulingContext(PrincipalGroupSchedulingContext):
-    component.adapts(IBungeniGroup)
+    component.adapts(IGroup)
 
     @property
     def group_id(self):

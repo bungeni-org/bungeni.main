@@ -72,7 +72,7 @@ mapper(domain.Group, schema.group,
     inherits=domain.Principal,
     polymorphic_identity=polymorphic_identity(domain.Group),
     properties={
-        "members": relation(domain.GroupMembership),
+        "group_members": relation(domain.GroupMember),
         "titletypes": relation(domain.TitleType),
         "contained_groups": relation(domain.Group,
             primaryjoin=rdb.and_(
@@ -174,8 +174,8 @@ mapper(domain.Office,
 
 # we need to specify join clause for user explicitly because we have multiple fk
 # to the user table.
-mapper(domain.GroupMembership, schema.user_group_membership,
-    polymorphic_identity=polymorphic_identity(domain.GroupMembership),
+mapper(domain.GroupMember, schema.user_group_membership,
+    polymorphic_identity=polymorphic_identity(domain.GroupMember),
     polymorphic_on=schema.user_group_membership.c.membership_type,
     properties={
         "user": relation(domain.User,
@@ -189,28 +189,27 @@ mapper(domain.GroupMembership, schema.user_group_membership,
                 schema.group.c.group_id),
             uselist=False,
             lazy=True),
-        "replaced": relation(domain.GroupMembership,
+        "replaced": relation(domain.GroupMember,
             primaryjoin=(schema.user_group_membership.c.replaced_id ==
                 schema.user_group_membership.c.membership_id),
             uselist=False,
             lazy=True),
-        "sub_roles": relation(domain.GroupMembershipRole),
+        "sub_roles": relation(domain.GroupMemberRole),
         "member_titles": relation(domain.MemberTitle)
     },
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
-domain.GroupMembership.head = domain.GroupMembership.user
+domain.GroupMember.head = domain.GroupMember.user
 
-mapper(domain.GroupMembershipRole, schema.group_membership_role,
+mapper(domain.GroupMemberRole, schema.group_membership_role,
     properties={
-        "member": relation(domain.GroupMembership)
+        "member": relation(domain.GroupMember)
     }
 )
 
-# !+RENAME Member
-mapper(domain.MemberOfParliament, schema.parliament_membership,
-    inherits=domain.GroupMembership,
-    polymorphic_identity=polymorphic_identity(domain.MemberOfParliament),
+mapper(domain.Member, schema.parliament_membership,
+    inherits=domain.GroupMember,
+    polymorphic_identity=polymorphic_identity(domain.Member),
     primary_key=[schema.user_group_membership.c.membership_id],
     properties={
         "start_date": column_property(
@@ -221,29 +220,29 @@ mapper(domain.MemberOfParliament, schema.parliament_membership,
 )
 
 mapper(domain.Minister,
-    inherits=domain.GroupMembership,
+    inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.Minister)
 )
 
 mapper(domain.CommitteeMember,
-    inherits=domain.GroupMembership,
+    inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.CommitteeMember)
 )
 
 mapper(domain.PoliticalGroupMember,
-    inherits=domain.GroupMembership,
+    inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.PoliticalGroupMember)
 )
 
 mapper(domain.OfficeMember,
-    inherits=domain.GroupMembership,
+    inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.OfficeMember)
 )
 
 # staff assigned to a group (committee, ...)
 
 mapper(domain.CommitteeStaff,
-    inherits=domain.GroupMembership,
+    inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
 )
 
@@ -615,7 +614,7 @@ mapper(domain.Signatory, schema.signatory,
     properties={
         "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
-        "member": relation(domain.MemberOfParliament,
+        "member": relation(domain.Member,
             primaryjoin=rdb.and_(schema.signatory.c.user_id == 
                 schema.user_group_membership.c.user_id),
             secondary=schema.user_group_membership,
@@ -657,7 +656,7 @@ mapper(domain.TitleType, schema.title_type,
 mapper(domain.MemberTitle, schema.member_title,
     properties={
         "title_type": relation(domain.TitleType, uselist=False, lazy=False),
-        "member": relation(domain.GroupMembership, uselist=False, lazy=False),
+        "member": relation(domain.GroupMember, uselist=False, lazy=False),
     }
 )
 

@@ -305,7 +305,7 @@
             attributes="
                 addresses
                 
-                members
+                group_members
                 contained_groups
                 group_addresses
                 
@@ -333,7 +333,7 @@
             attributes="
                 addresses
                 
-                members
+                group_members
                 contained_groups
                 group_addresses
                 
@@ -356,7 +356,7 @@
                 sessions
                 committees
                 governments
-                parliamentmembers
+                members
                 political_groups
                 bills
                 questions
@@ -388,7 +388,7 @@
             set_attributes="
                 addresses
                 
-                members
+                group_members
                 contained_groups
                 group_addresses
                 
@@ -415,7 +415,7 @@
             attributes="
                 addresses
                 
-                members
+                group_members
                 contained_groups
                 group_addresses
                 
@@ -459,7 +459,7 @@
             attributes="
                 addresses
                 
-                members
+                group_members
                 contained_groups
                 group_addresses
                 
@@ -503,7 +503,7 @@
             attributes="
                 addresses
                 
-                members
+                group_members
                 contained_groups
                 group_addresses
                 
@@ -553,7 +553,7 @@
             attributes="
                 addresses
                 
-                members
+                group_members
                 contained_groups
                 group_addresses
                 
@@ -607,8 +607,8 @@
     </class>
     <!-- group memberships -->
     
-    <class class=".domain.GroupMembership">
-        <require permission="bungeni.group_membership.View"
+    <class class=".domain.GroupMember">
+        <require permission="bungeni.group_member.View"
             attributes="
                 user
                 group
@@ -628,7 +628,7 @@
                 language
             "
         />
-        <require permission="bungeni.group_membership.Edit"
+        <require permission="bungeni.group_member.Edit"
             set_attributes="membership_id
                 user_id
                 group_id
@@ -643,8 +643,8 @@
         />
     </class>
     
-    <class class=".domain.MemberOfParliament">
-        <require permission="bungeni.member_of_parliament.View"
+    <class class=".domain.Member">
+        <require permission="bungeni.member.View"
             attributes="
                 user
                 group
@@ -672,7 +672,7 @@
                 leave_reason
             "
         />
-        <require permission="bungeni.member_of_parliament.Edit"
+        <require permission="bungeni.member.Edit"
             set_attributes="
                 membership_id
                 user_id

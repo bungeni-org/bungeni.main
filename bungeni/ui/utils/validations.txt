@@ -183,7 +183,7 @@ User group memberships:
   >>> session.add(mp_1)
   >>> session.add(mp_2)
   >>> session.add(mp_3)
-  >>> membership = domain.GroupMembership()
+  >>> membership = domain.GroupMember()
   >>> membership.user = mp_1
   >>> membership.group = chamber
   >>> session.add(membership)
@@ -197,18 +197,18 @@ User group memberships:
   ...   "end_date": None,
   ...   "user_id": mp_1.user_id}
   
-  >>> validations.validate_group_membership_dates(None, form_data, membership, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, membership, group_container)
   []
-  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, None, group_container)
   [Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
   
   >>> form_data = {"start_date": yesterday,
   ...   "end_date": today,
   ...   "user_id": mp_1.user_id} 
 
-  >>> validations.validate_group_membership_dates(None, form_data, membership, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, membership, group_container)
   []
-  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, None, group_container)
   [Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
  
   >>> membership.end_date = tomorrow
@@ -217,22 +217,22 @@ User group memberships:
   >>> form_data = {"start_date": yesterday,
   ...   "end_date": yesterday,
   ...   "user_id": mp_1.user_id} 
-  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, None, group_container)
   []
 
   >>> form_data = {"start_date": yesterday,
   ...   "end_date": tomorrow,
   ...   "user_id": mp_1.user_id} 
-  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, None, group_container)
   [Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
     
   >>> form_data = {"start_date": tomorrow,
   ...   "end_date": tomorrow,
   ...   "user_id": mp_1.user_id} 
-  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, None, group_container)
   [Invalid(u'The person is a member in (p_1) at that date', 'start_date'), 
   Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
-  >>> validations.validate_group_membership_dates(None, form_data, membership, group_container)
+  >>> validations.validate_group_member_dates(None, form_data, membership, group_container)
   []
 
 
@@ -250,41 +250,41 @@ may be only member of one political group at any given time:
   >>> session.save(pgroup_blue)
   >>> session.flush()
 
-  >>> pgroup_membership1 = domain.GroupMembership()
-  >>> pgroup_membership1.user = mp_1
-  >>> pgroup_membership1.group = pgroup_red
-  >>> session.add(pgroup_membership1)
+  >>> pgroup_member1 = domain.GroupMember()
+  >>> pgroup_member1.user = mp_1
+  >>> pgroup_member1.group = pgroup_red
+  >>> session.add(pgroup_member1)
   >>> session.flush()
 
-  >>> pgroup_membership2 = domain.GroupMembership()
-  >>> pgroup_membership2.user = mp_1
-  >>> pgroup_membership2.group = pgroup_blue
+  >>> pgroup_member2 = domain.GroupMember()
+  >>> pgroup_member2.user = mp_1
+  >>> pgroup_member2.group = pgroup_blue
 
-  >>> pgroup_membership_container = MockContainer()
-  >>> pgroup_membership_container.__parent__ = pgroup_red
-  >>> validations.validate_political_group_membership(action=None, data=form_data, 
-  ...   context=pgroup_membership2, container=pgroup_membership_container)
+  >>> pgroup_member_container = MockContainer()
+  >>> pgroup_member_container.__parent__ = pgroup_red
+  >>> validations.validate_political_group_member(action=None, data=form_data, 
+  ...   context=pgroup_member2, container=pgroup_member_container)
   [Invalid(u'The person is a member in (Red) at that date', 'end_date')]
   
-  >>> pgroup_membership1.start_date = yesterday
-  >>> pgroup_membership1.end_date = today
+  >>> pgroup_member1.start_date = yesterday
+  >>> pgroup_member1.end_date = today
   >>> session.flush()
-  >>> validations.validate_political_group_membership(action=None, data=form_data, 
-  ...   context=pgroup_membership2, container=pgroup_membership_container)
+  >>> validations.validate_political_group_member(action=None, data=form_data, 
+  ...   context=pgroup_member2, container=pgroup_member_container)
   []
   
-  >>> session.add(pgroup_membership2)
+  >>> session.add(pgroup_member2)
   >>> session.flush()
-  >>> validations.validate_political_group_membership(action=None, data=form_data, 
-  ...   context=pgroup_membership2, container=pgroup_membership_container)
+  >>> validations.validate_political_group_member(action=None, data=form_data, 
+  ...   context=pgroup_member2, container=pgroup_member_container)
    [Invalid(u'The person is a member in (Blue) at that date', 'end_date')]
 
-  >>> pgroup_membership3 = domain.GroupMembership()
-  >>> pgroup_membership3.user = mp_3
-  >>> pgroup_membership3.group = pgroup_red
+  >>> pgroup_member3 = domain.GroupMember()
+  >>> pgroup_member3.user = mp_3
+  >>> pgroup_member3.group = pgroup_red
   >>> form_data['user_id'] = mp_3.user_id
-  >>> validations.validate_political_group_membership(action=None, data=form_data, 
-  ...   context=pgroup_membership3, container=pgroup_membership_container)
+  >>> validations.validate_political_group_member(action=None, data=form_data, 
+  ...   context=pgroup_member3, container=pgroup_member_container)
   []
   
 
@@ -307,11 +307,11 @@ Titles for group members:
 We reuse the political group memberships to test the titles:
 
   >>> member_role_container = MockContainer()
-  >>> member_role_container.__parent__ = pgroup_membership1
+  >>> member_role_container.__parent__ = pgroup_member1
   >>> member_role1 = domain.MemberTitle()
   >>> member_role1.start_date = today
   >>> member_role1.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role1.membership_id = pgroup_membership1.membership_id
+  >>> member_role1.membership_id = pgroup_member1.membership_id
   
 check that the user does not have the role chaiperson yet
   
@@ -337,7 +337,7 @@ and try to give him the role again:
   >>> member_role2.start_date = tomorrow
   >>> member_role2.end_date = dayat
   >>> member_role2.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role2.membership_id = pgroup_membership1.membership_id
+  >>> member_role2.membership_id = pgroup_member1.membership_id
   >>> form_data['start_date'] = tomorrow
   >>> form_data['end_date'] = dayat
   >>> validations.validate_member_titles(action=None, data=form_data, 
@@ -351,7 +351,7 @@ now we give him the additional role 'member':
   >>> member_role2.start_date = yesterday
   >>> member_role2.end_date = dayat
   >>> member_role2.title_name_id = user_role_type_member.user_role_type_id
-  >>> member_role2.membership_id = pgroup_membership1.membership_id
+  >>> member_role2.membership_id = pgroup_member1.membership_id
   >>> form_data['start_date'] = yesterday
   >>> form_data['end_date'] = dayat
   >>> form_data['title_name_id'] = user_role_type_member.user_role_type_id
@@ -365,12 +365,12 @@ now we give him the additional role 'member':
   []
   
 he may be chairman in another group:
-  >>> member_role_container.__parent__ = pgroup_membership2
+  >>> member_role_container.__parent__ = pgroup_member2
   >>> member_role3 = domain.MemberTitle()
   >>> member_role3.start_date = yesterday
   >>> member_role3.end_date = dayat
   >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role3.membership_id = pgroup_membership2.membership_id
+  >>> member_role3.membership_id = pgroup_member2.membership_id
   >>> form_data['start_date'] = yesterday
   >>> form_data['end_date'] = dayat
   >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
@@ -383,11 +383,11 @@ he may be chairman in another group:
   
 try to give a second user the chairman role
   
-  >>> member_role_container.__parent__ = pgroup_membership3
+  >>> member_role_container.__parent__ = pgroup_member3
   >>> member_role3 = domain.MemberTitle()
   >>> member_role3.start_date = yesterday
   >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role3.membership_id = pgroup_membership3.membership_id
+  >>> member_role3.membership_id = pgroup_member3.membership_id
   >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
   >>> validations.validate_member_titles(action=None, data=form_data, 
   ...   context=None, container=member_role_container)
@@ -396,7 +396,7 @@ try to give a second user the chairman role
 
 as this is not possible just give him the member role:
   >>> member_role3.title_name_id = user_role_type_member.user_role_type_id
-  >>> member_role3.membership_id = pgroup_membership2.membership_id
+  >>> member_role3.membership_id = pgroup_member2.membership_id
   >>> form_data['title_name_id'] = user_role_type_member.user_role_type_id
   >>> validations.validate_member_titles(action=None, data=form_data, 
   ...   context=None, container=member_role_container)

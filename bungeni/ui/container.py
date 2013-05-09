@@ -55,7 +55,7 @@ def query_filter_date_range(context, request, query, domain_model):
                 mfaces.ICommitteeStaffContainer.providedBy(context))
             ) or
             (ufaces.IMembersSectionLayer.providedBy(request) and
-                mfaces.IMemberOfParliamentContainer.providedBy(context))
+                mfaces.IMemberContainer.providedBy(context))
         ):
         start_date, end_date = datetime.date.today(), None
     elif ufaces.IArchiveSectionLayer.providedBy(request):
@@ -573,8 +573,8 @@ JSLCaches = {
         JSLCache(49, mfaces.IReport, ["Report"]),
     "attendance": 
         JSLCache(99, mfaces.ISittingAttendance, ["SittingAttendance"]),
-    "parliamentmembers": # alias: "current"
-        JSLCache(99, mfaces.IMemberOfParliament, ["MemberOfParliament"]),
+    "members": # alias: "current"
+        JSLCache(99, mfaces.IMember, ["Member"]),
     "political-groups": # alias: "politicalgroups"
         JSLCache(49, mfaces.IPoliticalGroup, ["PoliticalGroup"]),
     "chambers":
@@ -593,7 +593,7 @@ JSLCaches = {
         JSLCache(49, mfaces.IMinistry, ["Ministry"]),
 }
 # aliases for same JSLCache instances
-JSLCaches["current"] = JSLCaches["parliamentmembers"]
+JSLCaches["current"] = JSLCaches["members"]
 
 
 def get_CacheByClassName():

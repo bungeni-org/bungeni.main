@@ -7,21 +7,21 @@
     
     <!-- Group Memberships -->
     <browser:page name="add"
-        for="bungeni.models.interfaces.IBungeniGroupMembershipContainer"
+        for="bungeni.models.interfaces.IGroupMemberContainer"
         class=".common.AddForm"
-        permission="bungeni.group_membership.Add"
+        permission="bungeni.group_member.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit"
-        for="bungeni.models.interfaces.IBungeniGroupMembership"
+        for="bungeni.models.interfaces.IGroupMember"
         class=".common.EditForm"
-        permission="bungeni.group_membership.Edit"
+        permission="bungeni.group_member.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete"
-        for="bungeni.models.interfaces.IBungeniGroupMembership"
+        for="bungeni.models.interfaces.IGroupMember"
         class=".common.DeleteForm"
-        permission="bungeni.group_membership.Delete"
+        permission="bungeni.group_member.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     

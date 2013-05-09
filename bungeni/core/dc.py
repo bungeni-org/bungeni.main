@@ -321,7 +321,7 @@ class VersionDescriptiveProperties(DescriptiveProperties):
 
 @register.adapter()
 class GroupDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IBungeniGroup)
+    component.adapts(interfaces.IGroup)
     
     @property
     def title(self):
@@ -366,8 +366,8 @@ class UserDescriptiveProperties(DescriptiveProperties):
         context = _merged(self.context)
         mp_user = None
         try:
-            mp_user = Session().query(domain.MemberOfParliament).filter(
-                domain.MemberOfParliament.user_id == context.user_id
+            mp_user = Session().query(domain.Member).filter(
+                domain.Member.user_id == context.user_id
             ).one()
         except NoResultFound:
             #this user has no associated MP record
@@ -390,8 +390,8 @@ class UserDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class GroupMembershipDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IBungeniGroupMembership)
+class GroupMemberDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IGroupMember)
     
     @property
     def title(self):
@@ -602,8 +602,8 @@ class TitleTypeDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "title_name")
 
 @register.adapter()
-class GroupMembershipRoleDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IGroupMembershipRole)
+class GroupMemberRoleDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IGroupMemberRole)
     
     @property
     def title(self):

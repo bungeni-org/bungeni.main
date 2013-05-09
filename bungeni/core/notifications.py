@@ -203,7 +203,7 @@ def get_group_member_ids(group_principal_name):
         domain.Group).filter(
         domain.Group.principal_name == group_principal_name).one()
     if group:
-        return [member.user.login for member in group.members]
+        return [member.user.login for member in group.group_members]
     return []
 
 

@@ -70,11 +70,11 @@
         factory=".daterange.group_filter" 
     />
     <!-:-adapter
-        for=".domain.GroupMembership"
+        for=".domain.GroupMember"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_membership_filter"
     /-:->
-    <adapter for=".domain.MemberOfParliament"
+    <adapter for=".domain.Member"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_membership_filter"
     />

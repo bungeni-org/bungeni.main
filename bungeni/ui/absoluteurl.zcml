@@ -112,32 +112,29 @@
         />
     -->
     
-    <browser:view
+    <browser:view name="get_url"
         for="bungeni.models.interfaces.IAgendaItem"
-        name="get_url"
         class=".absoluteurl.AgendaItemBusinessAbsoluteURLView"
         layer="bungeni.ui.interfaces.IBusinessSectionLayer"
         permission="zope.Public"
-        />
+    />
 
 
     <!-- Members section -->
 
-    <browser:view
-        for="bungeni.models.interfaces.IMemberOfParliament"
-        name="get_url"
+    <browser:view name="get_url"
+        for="bungeni.models.interfaces.IMember"
         class=".absoluteurl.MembersAbsoluteURLView"
         layer=".interfaces.IMembersSectionLayer"
         permission="zope.Public"
-        />
+    />
 
-    <browser:view
+    <browser:view name="get_url"
         for="bungeni.models.interfaces.IPoliticalGroup"
-        name="get_url"
         class=".absoluteurl.PoliticalGroupMembersAbsoluteURLView"
         layer=".interfaces.IMembersSectionLayer"
         permission="zope.Public"
-        />
+    />
         
  
  
@@ -211,14 +208,13 @@
         />
     -->
     
-    <browser:view
-        for="bungeni.models.interfaces.IMemberOfParliament"
-        name="get_url"
-        class=".absoluteurl.MemberOfParliamentArchiveAbsoluteURLView"
+    <browser:view name="get_url"
+        for="bungeni.models.interfaces.IMember"
+        class=".absoluteurl.MemberArchiveAbsoluteURLView"
         layer=".interfaces.IArchiveSectionLayer"
         permission="zope.Public"
-        />
-
+    />
+    
     <browser:view
         for="bungeni.models.interfaces.IOffice"
         name="get_url"
@@ -299,14 +295,13 @@
         permission="zope.Public"
         />
 
-    <browser:view
-        for="bungeni.models.interfaces.IMemberOfParliament"
-        name="get_url"
-        class=".absoluteurl.MemberOfParliamentAdminAbsoluteURLView"
+    <browser:view name="get_url"
+        for="bungeni.models.interfaces.IMember"
+        class=".absoluteurl.MemberAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
-        />
-
+    />
+    
     <browser:view
         for="bungeni.models.interfaces.IOffice"
         name="get_url"

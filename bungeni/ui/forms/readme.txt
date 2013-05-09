@@ -154,7 +154,7 @@ add some users:
     >>> session.add(mp_2)
     >>> session.flush()
     
-    >>> mp1 = model.MemberOfParliament()
+    >>> mp1 = model.Member()
     >>> mp1.group_id = chamber.group_id
     >>> mp1.user_id = mp_1.user_id
     >>> mp1.start_date = today
@@ -164,7 +164,7 @@ add some users:
     >>> session.add(mp1)
     >>> session.flush()
     
-    >>> mp2 = model.MemberOfParliament()
+    >>> mp2 = model.Member()
     >>> mp2.group_id = chamber.group_id
     >>> mp2.user_id = mp_2.user_id
     >>> mp2.start_date = today

@@ -94,11 +94,17 @@ def register_custom_types():
     Returns (type_key, TI) for the newly created TI instance.
     """
     xas, xab = misc.xml_attr_str, misc.xml_attr_bool
+    tag_archetype_key_mapping = {
+        "doc": "doc",
+        "event": "event",
+        "group": "group",
+        "member": "group_member"
+    }
     def parse_elem(type_elem):
         type_key = xas(type_elem, "name")
         workflow_key = xas(type_elem, "workflow")
         descriptor_key = xas(type_elem, "descriptor")
-        sys_archetype_key = type_elem.tag
+        sys_archetype_key = tag_archetype_key_mapping[type_elem.tag]
         custom_archetype_key = xas(type_elem, "archetype")
         label = xas(type_elem, "label", None)
         container_label = xas(type_elem, "container_label", None)

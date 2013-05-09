@@ -128,10 +128,10 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     #from bungeni.alchemist.interfaces import IAlchemistContainer
     # !+ the parent container SHOULD be implementing IAlchemistContainer but it
     # does not seem to! As a best alternative, that is close but conceptually 
-    # not quite the same, we check for IBungeniGroup
-    from bungeni.models.interfaces import IBungeniGroup
+    # not quite the same, we check for IGroup
+    from bungeni.models.interfaces import IGroup
     def func(context):
-        if IBungeniGroup.providedBy(parent_container_or_getter):
+        if IGroup.providedBy(parent_container_or_getter):
             parent_container = parent_container_or_getter
         else:
             parent_container = parent_container_or_getter(context)
@@ -171,11 +171,11 @@ def get_chamber(chamber_id):
 
 
 def get_member_of_chamber(user_id):
-    """Get the MemberOfParliament instance for user_id.
+    """Get the Member instance for user_id.
     Raises sqlalchemy.orm.exc.NoResultFound
     """
-    return Session().query(domain.MemberOfParliament
-        ).filter(domain.MemberOfParliament.user_id == user_id).one()
+    return Session().query(domain.Member
+        ).filter(domain.Member.user_id == user_id).one()
 
 
 def get_user(user_id):

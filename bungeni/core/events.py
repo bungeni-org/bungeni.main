@@ -20,12 +20,11 @@ from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
-from bungeni.models.interfaces import IBungeniGroup, \
-    IBungeniGroupMembership, IBungeniParliamentaryContent
+from bungeni.models.interfaces import IGroup, IGroupMember, IBungeniParliamentaryContent
 from bungeni.utils import register
 
 
-@register.handler(adapts=(IBungeniGroupMembership, IObjectModifiedEvent))
+@register.handler(adapts=(IGroupMember, IObjectModifiedEvent))
 def group_member_modified(ob, event):
     """when a group member gets inactivated (end date set)
     all his titles get deactivated for the same date (if they

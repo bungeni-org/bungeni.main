@@ -231,7 +231,7 @@ user = sa.Table("user", metadata,
     # !+active_p(mr, sep-2011) why is this "workflow status" column named
     # "active_p" and not "status"? Rename...
     # !+active_p(mr, sep-2011) why have identically named columns here and on 
-    # group_memberships, with one being a string and other a bool?
+    # group_member, with one being a string and other a bool?
     sa.Column("active_p", sa.String(1),
         sa.CheckConstraint("""active_p in ('A', 'I', 'D')"""),
         # !+active_p(mr, sep-2011) workflow status columns MUST not have a

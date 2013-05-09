@@ -98,7 +98,7 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
         list_data = []
         trusted = removeSecurityProxy(self.context)
         current_attendance = list(trusted.attendance.values())
-        for member in trusted.group.members:
+        for member in trusted.group.group_members:
             attd = filter(
                 lambda i:i.member_id==member.user_id,
                 current_attendance

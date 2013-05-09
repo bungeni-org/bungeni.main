@@ -144,10 +144,10 @@ class SignatoriesViewlet(SubformViewlet):
 
 @register.viewlet(interfaces.IChamber,
     manager=IContentViewManager,
-    name="bungeni.viewlet.member-of-parliament",
+    name="bungeni.viewlet.member",
     protect=register.PROTECT_VIEWLET_PUBLIC)
-class MemberOfParliamentViewlet(SubformViewlet):
-    sub_attr_name = "parliamentmembers"
+class MemberViewlet(SubformViewlet):
+    sub_attr_name = "members"
     weight = 20
 
 class SittingAttendanceViewlet(SubformViewlet):
@@ -206,7 +206,7 @@ class CommitteeMembersViewlet(SubformViewlet):
     sub_attr_name = "committeemembers"
 
 
-@register.viewlet(interfaces.IBungeniGroup, 
+@register.viewlet(interfaces.IGroup, 
     manager=ISubFormViewletManager,
     name="keep-zca-happy-addresses",
     protect=register.PROTECT_VIEWLET_PUBLIC)
@@ -323,7 +323,7 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
         formatter = self.get_date_formatter("date", "long")
         trusted = removeSecurityProxy(self.context)
         session = Session()
-        memberships = session.query(domain.GroupMembership
+        memberships = session.query(domain.GroupMember
             ).join(domain.User
             ).filter(domain.User.user_id == trusted.user_id).all()
         items = []

@@ -66,8 +66,8 @@ class IBungeniUser(interface.Interface):
     """A user in bungeni.
     """
 IUser = IBungeniUser
-# !+NAMING(mr, apr-2011) rename IGroup, inconsistent with domain
-class IBungeniGroup(interface.Interface):
+
+class IGroup(interface.Interface):
     """A group in bungeni.
     """
 class IUserContainer(IAlchemistContainer): pass
@@ -77,21 +77,21 @@ class IBungeniContainer(IAlchemistContainer):
     """Parliamentary container.
     """
 
-class IChamber(IBungeniGroup):
+class IChamber(IGroup):
     """Marker interface for parliament chamber group.
     """
 class IChamberContainer(IAlchemistContainer): pass
 
-class IGovernment(IBungeniGroup):
+class IGovernment(IGroup):
     """Marker interface for group Government.
     """
 class IGovernmentContainer(IAlchemistContainer): pass
 
-class IMinistry(IBungeniGroup):
+class IMinistry(IGroup):
     """Marker interface for group ministry """
 class IMinistryContainer(IAlchemistContainer): pass
 
-class ICommittee(IBungeniGroup):
+class ICommittee(IGroup):
     """Marker interface for committees.
     """
 class ICommitteeContainer(IAlchemistContainer): pass
@@ -101,51 +101,51 @@ class IJointCommittee(ICommittee):
     """
 class IJointCommitteeContainer(ICommitteeContainer): pass
 
-class IPoliticalGroup(IBungeniGroup):
+class IPoliticalGroup(IGroup):
     """Marker interface for political group (inside parliament).
     """
 class IPoliticalGroupContainer(IAlchemistContainer): pass
 
-class IOffice(IBungeniGroup):
+class IOffice(IGroup):
     """Marker interface for a parliamentary office.
     """
 class IOfficeContainer(IAlchemistContainer): pass
 
-class ICommittee(IBungeniGroup): pass
+class ICommittee(IGroup): pass
 class ICommitteeContainer(IAlchemistContainer): pass
 
 
-class IBungeniGroupMembership(interface.Interface):
+class IGroupMember(interface.Interface):
     """Group membership in bungeni.
     """
-class IBungeniGroupMembershipContainer(IBungeniContainer): pass
+class IGroupMemberContainer(IBungeniContainer): pass
 
-class IGroupMembershipRole(interface.Interface):
+class IGroupMemberRole(interface.Interface):
     """Group membership sub roles in bungeni.
     """
-class IGroupMembershipRoleContainer(IBungeniContainer): pass
+class IGroupMemberRoleContainer(IBungeniContainer): pass
 
 class IGroupDocumentAssignment(interface.Interface):
     """Group document assigment.
     """
 class IGroupDocumentAssignmentContainer(IBungeniContainer): pass
 
-class IMemberOfParliament(IBungeniGroupMembership): pass
-class IMemberOfParliamentContainer(IBungeniGroupMembershipContainer): pass
+class IMember(IGroupMember): pass
+class IMemberContainer(IGroupMemberContainer): pass
 
-class IPoliticalGroupMember(IBungeniGroupMembership): pass
-class IPoliticalGroupMemberContainer(IBungeniGroupMembershipContainer): pass
+class IPoliticalGroupMember(IGroupMember): pass
+class IPoliticalGroupMemberContainer(IGroupMemberContainer): pass
 
-class IMinister(IBungeniGroupMembership): pass
-class IMinisterContainer(IBungeniGroupMembershipContainer): pass
+class IMinister(IGroupMember): pass
+class IMinisterContainer(IGroupMemberContainer): pass
 
-class ICommitteeMember(IBungeniGroupMembership): pass
-class ICommitteeMemberContainer(IBungeniGroupMembershipContainer): pass
+class ICommitteeMember(IGroupMember): pass
+class ICommitteeMemberContainer(IGroupMemberContainer): pass
 
-class ICommitteeStaff(IBungeniGroupMembership): pass
-class ICommitteeStaffContainer(IBungeniGroupMembershipContainer): pass
+class ICommitteeStaff(IGroupMember): pass
+class ICommitteeStaffContainer(IGroupMemberContainer): pass
 
-class IOfficeMember(IBungeniGroupMembership): pass
+class IOfficeMember(IGroupMember): pass
 class IOfficeMemberContainer(IAlchemistContainer): pass
 
 class IOwned(interface.Interface):

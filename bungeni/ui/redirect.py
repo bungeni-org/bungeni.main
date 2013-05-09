@@ -22,7 +22,7 @@ from bungeni.core.workflow.interfaces import IWorkflowController
 class RedirectToCurrent(BrowserView):
     """Redirect to current.
     
-    Goto a url like current/parliamentmembers or current/committees
+    Goto a url like current/members or current/committees
     and you will be redirected to the apropriate container
     
     """

@@ -289,26 +289,25 @@ to e.g. "bungeni.{type}.Edit").
         permission="zope.Public"
         weight="10"
     />
-  <browser:viewlet
-     name="bungeni.viewlet.mp-personal-info"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.PersonInfo"
-     for="bungeni.models.interfaces.IMemberOfParliament"
-     permission="zope.Public"
-     weight="20"
-     />
+    <browser:viewlet name="bungeni.viewlet.mp-personal-info"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.PersonInfo"
+        for="bungeni.models.interfaces.IMember"
+        permission="zope.Public"
+        weight="20"
+    />
     
     <browser:viewlet name="bungeni.viewlet.offices-held"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"
-        for="bungeni.models.interfaces.IMemberOfParliament"
+        for="bungeni.models.interfaces.IMember"
         permission="zope.Public"
         weight="30"
     />
     <browser:viewlet name="bungeni.viewlet.mp-items"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.MemberItemsViewlet"
-        for="bungeni.models.interfaces.IMemberOfParliament"
+        for="bungeni.models.interfaces.IMember"
         permission="zope.Public"
         weight="40"
     />

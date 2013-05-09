@@ -199,10 +199,10 @@ class BillArchiveAbsoluteURLView():
     subsection = "bills"
 
     
-class MemberOfParliamentArchiveAbsoluteURLView(AbsoluteURL):
+class MemberArchiveAbsoluteURLView(AbsoluteURL):
     """ Custom absolute url for parliament members in archive section
     """
-    subsection = "parliamentmembers"
+    subsection = "members"
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
@@ -307,10 +307,10 @@ class CommitteeAdminAbsoluteURLView(AbsoluteURL):
     __call__ = __str__
     
     
-class MemberOfParliamentAdminAbsoluteURLView(AbsoluteURL):
+class MemberAdminAbsoluteURLView(AbsoluteURL):
     """ Custom absolute url for parliament members in admin section
     """
-    subsection = "parliamentmembers"
+    subsection = "members"
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        

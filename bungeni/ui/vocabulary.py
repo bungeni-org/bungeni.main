@@ -42,8 +42,8 @@ from bungeni.alchemist.interfaces import (
 from bungeni.models import schema, domain, utils, delegation
 from bungeni.models.interfaces import (
     ISubRoleAnnotations,
-    IBungeniGroup,
-    IBungeniGroupMembership,
+    IGroup,
+    IGroupMember,
     IDoc, 
     ITranslatable, 
     ISignatory,
@@ -334,11 +334,11 @@ component.provideUtility(GroupRoleFactory(), IVocabularyFactory, "group_role")
 class GroupSubRoleFactory(BaseVocabularyFactory):
     def __call__(self, context):
         terms = []
-        while not IBungeniGroup.providedBy(context):
+        while not IGroup.providedBy(context):
             context = (getattr(context, "group", None) or 
                 getattr(context, "__parent__", None))
             if not context:
-                raise NotImplementedError("Context does not implement IBungeniGroup")
+                raise NotImplementedError("Context does not implement IGroup")
         trusted = removeSecurityProxy(context)
         role = getUtility(IRole, get_group_local_role(trusted))
         for sub_role in ISubRoleAnnotations(role).sub_roles:
@@ -502,10 +502,10 @@ class GroupTitleTypesFactory(SpecializedSource):
                 .filter(schema.title_type.c.group_id == context.group_id)
     
     def __call__(self, context=None):
-        while not IBungeniGroup.providedBy(context):
+        while not IGroup.providedBy(context):
             context = context.__parent__
             if not context:
-                raise NotImplementedError("Context does not implement IBungeniGroup")
+                raise NotImplementedError("Context does not implement IGroup")
         query = self.construct_query(context)
         results = query.all()
         terms = []
@@ -566,10 +566,10 @@ class SpecializedMemberSource(BaseVocabularyFactory):
             # consider only if not yet included in terms
             if user.user_id not in [ t.value for t in terms ]:
                 
-                # !+ conditional on GroupMembership.root_container (declarative spec) ?
+                # !+ conditional on GroupMember.root_container (declarative spec) ?
                 # i.e. a user must be a member of root_container to be eligible...
                 # !+ self.chamber.active_membership(user.user_id) ?
-                if user not in [ m.user for m in self.chamber.members ]:
+                if user not in [ m.user for m in self.chamber.group_members ]:
                     log.warn("Adding chamber [%s] non-member user [%s] to "
                         "vocabulary [%s] terms for context [%s]",
                             self.chamber.group_id, user.user_id, self, context)
@@ -601,40 +601,41 @@ class MemberSource(SpecializedMemberSource):
         session = Session()
         if IAlchemistContainer.providedBy(ctx):
             # MemberContainer - "add" member (Committee, PoliticalGroup)
-            assert IBungeniGroupMembership.implementedBy(ctx.domain_model), ctx
+            assert IGroupMember.implementedBy(ctx.domain_model), ctx
             # the group is the context's __parent__
-            assert IBungeniGroup.providedBy(ctx.__parent__), ctx
+            assert IGroup.providedBy(ctx.__parent__), ctx
             self.chamber = utils.get_chamber_for_group(ctx.__parent__)
             # potentials to become Members are all Users who ARE already members of the Chamber
             # !+ this logic is for groups within a chamber... 
-            member_user_ids = [ m.user_id for m in self.chamber.members ]
+            member_user_ids = [ m.user_id for m in self.chamber.group_members ]
             query = session.query(domain.User
                 ).filter(
                     #sql.not_( !+negation with ColumnOperators.in_(), method notin_ in v0.8
-                    domain.MemberOfParliament.user_id.in_(member_user_ids)
+                    domain.Member.user_id.in_(member_user_ids)
                 ).order_by(
                     domain.User.last_name,
                     domain.User.first_name,
                     domain.User.middle_name)
         else:
             # Member - "view" member
-            assert IBungeniGroupMembership.providedBy(ctx), ctx
-            assert IBungeniGroup.providedBy(ctx.group), ctx
+            assert IGroupMember.providedBy(ctx), ctx
+            assert IGroup.providedBy(ctx.group), ctx
             self.chamber = utils.get_chamber_for_group(ctx.group)   
             chamber_id = self.chamber.group_id
             self.context_user = ctx.user
             user_id = ctx.user_id
             # all active Members of this Chamber
-            query = session.query(domain.MemberOfParliament
+            query = session.query(domain.Member
                 ).filter(
                     sql.or_(
                         sql.and_(
-                            domain.MemberOfParliament.user_id == user_id,
-                            domain.MemberOfParliament.group_id == chamber_id),
+                            domain.Member.user_id == user_id,
+                            domain.Member.group_id == chamber_id),
                         sql.and_(
-                            domain.MemberOfParliament.group_id == chamber_id,
-                            domain.MemberOfParliament.active_p == True)
-                    )).distinct()
+                            domain.Member.group_id == chamber_id,
+                            domain.Member.active_p == True))
+                ).distinct( # !+ needed?
+                ).order_by(domain.Member.user)
         return query
 component.provideUtility(
     MemberSource(), IVocabularyFactory, "chamber_member")
@@ -670,23 +671,23 @@ class MemberDelegationSource(MemberSource):
                 assert IDoc.implementedBy(ctx.domain_model), ctx
                 # chamber is a __parent__ ancestor
                 # !+ in admin, the chamber is the context's __parent__
-                assert IBungeniGroup.providedBy(ctx.__parent__), ctx
+                assert IGroup.providedBy(ctx.__parent__), ctx
                 self.chamber = utils.get_chamber_for_group(ctx.__parent__)
         else:
             # {Doc} - "view" a doc
             assert IDoc.providedBy(ctx), ctx
             # chamber is a doc.chamber
-            assert IBungeniGroup.providedBy(ctx.chamber), ctx
+            assert IGroup.providedBy(ctx.chamber), ctx
             self.chamber = ctx.chamber
             self.context_user = ctx.owner
         
         # all active Members of this Chamber
         chamber_id = self.chamber.group_id
-        all_mp_query = Session().query(domain.MemberOfParliament
+        all_mp_query = Session().query(domain.Member
             ).filter(
                 sql.and_(
-                    domain.MemberOfParliament.group_id == chamber_id,
-                    domain.MemberOfParliament.active_p == True)
+                    domain.Member.group_id == chamber_id,
+                    domain.Member.active_p == True)
             )
         
         # user delegations
@@ -698,14 +699,15 @@ class MemberDelegationSource(MemberSource):
             user_ids.append(user.user_id)
         
         delegated_mp_query = all_mp_query.filter(
-                domain.MemberOfParliament.user_id.in_(user_ids))
+                domain.Member.user_id.in_(user_ids))
         
         # if no-one has delegated to current logged in user (e.g. admin),
         # then include all MPs. !+DELEGATION_TO_NON_MP
         if len(delegated_mp_query.all()) == 0:
-            return all_mp_query
+            query = all_mp_query
         else:
-            return delegated_mp_query
+            query = delegated_mp_query
+        return query.order_by(domain.Member.user)
 component.provideUtility(
     MemberDelegationSource(), IVocabularyFactory, "chamber_member_delegation")
 
@@ -728,7 +730,7 @@ class MemberSignatorySource(MemberSource):
             assert IDoc.providedBy(ctx.__parent__), ctx
             head_doc = ctx.__parent__
             # chamber is a doc.chamber
-            assert IBungeniGroup.providedBy(ctx.__parent__.chamber), ctx
+            assert IGroup.providedBy(ctx.__parent__.chamber), ctx
             self.chamber = ctx.__parent__.chamber
         else:
             # Signatory - "view" a signatory
@@ -743,20 +745,20 @@ class MemberSignatorySource(MemberSource):
         
         # all active Members of this Chamber
         chamber_id = self.chamber.group_id
-        all_mp_query = Session().query(domain.MemberOfParliament
+        all_mp_query = Session().query(domain.Member
             ).filter(
                 sql.and_(
-                    domain.MemberOfParliament.group_id == chamber_id,
-                    domain.MemberOfParliament.active_p == True)
+                    domain.Member.group_id == chamber_id,
+                    domain.Member.active_p == True)
             )
         # exclude head doc owner and current signatories
         exclude_ids = set(
             [ sgn.user_id for sgn in signatory_container.values() ])
         exclude_ids.add(head_doc.owner_id)
         return all_mp_query.filter(sql.not_(
-                domain.MemberOfParliament.user_id.in_(list(exclude_ids))))
-component.provideUtility(
-    MemberSignatorySource(), IVocabularyFactory, "signatory")
+                domain.Member.user_id.in_(list(exclude_ids)))
+            ).order_by(domain.Member.user)
+component.provideUtility(MemberSignatorySource(), IVocabularyFactory, "signatory")
 
 
 class UserNotMPSource(SpecializedMemberSource):
@@ -769,14 +771,14 @@ class UserNotMPSource(SpecializedMemberSource):
     def construct_query(self, ctx):
         if IAlchemistContainer.providedBy(ctx):
             # MemberContainer - "add" member (Committee, Office)
-            assert IBungeniGroupMembership.implementedBy(ctx.domain_model), ctx
+            assert IGroupMember.implementedBy(ctx.domain_model), ctx
             # the group is the context's __parent__
-            assert IBungeniGroup.providedBy(ctx.__parent__), ctx
+            assert IGroup.providedBy(ctx.__parent__), ctx
             self.chamber = utils.get_chamber_for_group(ctx.__parent__)
         else:
             # Member - "view" member
-            assert IBungeniGroupMembership.providedBy(ctx), ctx
-            assert IBungeniGroup.providedBy(ctx.group), ctx
+            assert IGroupMember.providedBy(ctx), ctx
+            assert IGroup.providedBy(ctx.group), ctx
             self.chamber = utils.get_chamber_for_group(ctx.group)   
             self.context_user = ctx.user
         
@@ -789,9 +791,11 @@ class UserNotMPSource(SpecializedMemberSource):
                 domain.User.active_p == "A")
             ).order_by(
                 domain.User.last_name,
-                domain.User.first_name)
+                domain.User.first_name,
+                domain.User.middle_name)
         return query
 component.provideUtility(UserNotMPSource(), IVocabularyFactory, "user_not_mp")
+
 
 
 class MinistrySource(SpecializedSource):
@@ -1091,17 +1095,17 @@ class SubstitutionSource(SpecializedSource):
     
     def construct_query(self, context):
         session= Session()
-        query = session.query(domain.GroupMembership
+        query = session.query(domain.GroupMember
             #!+PRINCIPAL ).order_by("last_name", "first_name"
-            ).filter(domain.GroupMembership.active_p == True)
+            ).filter(domain.GroupMember.active_p == True)
         user_id = self._get_user_id(context)
         if user_id:
             query = query.filter(
-                domain.GroupMembership.user_id != user_id)
+                domain.GroupMember.user_id != user_id)
         group_id = self._get_group_id(context)
         if group_id:
             query = query.filter(
-                domain.GroupMembership.group_id == group_id)
+                domain.GroupMember.group_id == group_id)
         return query
     
     def __call__(self, context=None):
@@ -1114,7 +1118,7 @@ class SubstitutionSource(SpecializedSource):
                     getattr(ob.user, "last_name"))
         user_id = getattr(context, "replaced_id", None) 
         if user_id:
-            if len(query.filter(domain.GroupMembership.replaced_id == user_id).all()) == 0:
+            if len(query.filter(domain.GroupMember.replaced_id == user_id).all()) == 0:
                 session = Session()
                 ob = session.query(domain.User).get(user_id)
                 tdict[getattr(ob, "user_id")] = "%s %s" % (
@@ -1204,11 +1208,11 @@ class MotionPoliticalGroupSource(SpecializedSource):
         parliament_id = common.getattr_ancestry(trusted, "parliament_id")
         
         if user_id: 
-            query = session.query(domain.PoliticalGroupMembership
+            query = session.query(domain.PoliticalGroupMember
                ).filter(
-                    sql.and_(domain.PoliticalGroupMembership.active_p == True,
-                        domain.PoliticalGroupMembership.user_id == user_id,
-                        domain.PoliticalGroupMembership.parent_group_id == parliament_id)
+                    sql.and_(domain.PoliticalGroupMember.active_p == True,
+                        domain.PoliticalGroupMember.user_id == user_id,
+                        domain.PoliticalGroupMember.parent_group_id == parliament_id)
                        )
         else:
             query = session.query(domain.PoliticalGroup).filter(

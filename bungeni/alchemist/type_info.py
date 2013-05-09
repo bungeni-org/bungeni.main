@@ -264,9 +264,8 @@ TYPE_REGISTRY = [
     TI("signatory", "signatory", interfaces.ISignatory, domain.Signatory, None),
     
     # !+NAMING: member-related -> Group name + "Member" (no + "ship")
-    TI("group", "group", interfaces.IBungeniGroup, domain.Group, domain.Principal),
-    TI("group_membership", "group_membership", 
-        interfaces.IBungeniGroupMembership, domain.GroupMembership, None),
+    TI("group", "group", interfaces.IGroup, domain.Group, domain.Principal),
+    TI("group_member", "group_member", interfaces.IGroupMember, domain.GroupMember, None),
     TI("group_document_assignment", "group_assignment",
         interfaces.IGroupDocumentAssignment, domain.GroupDocumentAssignment, None),
     TI("debate_record", "debate_record", interfaces.IDebateRecord, domain.DebateRecord, None),
@@ -293,8 +292,7 @@ TYPE_REGISTRY = [
     TI("editorial_note", None, interfaces.IEditorialNote, domain.EditorialNote, None),
     TI("agenda_text_record", None, interfaces.IAgendaTextRecord, domain.AgendaTextRecord, None),
     TI("sitting_report", None, interfaces.ISittingReport, domain.SittingReport, None),
-    TI("group_membership_role", None, 
-        interfaces.IGroupMembershipRole, domain.GroupMembershipRole, None),
+    TI("group_member_role", None, interfaces.IGroupMemberRole, domain.GroupMemberRole, None),
     
     # additional custom types are loaded dynamically from bungeni_custom/types.xml
 ]

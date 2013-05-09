@@ -323,7 +323,7 @@ class UserDelegationDescriptor(ModelDescriptor):
         ),
     ]
 
-class GroupMembershipRoleDescriptor(ModelDescriptor):
+class GroupMemberRoleDescriptor(ModelDescriptor):
     """Role associated with a group membership
     """
     localizable = False
@@ -347,7 +347,7 @@ class GroupMembershipRoleDescriptor(ModelDescriptor):
           )
         ]
 
-class GroupMembershipDescriptor(ModelDescriptor):
+class GroupMemberDescriptor(ModelDescriptor):
     localizable = True #!+False #!+ARCHETYPE_LOCALIZATION
     scope = "archetype"
     
@@ -424,7 +424,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
     ]
     custom_validators = [
         validations.validate_date_range_within_parent,
-        validations.validate_group_membership_dates
+        validations.validate_group_member_dates
     ]
     
     # !+DESCRIPTOR_CONTAINER_NAME(mr, jan-2013) workaround (to handle special 

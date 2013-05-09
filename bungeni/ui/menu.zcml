@@ -258,7 +258,7 @@
     />
     
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IBungeniGroupMembership"
+        for="bungeni.models.interfaces.IGroupMember"
         title="Add title..."
         action="./titles/add"
         permission="bungeni.member_title.Add"
@@ -266,18 +266,18 @@
         order="30"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IBungeniGroupMembership"
+        for="bungeni.models.interfaces.IGroupMember"
         title="Add subrole..."
         action="./subroles/add"
-        permission="bungeni.group_membership_role.Add"
+        permission="bungeni.group_member_role.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IGroupMembershipRoleContainer"
+        for="bungeni.models.interfaces.IGroupMemberRoleContainer"
         title="Add member role..."
         action="./add"
-        permission="bungeni.group_membership_role.Add"
+        permission="bungeni.group_member_role.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
@@ -473,21 +473,21 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMemberOfParliament"
+        for="bungeni.models.interfaces.IMember"
         action="edit"
         title="Edit MP"
         order="10"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.member_of_parliament.Edit"
-    />
+        permission="bungeni.member.Edit"
+    /><!-- !+CUSTOM -->
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMemberOfParliament"
+        for="bungeni.models.interfaces.IMember"
         action="delete"
         title="Delete MP"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.member_of_parliament.Delete"
-    />
+        permission="bungeni.member.Delete"
+    /><!-- !+CUSTOM -->
       
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IUserContainer"
@@ -510,12 +510,12 @@
         title="Delete committee member"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.member_of_parliament.Delete"
+        permission="bungeni.member.Delete"
     />
     <!-- !+ZCML(mr, nov-2010) Individual menu items are declared specific per 
-            view of an IBungeniGroup subtype
+            view of an IGroup subtype
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IBungeniGroup"
+        for="bungeni.models.interfaces.IGroup"
         title="Add Group Address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
@@ -768,7 +768,7 @@
      permission="bungeni.item_schedule_vote.Add"
      />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IBungeniGroup"
+        for="bungeni.models.interfaces.IGroup"
         action="schedule"
         title="schedule"
         order="41"

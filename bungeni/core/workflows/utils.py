@@ -204,7 +204,7 @@ unschedule_doc = dbutils.unschedule_doc
 
 
 def get_group_local_role(group):
-    assert interfaces.IBungeniGroup.providedBy(group)
+    assert interfaces.IGroup.providedBy(group)
     return group.group_role
 
 

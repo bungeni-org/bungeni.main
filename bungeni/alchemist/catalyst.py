@@ -157,7 +157,7 @@ def generate_table_schema_interface(ti):
         
         Note that for 2nd level (mapped) domain classes i.e. those that inherit
         from another domain class e.g. Event(Doc), Office(Group), 
-        OfficeMember(GroupMembership), an IIModelInterface-providing 
+        OfficeMember(GroupMember), an IIModelInterface-providing 
         I*TableSchema interface had already been created (for base class) and 
         assigned to the super class--and that interface will match as one of 
         the domain_base interfaces here.
