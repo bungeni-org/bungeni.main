@@ -166,7 +166,8 @@ grammar {
         "text" | 
         "translated_text" | 
         "datetime" | 
-        "binary"
+        "binary" |
+        "number"
     )
 }
 

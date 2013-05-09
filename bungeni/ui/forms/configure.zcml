@@ -297,15 +297,7 @@ to e.g. "bungeni.{type}.Edit").
      permission="zope.Public"
      weight="20"
      />
-
-    <!--browser:viewlet name="bungeni.viewlet.party-member-mp-info"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.ParliamentMembershipInfo"
-        for="bungeni.models.interfaces.IPartyMember"
-        permission="!+VIEW_PERMISSION"
-        weight="30"
-    /-->
-
+    
     <browser:viewlet name="bungeni.viewlet.offices-held"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"

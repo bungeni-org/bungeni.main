@@ -149,16 +149,10 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
         # lazy load operation of attribute '_vp_response_type' cannot proceed
     )
 
-def instrument_extended_properties(cls, object_type=None, from_class=None):
+def instrument_extended_properties(cls, object_type=None):
     if object_type is None:
         object_type = utils.get_local_table(cls).name
-    if from_class is None:
-        from_class = cls
-        # update extended_properties (retaining same list instance)
-        #cls.extended_properties = from_class.extended_properties[:]
-    for vp_name, vp_type in from_class.extended_properties:
-        if (vp_name, vp_type) not in cls.extended_properties:
-            cls.extended_properties.append((vp_name, vp_type))
+    for vp_name, vp_type in cls.extended_properties:
         setattr(cls, vp_name, vertical_property(object_type, vp_name, vp_type))
         mapper_add_relation_vertical_property(cls, vp_name, vp_type)
 
@@ -215,15 +209,16 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     log.info("localize_domain_model_from_descriptor_class: (%s, %s)", 
             domain_model.__name__, descriptor_cls.__name__)
     
-    # ensure cls.__dict__.extended_properties (cls has own dedicated property)
+    # ensure cls has own dedicated "extended_properties" list property 
+    # i.e. a "extended_properties" key in own cls.__dict__, 
+    # and that it is initialized with current (possibly inherited) values
     domain_model.extended_properties = domain_model.extended_properties[:]
     
     for field in descriptor_cls.fields:
         
         # extended
         if field.extended is not None:
-            add_extended_property_to_model(domain_model, 
-                field.name, field.extended)
+            add_extended_property_to_model(domain_model, field.name, field.extended)
         
         # derived
         if field.derived is not None:
@@ -239,8 +234,10 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     if interfaces.IFeatureAudit.implementedBy(domain_model):
         # either defined manually or created dynamically in feature_audit()
         audit_kls = getattr(MODEL_MODULE, "%sAudit" % (domain_model.__name__))
+        # ensure cls has own dedicated "extended_properties" list property 
+        audit_kls.extended_properties = domain_model.extended_properties[:]
         # propagate any extended attributes on head kls also to its audit_kls
-        instrument_extended_properties(audit_kls, from_class=domain_model)
+        instrument_extended_properties(audit_kls)
     
     # containers
     from bungeni.capi import capi

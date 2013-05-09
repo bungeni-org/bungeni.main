@@ -734,10 +734,11 @@ class Audit(HeadParentedMixin, Entity):
             "head_id_column_name": auditable_pk_column.name })
         # define a subtype of Audit type
         audit_table_name = get_audit_table_name(auditable_cls)
-        # Extended properties from cls are inherited... but need to propagate 
+        # ensure cls has own dedicated "extended_properties" list property --
+        # extended properties from cls are inherited... but need to propagate 
         # onto audit_kls any extended properties defined by auditable_cls:
-        alchemist.model.instrument_extended_properties(factory, audit_table_name, 
-            from_class=auditable_cls)
+        factory.extended_properties = auditable_cls.extended_properties[:]
+        alchemist.model.instrument_extended_properties(factory, audit_table_name)
         return factory
     
     head_id_column_name = None # set in cls.auditFactory()

@@ -251,7 +251,7 @@ admin_user = sa.Table("admin_user", metadata,
     )
 )
 
-# associations table for many-to-many relation between user and doc
+# UserSubscription: many-to-many assoc table for relation between user and doc
 user_doc = sa.Table("user_doc", metadata,
     sa.Column("user_id", sa.Integer,
         sa.ForeignKey("user.user_id"),
@@ -649,7 +649,7 @@ resourcebookings = sa.Table("resourcebookings", metadata,
 )
 '''
 
-
+# !+RENAME doc_vote
 item_vote = sa.Table("item_vote", metadata,
     sa.Column("vote_id", sa.Integer, primary_key=True),
     sa.Column("item_id", sa.Integer, # !+RENAME doc_id
@@ -663,6 +663,7 @@ item_vote = sa.Table("item_vote", metadata,
     sa.Column("language", sa.String(5), nullable=False),
 )
 
+# !+RENAME doc_vote_user
 item_member_vote = sa.Table("item_member_vote", metadata,
     sa.Column("vote_id", sa.Integer,
         sa.ForeignKey("item_vote"),
@@ -679,6 +680,7 @@ item_member_vote = sa.Table("item_member_vote", metadata,
 
 item_schedule = sa.Table("item_schedule", metadata,
     sa.Column("schedule_id", sa.Integer, primary_key=True),
+    # !+ use object_id/object_type as elsewhere
     sa.Column("item_id", sa.Integer, nullable=False),
     sa.Column("item_type", sa.String(30), nullable=False),
     sa.Column("sitting_id", sa.Integer,
