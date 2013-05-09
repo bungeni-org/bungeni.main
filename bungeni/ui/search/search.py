@@ -95,7 +95,7 @@ def get_type_container(chamber, type_name):
     info = capi.get_type_info(type_name)
     containers = get_chamber_containers(chamber)
     for key, container in containers:
-        if info.container_interface.providedBy(container):
+        if isinstance(container, info.domain_model):
             return container
 
 def make_admin_url(obj_id, type_name, status, context, chamber_id):

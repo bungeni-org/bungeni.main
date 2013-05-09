@@ -1,5 +1,6 @@
 from zope.interface import Interface
 import zope.schema as schema
+
 from bungeni.ui.i18n import _
 from bungeni.ui.vocabulary import BaseVocabularyFactory
 from bungeni.utils import naming
@@ -55,6 +56,28 @@ search_group = schema.Choice(title=_("group type"),
     required=False
 )
 
+class SearchWorkflowStatus(BaseVocabularyFactory):
+    """workflow document status vocabulary"""
+    def __call__(self, context):
+        terms = []
+        seen_keys = []
+        for type_key, info in capi.iter_type_info():
+            if info.workflow and info.workflow.has_feature("workspace"):
+                for state in info.workflow._states_by_id.values():
+                    if not state.id in seen_keys:
+                        terms.append(schema.vocabulary.SimpleTerm(
+                            value=state.id, 
+                            token=state.id,
+                            title=state.title
+                        ))
+                        seen_keys.append(state.id)
+        terms.insert(0, schema.vocabulary.SimpleTerm(
+            value="*",
+            token="*",
+            title=_(u"* any status")
+        ))
+        return schema.vocabulary.SimpleVocabulary(terms)
+workflow_statuses = SearchWorkflowStatus()
 
 class ISearchRequest(Interface):
     """Schema definition for search request parameters
@@ -68,11 +91,15 @@ class ISearchRequest(Interface):
     #    value_type=search_group,
     #    required=False
     #)
+    status = schema.Choice(title=_("workflow status"),
+        vocabulary=workflow_statuses,
+        default="*",
+        required=False
+    )
     limit = schema.Choice(title=_("items per page"),
         values=(DEFAULT_LIMIT, 20, 50, 100),
         default=DEFAULT_LIMIT,
         required=False
     )
-    #status
     #offset
     #role (captured auto)
