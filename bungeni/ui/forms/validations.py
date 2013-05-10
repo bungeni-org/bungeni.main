@@ -145,12 +145,12 @@ class AllPoliticalGroupMemberships(object):
     """
 
 all_political_group_memberships = sa.join(
-    schema.user_group_membership, schema.group).join(schema.political_group)
+    schema.group_member, schema.group).join(schema.political_group)
         
 sa.orm.mapper(AllPoliticalGroupMemberships, all_political_group_memberships,
     properties={
         "group_id":[
-            schema.user_group_membership.c.group_id,
+            schema.group_member.c.group_id,
             schema.group.c.group_id,
             schema.political_group.c.group_id
             ],
@@ -363,26 +363,26 @@ class GroupMemberTitle(object):
     """ Titels that may be held by multiple persons of the
     group at the same time"""
 
-group_member_title = sa.join(schema.user_group_membership, schema.member_title
+group_member_title = sa.join(schema.group_member, schema.member_title
     ).join(schema.title_type)
 
 sa.orm.mapper(GroupMemberTitle, group_member_title,
     properties={
-        "membership_id":[
-            schema.user_group_membership.c.membership_id,
-            schema.member_title.c.membership_id
+        "member_id":[
+            schema.group_member.c.member_id,
+            schema.member_title.c.member_id
             ],
         "title_type_id":[
             schema.title_type.c.title_type_id,
             schema.member_title.c.title_type_id
             ],
         "group_id":[
-            schema.user_group_membership.c.group_id,
+            schema.group_member.c.group_id,
             schema.title_type.c.group_id
             ],
-        "membership_start_date":[schema.user_group_membership.c.start_date],
-        "membership_end_date":[schema.user_group_membership.c.end_date],
-        "membership_language":[schema.user_group_membership.c.language],
+        "membership_start_date":[schema.group_member.c.start_date],
+        "membership_end_date":[schema.group_member.c.end_date],
+        "membership_language":[schema.group_member.c.language],
         "title_type_language":[schema.title_type.c.language],
     }
 )
@@ -400,7 +400,7 @@ def validate_member_titles(action, data, context, container):
         return session.query(GroupMemberTitle).filter(
                 sa.and_(
                     GroupMemberTitle.group_id == group_id,
-                    GroupMemberTitle.membership_id == membership_id,
+                    GroupMemberTitle.member_id == member_id,
                     GroupMemberTitle.title_type_id == title_type_id,
                     sa.or_(
                         sa.between(
@@ -426,7 +426,7 @@ def validate_member_titles(action, data, context, container):
     end_date = data.get("end_date")
     errors = []
     group_id = container.__parent__.group_id
-    membership_id = container.__parent__.membership_id
+    member_id = container.__parent__.member_id
     session = Session()
     title_type_id = data.get("title_type_id")
     if interfaces.IMemberTitle.providedBy(context):

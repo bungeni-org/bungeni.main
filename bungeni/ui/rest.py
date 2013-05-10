@@ -6,7 +6,7 @@ from bungeni.models import domain
 
 from bungeni.models.schema import user
 from bungeni.models.schema import group
-from bungeni.models.schema import user_group_membership
+from bungeni.models.schema import group_member
 
 from bungeni.alchemist import Session
 import sqlalchemy as sa
@@ -379,32 +379,31 @@ class Memberships(REST):
                 for r in session.query(domain.Group).filter(
                     sa.and_(
                         user.c.login == self.request["principal_id"],
-                        user_group_membership.c.user_id == user.c.user_id,
-                        group.c.group_id == user_group_membership.c.group_id,
+                        group_member.c.user_id == user.c.user_id,
+                        group.c.group_id == group_member.c.group_id,
                         group.c.status == "active",
-                        user_group_membership.c.active_p == True)).all()])
+                        group_member.c.active_p == True)).all()])
 
 
 class GroupMembers(REST):
     """ RESTful view for Group Membership listing."""
     def GET(self):
         session = Session()
-        ugm = user_group_membership
         user_values = session.query(domain.User).filter(
-            sa.and_(user.c.user_id == ugm.c.user_id,
-                     group.c.group_id == ugm.c.group_id,
+            sa.and_(user.c.user_id == group_member.c.user_id,
+                     group.c.group_id == group_member.c.group_id,
                      domain.Group.principal_name == self.request["group_id"],
-                     ugm.c.active_p == True)).all()
+                     group_member.c.active_p == True)).all()
         return self.json_response([r.login for r in user_values])
-    
-
-        
+        ''' !+
         values=[r.principal_name
                 for r in session.query(domain.Group).filter(
                     sa.and_(
                         user.c.login == self.request["principal_id"],
-                        user_group_membership.c.user_id == user.c.user_id,
-                        group.c.group_id == user_group_membership.c.group_id,
+                        group_member.c.user_id == user.c.user_id,
+                        group.c.group_id == group_member.c.group_id,
                         group.c.status == "active",
-                        user_group_membership.c.active_p == True)).all() ]
+                        group_member.c.active_p == True)).all() ]
         return self.json_response(values)
+        '''
+

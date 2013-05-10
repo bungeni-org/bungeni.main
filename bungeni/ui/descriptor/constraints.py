@@ -126,12 +126,12 @@ def inactive_no_end_date(obj):
 @describe(_(u"Member: the start date for a member must be after the election date"))
 def member_start_after_elected(obj):
     """MP start date (when set) must be after election."""
-    if obj.election_nomination_date is None:
+    if obj.election_date is None:
         return
-    if obj.election_nomination_date > obj.start_date:
+    if obj.election_date > obj.start_date:
         raise Invalid(_("A parliament member has to be "
                 "elected/nominated before she/he can be sworn in"),
-            "election_nomination_date",
+            "election_date",
             "start_date")
 
 @describe(_(u"Person: the date of death must be after the date of birth"))

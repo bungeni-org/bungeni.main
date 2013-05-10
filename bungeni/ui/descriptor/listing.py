@@ -283,7 +283,7 @@ def member_linked_name_column(name, title, vocabulary=None):
             #!+BUSINESS(mb, feb-2013) is deprecated
             # else we link direct to the MP's "public" view
             #mp = get_member_of_chamber(related_user.user_id)
-            #href = "/members/current/obj-%s/" % (mp.membership_id)
+            #href = "/members/current/obj-%s/" % (mp.member_id)
             return related_user.combined_name
         return zope.formlib.widget.renderElement("a",
             contents=related_user.combined_name,  # User.combined_name derived property

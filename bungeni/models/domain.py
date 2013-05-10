@@ -275,7 +275,7 @@ class GroupMember(HeadParentedMixin, Entity):
     )
     
     subroles = one2many("subroles", 
-        "bungeni.models.domain.GroupMemberRoleContainer", "membership_id")
+        "bungeni.models.domain.GroupMemberRoleContainer", "member_id")
     
     @property
     def image(self): 
@@ -419,7 +419,7 @@ class Ministry(Group):
         interfaces.IMinistry,
     )
 class Minister(GroupMember):
-    """A Minister defined by its user_group_membership in a ministry (group).
+    """A Minister, defined as member of a ministry group.
     """
     interface.implements(
         interfaces.IMinister,

@@ -783,8 +783,8 @@ class UserNotMPSource(SpecializedMemberSource):
             self.context_user = ctx.user
         
         mp_user_ids = sql.select(
-            [schema.user_group_membership.c.user_id], 
-            schema.user_group_membership.c.group_id == self.chamber.group_id)
+            [schema.group_member.c.user_id], 
+            schema.group_member.c.group_id == self.chamber.group_id)
         query = Session().query(domain.User).filter(
             sql.and_(
                 sql.not_(domain.User.user_id.in_(mp_user_ids)),
@@ -884,7 +884,7 @@ class MemberTitleSource(SpecializedSource):
         self.value_field = value_field 
     
     def _get_user_type(self, context):
-        user_type = getattr(context, 'membership_type', None)
+        user_type = getattr(context, "member_type", None)
         if not user_type:
             user_type = self._get_user_type(context.__parent__)
         return user_type
@@ -1027,10 +1027,10 @@ class SittingAttendanceSource(SpecializedSource):
             sitting = trusted.__parent__
             group_id = sitting.group_id
             sitting_id = sitting.sitting_id
-            all_member_ids = sql.select([schema.user_group_membership.c.user_id], 
+            all_member_ids = sql.select([schema.group_member.c.user_id], 
                     sql.and_(
-                        schema.user_group_membership.c.group_id == group_id,
-                        schema.user_group_membership.c.active_p == True))
+                        schema.group_member.c.group_id == group_id,
+                        schema.group_member.c.active_p == True))
             attended_ids = sql.select([schema.sitting_attendance.c.member_id],
                      schema.sitting_attendance.c.sitting_id == sitting_id)
             query = session.query(domain.User).filter(
@@ -1136,18 +1136,6 @@ substitution = SubstitutionSource(
 )
 component.provideUtility(substitution, IVocabularyFactory, "substitution")
 
-
-''' !+MODELS(mr, oct-2011) shouldn't this be elsewhere?
-class PartyMembership(object):
-    pass
-
-party_membership = sql.join(schema.political_party, schema.group,
-        schema.political_party.c.party_id == schema.group.c.group_id
-    ).join(schema.user_group_membership,
-        schema.group.c.group_id == schema.user_group_membership.c.group_id)
-
-mapper(PartyMembership, party_membership)
-'''
 
 ''' !+ORPHANED(mr, jun-2012) some time prior to r9435
 class PIAssignmentSource(SpecializedSource):

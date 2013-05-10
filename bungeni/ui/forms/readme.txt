@@ -159,7 +159,7 @@ add some users:
     >>> mp1.user_id = mp_1.user_id
     >>> mp1.start_date = today
     >>> mp1.provenace = "r1::p1::c1"
-    >>> mp1.member_election_type = "elected"
+    >>> mp1.election_type = "elected"
     >>> mp1.language = "en"
     >>> session.add(mp1)
     >>> session.flush()
@@ -168,8 +168,8 @@ add some users:
     >>> mp2.group_id = chamber.group_id
     >>> mp2.user_id = mp_2.user_id
     >>> mp2.start_date = today
-    >>> mp2.representation = "r1::p1::c1"
-    >>> mp2.member_election_type = "nominated"
+    >>> mp2.representation_geo = "r1::p1::c1"
+    >>> mp2.election_type = "nominated"
     >>> mp2.language = "en"
     >>> session.add(mp2)
     >>> session.flush()

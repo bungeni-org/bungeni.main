@@ -251,7 +251,10 @@ admin_user = sa.Table("admin_user", metadata,
     )
 )
 
+
+# !+PRINCIPAL_DOC
 # UserSubscription: many-to-many assoc table for relation between user and doc
+# user_doc
 user_doc = sa.Table("user_doc", metadata,
     sa.Column("user_id", sa.Integer,
         sa.ForeignKey("user.user_id"),
@@ -275,7 +278,9 @@ user_delegation = sa.Table("user_delegation", metadata,
     )
 )
 
+# !+PRINCIPAL_DOC
 # document that user is being currently editing
+# user_editing_doc
 currently_editing_document = sa.Table("currently_editing_document", metadata,
     sa.Column("user_id", sa.Integer,
         sa.ForeignKey("user.user_id"),
@@ -297,31 +302,6 @@ password_restore_link = sa.Table("password_restore_link", metadata,
     sa.Column("hash", sa.Unicode(256), nullable=False),
     sa.Column("expiration_date", sa.DateTime(timezone=False), nullable=False) 
 ) 
-
-
-# specific user classes
-parliament_membership = sa.Table("parliament_membership", metadata,
-    sa.Column("membership_id", sa.Integer,
-        sa.ForeignKey("user_group_membership.membership_id"),
-        primary_key=True
-    ),
-    # The region/province/constituency (divisions and order may be in any way 
-    # as appropriate for the given parliamentary territory) for the 
-    # representation of this member of chamber.
-    # Hierarchical Controlled Vocabulary Micro Data Format: 
-    # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
-    # which is a double-colon "::" separated sequence of *key phrases*.
-    sa.Column("representation", sa.UnicodeText, nullable=True),
-    # the political party of the MP as of the time he was elected
-    sa.Column("party", sa.UnicodeText, nullable=True),
-    # is the MP elected, nominated, ex officio member, ...
-    sa.Column("member_election_type", sa.Unicode(128),
-        default=u'elected',
-        nullable=False,
-    ),
-    sa.Column("election_nomination_date", sa.Date), # nullable=False),
-    sa.Column("leave_reason", sa.Unicode(40)),
-)
 
 
 #########################
@@ -395,15 +375,16 @@ title_type = sa.Table("title_type", metadata,
 )
 
 # sub roles to be granted when a document is assigned to a user
-group_membership_role = sa.Table("group_membership_role", metadata,
-    sa.Column("membership_id", sa.Integer,
-        sa.ForeignKey("user_group_membership.membership_id"),
+group_member_role = sa.Table("group_member_role", metadata,
+    sa.Column("member_id", sa.Integer,
+        sa.ForeignKey("group_member.member_id"),
         primary_key=True),
     sa.Column("role_id", sa.Unicode(256), nullable=False,
         primary_key=True),
     sa.Column("is_global", sa.Boolean, default=False),
 )
 
+# !+PRINCIPAL_DOC
 # !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment, to 
 # be able to guarantee/constrain the intended action of the assignment to the
 # appropriate group e.g. imagine a doc is assigned to one group for a 
@@ -422,8 +403,8 @@ group_document_assignment = sa.Table("group_document_assignment", metadata,
 # group memberships encompasses any user participation in a group, including
 # substitutions.
 
-user_group_membership = sa.Table("user_group_membership", metadata,
-    sa.Column("membership_id", sa.Integer, primary_key=True),
+group_member = sa.Table("group_member", metadata,
+    sa.Column("member_id", sa.Integer, primary_key=True),
     sa.Column("user_id", sa.Integer,
         sa.ForeignKey("user.user_id"),
         nullable=False
@@ -450,17 +431,30 @@ user_group_membership = sa.Table("user_group_membership", metadata,
     # these fields are only present when a membership is result of substitution
     # unique because you can only replace one specific group member.
     sa.Column("replaced_id", sa.Integer,
-        sa.ForeignKey("user_group_membership.membership_id"),
+        sa.ForeignKey("group_member.member_id"),
         unique=True
     ),
     sa.Column("substitution_type", sa.Unicode(100)),
     # type of membership staff or member
-    sa.Column("membership_type", sa.String(30),
-        default="member",
-        nullable=False,
-    ),
+    sa.Column("member_type", sa.String(30), default="member", nullable=False),
     sa.Column("language", sa.String(5), nullable=False),
-    sa.schema.UniqueConstraint("user_id", "group_id")
+    # Representation of this member (in a chamber or any other group):
+    # - geo: the region/province/constituency (divisions and order may be in any
+    # way as appropriate for the given parliamentary territory)
+    # - sig: represented Special Interest Group (s)
+    # Values should be a Hierarchical Controlled Vocabulary Micro Data Format: 
+    # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
+    # which is a double-colon "::" separated sequence of *key phrases*.
+    sa.Column("representation_geo", sa.UnicodeText, nullable=True),
+    sa.Column("representation_sig", sa.UnicodeText, nullable=True),
+    sa.Column("election_type", sa.Unicode(128),
+        default="elected", # elected, nominated, ex officio, co-opted, ...
+        nullable=True),
+    sa.Column("election_date", sa.Date, 
+        server_default=sa.sql.text("now()::date"),
+        nullable=True),
+    sa.Column("leave_reason", sa.Unicode(40)),
+    sa.schema.UniqueConstraint("user_id", "group_id"),
 )
 
 ##############
@@ -471,8 +465,8 @@ user_group_membership = sa.Table("user_group_membership", metadata,
 
 member_title = sa.Table("member_title", metadata,
     sa.Column("member_title_id", sa.Integer, primary_key=True),
-    sa.Column("membership_id", sa.Integer,
-        sa.ForeignKey("user_group_membership.membership_id"),
+    sa.Column("member_id", sa.Integer,
+        sa.ForeignKey("group_member.member_id"),
         nullable=False
     ),
     # title of user"s group role
@@ -483,7 +477,7 @@ member_title = sa.Table("member_title", metadata,
     sa.Column("start_date", sa.Date, default=datetime.now, nullable=False),
     sa.Column("end_date", sa.Date),
     sa.Column("language", sa.String(5), nullable=False),
-    sa.schema.UniqueConstraint("membership_id", "title_type_id")
+    sa.schema.UniqueConstraint("member_id", "title_type_id")
 )
 
 

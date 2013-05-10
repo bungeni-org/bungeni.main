@@ -174,24 +174,24 @@ mapper(domain.Office,
 
 # we need to specify join clause for user explicitly because we have multiple fk
 # to the user table.
-mapper(domain.GroupMember, schema.user_group_membership,
+mapper(domain.GroupMember, schema.group_member,
     polymorphic_identity=polymorphic_identity(domain.GroupMember),
-    polymorphic_on=schema.user_group_membership.c.membership_type,
+    polymorphic_on=schema.group_member.c.member_type,
     properties={
         "user": relation(domain.User,
-            primaryjoin=rdb.and_(schema.user_group_membership.c.user_id ==
+            primaryjoin=rdb.and_(schema.group_member.c.user_id ==
                 schema.user.c.user_id),
             uselist=False,
             backref="group_membership",
             lazy=False),
         "group": relation(domain.Group,
-            primaryjoin=(schema.user_group_membership.c.group_id ==
+            primaryjoin=(schema.group_member.c.group_id ==
                 schema.group.c.group_id),
             uselist=False,
             lazy=True),
         "replaced": relation(domain.GroupMember,
-            primaryjoin=(schema.user_group_membership.c.replaced_id ==
-                schema.user_group_membership.c.membership_id),
+            primaryjoin=(schema.group_member.c.replaced_id ==
+                schema.group_member.c.member_id),
             uselist=False,
             lazy=True),
         "sub_roles": relation(domain.GroupMemberRole),
@@ -201,21 +201,21 @@ mapper(domain.GroupMember, schema.user_group_membership,
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMember.head = domain.GroupMember.user
 
-mapper(domain.GroupMemberRole, schema.group_membership_role,
+mapper(domain.GroupMemberRole, schema.group_member_role,
     properties={
         "member": relation(domain.GroupMember)
     }
 )
 
-mapper(domain.Member, schema.parliament_membership,
+mapper(domain.Member,
     inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.Member),
-    primary_key=[schema.user_group_membership.c.membership_id],
+    primary_key=[schema.group_member.c.member_id],
     properties={
         "start_date": column_property(
-            schema.user_group_membership.c.start_date.label("start_date")),
+            schema.group_member.c.start_date.label("start_date")),
         "end_date": column_property(
-            schema.user_group_membership.c.end_date.label("end_date")),
+            schema.group_member.c.end_date.label("end_date")),
     },
 )
 
@@ -616,8 +616,8 @@ mapper(domain.Signatory, schema.signatory,
         "user": relation(domain.User, uselist=False),
         "member": relation(domain.Member,
             primaryjoin=rdb.and_(schema.signatory.c.user_id == 
-                schema.user_group_membership.c.user_id),
-            secondary=schema.user_group_membership,
+                schema.group_member.c.user_id),
+            secondary=schema.group_member,
             uselist=False,
         ),
         "audits": relation(domain.SignatoryAudit,

@@ -257,7 +257,7 @@ Speaker's Office membership
 Speaker's Office Title with Sub role  
   
   >>> office_title = domain.MemberTitle()
-  >>> office_title.membership_id = office_membership.membership_id
+  >>> office_title.member_id = office_membership.member_id
   >>> office_title.title_type_id = title_type.title_type_id
   >>> office_title.start_date = datetime.datetime.now()
 
@@ -270,12 +270,12 @@ the chamber group and additional attributes.
   >>> mp4.group_id = chamber.group_id
   >>> mp4.user_id = mp_1.user_id
   >>> mp4.start_date = datetime.datetime.now()
-  >>> mp4.representation = "r1::p2::c3"
-  >>> mp4.member_election_type = "elected"
+  >>> mp4.representation_geo = "r1::p2::c3"
+  >>> mp4.election_type = "elected"
   >>> mp4.language = "en"
   >>> session.add(mp4)
   >>> session.flush()
-  >>> int(mp4.membership_id)
+  >>> int(mp4.member_id)
   7
 
 

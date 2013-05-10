@@ -33,9 +33,9 @@ def group_member_modified(ob, event):
     if ob.end_date:
         session = Session()
         trusted = removeSecurityProxy(ob)
-        membership_id = trusted.membership_id
+        member_id = trusted.member_id
         titles = session.query(domain.MemberTitle).filter(
-            domain.MemberTitle.membership_id == membership_id)
+            domain.MemberTitle.member_id == member_id)
         for title in titles.all():
             if title.end_date == None:
                 title.end_date = ob.end_date

@@ -805,7 +805,7 @@ def _render_link_to_mp_or_user(user_id, context, request):
         # bicameral installation
         #return zope.formlib.widget.renderElement("a",
         #    contents=mp.user.combined_name,
-        #    href="/workspace/members/obj-%s/" % (mp.membership_id))
+        #    href="/workspace/members/obj-%s/" % (mp.member_id))
     except NoResultFound:
         # not a member of chamber 
         #

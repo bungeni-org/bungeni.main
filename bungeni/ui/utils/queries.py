@@ -96,7 +96,7 @@ def validate_membership_in_interval(obj, domain_model, date, user_id,
     if results:
         if obj:
             for result in results:
-                if result.membership_id == obj.membership_id:
+                if result.member_id == obj.member_id:
                     continue
                 else:
                     yield result
@@ -121,7 +121,7 @@ def validate_open_membership(obj, domain_model, user_id,
     if results:
         if obj:
             for result in results:
-                if result.membership_id == obj.membership_id:
+                if result.member_id == obj.member_id:
                     continue
                 else:
                     yield result

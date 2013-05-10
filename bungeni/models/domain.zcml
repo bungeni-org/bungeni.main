@@ -615,7 +615,7 @@
                 replaced
                 member_titles
                 
-                membership_id
+                member_id
                 user_id
                 group_id
                 start_date
@@ -624,12 +624,13 @@
                 active_p
                 replaced_id
                 substitution_type
-                membership_type
+                member_type
                 language
             "
         />
         <require permission="bungeni.group_member.Edit"
-            set_attributes="membership_id
+            set_attributes="
+                member_id
                 user_id
                 group_id
                 start_date
@@ -638,7 +639,7 @@
                 active_p
                 replaced_id
                 substitution_type
-                membership_type
+                member_type
             "
         />
     </class>
@@ -651,7 +652,7 @@
                 replaced
                 member_titles
                 
-                membership_id
+                member_id
                 user_id
                 group_id
                 start_date
@@ -660,21 +661,22 @@
                 active_p
                 replaced_id
                 substitution_type
-                membership_type
+                member_type
                 language
                 titles
                 
-                representation
+                representation_geo
+                representation_sig
                 party
-                member_election_type
+                election_type
                 
-                election_nomination_date
+                election_date
                 leave_reason
             "
         />
         <require permission="bungeni.member.Edit"
             set_attributes="
-                membership_id
+                member_id
                 user_id
                 group_id
                 start_date
@@ -683,10 +685,11 @@
                 active_p
                 replaced_id
                 substitution_type
-                membership_type
-                representation
-                member_election_type
-                election_nomination_date
+                member_type
+                representation_geo
+                representation_sig
+                election_type
+                election_date
                 leave_reason
             "
         />

@@ -104,37 +104,6 @@ def getActiveItemSchedule(doc):
 def get_ministry(group_id):
     return Session().query(domain.Ministry).get(group_id)
 
-#!+UNUSED(miano, oct 2012)
-'''class _Minister(object):
-    pass
-
-ministers = sa.join(schema.group,schema.user_group_membership, 
-        schema.group.c.group_id == schema.user_group_membership.c.group_id
-    ).join(schema.user,
-        schema.user_group_membership.c.user_id == schema.user.c.user_id)
-mapper(
-    _Minister, ministers,
-    properties={
-        "user_id":[
-            schema.user_group_membership.c.user_id,
-            schema.user.c.user_id
-        ],
-        "group_id":[
-            schema.group.c.group_id,
-            schema.user_group_membership.c.group_id
-        ]
-    }
-)
-
-def get_ministers(ministry):
-    """Get comma-seperated list of emails of all persons who are 
-    ministry members.
-    """
-    query = Session().query(_Minister).filter(
-        _Minister.group_id == ministry.group_id)
-    return [ minister for minister in query.all() ]
-'''
-#
 
 def deactivateGroupMembers(group):
     """ upon dissolution of a group all group members
@@ -145,28 +114,29 @@ def deactivateGroupMembers(group):
     assert(end_date != None)
     connection = session.connection(domain.Group)
     connection.execute(
-        schema.user_group_membership.update().where(
+        schema.group_member.update().where(
             sa.and_(
-                schema.user_group_membership.c.group_id == group_id,
-                schema.user_group_membership.c.active_p == True
+                schema.group_member.c.group_id == group_id,
+                schema.group_member.c.active_p == True
             )
         ).values(active_p=False)
     )
     connection.execute(
-        schema.user_group_membership.update().where(
+        schema.group_member.update().where(
             sa.and_(
-                schema.user_group_membership.c.group_id == group_id,
-                schema.user_group_membership.c.end_date == None
+                schema.group_member.c.group_id == group_id,
+                schema.group_member.c.end_date == None
             )
         ).values(end_date=end_date)
     )
     def deactivateGroupMemberTitles(group):
-        group_members = sa.select([schema.user_group_membership.c.user_id],
-                 schema.user_group_membership.c.group_id == group_id)
+        group_members = sa.select([schema.group_member.c.user_id],
+                 schema.group_member.c.group_id == group_id)
         connection.execute(
             schema.member_title.update().where(
-                sa.and_( 
-                    schema.member_title.c.membership_id.in_(group_members),
+                sa.and_(
+                    # !+ why is this checking member_id vales not in user_id values ???
+                    schema.member_title.c.member_id.in_(group_members),
                     schema.member_title.c.end_date == None
                 ) 
             ).values(end_date=end_date)

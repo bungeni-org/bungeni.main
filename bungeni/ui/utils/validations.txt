@@ -311,7 +311,7 @@ We reuse the political group memberships to test the titles:
   >>> member_role1 = domain.MemberTitle()
   >>> member_role1.start_date = today
   >>> member_role1.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role1.membership_id = pgroup_member1.membership_id
+  >>> member_role1.member_id = pgroup_member1.member_id
   
 check that the user does not have the role chaiperson yet
   
@@ -337,7 +337,7 @@ and try to give him the role again:
   >>> member_role2.start_date = tomorrow
   >>> member_role2.end_date = dayat
   >>> member_role2.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role2.membership_id = pgroup_member1.membership_id
+  >>> member_role2.member_id = pgroup_member1.member_id
   >>> form_data['start_date'] = tomorrow
   >>> form_data['end_date'] = dayat
   >>> validations.validate_member_titles(action=None, data=form_data, 
@@ -351,7 +351,7 @@ now we give him the additional role 'member':
   >>> member_role2.start_date = yesterday
   >>> member_role2.end_date = dayat
   >>> member_role2.title_name_id = user_role_type_member.user_role_type_id
-  >>> member_role2.membership_id = pgroup_member1.membership_id
+  >>> member_role2.member_id = pgroup_member1.member_id
   >>> form_data['start_date'] = yesterday
   >>> form_data['end_date'] = dayat
   >>> form_data['title_name_id'] = user_role_type_member.user_role_type_id
@@ -370,7 +370,7 @@ he may be chairman in another group:
   >>> member_role3.start_date = yesterday
   >>> member_role3.end_date = dayat
   >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role3.membership_id = pgroup_member2.membership_id
+  >>> member_role3.member_id = pgroup_member2.member_id
   >>> form_data['start_date'] = yesterday
   >>> form_data['end_date'] = dayat
   >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
@@ -387,7 +387,7 @@ try to give a second user the chairman role
   >>> member_role3 = domain.MemberTitle()
   >>> member_role3.start_date = yesterday
   >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
-  >>> member_role3.membership_id = pgroup_member3.membership_id
+  >>> member_role3.member_id = pgroup_member3.member_id
   >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
   >>> validations.validate_member_titles(action=None, data=form_data, 
   ...   context=None, container=member_role_container)
@@ -396,7 +396,7 @@ try to give a second user the chairman role
 
 as this is not possible just give him the member role:
   >>> member_role3.title_name_id = user_role_type_member.user_role_type_id
-  >>> member_role3.membership_id = pgroup_member2.membership_id
+  >>> member_role3.member_id = pgroup_member2.member_id
   >>> form_data['title_name_id'] = user_role_type_member.user_role_type_id
   >>> validations.validate_member_titles(action=None, data=form_data, 
   ...   context=None, container=member_role_container)

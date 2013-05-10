@@ -364,7 +364,7 @@ class UserDescriptiveProperties(DescriptiveProperties):
     @property
     def title_member(self):
         context = _merged(self.context)
-        mp_user = None
+        mp_user = None # !+ generalize to all group_member types
         try:
             mp_user = Session().query(domain.Member).filter(
                 domain.Member.user_id == context.user_id
@@ -378,11 +378,12 @@ class UserDescriptiveProperties(DescriptiveProperties):
         finally:
             if mp_user is None:
                 return self.title
-        if mp_user.representation:
+        if mp_user.representation_geo or mp_user.representation_sig:
             return _("member_title_with_representation",
                 default=u"Member of Parliament for ${representation}"
                 " (${member})",
-                mapping={"representation": mp_user.representation, 
+                mapping={"representation": ", ".join([
+                        mp_user.representation_geo, mp_user.representation_sig]),
                     "member": self.title
                 }
             )
