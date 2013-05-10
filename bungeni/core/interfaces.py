@@ -26,6 +26,9 @@ class IAkomaNtosoSection(ISection):
 class ISearchableSection(interface.Interface):
     """Marker interface for searchable sections"""
 
+class IWorkspaceSection(interface.Interface):
+    """Marker interface for workspace section"""
+
 class IQueryContent(interface.Interface):
     query = interface.Attribute(
         """Query-method which returns a content-item.""")

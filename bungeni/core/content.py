@@ -19,7 +19,7 @@ from bungeni.core.proxy import DublinCoreDescriptivePropertiesProxy
 from bungeni.ui.utils import debug
 from bungeni.ui.interfaces import IBungeniAPILayer
 
-from interfaces import ISection, IAkomaNtosoSection
+from interfaces import ISection, IAkomaNtosoSection, IWorkspaceSection
 from interfaces import IQueryContent
 
 class Section(OrderedContainer):
@@ -204,7 +204,7 @@ class AdminSection(Section):
 
 
 class WorkspaceSection(Section):
-    pass
+    interface.implements(IWorkspaceSection)
 
 
 class APISection(Section):

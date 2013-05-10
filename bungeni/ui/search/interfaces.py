@@ -1,8 +1,13 @@
 from zope.interface import Interface
+import zope.component
 import zope.schema as schema
+
+from bungeni.core.interfaces import IWorkspaceSection, IWorkspaceTabsUtility
 
 from bungeni.ui.i18n import _
 from bungeni.ui.vocabulary import BaseVocabularyFactory
+from bungeni.ui.utils.common import get_workspace_roles
+
 from bungeni.utils import naming
 from bungeni.capi import capi
 
@@ -23,17 +28,33 @@ class SearchGroupTypes(BaseVocabularyFactory):
         return schema.vocabulary.SimpleVocabulary(terms)
 search_group_types = SearchGroupTypes()
 
+def get_search_doc_types(context):
+    """get types searchable in a context"""
+    types = []
+    if IWorkspaceSection.providedBy(context):
+        ws_config = zope.component.getUtility(IWorkspaceTabsUtility)
+        roles = get_workspace_roles()
+        wf_types = set()
+        for role in roles:
+            types = []
+            wf_types.update(*[ wsp.keys() 
+                for wsp in ws_config.workspaces[role].values() ])
+        types = [ capi.get_type_info(typ) for typ in wf_types ]
+    else:
+        types = [ info for key, info in capi.iter_type_info() ]
+    return types
+
 class SearchDocumentTypes(BaseVocabularyFactory):
     """Searchable document types
     """
     def __call__(self, context):
         terms = []
-        for type_key, info in capi.iter_type_info():
+        for info in get_search_doc_types(context):
             if info.workflow and info.workflow.has_feature("workspace"):
                 terms.append(schema.vocabulary.SimpleTerm(
-                    value=type_key, 
-                    token=type_key,
-                    title=naming.split_camel(info.domain_model.__name__)
+                    value=info.type_key, 
+                    token=info.type_key,
+                    title=_(naming.split_camel(info.domain_model.__name__))
                 ))
         terms.sort(key=lambda item:item.value)
         all_types=",".join([t.value for t in terms])
@@ -61,14 +82,14 @@ class SearchWorkflowStatus(BaseVocabularyFactory):
     def __call__(self, context):
         terms = []
         seen_keys = []
-        for type_key, info in capi.iter_type_info():
+        for info in get_search_doc_types(context):
             if info.workflow and info.workflow.has_feature("workspace"):
                 for state in info.workflow._states_by_id.values():
                     if not state.id in seen_keys:
                         terms.append(schema.vocabulary.SimpleTerm(
                             value=state.id, 
                             token=state.id,
-                            title=state.title
+                            title=_(state.title)
                         ))
                         seen_keys.append(state.id)
         terms.insert(0, schema.vocabulary.SimpleTerm(

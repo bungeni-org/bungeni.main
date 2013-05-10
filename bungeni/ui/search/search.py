@@ -3,7 +3,8 @@
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
 """Bungeni search implementation
-- Searches eXist database from within
+- Searches eXist database via eXist rest service
+See: https://code.google.com/p/bungeni-exist/wiki/BungeniRESTXQSearchService
 """
 log = __import__("logging").getLogger("bungeni.ui.search")
 
@@ -230,6 +231,8 @@ def execute_search(data, prefix, request, context):
     }
     if item_count:
         _results = exist_results.get("doc")
+        if item_count == 1:
+            _results = [_results]
         if ui_ifaces.IAdminSectionLayer.providedBy(request):
             results["items"] = get_results_meta(_results, 
                 context, SEARCH_ADMIN)
@@ -248,6 +251,7 @@ def get_search_types(types):
             type_names.append(info.descriptor_model.container_name)
         _types = ", ".join(type_names)
     return _types
+
 
 SEARCH_VIEW = "search"
 @register.view(ISearchableSection, ui_ifaces.IBungeniSkin, 
@@ -292,11 +296,11 @@ class Search(form.PageForm, browser.BungeniBrowserView):
         self.search_results = execute_search(data, self.prefix, 
             self.request, self.context)
         self.status = _("Searched for '${search_string}' and found ${count} "
-            "items. Searched in ${search_types}", 
+            "items. Searched in ${search_types}.", 
             mapping={ 
                 "search_string": data.get("search") or _("everything"), 
                 "count": self.search_results.get("total"),
-                "search_types": get_search_types(data.get("type")),  
+                "search_types": get_search_types(data.get("type")),
             }
         )
 
