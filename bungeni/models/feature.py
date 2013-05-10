@@ -28,7 +28,7 @@ from bungeni.alchemist.model import (
 )
 from bungeni.models import interfaces, domain, orm, schema
 from bungeni.core import audit
-from bungeni.utils import naming
+from bungeni.utils import naming, register
 from bungeni.capi import capi
 
 
@@ -162,6 +162,7 @@ class SchedulingManager(object):
     def __init__(self, context):
         self.context = context
 
+@register.adapter(adapts=(interfaces.IFeatureDownload,))
 class DownloadManager(object):
     """ Store download feature properties for a downloadable type.
     """
