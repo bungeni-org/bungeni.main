@@ -27,34 +27,29 @@
           </legend>
           <div id="new_transcript">
           </div>
-          <tal:loop tal:repeat="item context/debate_record_items">
-            <span tal:condition="python:item.type=='debate_speech'">
+          <tal:loop tal:repeat="item view/speeches">
               <div tal:attributes="id item/debate_record_item_id">
                 <fieldset id="transcript_fieldset" >
                   <legend>
                     <a>
                       <img src="/@@/portal/images/control_play_blue.png"/>
-                      <span tal:replace="python:item.start_date.strftime('%H:%M:%S') | nothing"/> to 
-                      <span tal:replace="python:item.end_date.strftime('%H:%M:%S') | nothing"/>
+                      <span tal:replace="python:item.start_date.strftime('%H:%M:%S')"/> to 
+                      <span tal:replace="python:item.end_date.strftime('%H:%M:%S')"/>
                       </a> | 
                       <a href="javascript:edit_transcript()">Versions</a> |
                       <a href="javascript:edit_transcript()">Audit Log</a>
                   </legend>
-                  <div>
-                    <div class="transcript_person">
-                      <span tal:content="item/person/first_name"/> 
-                      <span tal:content="item/person/last_name"/>
+                  <div class="transcript_person">
+                    <div class="user_image">
+                      <img class="user_image" tal:attributes="src item/image_data"/>
                     </div>
-                  </div>
+                      <span class="user_name" tal:content="item/user/combined_name"/>
+                    </div>
                   <div class="transcript_speech">
                     <span tal:content="item/text"></span>
                   </div>
                 </fieldset>
               </div>
-            </span> 
-            <span tal:condition="python:item.item_type=='debate_doc'">
-              <a>sssssssss</a>
-            </span>
           </tal:loop>
         </fieldset>
       </div>  

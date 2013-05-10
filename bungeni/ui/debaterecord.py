@@ -1,6 +1,9 @@
 import datetime
+import simplejson
 from zope import component
 from zope import formlib
+from zope import interface
+from zope import schema
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.security.proxy import removeSecurityProxy
@@ -26,7 +29,8 @@ class DebateRecordView(BungeniBrowserView):
 
     def __call__(self):
         self.context = removeSecurityProxy(self.context)
-        self.transcription_video = self.get_transctiption_video()
+        self.transcription_video = self.get_transcription_video()
+        self.speeches = self.get_speeches()
         return self.render()
 
     def render(self):
@@ -38,6 +42,14 @@ class DebateRecordView(BungeniBrowserView):
             if media.media_type == "transcription":
                 return media.media_path
         return None
+
+    def get_speeches(self):
+        speeches = []
+        for speech in self.context.debate_speeches:
+            speech.image_data = "data:;base64," + \
+                speech.user.image.encode("base64")
+            speeches.append(speech)
+        return speeches
 
 
 class DebateRecordTraverser(SimpleComponentTraverser):
@@ -153,3 +165,28 @@ class GenerateDebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
             session.add(take)
         session.flush()
         return self.request.response.redirect(next_url + "/takes")
+
+
+class AddSpeeches(forms.common.BaseForm):
+    template = NamedTemplate("alchemist.form")
+
+    class IAddSpeechesForm(interface.Interface):
+        data = schema.Text(required=True)
+    form_fields = formlib.form.Fields(IAddSpeechesForm)
+
+    @formlib.form.action("add", name="add")
+    def handle_add(self, action, data):
+        json_data = simplejson.loads(data["data"])
+        session = Session()
+        sitting = self.context.sitting
+        for item in json_data:
+            debate_speech = domain.DebateSpeech()
+            debate_speech.debate_record_id = self.context.debate_record_id
+            debate_speech.person_id = item["user_id"]
+            debate_speech.text = item["speech"]
+            debate_speech.language = "en"
+            debate_speech.start_date = sitting.start_date + \
+                datetime.timedelta(seconds=item["start_time"])
+            debate_speech.end_date = sitting.start_date + \
+                datetime.timedelta(seconds=item["end_time"])
+            session.add(debate_speech)

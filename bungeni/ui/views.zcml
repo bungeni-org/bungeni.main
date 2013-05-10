@@ -484,6 +484,12 @@
       class="bungeni.ui.debaterecord.GenerateDebateRecordTakes"
       permission="bungeni.debate_take.Edit"
    />
+   <browser:page
+      for="bungeni.models.interfaces.IDebateRecord"
+      name="add-speeches"
+      class="bungeni.ui.debaterecord.AddSpeeches"
+      permission="bungeni.debate_speech.Add"
+   />
    <!-- Bungeni API -->
    <browser:page
       for="bungeni.core.content.APISection"
@@ -545,6 +551,7 @@
        permission="bungeni.attachment.View"
        layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
+
    <!-- OAuth -->
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"

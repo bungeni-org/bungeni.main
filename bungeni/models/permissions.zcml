@@ -127,6 +127,8 @@
   <permission id="bungeni.debate_take.View" title="View debate takes" />
   <permission id="bungeni.debate_take.Edit" title="Edit debate takes" />
 
+  <permission id="bungeni.debate_speech.Add" title="Add speeches" />
+
   <permission id="bungeni.o_auth_application.View" title="View oauth app" />
   <permission id="bungeni.o_auth_application.Add" title="Add oauth app" />
   <permission id="bungeni.o_auth_application.Edit" title="Edit oauth app" />

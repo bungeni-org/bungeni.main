@@ -705,7 +705,7 @@ mapper(domain.DebateRecord, schema.debate_record,
             lazy=True,
             uselist=False
         ),
-        "debate_record_items": relation(domain.DebateRecordItem,
+        "debate_speeches": relation(domain.DebateSpeech,
             lazy=True,
             uselist=True
         ),

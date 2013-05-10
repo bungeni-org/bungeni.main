@@ -6,24 +6,24 @@
     bottom:10px;
     left:450px;
     margin:4px;
-    min-height:480px;
+    height:350px;
     min-width:470px;
     position:absolute;
     right:15px;
-    top:100px;
+    top:120px;
     overflow:auto;
 }
 #video_side_bar_fieldset {
-    min-height:480px;
+    min-height:350px;
 }
 #transcript_fieldset{
-    height:100px;
+    height:120px;
 }
 #transcripts_main{
     min-height:480px;
 }
 #transcript_video{
-    top:100px
+    top:120px
 }
 #transcript_slider { 
     margin: 10px; 
@@ -99,4 +99,21 @@ div.person_widget{
 #form\.high_quality_video_path
 {
     width:400px;
+}
+div.user_image{
+    width:100px;
+}
+
+img.user_image{
+    margin-left:auto;
+    margin-right:auto;
+    width:70%;
+}  
+
+div.transcript_person{
+    width:100px;
+    float:left;
+}
+div.transcript_speech{
+    float:left;
 }
