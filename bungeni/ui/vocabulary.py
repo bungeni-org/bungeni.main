@@ -611,11 +611,7 @@ class MemberSource(SpecializedMemberSource):
             query = session.query(domain.User
                 ).filter(
                     #sql.not_( !+negation with ColumnOperators.in_(), method notin_ in v0.8
-                    domain.Member.user_id.in_(member_user_ids)
-                ).order_by(
-                    domain.User.last_name,
-                    domain.User.first_name,
-                    domain.User.middle_name)
+                    domain.Member.user_id.in_(member_user_ids))
         else:
             # Member - "view" member
             assert IGroupMember.providedBy(ctx), ctx
@@ -633,9 +629,7 @@ class MemberSource(SpecializedMemberSource):
                             domain.Member.group_id == chamber_id),
                         sql.and_(
                             domain.Member.group_id == chamber_id,
-                            domain.Member.active_p == True))
-                ).distinct( # !+ needed?
-                ).order_by(domain.Member.user)
+                            domain.Member.active_p == True)))
         return query
 component.provideUtility(
     MemberSource(), IVocabularyFactory, "chamber_member")
@@ -704,10 +698,9 @@ class MemberDelegationSource(MemberSource):
         # if no-one has delegated to current logged in user (e.g. admin),
         # then include all MPs. !+DELEGATION_TO_NON_MP
         if len(delegated_mp_query.all()) == 0:
-            query = all_mp_query
+            return all_mp_query
         else:
-            query = delegated_mp_query
-        return query.order_by(domain.Member.user)
+            return delegated_mp_query
 component.provideUtility(
     MemberDelegationSource(), IVocabularyFactory, "chamber_member_delegation")
 
@@ -756,8 +749,7 @@ class MemberSignatorySource(MemberSource):
             [ sgn.user_id for sgn in signatory_container.values() ])
         exclude_ids.add(head_doc.owner_id)
         return all_mp_query.filter(sql.not_(
-                domain.Member.user_id.in_(list(exclude_ids)))
-            ).order_by(domain.Member.user)
+                domain.Member.user_id.in_(list(exclude_ids))))
 component.provideUtility(MemberSignatorySource(), IVocabularyFactory, "signatory")
 
 
@@ -788,11 +780,7 @@ class UserNotMPSource(SpecializedMemberSource):
         query = Session().query(domain.User).filter(
             sql.and_(
                 sql.not_(domain.User.user_id.in_(mp_user_ids)),
-                domain.User.active_p == "A")
-            ).order_by(
-                domain.User.last_name,
-                domain.User.first_name,
-                domain.User.middle_name)
+                domain.User.active_p == "A"))
         return query
 component.provideUtility(UserNotMPSource(), IVocabularyFactory, "user_not_mp")
 
@@ -945,9 +933,7 @@ class UserSource(SpecializedSource):
     """
     def construct_query(self, context):
         session = Session()
-        users = session.query(domain.User).order_by(
-            domain.User.last_name, domain.User.first_name).filter(
-            domain.User.active_p == "A")
+        users = session.query(domain.User).filter(domain.User.active_p == "A")
         return users
 user = UserSource(
     token_field="user_id", 
@@ -1017,11 +1003,7 @@ class SittingAttendanceSource(SpecializedSource):
         trusted=removeSecurityProxy(context)
         user_id = getattr(trusted, self.value_field, None)
         if user_id:
-            query = session.query(domain.User 
-                   ).filter(domain.User.user_id == 
-                        user_id).order_by(domain.User.last_name,
-                            domain.User.first_name,
-                            domain.User.middle_name)
+            query = session.query(domain.User).filter(domain.User.user_id == user_id)
             return query
         else:
             sitting = trusted.__parent__
@@ -1035,10 +1017,7 @@ class SittingAttendanceSource(SpecializedSource):
                      schema.sitting_attendance.c.sitting_id == sitting_id)
             query = session.query(domain.User).filter(
                 sql.and_(domain.User.user_id.in_(all_member_ids),
-                    ~ domain.User.user_id.in_(attended_ids))).order_by(
-                            domain.User.last_name,
-                            domain.User.first_name,
-                            domain.User.middle_name)
+                    ~ domain.User.user_id.in_(attended_ids)))
             return query
                  
     def __call__(self, context=None):

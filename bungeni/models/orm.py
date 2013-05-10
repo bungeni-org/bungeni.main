@@ -40,7 +40,10 @@ mapper(domain.User, schema.user,
         "subscriptions": relation(domain.Doc,
             secondary=schema.user_doc
         ),
-    }
+    },
+    # the fallback sort_on ordering for user items
+    order_by=[schema.user.c.last_name, schema.user.c.first_name, 
+            schema.user.c.middle_name, schema.user.c.user_id],
 )
 
 mapper(domain.UserSubscription, schema.user_doc)
@@ -197,6 +200,8 @@ mapper(domain.GroupMember, schema.group_member,
         "sub_roles": relation(domain.GroupMemberRole),
         "member_titles": relation(domain.MemberTitle)
     },
+    # the fallback sort_on ordering for member items
+    order_by=schema.user, #!+ineffective?
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMember.head = domain.GroupMember.user
@@ -210,8 +215,7 @@ mapper(domain.GroupMemberRole, schema.group_member_role,
 mapper(domain.Member,
     inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.Member),
-    primary_key=[schema.group_member.c.member_id],
-    properties={
+    properties={ # !+ why these properties?
         "start_date": column_property(
             schema.group_member.c.start_date.label("start_date")),
         "end_date": column_property(

@@ -93,7 +93,9 @@ def AdmissibleDateField(name="admissible_date"):
 class UserDescriptor(ModelDescriptor):
     order = 4 # top
     localizable = True
-    sort_on = ["user_id"]
+    
+    #!+DESCRIPTOR_SORT_ON ineffective?
+    sort_on = ["last_name", "first_name", "middle_name", "user_id"]
     sort_dir = "asc"
     
     fields = [
@@ -351,6 +353,7 @@ class GroupMemberDescriptor(ModelDescriptor):
     localizable = True #!+False #!+ARCHETYPE_LOCALIZATION
     scope = "archetype"
     
+    #!+DESCRIPTOR_SORT_ON ineffective?
     sort_on = ["user_id"]
     sort_dir = "asc"
     
@@ -450,8 +453,10 @@ class GroupDescriptor(ModelDescriptor):
     localizable = True # !+ARCHETYPE_LOCALIZATION
     scope = "archetype"
     
+    #!+DESCRIPTOR_SORT_ON ineffective?
     sort_on = ["group_id"]
     sort_dir = "asc"
+    
     _combined_name_title = "%s [%s]" % (_("Full Name"), _("Short Name"))
     default_field_order = [
         "full_name",
