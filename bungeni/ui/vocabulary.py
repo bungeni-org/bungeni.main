@@ -556,7 +556,7 @@ class SpecializedMemberSource(BaseVocabularyFactory):
                 value=ob.user_id,
                 token=ob.user_id,
                 title="%s %s" % (ob.first_name, ob.last_name))
-            for ob in results
+            for ob in sorted(results)
         ]
         
         # only for Doc/Member/User contexts

@@ -167,6 +167,12 @@ class User(Principal):
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)
     
+    # !+SORT_ON_USER(mr, may-2013) make the __lt__ method on every domian model
+    # be derived from configuration i.e. from descriptor.sort_on?
+    def __lt__(self, other):
+        return ((self.last_name, self.first_name, self.middle_name, self.user_id) < 
+            (other.last_name, other.first_name, other.middle_name, other.user_id))
+    
     def _makeSalt(self):
         return "".join(random.sample(string.letters[:52], 12))
     
@@ -286,7 +292,10 @@ class GroupMember(HeadParentedMixin, Entity):
     @property
     def last_name(self):
         return self.user.last_name
-
+    
+    # !+SORT_ON_USER
+    def __lt__(self, other):
+        return self.user < other.user
 
 class OfficesHeld(Entity):
     """Offices held by this group member.

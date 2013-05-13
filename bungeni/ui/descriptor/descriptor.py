@@ -353,9 +353,10 @@ class GroupMemberDescriptor(ModelDescriptor):
     localizable = True #!+False #!+ARCHETYPE_LOCALIZATION
     scope = "archetype"
     
+    #!+SORT_ON_USER
     #!+DESCRIPTOR_SORT_ON ineffective?
-    sort_on = ["user_id"]
-    sort_dir = "asc"
+    #sort_on = ["user_id"]
+    #sort_dir = "asc"
     
     fields = [
         F(name="start_date",

@@ -201,7 +201,7 @@ mapper(domain.GroupMember, schema.group_member,
         "member_titles": relation(domain.MemberTitle)
     },
     # the fallback sort_on ordering for member items
-    order_by=schema.user, #!+ineffective?
+    order_by=schema.user, # !+ineffective? !+SORT_ON_USER
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMember.head = domain.GroupMember.user
