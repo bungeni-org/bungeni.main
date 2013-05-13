@@ -334,9 +334,10 @@ function block_times(){
             end_date = session.start_date;
             scheduler.config.limit_start = session.start_date;
         } else {
-            start_date = scheduler.date.add(prev_end_date, 1, "day");
+            start_date = scheduler.date.add(prev_end_date, 1, "minute");
             end_date = session.start_date;
         }
+        //prev_end_date = scheduler.date.date_part(session.end_date);
         prev_end_date = session.end_date;
         block_span(start_date, end_date);
         if (index == last_index){

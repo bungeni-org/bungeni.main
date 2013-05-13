@@ -922,6 +922,14 @@ class DhtmlxCalendarSittings(BrowserView):
     def get_event_type(self, event):
         return event.__class__.__name__.lower()
     
+    def get_end_date(self, event):
+        """Get formatted end time of event.
+        For sessions, we set the end time to last hour of last day.
+        """
+        if model_interfaces.ISession.providedBy(event):
+            return event.end_date.strftime('%Y-%m-%d 24:00')
+        return event.end_date.strftime(DT_FORMAT)
+    
     def get_event_id(self, event):
         """This ensures no collission between sessions and sittings
         """

@@ -1471,7 +1471,7 @@ class SittingDescriptor(ModelDescriptor):
     fields = [
         F(name="short_name",
             label="Name of activity",
-            required=True,
+            required=False,
             localizable=[
                 show("view edit add listing"),
             ],
