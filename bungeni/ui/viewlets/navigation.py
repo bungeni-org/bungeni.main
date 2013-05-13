@@ -364,14 +364,12 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         elif IAlchemistContent.providedBy(context):
             _url = url.absoluteURL(context, self.request)
             selected = len(chain) == 0
-            
             if chain:
                 nodes = self.expand(chain)
             else:
                 containers = utils.get_managed_containers(context)
                 nodes = []
                 self.expand_containers(nodes, containers, _url, chain, None)
-            
             items.append({
                     "id": self.get_nav_entry_id(_url),
                     "label": IDCDescriptiveProperties(context).title,
@@ -474,7 +472,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         items.sort(key=lambda item:(item['order'], item['label']))
     
     def get_nav_entry_id(self, _url):
-        assert _url.startswith(self.top_section_url)
+        assert _url.startswith(self.top_section_url), (_url, "DOES NOT STARTWITH", self.top_section_url)
         depth = len(_url[len(self.top_section_url):].split("/"))
         _id = _url.split("/").pop()
         return "%s_%s_%d" % (self.id_prefix, _id, depth)

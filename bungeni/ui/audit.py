@@ -184,6 +184,11 @@ def _link_event(change):
 
 # Audit description format handlers !+bungeni_custom
 #
+# Dynamically derived at runtime, based on the change action and the item type.
+# An explanatory note/remark/comment/observation/recommendation/etc about the 
+# change, as part of the audit listing of a document; visible to all who have 
+# access to this change record.
+#
 # action: "add", "modify", "workflow", "remove", "version"
 # change_type: "head", "signatory", "attachment", "event"
 # 
