@@ -5,6 +5,14 @@
     i18n_domain="bungeni">
     
     
+    
+    
+    <!-- !+INLINE all regs here should be inline, and get rid of this file altogether inline  -->
+    
+    
+    
+    
+    
     <!-- Group Memberships -->
     <browser:page name="add"
         for="bungeni.models.interfaces.IGroupMemberContainer"
@@ -31,11 +39,6 @@
         permission="bungeni.session.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <!--browser:page name="index" for="bungeni.models.interfaces.IReport"
-        class=".viewlets.SittingReportDisplay"
-        permission="bungeni.report.View"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    /--> 
     <browser:page name="edit"
         for="bungeni.models.interfaces.ISession"
         class=".common.EditForm"

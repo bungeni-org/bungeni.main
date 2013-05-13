@@ -229,8 +229,14 @@ class PoliticalGroupsViewlet(SubformViewlet):
 class OfficeMembersViewlet(SubformViewlet):
     sub_attr_name = "officemembers"
 
+
+@register.viewlet(interfaces.IPoliticalGroup,
+    manager=ISubFormViewletManager,
+    name="bungeni.viewlet.political-group-members",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class PoliticalGroupMembersViewlet(SubformViewlet):
-    sub_attr_name = "group_members"
+    sub_attr_name = "political_group_members"
+    weight = 10
 
 class SittingsViewlet(SubformViewlet):
     sub_attr_name = "sittings"

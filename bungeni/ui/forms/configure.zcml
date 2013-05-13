@@ -5,6 +5,13 @@
     i18n_domain="bungeni">
     
     
+    
+    
+    <!-- !+INLINE all regs here should be inline, and get rid of this file altogether inline  -->
+    
+    
+    
+    
     <!-- access control:
     
     the basic component registration utilities do not support also specifiying
@@ -274,14 +281,6 @@ to e.g. "bungeni.{type}.Edit").
      weight="10"
      />
 
-    <!--browser:viewlet
-     name="bungeni.viewlet.sittingreportdisplay"
-     manager="bungeni.alchemist.interfaces.IContentViewManager"
-     class=".viewlets.SittingReportDisplay"
-     for="bungeni.models.interfaces.IReport"
-     permission="!+VIEW_PERMISSION"
-     weight="10"
-     /-->
     <browser:viewlet name="bungeni.viewlet.pi-signatories"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.SignatoriesViewlet"
@@ -409,26 +408,6 @@ to e.g. "bungeni.{type}.Edit").
      weight="20"
      />
 
-    <!-- !+MINISTRY_DOCS
-  <browser:viewlet
-     name="bungeni.viewlet.minstery-bills"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.BillsViewlet"
-     for="bungeni.models.interfaces.IMinistry"
-     permission="zope.Public"
-     weight="30"
-     />
-
-  <browser:viewlet
-     name="bungeni.viewlet.ministry-questions"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.QuestionsViewlet"
-     for="bungeni.models.interfaces.IMinistry"
-     permission="zope.Public"
-     weight="40"
-     />
-    -->
-    
     <browser:viewlet name="bungeni.viewlet.minister-titles"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.OfficesHeldViewlet"
@@ -446,41 +425,4 @@ to e.g. "bungeni.{type}.Edit").
      weight="20"
      />
     
-    <!-- !+PartyMemberViewlet(mr, oct-2010)
-    This viewlet is replaced with the other viewlet below it, with:
-        for="bungeni.models.interfaces.IPoliticalGroup"
-    (a matching view: /members/political-groups/obj-NNN/ ).
-    But:
-    - how to determine whether this view was indeed the ONLY one matching,
-    to know whether we can just thus simply replace it ???
-    - disabling this viewlet will also "obsolete" the URL
-        ${url}/partymembers/*
-    but, that URL still continues to work...
-    Should explicitly block it from anonymous or any given user?
-
-    <browser:viewlet name="bungeni.viewlet.political-group-members"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.PartyMemberViewlet"
-        for="bungeni.models.interfaces.IPoliticalGroup"
-        permission="!+VIEW_PERMISSION"
-        weight="10"
-    />
-    -->
-    <browser:viewlet name="bungeni.viewlet.political-group-members"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.PoliticalGroupMembersViewlet"
-        for="bungeni.models.interfaces.IPoliticalGroup"
-        permission="zope.Public"
-        weight="10"
-    />
-
-  <!--browser:page
-     name="event-rss.xml"
-     for="bungeni.models.interfaces.IBill"
-     class=".forms.BungeniRSSEventView"
-     permission="!+VIEW_PERMISSION"
-     /-->
-
-  <!-- Partymembership -->
-
 </configure>

@@ -548,49 +548,6 @@
         />
     </class>
     
-    <class class=".domain.PoliticalGroup">
-        <require permission="bungeni.political_group.View"
-            attributes="
-                addresses
-                
-                group_members
-                contained_groups
-                group_addresses
-                
-                group_id
-                short_name
-                full_name
-                acronym
-                principal_name
-                description
-                status
-                status_date
-                start_date
-                end_date
-                type
-                sub_type
-                parent_group_id
-                language
-                
-                logo_data
-                logo_name
-                logo_mimetype
-            "
-        />
-        <require permission="bungeni.political_group.Edit"
-            set_attributes="
-                short_name
-                full_name
-                acronym
-                principal_name
-                sub_type
-                description
-                start_date
-                end_date
-                logo_data
-            "
-        />
-    </class>
     <class class=".domain.GroupDocumentAssignment">
         <require permission="bungeni.group_assignment.View"
             attributes="
