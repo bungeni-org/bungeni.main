@@ -12,7 +12,6 @@ import os
 import time
 from sqlalchemy import orm, Date, cast
 from sqlalchemy.sql import expression
-from lxml import etree
 from collections import namedtuple
 
 from zope import interface
@@ -29,6 +28,7 @@ from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
 from bungeni.models import utils, domain
 from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
+from bungeni.models.interfaces import IDoc
 from bungeni.capi import capi
 from bungeni.core.interfaces import (
     IWorkspaceTabsUtility,
@@ -89,7 +89,6 @@ class WorkspaceBaseContainer(AlchemistContainer):
         domain_status = {}
         for role in roles:
             domain_classes = self.workspace_config.get_role_domains(role, tab)
-            
             if domain_classes:
                 for domain_class in domain_classes:
                     status = self.workspace_config.get_status(
@@ -120,7 +119,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
                                 kw["filter_status"])
                     else:
                         domain_status[domain_class] = list(set(
-                                domain_status[domain_class] + statuses))
+                            domain_status[domain_class] + statuses))
         else:
             domain_status = self.domain_status(roles, self.__name__)
             if kw.get("filter_status", None):
@@ -148,13 +147,12 @@ class WorkspaceBaseContainer(AlchemistContainer):
         if kw.get("filter_title", None):
             column = self.title_column(domain_class)
             return query.filter(expression.func.lower(column).like(
-                    "%%%s%%" % kw["filter_title"].lower()))
+                "%%%s%%" % kw["filter_title"].lower()))
         return query
 
     def order_query(self, query, domain_class, kw, reverse):
         if (kw.get("sort_on", None) and
-                hasattr(domain_class, str(kw.get("sort_on")))
-            ):
+                hasattr(domain_class, str(kw.get("sort_on")))):
             if reverse:
                 return query.order_by(expression.desc(
                     getattr(domain_class, str(kw.get("sort_on")))))
@@ -555,16 +553,17 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
         results = []
         domain_status = self.item_status_filter(kw)
         for domain_class, status in domain_status.iteritems():
-            query = session.query(domain_class
-                ).filter(domain_class.status.in_(status)
-                ).enable_eagerloads(False
-                ).join(domain.UserSubscription
-                ).filter(domain.UserSubscription.user_id == user.user_id)
-            query = self.filter_title(query, domain_class, kw)
-            #filter on status_date
-            query = self.filter_status_date(query, domain_class, kw)
-            query = self.order_query(query, domain_class, kw, reverse)
-            results.extend(query.all())
+            if IDoc.implementedBy(domain_class):
+                query = session.query(domain_class
+                    ).filter(domain_class.status.in_(status)
+                    ).enable_eagerloads(False
+                    ).join(domain.UserSubscription
+                    ).filter(domain.UserSubscription.user_id == user.user_id)
+                query = self.filter_title(query, domain_class, kw)
+                #filter on status_date
+                query = self.filter_status_date(query, domain_class, kw)
+                query = self.order_query(query, domain_class, kw, reverse)
+                results.extend(query.all())
         count = len(results)
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
