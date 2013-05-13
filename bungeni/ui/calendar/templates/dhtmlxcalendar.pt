@@ -152,7 +152,7 @@
                 init();
                 setup_editor();
                 scheduler.config.details_on_dblclick = true;
-                scheduler.config.icons_select=["icon_details","icon_delete"]
+                scheduler.config.icons_select=["icon_details"]
                 scheduler.config.readonly = false;
                 if(cal_globals.limit_start){
                     scheduler.config.limit_start = new Date(cal_globals.limit_start);
@@ -170,7 +170,7 @@
                 scheduler.attachEvent("onXLS", reset_sessions);
                 scheduler.attachEvent("onXLE", block_times);
                 scheduler.attachEvent("onBeforeLightbox", handle_lightbox);
-                scheduler.attachEvent("onBeforeDrag", handle_lightbox);
+                scheduler.attachEvent("onBeforeDrag", handle_drag);
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
                 dp.styles.invalid = "border:2px solid red;color:red;"
                 dp.init(scheduler);

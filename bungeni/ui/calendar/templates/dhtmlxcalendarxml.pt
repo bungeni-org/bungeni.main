@@ -9,6 +9,7 @@
 <event_length><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/sitting_length|string:"/><span tal:replace="structure python:']]&gt;'"/></event_length>
 <short_name><span tal:replace="s/short_name"/></short_name>
 <event_type><span tal:replace="event_type"/></event_type>
+<readonly tal:content="python:view.is_readonly(s)"/>
 <activity_type><span tal:replace="s/activity_type|nothing"/></activity_type>
 <meeting_type><span tal:replace="s/meeting_type|nothing"/></meeting_type>
 <convocation_type><span tal:replace="s/convocation_type|nothing"/></convocation_type>

@@ -935,6 +935,15 @@ class DhtmlxCalendarSittings(BrowserView):
         """
         return create_id(event)
     
+    def is_readonly(self, event):
+        """Return true if event is readonly
+        """
+        if model_interfaces.ISession.providedBy(event):
+            return 'true'
+        else:
+            return (checkPermission("bungeni.sitting.Edit", event) and '' 
+                or 'true')
+    
     @property
     def event_colour(self):
         if not hasattr(self, "event_color"):

@@ -72,7 +72,8 @@
         dhtmlxscheduler-year-view dhtmlxscheduler-week-agenda-view 
         dhtmlxscheduler-expand bungeni-calendar-globals
         dhtmlxscheduler-limit dhtmlxscheduler-timeline dhtmlxscheduler-tooltip 
-        dhtmlxscheduler-minical dhtmlxscheduler-collision">
+        dhtmlxscheduler-minical dhtmlxscheduler-collision
+        dhtmlxscheduler-readonly">
     <directory source="calendar"
         include="calendar-extensions.js
                  calendar-multisource.js"

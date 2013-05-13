@@ -158,17 +158,24 @@ function collission_handler(ev, evs){
 
 /**
  * @function handle_lightbox
- * @description handle show lightbox event - not displayed for sessions 
+ * @description handle show lighbox event - clear invalid input markers
  */
 function handle_lightbox(event_id){
+    $("tr", $("div.dhx_cal_light")).removeClass("scheduling_input_error");
+    return true;
+}
+
+/**
+ * @function handle_drag
+ * @description handle drag event (no effect when event is readonly)
+ */
+function handle_drag(event_id){
     if (event_id != null){
-        //only block for existing events (with ids)
         event = scheduler.getEvent(event_id);
-        if (event.event_type=="session"){
+        if(event.readonly){
             return false;
         }
     }
-    $("tr", $("div.dhx_cal_light")).removeClass("scheduling_input_error");
     return true;
 }
 
