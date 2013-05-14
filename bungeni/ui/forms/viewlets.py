@@ -200,10 +200,10 @@ class CommitteesViewlet(SubformViewlet):
     weight = 10
 
 class CommitteeStaffViewlet(SubformViewlet):
-    sub_attr_name = "committeestaff"
+    sub_attr_name = "committee_staff"
 
 class CommitteeMembersViewlet(SubformViewlet):
-    sub_attr_name = "committeemembers"
+    sub_attr_name = "committee_members"
 
 
 @register.viewlet(interfaces.IGroup, 
@@ -227,7 +227,7 @@ class PoliticalGroupsViewlet(SubformViewlet):
     weight = 30
 
 class OfficeMembersViewlet(SubformViewlet):
-    sub_attr_name = "officemembers"
+    sub_attr_name = "office_members"
 
 
 @register.viewlet(interfaces.IPoliticalGroup,

@@ -136,6 +136,7 @@
         layer=".interfaces.IBungeniSkin"
         submenu="additems"
     />
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalGroupMember"
         action="edit"
@@ -151,30 +152,6 @@
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.political_group_member.Delete"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IPoliticalGroup"
-        title="Add political group member..."
-        action="./group_members/add"
-        permission="bungeni.political_group_member.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="61"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ICommittee"
-        title="Add committee member..."
-        action="./committeemembers/add"
-        permission="bungeni.committee_member.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="62"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ICommittee"
-        title="Add staff..."
-        action="./committeestaff/add"
-        permission="bungeni.committee_staff.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="63"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ICommitteeStaff"
@@ -229,14 +206,6 @@
         title="Add ministry..."
         action="./ministries/add"
         permission="bungeni.ministry.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="70"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IMinistry"
-        title="Add minister..."
-        action="./ministers/add"
-        permission="bungeni.minister.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="70"
     />
@@ -382,14 +351,6 @@
         action="./add"
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IOffice"
-        title="Add office member..."
-        action="./officemembers/add"
-        permission="bungeni.office_member.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="63"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IOffice"

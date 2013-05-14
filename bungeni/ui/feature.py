@@ -11,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.ui.feature")
 
 from zope.configuration import xmlconfig
 from bungeni.models import domain
-from bungeni.models.interfaces import IGroup
+from bungeni.models.interfaces import IGroup, IGroupMember
 from bungeni.capi import capi
 from bungeni.utils import naming, misc
 
@@ -108,7 +108,10 @@ def setup_customization_ui():
         # is not the edit view tht was actually being used!
         #register_form_view(type_key, "Edit", "edit", model_interface_qualname,
         #    "bungeni.ui.forms.common.EditForm")
+        
+        # edit 
         if issubclass(ti.interface, IGroup):
+            # groups
             register_form_view(type_key, "Edit", "edit",
                 model_interface_qualname,
                 "bungeni.ui.forms.common.GroupEditForm")
@@ -116,6 +119,7 @@ def setup_customization_ui():
             register_form_view(type_key, "Edit", "edit",
             model_interface_qualname,
             "bungeni.ui.forms.common.EditForm")
+        
         # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")
@@ -130,6 +134,20 @@ def setup_customization_ui():
             "./add",
             menu="plone_contentmenu",
             layer="bungeni.ui.interfaces.IAdminSectionLayer")
+        
+        
+        # member
+        if issubclass(ti.interface, IGroupMember):
+            group_ti = capi.get_type_info(ti.within_type_key)
+            group_model_interface_name = naming.qualname(group_ti.interface)
+            # add member !+ was: layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+            register_menu_item(type_key, "Add", "Add %s..." % (type_title), 
+                group_model_interface_name,
+                "./%s/add" % (naming.plural(type_key)),
+                menu="additems", 
+                order=61,
+                layer="bungeni.ui.interfaces.IAdminSectionLayer")
+        
         
         # workspace
         if ti.workflow.has_feature("workspace"):

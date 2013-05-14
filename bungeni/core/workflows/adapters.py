@@ -130,9 +130,10 @@ def register_custom_types():
         type_key, ti = type_info.register_new_custom_type(*parse_elem(etype))
     # group/member types
     for egroup in enabled_elems(etypes.iterchildren("group")):
-        type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
+        group_type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
         for emember in enabled_elems(egroup.iterchildren("member")):
             type_key, ti = type_info.register_new_custom_type(*parse_elem(emember))
+            ti.within_type_key = group_type_key
 
 
 def load_workflow(type_key, ti):

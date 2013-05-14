@@ -271,7 +271,7 @@ class Group(Principal):
 
 class GroupMember(HeadParentedMixin, Entity):
     """A user's membership in a group-abstract basis for 
-    ministers, committeemembers, etc.
+    ministers, committee_members, etc.
     """
     available_dynamic_features = []
     interface.implements(

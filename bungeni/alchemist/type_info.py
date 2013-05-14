@@ -178,6 +178,9 @@ class TI(object):
                 the i18n msgid display label for the type (descriptor)
             container_label
                 the i18n msgid display label for the container of the type (descriptor)
+            within_type_key
+                the type_key of the containing/owning type 
+                e.g. a member exists exclusively within a group type
     """
     def __init__(self, type_key, workflow_key, iface, domain_model, archetype):
         self.type_key = type_key
@@ -193,6 +196,7 @@ class TI(object):
         self.container_interface = None
         self.label = None
         self.container_label = None
+        self.within_type_key = None
         self.custom = False # type loaded from custom configuration 
         # NOTE: only needed temporarily during loading (until descriptor_model 
         # is set) -- but from then on ti.custom must not be inconsistent with 

@@ -57,13 +57,15 @@ vp_integer = sa.Table("vp_integer", metadata,
 
 # audit 
 
-# generic change information
+# generic change information -- visibility of a change record depends
+# the permissions of the parent object "at the time" of the change
 change = sa.Table("change", metadata,
     sa.Column("audit_id", sa.Integer, 
         sa.ForeignKey("audit.audit_id"),
         primary_key=True),
     sa.Column("user_id", sa.Integer, sa.ForeignKey("user.user_id"), 
         nullable=False),
+    # the type of change, also the change poloymorphic identity
     sa.Column("action", sa.Unicode(16), nullable=False),
     # accumulative count, per (change.audit.audit_head_id, change.action) 
     # e.g default: 1 + max(seq(head, "version")), see ui.audit _get_seq()
@@ -86,21 +88,6 @@ change = sa.Table("change", metadata,
         server_default=sa.sql.text("now()"),
         nullable=False
     ),
-    
-    #sa.Column("description", sa.UnicodeText), #!+dynamic at runtime
-    # possible explanatory note/remark/comment/observation/recommendation/etc 
-    # about the change, manually added by the user; this is part of the 
-    # audit history of a document and visible to all who have access to this
-    # change record.
-    # Workflow State at time of change - visibility of a change record 
-    # depends on permissions of parent object in this specific state.
-    
-    #sa.Column("status", sa.Unicode(48)), # !+ use audit.status?
-    # !+presumably already on head for when audit_head is itself a sub-document 
-    # e.g. events, as knowing the status of also the "root" head document may 
-    # be necessary to determine allowed access for *this* change record
-    
-    #sa.Column("root_status", sa.Unicode(48)),
 )
 # tree to relate change actions across parent and child objects 
 # e.g. to snapshot a version tree of an object and its sub-objects. 
