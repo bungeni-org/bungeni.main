@@ -446,10 +446,13 @@ class IFeatureSignatory(IFeature):
     """Marks support for "signatory" feature.
     """
 class IFeatureSchedule(IFeature):
-    """Marks support for "schedule" feature.
+    """A document can be scheduled: support for the "schedule" feature.
+    """
+class IFeatureSitting(IFeature):
+    """A group can hold sittings: support for the "sitting" feature.
     """
 class IFeatureAddress(IFeature):
-    """Marks support for "address" feature.
+    """Can have addresses: support for the "address" feature.
     """
 class IFeatureWorkspace(IFeature):
     """Marks support for "workspace" feature.

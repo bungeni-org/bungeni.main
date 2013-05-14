@@ -224,6 +224,12 @@ def feature_schedule(kls, feature):
 
 # /schedule
 
+def feature_sitting(kls, feature):
+    """Decorator for group types to support the "sitting" feature.
+    For Group types, means support for holding sittings.
+    """
+    interface.classImplements(kls, interfaces.IFeatureSitting)
+
 
 def feature_address(kls, feature):
     """Decorator for domain types to support "address" feature.

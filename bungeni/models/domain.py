@@ -233,7 +233,7 @@ class Group(Principal):
     """An abstract collection of users.
     """
     principal_type = "group"
-    available_dynamic_features = ["address"]
+    available_dynamic_features = ["sitting", "address"]
     interface.implements(
         interfaces.IGroup,
         interfaces.ITranslatable,
