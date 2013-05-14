@@ -80,23 +80,12 @@ See Bungeni Custom documentation (and workflows/README.txt) for further details.
 
 
 def zcml_check_regenerate():
-    """Called after all XML workflows have been loaded (see adapers.py).
+    """For debug purposes; called after loading of all XML workflows (adapers.py).
     """
-    #!+permissions.zcml(mr, aug-2011) bypass writing to disk?
-    filepath = capi.get_path_for(os.path.join("workflows/.auto/", ZCML_FILENAME))
-    # read current file
-    try:
-        persisted = open(filepath, "r").read().decode("utf-8")
-    except IOError:
-        persisted = u""
-    # regenerate, compare, and re-write if needed
-    regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
-    if persisted != regenerated:
-        if not os.path.exists(os.path.dirname(filepath)):
-            os.makedirs(os.path.dirname(filepath))
-        log.warn("CHANGES to file:\n%s", 
-            misc.unified_diff(persisted, regenerated, filepath, "NEW"))
-        open(filepath, "w").write(regenerated.encode("utf-8"))
+    misc.check_overwrite_file(
+        capi.get_path_for(os.path.join("workflows/.auto/", ZCML_FILENAME)),
+        ZCML_BOILERPLATE % ("\n".join(ZCML_LINES)))
+
 
 def is_zcml_permissionable(trans_elem):
     # Automatically triggered transitions may not be permissioned.

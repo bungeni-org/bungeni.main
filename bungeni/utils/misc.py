@@ -93,17 +93,17 @@ def check_overwrite_file(file_path, content):
     creating it if does not exist. Log a "diff" to preceding content.
     """
     try:
+        log.debug(" *** OVERWRITING file: %s", file_path)
         persisted = read_file(file_path)
-        exists = True
     except IOError:
-        persisted = '<NO-SUCH-FILE path="%s" />\n' % (file_path)
-        exists = False
+        log.debug(" *** CREATING file: %s", file_path)
+        if not os.path.exists(os.path.dirname(file_path)):
+            os.makedirs(os.path.dirname(file_path))
+        persisted = """<NO-SUCH-FILE path="%s" />\n""" % (file_path)
+    # compare with saved file, and re-write if needed
     if persisted != content:
-        if exists:
-            print "*** OVERWRITING file: %s" % (file_path)
-        else:
-            print "*** CREATING file: %s" % (file_path)
-        print unified_diff(persisted, content, file_path, "NEW")            
+        log.debug("CHANGES to file:\n%s", 
+            unified_diff(persisted, content, file_path, "NEW"))
         open(file_path, "w").write(content.encode("utf-8"))
 
 

@@ -13,20 +13,21 @@ from zope.configuration import xmlconfig
 from bungeni.models import domain
 from bungeni.models.interfaces import IGroup
 from bungeni.capi import capi
-from bungeni.utils import naming
+from bungeni.utils import naming, misc
 
 
 ZCML_SLUG = """
-    <configure xmlns="http://namespaces.zope.org/zope"
-        xmlns:browser="http://namespaces.zope.org/browser"
-        xmlns:i18n="http://namespaces.zope.org/i18n"
-        i18n_domain="bungeni"
-        >
-        <include package="zope.browsermenu" file="meta.zcml" />
-        <include package="zope.browserpage" file="meta.zcml" />
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni">
+    
+    <include package="zope.browsermenu" file="meta.zcml" />
+    <include package="zope.browserpage" file="meta.zcml" />
 {ui_zcml_decls}
-    </configure>
-    """
+
+</configure>
+"""
 
 UI_ZC_DECLS = []
 
@@ -228,5 +229,8 @@ def apply_customization_ui():
     zcml = ZCML_SLUG.format(ui_zcml_decls="".join([ zd for zd in UI_ZC_DECLS ]))
     log.debug("Executing UI feature configuration:\n%s" % (zcml))
     xmlconfig.string(zcml)
-    
+    # log zcml directives to a dedicated file, for easier debugging
+    misc.check_overwrite_file(capi.get_path_for("workflows/.auto/ui.zcml"), 
+        '<?xml version="1.0"?>\n<!-- !! AUTO-GENERATED !! DO NOT MODIFY !! -->' + zcml)
+
 
