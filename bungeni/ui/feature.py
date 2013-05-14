@@ -135,16 +135,34 @@ def setup_customization_ui():
         
         # member
         if issubclass(ti.domain_model, domain.GroupMember):
+            # !+ all were: layer=".interfaces.IWorkspaceOrAdminSectionLayer"
             group_ti = capi.get_type_info(ti.within_type_key)
-            group_model_interface_name = naming.qualname(group_ti.interface)
-            # add member !+ was: layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+            group_model_interface_qualname = naming.qualname(group_ti.interface)
+            # add
             register_menu_item(type_key, "Add", "Add %s..." % (type_title), 
-                group_model_interface_name,
+                group_model_interface_qualname,
                 "./%s/add" % (naming.plural(type_key)),
                 menu="additems", 
                 order=61,
                 layer="bungeni.ui.interfaces.IAdminSectionLayer")
         
+        # group, member
+        if issubclass(ti.domain_model, (domain.Group, domain.GroupMember)):
+            # !+ all were: layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+            # edit
+            register_menu_item(type_key, "Edit", "Edit %s..." % (type_title), 
+                model_interface_qualname,
+                "edit",
+                menu="context_actions", 
+                order=10,
+                layer="bungeni.ui.interfaces.IAdminSectionLayer")
+            # delete
+            register_menu_item(type_key, "Delete", "Delete %s..." % (type_title), 
+                model_interface_qualname,
+                "delete",
+                menu="context_actions", 
+                order=99,
+                layer="bungeni.ui.interfaces.IAdminSectionLayer")
         
         # workspace
         if ti.workflow.has_feature("workspace"):

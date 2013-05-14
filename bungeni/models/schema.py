@@ -661,7 +661,7 @@ item_member_vote = sa.Table("item_member_vote", metadata,
 
 item_schedule = sa.Table("item_schedule", metadata,
     sa.Column("schedule_id", sa.Integer, primary_key=True),
-    # !+ use object_id/object_type as elsewhere
+    # !+object_id/object_type - use object_id/object_type as elsewhere
     sa.Column("item_id", sa.Integer, nullable=False),
     sa.Column("item_type", sa.String(30), nullable=False),
     sa.Column("sitting_id", sa.Integer,

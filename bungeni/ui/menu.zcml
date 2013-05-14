@@ -137,38 +137,6 @@
         submenu="additems"
     />
     
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalGroupMember"
-        action="edit"
-        title="Edit political group member"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.political_group_member.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalGroupMember"
-        action="delete"
-        title="Delete political group member"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.political_group_member.Delete"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ICommitteeStaff"
-        action="edit"
-        title="Edit committee staff"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.committee.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ICommitteeStaff"
-        action="delete"
-        title="Delete committee staff"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.committee_staff.Delete"
-    />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ICommittee"
         title="Add agenda item..."
@@ -176,7 +144,7 @@
         permission="bungeni.agenda_item.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="41"
-    />
+    /><!-- !+CUSTOM + need group "sitting" feature -->
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ICommittee"
         title="Add sitting..."
@@ -184,7 +152,8 @@
         permission="bungeni.sitting.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="40"
-    />
+    /><!-- !+CUSTOM + need group "sitting" feature -->
+    
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ISession"
         title="Add sitting..."
@@ -208,22 +177,6 @@
         permission="bungeni.ministry.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="70"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMinister"
-        action="edit"
-        title="Edit minister"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.minister.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMinister"
-        action="delete"
-        title="Delete minister"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.minister.Delete"
     />
     
     <browser:menuItem menu="additems"
@@ -361,22 +314,6 @@
         order="80"
     />
     
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IOfficeMember"
-        action="edit"
-        title="Edit office member"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.office_member.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IOfficeMember"
-        action="delete"
-        title="Delete office member"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.office_member.Delete"
-    />
     <!-- Navigation -->
     
     <browser:menuItem menu="admin_navigation"
@@ -433,45 +370,13 @@
         permission="bungeni.session.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMember"
-        action="edit"
-        title="Edit MP"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.member.Edit"
-    /><!-- !+CUSTOM -->
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMember"
-        action="delete"
-        title="Delete MP"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.member.Delete"
-    /><!-- !+CUSTOM -->
-      
+    
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IUserContainer"
         title="Add user..."
         action="./add"
         permission="bungeni.user.Add"
         layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ICommitteeMember"
-        action="edit"
-        title="Edit committee member"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.committee_member.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ICommitteeMember"
-        action="delete"
-        title="Delete committee member"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.member.Delete"
     />
     <!-- !+ZCML(mr, nov-2010) Individual menu items are declared specific per 
             view of an IGroup subtype
@@ -957,84 +862,12 @@
     </browser:menuItems>
 
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IChamber"
-        action="edit"
-        title="Edit parliament"
-        order="10"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="bungeni.chamber.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IOffice"
-        action="edit"
-        title="Edit office"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.office.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ICommittee"
-        action="edit"
-        title="Edit committee"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.committee.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalGroup"
-        action="edit"
-        title="Edit political group"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.political_group.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IChamber"
-        action="delete"
-        title="Delete parliament"
-        order="99"
-        permission="bungeni.chamber.Delete"
-        layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IOffice"
-        action="delete"
-        title="Delete office"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.office.Delete"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ICommittee"
-        action="delete"
-        title="Delete committee"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.committee.Delete"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalGroup"
-        action="delete"
-        title="Delete political group"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.political_group.Delete"
-    />
-    <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGovernment"
         action="edit"
         title="Edit government"
         order="10"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.government.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMinistry"
-        action="edit"
-        title="Edit ministry"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.ministry.Edit"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGovernment"
@@ -1044,14 +877,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.government.Delete"
     />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMinistry"
-        action="delete"
-        title="Delete ministry"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.ministry.Delete"
-    />
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupAddress"
         action="edit"

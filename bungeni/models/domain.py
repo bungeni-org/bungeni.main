@@ -1008,6 +1008,7 @@ class ItemSchedule(Entity):
             schedule_item.__parent__ = self
             return schedule_item
         def fset(self, schedule_item):
+            # !+object_id/object_type - use object_id/object_type as elsewhere
             self.item_id = get_mapped_object_id(schedule_item)
             self.item_type = schedule_item.type
         def fdel(self):
