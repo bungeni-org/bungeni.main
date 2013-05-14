@@ -621,7 +621,7 @@ mapper(domain.Signatory, schema.signatory,
         "member": relation(domain.Member,
             primaryjoin=rdb.and_(schema.signatory.c.user_id == 
                 schema.group_member.c.user_id),
-            secondary=schema.group_member,
+            foreign_keys=[schema.group_member.c.user_id],
             uselist=False,
         ),
         "audits": relation(domain.SignatoryAudit,

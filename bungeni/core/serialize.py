@@ -513,6 +513,10 @@ def batch_serialize(type_key="*"):
 def get_serializable_parent(obj):
     """Get serializable parent object
     """
+    if hasattr(obj, 'head') and interfaces.IDoc.providedBy(obj.head):
+        serializable_head = get_serializable_parent(obj.head)
+        if serializable_head:
+            queue_object_serialization(serializable_head)
     serializable_obj = None
     if not interfaces.ISerializable.providedBy(obj):
         parent = obj
