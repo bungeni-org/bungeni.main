@@ -11,7 +11,6 @@ log = __import__("logging").getLogger("bungeni.ui.feature")
 
 from zope.configuration import xmlconfig
 from bungeni.models import domain
-from bungeni.models.interfaces import IGroup, IGroupMember
 from bungeni.capi import capi
 from bungeni.utils import naming, misc
 
@@ -101,28 +100,27 @@ def setup_customization_ui():
         # view
         register_form_view(type_key, "View", "index", model_interface_qualname,
             "bungeni.ui.forms.common.DisplayForm")
-        
-        register_api_view(type_key, model_interface_qualname)
-        # edit !+DiffEditForm prior to r10032, doc-archetyped types were being
+        # edit 
+        # !+DiffEditForm prior to r10032, doc-archetyped types were being
         # *declared* to use bungeni.ui.forms.forms.DiffEditForm, but this
         # is not the edit view tht was actually being used!
         #register_form_view(type_key, "Edit", "edit", model_interface_qualname,
         #    "bungeni.ui.forms.common.EditForm")
-        
-        # edit 
-        if issubclass(ti.interface, IGroup):
+        if issubclass(ti.domain_model, domain.Group):
             # groups
             register_form_view(type_key, "Edit", "edit",
                 model_interface_qualname,
                 "bungeni.ui.forms.common.GroupEditForm")
         else:
             register_form_view(type_key, "Edit", "edit",
-            model_interface_qualname,
-            "bungeni.ui.forms.common.EditForm")
-        
+                model_interface_qualname,
+                "bungeni.ui.forms.common.EditForm")
         # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")
+        
+        # api
+        register_api_view(type_key, model_interface_qualname)
         
         # plone content menu (for custom types)
         # !+ doc-types were previously being layered on IWorkspaceOrAdminSectionLayer
@@ -135,9 +133,8 @@ def setup_customization_ui():
             menu="plone_contentmenu",
             layer="bungeni.ui.interfaces.IAdminSectionLayer")
         
-        
         # member
-        if issubclass(ti.interface, IGroupMember):
+        if issubclass(ti.domain_model, domain.GroupMember):
             group_ti = capi.get_type_info(ti.within_type_key)
             group_model_interface_name = naming.qualname(group_ti.interface)
             # add member !+ was: layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -157,8 +154,8 @@ def setup_customization_ui():
             # !+workspace_feature_add(mr, oct-2012) note that an enabled
             # workspace feature also implies "add" functionality for the type
             first_tab = capi.workspace_tabs[0]
-            action = "../../{first_tab}/add_{k}".format(first_tab=first_tab,
-                k=type_key)
+            action = "../../{first_tab}/add_{k}".format(
+                first_tab=first_tab, k=type_key)
             register_menu_item(type_key, "Add", type_title, "*", action,
                 menu="workspace_add_parliamentary_content", order=7)
             

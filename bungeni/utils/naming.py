@@ -63,15 +63,22 @@ def singular(pname):
 
 def plural(sname):
     """Get the english plural of (singular) name.
+    See: http://en.wikipedia.org/wiki/English_plural
     """
-    return plural.custom.get(sname, None) or "%ss" % (sname)
-plural.custom = {
-    "Address": "Addresses",
-    "Ministry": "Ministries",
-    "Signatory": "Signatories",
-    "Country": "Countries",
-    "user_address": "user_addresses",
-    "group_address": "group_addresses",
+    for ending in plural.endings:
+        if sname.endswith(ending):
+            return sname[:-len(ending)] + plural.endings[ending]
+    # ending in "y" but not preceeded by a vowel
+    if sname.endswith("y") and sname[-2] not in "aeiou":
+        # country -> countries (but day -> days)
+        return sname[:-1] + "ies"
+    # fallback on common standard form
+    return "%ss" % (sname)
+plural.endings = {
+    "ss": "sses", # address -> addresses
+    "staff": "staff",
+    #"man": "men",
+    #"foot": "feet",
 }
 
 
