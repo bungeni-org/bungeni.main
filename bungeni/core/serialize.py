@@ -10,6 +10,7 @@ log = __import__("logging").getLogger("bungeni.core.serialize")
 
 import os
 import functools
+import inspect
 import math
 import string
 import random
@@ -719,23 +720,23 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
     
     # Get mapped attributes
     mapper = class_mapper(obj.__class__)
-    for property in mapper.iterate_properties:
-        if property.key.startswith("_vp"):
+    for mproperty in mapper.iterate_properties:
+        if mproperty.key.startswith("_vp"):
             #skip vertical props
             continue
-        if property.key in exclude:
+        if mproperty.key in exclude:
             continue
-        value = getattr(obj, property.key)
+        value = getattr(obj, mproperty.key)
         if value == parent:
             continue
         if value is None:
             continue
         
-        if isinstance(property, RelationshipProperty) and depth > 0:
+        if isinstance(mproperty, RelationshipProperty) and depth > 0:
             if isinstance(value, collections.Iterable):
-                result[property.key] = []
+                result[mproperty.key] = []
                 for item in value:
-                    result[property.key].append(obj2dict(item, 1, 
+                    result[mproperty.key].append(obj2dict(item, 1, 
                             parent=obj,
                             include=[],
                             exclude=exclude + INNER_EXCLUDES,
@@ -743,7 +744,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                             root_key=root_key
                     ))
             else:
-                result[property.key] = obj2dict(value, depth-1, 
+                result[mproperty.key] = obj2dict(value, depth-1, 
                     parent=obj,
                     include=[],
                     exclude=exclude + INNER_EXCLUDES,
@@ -751,10 +752,10 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                     root_key=root_key
                 )
         else:
-            if isinstance(property, RelationshipProperty):
+            if isinstance(mproperty, RelationshipProperty):
                 continue
-            elif isinstance(property, ColumnProperty):
-                columns = property.columns
+            elif isinstance(mproperty, ColumnProperty):
+                columns = mproperty.columns
                 if len(columns) == 1:
                     if is_column_binary(columns[0]):
                         fname = PersistFiles.store_file(obj, parent, 
@@ -763,13 +764,13 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                             result[columns[0].key] = dict(saved_file=fname)
                         continue
             if descriptor:
-                columns = property.columns
+                columns = mproperty.columns
                 is_foreign = False
                 if len(columns) == 1:
                     if len(columns[0].foreign_keys):
                         is_foreign = True
-                if (not is_foreign) and (property.key in descriptor.keys()):
-                    field = descriptor.get(property.key)
+                if (not is_foreign) and (mproperty.key in descriptor.keys()):
+                    field = descriptor.get(mproperty.key)
                     if (field and field.property and
                         (schema.interfaces.IChoice.providedBy(field.property)
                             or IVocabularyTextField.providedBy(field.property))
@@ -797,14 +798,14 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                                         term_values = []
                                         for val in values:
                                             term_values.append(dict(
-                                                name=property.key,
+                                                name=mproperty.key,
                                                 value=val,
                                                 displayAs=factory.vdex.getTermCaption(
                                                     factory.getTermById(val),
                                                     lang
                                                 )
                                             ))
-                                        result[property.key] = term_values
+                                        result[mproperty.key] = term_values
                                         continue
                                     term = vocabulary.getTerm(value)
                                     if lang:
@@ -830,7 +831,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                                     # try to use dc adapter lookup
                                     try:
                                         _prop = mapper.get_property_by_column(
-                                            property.columns[0])
+                                            mproperty.columns[0])
                                         _prop_value = getattr(obj, _prop.key)
                                         dc = IDCDescriptiveProperties(
                                             _prop_value, None)
@@ -855,13 +856,13 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                                         if not isinstance(value, unicode):
                                             display_name = unicode(value)
                                 if display_name is not None:
-                                    result[property.key] = dict(
-                                        name=property.key,
+                                    result[mproperty.key] = dict(
+                                        name=mproperty.key,
                                         value=value,
                                         displayAs=display_name
                                     )
                                     continue
-            result[property.key] = value
+            result[mproperty.key] = value
     
     extended_props = []
     for prop_name, prop_type in obj.__class__.extended_properties:
@@ -896,6 +897,15 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
         except KeyError:
             log.warn("Could not find table schema for %s", obj)
     
+    #any other properties defined on class
+    props = inspect.getmembers(type(obj), 
+        predicate=lambda mm:isinstance(mm, property))
+    extra_props = set([p for p, v in props]).difference(result.keys())
+    for prop in extra_props:
+        if prop.startswith("_"): continue
+        val = getattr(obj, prop)
+        if isinstance(val, (unicode,str, int)):
+            result[prop] = getattr(obj, prop)
     return result
 
 

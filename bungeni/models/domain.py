@@ -1045,6 +1045,12 @@ class ItemSchedule(Entity):
         return False
     
     @property
+    def real_item_type(self):
+        if self.get_item_domain() == AgendaTextRecord:
+            return self.item.record_type
+        return self.item_type
+    
+    @property
     def type_document(self):
         return not self.type_heading
     
