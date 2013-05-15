@@ -157,3 +157,5 @@ def text_snippet(text, length):
 def set_json_headers(request):
     """Set appropriate headers on JSON response"""
     request.response.setHeader("Content-type", "application/json")
+
+

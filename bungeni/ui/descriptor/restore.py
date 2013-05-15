@@ -7,13 +7,13 @@ utility module, intended to be executed as a standalone process.
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
+log = __import__("logging").getLogger("bungeni.ui.descriptor.restore")
 
 from bungeni.utils import naming, misc
 from bungeni.ui.descriptor import localization
 
 INDENT = " " * 4
-
+LOG_HANDLER = log.debug
 
 def serialize_roles(roles):
     """(roles:[qualified_role_id] -> space-separated-str of names
@@ -162,7 +162,7 @@ def reset_localization_system_descriptors():
     print
     print "Processing localization file: %s" % (localization.PATH_UI_FORMS_SYSTEM)
     regenerated = "\n".join(serialize_module(localization.DESCRIPTOR_MODULE))
-    misc.check_overwrite_file(localization.PATH_UI_FORMS_SYSTEM, regenerated)
+    misc.check_overwrite_file(localization.PATH_UI_FORMS_SYSTEM, regenerated, log_handler=LOG_HANDLER)
 
 
 def dump_i18n_message_ids():
@@ -186,10 +186,13 @@ def dump_i18n_message_ids():
         ""]
     msgids_py_source = "\n".join(msgids_py_source_preamble + [
             "_(%r)" % msgid for msgid in sorted(naming.MSGIDS) ])
-    misc.check_overwrite_file(msgids_py_source_file_path, msgids_py_source)
+    misc.check_overwrite_file(msgids_py_source_file_path, msgids_py_source, log_handler=LOG_HANDLER)
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
+    # when running standalone, overwrite global LOG_HANDLER with a print utility
+    def LOG_HANDLER(m, *args): 
+        print m % args
     reset_localization_system_descriptors()
     dump_i18n_message_ids()
 

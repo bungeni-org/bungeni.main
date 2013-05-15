@@ -766,8 +766,8 @@ class AttachmentDescriptor(ModelDescriptor):
     default_field_order = [
         #"attachment_id",
         #"head_id",
-        "type",
         "title",
+        "type",
         "data",
         "name",
         "mimetype",
@@ -1471,7 +1471,7 @@ class SittingDescriptor(ModelDescriptor):
     fields = [
         F(name="short_name",
             label="Name of activity",
-            required=False,
+            required=True,
             localizable=[
                 show("view edit add listing"),
             ],

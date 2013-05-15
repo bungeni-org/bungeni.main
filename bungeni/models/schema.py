@@ -630,6 +630,10 @@ resourcebookings = sa.Table("resourcebookings", metadata,
 )
 '''
 
+
+# !+VOTE(mr, may-2013) tables "item_vote" and "item_member_vote" are UNUSED 
+# and UNMAPPED, why are they here ?!
+
 # !+RENAME doc_vote
 item_vote = sa.Table("item_vote", metadata,
     sa.Column("vote_id", sa.Integer, primary_key=True),
@@ -658,6 +662,7 @@ item_member_vote = sa.Table("item_member_vote", metadata,
     ),
     sa.Column("vote", sa.Boolean,),
 )
+
 
 item_schedule = sa.Table("item_schedule", metadata,
     sa.Column("schedule_id", sa.Integer, primary_key=True),

@@ -88,21 +88,21 @@ def replace_keyed_item(seq, replacement_item, key="name"):
 def read_file(file_path):
     return open(file_path, "r").read().decode("utf-8")
 
-def check_overwrite_file(file_path, content):
+def check_overwrite_file(file_path, content, log_handler=log.debug):
     """Write content to file_path if necessary (that is if there are changes),
     creating it if does not exist. Log a "diff" to preceding content.
     """
     try:
-        log.debug(" *** OVERWRITING file: %s", file_path)
+        log_handler(" *** OVERWRITING file: %s", file_path)
         persisted = read_file(file_path)
     except IOError:
-        log.debug(" *** CREATING file: %s", file_path)
+        log_handler(" *** CREATING file: %s", file_path)
         if not os.path.exists(os.path.dirname(file_path)):
             os.makedirs(os.path.dirname(file_path))
         persisted = """<NO-SUCH-FILE path="%s" />\n""" % (file_path)
     # compare with saved file, and re-write if needed
     if persisted != content:
-        log.debug("CHANGES to file:\n%s", 
+        log_handler("CHANGES to file:\n%s", 
             unified_diff(persisted, content, file_path, "NEW"))
         open(file_path, "w").write(content.encode("utf-8"))
 

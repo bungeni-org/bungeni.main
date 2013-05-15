@@ -52,11 +52,16 @@ def split_camel(name):
 
 
 def singular(pname):
-    """Get the english singular of (plural) name.
+    """Get the english singular of (plural) name (inverse of plural)
     """
-    for sname in plural.custom:
-        if plural.custom[sname] == pname:
-            return sname
+    for ending_s in plural.endings:
+        ending_p = plural.endings[ending_s]
+        if pname.endswith(ending_p):
+            return pname[:-len(ending_p)] + ending_s
+    # ending in "ies" [reverse of: ending in "y" but not preceeded by a vowel]
+    if pname.endswith("ies"):
+        # countries -> country
+        return pname[:-3] + "y"
     if pname.endswith("s"):
         return pname[:-1]
     return pname
