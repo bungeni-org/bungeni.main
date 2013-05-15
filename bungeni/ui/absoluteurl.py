@@ -50,6 +50,8 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
     __call__ = __str__
 
 
+''' !+BUSINESS
+
 """ Business section
 """
 class BusinessAbsoluteURLView(CustomAbsoluteURL):
@@ -104,6 +106,7 @@ class AgendaItemBusinessAbsoluteURLView(BusinessAbsoluteURLView):
     """ Custom absolute url for agenda items in business section
     """
     subsection = "agendaitems"
+'''
 
     
 """ Members section
@@ -121,6 +124,7 @@ class PoliticalGroupMembersAbsoluteURLView(CustomAbsoluteURL):
     subsection = "political-groups"
 
 
+''' !+ARCHIVE
 
 """ Archives section
 """
@@ -229,9 +233,10 @@ class AgendaItemArchiveAbsoluteURLView(ArchiveSectionParliamentItem):
     """ Custom absolute url for agenda items in archive section
     """
     subsection = "agendaitems"
+'''
 
-    
-    
+
+
 """ Admin section
 """
 class ParliamentAdminAbsoluteURLView(AbsoluteURL):
@@ -335,7 +340,7 @@ class OfficeAdminAbsoluteURLView(AbsoluteURL):
 class AgendaItemAdminAbsoluteURLView(AdminSectionParliamentItem):
     """ Custom absolute url for agenda items in admin section
     """
-    subsection = "agendaitems"
+    subsection = "agenda_items"
     
 
 class UserAdminAbsoluteURLView(AbsoluteURL):

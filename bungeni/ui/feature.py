@@ -133,6 +133,26 @@ def setup_customization_ui():
             menu="plone_contentmenu",
             layer="bungeni.ui.interfaces.IAdminSectionLayer")
         
+        # group        
+        if issubclass(ti.domain_model, domain.Group):
+            if ti.workflow.has_feature("sitting"):
+                # !+CHAMBER_SITTING clarify/regularize for chamber (e.g. can
+                # already add an agenda item via workspace menus, etc).
+                # add sitting
+                register_menu_item("sitting", "Add", "Add %s..." % (model_title("sitting")),
+                    model_interface_qualname,
+                    "./sittings/add",
+                    menu="additems", 
+                    order=40,
+                    layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+                # add agenda_item !+CUSTOM?
+                register_menu_item("agenda_item", "Add", "Add %s..." % (model_title("agenda_item")),
+                    model_interface_qualname,
+                    "./agenda_items/add",
+                    menu="additems", 
+                    order=41,
+                    layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+        
         # member
         if issubclass(ti.domain_model, domain.GroupMember):
             # !+ all were: layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -260,10 +280,11 @@ def apply_customization_ui():
     """
     # combine config string and execute it
     zcml = ZCML_SLUG.format(ui_zcml_decls="".join([ zd for zd in UI_ZC_DECLS ]))
-    log.debug("Executing UI feature configuration:\n%s" % (zcml))
-    xmlconfig.string(zcml)
-    # log zcml directives to a dedicated file, for easier debugging
+    # log zcml directives to a dedicated file (before executing), for easier debugging
     misc.check_overwrite_file(capi.get_path_for("workflows/.auto/ui.zcml"), 
         '<?xml version="1.0"?>\n<!-- !! AUTO-GENERATED !! DO NOT MODIFY !! -->' + zcml)
+    # execute the zcml
+    log.debug("Executing UI feature configuration:\n%s" % (zcml))
+    xmlconfig.string(zcml)
 
 

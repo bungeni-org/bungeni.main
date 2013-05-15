@@ -185,8 +185,9 @@ class QuestionsViewlet(SubformViewlet):
     sub_attr_name = "questions"
 '''
 
+
 class AgendaItemsViewlet(SubformViewlet):
-    sub_attr_name = "agendaitems"
+    sub_attr_name = "agenda_items"
 
 class MinistriesViewlet(SubformViewlet):
     sub_attr_name = "ministries"
@@ -223,7 +224,7 @@ class AddressesViewlet(SubformViewlet):
     name="bungeni.viewlet.political-groups",
     protect=register.PROTECT_VIEWLET_PUBLIC)
 class PoliticalGroupsViewlet(SubformViewlet):
-    sub_attr_name = "politicalgroups"
+    sub_attr_name = "political_groups"
     weight = 30
 
 class OfficeMembersViewlet(SubformViewlet):

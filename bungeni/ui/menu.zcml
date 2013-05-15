@@ -138,23 +138,6 @@
     />
     
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ICommittee"
-        title="Add agenda item..."
-        action="./agendaitems/add"
-        permission="bungeni.agenda_item.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="41"
-    /><!-- !+CUSTOM + need group "sitting" feature -->
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ICommittee"
-        title="Add sitting..."
-        action="./sittings/add"
-        permission="bungeni.sitting.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="40"
-    /><!-- !+CUSTOM + need group "sitting" feature -->
-    
-    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ISession"
         title="Add sitting..."
         action="./sittings/add"
@@ -545,14 +528,19 @@
         layer=".interfaces.IAdminSectionLayer"
     />
     
-    <!-- committee agenda items -->
+    <!-- committee agenda items 
+    !+CUSTOM agenda_item, feature-driven
+    !+SchedulingContext why do they need to be different
+    -->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.core.schedule.GroupSchedulingContext"
         title="Add agenda item..."
-        action="./../agendaitems/add"
+        action="./../agenda_items/add"
         permission="bungeni.agenda_item.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
+    
+    
     <!-- submenu adapters -->
     
     <adapter name="plone.contentmenu.workflow"
@@ -680,11 +668,14 @@
         permission="bungeni.item_schedule_vote.Delete"
     />
 
-    <!-- scheduling agenda items -->
+    <!-- scheduling agenda items 
+    !+CUSTOM agenda_item, feature-driven
+    !+SchedulingContext why do they need to be different
+    -->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.core.schedule.WorkspaceSchedulingContext"
         title="Add agenda item..."
-        action="./agendaitems/add"
+        action="./agenda_items/add"
         permission="bungeni.agenda_item.Add"
         layer=".interfaces.IWorkspaceSectionLayer"
     />

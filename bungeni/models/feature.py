@@ -224,11 +224,19 @@ def feature_schedule(kls, feature):
 
 # /schedule
 
+
 def feature_sitting(kls, feature):
     """Decorator for group types to support the "sitting" feature.
     For Group types, means support for holding sittings.
     """
+    # !+ chamber MUST have "sitting" feature enabled! 
+    # !+ agenda_item should probably not be a custom type
     interface.classImplements(kls, interfaces.IFeatureSitting)
+    # add containers required by "sitting" feature:
+    add_container_property_to_model(kls, "sittings",
+            "bungeni.models.domain.SittingContainer", "group_id")    
+    add_container_property_to_model(kls, "agenda_items",
+            "bungeni.models.domain.AgendaItemContainer", "group_id")
 
 
 def feature_address(kls, feature):

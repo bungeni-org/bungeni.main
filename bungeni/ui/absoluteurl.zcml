@@ -61,7 +61,7 @@
 
 
     <!-- Business section -->
-    
+    <!-- !+BUSINESS
     <browser:view
         for="bungeni.models.interfaces.IAttachment"
         name="get_url"
@@ -78,7 +78,7 @@
         permission="zope.Public"
         />
     
-    <!-- !+CUSTOM
+    !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.IBill"
         name="get_url"
@@ -110,7 +110,7 @@
         layer="bungeni.ui.interfaces.IBusinessSectionLayer"
         permission="zope.Public"
         />
-    -->
+    
     
     <browser:view name="get_url"
         for="bungeni.models.interfaces.IAgendaItem"
@@ -118,7 +118,7 @@
         layer="bungeni.ui.interfaces.IBusinessSectionLayer"
         permission="zope.Public"
     />
-
+    -->
 
     <!-- Members section -->
 
@@ -139,7 +139,7 @@
  
  
      <!-- Archive section -->
-   
+    <!-- !+ARCHIVE
     <browser:view
         for="bungeni.models.interfaces.IChamber"
         name="get_url"
@@ -164,7 +164,7 @@
         permission="zope.Public"
         />
 
-    <!-- !+CUSTOM
+    !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.IQuestion"
         name="get_url"
@@ -172,7 +172,7 @@
         layer=".interfaces.IArchiveSectionLayer"
         permission="zope.Public"
         />
-    -->
+    
     
     <browser:view
         for="bungeni.models.interfaces.IReport"
@@ -182,7 +182,7 @@
         permission="zope.Public"
         />    
 
-    <!-- !+CUSTOM
+    !+CUSTOM
     <browser:view
         for="bungeni.models.interfaces.ITabledDocument"
         name="get_url"
@@ -206,7 +206,7 @@
         layer=".interfaces.IArchiveSectionLayer"
         permission="zope.Public"
         />
-    -->
+    
     
     <browser:view name="get_url"
         for="bungeni.models.interfaces.IMember"
@@ -230,7 +230,7 @@
         layer=".interfaces.IArchiveSectionLayer"
         permission="zope.Public"
         />
-
+    -->
         
     
     <!-- Admin section -->
