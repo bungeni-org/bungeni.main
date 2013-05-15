@@ -938,11 +938,11 @@ class DhtmlxCalendarSittings(BrowserView):
     def is_readonly(self, event):
         """Return true if event is readonly
         """
-        if model_interfaces.ISession.providedBy(event):
-            return 'true'
-        else:
-            return (checkPermission("bungeni.sitting.Edit", event) and '' 
-                or 'true')
+        readonly = 'true'
+        if not model_interfaces.ISession.providedBy(event):
+            if checkPermission("bungeni.sitting.Edit", event):
+                readonly = ''
+        return readonly
     
     @property
     def event_colour(self):

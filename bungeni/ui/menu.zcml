@@ -936,7 +936,7 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
-        action="create-report"
+        action="./index/create-report"
         title="Create reports"
         permission="bungeni.report.Edit"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
