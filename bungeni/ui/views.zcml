@@ -234,7 +234,7 @@
     />
     <browser:page name="schedulable-items-json"
         for="bungeni.models.interfaces.ISitting"
-        permission="bungeni.item_schedule.Add"
+        permission="bungeni.sitting.Edit"
         class=".calendar.browser.SchedulableItemsJSON"
     />
       <browser:page

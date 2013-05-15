@@ -99,6 +99,12 @@
         include="schedule-config.js"
     />
   </resourceLibrary>
+  <resourceLibrary name="bungeni-schedule-text-records"
+    require="bungeni-schedule-config yui-tab yui-button yui-container">
+    <directory source="calendar" 
+        include="schedule-text-records.js"
+    />
+  </resourceLibrary>
   <resourceLibrary name="bungeni-schedule-available-items" 
     require="bungeni-schedule-config yui-tab yui-button yui-container 
         yui-calendar">
@@ -109,7 +115,7 @@
   <resourceLibrary name="bungeni-schedule-editor" 
     require="bungeni-schedule-config bungeni-schedule-available-items 
         yui-container yui-connection yui-menu yui-button yui-rte yui-calendar 
-        yui-layout yui-tab yui-json">
+        yui-layout yui-tab yui-json bungeni-schedule-text-records ">
     <directory source="calendar" 
         include="schedule-editor.js
                  schedule-editor-core.js
@@ -118,7 +124,7 @@
   </resourceLibrary>
   <resourceLibrary name="bungeni-schedule-minutes" 
     require="bungeni-schedule-config yui-container yui-connection 
-        yui-button yui-rte yui-layout yui-json">
+        yui-button yui-rte yui-layout yui-json bungeni-schedule-text-records">
     <directory source="calendar" 
         include="schedule-editor-minutes.js
                  schedule-editor-core.js

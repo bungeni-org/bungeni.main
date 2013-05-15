@@ -312,7 +312,7 @@ YAHOO.bungeni.config = function () {
                 this.dialog.setBody("");
                 this.dialog.cfg.queueProperty("buttons", buttons);
                 this.dialog.renderEvent.subscribe(
-                YAHOO.bungeni.availableitems.handlers.renderTextRecordsTabs);
+                YAHOO.bungeni.textrecords.handlers.renderTextRecordsTabs);
                 this.dialog.render(document.body);
             },
             show: function (tab_id) {
@@ -502,7 +502,7 @@ YAHOO.bungeni.config = function () {
                 type_el.className = "yui-dt-label";
                 type_el.textContent = SGlobals.type_names[rdata[Columns.TYPE]];
                 el.appendChild(type_el);
-                if (YAHOO.bungeni.availableitems != undefined){
+                if (YAHOO.bungeni.textrecords != undefined){
                     //render edit buttons only in agenda edit mode
                     var menu = [{
                         text: SGlobals.heading_button_text,
