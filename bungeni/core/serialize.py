@@ -892,19 +892,19 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                 try:
                     result[prop_name] = getattr(obj, prop_name)
                 except zope.security.interfaces.NoInteraction:
-                    log.error("Attribute %s requires an interaction.",
-                        prop_name)
+                    log.error("Attribute %s requires an interaction.", prop_name)
         except KeyError:
             log.warn("Could not find table schema for %s", obj)
     
-    #any other properties defined on class
+    # any other properties defined on class
     props = inspect.getmembers(type(obj), 
         predicate=lambda mm:isinstance(mm, property))
     extra_props = set([p for p, v in props]).difference(result.keys())
     for prop in extra_props:
-        if prop.startswith("_"): continue
+        if prop.startswith("_"): 
+            continue
         val = getattr(obj, prop)
-        if isinstance(val, (unicode,str, int)):
+        if isinstance(val, (basestring, int)):
             result[prop] = getattr(obj, prop)
     return result
 

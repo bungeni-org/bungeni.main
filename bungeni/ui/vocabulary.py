@@ -49,6 +49,7 @@ from bungeni.models.interfaces import (
     ISignatory,
     ISignatoryContainer, 
     IVersion,
+    IDocVersion,
     IScheduleText,
     IScheduleContent,
     ISerializable
@@ -668,6 +669,12 @@ class MemberDelegationSource(MemberSource):
                 assert IGroup.providedBy(ctx.__parent__), ctx
                 self.chamber = utils.get_chamber_for_group(ctx.__parent__)
         else:
+            # !+VERSION descriptor for DocVersion also uses this vocabulary for the 
+            # "owner_id" field, but the source data we want here is tied to the 
+            # version's head doc...
+            if IDocVersion.providedBy(ctx):
+                # proceed as if context is the version's head doc
+                ctx = ctx.head
             # {Doc} - "view" a doc
             assert IDoc.providedBy(ctx), ctx
             # chamber is a doc.chamber

@@ -78,8 +78,8 @@ def FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(context, key):
     print "!+FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK:", context, key
     container = getattr(context.__class__, key)
     print "    trying off context.__class__: %s.%s = %s" % (context.__class__, key, container)
-    from bungeni.utils import common
-    if common.has_feature("devmode"):
-        import pdb; pdb.set_trace()
+    #from bungeni.utils import common
+    #if common.has_feature("devmode"):
+    #    import pdb; pdb.set_trace()
     return container
 
