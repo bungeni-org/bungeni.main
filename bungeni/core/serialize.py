@@ -899,13 +899,18 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
     # any other properties defined on class
     props = inspect.getmembers(type(obj), 
         predicate=lambda mm:isinstance(mm, property))
-    extra_props = set([p for p, v in props]).difference(result.keys())
+    seen_keys = result.keys() + include + exclude
+    extra_props = set([p for p, v in props]).difference(seen_keys)
     for prop in extra_props:
-        if prop.startswith("_"): 
+        if prop.startswith("_"):
             continue
-        val = getattr(obj, prop)
-        if isinstance(val, (basestring, int)):
-            result[prop] = getattr(obj, prop)
+        #play it safe if lookup fails and log exception
+        try:
+            val = getattr(obj, prop)
+            if isinstance(val, (basestring, int)):
+                result[prop] = getattr(obj, prop)
+        except Exception, e:
+            log.debug("Could not fetch property %s on object %s: %s",
+                prop, obj, e)
     return result
-
 
