@@ -1168,8 +1168,7 @@ class DebateDoc(DebateRecordItem):
 class DebateSpeech(DebateRecordItem):
     """A single speech in a debate record
     """
-    available_dynamic_features = ["audit", "version", "attachment",
-        "workspace", "notification", "email", "user_assignment"]
+    available_dynamic_features = ["audit", "version"]
     interface.implements(interfaces.ITranslatable, interfaces.IDebateSpeech)
 
 class DebateMedia(Entity):

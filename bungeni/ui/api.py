@@ -1,12 +1,13 @@
 import simplejson
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
+from sqlalchemy.sql.expression import and_
 from zope import component
 from zope.publisher.browser import BrowserPage
 from zope.publisher.interfaces import NotFound
 from zope.security.proxy import removeSecurityProxy
 from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-from bungeni.alchemist import container
+from bungeni.alchemist import container, Session
 from bungeni.core.serialize import obj2dict
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.utils import url, misc
@@ -126,3 +127,25 @@ class APITakeListing(ContainerJSONListingRaw):
             d["media_url"] = node.media_url
             values.append(d)
         return values
+
+
+class APIDebateRecordItemsView(BungeniBrowserView):
+
+    def __call__(self):
+        sitting = self.context.sitting
+        start_time = sitting.start_date + timedelta(
+            seconds=self.request.get("start_time", 0))
+        if self.request.get("end_time", 0):
+            end_time = sitting.start_date + timedelta(
+                seconds=self.request.get("end_time", 0))
+        else:
+            end_time = sitting.end_date
+        session = Session()
+        items = session.query(domain.DebateRecordItem).filter(and_(
+            domain.DebateRecordItem.start_date >= start_time,
+            domain.DebateRecordItem.end_date <= end_time)).all()
+        data = []
+        for item in items:
+            data.append(obj2dict(item, 0))
+        misc.set_json_headers(self.request)
+        return simplejson.dumps(data, default=dthandler)

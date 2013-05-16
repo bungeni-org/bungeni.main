@@ -546,6 +546,13 @@
       permission="bungeni.debate_record.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
+   <browser:page
+      for="bungeni.models.interfaces.IDebateRecord"
+      name="items" 
+      class="bungeni.ui.api.APIDebateRecordItemsView"
+      permission="bungeni.debate_record_item.View"
+      layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
    <browser:page name="index"
        for="bungeni.models.interfaces.IAttachment"
        class="bungeni.ui.api.APIObjectView"

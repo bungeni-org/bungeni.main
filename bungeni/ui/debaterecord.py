@@ -180,8 +180,13 @@ class AddSpeeches(forms.common.BaseForm):
         session = Session()
         sitting = self.context.sitting
         for item in json_data:
-            debate_speech = domain.DebateSpeech()
-            debate_speech.debate_record_id = self.context.debate_record_id
+            debate_speech = None
+            if item.get("speech_id", None):
+                debate_speech = session.query(domain.DebateSpeech
+                    ).get(item["speech_id"])
+            if not debate_speech:
+                debate_speech = domain.DebateSpeech()
+                debate_speech.debate_record_id = self.context.debate_record_id
             debate_speech.person_id = item["user_id"]
             debate_speech.text = item["speech"]
             debate_speech.language = "en"
