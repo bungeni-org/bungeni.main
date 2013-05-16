@@ -161,6 +161,7 @@
     display: table !important;
     border-collapse: collapse;
     border-spacing: 0;
+    clear:both;
 }
 .actionMenu.deactivated .actionMenuContent {
     display: none !important;
@@ -282,7 +283,7 @@ dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
 	background-color: #74AE0B !important;
 	color: #fff !important;
 }
-dl#context_actions.actionMenu .actionMenuContent ul li a#view,
+dl#context_actions.actionMenu .actionMenuContent ul li a#index,
 dl#context_actions.actionMenu .actionMenuContent ul li a#schedule,
 dl#context_actions.actionMenu .actionMenuContent ul li a#edit,
 dl#context_actions.actionMenu .actionMenuContent ul li a#edit-profile,
@@ -309,7 +310,7 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#report-builder{
 	padding-left: 22px;
 	background: transparent 2px 2px no-repeat;
 }
-dl#context_actions.actionMenu .actionMenuContent ul li a#view {
+dl#context_actions.actionMenu .actionMenuContent ul li a#index {
 	background-image: url(images/page_portrait.png);
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#delete {
