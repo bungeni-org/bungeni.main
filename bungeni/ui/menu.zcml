@@ -918,14 +918,6 @@
         permission="zope.ManageContent"
     />
     <browser:menuItem menu="context_actions"
-        layer=".interfaces.IBusinessSectionLayer"
-        for="bungeni.models.interfaces.ICommittee"
-        action="./schedule"
-        title="Committee schedule"
-        order="40"
-        permission="zope.Public"
-    />
-    <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
         action="./index/create-report"
         title="Create reports"

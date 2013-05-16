@@ -99,7 +99,6 @@ class SiteTraverser(ContainerTraverser):
 class ProfileTraverser(ContainerTraverser):
 
     def publishTraverse(self, request, name):
-
         # Shortcut for current user workspace
         if name == u"profile":
             user = get_login_user()
@@ -109,14 +108,16 @@ class ProfileTraverser(ContainerTraverser):
                 return user
             else:
                 return NotFound(self.context, name, request)
-            
-        return super(ProfileTraverser, self).publishTraverse(request, name)                                                     
+        return super(ProfileTraverser, self).publishTraverse(request, name)
 
                                                     
 class Permalink(AbsoluteURL):
-    """ Custom absoluteURL view for objects in bungeni section. """
+    """Custom absoluteURL view for objects in bungeni section.
+    """
     
     def __str__(self):
-            return self.context.uri
+        return self.context.uri
 
     __call__ = __str__
+
+

@@ -50,64 +50,6 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
     __call__ = __str__
 
 
-''' !+BUSINESS
-
-""" Business section
-"""
-class BusinessAbsoluteURLView(CustomAbsoluteURL):
-    """ Custom absolute url for business section
-    """
-    section = "business"
-
-class AttachmentBusinessAbsoluteURLView(BusinessAbsoluteURLView):
-    
-    def __str__(self):
-        item_id = self.context.owner_id
-        base_url = ui_utils.url.absoluteURL(getSite(), self.request)
-        session = Session()
-        item = session.query(Doc).filter(Doc.doc_id==item_id).first()
-        return '%s/business/%ss/obj-%s/files/%s/' % (base_url, item.type,\
-                                                   item_id, stringKey(self.context))
-    
-    __call__ = __str__
-
-    
-class CommitteeBusinessAbsoluteURLView(BusinessAbsoluteURLView):
-    """ Custom absolute url for committees in business section
-    """
-    subsection = "committees"
-    
-
-class BillBusinessAbsoluteURLView(BusinessAbsoluteURLView):
-    """ Custom absolute url for bills in business section
-    """
-    subsection = "bills"
-
-
-class QuestionBusinessAbsoluteURLView(BusinessAbsoluteURLView):
-    """ Custom absolute url for questions in business section
-    """
-    subsection = "questions"
-
-
-class MotionBusinessAbsoluteURLView(BusinessAbsoluteURLView):
-    """ Custom absolute url for motions in business section
-    """
-    subsection = "motions"
-   
-    
-class TabledDocumentBusinessAbsoluteURLView(BusinessAbsoluteURLView):
-    """ Custom absolute url for tabled documents in business section
-    """
-    subsection = "tableddocuments"
-    
-    
-class AgendaItemBusinessAbsoluteURLView(BusinessAbsoluteURLView):
-    """ Custom absolute url for agenda items in business section
-    """
-    subsection = "agendaitems"
-'''
-
     
 """ Members section
 """

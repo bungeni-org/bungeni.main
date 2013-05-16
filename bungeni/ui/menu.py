@@ -382,11 +382,9 @@ class CalendarMenu(BrowserMenu):
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
             committees = app["workspace"]["scheduling"]["committees"].values()
             check_permissions = True
-        elif interfaces.IBusinessSectionLayer.providedBy(request):
-            committees = app["business"]["committees"].values()
         else:
             committees = []
-
+        
         if check_permissions:
             for committee in committees:
                     if ((committee.end_date is None
@@ -402,23 +400,16 @@ class CalendarMenu(BrowserMenu):
                         )
         else:
             for committee in committees:
-                if ((committee.end_date is None
-                     or committee.end_date >= today) and
-                   (committee.start_date is None
-                    or committee.start_date <= today) and
-                   (committee.status == "active")
-                ):
-                    contexts.append(schedule.GroupSchedulingContext(
-                            committee))
+                if ((committee.end_date is None or committee.end_date >= today) and
+                       (committee.start_date is None or committee.start_date <= today) and
+                       (committee.status == "active")
+                    ):
+                    contexts.append(schedule.GroupSchedulingContext(committee))
         for context in contexts:
             context.__name__ = u"schedule"
         #!+HARDWIRING(mb, Aug-2012) unhardwire committees lookup
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
-            contexts.append(schedule.ISchedulingContext(
-                    app["workspace"]["scheduling"]))
-        elif interfaces.IBusinessSectionLayer.providedBy(request):
-            contexts.append(schedule.ISchedulingContext(
-                    app["business"]["sittings"]))
+            contexts.append(schedule.ISchedulingContext(app["workspace"]["scheduling"]))
         if len(contexts):
             contexts[-1].__name__ = u""
         return contexts

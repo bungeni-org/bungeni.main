@@ -44,13 +44,11 @@ class IAnonymousSectionLayer(IDefaultBrowserLayer):
 class IArchiveSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the archive."""
 
-class IBusinessSectionLayer(IAnonymousSectionLayer, IRSSRepresentationLayer):
-    """Requests for an object within the business section."""
-class IBusinessWhatsOnSectionLayer(IAnonymousSectionLayer):
-    """Requests for an object within the whats on page of the business section."""
 
-class IPermalinkSectionLayer(IBusinessSectionLayer):
+# !+PERMALINK(mr, may-2013) is this layer (and associated functionality) still used/needed?
+class IPermalinkSectionLayer(IAnonymousSectionLayer, IRSSRepresentationLayer):
     """Requests for an object within the bungeni section."""
+
 
 class IMembersSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the members section."""

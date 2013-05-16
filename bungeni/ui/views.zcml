@@ -180,6 +180,7 @@
      class=".calendar.browser.DhtmlxCalendarSittingsEdit"
     />
 
+    <!-- !+SITTING_GROUP_FEATURE rework these regs to be feature driven! -->
   <browser:page
      for="bungeni.models.interfaces.ISession"
      permission="bungeni.session.View"

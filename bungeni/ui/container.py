@@ -48,14 +48,8 @@ def query_filter_date_range(context, request, query, domain_model):
     - else (archive section) pick off start/end date from the request's cookies
     - else try getting a display date off request
     """
-    if (
-            (ufaces.IBusinessSectionLayer.providedBy(request) and (
-                mfaces.ICommitteeContainer.providedBy(context) or
-                mfaces.ICommitteeMemberContainer.providedBy(context) or
-                mfaces.ICommitteeStaffContainer.providedBy(context))
-            ) or
-            (ufaces.IMembersSectionLayer.providedBy(request) and
-                mfaces.IMemberContainer.providedBy(context))
+    if (ufaces.IMembersSectionLayer.providedBy(request) and
+            mfaces.IMemberContainer.providedBy(context)
         ):
         start_date, end_date = datetime.date.today(), None
     elif ufaces.IArchiveSectionLayer.providedBy(request):

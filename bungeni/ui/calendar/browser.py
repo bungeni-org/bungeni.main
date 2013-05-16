@@ -49,7 +49,6 @@ from bungeni.core.language import get_default_language
 from bungeni.core.translation import translate_i18n
 
 from ploned.ui.interfaces import IStructuralView
-from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.calendar import utils, config, interfaces, data
 from bungeni.ui.i18n import _
@@ -208,10 +207,6 @@ class SessionsRedirect(BrowserView):
         return self.request.response.redirect(self.redirect_to)
 
 
-@register.view(model_interfaces.ISittingContainer, 
-    layer=IBusinessSectionLayer, 
-    name="index",
-    protect=register.PROTECT_VIEW_PUBLIC)
 class CalendarView(BungeniBrowserView):
     """Main calendar view."""
 
@@ -228,11 +223,7 @@ class CalendarView(BungeniBrowserView):
         trusted = removeSecurityProxy(self.context)
         trusted.__name__ = self.__name__
         interface.alsoProvides(trusted, ILocation)
-        if (IBusinessSectionLayer.providedBy(self.request) and 
-            isinstance(trusted, SittingContainerSchedulingContext)):
-            self.url = url.absoluteURL(trusted.__parent__.__parent__, self.request)
-        else:
-            self.url = url.absoluteURL(trusted.__parent__, self.request)
+        self.url = url.absoluteURL(trusted.__parent__, self.request)
         self.title = ISchedulingContext(self.context).label
         return self.render()
         
@@ -360,8 +351,7 @@ class CalendarView(BungeniBrowserView):
         need("bungeni-calendar-bundle")
         if template is None:
             template = self.template
-        if (not checkPermission(u"bungeni.sitting.Add", self.context)) or \
-            (IBusinessSectionLayer.providedBy(self.request)):
+        if not checkPermission(u"bungeni.sitting.Add", self.context):
             self.edit = False
         else:
             self.edit = True

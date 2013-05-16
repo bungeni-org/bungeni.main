@@ -58,68 +58,8 @@
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         permission="zope.Public"
         />
-
-
-    <!-- Business section -->
-    <!-- !+BUSINESS
-    <browser:view
-        for="bungeni.models.interfaces.IAttachment"
-        name="get_url"
-        class=".absoluteurl.AttachmentBusinessAbsoluteURLView"
-        layer="bungeni.ui.interfaces.IBusinessSectionLayer"
-        permission="zope.Public"
-        />
-        
-    <browser:view
-        for="bungeni.models.interfaces.ICommittee"
-        name="get_url"
-        class=".absoluteurl.CommitteeBusinessAbsoluteURLView"
-        layer="bungeni.ui.interfaces.IBusinessSectionLayer"
-        permission="zope.Public"
-        />
-    
-    !+CUSTOM
-    <browser:view
-        for="bungeni.models.interfaces.IBill"
-        name="get_url"
-        class=".absoluteurl.BillBusinessAbsoluteURLView"
-        layer="bungeni.ui.interfaces.IBusinessSectionLayer"
-        permission="zope.Public"
-        />
-
-    <browser:view
-        for="bungeni.models.interfaces.IQuestion"
-        name="get_url"
-        class=".absoluteurl.QuestionBusinessAbsoluteURLView"
-        layer=".interfaces.IBusinessSectionLayer"
-        permission="zope.Public"
-        />
-
-    <browser:view
-        for="bungeni.models.interfaces.IMotion"
-        name="get_url"
-        class=".absoluteurl.MotionBusinessAbsoluteURLView"
-        layer="bungeni.ui.interfaces.IBusinessSectionLayer"
-        permission="zope.Public"
-        />
-
-    <browser:view
-        for="bungeni.models.interfaces.ITabledDocument"
-        name="get_url"
-        class=".absoluteurl.TabledDocumentBusinessAbsoluteURLView"
-        layer="bungeni.ui.interfaces.IBusinessSectionLayer"
-        permission="zope.Public"
-        />
     
     
-    <browser:view name="get_url"
-        for="bungeni.models.interfaces.IAgendaItem"
-        class=".absoluteurl.AgendaItemBusinessAbsoluteURLView"
-        layer="bungeni.ui.interfaces.IBusinessSectionLayer"
-        permission="zope.Public"
-    />
-    -->
-
     <!-- Members section -->
 
     <browser:view name="get_url"
