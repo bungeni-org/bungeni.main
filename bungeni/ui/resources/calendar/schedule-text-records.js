@@ -201,7 +201,11 @@ YAHOO.bungeni.textrecords = function() {
                 tab_view.getTab(t_id).setStyle('display', '');
                 tab_view.selectTab(t_id);
             }
-            tab_view.selectTab((active_tab_id?(tab_map[active_tab_id]):0));
+            //work around bug in initial tab selection 
+            //issue with uninitialized datatable ids
+            tab_view.selectTab(0);
+            target = (active_tab_id?(tab_map[active_tab_id]):0);
+            if (target>0){ tab_view.selectTab(target); }
         }
 
         return {

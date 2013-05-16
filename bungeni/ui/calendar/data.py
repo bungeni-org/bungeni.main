@@ -187,7 +187,8 @@ class SchedulableItemsGetter(object):
                 item_id = orm.object_mapper(item).primary_key_from_instance(
                     item
                 )[0],
-                item_title = IDCDescriptiveProperties(item).title,
+                item_title = (item.text if is_text else 
+                    IDCDescriptiveProperties(item).title),
                 status = (IWorkflow(item).get_state(item.status).title 
                     if not is_text else None),
                 status_date = ( date_formatter.format(item.submission_date) 
