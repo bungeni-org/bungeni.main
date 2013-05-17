@@ -15,9 +15,9 @@ from lxml import etree
 
 from zope import interface, component
 from zope.schema.interfaces import (
-    IContextSourceBinder, 
-    IBaseVocabulary, # IBaseVocabulary(ISource)
-    IVocabulary, # IVocabulary(IIterableVocabulary, IBaseVocabulary)
+    IContextSourceBinder,
+    IBaseVocabulary,  # IBaseVocabulary(ISource)
+    IVocabulary,  # IVocabulary(IIterableVocabulary, IBaseVocabulary)
     IVocabularyFactory)
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
@@ -27,8 +27,6 @@ from zope.component import getUtilitiesFor
 from zope.securitypolicy.interfaces import IRole
 from i18n import _
 
-from sqlalchemy.orm import mapper
-import sqlalchemy as sa
 import sqlalchemy.sql.expression as sql
 
 from bungeni.capi import capi
@@ -44,10 +42,12 @@ from bungeni.models.interfaces import (
     ISubRoleAnnotations,
     IGroup,
     IGroupMember,
-    IDoc, 
-    ITranslatable, 
+    IGroupAssignment,
+    IGroupAssignmentContainer,
+    IDoc,
+    ITranslatable,
     ISignatory,
-    ISignatoryContainer, 
+    ISignatoryContainer,
     IVersion,
     IDocVersion,
     IScheduleText,
@@ -953,13 +953,13 @@ component.provideUtility(user, IVocabularyFactory, "user")
 class GroupSource(SpecializedSource):
     """All active groups.
     """
-    
+
     def construct_query(self, context):
         # !+GROUP_FILTERS, refine, check for active, ...
         groups = Session().query(domain.Group).order_by(
             domain.Group.short_name, domain.Group.full_name)
         return groups
-    
+
     def __call__(self, context=None):
         results = self.construct_query(context).all()
         terms = []
@@ -971,13 +971,40 @@ class GroupSource(SpecializedSource):
                     title = get_translated_group_label(ob)
                 ))
         return vocabulary.SimpleVocabulary(terms)
-group = GroupSource( 
+
+group = GroupSource(
     token_field="group_id",
     title_field="short_name",
     value_field="group_id",
 )
 component.provideUtility(group, IVocabularyFactory, "group")
 
+class GroupAssignmentSource(GroupSource):
+    """Vocabulary for groups that may have a document assigned to them
+    """
+    def construct_query(self, context):
+        principal_ids = []
+        trusted = removeSecurityProxy(context)
+        if IGroupAssignmentContainer.providedBy(trusted):
+            for assignment in trusted.__parent__.group_assignment:
+                principal_ids.append(assignment.principal.principal_id)
+        else:
+            assert IGroupAssignment.providedBy(trusted)
+            for assignment in trusted.doc.group_assignment:
+                principal_ids.append(assignment.principal.principal_id)
+            principal_ids.remove(trusted.principal.principal_id)
+        groups = Session().query(domain.Group).order_by(
+            domain.Group.short_name, domain.Group.full_name).filter(
+            sql.not_(domain.Group.principal_id.in_(principal_ids)))
+        return groups
+
+group_assignment = GroupAssignmentSource(
+    token_field="principal_id",
+    title_field="short_name",
+    value_field="principal_id",
+)
+component.provideUtility(group_assignment, IVocabularyFactory,
+    "group_assignment")
 
 class MembershipUserSource(UserSource):
     """Filter out users already added to a membership container

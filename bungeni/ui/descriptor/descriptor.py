@@ -577,7 +577,7 @@ class GroupAssignmentDescriptor(ModelDescriptor):
             ],
             value_type="vocabulary",
             render_type="single_select",
-            vocabulary="group",
+            vocabulary="group_assignment",
         ),
         F(name="date",
            label="Date Active",
