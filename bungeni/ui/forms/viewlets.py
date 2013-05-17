@@ -336,8 +336,13 @@ class DocMinutesViewlet(browser.BungeniItemsViewlet):
         super(DocMinutesViewlet, self).update()
 
 
+@register.viewlet(interfaces.IGroupMember,
+    manager=ISubFormViewletManager,
+    name="bungeni.viewlet.offices-held",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class OfficesHeldViewlet(browser.BungeniItemsViewlet):
-
+    weight = 30
+    
     render = ViewPageTemplateFile("templates/offices-held-viewlet.pt")
 
     def _get_items(self):

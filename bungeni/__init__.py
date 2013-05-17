@@ -118,8 +118,9 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
         # to into the lookup hierarchy.
         group_assignments = getattr(parent, "group_assignment", list())
         for group_assignment in group_assignments:
-            assigned_group_prinrole = IPrincipalRoleMap(
-                group_assignment.group, None)
+            group = group_assignment.principal
+            #!+assert isinstance(group, domain.Group), group
+            assigned_group_prinrole = IPrincipalRoleMap(group, None)
             if assigned_group_prinrole:
                 roles = roles.copy()
                 role_settings = assigned_group_prinrole.getRolesForPrincipal(
@@ -128,3 +129,4 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
                     roles[role] = zopepolicy.SettingAsBoolean[setting]
         cache_principal_roles[principal] = roles
         return roles
+

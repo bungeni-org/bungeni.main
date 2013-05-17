@@ -133,8 +133,9 @@ def get_context_roles(context, principal):
             group_assignment = getattr(ctx, "group_assignment", list())
             trusted_ga = proxy.removeSecurityProxy(group_assignment)
             for ga in trusted_ga:
-                gprm = zope.component.queryAdapter(
-                    ga.group, IPrincipalRoleMap, default=None)
+                group = ga.principal
+                #!+assert isinstance(group, domain.Group)
+                gprm = zope.component.queryAdapter(group, IPrincipalRoleMap, default=None)
                 if gprm:
                     prms.append(gprm)
             _build_principal_role_maps(getattr(ctx, '__parent__', None))

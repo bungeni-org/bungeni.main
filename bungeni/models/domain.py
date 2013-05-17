@@ -290,9 +290,6 @@ class GroupMember(HeadParentedMixin, Entity):
     def __lt__(self, other):
         return self.user < other.user
 
-class OfficesHeld(Entity):
-    """Offices held by this group member.
-    """
 
 class CommitteeStaff(GroupMember):
     """Committee Staff.

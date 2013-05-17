@@ -133,21 +133,7 @@ mapper(domain.DocPrincipal, schema.doc_principal,
 mapper(domain.GroupAssignment,
     inherits=domain.DocPrincipal,
     polymorphic_identity=polymorphic_identity(domain.GroupAssignment),
-    properties={
-        "group": relation(domain.Group,
-            primaryjoin=rdb.and_(
-                schema.doc_principal.c.principal_id == schema.principal.c.principal_id,
-            ),
-            secondary=schema.principal,
-            secondaryjoin=rdb.and_(
-                schema.principal.c.principal_id == schema.group.c.group_id,
-            ),
-            uselist=False,
-            lazy=False,
-            viewonly=True),
-    }
 )
-
 
 mapper(domain.UserSubscription,
     inherits=domain.DocPrincipal,
@@ -157,10 +143,8 @@ mapper(domain.UserSubscription,
 mapper(domain.UserEditing,
     inherits=domain.DocPrincipal,
     polymorphic_identity=polymorphic_identity(domain.UserEditing),
-    properties={
-        "user": relation(domain.User, uselist=False),
-    }
 )
+
 
 # group subclasses
 

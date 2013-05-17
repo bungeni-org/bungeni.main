@@ -296,13 +296,6 @@ to e.g. "bungeni.{type}.Edit").
         weight="20"
     />
     
-    <browser:viewlet name="bungeni.viewlet.offices-held"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.OfficesHeldViewlet"
-        for="bungeni.models.interfaces.IMember"
-        permission="zope.Public"
-        weight="30"
-    />
     <browser:viewlet name="bungeni.viewlet.mp-items"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.MemberItemsViewlet"
@@ -337,13 +330,6 @@ to e.g. "bungeni.{type}.Edit").
         weight="50"
     />
 
-    <browser:viewlet name="bungeni.viewlet.committee-member-titles"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.OfficesHeldViewlet"
-        for="bungeni.models.interfaces.ICommitteeMember"
-        permission="zope.Public"
-        weight="10"
-    />
 
   <browser:viewlet
      name="bungeni.viewlet.committee-member-personal-info"
@@ -362,21 +348,6 @@ to e.g. "bungeni.{type}.Edit").
      permission="zope.Public"
      weight="20"
      />
-
-    <browser:viewlet name="bungeni.viewlet.committee-staff-titles"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.OfficesHeldViewlet"
-        for="bungeni.models.interfaces.ICommitteeStaff"
-        permission="zope.Public"
-        weight="10"
-    />
-    <browser:viewlet name="bungeni.viewlet.office-member-titles"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.OfficesHeldViewlet"
-        for="bungeni.models.interfaces.IOfficeMember"
-        permission="zope.Public"
-        weight="10"
-    />
 
   <browser:viewlet
      name="bungeni.viewlet.office-members"
@@ -408,6 +379,7 @@ to e.g. "bungeni.{type}.Edit").
      weight="20"
      />
 
+    <!-- !+CUSTOM -->
     <browser:viewlet name="bungeni.viewlet.minister-titles"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.OfficesHeldViewlet"
