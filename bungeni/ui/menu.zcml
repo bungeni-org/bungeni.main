@@ -174,15 +174,15 @@
         for="bungeni.models.interfaces.IGroupMember"
         title="Add subrole..."
         action="./subroles/add"
-        permission="bungeni.group_member_role.Add"
+        permission="bungeni.member_role.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IGroupMemberRoleContainer"
+        for="bungeni.models.interfaces.IMemberRoleContainer"
         title="Add member role..."
         action="./add"
-        permission="bungeni.group_member_role.Add"
+        permission="bungeni.member_role.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
@@ -962,7 +962,7 @@
     />
     <!-- group assignment -->
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        for="bungeni.models.interfaces.IGroupAssignment"
         action="index"
         title="View"
         order="0"
@@ -970,7 +970,7 @@
         permission="bungeni.group_assignment.View"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        for="bungeni.models.interfaces.IGroupAssignment"
         action="edit"
         title="Edit group assignment"
         order="10"
@@ -978,7 +978,7 @@
         permission="bungeni.group_assignment.Edit"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupDocumentAssignment"
+        for="bungeni.models.interfaces.IGroupAssignment"
         action="delete"
         title="Delete group assignment"
         order="99"
@@ -986,7 +986,7 @@
         permission="bungeni.group_assignment.Delete"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IGroupDocumentAssignmentContainer"
+        for="bungeni.models.interfaces.IGroupAssignmentContainer"
         title="Add group assignment..."
         action="./add"
         permission="bungeni.group_assignment.Add"

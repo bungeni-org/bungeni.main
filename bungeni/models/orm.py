@@ -38,7 +38,12 @@ mapper(domain.User, schema.user,
             backref=backref("head", remote_side=schema.principal.c.principal_id)
         ),
         "subscriptions": relation(domain.Doc,
-            secondary=schema.user_doc
+            secondary=schema.doc_principal,
+            secondaryjoin=rdb.and_(
+                schema.user.c.user_id == schema.doc_principal.c.principal_id,
+                schema.doc_principal.c.doc_id == schema.doc.c.doc_id,
+                schema.doc_principal.c.activity == "user_subscription",
+            ),
         ),
     },
     # the fallback sort_on ordering for user items
@@ -46,21 +51,12 @@ mapper(domain.User, schema.user,
             schema.user.c.middle_name, schema.user.c.user_id],
 )
 
-mapper(domain.UserSubscription, schema.user_doc)
-
 mapper(domain.AdminUser, schema.admin_user,
     properties={
         "user": relation(domain.User)
     }
 )
 
-# The document that the user is being currently editing
-mapper(domain.CurrentlyEditingDocument, schema.currently_editing_document,
-    properties={
-        "user": relation(domain.User, uselist=False),
-        "document": relation(domain.Doc, uselist=False), # !+rename "doc"
-    }
-)
 
 # Hash for password restore link
 mapper(domain.PasswordRestoreLink, schema.password_restore_link,
@@ -124,13 +120,45 @@ mapper(domain.UserDelegation, schema.user_delegation,
     }
 )
 
-mapper(domain.GroupDocumentAssignment, schema.group_document_assignment,
+
+mapper(domain.DocPrincipal, schema.doc_principal,
+    polymorphic_on=schema.doc_principal.c.activity, # polymorphic discriminator
+    polymorphic_identity=polymorphic_identity(domain.DocPrincipal),
+    properties={
+        "principal": relation(domain.Principal, uselist=False),
+        "doc": relation(domain.Doc, uselist=False),
+    }
+)
+
+mapper(domain.GroupAssignment,
+    inherits=domain.DocPrincipal,
+    polymorphic_identity=polymorphic_identity(domain.GroupAssignment),
     properties={
         "group": relation(domain.Group,
-            primaryjoin=schema.group_document_assignment.c.group_id ==
-                schema.group.c.group_id,
+            primaryjoin=rdb.and_(
+                schema.doc_principal.c.principal_id == schema.principal.c.principal_id,
+            ),
+            secondary=schema.principal,
+            secondaryjoin=rdb.and_(
+                schema.principal.c.principal_id == schema.group.c.group_id,
+            ),
             uselist=False,
-            lazy=False),
+            lazy=False,
+            viewonly=True),
+    }
+)
+
+
+mapper(domain.UserSubscription,
+    inherits=domain.DocPrincipal,
+    polymorphic_identity=polymorphic_identity(domain.UserSubscription),
+)
+
+mapper(domain.UserEditing,
+    inherits=domain.DocPrincipal,
+    polymorphic_identity=polymorphic_identity(domain.UserEditing),
+    properties={
+        "user": relation(domain.User, uselist=False),
     }
 )
 
@@ -177,27 +205,24 @@ mapper(domain.Office,
 
 # we need to specify join clause for user explicitly because we have multiple fk
 # to the user table.
-mapper(domain.GroupMember, schema.group_member,
+mapper(domain.GroupMember, schema.member,
     polymorphic_identity=polymorphic_identity(domain.GroupMember),
-    polymorphic_on=schema.group_member.c.member_type,
+    polymorphic_on=schema.member.c.member_type,
     properties={
         "user": relation(domain.User,
-            primaryjoin=rdb.and_(schema.group_member.c.user_id ==
-                schema.user.c.user_id),
+            primaryjoin=rdb.and_(schema.member.c.user_id == schema.user.c.user_id),
             uselist=False,
             backref="group_membership",
             lazy=False),
         "group": relation(domain.Group,
-            primaryjoin=(schema.group_member.c.group_id ==
-                schema.group.c.group_id),
+            primaryjoin=(schema.member.c.group_id == schema.group.c.group_id),
             uselist=False,
             lazy=True),
         "replaced": relation(domain.GroupMember,
-            primaryjoin=(schema.group_member.c.replaced_id ==
-                schema.group_member.c.member_id),
+            primaryjoin=(schema.member.c.replaced_id == schema.member.c.member_id),
             uselist=False,
             lazy=True),
-        "sub_roles": relation(domain.GroupMemberRole),
+        "sub_roles": relation(domain.MemberRole),
         "member_titles": relation(domain.MemberTitle)
     },
     # the fallback sort_on ordering for member items
@@ -206,7 +231,7 @@ mapper(domain.GroupMember, schema.group_member,
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMember.head = domain.GroupMember.user
 
-mapper(domain.GroupMemberRole, schema.group_member_role,
+mapper(domain.MemberRole, schema.member_role,
     properties={
         "member": relation(domain.GroupMember)
     }
@@ -217,9 +242,9 @@ mapper(domain.Member,
     polymorphic_identity=polymorphic_identity(domain.Member),
     properties={ # !+ why these properties?
         "start_date": column_property(
-            schema.group_member.c.start_date.label("start_date")),
+            schema.member.c.start_date.label("start_date")),
         "end_date": column_property(
-            schema.group_member.c.end_date.label("end_date")),
+            schema.member.c.end_date.label("end_date")),
     },
 )
 
@@ -320,12 +345,9 @@ mapper(domain.Doc, schema.doc,
         # !+ARCHETYPE_MAPPER(mr, apr-2012) keep this mapper property always 
         # present on predefined archetype mapper, or dynamically instrument it 
         # on each on mapper of each (sub-archetype) type having this feature?
-        "item_signatories": relation(domain.Signatory, uselist=True,
-            cascade="all"), #!+rename sa_signatories
-        "attachments": relation(domain.Attachment, 
-            cascade="all"), # !+ARCHETYPE_MAPPER
-        "sa_events": relation(domain.Event, uselist=True, 
-            cascade="all"), # !+ARCHETYPE_MAPPER
+        "item_signatories": relation(domain.Signatory, uselist=True, cascade="all"), #!+rename sa_signatories
+        "attachments": relation(domain.Attachment, cascade="all"), # !+ARCHETYPE_MAPPER
+        "sa_events": relation(domain.Event, uselist=True, cascade="all"), # !+ARCHETYPE_MAPPER
         # for sub parliamentary docs, non-null implies a sub doc
         #"head": relation(domain.Doc,
         #    uselist=False,
@@ -369,8 +391,8 @@ mapper(domain.Doc, schema.doc,
             lazy=False,
             uselist=False,
         ),
-        "group_assignment": relation(domain.GroupDocumentAssignment,
-            primaryjoin=schema.doc.c.doc_id == schema.group_document_assignment.c.doc_id,
+        "group_assignment": relation(domain.GroupAssignment,
+            primaryjoin=schema.doc.c.doc_id == schema.doc_principal.c.doc_id,
             lazy=False,
             uselist=True,
         )
@@ -620,8 +642,8 @@ mapper(domain.Signatory, schema.signatory,
         "user": relation(domain.User, uselist=False),
         "member": relation(domain.Member,
             primaryjoin=rdb.and_(schema.signatory.c.user_id == 
-                schema.group_member.c.user_id),
-            foreign_keys=[schema.group_member.c.user_id],
+                schema.member.c.user_id),
+            foreign_keys=[schema.member.c.user_id],
             uselist=False,
         ),
         "audits": relation(domain.SignatoryAudit,

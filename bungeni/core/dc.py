@@ -330,13 +330,13 @@ class GroupDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class GroupDocumentAssignmentDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IGroupDocumentAssignment)
+class GroupAssignmentDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IGroupAssignment)
     
     @property
     def title(self):
         context = _merged(self.context)
-        return "%s" % ( self.translate(context.group, "short_name"))
+        return "%s" % (self.translate(context.group, "short_name"))
 
 
 @register.adapter()
@@ -603,8 +603,8 @@ class TitleTypeDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "title_name")
 
 @register.adapter()
-class GroupMemberRoleDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IGroupMemberRole)
+class MemberRoleDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IMemberRole)
     
     @property
     def title(self):

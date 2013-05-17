@@ -299,7 +299,7 @@ def feature_group_assignment(kls, feature):
     # a qualified "event" feature.
     interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
     add_container_property_to_model(kls, "group_assignments",
-        "bungeni.models.domain.GroupDocumentAssignmentContainer", "doc_id")
+        "bungeni.models.domain.GroupAssignmentContainer", "doc_id")
 
 
 # mappings

@@ -114,24 +114,24 @@ def deactivateGroupMembers(group):
     assert(end_date != None)
     connection = session.connection(domain.Group)
     connection.execute(
-        schema.group_member.update().where(
+        schema.member.update().where(
             sa.and_(
-                schema.group_member.c.group_id == group_id,
-                schema.group_member.c.active_p == True
+                schema.member.c.group_id == group_id,
+                schema.member.c.active_p == True
             )
         ).values(active_p=False)
     )
     connection.execute(
-        schema.group_member.update().where(
+        schema.member.update().where(
             sa.and_(
-                schema.group_member.c.group_id == group_id,
-                schema.group_member.c.end_date == None
+                schema.member.c.group_id == group_id,
+                schema.member.c.end_date == None
             )
         ).values(end_date=end_date)
     )
     def deactivateGroupMemberTitles(group):
-        group_members = sa.select([schema.group_member.c.user_id],
-                 schema.group_member.c.group_id == group_id)
+        group_members = sa.select([schema.member.c.user_id],
+                 schema.member.c.group_id == group_id)
         connection.execute(
             schema.member_title.update().where(
                 sa.and_(

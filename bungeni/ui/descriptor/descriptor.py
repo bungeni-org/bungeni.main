@@ -325,7 +325,7 @@ class UserDelegationDescriptor(ModelDescriptor):
         ),
     ]
 
-class GroupMemberRoleDescriptor(ModelDescriptor):
+class MemberRoleDescriptor(ModelDescriptor):
     """Role associated with a group membership
     """
     localizable = False
@@ -564,12 +564,12 @@ class GroupDescriptor(ModelDescriptor):
     custom_validators = [validations.validate_date_range_within_parent]
 
 
-class GroupDocumentAssignmentDescriptor(ModelDescriptor):
+class GroupAssignmentDescriptor(ModelDescriptor):
     localizable = False
-    display_name = "Group document assignment" # !+
-    container_name = "Group document assignment" # !+
+    display_name = "Document Group Assignment" # !+
+    container_name = "Document Group Assignment" # !+
     fields = [
-        F(name="group_id",
+        F(name="principal_id",
             label="Group",
             required=True,
             localizable=[
@@ -578,6 +578,15 @@ class GroupDocumentAssignmentDescriptor(ModelDescriptor):
             value_type="vocabulary",
             render_type="single_select",
             vocabulary="group",
+        ),
+        F(name="date",
+           label="Date Active",
+           required=True,
+           localizable=[
+                show("add view edit listing"),
+            ],
+            value_type="datetime",
+            render_type="datetime",
         ),
     ]
 

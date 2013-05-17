@@ -94,11 +94,11 @@
   <permission id="bungeni.member_title.View" title="View member title" />
   <meta:redefinePermission from="bungeni.member_title.View" to="zope.View" />
 
-  <permission id="bungeni.group_member_role.Add" title="Add Member Role" />
-  <permission id="bungeni.group_member_role.Edit" title="Edit Member Role" />
-  <permission id="bungeni.group_member_role.Delete" title="Delete Member Role" />
-  <permission id="bungeni.group_member_role.View" title="View member Role" />
-  <meta:redefinePermission from="bungeni.group_member_role.View" to="zope.View" />
+  <permission id="bungeni.member_role.Add" title="Add Member Role" />
+  <permission id="bungeni.member_role.Edit" title="Edit Member Role" />
+  <permission id="bungeni.member_role.Delete" title="Delete Member Role" />
+  <permission id="bungeni.member_role.View" title="View member Role" />
+  <meta:redefinePermission from="bungeni.member_role.View" to="zope.View" />
 
 <!--
      who is able to amend, comment? Actually, here we have two steps

@@ -782,8 +782,8 @@ class UserNotMPSource(SpecializedMemberSource):
             self.context_user = ctx.user
         
         mp_user_ids = sql.select(
-            [schema.group_member.c.user_id], 
-            schema.group_member.c.group_id == self.chamber.group_id)
+            [schema.member.c.user_id], 
+            schema.member.c.group_id == self.chamber.group_id)
         query = Session().query(domain.User).filter(
             sql.and_(
                 sql.not_(domain.User.user_id.in_(mp_user_ids)),
@@ -1016,10 +1016,10 @@ class SittingAttendanceSource(SpecializedSource):
             sitting = trusted.__parent__
             group_id = sitting.group_id
             sitting_id = sitting.sitting_id
-            all_member_ids = sql.select([schema.group_member.c.user_id], 
+            all_member_ids = sql.select([schema.member.c.user_id], 
                     sql.and_(
-                        schema.group_member.c.group_id == group_id,
-                        schema.group_member.c.active_p == True))
+                        schema.member.c.group_id == group_id,
+                        schema.member.c.active_p == True))
             attended_ids = sql.select([schema.sitting_attendance.c.member_id],
                      schema.sitting_attendance.c.sitting_id == sitting_id)
             query = session.query(domain.User).filter(

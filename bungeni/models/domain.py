@@ -212,19 +212,12 @@ class UserDelegation(Entity):
     """
     interface.implements(interfaces.IUserDelegation)
 
-class CurrentlyEditingDocument(object):
-    """The document (parliamentary item) 
-    that the user is currently being editing"""
-    
 class PasswordRestoreLink(object):
     """Object containing hash and expiration date for
     password restoration form"""
     
     def expired(self):
         return self.expiration_date < datetime.datetime.now() 
-
-class UserSubscription(Entity):
-    """The documents a user is tracking"""
 
 
 ######
@@ -281,7 +274,7 @@ class GroupMember(HeadParentedMixin, Entity):
     )
     
     subroles = one2many("subroles", 
-        "bungeni.models.domain.GroupMemberRoleContainer", "member_id")
+        "bungeni.models.domain.MemberRoleContainer", "member_id")
     
     @property
     def image(self): 
@@ -307,27 +300,39 @@ class CommitteeStaff(GroupMember):
     interface.implements(interfaces.ICommitteeStaff)
 
 
-class GroupMemberRole(Entity):
+class MemberRole(Entity):
     """Association between an group member and subroles
        that are granted when a document is assigned to a user
     """
-    interface.implements(interfaces.IGroupMemberRole)
+    interface.implements(interfaces.IMemberRole)
     
     @property
     def group(self):
         return self.member.group
 
 
-class GroupDocumentAssignment(Entity):
+class DocPrincipal(Entity):
+    """A qualified association between a doc and a principal.
+    """
+
+class GroupAssignment(DocPrincipal):
     """Association between a doc and groups it's been assigned to
     """
-    interface.implements(interfaces.IGroupDocumentAssignment)
+    interface.implements(interfaces.IGroupAssignment)
     
     @property
     def status(self):
         """Placeholder getter for workflow status."""
         return "_"
 
+class UserSubscription(DocPrincipal):
+    """The document a user is tracking.
+    """
+
+class UserEditing(DocPrincipal):
+    """The legislative document that the user is currently being editing.
+    """
+    
 
 # auditable (by default), but not a Doc
 class Sitting(Entity):

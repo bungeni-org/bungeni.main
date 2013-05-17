@@ -65,7 +65,7 @@ change = sa.Table("change", metadata,
         primary_key=True),
     sa.Column("user_id", sa.Integer, sa.ForeignKey("user.user_id"), 
         nullable=False),
-    # the type of change, also the change poloymorphic identity
+    # the type of change, also the change polymorphic identity
     sa.Column("action", sa.Unicode(16), nullable=False),
     # accumulative count, per (change.audit.audit_head_id, change.action) 
     # e.g default: 1 + max(seq(head, "version")), see ui.audit _get_seq()
@@ -218,7 +218,7 @@ user = sa.Table("user", metadata,
     # !+active_p(mr, sep-2011) why is this "workflow status" column named
     # "active_p" and not "status"? Rename...
     # !+active_p(mr, sep-2011) why have identically named columns here and on 
-    # group_member, with one being a string and other a bool?
+    # member, with one being a string and other a bool?
     sa.Column("active_p", sa.String(1),
         sa.CheckConstraint("""active_p in ('A', 'I', 'D')"""),
         # !+active_p(mr, sep-2011) workflow status columns MUST not have a
@@ -239,20 +239,6 @@ admin_user = sa.Table("admin_user", metadata,
 )
 
 
-# !+PRINCIPAL_DOC
-# UserSubscription: many-to-many assoc table for relation between user and doc
-# user_doc
-user_doc = sa.Table("user_doc", metadata,
-    sa.Column("user_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True
-    ),
-    sa.Column("doc_id", sa.Integer,
-        sa.ForeignKey("doc.doc_id"),
-        primary_key=True
-    )
-)
-
 # delegate rights to act on behalf of a user to another user
 user_delegation = sa.Table("user_delegation", metadata,
     sa.Column("user_id", sa.Integer,
@@ -265,20 +251,6 @@ user_delegation = sa.Table("user_delegation", metadata,
     )
 )
 
-# !+PRINCIPAL_DOC
-# document that user is being currently editing
-# user_editing_doc
-currently_editing_document = sa.Table("currently_editing_document", metadata,
-    sa.Column("user_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True
-    ),
-    sa.Column("currently_editing_id", sa.Integer,
-        sa.ForeignKey("doc.doc_id"),
-        primary_key=True
-    ),
-    sa.Column("editing_date", sa.DateTime(timezone=False)) 
-)
 
 # password restore links
 password_restore_link = sa.Table("password_restore_link", metadata,
@@ -362,35 +334,35 @@ title_type = sa.Table("title_type", metadata,
 )
 
 # sub roles to be granted when a document is assigned to a user
-group_member_role = sa.Table("group_member_role", metadata,
+member_role = sa.Table("member_role", metadata,
     sa.Column("member_id", sa.Integer,
-        sa.ForeignKey("group_member.member_id"),
+        sa.ForeignKey("member.member_id"),
         primary_key=True),
     sa.Column("role_id", sa.Unicode(256), nullable=False,
         primary_key=True),
     sa.Column("is_global", sa.Boolean, default=False),
 )
 
-# !+PRINCIPAL_DOC
-# !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment, to 
-# be able to guarantee/constrain the intended action of the assignment to the
-# appropriate group e.g. imagine a doc is assigned to one group for a 
-# "2nd opinion" and again to another (or same!) for a "response"... and a user 
-# to carry out the implied actions, who may be a member of both assigned groups
-group_document_assignment = sa.Table("group_document_assignment", metadata,
-    sa.Column("group_id", sa.Integer,
-        sa.ForeignKey("group.group_id"),
-        primary_key=True),
+
+doc_principal = sa.Table("doc_principal", metadata,
     sa.Column("doc_id", sa.Integer,
         sa.ForeignKey("doc.doc_id"),
         primary_key=True),
+    sa.Column("principal_id", sa.Integer, 
+        sa.ForeignKey("principal.principal_id"),
+        primary_key=True),
+    # relationship qualifier, also the item's polymorphic identity
+    sa.Column("activity", sa.Unicode(16), primary_key=True, nullable=False),
+    sa.Column("date", sa.DateTime(timezone=False), 
+        server_default=sa.sql.text("now()"),
+        nullable=False),
 )
 
-#
+
 # group memberships encompasses any user participation in a group, including
 # substitutions.
 
-group_member = sa.Table("group_member", metadata,
+member = sa.Table("member", metadata,
     sa.Column("member_id", sa.Integer, primary_key=True),
     sa.Column("user_id", sa.Integer,
         sa.ForeignKey("user.user_id"),
@@ -418,7 +390,7 @@ group_member = sa.Table("group_member", metadata,
     # these fields are only present when a membership is result of substitution
     # unique because you can only replace one specific group member.
     sa.Column("replaced_id", sa.Integer,
-        sa.ForeignKey("group_member.member_id"),
+        sa.ForeignKey("member.member_id"),
         unique=True
     ),
     sa.Column("substitution_type", sa.Unicode(100)),
@@ -444,6 +416,7 @@ group_member = sa.Table("group_member", metadata,
     sa.schema.UniqueConstraint("user_id", "group_id"),
 )
 
+
 ##############
 # Titles
 ##############
@@ -453,7 +426,7 @@ group_member = sa.Table("group_member", metadata,
 member_title = sa.Table("member_title", metadata,
     sa.Column("member_title_id", sa.Integer, primary_key=True),
     sa.Column("member_id", sa.Integer,
-        sa.ForeignKey("group_member.member_id"),
+        sa.ForeignKey("member.member_id"),
         nullable=False
     ),
     # title of user"s group role

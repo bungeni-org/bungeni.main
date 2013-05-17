@@ -401,16 +401,16 @@
     </class>
     
     
-    <class class=".domain.GroupDocumentAssignment">
+    <class class=".domain.GroupAssignment">
         <require permission="bungeni.group_assignment.View"
             attributes="
-                group_id
+                principal_id
                 doc_id
             "
         />
         <require permission="bungeni.group_assignment.Edit"
             set_attributes="
-                group_id
+                principal_id
                 doc_id
             "
         />

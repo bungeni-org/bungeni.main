@@ -267,12 +267,13 @@ TYPE_REGISTRY = [
     TI("user", "user", interfaces.IBungeniUser, domain.User, domain.Principal),
     TI("signatory", "signatory", interfaces.ISignatory, domain.Signatory, None),
     
-    # !+NAMING: member-related -> Group name + "Member" (no + "ship")
     TI("group", "group", interfaces.IGroup, domain.Group, domain.Principal),
     TI("group_member", "group_member", interfaces.IGroupMember, domain.GroupMember, None),
-    TI("group_document_assignment", "group_assignment",
-        interfaces.IGroupDocumentAssignment, domain.GroupDocumentAssignment, None),
+    TI("doc_principal", None, interfaces.IDocPrincipal, domain.DocPrincipal, None), 
+    TI("group_assignment", "group_assignment",
+        interfaces.IGroupAssignment, domain.GroupAssignment, domain.DocPrincipal),
     TI("debate_record", "debate_record", interfaces.IDebateRecord, domain.DebateRecord, None),
+    
     # non-workflowed
     TI("o_auth_application", None, interfaces.IOAuthApplication, domain.OAuthApplication, None),
     TI("debate_media", None, interfaces.IDebateMedia, domain.DebateMedia, None),
@@ -296,7 +297,7 @@ TYPE_REGISTRY = [
     TI("editorial_note", None, interfaces.IEditorialNote, domain.EditorialNote, None),
     TI("agenda_text_record", None, interfaces.IAgendaTextRecord, domain.AgendaTextRecord, None),
     TI("sitting_report", None, interfaces.ISittingReport, domain.SittingReport, None),
-    TI("group_member_role", None, interfaces.IGroupMemberRole, domain.GroupMemberRole, None),
+    TI("member_role", None, interfaces.IMemberRole, domain.MemberRole, None),
     
     # additional custom types are loaded dynamically from bungeni_custom/types.xml
 ]

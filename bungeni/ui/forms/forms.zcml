@@ -173,22 +173,22 @@
     />
     
     <!-- group assignment-->
-    <browser:page name="add" for="bungeni.models.interfaces.IGroupDocumentAssignmentContainer"
+    <browser:page name="add" for="bungeni.models.interfaces.IGroupAssignmentContainer"
         class=".common.AddForm"
         permission="bungeni.group_assignment.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="edit" for="bungeni.models.interfaces.IGroupDocumentAssignment"
+    <browser:page name="edit" for="bungeni.models.interfaces.IGroupAssignment"
         class=".common.EditForm"
         permission="bungeni.group_assignment.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="delete" for="bungeni.models.interfaces.IGroupDocumentAssignment"
+    <browser:page name="delete" for="bungeni.models.interfaces.IGroupAssignment"
         class=".common.DeleteForm"
         permission="bungeni.group_assignment.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="index" for="bungeni.models.interfaces.IGroupDocumentAssignment"
+    <browser:page name="index" for="bungeni.models.interfaces.IGroupAssignment"
         class=".common.DisplayForm"
         permission="bungeni.group_assignment.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"

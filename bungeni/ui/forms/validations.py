@@ -358,31 +358,26 @@ def validate_group_member_dates(action, data, context, container):
                     "end_date", "user_id"))
     return logged_errors(errors, "validate_group_member_dates")
                  
-
+# !+MODEL remove this, use same "consistent" model and schema
 class GroupMemberTitle(object):
     """ Titels that may be held by multiple persons of the
     group at the same time"""
 
-group_member_title = sa.join(schema.group_member, schema.member_title
-    ).join(schema.title_type)
-
+group_member_title = sa.join(schema.member, schema.member_title).join(schema.title_type)
 sa.orm.mapper(GroupMemberTitle, group_member_title,
     properties={
-        "member_id":[
-            schema.group_member.c.member_id,
+        "member_id": [
+            schema.member.c.member_id,
             schema.member_title.c.member_id
-            ],
-        "title_type_id":[
+        ],
+        "title_type_id": [
             schema.title_type.c.title_type_id,
             schema.member_title.c.title_type_id
-            ],
-        "group_id":[
-            schema.group_member.c.group_id,
-            schema.title_type.c.group_id
-            ],
-        "membership_start_date":[schema.group_member.c.start_date],
-        "membership_end_date":[schema.group_member.c.end_date],
-        "membership_language":[schema.group_member.c.language],
+        ],
+        "group_id": [schema.member.c.group_id, schema.title_type.c.group_id],
+        "membership_start_date":[schema.member.c.start_date],
+        "membership_end_date":[schema.member.c.end_date],
+        "membership_language":[schema.member.c.language],
         "title_type_language":[schema.title_type.c.language],
     }
 )

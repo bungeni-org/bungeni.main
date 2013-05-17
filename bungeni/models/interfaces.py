@@ -120,15 +120,17 @@ class IGroupMember(interface.Interface):
     """
 class IGroupMemberContainer(IBungeniContainer): pass
 
-class IGroupMemberRole(interface.Interface):
+class IMemberRole(interface.Interface):
     """Group membership sub roles in bungeni.
     """
-class IGroupMemberRoleContainer(IBungeniContainer): pass
+class IMemberRoleContainer(IBungeniContainer): pass
 
-class IGroupDocumentAssignment(interface.Interface):
-    """Group document assigment.
+class IDocPrincipal(interface.Interface): pass
+
+class IGroupAssignment(IDocPrincipal):
+    """Doc group assignment.
     """
-class IGroupDocumentAssignmentContainer(IBungeniContainer): pass
+class IGroupAssignmentContainer(IBungeniContainer): pass
 
 class IMember(IGroupMember): pass
 class IMemberContainer(IGroupMemberContainer): pass
