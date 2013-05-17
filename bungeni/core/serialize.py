@@ -335,7 +335,11 @@ def _serialize(parent_elem, data):
         parent_elem.attrib["name"] = parent_elem.tag
         parent_elem.tag = "field"
         if not isinstance(data, unicode):
-            data = unicode(data)
+            try:
+                data = unicode(data)
+            except UnicodeDecodeError:
+                data = "Unknown Value (Error)"
+                log.error("Decode error in property: %s", parent_elem.tag)
         parent_elem.text = data
 
 
@@ -867,6 +871,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
             result[mproperty.key] = value
     
     extended_props = []
+    seen_keys.extend(INNER_EXCLUDES)
     for prop_name, prop_type in obj.__class__.extended_properties:
         try:
             if prop_type == domain.vp.Binary:
