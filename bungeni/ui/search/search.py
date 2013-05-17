@@ -209,6 +209,10 @@ def execute_search(data, prefix, request, context):
     data = dict([(key, 
         (",".join(value) if isinstance(value, list) else value))
         for key,value in data.iteritems() if value])
+    #set default search types (context-aware) if none is set in form
+    if data.get("type") is None:
+        data["type"] = [tp for tp in 
+            interfaces.search_document_types(context)][0].value
     if data.get("page"):
         limit = data.get("limit", interfaces.DEFAULT_LIMIT)
         data["offset"] = (int(data["page"])-1)*int(limit)+1
