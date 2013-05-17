@@ -553,16 +553,19 @@ YAHOO.bungeni.config = function () {
                     });
                     orderButtons.appendTo(el);
 
-                    var deleteButton = new YAHOO.widget.Button({
-                        label: "&nbsp;"
-                    })
+                    if ((YAHOO.bungeni.availableitems!=undefined) || 
+                        (SGlobals.editable_types.indexOf(type_key)>=0)){
+                        var deleteButton = new YAHOO.widget.Button({
+                            label: "&nbsp;"
+                        })
 
-                    deleteButton.addClass("schedule_delete");
-                    deleteButton.on("click", function () {
-                        YAHOO.bungeni.config.scheduling.handlers.removeRow(
-                        deleteButton.get("element"));
-                    });
-                    deleteButton.appendTo(el);
+                        deleteButton.addClass("schedule_delete");
+                        deleteButton.on("click", function () {
+                            YAHOO.bungeni.config.scheduling.handlers.removeRow(
+                            deleteButton.get("element"));
+                        });
+                        deleteButton.appendTo(el);
+                    }
                 }
 
                 // adding minutes state (workflow actions)

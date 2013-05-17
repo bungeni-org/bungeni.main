@@ -32,10 +32,10 @@ YAHOO.bungeni.agendaconfig = function(){
                 {
                     text: SGlobals.save_button_text,
                     handler: function(){
-                        var text = this._parent.getText();
-                        var row_index = this._parent.row;
-                        var minute_index = this._parent.minute;
                         var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+                        var text = this._parent.getText();
+                        var row_index = sDt.getTrIndex(sDt.getSelectedRows()[0]);
+                        var minute_index = this._parent.minute;
                         if (text){
                             var record = sDt.getRecord(row_index);
                             var row_data = record.getData();
@@ -56,13 +56,17 @@ YAHOO.bungeni.agendaconfig = function(){
                                 );
                             }
                             sDt.updateRow(row_index, row_data);
+                            this._parent.row = null;
                             this.hide();
                         }
                     }
                 },
                 {
                     text: SGlobals.text_dialog_cancel_action,
-                    handler: function(){ this.hide(); }
+                    handler: function(){
+                        this._parent.row = null; 
+                        this.hide(); 
+                    }
                 },
             ]
             this.dialog.cfg.queueProperty("buttons", dialogButtons);
@@ -81,13 +85,19 @@ YAHOO.bungeni.agendaconfig = function(){
                 YAHOO.bungeni.agendaconfig.minuteEditor.getText = function(){
                     return editor.cleanHTML(editor.getEditorHTML())
                 }
-                YAHOO.bungeni.agendaconfig.minuteEditor.setText = function(row, minute){
-                    if ((row==null) && (minute==null)){
+                YAHOO.bungeni.agendaconfig.minuteEditor.setText = function(minute){
+                    if (minute==null){
                         editor.setEditorHTML("");
                         return;
                     }
                     var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
-                    var record = sDt.getRecord(row);
+                    var record = null;
+                    row_index = YAHOO.bungeni.agendaconfig.minuteEditor.row;
+                    if(row_index>=0){
+                        record = sDt.getRecord(row_index);
+                    }else{
+                        record = sDt.getRecord(sDt.getSelectedRows()[0]);
+                    }
                     var row_data = record.getData();
                     var cdata = YAHOO.bungeni.agendaconfig.minutesCache.get(
                         YAHOO.bungeni.Utils.slugify(row_data[Columns.OBJECT_ID])
@@ -97,8 +107,7 @@ YAHOO.bungeni.agendaconfig = function(){
             });
             this.dialog.render(document.body);
         }
-        render = function(row, minute){
-            this.row = Number(row);
+        render = function(minute){
             this.minute = Number(minute);
             if (!this.dialog){
                 this.init();
@@ -106,10 +115,10 @@ YAHOO.bungeni.agendaconfig = function(){
                 this.dialog.show();
                 this.dialog.bringToTop();
                 this.dialog.center();
-                if (minute){
-                    this.setText(this.row, this.minute);
+                if (this.minute>=0){
+                    this.setText(this.minute);
                 }else{
-                    this.setText(null, null);
+                    this.setText(null);
                 }
             }
         }
@@ -180,7 +189,8 @@ YAHOO.bungeni.agendaconfig = function(){
             var indices = this.id.split("_")[1].split("-");
             var row = indices[0];
             var minute = indices[1];
-            YAHOO.bungeni.agendaconfig.minuteEditor.render(row, minute);
+            YAHOO.bungeni.agendaconfig.minuteEditor.row = Number(row);
+            YAHOO.bungeni.agendaconfig.minuteEditor.render(minute);
         }
         var _deleteMinute = function(args){
             var indices = this.id.split("_")[1].split("-");
@@ -198,13 +208,11 @@ YAHOO.bungeni.agendaconfig = function(){
             }
             sDt.updateRow(row, row_data);
         }
-        var _addMinute = function(args){
+        var _addMinute = function(e){
             sDt = YAHOO.bungeni.scheduling.getScheduleTable();
             sDt.unselectAllRows();
-            sDt.selectRow(args.toElement);
-            var selected_rows = sDt.getSelectedRows();
-            var row = sDt.getTrIndex(selected_rows[0])
-            YAHOO.bungeni.agendaconfig.minuteEditor.render(row);
+            sDt.selectRow(e.relatedTarget || e.toElement);
+            YAHOO.bungeni.agendaconfig.minuteEditor.render(-1);
         }
 
         var _saveMinutes = function(row){
