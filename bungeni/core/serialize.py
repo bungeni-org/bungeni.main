@@ -719,6 +719,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
             result[name] = value
     
     # Get mapped attributes
+    seen_keys = []
     mapper = class_mapper(obj.__class__)
     for mproperty in mapper.iterate_properties:
         if mproperty.key.startswith("_vp"):
@@ -726,6 +727,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
             continue
         if mproperty.key in exclude:
             continue
+        seen_keys.append(mproperty.key)
         value = getattr(obj, mproperty.key)
         if value == parent:
             continue
@@ -880,14 +882,14 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
 
     
     # any additional attributes - this allows us to capture any derived attributes
+    seen_keys.extend(include + exclude + extended_props)
     if IAlchemistContent.providedBy(obj):
-        seen_keys = ( [ prop.key for prop in mapper.iterate_properties ] + 
-            include + exclude + extended_props)
         try:
             domain_schema = utils.get_derived_table_schema(type(obj))
             known_names = [ k for k, d in 
                 domain_schema.namesAndDescriptions(all=True) ]
             extra_properties = set(known_names).difference(set(seen_keys))
+            seen_keys.extend(extra_properties)
             for prop_name in extra_properties:
                 try:
                     result[prop_name] = getattr(obj, prop_name)
@@ -899,7 +901,6 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
     # any other properties defined on class
     props = inspect.getmembers(type(obj), 
         predicate=lambda mm:isinstance(mm, property))
-    seen_keys = result.keys() + include + exclude
     extra_props = set([p for p, v in props]).difference(seen_keys)
     for prop in extra_props:
         if prop.startswith("_"):
