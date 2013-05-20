@@ -100,7 +100,7 @@ def propagate_parent_assigned_group_role(child_doc):
     assert child_doc.group is None, "!+GROUP_ID must be unset! %s" % (child_doc)
     def get_parent_doc_assigned_group(child_doc):
         parent_group_assignments = child_doc.head.group_assignment
-        for ag in parent_group_assignments:
+        for group_assignment in parent_group_assignments:
             # !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment!
             # !+MULTI_ASSIGNMENTS_MULTI_MEMBERSHIPS(mr, apr-2013) for now we just
             # take the first assigned group we find, but this is obvioulsy 
@@ -108,7 +108,8 @@ def propagate_parent_assigned_group_role(child_doc):
             # more than one group, within which is the current user acting
             # (keeping in mind, also that the current user may be member of more
             # than one group that the doc is assigned to!).
-            return ag.group
+            #!+GROUP_ASSIGNMENT.GROUP assert isinstance(group, domain.Group), group
+            return group_assignment.principal
     pag = parent_assigned_group = get_parent_doc_assigned_group(child_doc)
     assert pag is not None, child_doc
     utils.assign_role(pag.group_role, pag.principal_name, child_doc)

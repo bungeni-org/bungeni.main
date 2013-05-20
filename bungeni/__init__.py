@@ -119,7 +119,7 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
         group_assignments = getattr(parent, "group_assignment", list())
         for group_assignment in group_assignments:
             group = group_assignment.principal
-            #!+assert isinstance(group, domain.Group), group
+            #!+GROUP_ASSIGNMENT.GROUP assert isinstance(group, domain.Group), group
             assigned_group_prinrole = IPrincipalRoleMap(group, None)
             if assigned_group_prinrole:
                 roles = roles.copy()

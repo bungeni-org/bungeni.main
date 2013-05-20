@@ -335,8 +335,10 @@ class GroupAssignmentDescriptiveProperties(DescriptiveProperties):
     
     @property
     def title(self):
-        context = _merged(self.context)
-        return "%s" % (self.translate(context.group, "short_name"))
+        group_assignment = _merged(self.context)
+        group = group_assignment.principal
+        #!+GROUP_ASSIGNMENT.GROUP assert isinstance(group, domain.Group), group
+        return "%s" % (self.translate(group, "short_name"))
 
 
 @register.adapter()
