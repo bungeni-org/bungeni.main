@@ -512,11 +512,14 @@
             attributes="
                 sitting_id
                 group_id
+                session_id
                 short_name
                 start_date
                 end_date
+                sitting_length
                 recurring_id
                 recurring_type
+                recurring_end_date
                 status
                 status_date
                 venue_id
@@ -531,11 +534,14 @@
             set_attributes="
                 sitting_id
                 group_id
+                session_id
                 short_name
                 start_date
                 end_date
+                sitting_length
                 recurring_id
                 recurring_type
+                recurring_end_date
                 status
                 status_date
                 venue_id

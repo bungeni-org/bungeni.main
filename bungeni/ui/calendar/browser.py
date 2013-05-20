@@ -459,10 +459,26 @@ class SittingScheduleView(BrowserView):
         return self.template()
 
 @register.view(model_interfaces.IItemScheduleContainer, 
+    name="jsonlisting",
+    protect={"bungeni.item_schedule.View": 
+        register.VIEW_DEFAULT_ATTRS})
+class ScheduleJSONListingDocuments(ContainerJSONListing):
+    """By default, lists documents only (excluding headings and notes)
+    If flag is set, includes all text records in listing (used in scheduling)
+    """
+    def query_add_filters(self, query):
+        include_text = self.request.get("include_text_records", None)
+        if not include_text:
+            query = query.filter(self.domain_model.item_type.in_(
+                data.get_schedulable_types(True).keys()
+            ))
+        return query
+
+@register.view(model_interfaces.IItemScheduleContainer, 
     name="jsonlisting-schedule",
     protect={"bungeni.item_schedule_discussion.View": 
         register.VIEW_DEFAULT_ATTRS})
-class ScheduleJSONListing(ContainerJSONListing):
+class ScheduleJSONListing(ScheduleJSONListingDocuments):
     """Returns JSON listing with expanded unlisted properties used in
     scheduling user interface setup
     """
@@ -494,19 +510,6 @@ class ScheduleJSONListing(ContainerJSONListing):
             ]
         map(add_wf_meta, enumerate(items))
         return items
-
-@register.view(model_interfaces.IItemScheduleContainer, 
-    name="jsonlisting-schedule-documents",
-    protect={"bungeni.item_schedule.View": 
-        register.VIEW_DEFAULT_ATTRS})
-class ScheduleJSONListingDocuments(ContainerJSONListing):
-    """Lists all scheduled documents (excluding headings and notes)
-    """
-    def query_add_filters(self, query):
-        return query.filter(self.domain_model.item_type.in_(
-            data.get_schedulable_types(True).keys()
-        ))
-    
 
 class SchedulableItemsJSON(BrowserView):
     

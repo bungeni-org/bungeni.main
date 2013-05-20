@@ -1750,8 +1750,8 @@ class CountryDescriptor(ModelDescriptor):
 
 class ItemScheduleDescriptor(ModelDescriptor):
     localizable = True
-    #display_name = "Scheduling"
-    #container_name = "Schedulings"
+    display_name = "Scheduled Item"
+    container_name = "Scheduled Items"
     sort_on = ["real_order", ]
     sort_dir = "asc"
     #!+VOCABULARY(mb, nov-2010) item_id references a variety of content
@@ -1883,8 +1883,8 @@ class DebateTakeDescriptor(ModelDescriptor):
 
 class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     localizable = True
-    #display_name = "Discussion"
-    #container_name = "Discussions"
+    display_name = "Discussion"
+    container_name = "Discussions"
     
     fields = [
         LanguageField("language"),
