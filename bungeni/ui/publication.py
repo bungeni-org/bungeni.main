@@ -9,6 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.publication")
 
 import re
+import gc
 
 from zope import interface
 from zope import component
@@ -69,13 +70,14 @@ def on_end_request(event):
     """Subscriber to catch end of request processing, and dispatch cleanup 
     tasks as needed. 
     """
+    common._clear_request_cache()
     session = Session()
     log.debug("IEndRequestEvent:%s:%s:%s\n"
         "    closing SqlAlchemy session: %s" % (
             id(event.request), event.request.getURL(), event.object, session))
-    common._clear_request_cache()
+    session.close()
+    gc.collect()
 
-    
 
 # some actual handlers
 
