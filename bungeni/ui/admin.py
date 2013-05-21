@@ -8,7 +8,6 @@ $Id$
 """
 
 from zope import component
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.formlib import form, namedtemplate
 
 from bungeni.alchemist import Session
@@ -17,7 +16,7 @@ from bungeni.models import domain, interfaces
 from bungeni.core.serialize import batch_serialize
 from bungeni.ui import browser
 from bungeni.ui.interfaces import IBungeniSkin, ISerializationManager
-from bungeni.ui.widgets import TextWidget
+from bungeni.ui.widgets import TextWidget, DateWidget
 from bungeni.ui.i18n import _
 from bungeni.utils import register
 
@@ -113,6 +112,8 @@ class RegistrySettings(ui.EditForm):
 class SerializationManager(form.PageForm, browser.BungeniBrowserView):
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.FormFields(ISerializationManager)
+    form_fields["start_date"].custom_widget = DateWidget
+    form_fields["end_date"].custom_widget = DateWidget
     form_name = _(u"Batch Serialization")
     form_description = _(u"This will serialize all workflowable objects "
         "in Bungeni to XML. You can limit by type below or choose "
@@ -122,7 +123,9 @@ class SerializationManager(form.PageForm, browser.BungeniBrowserView):
     @form.action(_(u"Serialize Items"), 
         name="serialize-objects")
     def handle_serialize_objects(self, action, data):
-        item_count = batch_serialize(data.get("object_type"))
+        item_count = batch_serialize(data.get("object_type"),
+            data.get("start_date"), data.get("end_date"),
+        )
         self.status = _("Sent ${item_count} items for serialization",
             mapping = { "item_count": item_count }
         )

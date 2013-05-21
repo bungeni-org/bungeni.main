@@ -30,6 +30,7 @@ from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 from bungeni.core.testing import create_participation
 
 from sqlalchemy.orm import class_mapper, object_mapper
+from sqlalchemy import sql
 
 from bungeni.alchemist.container import stringKey, valueKey
 from bungeni.alchemist import Session
@@ -488,9 +489,11 @@ def init_thread(*args, **kw):
     TIMER_DELAYS[task_thread.name] = delay
     
 
-def batch_serialize(type_key="*"):
+def batch_serialize(type_key="*", start_date=None, end_date=None):
     """Serialize all objects of `type_key` or all types if with a
     wildcard(*) as the type key.
+    Item set may be filtered by status date (start_date and/or end date)
+    range.
     """
     #keep count of serialized objects for feedback
     serialized_count = 0
@@ -510,7 +513,17 @@ def batch_serialize(type_key="*"):
             domain_models.append(info.domain_model)
     session = Session()
     for domain_model in domain_models:
-        objects = session.query(domain_model).all()
+        query = session.query(domain_model)
+        if IWorkflowed.implementedBy(domain_model) and (start_date or end_date):
+            column = domain_model.status_date
+            if start_date and end_date:
+                expression = sql.between(column, start_date, end_date)
+            elif start_date:
+                expression = (column>=start_date)
+            elif end_date:
+                expression = (column<=end_date)
+            query = query.filter(expression)
+        objects = query.all()
         map(queue_object_serialization, objects)
         serialized_count += len(objects)
     return serialized_count

@@ -141,3 +141,13 @@ class ISerializationManager(interface.Interface):
         required=True,
         vocabulary="serializable_type"
     )
+    start_date = schema.Date(
+        title=_(u"Status Date (Start)"),
+        description=_(u"Items with a status after this date"),
+        required=False,
+    )
+    end_date = schema.Date(
+        title=_(u"Status Date (End)"),
+        description=_(u"Items with a status before this date"),
+        required=False,
+    )
