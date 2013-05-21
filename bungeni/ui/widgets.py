@@ -36,6 +36,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, debug, date, misc
+from bungeni.ui.calendar.data import TIME_OPTIONS
 from bungeni.utils import common
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
     IAdminSectionLayer
@@ -555,6 +556,57 @@ class SelectDateWidget(zope.formlib.widget.SimpleInputWidget):
         else:
             value = self._data
         return self._toFormValue(value)
+
+class TimeWidget(zope.formlib.widgets.TextWidget):
+    options_container = "time_options_container"
+
+    def _toFieldValue(self, value):
+        if self.required and (value==self.context.missing_value):
+            return value
+        else:
+            try:
+                parsed = datetime.datetime.strptime(value, "%H:%M")
+                return value
+            except ValueError, e:
+                if value:
+                    raise ConversionError(_(u"Type in a valid time value in"
+                    " 24H format e.g 00:00 - 23:59"), e)
+    
+    @property
+    def js(self):
+        kw = dict(
+            time_options=TIME_OPTIONS,
+            input_el=self.name,
+            container_el=self.options_container,
+            func_name=self.name.replace(".", "_"),
+        )
+        return """<script type="text/javascript">
+            YAHOO.namespace("actime");
+            YAHOO.actime.timeOptions = %(time_options)s;
+            YAHOO.actime.render_%(func_name)s = function() {
+                var oDS = new YAHOO.util.LocalDataSource(
+                    YAHOO.actime.timeOptions);
+                var oAC = new YAHOO.widget.AutoComplete("%(input_el)s",
+                    "%(container_el)s", oDS);
+                oAC.prehighlightClassName = "yui-ac-prehighlight";
+                oAC.useShadow = true;
+                return {
+                    oDS: oDS,
+                    oAC: oAC
+                };
+            }();
+        </script>
+        """ % kw
+    
+    def __call__(self):
+        need("yui-json")
+        need("yui-datasource")
+        need("yui-autocomplete")
+        input_widget = super(TimeWidget, self).__call__()
+        auto_container = u'<div id="%s" class="yui-skin-sam"></div>' % (
+            self.options_container)
+        return "<div class='ac_time_container'>%s%s%s</div>" %(
+            input_widget, auto_container, self.js)
 
 class TextDateWidget(SelectDateWidget):
     """Simple date widget input in a text field.

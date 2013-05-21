@@ -214,6 +214,12 @@ input.searchButton {
     color: Black;
 }
 
+/*autocomplete time widget*/
+.ac_time_container{
+    width:90pt;
+    padding-bottom:1.2em;
+}
+
 /* The edit form elements */
 .field {
     top: 0;

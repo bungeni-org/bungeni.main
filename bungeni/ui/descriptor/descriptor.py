@@ -1913,6 +1913,8 @@ class ItemScheduleVoteDescriptor(ModelDescriptor):
             label="Vote Time",
             required=False,
             localizable=[ show("add view edit listing") ],
+            value_type="time",
+            render_type="time",
         ),
         F(name="issue_item",
             label="Issue item",

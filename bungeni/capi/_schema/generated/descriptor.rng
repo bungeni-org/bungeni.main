@@ -271,6 +271,7 @@
   <define name="FIELD_VALUE_TYPE">
     <choice>
       <value>text</value>
+      <value>time</value>
       <value>date</value>
       <value>datetime</value>
       <value>duration</value>
@@ -307,6 +308,7 @@
       <value>text_box</value>
       <value>rich_text</value>
       <value>date</value>
+      <value>time</value>
       <value>datetime</value>
       <value>bool</value>
       <value>number</value>

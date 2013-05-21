@@ -23,6 +23,7 @@ VALUETYPE = {
     "text": {},
     "date": {},
     "datetime": {},
+    "time": {},
     "duration": {}, # !+ this "consumes" 2 columns, so probably have dedicated widget type? entirely 
     "bool": {"default": True},
     "number": {},
@@ -50,6 +51,7 @@ RENDERTYPE = {
     "text_schedule_type": schema.TextLine,
     "text_box": schema.Text,
     "rich_text": schema.Text,
+    "time": schema.TextLine,
     "date": schema.Date,
     "datetime": schema.Datetime,
     "bool": schema.Bool,
@@ -101,6 +103,8 @@ WIDGETS = {
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget,
             listing.date_column, None),
+    ("time", "time"):
+        (None, widgets.TimeWidget, widgets.TimeWidget, None, None, None),
     ("datetime", "datetime"):
         (None, widgets.DateTimeWidget, widgets.DateTimeWidget, 
             widgets.date_input_search_widget,

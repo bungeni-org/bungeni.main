@@ -121,6 +121,7 @@ grammar {
     
     FIELD_VALUE_TYPE = (
         "text" |
+        "time" |
         "date" | 
         "datetime" |
         "duration" | # !+ this "consumes" 2 columns, so probably have dedicated widget type? entirely 
@@ -148,6 +149,7 @@ grammar {
         "text_box" |
         "rich_text" |
         "date" |
+        "time" |
         "datetime" |
         "bool" |
         "number" |
