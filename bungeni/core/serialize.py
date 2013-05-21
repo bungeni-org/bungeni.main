@@ -9,6 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
 import os
+import threading
 import functools
 import inspect
 import math
@@ -16,7 +17,6 @@ import string
 import random
 from StringIO import StringIO
 from zipfile import ZipFile
-from threading import Thread, Timer, RLock
 
 from xml.etree.cElementTree import Element, ElementTree
 from tempfile import NamedTemporaryFile as tmp
@@ -55,6 +55,9 @@ from bungeni.capi import capi
 
 import transaction
 import pika
+
+#local thread storage
+thread_locals = threading.local()
 
 # timer delays in setting up serialization workers
 INITIAL_DELAY = 10
@@ -113,21 +116,23 @@ class memoized(object):
     If called later with the same arguments, the cached value is returned
     (not reevaluated).
     adapted from http://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
+    
+    Since serialize functions are run in threads, we use a thread local as 
+    a cache.
     '''
     def __init__(self, func):
         self.func = func
-        self.cache = {}
     def __call__(self, *args, **kwargs):
         key_args = (args[0], kwargs.get("root_key"))
         if not isinstance(key_args, collections.Hashable):
             # uncacheable. a list, for instance.
             # better to not cache than blow up.
             return self.func(*args, **kwargs)
-        if key_args in self.cache:
-            return self.cache[key_args]
+        if key_args in thread_locals.cache:
+            return thread_locals.cache[key_args]
         else:
             value = self.func(*args, **kwargs)
-            self.cache[key_args] = value
+            thread_locals.cache[key_args] = value
             return value
     def __repr__(self):
         return self.func.__repr__()
@@ -166,7 +171,7 @@ class _PersistFiles(object):
                 return file_name
 PersistFiles = _PersistFiles()
 
-getter_lock = RLock()
+getter_lock = threading.RLock()
 class _LockStore(object):
     """instance of this stores all locks if module is loaded"""
     locks = {}
@@ -174,7 +179,7 @@ class _LockStore(object):
     def get_lock(self, lock_name):
         with getter_lock:
             if not self.locks.has_key(lock_name):
-                self.locks[lock_name] = RLock()
+                self.locks[lock_name] = threading.RLock()
             return self.locks.get(lock_name)
 LockStore = _LockStore()
 
@@ -405,6 +410,10 @@ def notify_serialization_failure(template, **kw):
 
 
 def serialization_notifications_callback(channel, method, properties, body):
+    """Publish an object to XML on receiving AMQP message
+    """
+    #set up thread local cache
+    thread_locals.cache = {}
     obj_data = simplejson.loads(body)
     obj_type = obj_data.get("obj_type")
     domain_model = getattr(domain, obj_type, None)
@@ -434,6 +443,8 @@ def serialization_notifications_callback(channel, method, properties, body):
         log.error("Failed to get class in bungeni.models.domain named %s",
             obj_type
         )
+    #clear thread local cache
+    del thread_locals.cache
 
 def serialization_worker():
     connection = bungeni.core.notifications.get_mq_connection()
@@ -446,7 +457,7 @@ def serialization_worker():
     channel.start_consuming()
 
 
-class SerializeThread(Thread):
+class SerializeThread(threading.Thread):
     """This thread will respawn after n seconds if it crashes
     """
     is_running = True
@@ -474,7 +485,7 @@ class SerializeThread(Thread):
                         "consumer in %d seconds", delay
                     )
                     next_delay = delay * 2
-                    timer = Timer(delay, init_thread, [], 
+                    timer = threading.Timer(delay, init_thread, [], 
                         {"delay": next_delay })
                     timer.daemon = True
                     timer.start()
@@ -644,7 +655,7 @@ def serialization_notifications():
             log.info("Attempting to setup serialization AMQP consumers "
                 "in %d seconds", delay
             )
-            timer = Timer(TIMER_DELAYS["serialize_setup"],
+            timer = threading.Timer(TIMER_DELAYS["serialize_setup"],
                 serialization_notifications
             )
             timer.daemon = True
