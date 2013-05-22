@@ -1,12 +1,13 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="bungeni">
   <metal:eventformhtml define-macro="eventformhtml">
     <div class="dhl_cal_ltext" style="height:auto;">
       <table>
     <metal:block tal:repeat="widget view/partial_event_form/get_widgets">
       <tr tal:attributes="rel widget/name">
-        <td i18n:translate="" tal:content="nocall:widget/label"
+        <td tal:content="nocall:widget/label"
             tal:attributes="class python: ('required-flag' if widget.required else '')"/>
         <td>
           <span tal:replace="structure widget"/>

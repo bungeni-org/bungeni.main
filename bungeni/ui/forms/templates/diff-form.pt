@@ -6,32 +6,29 @@
   <body>   
     <div metal:fill-slot="body">
       <tal:macros condition="python:False">
-	<metal:field-header define-macro="header">
-	  <label tal:attributes="for widget/name">
-            <span i18n:translate=""
-		  tal:content="widget/label">label</span>
-	  </label>
-	  <span class="fieldRequired" title="Required" 
-		tal:condition="widget/required"
-		i18n:translate="label_required"
-		i18n:attributes="title title_required;">
+    <metal:field-header define-macro="header">
+      <label tal:attributes="for widget/name">
+            <span tal:content="widget/label">label</span>
+      </label>
+      <span class="fieldRequired" title="Required" 
+        tal:condition="widget/required"
+        i18n:translate="label_required"
+        i18n:attributes="title title_required;">
             (Required)
-	  </span>
-	  <div class="formHelp"
-               i18n:translate=""
+      </span>
+      <div class="formHelp"
                tal:content="description"
                tal:condition="description"
                >field description</div>
-	</metal:field-header>
+    </metal:field-header>
       </tal:macros>
-      <h1 i18n:translate=""
-	  tal:content="view/form_name|nothing" />
+      <h1 tal:content="view/form_name|nothing" />
       <span>
-	<tal:block i18n:translate="">
-	  Also editing the document:
-	</tal:block>
-	<strong id="nowediting" 
-		tal:content="context/@@nowediting" />
+    <tal:block i18n:translate="">
+      Also editing the document:
+    </tal:block>
+    <strong id="nowediting" 
+        tal:content="context/@@nowediting" />
       </span>
       <metal:block define-macro="form"
                    i18n:domain="alchemist">
@@ -113,120 +110,120 @@
                       
                       <tal:block condition="not: view/diff" define="widgets python: groups.get(name)"
                                  repeat="widget widgets">
-			<tal:field define="description widget/hint;
-					   error widget/error;
-					   odd repeat/widget/odd;
-					   changed widget/changed | nothing"
-				   condition="widget/visible">
+            <tal:field define="description widget/hint;
+                       error widget/error;
+                       odd repeat/widget/odd;
+                       changed widget/changed | nothing"
+                   condition="widget/visible">
 
 
-			  <tal:standard condition="not: side_by_side">
+              <tal:standard condition="not: side_by_side">
                             <div 
-				tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
-				tal:attributes="class string:field widget-$name;id string:field.$fieldid">
+                tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
+                tal:attributes="class string:field widget-$name;id string:field.$fieldid">
                               <metal:header use-macro="template/macros/header" />
                               
                               <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
-				<div class="widget" tal:content="structure widget"  >
-				  <input type="text" />
-				</div>
-				<div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
-				  The Error
-				</div>
-	                      </div>
+                <div class="widget" tal:content="structure widget"  >
+                  <input type="text" />
+                </div>
+                <div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
+                  The Error
+                </div>
+                          </div>
                             </div>
-			  </tal:standard>
-			  
-			  <tal:side-by-side condition="side_by_side">
+              </tal:standard>
+              
+              <tal:side-by-side condition="side_by_side">
                             <tr tal:attributes="class python:'field'+(error and ' error' or '') + (odd and ' odd' or ' even')">
                               <th colspan="2">
-				<metal:header use-macro="template/macros/header" />
+                <metal:header use-macro="template/macros/header" />
                               </th>
                             </tr>
                             
                             <tr>
                               <td valign="top" width="30%" style="overflow: auto">
-				<div tal:content="structure widget/render_original" />
+                <div tal:content="structure widget/render_original" />
                               </td>
                               <td valign="top">
-				<div class="widget" tal:content="structure widget" />
+                <div class="widget" tal:content="structure widget" />
                               </td>
                             </tr>
-			  </tal:side-by-side>
+              </tal:side-by-side>
 
-			</tal:field>
+            </tal:field>
                       </tal:block>
                       
                       <tal:block condition="view/diff">
-			<div class="diff-widgets">
-          		  <table>
-          		    <tr>
-			      <td><h3>Current version</h3></td>
-			      <td><h3>Your version</h3></td>
-			    </tr>
-          		    <tal:block define="widgets view/diff_widgets"
+            <div class="diff-widgets">
+                    <table>
+                      <tr>
+                  <td><h3>Current version</h3></td>
+                  <td><h3>Your version</h3></td>
+                </tr>
+                      <tal:block define="widgets view/diff_widgets"
                                        repeat="widget widgets">
-			      <tr>
-				<td width="50%" valign="top">
-                		  <div tal:define="widget python:widget[1]">
-                		    <tal:field define="description widget/hint;
-						       error widget/error;
-						       odd repeat/widget/odd;
-						       changed widget/changed | nothing"
-					       condition="widget/visible">
+                  <tr>
+                <td width="50%" valign="top">
+                          <div tal:define="widget python:widget[1]">
+                            <tal:field define="description widget/hint;
+                               error widget/error;
+                               odd repeat/widget/odd;
+                               changed widget/changed | nothing"
+                           condition="widget/visible">
 
 
-				      <tal:standard >
-					<div
-					    tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
-					    tal:attributes="class string:field widget-$name;id string:field_$fieldid">
-					  <metal:header use-macro="template/macros/header" />
-					  
-					  <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
-					    <div class="widget" tal:content="structure widget"  >
-					      <input type="text" />
-					    </div>
-					    <div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
-					      The Error
-					    </div>
-					  </div>
-					</div>
-				      </tal:standard>
-				    </tal:field>
-				  </div>
-				</td>
-				<td width="50%" valign="top">
-				  <div tal:define="widget python:widget[0]">
-				    <tal:field define="description widget/hint;
-						       error widget/error;
-						       odd repeat/widget/odd;
-						       changed widget/changed | nothing"
-					       condition="widget/visible">
-				      <tal:standard >
-					<div class="field"
-					     tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
-					     tal:attributes="class string:$default widget-$name;id string:field_$fieldid">
-					  <metal:header use-macro="template/macros/header" />
-					  
-					  <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
-					    <div class="widget" tal:content="structure widget"  >
-					      <input type="text" />
-					    </div>
-					    <div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
-					      The Error
-					    </div>
-					  </div>
-					</div>
-				      </tal:standard>
-				    </tal:field>
-				  </div>
-				</td>
-			      </tr>
-			      
-		            </tal:block>
-		          </table>
-		        </div>
-          	      </tal:block>
+                      <tal:standard >
+                    <div
+                        tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
+                        tal:attributes="class string:field widget-$name;id string:field_$fieldid">
+                      <metal:header use-macro="template/macros/header" />
+                      
+                      <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
+                        <div class="widget" tal:content="structure widget"  >
+                          <input type="text" />
+                        </div>
+                        <div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
+                          The Error
+                        </div>
+                      </div>
+                    </div>
+                      </tal:standard>
+                    </tal:field>
+                  </div>
+                </td>
+                <td width="50%" valign="top">
+                  <div tal:define="widget python:widget[0]">
+                    <tal:field define="description widget/hint;
+                               error widget/error;
+                               odd repeat/widget/odd;
+                               changed widget/changed | nothing"
+                           condition="widget/visible">
+                      <tal:standard >
+                    <div class="field"
+                         tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
+                         tal:attributes="class string:$default widget-$name;id string:field_$fieldid">
+                      <metal:header use-macro="template/macros/header" />
+                      
+                      <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
+                        <div class="widget" tal:content="structure widget"  >
+                          <input type="text" />
+                        </div>
+                        <div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
+                          The Error
+                        </div>
+                      </div>
+                    </div>
+                      </tal:standard>
+                    </tal:field>
+                  </div>
+                </td>
+                  </tr>
+                  
+                    </tal:block>
+                  </table>
+                </div>
+                    </tal:block>
                       
                     </fieldset>
                   </tal:groups>
@@ -245,7 +242,7 @@
                                        name action/__name__;
                                        value action/label;"
                        i18n:attributes="value" />
-              </tal:loop>					
+              </tal:loop>                    
             </span>
           </div>
         </form>

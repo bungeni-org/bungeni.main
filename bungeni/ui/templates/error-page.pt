@@ -2,9 +2,8 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/@@standard_macros/page">
-
   <div metal:fill-slot="body" i18n:domain="bungeni">
-    <h1 i18n:translate="" tal:content="view/page_title"></h1>
+    <h1 tal:content="view/page_title"/>
         <div align="center" class="bungeni-error">
             <p>
                 <strong tal:content="view/error_message"></strong>

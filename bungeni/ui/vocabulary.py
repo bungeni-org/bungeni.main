@@ -85,10 +85,6 @@ def get_translated_group_label(group):
     return "%s - %s" % (g.short_name, g.full_name)
 
 
-days = [ _("day_%d" % index, default=default) for (index, default) in
-    enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
-
-
 class BaseVocabularyFactory(object):
     
     interface.implements(
@@ -232,81 +228,6 @@ class BoolFlatVDEXVocabularyFactory(FlatVDEXVocabularyFactory):
         return super(BoolFlatVDEXVocabularyFactory, self).getTermById(value)
 
 # /vdex
-
-
-''' !+UNUSED(mr, jun-2012)
-import datetime
-from zope.i18n import translate
-from bungeni.ui.calendar.utils import first_nth_weekday_of_month
-from bungeni.ui.calendar.utils import nth_day_of_month
-from bungeni.ui.calendar.utils import nth_day_of_week
-
-class WeekdaysVocabulary(object):
-    interface.implements(IVocabularyFactory)
-    
-    def __call__(self, context):
-        return vocabulary.SimpleVocabulary([
-            vocabulary.SimpleTerm(nth_day_of_week(index), str(index), msg)
-            for (index, msg) in enumerate(days)
-        ])
-WeekdaysVocabularyFactory = WeekdaysVocabulary()
-
-class MonthlyRecurrenceVocabulary(object):
-    """This vocabulary provides an option to choose between different
-    modes of monthly recurrence.
-
-    Vocabulary values are methods which take a date and generate
-    future dates.
-    """
-    
-    interface.implements(IVocabularyFactory)
-
-    def __call__(self, context):
-        today = datetime.date.today()
-        weekday = today.weekday()
-        day = today.day
-
-        return vocabulary.SimpleVocabulary(
-            (vocabulary.SimpleTerm(
-                nth_day_of_month(day),
-                "day_%d_of_every_month" % day,
-                _(u"Day $number of every month", mapping={"number": day})),
-             vocabulary.SimpleTerm(
-                 first_nth_weekday_of_month(weekday),
-                 "first_%s_of_every_month" % today.strftime("%a"),
-                 _(u"First $day of every month", mapping={"day": translate(
-                     today.strftime("%A"))})),
-        ))
-MonthlyRecurrenceVocabularyFactory = MonthlyRecurrenceVocabulary()
-
-ElectedNominated = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('E', _(u"elected"), _(u"elected")),
-    vocabulary.SimpleTerm('N', _(u"nominated"), _(u"nominated")), 
-    vocabulary.SimpleTerm('O', _(u"ex officio"), _(u"ex officio"))
-])
-InActiveDead = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('A', _(u"active"), _(u"active")),
-    vocabulary.SimpleTerm('I', _(u"inactive"), _(u"inactive")),
-    vocabulary.SimpleTerm('D', _(u"deceased"),  _(u"deceased"))
-])
-ISResponse = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('I', _(u"initial"), _(u"initial")),
-    vocabulary.SimpleTerm('S', _(u"subsequent"), _(u"subsequent"))
-])
-#AddressPostalType = vocabulary.SimpleVocabulary([
-#    vocabulary.SimpleTerm("P", _(u"P.O. Box"), _(u"P.O. Box")),
-#    vocabulary.SimpleTerm("S", _(u"Street / Physical"), 
-#        _(u"Street / Physical")),
-#    vocabulary.SimpleTerm("M", _(u"Military"), _(u"Military")),
-#    vocabulary.SimpleTerm("U", _(u"Undefined / Unknown"), 
-#        _(u"Undefined / Unknown")),
-#])
-#CommitteeStatusVocabulary = vocabulary.SimpleVocabulary([
-#    vocabulary.SimpleTerm("P", _("permanent"), _("permanent")),
-#    vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
-#])
-'''
-
 
 class GroupRoleFactory(BaseVocabularyFactory):
     def __call__(self, context=None):

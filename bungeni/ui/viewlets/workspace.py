@@ -32,7 +32,8 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
         for key in directory.keys():
             tab_url = url.absoluteURL(directory[key], self.request)
             tab = {}
-            tab["title"] = directory[key].title
+            tab["title"] = translation.translate_i18n(
+                "section_workspace_%s" % key)
             tab["tab_type"] = directory[key].__name__
             tab["url"] = tab_url
             tab["active"] = self.request.getURL().startswith(tab_url)

@@ -23,8 +23,7 @@
                id="" name="" value=""
                tal:attributes="id action/__name__;
                        name action/__name__;
-                       value python:str(action.label);"
-               i18n:attributes="value" />
+                       value action/label"/>
               </tal:loop>
             </span>
           </div>

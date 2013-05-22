@@ -5,10 +5,10 @@
       i18n:domain="bungeni">
   <body>
     <div metal:fill-slot="body">
-      <h1 i18n:translate="" tal:content="view/form_name|nothing" />
+      <h1 tal:content="view/form_name|nothing" />
       <metal:block define-macro="form"
                    i18n:domain="alchemist">
-	<p class="documentDescription"
+    <p class="documentDescription"
            i18n:translate=""
            tal:content="view/form_description|nothing" />
         <form action=""
@@ -77,69 +77,69 @@
                               i18n:translate="" />
                       <tal:block define="widgets python: groups.get(name)"
                                  repeat="widget widgets">
-			<tal:field define="description widget/hint;
-					   error widget/error;
-					   odd repeat/widget/odd;
-					   changed widget/changed | nothing"
-				   condition="widget/visible">
-			  <tal:standard condition="not: side_by_side">
-			    <div
-				tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
-				tal:attributes="class string:field widget-$name;id string:field_$fieldid">
-			      <label tal:attributes="for widget/name">
-				<span i18n:translate=""
-				      tal:content="widget/label">label</span>
-			      </label>
-			      <span class="fieldRequired" title="Required" tal:condition="widget/required"
-				    i18n:translate="label_required"
-				    i18n:attributes="title title_required;">
-				(Required)
-			      </span>
-			      <div class="formHelp"
-				   i18n:translate=""
-				   tal:content="description"
-				   tal:condition="description"
-				   >field description</div>
-			      <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
-				<div class="widget" tal:content="structure widget"  >
-				  <input type="text" />
-				</div>
-				<div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
-				  The Error
-				</div>
-			      </div>
-			    </div>
-			  </tal:standard>
-			  <tal:side-by-side condition="side_by_side">
-			    <tr tal:attributes="class python:'field'+(error and ' error' or '') + (odd and ' odd' or ' even')">
-			      <th colspan="2">
-				<label tal:attributes="for widget/name">
-				  <span i18n:translate=""
-					tal:content="widget/label">label</span>
-				</label>
-				<span class="fieldRequired" title="Required" tal:condition="widget/required"
-				      i18n:translate="label_required"
-				      i18n:attributes="title title_required;">
-				  (Required)
-				</span>
-				<div class="formHelp"
-				     i18n:translate=""
-				     tal:content="description"
-				     tal:condition="description"
-				     >field description</div>
-			      </th>
-			    </tr>
-			    <tr>
-			      <td valign="top" width="30%" style="overflow: auto">
-				<div tal:content="structure widget/render_original" />
-			      </td>
-			      <td valign="top">
-				<div class="widget" tal:content="structure widget" />
-			      </td>
-			    </tr>
-			  </tal:side-by-side>
-			</tal:field>
-		      </tal:block>
+            <tal:field define="description widget/hint;
+                       error widget/error;
+                       odd repeat/widget/odd;
+                       changed widget/changed | nothing"
+                   condition="widget/visible">
+              <tal:standard condition="not: side_by_side">
+                <div
+                tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
+                tal:attributes="class string:field widget-$name;id string:field_$fieldid">
+                  <label tal:attributes="for widget/name">
+                <span i18n:translate=""
+                      tal:content="widget/label">label</span>
+                  </label>
+                  <span class="fieldRequired" title="Required" tal:condition="widget/required"
+                    i18n:translate="label_required"
+                    i18n:attributes="title title_required;">
+                (Required)
+                  </span>
+                  <div class="formHelp"
+                   i18n:translate=""
+                   tal:content="description"
+                   tal:condition="description"
+                   >field description</div>
+                  <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
+                <div class="widget" tal:content="structure widget"  >
+                  <input type="text" />
+                </div>
+                <div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
+                  The Error
+                </div>
+                  </div>
+                </div>
+              </tal:standard>
+              <tal:side-by-side condition="side_by_side">
+                <tr tal:attributes="class python:'field'+(error and ' error' or '') + (odd and ' odd' or ' even')">
+                  <th colspan="2">
+                <label tal:attributes="for widget/name">
+                  <span i18n:translate=""
+                    tal:content="widget/label">label</span>
+                </label>
+                <span class="fieldRequired" title="Required" tal:condition="widget/required"
+                      i18n:translate="label_required"
+                      i18n:attributes="title title_required;">
+                  (Required)
+                </span>
+                <div class="formHelp"
+                     i18n:translate=""
+                     tal:content="description"
+                     tal:condition="description"
+                     >field description</div>
+                  </th>
+                </tr>
+                <tr>
+                  <td valign="top" width="30%" style="overflow: auto">
+                <div tal:content="structure widget/render_original" />
+                  </td>
+                  <td valign="top">
+                <div class="widget" tal:content="structure widget" />
+                  </td>
+                </tr>
+              </tal:side-by-side>
+            </tal:field>
+              </tal:block>
                     </fieldset>
                   </tal:groups>
                 </table>
@@ -157,7 +157,7 @@
                                        name action/__name__;
                                        value action/label;"
                        i18n:attributes="value" />
-              </tal:loop>					
+              </tal:loop>                    
             </span>
           </div>
           </metal:block>

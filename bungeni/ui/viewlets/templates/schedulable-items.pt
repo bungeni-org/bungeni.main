@@ -1,38 +1,38 @@
 <dt id="fieldsetlegend-..." 
     tal:attributes="id string:fieldsetlegend-${view/view_name}-for-scheduling"
     tal:condition="view/visible"
-    i18n:translate="" tal:content="view/name">
+    tal:content="view/name">
 </dt>
 <dd id="fieldset-..." 
     tal:attributes="id string:fieldset-${view/view_name}-for-scheduling" 
     tal:condition="view/visible">
   <table class="listing grid" tal:condition="view/items"
-	 tal:attributes="id string:items-for-scheduling-${view/view_name}">
+     tal:attributes="id string:items-for-scheduling-${view/view_name}">
     <thead>
       <tr>
-	<th>Schedule</th>
-	<th>Title</th>
-	<th>Last modified</th>
+    <th>Schedule</th>
+    <th>Title</th>
+    <th>Last modified</th>
       </tr>
     </thead>
     <tbody>
       <tal:items repeat="item view/items">
-	<tr tal:attributes="id string:row-${item/id}; class item/class;">
-	  <td tal:condition="item/class">
-	    <input type="checkbox" tal:attributes="id item/id" checked="checked" class="scheduling-checkbox"/>
-	  </td>
-	  <td tal:condition="not:item/class">
-	    <input type="checkbox" tal:attributes="id item/id" class="scheduling-checkbox"/>
-	  </td>
-	  <td>
-	    <a rel="id"
-	       tal:attributes="href item/url;
-			       name item/id;
-			       title item/description"
-	       tal:content="item/title" />
-	  </td>
-	  <td tal:content="item/date" />
-	</tr>
+    <tr tal:attributes="id string:row-${item/id}; class item/class;">
+      <td tal:condition="item/class">
+        <input type="checkbox" tal:attributes="id item/id" checked="checked" class="scheduling-checkbox"/>
+      </td>
+      <td tal:condition="not:item/class">
+        <input type="checkbox" tal:attributes="id item/id" class="scheduling-checkbox"/>
+      </td>
+      <td>
+        <a rel="id"
+           tal:attributes="href item/url;
+                   name item/id;
+                   title item/description"
+           tal:content="item/title" />
+      </td>
+      <td tal:content="item/date" />
+    </tr>
       </tal:items>
     </tbody>
   </table>

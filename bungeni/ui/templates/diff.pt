@@ -1,5 +1,6 @@
 <fieldset>
-  <legend i18n:translate=""> Diff
+  <legend>
+    <span i18n:translate="" tal:omit-tag="">Diff</span>
     <b i18n:translate="" tal:condition="not:options/content_changed">
       unchanged
     </b>

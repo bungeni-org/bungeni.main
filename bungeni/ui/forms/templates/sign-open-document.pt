@@ -6,11 +6,11 @@
     <form metal:use-macro="view/form_template/macros/form">
       <div metal:fill-slot="pre-fieldset">
         <dl class="portalMessage warning"
-	    tal:condition="not: view/status">
+        tal:condition="not: view/status">
           <dt>
-            <p i18:translate="">Sign</p>
+            <p i18n:translate="">Sign</p>
           </dt>
-          <dd i18n:translate="" tal:content="view/action_message"/>
+          <dd tal:content="view/action_message"/>
         </dl>
         <div class="visualClear"><!-- nothing here --></div>
         <p i18n:translate="">Document Details.</p>

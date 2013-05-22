@@ -171,7 +171,7 @@ class AppSetup(object):
         for tab in capi.workspace_tabs:
             workspace["my-documents"][tab] = WorkspaceContainer(
                 tab_type=tab,
-                title=_("section_workspace_%s" % tab, default=tab),
+                title=tab,
                 marker=interfaces.IWorkspaceTab
             )
 

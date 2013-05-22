@@ -224,6 +224,10 @@ def setup_customization_ui():
                 "bungeni.core.interfaces.IWorkspaceTab",
                 "bungeni.ui.workspace.WorkspaceAddForm")
         
+        # workspace add titles to strings for i18n
+        for ws_tab in capi.workspace_tabs:
+            naming.MSGIDS.add(('section_workspace_%s' % ws_tab, ws_tab))
+        
         # events
         if ti.workflow.has_feature("event"):
             log.debug("Setting up UI for feature %r for type %r", "event", type_key)

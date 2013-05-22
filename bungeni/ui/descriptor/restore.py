@@ -184,8 +184,14 @@ def dump_i18n_message_ids():
         "# automatically generated: dump_i18n_message_ids",
         "from bungeni.ui.i18n import _", 
         ""]
+    def make_message(msgid):
+        """generate message with unique id if any or use string as id"""
+        if isinstance(msgid, tuple):
+            return """_("%s", default="%s")""" %(msgid[0], msgid[1])
+        else:
+            return "_(%r)" % msgid
     msgids_py_source = "\n".join(msgids_py_source_preamble + [
-            "_(%r)" % msgid for msgid in sorted(naming.MSGIDS) ])
+            make_message(msgid) for msgid in sorted(naming.MSGIDS) ])
     misc.check_overwrite_file(msgids_py_source_file_path, msgids_py_source, log_handler=LOG_HANDLER)
 
 

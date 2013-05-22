@@ -14,9 +14,8 @@
               <li tal:define="selected action/selected;"
                   tal:attributes="class python:selected and 'selected' or 'plain'">
                 <a href=""
-                   tal:content="action/title"
-		   tal:attributes="href action/url|action/action;"
-                   i18n:translate="">
+                    tal:content="action/title"
+                    tal:attributes="href action/url|action/action;">
                 View name
                 </a>
               </li>

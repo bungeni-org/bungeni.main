@@ -4,7 +4,7 @@
     <span tal:replace="view/document/group/dc:title | nothing"/>
   </p>
   <p class="documenttype">
-    <span i18n:translate="" tal:replace="view/document/type"/>
+    <span tal:replace="view/document/type"/>
   </p>
   <p class="documenttitle" tal:condition="view/document/dc:title">
     <span tal:replace="view/document/dc:title"/>
@@ -14,8 +14,7 @@
       <span i18n:translate="" tal:omit-tag="">View in Bungeni</span>
     </a>
   </p>
-  <p class="documentdescription" tal:condition="view/document/dc:description" 
-     i18n:translate="">
+  <p class="documentdescription" tal:condition="view/document/dc:description">
     <span tal:replace="view/document/dc:description" /> 
   </p>
   <p class="documentregistrynumber" tal:condition="view/document/registry_number">

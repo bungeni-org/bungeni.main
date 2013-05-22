@@ -1,5 +1,6 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/@@standard_macros/page">
 
   <div metal:fill-slot="body" i18n:domain="bungeni">
@@ -9,8 +10,7 @@
             <span tal:omit-tag="" tal:condition="context/venue" 
                 tal:content="context/venue/dc:title"/>
             <span tal:omit-tag="">&nbsp;:&nbsp;</span>
-            <span tal:omit-tag="" i18n:translate="" 
-                tal:content="view/sitting_dates"/>
+            <span tal:omit-tag="" tal:content="view/sitting_dates"/>
         </h1>
     </div>
     <div id="schedule-table"></div>

@@ -9,7 +9,6 @@
             <div>
                 <ul tal:condition="view/error_messages">
                     <li tal:repeat="error_message view/error_messages"
-                        i18n:translate=""
                         tal:content="error_message"
                     />
                 </ul>
