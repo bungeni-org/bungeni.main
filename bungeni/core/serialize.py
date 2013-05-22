@@ -123,16 +123,19 @@ class memoized(object):
     def __init__(self, func):
         self.func = func
     def __call__(self, *args, **kwargs):
+        #check if a thread locals cache has been set up
+        if not hasattr(thread_locals, "serialize_cache"):
+            return self.func(*args, **kwargs)
         key_args = (args[0], kwargs.get("root_key"))
         if not isinstance(key_args, collections.Hashable):
             # uncacheable. a list, for instance.
             # better to not cache than blow up.
             return self.func(*args, **kwargs)
-        if key_args in thread_locals.cache:
-            return thread_locals.cache[key_args]
+        if key_args in thread_locals.serialize_cache:
+            return thread_locals.serialize_cache[key_args]
         else:
             value = self.func(*args, **kwargs)
-            thread_locals.cache[key_args] = value
+            thread_locals.serialize_cache[key_args] = value
             return value
     def __repr__(self):
         return self.func.__repr__()
@@ -413,7 +416,7 @@ def serialization_notifications_callback(channel, method, properties, body):
     """Publish an object to XML on receiving AMQP message
     """
     #set up thread local cache
-    thread_locals.cache = {}
+    thread_locals.serialize_cache = {}
     obj_data = simplejson.loads(body)
     obj_type = obj_data.get("obj_type")
     domain_model = getattr(domain, obj_type, None)
@@ -444,7 +447,7 @@ def serialization_notifications_callback(channel, method, properties, body):
             obj_type
         )
     #clear thread local cache
-    del thread_locals.cache
+    del thread_locals.serialize_cache
 
 def serialization_worker():
     connection = bungeni.core.notifications.get_mq_connection()
