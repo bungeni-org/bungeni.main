@@ -1,3 +1,9 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2013 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+log = __import__("logging").getLogger("bungeni.ui.debaterecord")
+
 import datetime
 import simplejson
 from zope import component
@@ -167,12 +173,12 @@ class GenerateDebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
         return self.request.response.redirect(next_url + "/takes")
 
 
-class AddSpeeches(forms.common.BaseForm):
+class AddItems(forms.common.BaseForm):
     template = NamedTemplate("alchemist.form")
 
-    class IAddSpeechesForm(interface.Interface):
+    class IAddItemsForm(interface.Interface):
         data = schema.Text(required=True)
-    form_fields = formlib.form.Fields(IAddSpeechesForm)
+    form_fields = formlib.form.Fields(IAddItemsForm)
 
     @formlib.form.action("add", name="add")
     def handle_add(self, action, data):
@@ -180,18 +186,37 @@ class AddSpeeches(forms.common.BaseForm):
         session = Session()
         sitting = self.context.sitting
         for item in json_data:
-            debate_speech = None
-            if item.get("speech_id", None):
-                debate_speech = session.query(domain.DebateSpeech
-                    ).get(item["speech_id"])
-            if not debate_speech:
-                debate_speech = domain.DebateSpeech()
-                debate_speech.debate_record_id = self.context.debate_record_id
-            debate_speech.person_id = item["user_id"]
-            debate_speech.text = item["speech"]
-            debate_speech.language = "en"
-            debate_speech.start_date = sitting.start_date + \
-                datetime.timedelta(seconds=item["start_time"])
-            debate_speech.end_date = sitting.start_date + \
-                datetime.timedelta(seconds=item["end_time"])
-            session.add(debate_speech)
+            if not item.get("type", None):
+                log.error("Debate record item type not specified")
+                continue
+            if item.get("type") == "speech":
+                speech = None
+                if item.get("debate_record_item_id", None):
+                    speech = session.query(domain.DebateSpeech
+                        ).get(item["debate_record_item_id"])
+                if not speech:
+                    speech = domain.DebateSpeech()
+                    speech.debate_record = self.context
+                speech.person_id = item["user_id"]
+                speech.text = item["speech"]
+                speech.language = "en"
+                speech.start_date = sitting.start_date + \
+                    datetime.timedelta(seconds=item["start_time"])
+                speech.end_date = sitting.start_date + \
+                    datetime.timedelta(seconds=item["end_time"])
+                session.add(speech)
+            elif item.get("type") == "doc":
+                agenda_item = None
+                if item.get("doc_id", None):
+                    agenda_item = session.query(domain.DebateDoc
+                        ).get(item["debate_record_item_id"])
+                if not agenda_item:
+                    agenda_item = domain.DebateDoc()
+                    agenda_item.debate_record = self.context
+                agenda_item.doc_id = item["doc_id"]
+                agenda_item.start_date = sitting.start_date + \
+                    datetime.timedelta(seconds=item["start_time"])
+                agenda_item.end_date = sitting.start_date + \
+                    datetime.timedelta(seconds=item["end_time"])
+                session.add(agenda_item)
+        session.flush()

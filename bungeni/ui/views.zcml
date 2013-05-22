@@ -485,12 +485,6 @@
       class="bungeni.ui.debaterecord.GenerateDebateRecordTakes"
       permission="bungeni.debate_take.Edit"
    />
-   <browser:page
-      for="bungeni.models.interfaces.IDebateRecord"
-      name="add-speeches"
-      class="bungeni.ui.debaterecord.AddSpeeches"
-      permission="bungeni.debate_speech.Add"
-   />
    <!-- Bungeni API -->
    <browser:page
       for="bungeni.core.content.APISection"
@@ -552,6 +546,12 @@
       class="bungeni.ui.api.APIDebateRecordItemsView"
       permission="bungeni.debate_record_item.View"
       layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
+   <browser:page
+      for="bungeni.models.interfaces.IDebateRecord"
+      name="add-items"
+      class="bungeni.ui.debaterecord.AddItems"
+      permission="bungeni.debate_record_item.Add"
    />
    <browser:page name="index"
        for="bungeni.models.interfaces.IAttachment"

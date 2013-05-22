@@ -726,7 +726,11 @@ mapper(domain.DebateRecord, schema.debate_record,
     }
 )
 
-mapper(domain.DebateRecordItem, schema.debate_record_item)
+mapper(domain.DebateRecordItem, schema.debate_record_item,
+    properties={
+        "debate_record": relation(domain.DebateRecord, lazy=True)
+    }
+)
 
 mapper(domain.DebateDoc, schema.debate_doc,
     inherits=domain.DebateRecordItem,

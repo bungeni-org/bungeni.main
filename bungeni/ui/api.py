@@ -134,18 +134,23 @@ class APIDebateRecordItemsView(BungeniBrowserView):
     def __call__(self):
         sitting = self.context.sitting
         start_time = sitting.start_date + timedelta(
-            seconds=self.request.get("start_time", 0))
+            seconds=int(self.request.get("start_time", 0)))
         if self.request.get("end_time", 0):
             end_time = sitting.start_date + timedelta(
-                seconds=self.request.get("end_time", 0))
+                seconds=int(self.request.get("end_time", 0)))
         else:
             end_time = sitting.end_date
         session = Session()
-        items = session.query(domain.DebateRecordItem).filter(and_(
-            domain.DebateRecordItem.start_date >= start_time,
-            domain.DebateRecordItem.end_date <= end_time)).all()
+        speeches = session.query(domain.DebateSpeech).filter(
+            and_(
+                domain.DebateSpeech.start_date >= start_time,
+                domain.DebateSpeech.end_date <= end_time)).all()
+        docs = session.query(domain.DebateDoc).filter(
+            and_(
+                domain.DebateDoc.start_date >= start_time,
+                domain.DebateDoc.end_date <= end_time)).all()
         data = []
-        for item in items:
+        for item in speeches + docs:
             data.append(obj2dict(item, 0))
         misc.set_json_headers(self.request)
-        return simplejson.dumps(data, default=dthandler)
+        return simplejson.dumps({"nodes":data}, default=dthandler)
