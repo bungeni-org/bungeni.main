@@ -164,6 +164,11 @@ def container_class_name(type_key):
 def container_interface_name(type_key):
     return "%s%s" % (INTERFACE_PREFIX, container_class_name(type_key))
 
+
+def audit_table_name(audited_table_name):
+    return "%s_audit" % (audited_table_name)
+
+
 # reverse conversions back to type_key
 def type_key(name_type, name):
     return type_key.reverse_conversions[name_type](name)

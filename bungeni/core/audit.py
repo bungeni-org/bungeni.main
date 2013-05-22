@@ -83,10 +83,10 @@ def _object_add(ob, event):
 @_trace_audit_handler
 def _object_modify(ob, event):
     # no audit ObjectModifiedEvent if originates from a WorkflowTransitionEvent
-    orginator = getattr(event, "originator", None)
-    if IWorkflowTransitionEvent.providedBy(orginator):
+    originator = getattr(event, "originator", None)
+    if IWorkflowTransitionEvent.providedBy(originator):
         log.debug("NOT AUDITING event [%s] as it originates from [%s]" % (
-            event, orginator))
+            event, originator))
         return
     auditor = get_auditor(ob)
     auditor.object_modify(removeSecurityProxy(ob), event)
