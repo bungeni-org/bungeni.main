@@ -207,7 +207,7 @@ class AddItems(forms.common.BaseForm):
                 session.add(speech)
             elif item.get("type") == "doc":
                 agenda_item = None
-                if item.get("doc_id", None):
+                if item.get("debate_record_item_id", None):
                     agenda_item = session.query(domain.DebateDoc
                         ).get(item["debate_record_item_id"])
                 if not agenda_item:
