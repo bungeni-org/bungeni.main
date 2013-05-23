@@ -136,44 +136,50 @@ class TI(object):
             type_key
                 the type identifier, the underscore-separated lowercase name of 
                 the domain_model (the domain class)
-                (UNIQUE for each type)
+                (type-UNIQUE)
             workflow_key 
                 the workflow file name
                 defaults to the type_key for workflowed types that DO NOT specify
                 is None for non-workflowed types 
-                (NOT unique for each type)
+                (NOT type-UNIQUE)
             workflow 
                 a same workflow instance may be used by multiple (non-custom) types
                 is None for non-workflowed types
-                (once instantiated, UNIQUE for each type)
+                (once instantiated, type-UNIQUE)
             interface
                 the manually applied application-dedicated model interface 
                 (if any) for the type
-                (UNIQUE for each type)
+                (type-UNIQUE)
             derived_table_schema
                 auto-generated db schema interface, provides IIModelInterface
-                (UNIQUE for each type)
+                (type-UNIQUE)
             domain_model
                 the domain class
-                (UNIQUE for each type)
+                (type-UNIQUE)
             archetype
-                the domain model for:
-                a) either the (system or custom) archetype of the custom type
+                the domain model for: !+?
+                a) either the (custom, if defined, or system) archetype of the custom type
                 b) or the (mapped) base type of the system type, or None
-                (NOT unique for each type)
+                (NOT type-UNIQUE)
+            custom_archetype_key
+                the type_key for the custom OR (if None) the system archetype of the custom type
+                (NOT type-UNIQUE)
+            sys_archetype_key
+                the type_key for the system archetype of the custom type                
+                (NOT type-UNIQUE)
             descriptor_key
                 the descriptor file name
                 defaults to the type_key for types that DO NOT specify
-                (NOT unique for each type)
+                (NOT type-UNIQUE)
             descriptor_model
                 the descriptor model for UI views for the type
-                (once instantiated, UNIQUE for each type)
+                (once instantiated, type-UNIQUE)
             container_class
                 container class for domain_model
-                (UNIQUE for each type)
+                (type-UNIQUE)
             container_interface
                 interface for the container class for domain_model
-                (UNIQUE for each type)
+                (type-UNIQUE)
             label
                 the i18n msgid display label for the type (descriptor)
             container_label
@@ -181,8 +187,6 @@ class TI(object):
             within_type_key
                 the type_key of the containing/owning type 
                 e.g. a member exists exclusively within a group type
-            custom_archetype_key
-            sys_archetype_key
     """
     def __init__(self, type_key, workflow_key, iface, domain_model, archetype):
         self.type_key = type_key
@@ -192,6 +196,8 @@ class TI(object):
         self.derived_table_schema = None # provides IIModelInterface
         self.domain_model = domain_model
         self.archetype = archetype # cls
+        self.custom_archetype_key = None
+        self.sys_archetype_key = None
         self.descriptor_key = None
         self.descriptor_model = None
         self.container_class = None
@@ -199,8 +205,6 @@ class TI(object):
         self.label = None
         self.container_label = None
         self.within_type_key = None
-        self.custom_archetype_key = None
-        self.sys_archetype_key = None
         self.custom = False # type loaded from custom configuration 
         # NOTE: only needed temporarily during loading (until descriptor_model 
         # is set) -- but from then on ti.custom must not be inconsistent with 
@@ -235,6 +239,10 @@ class TI(object):
         # same workflow e.g. UserAddress & GroupAddress. 
         # if no workflow, use type_key
         return self.workflow_key or self.type_key
+
+    @property
+    def sys_archetype(self):
+        return _get_by_type_key(self.sys_archetype_key).domain_model
 
 '''
 !+TYPE_REGISTRY externalize further to bungeni_custom, currently:

@@ -29,7 +29,7 @@ from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.utils import register, naming
 
-CHANGE_TYPES = ("head", "signatory", "attachment", "event")
+CHANGE_TYPES = ("head", "signatory", "attachment", "event", "member", "group_assignment")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
 # ("add", "modify", "workflow", "remove", "version", "translate")
 
@@ -50,6 +50,7 @@ class ChangeDataProvider(object):
         """Get change data items, reverse-sorted by date (most recent first).
         """
         interaction = getInteraction()
+        head_wf = IWorkflow(self.head)
         changes = []
         
         def append_visible_changes_on_item(item):
@@ -58,41 +59,37 @@ class ChangeDataProvider(object):
                 if checkPermission(permission, c):
                     changes.append(c)
         
-        def include_feature_changes(wf, feature_name):
+        def include_feature_changes(feature_name, SUPPORTED_FEATURE):
             # !+ interfaces.IFeatureX.providedBy(self.head)
-            return wf.has_feature(feature_name) and \
-                feature_name in self.include_change_types
-            
+            return (
+                (not SUPPORTED_FEATURE or head_wf.has_feature(feature_name)) and 
+                feature_name in self.include_change_types)
+        
+        def append_visible_changes_on_sub_items(sub_type_key, items_attr,
+                SUPPORTED_FEATURE=True # !+
+            ):
+            if include_feature_changes(sub_type_key, SUPPORTED_FEATURE):
+                pid = "bungeni.%s.View" % (sub_type_key)
+                items = [ item for item in getattr(self.head, items_attr)
+                        if interaction.checkPermission(pid, item) ]
+                for item in items:
+                    append_visible_changes_on_item(item)
+        
         # changes direct on head item
         if "head" in self.include_change_types:
             append_visible_changes_on_item(self.head)
-        
         # changes on sub-items
-        hwf = IWorkflow(self.head)
-        
-        # changes on item signatories
-        if include_feature_changes(hwf, "signatory"):
-            signatories = [ s for s in self.head.item_signatories
-                if interaction.checkPermission("bungeni.signatory.View", s)
-            ]
-            for s in signatories:
-                append_visible_changes_on_item(s)
-        
-        # changes on item attachments
-        if include_feature_changes(hwf, "attachment"):
-            attachments = [ f for f in self.head.attachments
-                if interaction.checkPermission("bungeni.attachment.View", f)
-            ]
-            for f in attachments:
-                append_visible_changes_on_item(f)
-        
-        # changes on item events
-        if include_feature_changes(hwf, "event"):
-            events = [ e for e in self.head.sa_events
-                if interaction.checkPermission("bungeni.event.View", e)
-            ]
-            for e in events:
-                append_visible_changes_on_item(e)
+        append_visible_changes_on_sub_items("signatory", "item_signatories")
+        append_visible_changes_on_sub_items("attachment", "attachments")
+        append_visible_changes_on_sub_items("event", "sa_events")
+        if interfaces.IDoc.providedBy(self.head):
+            # !+DOC_GROUP_ASSIGNMENTS rename plural?
+            append_visible_changes_on_sub_items("group_assignment", "group_assignment")
+        elif interfaces.IGroup.providedBy(self.head):
+            append_visible_changes_on_sub_items("group_assignment", "group_assignments",
+                SUPPORTED_FEATURE=False) # !+ "group_assignment" is not a "group" feature
+            append_visible_changes_on_sub_items("member", "group_members",
+                SUPPORTED_FEATURE=False) # !+ "member" is not a "group" feature)
         
         # sort aggregated changes by date_active
         changes = [ dc[1] for dc in 

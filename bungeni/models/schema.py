@@ -11,6 +11,7 @@ log = __import__("logging").getLogger("bungeni.models.schema")
 import sqlalchemy as sa
 from fields import FSBlob
 from datetime import datetime
+from bungeni.utils import naming
 
 
 metadata = sa.MetaData()
@@ -114,14 +115,23 @@ audit = sa.Table("audit", metadata,
     sa.Column("audit_type", sa.String(30), nullable=False),
 )
 
+
 def make_audit_table(table, metadata):
     """Create an audit log table for an archetype.
-    
-    We prefix all additional audit-specific columns with "audit_" to avoid 
-    potential clashing of column names from table being audited.
+    """
+    audit_tbl_name = naming.audit_table_name(table.name)
+    audit_columns = get_audit_table_columns(table)
+    audit_tbl = sa.Table(audit_tbl_name, metadata, *audit_columns,
+        useexisting=False
+    )
+    return audit_tbl
+def get_audit_table_columns(table):
+    """Derive the columns of the audit table from the table being audited.
     """
     entity_name = table.name
-    audit_tbl_name = "%s_audit" % (entity_name)
+    audit_tbl_name = naming.audit_table_name(entity_name)
+    # audit-specific columns -- prefix with "audit_" to avoid potential 
+    # clashing of column names from table being audited.
     columns = [
         sa.Column("audit_id", sa.Integer, 
             sa.ForeignKey("audit.audit_id"), 
@@ -132,30 +142,41 @@ def make_audit_table(table, metadata):
         for c in ext_cols:
             assert c.name not in names, "Duplicate column [%s]." % (c.name)
             names.append(c.name)
-            if not c.primary_key:
-                #!+should special ext col constraints NOT be carried over e.g.
-                #  default value on ext, not/nullable on ext...?
+            if c.primary_key:
+                # PK columns on auditable table become FK columns on audit table
+                if len(table.primary_key) == 1:
+                    # single-column PK - the id column of the "owning" object for
+                    # which the change is being logged; we always retain the same
+                    # original column name i.e. doc_id for case of "doc", and have
+                    # the audit_head_id property always read and write to this.
+                    assert c.name == "%s_id" % (entity_name), \
+                        "Inconsistent PK column naming [%s != %s]" % (
+                            "%s_id" % (entity_name), c.name)
+                else:
+                    # composite PK
+                    log.debug("Table %r -> skipping pk column %r name "
+                            "constraint check for multi-column PK: %s", 
+                                audit_tbl_name, c.name, table.primary_key.columns)
+                # add the column, corresponding ForeignKeyConstraint added at end
+                cols.append(sa.Column(c.name, c.type, nullable=False, index=True))
+                # !+FK columns may specify type as None (not c.type), to let 
+                # auto detection of the type from that of the FK col
+            else:
+                # !+ should special ext col constraints NOT be carried over
+                # e.g. default value on ext, not/nullable on ext...?
                 cols.append(c.copy())
-            else: 
-                # the single PK id of the "owning" object for which the change
-                # is being logged; we retain the same original column name
-                # i.e. doc_id for case of "doc", and have the audit_head_id 
-                # property always read and write to this.
-                assert c.name == "%s_id" % (entity_name), \
-                    "Inconsistent PK column naming [%s != %s]" % (
-                        "%s_id" % (entity_name), c.name)
-                cols.append(
-                    sa.Column(c.name, sa.Integer, 
-                        sa.ForeignKey(table.c[c.name]),
-                        nullable=False,
-                        index=True
-                    )),
+                # auditable "unique" columns may NOT be unique in the audit table!
+                if cols[-1].unique:
+                    cols[-1].unique = False
+    
     extend_cols(columns, table.columns)
+    # add ForeignKeyConstraint corresponding to original PK
+    pk_col_names = [ c.name for c in table.primary_key.columns ]
+    columns.append(
+        sa.ForeignKeyConstraint(pk_col_names, 
+            [ "%s.%s" % (entity_name, name) for name in pk_col_names ]))
     # !+additional tables...
-    audit_tbl = sa.Table(audit_tbl_name, metadata, *columns,
-        useexisting=False
-    )
-    return audit_tbl
+    return columns
 
 
 #######################
@@ -296,7 +317,6 @@ group = sa.Table("group", metadata,
         nullable=False),
     sa.Column("description", sa.UnicodeText),
     sa.Column("body", sa.UnicodeText),
-    # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
         server_default=sa.sql.text("now()"),
@@ -316,6 +336,7 @@ group = sa.Table("group", metadata,
     # is the group "permament", "temporary", ... ?
     sa.Column("group_mandate", sa.Unicode(128)),
 )
+group_audit = make_audit_table(group, metadata)
 
 
 ###
@@ -357,6 +378,7 @@ doc_principal = sa.Table("doc_principal", metadata,
         server_default=sa.sql.text("now()"),
         nullable=False),
 )
+doc_principal_audit = make_audit_table(doc_principal, metadata)
 
 
 # group memberships encompasses any user participation in a group, including
@@ -372,7 +394,6 @@ member = sa.Table("member", metadata,
         sa.ForeignKey("group.group_id"),
         nullable=False
     ),
-    # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
         server_default=sa.sql.text("now()"),
@@ -415,6 +436,7 @@ member = sa.Table("member", metadata,
     sa.Column("leave_reason", sa.Unicode(40)),
     sa.schema.UniqueConstraint("user_id", "group_id"),
 )
+member_audit = make_audit_table(member, metadata)
 
 
 ##############
@@ -470,7 +492,6 @@ address = sa.Table("address", metadata,
     sa.Column("phone", sa.Unicode(256)),
     sa.Column("fax", sa.Unicode(256)),
     sa.Column("email", sa.String(512)),
-    # Workflow State -> determines visibility
     sa.Column("status", sa.Unicode(16)),
     sa.Column("status_date", sa.DateTime(timezone=False),
         server_default=sa.sql.text("now()"),
@@ -604,39 +625,6 @@ resourcebookings = sa.Table("resourcebookings", metadata,
 '''
 
 
-# !+VOTE(mr, may-2013) tables "item_vote" and "item_member_vote" are UNUSED 
-# and UNMAPPED, why are they here ?!
-
-# !+RENAME doc_vote
-item_vote = sa.Table("item_vote", metadata,
-    sa.Column("vote_id", sa.Integer, primary_key=True),
-    sa.Column("item_id", sa.Integer, # !+RENAME doc_id
-        sa.ForeignKey("doc.doc_id"),
-        nullable=False
-    ),
-    sa.Column("date", sa.Date),
-    sa.Column("affirmative_vote", sa.Integer),
-    sa.Column("negative_vote", sa.Integer),
-    sa.Column("remarks", sa.UnicodeText),
-    sa.Column("language", sa.String(5), nullable=False),
-)
-
-# !+RENAME doc_vote_user
-item_member_vote = sa.Table("item_member_vote", metadata,
-    sa.Column("vote_id", sa.Integer,
-        sa.ForeignKey("item_vote"),
-        primary_key=True,
-        nullable=False
-    ),
-    sa.Column("member_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True,
-        nullable=False
-    ),
-    sa.Column("vote", sa.Boolean,),
-)
-
-
 item_schedule = sa.Table("item_schedule", metadata,
     sa.Column("schedule_id", sa.Integer, primary_key=True),
     # !+object_id/object_type - use object_id/object_type as elsewhere
@@ -760,7 +748,6 @@ attachment = sa.Table("attachment", metadata,
     sa.Column("data", FSBlob(32)), #!+file
     sa.Column("name", sa.String(200)), #!+file
     sa.Column("mimetype", sa.String(127)), #!+file
-    # Workflow State
     sa.Column("status", sa.Unicode(48)),
     sa.Column("status_date", sa.DateTime(timezone=False),
         server_default=sa.sql.text("now()"),
@@ -1070,7 +1057,6 @@ debate_record = sa.Table("debate_record", metadata,
     sa.Column("debate_record_id", sa.Integer, primary_key=True),
     sa.Column("sitting_id", sa.Integer, sa.ForeignKey("sitting.sitting_id"),
         unique=True),
-    # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
         server_default=sa.sql.text("now()"),
@@ -1104,7 +1090,6 @@ debate_speech = sa.Table("debate_speech", metadata,
     # users that are not MPs or staff can have a user record that is not active
     sa.Column("person_id", sa.ForeignKey("user.user_id")),
     sa.Column("text", sa.UnicodeText),
-    # Workflow State
     sa.Column("status", sa.Unicode(32)),
     sa.Column("status_date", sa.DateTime(timezone=False),
         server_default=sa.sql.text("now()"),

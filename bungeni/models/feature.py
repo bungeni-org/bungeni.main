@@ -26,6 +26,7 @@ from bungeni.alchemist.model import (
     add_container_property_to_model,
     mapper_add_relation_vertical_property
 )
+from bungeni.alchemist import utils
 from bungeni.models import interfaces, domain, orm, schema
 from bungeni.core import audit
 from bungeni.utils import naming, register
@@ -61,10 +62,19 @@ def feature_audit(kls, feature):
         """Identify what should be the BASE audit class for a 
         {kls}Audit class to inherit from, and return it.
         """
-        # !+ may have a deeper inheritance, other archetypes... get via archetype
-        if kls is not domain.Doc and issubclass(kls, domain.Doc):
-            return domain.DocAudit
-        return domain.Audit
+        assert interfaces.IFeatureAudit.implementedBy(kls), kls
+        ti = capi.get_type_info(kls)
+        if ti.archetype is None:
+            # !+ should this be allowed to ever happen? 
+            # i.e. require each type to declare an archetype?
+            base_audit_class = domain.Audit
+        else:
+            base_audit_class = get_audit_class_for(ti.archetype)
+            if base_audit_class is None:
+                # fallback to get the audit class for the sys archetype
+                base_audit_class = get_audit_class_for(ti.sys_archetype)
+            assert base_audit_class is not None, (kls, ti.archetype, base_audit_class)
+        return base_audit_class
     
     def new_audit_class(kls):
         """Create, set on MODEL_MODULE, and map {kls}Audit class.
@@ -326,30 +336,26 @@ def configurable_mappings(kls):
     
     # add any properties to the head kls itself
     def mapper_add_configurable_properties(kls):
-        kls_mapper = class_mapper(kls)
-        
         def configurable_properties(kls, mapper_properties):
             """Add properties, as per configured features for a domain type.
             """
-            
             # auditable
             if interfaces.IFeatureAudit.implementedBy(kls):
                 # kls.changes <-> change.audit.audit_head=doc:
                 # doc[@TYPE] <-- TYPE_audit <-> audit <-> change
                 
                 # get head table for kls, and its audit table.
-                tbl = kls_mapper.mapped_table
-                audit_tbl = getattr(schema, "%s_audit" % (tbl.name))
-                
-                # get tbl PK column
-                assert len(tbl.primary_key) == 1
-                # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
-                # !+PrimaryKeyConstraint object does not support indexing
-                pk_col = [ c for c in tbl.primary_key ][0]
+                tbl = utils.get_local_table(kls)
+                # NOT mapped_table, as when kls_mapper.single=False (e.g. for 
+                # the case of the group type) it gves an sa.sql.expression.Join,
+                # and not a table object:
+                #   principal JOIN "group" ON principal.principal_id = "group".group_id
+                audit_tbl = getattr(schema, naming.audit_table_name(tbl.name))
                 mapper_properties["changes"] = relation(domain.Change,
-                    primaryjoin=sa.and_(
-                        pk_col == audit_tbl.c.get(pk_col.name),
-                    ),
+                    # join condition, may be determined by a composite primary key
+                    primaryjoin=sa.and_( *[
+                        pk_col == audit_tbl.c.get(pk_col.name)
+                        for pk_col in tbl.primary_key ]),
                     secondary=audit_tbl,
                     secondaryjoin=sa.and_(
                         audit_tbl.c.audit_id == schema.change.c.audit_id,
@@ -359,12 +365,12 @@ def configurable_mappings(kls):
                     cascade="all",
                     passive_deletes=False, # SA default
                 )
-            
             # versionable
             if interfaces.IFeatureVersion.implementedBy(kls):
                 pass # !+VERSION_CLASS_PER_TYPE
             return mapper_properties
         
+        kls_mapper = class_mapper(kls)
         for key, prop in configurable_properties(kls, {}).items():
             kls_mapper.add_property(key, prop)
     

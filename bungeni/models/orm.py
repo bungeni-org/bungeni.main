@@ -72,7 +72,7 @@ mapper(domain.Group, schema.group,
     polymorphic_identity=polymorphic_identity(domain.Group),
     properties={
         "group_members": relation(domain.GroupMember),
-        "titletypes": relation(domain.TitleType),
+        "group_title_types": relation(domain.TitleType),
         "contained_groups": relation(domain.Group,
             primaryjoin=rdb.and_(
                 schema.group.c.group_id == schema.group.c.parent_group_id
@@ -85,7 +85,27 @@ mapper(domain.Group, schema.group,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
             backref=backref("head", remote_side=schema.principal.c.principal_id)
         ),
-        # "keywords": relation(domain.Keyword, secondary=schema.group_keywords)
+        # "keywords": relation(domain.Keyword, secondary=schema.group_keywords),
+        
+        "audits": relation(domain.GroupAudit, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == schema.group_audit.c.group_id
+            ),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            order_by=schema.group_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
+        ),
+        "group_assignments": relation(domain.GroupAssignment,
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == schema.doc_principal.c.principal_id,
+            ),
+            foreign_keys=[schema.doc_principal.c.principal_id],
+            lazy=False,
+            uselist=True,
+        )
     },
 )
 
@@ -127,6 +147,18 @@ mapper(domain.DocPrincipal, schema.doc_principal,
     properties={
         "principal": relation(domain.Principal, uselist=False),
         "doc": relation(domain.Doc, uselist=False),
+        "audits": relation(domain.DocPrincipalAudit, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                    *[ pk_col == schema.doc_principal_audit.c.get(pk_col.name)
+                       for pk_col in schema.doc_principal.primary_key ]
+            ),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            order_by=schema.doc_principal_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
+        ),
     }
 )
 
@@ -203,11 +235,25 @@ mapper(domain.GroupMember, schema.member,
             uselist=False,
             lazy=True),
         "replaced": relation(domain.GroupMember,
-            primaryjoin=(schema.member.c.replaced_id == schema.member.c.member_id),
+            primaryjoin=rdb.and_(
+                schema.member.c.replaced_id == schema.member.c.member_id),
             uselist=False,
             lazy=True),
         "sub_roles": relation(domain.MemberRole),
-        "member_titles": relation(domain.MemberTitle)
+        "member_titles": relation(domain.MemberTitle),
+        "audits": relation(domain.GroupMemberAudit, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                #   *[ pk_col == schema.member_audit.c.get(pk_col.name)
+                #      for pk_col in schema.member.primary_key ]
+                schema.member.c.member_id == schema.member_audit.c.member_id,
+            ),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            order_by=schema.member_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
+        ),
     },
     # the fallback sort_on ordering for member items
     order_by=schema.user, # !+ineffective? !+SORT_ON_USER
@@ -378,7 +424,7 @@ mapper(domain.Doc, schema.doc,
         "group_assignment": relation(domain.GroupAssignment,
             primaryjoin=schema.doc.c.doc_id == schema.doc_principal.c.doc_id,
             lazy=False,
-            uselist=True,
+            uselist=True, # !+DOC_GROUP_ASSIGNMENTS rename plural?
         )
     }
 )
@@ -479,6 +525,21 @@ mapper(domain.DocVersion,
         #"sa_events": relation(domain.Event, uselist=True),
     },
 )
+
+
+mapper(domain.GroupAudit, schema.group_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.Group) # on head class
+)
+mapper(domain.GroupMemberAudit, schema.member_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.GroupMember) # on head class
+)
+mapper(domain.DocPrincipalAudit, schema.doc_principal_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.DocPrincipal) # on head class
+)
+
 
 
 mapper(domain.AgendaItem,

@@ -400,14 +400,13 @@ class GroupMemberDescriptiveProperties(DescriptiveProperties):
     def title(self):
         context = _merged(self.context)
         if context.user:
-            return "%s - %s %s %s" % (
-                self.translate(context.group, "short_name"),
-                self.translate(context.user, "salutation"),
+            return "%s %s" % ( #"%s - %s %s %s" % (
+                #self.translate(context.group, "short_name"),
+                #self.translate(context.user, "salutation"),
                 context.user.first_name,
                 context.user.last_name)
         else:
-            return "%s - New User" % (
-                self.translate(context.group, "short_name"))
+            return "New User"
 
 
 @register.adapter()

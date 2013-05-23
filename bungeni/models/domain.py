@@ -226,7 +226,7 @@ class Group(Principal):
     """An abstract collection of users.
     """
     principal_type = "group"
-    available_dynamic_features = ["sitting", "address"]
+    available_dynamic_features = ["audit", "version", "sitting", "address"]
     interface.implements(
         interfaces.IGroup,
         interfaces.ITranslatable,
@@ -266,7 +266,7 @@ class GroupMember(HeadParentedMixin, Entity):
     """A user's membership in a group-abstract basis for 
     ministers, committee_members, etc.
     """
-    available_dynamic_features = []
+    available_dynamic_features = ["audit", "version"]
     interface.implements(
         interfaces.IGroupMember,
         interfaces.ITranslatable,
@@ -311,13 +311,14 @@ class MemberRole(Entity):
 class DocPrincipal(Entity):
     """A qualified association between a doc and a principal.
     """
+    available_dynamic_features = ["audit", "version"]
 
 class GroupAssignment(DocPrincipal):
-    """Association between a doc and groups it's been assigned to
+    """Association between a doc and a group it's been assigned to.
     """
     interface.implements(interfaces.IGroupAssignment)
     
-    @property
+    @property # !+StatusGroupAssignment
     def status(self):
         """Placeholder getter for workflow status."""
         return "_"
@@ -596,6 +597,7 @@ class Change(HeadParentedMixin, Entity):
         return self.audit.audit_head # orm property
     
     # !+Change.status(mr, apr-2012) needed? keep?
+    # !+StatusDocPrincipal
     @property
     def status(self):
         return self.audit.status # assumption: audit.audit_head is workflowed
@@ -733,6 +735,7 @@ class Audit(HeadParentedMixin, Entity):
         # 
         # define a subtype of Audit type
         audit_factory_name = "%sAudit" % (auditable_cls.__name__)
+        # !+
         auditable_pk_column = [ c for c in 
             alchemist.utils.get_local_table(auditable_cls).primary_key ][0]
         factory = type(audit_factory_name, (cls,), {
@@ -789,6 +792,34 @@ class DocVersion(Version):
     # !+version_feature_event
     #events = one2many("events",
     #    "bungeni.models.domain.DocVersionContainer", "head_id")
+
+
+class GroupAudit(Audit):
+    """An audit record for a group.
+    """
+    label_attribute_name = "short_name"
+
+class GroupMemberAudit(Audit):
+    """An audit record for a group member.
+    """
+    #!+label_attribute_name = "user_id"
+    @property
+    def label(self):
+        return IDCDescriptiveProperties(self.audit_head).title
+
+class DocPrincipalAudit(Audit):
+    """An audit record for a doc_principal record.
+    """
+    #!+label_attribute_name = "principal_id" #!+
+    @property
+    def label(self):
+        dp = self.audit_head
+        return "%s -> %s" % (
+            dp.doc.title, IDCDescriptiveProperties(dp.principal).title)
+    
+    @property # !+StatusDocPrincipal
+    def status(self):
+        return self.audit_head.status
 
 
 #!+CUSTOM
