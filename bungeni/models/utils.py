@@ -166,8 +166,9 @@ def get_all_group_ids_in_chamber(chamber_id):
 # !+chamber_mapper_property(mr, jan-2013) some types/tables define a 
 # chamber_id column, but not chamber mapper property... add it?
 # !+rename get_chamber_by_id
-def get_chamber(chamber_id):
-    return Session().query(domain.Chamber).get(chamber_id)            
+# !+get_chamber unused
+#def get_chamber(chamber_id):
+#    return Session().query(domain.Chamber).get(chamber_id)            
 
 
 def get_member_of_chamber(user_id):

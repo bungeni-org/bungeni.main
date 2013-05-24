@@ -24,7 +24,11 @@ from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
 from bungeni.core.interfaces import IWorkspaceContainer
-from bungeni.models.interfaces import IFeatureAudit, IBungeniParliamentaryContent
+from bungeni.models.interfaces import (
+    IFeatureAudit, 
+    IBungeniParliamentaryContent,
+    IGroup,
+)
 from bungeni.models.domain import Doc, get_changes
 from bungeni import models
 
@@ -164,8 +168,12 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         if not min_date_active:
             # ok, try determine a min_date_active in another way, namely via the
             # start_date of the "chamber" the instance "lives" in...
-            chamber = models.utils.get_chamber(
-                common.getattr_ancestry(instance, "chamber_id")) #!+parent_ref="head"?
+            if IGroup.providedBy(instance):
+                chamber = models.utils.get_chamber_for_group(instance)
+            else:
+                chamber = models.utils.get_chamber_for_context(instance)
+            assert chamber is not None, \
+                "Cannot determine chamber for worklfowed instance: %s" % (instance)
             min_date_active = datetime.datetime.combine(
                 chamber.start_date, datetime.time())
         
