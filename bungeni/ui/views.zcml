@@ -559,7 +559,19 @@
        permission="bungeni.attachment.View"
        layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
-
+   <browser:page name="add" 
+        for="bungeni.models.interfaces.IEventContainer"
+        class=".api.APIAddForm"
+        permission="bungeni.event.Add"
+        layer="bungeni.ui.interfaces.IBungeniAPILayer"
+    />
+    <browser:page name="add" 
+        for="bungeni.models.interfaces.IAttachmentContainer"
+        class=".api.APIAddForm"
+        permission="bungeni.attachment.Add"
+        layer="bungeni.ui.interfaces.IBungeniAPILayer"
+    />
+    
    <!-- OAuth -->
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"

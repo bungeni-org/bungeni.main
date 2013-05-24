@@ -2,13 +2,17 @@ import simplejson
 from datetime import datetime, date, time, timedelta
 from sqlalchemy.sql.expression import and_
 from zope import component
+from zope import formlib
 from zope.publisher.browser import BrowserPage
 from zope.publisher.interfaces import NotFound
 from zope.security.proxy import removeSecurityProxy
 from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.dublincore.interfaces import IDCDescriptiveProperties
+from zope.formlib.namedtemplate import NamedTemplate
 from bungeni.alchemist import container, Session
 from bungeni.core.serialize import obj2dict
+from bungeni.ui.workspace import WorkspaceAddForm
+from bungeni.ui.forms.common import AddForm
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.utils import url, misc
 from bungeni.ui.container import ContainerJSONListingRaw
@@ -153,4 +157,31 @@ class APIDebateRecordItemsView(BungeniBrowserView):
         for item in speeches + docs:
             data.append(obj2dict(item, 0))
         misc.set_json_headers(self.request)
-        return simplejson.dumps({"nodes":data}, default=dthandler)
+        return simplejson.dumps({"nodes": data}, default=dthandler)
+
+
+class APIAddForm(AddForm):
+    """ Generic add form
+    """
+    
+    template = NamedTemplate("alchemist.subform")
+
+    def __call__(self):
+        self.prefix = ""
+        # if data has been submitted
+        if (self.request.form.keys()):
+            self.request.form["actions.add"] = "add"
+        call = super(APIAddForm, self).__call__()
+        return call
+
+    @formlib.form.action("add", name="add",
+        condition=formlib.form.haveInputWidgets)
+    def handle_add(self, action, data):
+        ob = self.createAndAdd(data)
+        if not self._next_url:
+            self._next_url = url.absoluteURL(ob, self.request)
+
+
+class APIWorkspaceAddForm(APIAddForm, WorkspaceAddForm):
+    """Add form for docs that have workspace Feature
+    """

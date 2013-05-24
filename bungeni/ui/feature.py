@@ -67,16 +67,6 @@ def setup_customization_ui():
                 layer="{layer}"
             />"""
 
-    def register_api_view(type_key, for_):
-        UI_ZC_DECLS.append(register_api_view.TMPL.format(**locals()))
-    register_api_view.TMPL = """
-            <browser:page name="index"
-                for="{for_}"
-                class="bungeni.ui.api.APIObjectView"
-                permission="bungeni.{type_key}.View"
-                layer="bungeni.ui.interfaces.IBungeniAPILayer"
-            />"""
-
     def model_title(type_key):
         return naming.split_camel(naming.model_name(type_key))
     
@@ -97,9 +87,17 @@ def setup_customization_ui():
         # add
         register_form_view(type_key, "Add", "add", container_interface_qualname,
             "bungeni.ui.forms.common.AddForm")
+        # api add
+        register_form_view(type_key, "Add", "add", container_interface_qualname,
+            "bungeni.ui.api.APIAddForm", "bungeni.ui.interfaces.IBungeniAPILayer")
         # view
         register_form_view(type_key, "View", "index", model_interface_qualname,
             "bungeni.ui.forms.common.DisplayForm")
+        # api view
+        register_form_view(type_key, "View", "index",
+                model_interface_qualname,
+                "bungeni.ui.api.APIObjectView",
+                "bungeni.ui.interfaces.IBungeniAPILayer")
         # edit 
         # !+DiffEditForm prior to r10032, doc-archetyped types were being
         # *declared* to use bungeni.ui.forms.forms.DiffEditForm, but this
@@ -118,10 +116,7 @@ def setup_customization_ui():
         # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")
-        
-        # api
-        register_api_view(type_key, model_interface_qualname)
-        
+    
         # plone content menu (for custom types)
         # !+ doc-types were previously being layered on IWorkspaceOrAdminSectionLayer
         # !+ there was previously no reg for IReportConatiner and one of the member
@@ -223,6 +218,11 @@ def setup_customization_ui():
             register_form_view(type_key, "Add", name,
                 "bungeni.core.interfaces.IWorkspaceTab",
                 "bungeni.ui.workspace.WorkspaceAddForm")
+            # api add
+            register_form_view(type_key, "Add", name,
+                "bungeni.core.interfaces.IWorkspaceTab",
+                "bungeni.ui.api.APIWorkspaceAddForm",
+                "bungeni.ui.interfaces.IBungeniAPILayer")
         
         # workspace add titles to strings for i18n
         for ws_tab in capi.workspace_tabs:
