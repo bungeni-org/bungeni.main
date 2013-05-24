@@ -559,6 +559,24 @@
        permission="bungeni.attachment.View"
        layer="bungeni.ui.interfaces.IBungeniAPILayer"
    />
+   <browser:page name="index"
+       for="bungeni.models.interfaces.IEvent"
+       class="bungeni.ui.api.APIObjectView"
+       permission="bungeni.event.View"
+       layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
+   <browser:page name="edit"
+       for="bungeni.models.interfaces.IAttachment"
+       class="bungeni.ui.api.APIEditForm"
+       permission="bungeni.attachment.Edit"
+       layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
+   <browser:page name="edit"
+       for="bungeni.models.interfaces.IEvent"
+       class="bungeni.ui.api.APIEditForm"
+       permission="bungeni.event.Edit"
+       layer="bungeni.ui.interfaces.IBungeniAPILayer"
+   />
    <browser:page name="add" 
         for="bungeni.models.interfaces.IEventContainer"
         class=".api.APIAddForm"

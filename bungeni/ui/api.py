@@ -12,7 +12,7 @@ from zope.formlib.namedtemplate import NamedTemplate
 from bungeni.alchemist import container, Session
 from bungeni.core.serialize import obj2dict
 from bungeni.ui.workspace import WorkspaceAddForm
-from bungeni.ui.forms.common import AddForm
+from bungeni.ui.forms.common import AddForm, EditForm
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.utils import url, misc
 from bungeni.ui.container import ContainerJSONListingRaw
@@ -159,6 +159,25 @@ class APIDebateRecordItemsView(BungeniBrowserView):
         misc.set_json_headers(self.request)
         return simplejson.dumps({"nodes": data}, default=dthandler)
 
+
+class APIEditForm(EditForm):
+    """API Edit form that doesn't have bungeni skin
+    """
+    template = NamedTemplate("alchemist.subform")
+
+    def __call__(self):
+        self.prefix = ""
+        # if data has been submitted
+        if (self.request.form.keys()):
+            self.request.form["actions.edit"] = "edit"
+        call = super(APIEditForm, self).__call__()
+        return call
+
+    @formlib.form.action("edit", name="edit",
+        condition=formlib.form.haveInputWidgets)
+    def handle_edit(self, action, data):
+        """Saves the document and goes back to edit page"""
+        self._do_save(data)
 
 class APIAddForm(AddForm):
     """ Generic add form

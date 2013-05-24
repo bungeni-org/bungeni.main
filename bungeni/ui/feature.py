@@ -113,6 +113,10 @@ def setup_customization_ui():
             register_form_view(type_key, "Edit", "edit",
                 model_interface_qualname,
                 "bungeni.ui.forms.common.EditForm")
+            register_form_view(type_key, "Edit", "edit",
+                model_interface_qualname,
+                "bungeni.ui.api.APIEditForm",
+                "bungeni.ui.interfaces.IBungeniAPILayer")
         # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")
