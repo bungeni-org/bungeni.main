@@ -326,6 +326,7 @@ class GroupDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         group = _merged(self.context)
+        #!+return group.combined_name
         return self.translate(group, "full_name")
 
 
@@ -338,6 +339,7 @@ class GroupAssignmentDescriptiveProperties(DescriptiveProperties):
         group_assignment = _merged(self.context)
         group = group_assignment.principal
         #!+GROUP_ASSIGNMENT.GROUP assert isinstance(group, domain.Group), group
+        #!+return group.combined_name
         return "%s" % (self.translate(group, "short_name"))
 
 
@@ -358,10 +360,7 @@ class UserDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        return "%s %s %s".strip() % (
-            (self.translate(context, "salutation") if context.salutation else ""),
-            context.first_name, context.last_name
-        )
+        return context.combined_name
     
     @property
     def title_member(self):
@@ -400,11 +399,7 @@ class GroupMemberDescriptiveProperties(DescriptiveProperties):
     def title(self):
         context = _merged(self.context)
         if context.user:
-            return "%s %s" % ( #"%s - %s %s %s" % (
-                #self.translate(context.group, "short_name"),
-                #self.translate(context.user, "salutation"),
-                context.user.first_name,
-                context.user.last_name)
+            return context.user.combined_name
         else:
             return "New User"
 

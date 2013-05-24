@@ -62,6 +62,17 @@ def unified_diff(old_str, new_str, old_name="OLD", new_name="NEW"):
                 tofile=new_name))
 
 
+def callers_module():
+    import inspect
+    module_name = inspect.currentframe().f_back.f_globals["__name__"]
+    return sys.modules[module_name]
+
+
+def named_repr(obj, name):
+    return "<%s.%s '%s' object at %s>" % (
+        obj.__module__, type(obj).__name__, name, hex(id(obj)))
+
+
 # list
 
 def get_keyed_item(seq, value, key="name"):

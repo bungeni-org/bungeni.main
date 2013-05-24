@@ -20,8 +20,9 @@ from zope.cachedescriptors import property as cached_property
 
 from bungeni.alchemist import Session
 from bungeni.models import interfaces, domain, utils as model_utils
-from bungeni.utils import common, register
+from bungeni.utils import register
 from bungeni.capi import capi
+# !+MODEL_DEPENDENCY_CORE
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
 
 CONFIGURABLE_PARAMS = ("max_signatories", "min_signatories", "submitted_states",

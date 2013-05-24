@@ -16,11 +16,11 @@ from zope.component import provideUtility
 from zope.security.interfaces import IPermission
 from zope.security.permission import Permission
 from zope.securitypolicy.rolepermission import rolePermissionManager as rpm
-from bungeni.models import domain
+from bungeni.models import domain, feature
 from bungeni.models.interfaces import IFeatureAudit
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
-from bungeni.core.workflow.states import Facet, Feature, State, Transition, Workflow, get_tid
+from bungeni.core.workflow.states import Facet, State, Transition, Workflow, get_tid
 from bungeni.core.workflow.states import assert_distinct_permission_scopes
 
 from bungeni.capi import capi
@@ -143,7 +143,7 @@ def load_features(workflow_name, workflow_elem):
         assert num_params == len(params), \
             "Repeated parameters in feature %r" % (feature_name)
         
-        workflow_features.append(Feature(feature_name, 
+        workflow_features.append(feature.Feature(feature_name, 
                 enabled=feature_enabled,
                 note=xas(f, "note"), 
                 **params))

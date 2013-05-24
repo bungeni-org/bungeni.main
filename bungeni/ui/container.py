@@ -41,39 +41,6 @@ def query_iterator(query, parent):
             yield item
 
 
-def query_filter_date_range(context, request, query, domain_model):
-    """Add date range filter to query:
-    - if the model has start & end dates, constrain the query to objects
-      appearing within those dates.
-    - else (archive section) pick off start/end date from the request's cookies
-    - else try getting a display date off request
-    """
-    if (ufaces.IMembersSectionLayer.providedBy(request) and
-            mfaces.IMemberContainer.providedBy(context)
-        ):
-        start_date, end_date = datetime.date.today(), None
-    elif ufaces.IArchiveSectionLayer.providedBy(request):
-        start_date, end_date = cookies.get_date_range(request)
-    else:
-        start_date, end_date = date.getDisplayDate(request), None
-
-    ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood
-    if not start_date and not end_date:
-        return query
-    elif not start_date:
-        start_date = datetime.date(1900, 1, 1)
-    elif not end_date:
-        end_date = datetime.date(2100, 1, 1)
-
-    date_range_filter = component.getSiteManager().adapters.lookup(
-        (interface.implementedBy(domain_model),), mfaces.IDateRangeFilter)
-    if date_range_filter is not None:
-        query = query.filter(date_range_filter(domain_model)).params(
-            start_date=start_date, end_date=end_date)
-    '''
-    return query
-
-
 def get_date_strings(date_string):
     date_str = date_string.strip()
     start_date, end_date = None, None
@@ -400,9 +367,6 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         """
         context = proxy.removeSecurityProxy(self.context)
         query = context._query
-        # date_range filter (try from: model, then cookie, then request)
-        query = query_filter_date_range(context, self.request, query,
-            self.domain_model)
         sort_on_expressions = []
         # other filters
         lc_filter_queries = self.get_filter()

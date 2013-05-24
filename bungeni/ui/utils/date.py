@@ -39,28 +39,6 @@ def getDisplayDate(request):
         except:
             pass
 
-''' !+DATERANGEFILTER(mr, sep-2010) use IDateRangeFilter adaptors?
-
-def getFilter(displayDate):
-    """(either(datetime.date|None) -> filter_by:str
-    
-    Filter on a date for which to display the data.
-    #SQL WHERE:
-    # displayDate BETWEEN start_date and end_date
-    # OR
-    # displayDate > start_date and end_date IS NULL
-
-    Assumption: relation being being queried has date columns named 
-    "start_date" and "end_date"
-    """
-    if displayDate:
-        return """
-        ( ('%(displayDate)s' BETWEEN start_date AND end_date )
-        OR
-        ( '%(displayDate)s' > start_date AND end_date IS NULL) )
-        """ % ({"displayDate": displayDate})
-    return ""
-'''
 
 def getLocaleFormatter(
             request=None, 

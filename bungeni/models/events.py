@@ -15,8 +15,9 @@ from zope.lifecycleevent.interfaces import IObjectCreatedEvent, \
     IObjectModifiedEvent
 from sqlalchemy import sql, orm
 import domain, utils, interfaces
-from bungeni.core.interfaces import ISchedulingContext
+from bungeni.core.interfaces import ISchedulingContext # !+MODEL_DEPENDENCY_CORE
 from bungeni.utils import register
+
 
 @register.handler(adapts=(interfaces.IAgendaItem, IObjectCreatedEvent))
 @register.handler(adapts=(interfaces.ISession, IObjectCreatedEvent))

@@ -27,10 +27,32 @@ from bungeni.alchemist.model import (
     mapper_add_relation_vertical_property
 )
 from bungeni.alchemist import utils
-from bungeni.models import interfaces, domain, orm, schema
-from bungeni.core import audit
-from bungeni.utils import naming, register
+from bungeni.models import interfaces, domain, schema
+from bungeni.models import orm # !+ needed to execute mappings
+from bungeni.utils import naming, register, misc
 from bungeni.capi import capi
+
+
+# Features
+
+class Feature(object):
+    """Status/settings of an optional feature on a workflowed type.
+    """
+    def __init__(self, name, enabled=True, note=None, **kws):
+        self.name = name
+        self.enabled = enabled
+        self.note = note
+        self.params = kws
+    
+    def assert_available_for_type(self, cls):
+        assert self.name in cls.available_dynamic_features, \
+            "Feature %r not one that is available %s for this type %s" % (
+                self.name, cls.available_dynamic_features, cls)
+    
+    def __str__(self):
+        return misc.named_repr(self, self.name)
+    __repr__ = __str__
+
 
 
 # domain models
@@ -97,7 +119,8 @@ def feature_audit(kls, feature):
     if audit_kls is None: 
         audit_kls = new_audit_class(kls)
     # set auditor for kls
-    audit.set_auditor(kls)
+    import bungeni.core.audit
+    bungeni.core.audit.set_auditor(kls)
 
 
 def feature_version(kls, feature):
@@ -194,7 +217,7 @@ def create_feature_manager(domain_class, base_class, manager_iface, suffix, **pa
     """Instantiate a scheduling manager instance for `domain_class`.
     """
     manager_name = "%s%s" % (domain_class.__name__, suffix)
-    if manager_name in globals().keys():
+    if manager_name in globals().keys(): #!+KEYS
         log.error("Feature manager named %s already exists", manager_name)
         return
 
@@ -310,6 +333,7 @@ def feature_group_assignment(kls, feature):
     interface.classImplements(kls, interfaces.IFeatureGroupAssignment)
     add_container_property_to_model(kls, "group_assignments",
         "bungeni.models.domain.GroupAssignmentContainer", "doc_id")
+    #!+param assignable_types
 
 
 # mappings

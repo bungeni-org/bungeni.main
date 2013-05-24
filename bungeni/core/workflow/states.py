@@ -21,7 +21,7 @@ import zope.event
 import zope.lifecycleevent
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
-from bungeni.utils import error
+from bungeni.utils import error, misc
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
 
@@ -35,9 +35,6 @@ IntAsSetting = {
     0: Deny
 }
 
-def named__str__(self, name):
-    return "<%s.%s '%s' object at %s>" % (
-        self.__module__, type(self).__name__, name, hex(id(self)))
 
 def in_edit_mode():
     """Is current UI view in mode "edit" i.e. are we modifying bungeni content?
@@ -63,25 +60,7 @@ class Facet(object):
         assert len(permissions) == len(set(permissions)), \
             "Facet %r duplicates permissions: %s" % (self.name, permissions)
 
-class Feature(object):
-    """Status/settings of an optional feature on a workflowed type.
-    """
-    def __init__(self, name, enabled=True, note=None, **kws):
-        self.name = name
-        self.enabled = enabled
-        self.note = note
-        self.params = kws
-    
-    def assert_available_for_type(self, cls):
-        assert self.name in cls.available_dynamic_features, \
-            "Feature %r not one that is available %s for this type %s" % (
-                self.name, cls.available_dynamic_features, cls)
-    
-    def __str__(self):
-        return named__str__(self, self.name)
-    __repr__ = __str__
-    
-    
+
 class State(object):
     """A workflow state instance. 
     
@@ -199,7 +178,7 @@ class Transition(object):
         return cmp(self.order, other.order)
     
     def __str__(self):
-        return named__str__(self, self.id)
+        return misc.named_repr(self, self.id)
     __repr__ = __str__
 
 #
@@ -652,7 +631,7 @@ class Workflow(object):
         return self
     
     def __str__(self):
-        return named__str__(self, self.name)
+        return misc.named_repr(self, self.name)
     __repr__ = __str__
 
 class WorkflowController(object):
