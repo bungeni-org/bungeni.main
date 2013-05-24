@@ -50,7 +50,7 @@ def get_chamber_for_group(group):
     '''
 
 
-def user_delegatations(user):
+def get_user_delegations(user):
     session = Session()
     delegations = session.query(domain.UserDelegation).filter(
         domain.UserDelegation.delegation_id == user.user_id).all()
@@ -60,7 +60,7 @@ def user_delegatations(user):
 def get_login_user_chamber():
     user = get_login_user()
     if user:
-        user_delegations = user_delegatations(user)
+        user_delegations = get_user_delegations(user)
         if user_delegations:
             user = user_delegations[0].user
         for gm in user.group_membership:

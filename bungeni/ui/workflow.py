@@ -28,6 +28,7 @@ from bungeni.models.interfaces import (
     IFeatureAudit, 
     IBungeniParliamentaryContent,
     IGroup,
+    IGroupMember,
 )
 from bungeni.models.domain import Doc, get_changes
 from bungeni import models
@@ -167,15 +168,15 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         
         if not min_date_active:
             # ok, try determine a min_date_active in another way, namely via the
-            # start_date of the "chamber" the instance "lives" in...
-            if IGroup.providedBy(instance):
-                chamber = models.utils.get_chamber_for_group(instance)
+            # start_date of the instance itself (if it supports it) or of the 
+            # "chamber" the instance "lives" in... !+sitting, session, ...?
+            if IGroup.providedBy(instance) or IGroupMember.providedBy(instance):
+                start_date = instance.start_date
             else:
-                chamber = models.utils.get_chamber_for_context(instance)
-            assert chamber is not None, \
-                "Cannot determine chamber for worklfowed instance: %s" % (instance)
-            min_date_active = datetime.datetime.combine(
-                chamber.start_date, datetime.time())
+                start_date = models.utils.get_chamber_for_context(instance).start_date
+            assert start_date is not None, \
+                "Cannot determine min_date_active for worklfowed instance: %s" % (instance)
+            min_date_active = datetime.datetime.combine(start_date, datetime.time())
         
         # As the precision of the UI-submitted datetime is only to the minute, 
         # we adjust min_date_active by a margin of 59 secs earlier to avoid 

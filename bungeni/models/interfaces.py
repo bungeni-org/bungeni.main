@@ -500,7 +500,10 @@ class IDownloadManager(interface.Interface):
     
     def get_allowed_types():
         """get a subset of DOWNLOAD_TYPES"""
-    
+
+
+
+
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood
 class IDateRangeFilter(interface.Interface):
     """Adapts a model container instance and a SQLAlchemy query
@@ -557,7 +560,8 @@ class IBungeniVocabulary(interface.Interface):
 class IVenue(IBungeniVocabulary):
     """Marker interface for venues vocabulary"""
 class IVenueContainer(IAlchemistContainer): pass
-    
+
+
 class ISubRoleDirective(interface.Interface):
     """Define a new sub role."""
     id = schema.Id(
@@ -588,6 +592,7 @@ class ISubRoleAnnotations(interface.Interface):
 class ICountry(interface.Interface):
     """Marker interface for Country"""
 
+
 class IDebateRecord(interface.Interface):
     """Marker interface for debate records"""
 
@@ -612,6 +617,7 @@ class IDebateTake(interface.Interface):
 class IDebateTakeContainer(IAlchemistContainer):
     """Marker interface for debate takes container"""
 
+
 # OAuth
 class IOAuthApplication(interface.Interface):
     """Marker interface for an OAuth Application record"""
@@ -627,3 +633,5 @@ class IOAuthAuthorizationToken(interface.Interface):
 
 class IOAuthAccessToken(interface.Interface):
     """Marker interface for OAuth access token"""
+
+

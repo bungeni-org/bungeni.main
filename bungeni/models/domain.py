@@ -956,11 +956,6 @@ class Session(Entity):
     def group_id(self):
         return self.chamber_id
 
-''' !+SUBSCRIPTIONS(mr, jun-2012) unused
-class ObjectSubscriptions(object):
-    """
-    """
-'''
 
 # ###############
 

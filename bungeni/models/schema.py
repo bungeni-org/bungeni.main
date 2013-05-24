@@ -300,7 +300,7 @@ country = sa.Table("country", metadata,
 #######################
 # Groups
 #######################
-# we"re using a very normalized form here to represent all kinds of
+# we use a very normalized form here to represent all kinds of
 # groups and their relations to other things in the system.
 
 group = sa.Table("group", metadata,
@@ -331,7 +331,7 @@ group = sa.Table("group", metadata,
         sa.ForeignKey("group.group_id")
      ),
     sa.Column("language", sa.String(5), nullable=False),
-    # the role that members of this group get
+    # the role gained by being a member of this group
     sa.Column("group_role", sa.Unicode(256), nullable=False),
     # is the group "permament", "temporary", ... ?
     sa.Column("group_mandate", sa.Unicode(128)),
@@ -339,10 +339,10 @@ group = sa.Table("group", metadata,
 group_audit = make_audit_table(group, metadata)
 
 
-###
-#  the personal role of a user in terms of their membership this group
-#  The personal roles a person may have varies with the context. In a party
-#  one may have the role spokesperson, member, ...
+
+# the personal role of a user in terms of their membership in this group:
+# The personal roles a person may have varies with the context 
+# e.g. in a party one may have the role spokesperson, member, ...
 
 title_type = sa.Table("title_type", metadata,
     sa.Column("title_type_id", sa.Integer, primary_key=True),
@@ -415,7 +415,7 @@ member = sa.Table("member", metadata,
         unique=True
     ),
     sa.Column("substitution_type", sa.Unicode(100)),
-    # type of membership staff or member
+    # the type of membership, polymorphic identity
     sa.Column("member_type", sa.String(30), default="member", nullable=False),
     sa.Column("language", sa.String(5), nullable=False),
     # Representation of this member (in a chamber or any other group):
@@ -427,6 +427,7 @@ member = sa.Table("member", metadata,
     # which is a double-colon "::" separated sequence of *key phrases*.
     sa.Column("representation_geo", sa.UnicodeText, nullable=True),
     sa.Column("representation_sig", sa.UnicodeText, nullable=True),
+    # how the user became a member of this group
     sa.Column("election_type", sa.Unicode(128),
         default="elected", # elected, nominated, ex officio, co-opted, ...
         nullable=True),
@@ -442,7 +443,7 @@ member_audit = make_audit_table(member, metadata)
 ##############
 # Titles
 ##############
-# To indicate the title a persons has in a specific context (Ministry, 
+# To indicate the title a person has in a specific context (Ministry, 
 # Committee, Chamber, ...) and for what period (from - to)
 
 member_title = sa.Table("member_title", metadata,
@@ -711,21 +712,6 @@ sitting_report = sa.Table("sitting_report", metadata,
     ),
 )
 
-''' !+SUBSCRIPTIONS(mr, jun-2012) unused
-# generic subscriptions, to any type
-subscriptions = sa.Table("object_subscriptions", metadata,
-    sa.Column("subscriptions_id", sa.Integer, primary_key=True),
-    sa.Column("object_id", sa.Integer, nullable=False),
-    sa.Column("object_type", sa.String(32), nullable=False),
-    sa.Column("party_id", sa.Integer, nullable=False),
-    sa.Column("party_type", sa.String(32), nullable=False),
-    sa.Column("last_delivery", sa.Date, nullable=False),
-    # delivery period
-    # sa.Column("delivery_period", sa.Integer),
-    # delivery type
-    # sa.Column("delivery_type", sa.Integer),
-)
-'''
 
 # NOT a parliamentary_item
 # !+doc_attachment
