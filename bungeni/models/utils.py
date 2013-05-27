@@ -27,7 +27,16 @@ def get_chamber_for_context(context):
     # first look for current chamber from context tree
     chamber = common.getattr_ancestry(context, None, "__parent__",
         acceptable=interfaces.IChamber.providedBy)
-    # !+ should this ever be None here?
+    # !+ should this ever be None here? Cases when it is:
+    # - in workspace, the "contextual" chamber is not defined in the traversal 
+    #   hierarchy (even if all doc instacnes define the "chamber" attr directly).
+    # - context is an event (no chamber/group set) and user is a non-mp minister
+    if chamber is None:
+        # is context a sub-document? If so, take the chamber of the head doc:
+        if getattr(context, "head", None):
+            head = context.head
+            if hasattr(head, "chamber"):
+                chamber = head.chamber
     if chamber is None:
         # check logged in user's chamber
         chamber = get_login_user_chamber()

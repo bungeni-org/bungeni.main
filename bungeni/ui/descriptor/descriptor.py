@@ -809,7 +809,7 @@ class AttachmentDescriptor(ModelDescriptor):
                 show("view edit add"),
             ],
             value_type="text",
-            render_type="rich_text",
+            render_type="text_box",
         ),
         F(name="body",
             label="Body",

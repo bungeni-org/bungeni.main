@@ -398,8 +398,9 @@ class GroupMemberDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        if context.user:
-            return context.user.combined_name
+        user = context.user
+        if user:
+            return user.combined_name
         else:
             return "New User"
 
@@ -411,19 +412,16 @@ class SittingAttendanceDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        if context.member:
-            user = context.member
-            return "%s %s %s" % (self.translate(user, "salutation"),
-                user.first_name, user.last_name)
+        user = context.member
+        if user:
+            return user.combined_name
         else:
-            return u"New User"
+            return "New User"
     
     @property
     def description(self):
         context = _merged(self.context)
-        return self.translate(context.attendance_type, 
-            "attendance_type"
-        )
+        return self.translate(context.attendance_type, "attendance_type")
 
 
 @register.adapter()
@@ -433,12 +431,11 @@ class SignatoryDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        if context.user:
-            return "%s %s %s" % (self.translate(context.user, "salutation"),
-                context.user.first_name,
-                context.user.last_name)
+        user = context.user
+        if user: 
+            return user.combined_name
         else:
-            return u"New User"
+            return "New User"
     
     @property
     def status(self):
