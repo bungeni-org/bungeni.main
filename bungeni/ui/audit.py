@@ -30,22 +30,26 @@ from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.utils import register, naming
 
-CHANGE_TYPES = ("head", "signatory", "attachment", "event", "member", "group_assignment")
-CHANGE_ACTIONS = domain.CHANGE_ACTIONS
-# ("add", "modify", "workflow", "remove", "version", "translate")
-
 
 # Data
 
 class ChangeDataProvider(object):
     
-    def __init__(self, context,
-            include_change_types=CHANGE_TYPES, 
-            include_change_actions=CHANGE_ACTIONS
-        ):
+    def __init__(self, context):
         self.head = removeSecurityProxy(context)
-        self.include_change_types = include_change_types
-        self.include_change_actions = include_change_actions
+        self.head_workflow = IWorkflow(self.head)
+        self.head_audit_feature = self.head_workflow.get_feature("audit")
+    
+    @property
+    def param_audit_actions(self):
+        return self.head_audit_feature.params["audit_actions"]
+    @property
+    def param_include_subtypes(self):
+        return self.head_audit_feature.params["include_subtypes"]
+    @property
+    def param_display_columns(self):
+        return self.head_audit_feature.params["display_columns"]
+    
     
     def change_data_items(self):
         """Get change data items, reverse-sorted by date (most recent first).
@@ -56,7 +60,7 @@ class ChangeDataProvider(object):
         
         def append_visible_changes_on_item(item):
             permission = view_permission(item)
-            for c in domain.get_changes(item, *self.include_change_actions):
+            for c in domain.get_changes(item, *self.param_audit_actions):
                 if checkPermission(permission, c):
                     changes.append(c)
         
@@ -64,7 +68,7 @@ class ChangeDataProvider(object):
             # !+ interfaces.IFeatureX.providedBy(self.head)
             return (
                 (not SUPPORTED_FEATURE or head_wf.has_feature(feature_name)) and 
-                feature_name in self.include_change_types)
+                feature_name in self.param_include_subtypes)
         
         def append_visible_changes_on_sub_items(sub_type_key, items_attr,
                 SUPPORTED_FEATURE=True # !+
@@ -77,8 +81,7 @@ class ChangeDataProvider(object):
                     append_visible_changes_on_item(item)
         
         # changes direct on head item
-        if "head" in self.include_change_types:
-            append_visible_changes_on_item(self.head)
+        append_visible_changes_on_item(self.head)
         # changes on sub-items
         append_visible_changes_on_sub_items("signatory", "item_signatories")
         append_visible_changes_on_sub_items("attachment", "attachments")
@@ -269,8 +272,8 @@ def _df_translate(change):
 # !+AUDIT-TIMELINE-RSS need different change description formatters for each?
 
 def get_description_formatter(action, change_type):
-    # assert change_type in CHANGE_TYPES
-    # assert action in CHANGE_ACTIONS
+    # assert change_type in param_include_subtypes
+    # assert action in param_audit_actions
     return globals().get("_df_%s_%s" % (action, change_type), 
         # failing that, use the generic formatter for action
         globals().get("_df_%s" % (action)))
@@ -339,13 +342,6 @@ class AuditLogMixin(object):
     formatter_factory = TableFormatter
     prefix = "container_contents_changes"
     
-    # !+bungeni_custom listing bind to UI configuration (descriptor)
-    visible_column_names = []
-    # !+ParametrizedAuditLog(mr, dec-2011) bungeni_custom parameters:
-    # change types X change actions
-    include_change_types = []
-    include_change_actions = []
-    
     def columns(self):
         return ChangeDataDescriptor(self.context, self.request).columns()
     
@@ -357,10 +353,7 @@ class AuditLogMixin(object):
     _data_items = None
     def change_data_items(self):
         if self._data_items is None:
-            self._data_items = ChangeDataProvider(self.context, 
-                    self.include_change_types, 
-                    self.include_change_actions
-                ).change_data_items()
+            self._data_items = ChangeDataProvider(self.context).change_data_items()
         return self._data_items
     
     @property
@@ -386,7 +379,7 @@ class AuditLogMixin(object):
         #
         formatter = self.formatter_factory(self.context, self.request,
             self.change_data_items(), # formatter.items
-            visible_column_names=self.visible_column_names, 
+            visible_column_names=ChangeDataProvider(self.context).param_display_columns,
             prefix=self.prefix,
             columns=self.columns()
         )
@@ -409,10 +402,6 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     __call__ = ViewPageTemplateFile("templates/listing-view.pt")
     
     _page_title = _("Change Log")
-    visible_column_names = [
-        "user", "date_active", "object", "description", "note", "date_audit"]
-    include_change_types = [ t for t in CHANGE_TYPES ]
-    include_change_actions = [ a for a in CHANGE_ACTIONS ]
     
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context, request)
@@ -432,10 +421,6 @@ class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     weight = 20
     
     render = ViewPageTemplateFile("templates/listing-viewlet.pt")
-    
-    visible_column_names = ["object", "description", "user", "date_active"]
-    include_change_types =  [ t for t in CHANGE_TYPES ]
-    include_change_actions = [ a for a in CHANGE_ACTIONS ] #if not a == "modify" ]
     
     def __init__(self,  context, request, view, manager):
         browser.BungeniItemsViewlet.__init__(self, context, request, view, manager)

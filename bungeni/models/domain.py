@@ -35,12 +35,12 @@ def object_hierarchy_type(object):
     return ""
 
 
-CHANGE_ACTIONS = ("add", "modify", "workflow", "remove", "version", "translate")
+AUDIT_ACTIONS = ("add", "modify", "workflow", "remove", "version", "translate")
 
 def assert_valid_change_action(action):
-    assert action in CHANGE_ACTIONS, \
+    assert action in AUDIT_ACTIONS, \
         "Invalid audit action: %s. Must be one of: %s" % (
-            action, CHANGE_ACTIONS)
+            action, AUDIT_ACTIONS)
 
 def get_changes(auditable, *actions):
     """Get changelog for auditable context, filtered for actions.
@@ -614,7 +614,7 @@ class Change(HeadParentedMixin, Entity):
     def previous(self):
         """The previous change (any action) on self.head. None if no previous.
         """
-        changes = get_changes(self.head, *CHANGE_ACTIONS)
+        changes = get_changes(self.head, *AUDIT_ACTIONS)
         for c in changes[1 + changes.index(self):]:
             return c
     

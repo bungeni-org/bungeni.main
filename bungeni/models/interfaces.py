@@ -436,9 +436,9 @@ class ISubRoleDirective(interface.Interface):
         required=True)
 
 class ISubRoleAnnotations(interface.Interface):
-    sub_roles = interface.Attribute('sub_roles')
-    is_sub_role = interface.Attribute('is_sub_role')
-    parent = interface.Attribute('parent')
+    sub_roles = interface.Attribute("sub_roles")
+    is_sub_role = interface.Attribute("is_sub_role")
+    parent = interface.Attribute("parent")
 
 class ICountry(interface.Interface):
     """Marker interface for Country"""

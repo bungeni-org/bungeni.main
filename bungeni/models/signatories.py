@@ -6,7 +6,6 @@
 
 $Id$
 """
-
 log = __import__("logging").getLogger("bungeni.models.signatories")
 
 import zope.component
@@ -27,10 +26,8 @@ from bungeni.capi import capi
 # !+MODEL_DEPENDENCY_CORE
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
 
+
 # !+FEATURE
-CONFIGURABLE_PARAMS = ("max_signatories", "min_signatories", "submitted_states",
-    "draft_states", "expire_states", "open_states"
-)
 OWNER_ROLE = "bungeni.Owner"  # !+OWNER_TO_DRAFTER
 SIGNATORY_ROLE = "bungeni.Signatory"
 SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
@@ -284,9 +281,6 @@ def createManagerFactory(domain_class, **params):
     globals()[manager_name] = type(manager_name, (SignatoryValidator,), {})
     manager = globals()[manager_name]
     for config_name, config_value in params.iteritems():
-        assert config_name in CONFIGURABLE_PARAMS, ("Check your signatory "
-            "feature configuration for %s. Only these parameters may be "
-            "configured %s" % (domain_class.__name__, CONFIGURABLE_PARAMS))
         config_type = type(getattr(manager, config_name))
         if config_type in (tuple, list):
             config_value = map(str.strip, config_value)

@@ -47,11 +47,12 @@ def get_feature_cls(feature_name):
 
 # param parser/validator utils
 
-def ppv_space_separated_tokens(value, default):
+def ppv_sst(value, default):
+    """Space separated tokens."""
     return (value or default or "").split()
-ppv_space_separated_type_keys = ppv_space_separated_tokens
-ppv_space_separated_role_ids = ppv_space_separated_tokens
-ppv_space_separated_state_ids = ppv_space_separated_tokens
+ppv_space_separated_type_keys = ppv_sst
+ppv_space_separated_role_ids = ppv_sst
+ppv_space_separated_state_ids = ppv_sst
 
 def ppv_int(value, default=None):
     return int(value or default or 0)
@@ -76,7 +77,9 @@ class Feature(object):
             if key not in kws:
                 kws[key] = self.feature_parameters[key]["default"]
         for key in kws:
-            assert key in self.feature_parameters, key
+            assert key in self.feature_parameters, "Unknown parameter %r for " \
+            "feature %r - configurable parameters here are: %s" % (
+                key, self.name, self.feature_parameters.keys())
             p_desc = self.feature_parameters[key]
             pp = globals()["ppv_%s" % (p_desc["type"])]
             kws[key] = pp(kws[key], p_desc["default"])
@@ -114,6 +117,15 @@ class Audit(Feature):
     """
     feature_interface = interfaces.IFeatureAudit
     feature_parameters = {}
+    feature_parameters = {
+        "audit_actions": dict(type="sst",
+            # "add modify workflow remove version translate"
+            default=" ".join(domain.AUDIT_ACTIONS)),
+        "include_subtypes": dict(type="sst",
+            default="signatory attachment event member group_assignment"),
+        "display_columns": dict(type="sst", 
+            default="user date_active object description note date_audit"),
+    }
     
     def decorate(self, cls):
         # Assumption: if a domain class is explicitly pre-defined, then it is 
@@ -364,7 +376,7 @@ class Download(Feature):
     """
     feature_interface = interfaces.IFeatureDownload
     feature_parameters = {
-        "allowed_types": dict(type="space_separated_tokens", default=None)
+        "allowed_types": dict(type="sst", default=None)
     }
     
     def decorate(self, cls):
