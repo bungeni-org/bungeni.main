@@ -12,6 +12,7 @@ log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 from bungeni.models import  interfaces
+from bungeni.feature.interfaces import ISchedulingManager
 from bungeni.utils import register
 from bungeni.core.workflow.interfaces import IWorkflowController
 

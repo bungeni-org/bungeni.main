@@ -1144,10 +1144,11 @@ class Report(Doc):
 class SittingReport(Entity):
     """Which reports are created for this sitting.
     """
+    from bungeni.feature.interfaces import IFeatureDownload
     interface.implements(
         interfaces.ISittingReport,
         interfaces.IBungeniContent,
-        interfaces.IFeatureDownload,
+        IFeatureDownload, # !+not worklfowed
     )
     
     def __getattr__(self, name):

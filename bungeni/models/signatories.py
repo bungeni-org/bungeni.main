@@ -19,12 +19,15 @@ from zope.component import getGlobalSiteManager
 from zope.cachedescriptors import property as cached_property
 
 from bungeni.alchemist import Session
-from bungeni.models import interfaces, domain, utils as model_utils
+from bungeni.models import domain, utils as model_utils
+from bungeni.models.interfaces import ISignatory
+from bungeni.feature import interfaces
 from bungeni.utils import register
 from bungeni.capi import capi
 # !+MODEL_DEPENDENCY_CORE
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
 
+# !+FEATURE
 CONFIGURABLE_PARAMS = ("max_signatories", "min_signatories", "submitted_states",
     "draft_states", "expire_states", "open_states"
 )
@@ -67,7 +70,7 @@ def doc_workflow(ob, event):
         manager = interfaces.ISignatoryManager(ob)
         manager.fire_workflow_actions()
 
-@register.handler(adapts=(interfaces.ISignatory, 
+@register.handler(adapts=(ISignatory, 
     zope.lifecycleevent.interfaces.IObjectCreatedEvent))
 def signatory_created(ob, event):
     manager = interfaces.ISignatoryManager(ob.head)
@@ -264,7 +267,8 @@ class SignatoryValidator(object):
         """
         self.setup_roles()
         self.update_signatories()
-        
+
+
 def createManagerFactory(domain_class, **params):
     manager_name = "%sSignatoryManager" % domain_class.__name__ #!+naming
     if manager_name in globals().keys():
@@ -285,7 +289,7 @@ def createManagerFactory(domain_class, **params):
             "configured %s" % (domain_class.__name__, CONFIGURABLE_PARAMS))
         config_type = type(getattr(manager, config_name))
         if config_type in (tuple, list):
-            config_value = map(str.strip, config_value.split())
+            config_value = map(str.strip, config_value)
         setattr(manager, config_name, config_type(config_value))
     assert set.intersection(
             set(manager.submitted_states), 

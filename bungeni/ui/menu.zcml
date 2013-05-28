@@ -187,7 +187,7 @@
         order="31"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IFeatureSignatory"
+        for="bungeni.feature.interfaces.IFeatureSignatory"
         title="Add signatory..."
         action="./signatories/add"
         permission="bungeni.signatory.Add"
@@ -513,7 +513,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IFeatureAttachment"
+        for="bungeni.feature.interfaces.IFeatureAttachment"
         title="Add file..."
         action="./files/add"
         permission="bungeni.attachment.Add"
@@ -554,7 +554,7 @@
         provides="ploned.ui.interfaces.IContentMenuItem"
     />
     <adapter name="plone.contentmenu.downloaddocument"
-        for="bungeni.models.interfaces.IFeatureDownload *"
+        for="bungeni.feature.interfaces.IFeatureDownload *"
         factory=".menu.DownloadDocumentSubMenuItem"
         provides="ploned.ui.interfaces.IContentMenuItem"
     />
@@ -570,7 +570,7 @@
     />
 
   <!--adapter
-     for="bungeni.models.interfaces.IFeatureVersion *"
+     for="bungeni.feature.interfaces.IFeatureVersion *"
      name="plone.contentmenu.translation"
      factory=".menu.TranslationSubMenuItem"
      provides="ploned.ui.interfaces.IContentMenuItem" /-->
@@ -779,7 +779,7 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IFeatureSignatory"
+        for="bungeni.feature.interfaces.IFeatureSignatory"
         action="signatory-review" 
         title="Sign Document"
         layer=".interfaces.IWorkspaceMyDocumentsSectionLayer"
@@ -788,7 +788,7 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IFeatureSignatory"
+        for="bungeni.feature.interfaces.IFeatureSignatory"
         action="signatory-review" 
         title="Withdraw signature"
         layer=".interfaces.IWorkspaceSectionLayer"
@@ -797,7 +797,7 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IFeatureSignatory"
+        for="bungeni.feature.interfaces.IFeatureSignatory"
         action="sign-open-document" 
         title="Sign Document"
         layer=".interfaces.IWorkspaceUnderConsiderationSectionLayer"
@@ -806,7 +806,7 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IFeatureAudit"
+        for="bungeni.feature.interfaces.IFeatureAudit"
         action="audit-log"
         title="Audit log"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -814,7 +814,7 @@
         order="22"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IFeatureVersion"
+        for="bungeni.feature.interfaces.IFeatureVersion"
         action="version-log"
         title="Versions"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -944,7 +944,7 @@
 
    
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IFeatureUserAssignment"
+        for="bungeni.feature.interfaces.IFeatureUserAssignment"
         action="user-assignments"
         title="User Assignment"
         permission="bungeni.user_assignment.View"
@@ -953,7 +953,7 @@
     />
     
    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IFeatureGroupAssignment"
+        for="bungeni.feature.interfaces.IFeatureGroupAssignment"
         action="group_assignments"
         title="Group Assignment"
         permission="bungeni.group_assignment.View"

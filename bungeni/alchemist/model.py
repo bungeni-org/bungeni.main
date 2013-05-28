@@ -15,6 +15,7 @@ from sqlalchemy.orm import class_mapper, relation
 from zope.interface import interface, classImplements
 
 from bungeni.models import interfaces
+from bungeni.feature.interfaces import IFeatureAudit
 from bungeni.alchemist import utils
 from bungeni.alchemist.catalyst import (
     INTERFACE_MODULE, 
@@ -231,7 +232,7 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
     # !+AUDIT_EXTENDED_ATTRIBUTES as audit class was created prior to 
     # extended attributes being updated on domain type, need to push onto 
     # it any extended attrs that were read from model's descriptor
-    if interfaces.IFeatureAudit.implementedBy(domain_model):
+    if IFeatureAudit.implementedBy(domain_model):
         # either defined manually or created dynamically in feature_audit()
         audit_kls = getattr(MODEL_MODULE, "%sAudit" % (domain_model.__name__))
         # ensure cls has own dedicated "extended_properties" list property 

@@ -29,7 +29,7 @@ from bungeni.alchemist.ui import getSelected
 
 from bungeni.core import version
 from bungeni.core.workflows.utils import view_permission
-from bungeni.models.interfaces import IFeatureVersion
+from bungeni.feature.interfaces import IFeatureVersion
 from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url

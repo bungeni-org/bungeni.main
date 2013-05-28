@@ -16,7 +16,8 @@ from sqlalchemy import orm, sql
 
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
-from bungeni.models.interfaces import ISchedulingManager, IScheduleText
+from bungeni.models.interfaces import IScheduleText
+from bungeni.feature.interfaces import ISchedulingManager
 from bungeni.models.utils import get_login_user_chamber
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session

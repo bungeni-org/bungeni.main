@@ -14,6 +14,9 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy import zopepolicy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
+import zope.i18nmessageid
+_ = zope.i18nmessageid.MessageFactory("bungeni")
+
 
 def cache_item(mapping, key, value):
     """Utility to set (key, value) item on mapping, and return the value.

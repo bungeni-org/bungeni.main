@@ -40,9 +40,9 @@ def apply_customization_workflow(type_key, ti):
     if not IWorkflowed.implementedBy(domain_model):
         classImplements(domain_model, IWorkflowed)
     # dynamic features from workflow - setup domain/mapping as needed
-    from bungeni.models import feature
-    feature.configurable_domain(domain_model, workflow)
-    feature.configurable_mappings(domain_model)
+    for feature in workflow.features:
+        feature.setup(domain_model)
+
 
 def register_specific_workflow_adapter(ti):
     # Specific adapter on specific iface per workflow.

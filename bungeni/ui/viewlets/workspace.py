@@ -15,7 +15,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
-from bungeni.models.interfaces import ISignatoryManager
+from bungeni.feature.interfaces import ISignatoryManager
 from bungeni.core import translation
 from bungeni.capi import capi
 

@@ -130,7 +130,7 @@
     
     <!-- signatories -->
     <browser:page name="signatory-review"
-        for="bungeni.models.interfaces.IFeatureSignatory"
+        for="bungeni.feature.interfaces.IFeatureSignatory"
         permission="bungeni.signatory.Act"
         class=".redirect.SignatoryReview"
     />
@@ -321,7 +321,7 @@
 
    <browser:page
       name="feed.rss"
-    for="bungeni.models.interfaces.IFeatureAudit"
+    for="bungeni.feature.interfaces.IFeatureAudit"
     class=".rss.TimelineRSSView"
     permission="zope.Public"
     layer=".interfaces.IRSSRepresentationLayer"
@@ -440,7 +440,7 @@
     custom type should be considered as ParliamentaryContent?
     -->
     <browser:page name="nowediting"
-        for="bungeni.models.interfaces.IFeatureWorkspace"
+        for="bungeni.feature.interfaces.IFeatureWorkspace"
    		class=".views.StoreNowEditView"
    		layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
    		permission="zope.Public"
@@ -463,7 +463,7 @@
    />
       
    <browser:page
-      for="bungeni.models.interfaces.IFeatureUserAssignment"
+      for="bungeni.feature.interfaces.IFeatureUserAssignment"
       name="user-assignments"
       class=".assignment.UserAssignmentView"
       permission="bungeni.user_assignment.View"

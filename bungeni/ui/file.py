@@ -18,9 +18,9 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zc.table import column
 
 from bungeni.core.workflow.interfaces import IStateController
-from bungeni.models.interfaces import IFeatureAttachment, \
+from bungeni.models.interfaces import IAttachmentContainer, \
     IVersion, IAttachedFileVersion
-from bungeni.models.interfaces import IAttachmentContainer
+from bungeni.feature.interfaces import IFeatureAttachment
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui import browser
 from bungeni.ui.i18n import _

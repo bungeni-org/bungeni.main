@@ -20,6 +20,7 @@ from bungeni.models.utils import (
     is_current_or_delegated_user, 
     get_user,
 )
+from bungeni.feature.interfaces import ISchedulingManager
 
 from bungeni.utils import common
 from bungeni.ui.utils import debug
@@ -270,7 +271,7 @@ def schedule_sitting_items(context):
         if wfc is None:
             continue
         wf = wfc.workflow
-        manager = interfaces.ISchedulingManager(schedule.item, None)
+        manager = ISchedulingManager(schedule.item, None)
         if not manager:
             continue
         try:
@@ -296,7 +297,7 @@ def check_agenda_finalized(context):
         #!+TYPES(mb, march-2012) There might be a more elegant approach here
         # to filter out 'text records' from the schedule
         if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
-            manager = interfaces.ISchedulingManager(schedule.item)            
+            manager = ISchedulingManager(schedule.item)            
             return (wfc.state_controller.get_status() not in 
                 manager.scheduled_states
             )

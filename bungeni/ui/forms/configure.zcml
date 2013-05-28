@@ -239,7 +239,7 @@ to e.g. "bungeni.{type}.Edit").
     
     <browser:page
         name="sign-open-document"
-        for="bungeni.models.interfaces.IFeatureSignatory"
+        for="bungeni.feature.interfaces.IFeatureSignatory"
         class=".common.SignOpenDocumentForm"
         permission="bungeni.signatory.Append"
         layer="bungeni.ui.interfaces.IWorkspaceUnderConsiderationSectionLayer"
@@ -284,7 +284,7 @@ to e.g. "bungeni.{type}.Edit").
     <browser:viewlet name="bungeni.viewlet.pi-signatories"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.SignatoriesViewlet"
-        for="bungeni.models.interfaces.IFeatureSignatory"
+        for="bungeni.feature.interfaces.IFeatureSignatory"
         permission="zope.Public"
         weight="10"
     />

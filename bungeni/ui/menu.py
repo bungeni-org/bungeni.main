@@ -31,6 +31,8 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.interfaces import (
     IVersion, 
     IScheduleContent, 
+)
+from bungeni.feature.interfaces import (
     IFeatureAudit,
     IFeatureDownload,
     IDownloadManager,

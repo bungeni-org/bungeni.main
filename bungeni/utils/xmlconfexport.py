@@ -302,7 +302,7 @@ def output_downloadtypes():
     feature )
     """
 
-    from bungeni.models.interfaces import DOWNLOAD_TYPES
+    from bungeni.feature.interfaces import DOWNLOAD_TYPES
 
     li_dntypes = ["<downloadTypes>"]
     for k,v in DOWNLOAD_TYPES:

@@ -42,9 +42,10 @@ from bungeni.core.translation import get_translation_for
 from bungeni.core.language import CurrentLanguageVocabulary, get_language_by_name
 from bungeni.core.workflows.utils import set_group_local_role, unset_group_local_role
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
-    IAttachmentContainer, ISignatoryManager #, ISittingContainer
+    IAttachmentContainer #, ISittingContainer
 from bungeni.models import domain
 from bungeni.models.utils import get_login_user
+from bungeni.feature.interfaces import ISignatoryManager
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
     IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer

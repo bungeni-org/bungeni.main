@@ -44,7 +44,7 @@ import sqlalchemy as sa
 from bungeni.alchemist import Session
 
 from bungeni.models import utils
-from bungeni.models.interfaces import IFeatureAudit
+from bungeni.feature.interfaces import IFeatureAudit
 from bungeni.models import schema
 from bungeni.models import domain
 from bungeni.core.interfaces import TranslationCreatedEvent

@@ -20,6 +20,7 @@ from zope.security import checkPermission
 
 from bungeni.models import interfaces
 from bungeni.models import domain
+from bungeni.feature.interfaces import IFeatureAudit
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.core.workflows.utils import view_permission
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
@@ -399,7 +400,7 @@ class AuditLogMixin(object):
     #    return auditor.audit_class
 
 
-@register.view(interfaces.IFeatureAudit, name="audit-log",
+@register.view(IFeatureAudit, name="audit-log",
     protect={"bungeni.ui.audit.View": register.VIEW_DEFAULT_ATTRS})
 class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
@@ -423,7 +424,7 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
                 dc and dc.title or self.context.title
             )
 
-@register.viewlet(interfaces.IFeatureAudit, manager=ISubFormViewletManager, 
+@register.viewlet(IFeatureAudit, manager=ISubFormViewletManager, 
     name="keep-zca-happy-timeline", protect=register.PROTECT_VIEWLET_PUBLIC)
 class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     view_title = "Timeline"
@@ -581,12 +582,12 @@ class ChangeDataTableJSONListingBase(container.ContainerJSONListing):
         return self.json_batch(start, limit, lang)
 
 
-@register.view(interfaces.IFeatureAudit, name="jsonlisting_view")
+@register.view(IFeatureAudit, name="jsonlisting_view")
 class ChangeDataTableJSONListingView(ChangeDataTableJSONListingBase, AuditLogView):
     """Json Listing callback for View.
     """
 
-@register.view(interfaces.IFeatureAudit, name="jsonlisting_viewlet")
+@register.view(IFeatureAudit, name="jsonlisting_viewlet")
 class ChangeDataTableJSONListingViewlet(ChangeDataTableJSONListingBase, TimeLineViewlet):
     """Json Listing callback for Viewlet.
     """

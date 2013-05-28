@@ -25,13 +25,14 @@ from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
 from bungeni.core.interfaces import IWorkspaceContainer
 from bungeni.models.interfaces import (
-    IFeatureAudit, 
     IBungeniParliamentaryContent,
     IGroup,
     IGroupMember,
 )
 from bungeni.models.domain import Doc, get_changes
 from bungeni import models
+
+from bungeni.feature.interfaces import IFeatureAudit
 
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm

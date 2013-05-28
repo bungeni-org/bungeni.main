@@ -20,9 +20,8 @@ from bungeni.core.interfaces import IRSSValues
 from bungeni.core.workflows.utils import view_permission
 from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.models import domain
-from bungeni.models.interfaces import (IFeatureAudit, \
-    IAlchemistContainer
-)
+from bungeni.models.interfaces import IAlchemistContainer
+from bungeni.feature.interfaces import IFeatureAudit
 from bungeni.utils import register
 from bungeni.capi import capi
 #import bungeni.ui.versions # !+REGISTER

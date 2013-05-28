@@ -25,6 +25,7 @@ from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IContentViewManager
 
 from bungeni.models import domain, interfaces
+from bungeni.feature.interfaces import IFeatureAttachment, IFeatureSchedule
 
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
@@ -236,7 +237,7 @@ class PoliticalGroupMembersViewlet(SubformViewlet):
 class SittingsViewlet(SubformViewlet):
     sub_attr_name = "sittings"
 
-@register.viewlet(interfaces.IFeatureAttachment,
+@register.viewlet(IFeatureAttachment,
     manager=ISubFormViewletManager,
     name="keep-zca-happy-attachments",
     protect=register.PROTECT_VIEWLET_PUBLIC)
@@ -280,7 +281,7 @@ class PersonInfo(BungeniAttributeDisplay):
         self.context.__parent__ = parent
         super(PersonInfo, self).update()
 
-@register.viewlet(interfaces.IFeatureSchedule,
+@register.viewlet(IFeatureSchedule,
     manager=ISubFormViewletManager,
     name="doc-minutes",
     protect=register.PROTECT_VIEWLET_PUBLIC)

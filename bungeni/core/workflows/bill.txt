@@ -33,7 +33,7 @@ Imports
 Bills are versionable.
 ----------------------  
   >>> from zope.interface import classImplements
-  >>> from bungeni.models.interfaces import IFeatureVersion
+  >>> from bungeni.feature.interfaces import IFeatureVersion
   >>> classImplements(domain.Bill, IFeatureVersion)
 
   
