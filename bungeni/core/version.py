@@ -12,14 +12,14 @@ from zope.security.proxy import removeSecurityProxy
 from zope import event
 
 from bungeni.alchemist import Session
-import bungeni.models.interfaces
+import bungeni.feature.interfaces
 import bungeni.core.interfaces
 from bungeni.models import domain
 from bungeni.core import audit
 
 
 def get_feature_interface(feature_name):
-    return getattr(bungeni.models.interfaces,
+    return getattr(bungeni.feature.interfaces,
         "IFeature%s" % feature_name.capitalize())
 
 

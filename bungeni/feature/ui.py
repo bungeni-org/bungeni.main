@@ -6,7 +6,7 @@
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.ui.feature")
+log = __import__("logging").getLogger("bungeni.feature")
 
 
 from zope.configuration import xmlconfig
@@ -66,7 +66,7 @@ def setup_customization_ui():
                 permission="bungeni.{type_key}.{privilege}"
                 layer="{layer}"
             />"""
-
+    
     def model_title(type_key):
         return naming.split_camel(naming.model_name(type_key))
     
@@ -120,7 +120,7 @@ def setup_customization_ui():
         # delete
         register_form_view(type_key, "Delete", "delete", model_interface_qualname,
             "bungeni.ui.forms.common.DeleteForm")
-    
+        
         # plone content menu (for custom types)
         # !+ doc-types were previously being layered on IWorkspaceOrAdminSectionLayer
         # !+ there was previously no reg for IReportConatiner and one of the member

@@ -170,8 +170,8 @@ def dump_i18n_message_ids():
     for internationalization.
     """
     # ensure localization files are loaded (and naming.MSGIDS correctly primed)
-    from bungeni.ui import feature
-    feature.setup_customization_ui()
+    import bungeni.feature.ui
+    bungeni.feature.ui.setup_customization_ui()
     #localization.forms_localization_init() #!+ AssertionError from custom roles...
     from os import path
     import bungeni.ui # !+ simply using __file__ gives erroneous abspath!

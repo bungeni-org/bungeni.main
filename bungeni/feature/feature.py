@@ -26,13 +26,9 @@ from bungeni.alchemist.model import (
     add_container_property_to_model,
     mapper_add_relation_vertical_property
 )
+from bungeni.alchemist.descriptor import classproperty
 from bungeni.alchemist import utils
-from bungeni.models import domain, schema
-from bungeni.models.interfaces import (
-    IAttachment,
-    IEvent,
-    IVersion
-)
+from bungeni.models import domain, schema, interfaces as model_ifaces
 from bungeni.models import orm # !+ needed to execute mappings
 from bungeni.feature import interfaces
 from bungeni.utils import naming, register, misc
@@ -43,6 +39,9 @@ from bungeni.capi import capi
 
 def get_feature_cls(feature_name):
     return globals()[naming.camel(feature_name)]
+
+def get_cls_workflow_feature(cls, feature_name):
+    return capi.get_type_info(cls).workflow.get_feature(feature_name)
 
 
 # param parser/validator utils
@@ -58,16 +57,30 @@ def ppv_int(value, default=None):
     return int(value or default or 0)
 
 
-# Optional Workflow Features
+# Base Workflow Feature
 
 class Feature(object):
     """Base class for implementation of an optional feature on a workflowed type.
     """
-    feature_interface = None # interface class
-    feature_parameters = None # {param_name: {"type": param_type:str, "default": default_value:any}
+    # interface class that marks support for this feature
+    feature_interface = None
+    
+    # spec of all parameters supported by this feature
+    feature_parameters = None # {param_name: {"type": str, "default": any}
+    
+    # the interface of the subtype, if any, implicated by this feature -- 
+    # "feature recursion" is categorically NOT allowed
+    subordinate_interface = None
+    
+    # other features (must be enabled) that this feature depends on, if any
+    depends_on = None # tuple(Feature)
+    
+    @classproperty
+    def name(cls):
+        return naming.polymorphic_identity(cls)
     
     def __init__(self, name, enabled=True, note=None, **kws):
-        self.name = name
+        self.name = name #!+
         self.enabled = enabled
         self.note = note
         self.params = self.validated_params(kws)
@@ -80,9 +93,9 @@ class Feature(object):
             assert key in self.feature_parameters, "Unknown parameter %r for " \
             "feature %r - configurable parameters here are: %s" % (
                 key, self.name, self.feature_parameters.keys())
-            p_desc = self.feature_parameters[key]
-            pp = globals()["ppv_%s" % (p_desc["type"])]
-            kws[key] = pp(kws[key], p_desc["default"])
+            fp = self.feature_parameters[key]
+            ppv = globals()["ppv_%s" % (fp["type"])]
+            kws[key] = ppv(kws[key], fp["default"])
         return kws
     
     def assert_available_for_type(self, cls):
@@ -94,8 +107,22 @@ class Feature(object):
         """Executed on adapters.load_workflow().
         """
         self.assert_available_for_type(cls)
+        # "feature recursion" is categorically NOT allowed
+        if self.subordinate_interface:
+            assert not self.subordinate_interface.implementedBy(cls), \
+                (self, cls, "feature recursion")
         if self.enabled:
+            # dependent features
+            if self.depends_on:
+                for fi in self.depends_on:
+                    assert get_cls_workflow_feature(cls, fi.name).enabled, \
+                        (self, cls, fi, "dependent feature disabled")
             self.validate(cls)
+            # !+determine if class implements an interface NOT via inheritance
+            # e.g. EventResponse will already "implement" Audit as super class 
+            # Event already does
+            #assert not self.feature_interface.implementedBy(cls), \
+            #    (self, cls, "feature already supported")
             interface.classImplements(cls, self.feature_interface)
             self.decorate(cls)
     
@@ -116,7 +143,6 @@ class Audit(Feature):
     """Support for the "audit" feature.
     """
     feature_interface = interfaces.IFeatureAudit
-    feature_parameters = {}
     feature_parameters = {
         "audit_actions": dict(type="sst",
             # "add modify workflow remove version translate"
@@ -126,6 +152,7 @@ class Audit(Feature):
         "display_columns": dict(type="sst", 
             default="user date_active object description note date_audit"),
     }
+    subordinate_interface = model_ifaces.IChange # !+IAudit?
     
     def decorate(self, cls):
         # Assumption: if a domain class is explicitly pre-defined, then it is 
@@ -171,16 +198,16 @@ class Audit(Feature):
                 audit_cls, base_audit_cls, cls)
             return audit_cls
         
-        # audit class - domain
+        # domain - audit class
         audit_cls = get_audit_class_for(cls)
         if audit_cls is None: 
             audit_cls = new_audit_class(cls)
         
-        # set auditor for cls
+        # auditor - head cls
         import bungeni.core.audit
         bungeni.core.audit.set_auditor(cls)
         
-        # mapper 
+        # mapper - audit class
         # assumption: audit_cls uses single inheritance only (and not only for 
         # those created dynamically in feature_audit())
         base_audit_cls = audit_cls.__bases__[0]
@@ -188,12 +215,12 @@ class Audit(Feature):
             "Audit class %s is not a proper subclass of %s" % (
                 audit_cls, domain.Audit)
         
-        # propagate any extended attributes on head cls also to its audit_cls
+        # extended attributes - propagate any on head cls also to its audit_cls
         for vp_name, vp_type in cls.extended_properties:
             mapper_add_relation_vertical_property(audit_cls, vp_name, vp_type)
         # !+NOTE: capi.get_type_info(cls).descriptor_model is still None
 
-        # kls.changes <-> change.audit.audit_head=doc:
+        # cls.changes <-> change.audit.audit_head=doc:
         # doc[@TYPE] <-- TYPE_audit <-> audit <-> change
                 
         # get head table for kls, and its audit table.
@@ -225,13 +252,9 @@ class Version(Feature):
     """
     feature_interface = interfaces.IFeatureVersion
     feature_parameters = {}
-    
-    def validate(self, cls):
-        # domain.{Type}Version itself may NOT support versions
-        assert not IVersion.implementedBy(cls), cls
-        # !+ @version requires @audit
-        assert interfaces.IFeatureAudit.implementedBy(cls), cls
-        # !+VERSION_CLASS_PER_TYPE
+    subordinate_interface = model_ifaces.IVersion
+    depends_on = Audit,
+    # !+VERSION_CLASS_PER_TYPE
 
 
 class Attachment(Feature):
@@ -239,11 +262,8 @@ class Attachment(Feature):
     """
     feature_interface = interfaces.IFeatureAttachment
     feature_parameters = {}
-    
-    def validate(self, cls):
-        # !+assumption: domain.Attachment is versionable
-        # domain.Attachment itself may NOT support attachments
-        assert not IAttachment.implementedBy(cls)
+    subordinate_interface = model_ifaces.IAttachment
+    depends_on = Version, # !+ domain.Attachment is expected to be versionable
     
     def decorate(self, cls):
         add_container_property_to_model(cls, "files", 
@@ -260,10 +280,7 @@ class Event(Feature):
         # - if none specified, "event" is assumed as the default.
         "types": dict(type="space_separated_type_keys", default="event")
     }
-    
-    def validate(self, cls):
-        # domain.Event itself may NOT support events
-        assert not IEvent.implementedBy(cls)
+    subordinate_interface = model_ifaces.IEvent
     
     def decorate(self, cls):
         # container property per enabled event type
@@ -290,6 +307,7 @@ class Signatory(Feature):
         "expire_states": dict(type="space_separated_state_ids", default="submitted"),
         "open_states": dict(type="space_separated_state_ids", default=None),
     }
+    subordinate_interface = model_ifaces.ISignatory
     
     def decorate(self, cls):
         add_container_property_to_model(cls, "signatories", 
@@ -304,6 +322,7 @@ class Sitting(Feature):
     """
     feature_interface = interfaces.IFeatureSitting
     feature_parameters = {}
+    subordinate_interface = model_ifaces.ISitting
     
     # !+ chamber MUST have "sitting" feature enabled! 
     # !+ agenda_item should probably not be a custom type
@@ -325,6 +344,7 @@ class Schedule(Feature):
         "schedulable_states": dict(type="space_separated_state_ids", default=None),
         "scheduled_states": dict(type="space_separated_state_ids", default=None),
     }
+    subordinate_interface = None # !+?
     
     def decorate(self, cls):
         manager = create_feature_manager(cls, SchedulingManager,
@@ -340,6 +360,7 @@ class Address(Feature):
     """
     feature_interface = interfaces.IFeatureAddress
     feature_parameters = {}
+    subordinate_interface = model_ifaces.IAddress
     
     def decorate(self, cls):
         if issubclass(cls, domain.Group):
@@ -355,6 +376,7 @@ class Workspace(Feature):
     """
     feature_interface = interfaces.IFeatureWorkspace
     feature_parameters = {}
+    subordinate_interface = None
 
 
 class Notification(Feature):
@@ -362,6 +384,7 @@ class Notification(Feature):
     """
     feature_interface = interfaces.IFeatureNotification
     feature_parameters = {}
+    subordinate_interface = None
 
 
 class Email(Feature):
@@ -369,6 +392,8 @@ class Email(Feature):
     """
     feature_interface = interfaces.IFeatureEmail
     feature_parameters = {}
+    subordinate_interface = None
+    depends_on = Notification,
 
 
 class Download(Feature):
@@ -378,6 +403,7 @@ class Download(Feature):
     feature_parameters = {
         "allowed_types": dict(type="sst", default=None)
     }
+    subordinate_interface = None
     
     def decorate(self, cls):
         manager = create_feature_manager(cls, DownloadManager,
@@ -395,6 +421,8 @@ class UserAssignment(Feature):
         "assigner_roles": dict(type="space_separated_role_ids", default=None),
         "assignable_roles": dict(type="space_separated_role_ids", default=None),
     }
+    subordinate_interface = None
+
 
 class GroupAssignment(Feature):
     """Support for the "group_assignment" feature.
@@ -402,6 +430,7 @@ class GroupAssignment(Feature):
     feature_interface = interfaces.IFeatureGroupAssignment
     feature_parameters = {}
     # !+param assignable_types
+    subordinate_interface = model_ifaces.IGroupAssignment
     
     # !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment!
     # Or, alternatively, each "group_assignment" enabling needs to be "part of" 
