@@ -146,7 +146,6 @@ def load_features(workflow_name, workflow_elem):
         
         workflow_features.append(
             feature.get_feature_cls(feature_name)(
-                feature_name, 
                 enabled=feature_enabled,
                 note=xas(f, "note"), 
                 **params))

@@ -38,7 +38,7 @@ from bungeni.capi import capi
 # utils
 
 def get_feature_cls(feature_name):
-    return globals()[naming.camel(feature_name)]
+    return globals()[naming.model_name(feature_name)]
 
 def get_cls_workflow_feature(cls, feature_name):
     return capi.get_type_info(cls).workflow.get_feature(feature_name)
@@ -79,8 +79,7 @@ class Feature(object):
     def name(cls):
         return naming.polymorphic_identity(cls)
     
-    def __init__(self, name, enabled=True, note=None, **kws):
-        self.name = name #!+
+    def __init__(self, enabled=True, note=None, **kws):
         self.enabled = enabled
         self.note = note
         self.params = self.validated_params(kws)
