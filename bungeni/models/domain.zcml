@@ -19,7 +19,7 @@
                 submission_date
                 
                 owner
-                item_signatories
+                sa_signatories
                 attachments
                 sa_events
                 audits
@@ -145,7 +145,6 @@
                 submission_date
                 
                 owner
-                item_signatories
                 attachments
                 sa_events
                 audits

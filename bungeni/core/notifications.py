@@ -213,10 +213,10 @@ def get_group_prms(document):
     parent_group = getattr(document, "group", None)
     if parent_group:
         prms.append(IPrincipalRoleMap(parent_group))
-    assigned_groups = getattr(document, "group_assignment", list())
-    if assigned_groups:
-        for group in assigned_groups:
-            prms.append(IPrincipalRoleMap(group))
+    group_assignments = getattr(document, "sa_group_assignments", list())
+    if group_assignments:
+        for group_assignment in group_assignments:
+            prms.append(IPrincipalRoleMap(group_assignment))
     return prms
 
 

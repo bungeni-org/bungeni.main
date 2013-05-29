@@ -37,11 +37,22 @@ from bungeni.capi import capi
 
 # utils
 
+def get_feature_interface(feature_name):
+    return getattr(interfaces, "IFeature%s" % naming.model_name(feature_name))
+
 def get_feature_cls(feature_name):
     return globals()[naming.model_name(feature_name)]
 
-def get_cls_workflow_feature(cls, feature_name):
-    return capi.get_type_info(cls).workflow.get_feature(feature_name)
+#def get_cls_workflow_feature(cls, feature_name):
+#    return capi.get_type_info(cls).workflow.get_feature(feature_name)
+def provides_feature(discriminator, feature_name):
+    """Does the domain model identified by discriminator provide the named feature?
+    """
+    if not (type(discriminator) is type and issubclass(discriminator, domain.Entity)):
+        cls = capi.get_type_info(discriminator).domain_model
+    else:
+        cls = discriminator
+    return get_feature_interface(feature_name).implementedBy(cls)
 
 
 # param parser/validator utils
@@ -114,7 +125,7 @@ class Feature(object):
             # dependent features
             if self.depends_on:
                 for fi in self.depends_on:
-                    assert get_cls_workflow_feature(cls, fi.name).enabled, \
+                    assert provides_feature(cls, fi.name), \
                         (self, cls, fi, "dependent feature disabled")
             self.validate(cls)
             # !+determine if class implements an interface NOT via inheritance
@@ -147,7 +158,7 @@ class Audit(Feature):
             # "add modify workflow remove version translate"
             default=" ".join(domain.AUDIT_ACTIONS)),
         "include_subtypes": dict(type="sst",
-            default="signatory attachment event member group_assignment"),
+            default="attachment event signatory group_assignment member"),
         "display_columns": dict(type="sst", 
             default="user date_active object description note date_audit"),
     }

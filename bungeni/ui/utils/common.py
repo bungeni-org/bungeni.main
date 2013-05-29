@@ -130,8 +130,8 @@ def get_context_roles(context, principal):
                 ctx, IPrincipalRoleMap, default=None)
             if prm:
                 prms.append(prm)
-            group_assignment = getattr(ctx, "group_assignment", list())
-            trusted_ga = proxy.removeSecurityProxy(group_assignment)
+            group_assignments = getattr(ctx, "sa_group_assignments", [])
+            trusted_ga = proxy.removeSecurityProxy(group_assignments)
             for ga in trusted_ga:
                 group = ga.principal
                 #!+GROUP_ASSIGNMENT.GROUP assert isinstance(group, domain.Group), group

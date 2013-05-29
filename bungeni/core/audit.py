@@ -104,37 +104,6 @@ def _object_workflow(ob, event):
     change_id = auditor.object_workflow(removeSecurityProxy(ob), event)
     event.change_id = change_id
 
-''' !+OBSOLETE_VERSIONING versioning of an object is no longer event-based
-
-from bungeni.core.interfaces import IVersionCreated, IVersionReverted
-
-@register.handler(adapts=(IFeatureAudit, IVersionCreated))
-@_trace_audit_handler
-def _object_version(ob, event):
-    """When an auditable object is versioned, we audit creation of new version.
-    
-    As version objects are objects that never change, no audit trail on them 
-    is needed. But a change record on the head object is needed to provide the 
-    following valuable information:
-    
-    - The "owner" of the object being versioned is categorically also always 
-    the owner of any version made of it, irresepctive of who actually makes it. 
-    The "user" who authored the change is recorded in the change record.
-    - Possibly to specify an effective date (date_active)
-    - Possibility to add a description of the change (as well as notes/extras).
-    """
-    auditor = get_auditor(ob)
-    change_id = auditor.object_version(removeSecurityProxy(ob), event)
-    event.version.change_id = change_id
-
-@register.handler(adapts=(IFeatureAudit, IVersionReverted))
-@_trace_audit_handler
-def _object_reversion(ob, event):
-    auditor = get_auditor(ob)
-    change_id = auditor.object_reversion(removeSecurityProxy(ob), event)
-    event.change_id = change_id
-'''
-
 
 # internal utilities
 

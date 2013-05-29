@@ -907,11 +907,11 @@ class GroupAssignmentSource(GroupSource):
         principal_ids = []
         trusted = removeSecurityProxy(context)
         if IGroupAssignmentContainer.providedBy(trusted):
-            for assignment in trusted.__parent__.group_assignment:
+            for assignment in trusted.__parent__.sa_group_assignments:
                 principal_ids.append(assignment.principal.principal_id)
         else:
             assert IGroupAssignment.providedBy(trusted)
-            for assignment in trusted.doc.group_assignment:
+            for assignment in trusted.doc.sa_group_assignments:
                 principal_ids.append(assignment.principal.principal_id)
             principal_ids.remove(trusted.principal.principal_id)
         groups = Session().query(domain.Group).order_by(

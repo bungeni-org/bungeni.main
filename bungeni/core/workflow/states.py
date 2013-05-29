@@ -532,7 +532,7 @@ class Workflow(object):
         return False
     
     def get_feature(self, name):
-        """Get the named feature instance, or None.
+        """Get the named feature instance (not necessarily enabled), or None.
         """
         for f in self.features:
             if f.name == name:

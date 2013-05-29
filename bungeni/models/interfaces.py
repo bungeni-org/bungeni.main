@@ -187,10 +187,6 @@ class IDocVersion(IVersion):
     """A version of a Doc instance.
     """
 
-''' !+OBSOLETE_VERSIONING
-class IVersionContainer(IBungeniContainer):
-    pass
-'''
 # !+AuditLogView(mr, nov-2011)
 #class IChangeContainer(IBungeniContainer): pass
 
@@ -254,7 +250,7 @@ class IAgendaItem(IBungeniContent): pass
 class IAgendaItemContainer(IBungeniContainer): pass
 # !+IITEMVersion
 #class IAgendaItemVersion(IAgendaItem): pass
-#!+OBSOLETE_VERSIONING class IAgendaItemVersionContainer(IVersionContainer): pass
+
 
 class ISession(interface.Interface): pass
 class ISessionContainer(IAlchemistContainer): pass
@@ -342,8 +338,6 @@ class IAttachment(IOwned): pass
 class IAttachmentContainer(IAlchemistContainer): pass
 # !+VERSION_CLASS_PER_TYPE
 class IAttachedFileVersion(interface.Interface): pass 
-# !+OBSOLETE_VERSIONING
-#class IAttachedFileVersionContainer(IVersionContainer): pass
 
 
 class ISignatory(interface.Interface):

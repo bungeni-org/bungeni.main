@@ -98,7 +98,7 @@ mapper(domain.Group, schema.group,
             cascade="all",
             passive_deletes=False, # SA default
         ),
-        "group_assignments": relation(domain.GroupAssignment,
+        "sa_group_assignments": relation(domain.GroupAssignment,
             primaryjoin=rdb.and_(
                 schema.group.c.group_id == schema.doc_principal.c.principal_id,
             ),
@@ -375,7 +375,7 @@ mapper(domain.Doc, schema.doc,
         # !+ARCHETYPE_MAPPER(mr, apr-2012) keep this mapper property always 
         # present on predefined archetype mapper, or dynamically instrument it 
         # on each on mapper of each (sub-archetype) type having this feature?
-        "item_signatories": relation(domain.Signatory, uselist=True, cascade="all"), #!+rename sa_signatories
+        "sa_signatories": relation(domain.Signatory, uselist=True, cascade="all"),
         "attachments": relation(domain.Attachment, cascade="all"), # !+ARCHETYPE_MAPPER
         "sa_events": relation(domain.Event, uselist=True, cascade="all"), # !+ARCHETYPE_MAPPER
         # for sub parliamentary docs, non-null implies a sub doc
@@ -421,10 +421,10 @@ mapper(domain.Doc, schema.doc,
             lazy=False,
             uselist=False,
         ),
-        "group_assignment": relation(domain.GroupAssignment,
+        "sa_group_assignments": relation(domain.GroupAssignment,
             primaryjoin=schema.doc.c.doc_id == schema.doc_principal.c.doc_id,
             lazy=False,
-            uselist=True, # !+DOC_GROUP_ASSIGNMENTS rename plural?
+            uselist=True,
         )
     }
 )

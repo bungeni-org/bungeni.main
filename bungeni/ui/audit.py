@@ -83,14 +83,13 @@ class ChangeDataProvider(object):
         # changes direct on head item
         append_visible_changes_on_item(self.head)
         # changes on sub-items
-        append_visible_changes_on_sub_items("signatory", "item_signatories")
+        append_visible_changes_on_sub_items("signatory", "sa_signatories")
         append_visible_changes_on_sub_items("attachment", "attachments")
         append_visible_changes_on_sub_items("event", "sa_events")
         if interfaces.IDoc.providedBy(self.head):
-            # !+DOC_GROUP_ASSIGNMENTS rename plural?
-            append_visible_changes_on_sub_items("group_assignment", "group_assignment")
+            append_visible_changes_on_sub_items("group_assignment", "sa_group_assignments")
         elif interfaces.IGroup.providedBy(self.head):
-            append_visible_changes_on_sub_items("group_assignment", "group_assignments",
+            append_visible_changes_on_sub_items("group_assignment", "sa_group_assignments",
                 SUPPORTED_FEATURE=False) # !+ "group_assignment" is not a "group" feature
             append_visible_changes_on_sub_items("member", "group_members",
                 SUPPORTED_FEATURE=False) # !+ "member" is not a "group" feature)

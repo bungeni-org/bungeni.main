@@ -99,7 +99,7 @@ def propagate_parent_assigned_group_role(child_doc):
     assert IDoc.providedBy(child_doc), "Not a Doc: %s" % (child_doc)
     assert child_doc.group is None, "!+GROUP_ID must be unset! %s" % (child_doc)
     def get_parent_doc_assigned_group(child_doc):
-        parent_group_assignments = child_doc.head.group_assignment
+        parent_group_assignments = child_doc.head.sa_group_assignments
         for group_assignment in parent_group_assignments:
             # !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment!
             # !+MULTI_ASSIGNMENTS_MULTI_MEMBERSHIPS(mr, apr-2013) for now we just

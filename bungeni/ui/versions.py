@@ -17,21 +17,19 @@ from zope.security.proxy import removeSecurityProxy
 from zope.security import canWrite, checkPermission
 from zope.security.interfaces import ForbiddenAttribute
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.annotation.interfaces import IAnnotations
 from zope.publisher.interfaces.browser import IBrowserPublisher
 
 from sqlalchemy import orm
 
+from bungeni import translate, _
 from bungeni.alchemist.interfaces import IIModelInterface
 from bungeni.alchemist.ui import getSelected
-
 from bungeni.core import version
 from bungeni.core.workflows.utils import view_permission
 from bungeni.feature.interfaces import IFeatureVersion
 from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
 from bungeni.ui import browser
 from bungeni.ui import forms
@@ -41,46 +39,12 @@ from bungeni.ui import audit
 from zc.table import column
 
 
-'''
-from zope.publisher.browser import BrowserView
-class VersionsView(BrowserView):
-    """To-Do: Find out why this class isn't hooked up."""
-    
-    def __call__(self):
-        context = self.context.__parent__.__parent__
-        ifaces = filter(IIModelInterface.providedBy, interface.providedBy(context))
-        
-        class Form(formlib.form.DisplayForm):
-            
-            template = ViewPageTemplateFile("templates/form.pt")
-            form_fields = formlib.form.FormFields(*ifaces)
-            form_name = _(u"View")
-            
-            @property
-            def description(self):
-                return _(u"Currently displaying version ${version}",
-                         mapping={"version": self.context.version_id})
-            
-            def setUpWidgets(self, ignore_request=False):
-                self.adapters = dict(
-                    [(iface, self.context) for iface in ifaces])
-
-                self.widgets = formlib.form.setUpEditWidgets(
-                    self.form_fields, self.prefix, self.context, self.request,
-                    adapters=self.adapters, for_display=True,
-                    ignore_request=ignore_request
-                    )
-        
-        view = Form(self.context, self.request)
-        
-        return view()
-'''
 #!+zc.table the selection column below overrides the base class
 # that generates id's using base64 resulting in invalid HTML ids
 # eg. they contain = sign.
 class CustomSelectionColumn(column.SelectionColumn):
     def makeId(self, item):
-        return ''.join(self.idgetter(item).split())
+        return "".join(self.idgetter(item).split())
 
 
 # versions are a special "audit" case
@@ -106,6 +70,7 @@ class VersionDataDescriptor(audit.ChangeDataDescriptor):
             column.GetterColumn(title=_("message"),
                     getter=lambda i,f:i.note),
         ]
+
 
 class VersionLogMixin(object):
     """Base handling of version log listing for a context.
@@ -158,6 +123,7 @@ class VersionLogMixin(object):
         formatter.url = url.absoluteURL(self.context, self.request)
         formatter.cssClasses["table"] = "listing grid"
         return formatter()
+
 
 @register.view(IFeatureVersion, layer=IWorkspaceOrAdminSectionLayer, 
     name="version-log", 

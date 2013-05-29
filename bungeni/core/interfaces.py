@@ -85,55 +85,6 @@ class IWorkspaceTrackedDocuments(interface.Interface):
 class IWorkspaceGroups(interface.Interface):
     """Marker interfaces for workspace groups tab"""
 
-''' !+OBSOLETE_VERSIONING
-#####################
-# Versioned Object Interfaces
-#
-from zope import lifecycleevent
-from zope.component.interfaces import IObjectEvent, ObjectEvent
-from bungeni.models.interfaces import IVersion
-
-class IVersioned(IContainer):
-    """A versioning system interface to an object, versioned is a container 
-    of versions.
-    """
-    def create():
-        """Store the existing state of the adapted context as a new version.
-        """
-    def revert(version):
-        """Revert the current state of the adapted object to the values 
-        specified in version.
-        """
-
-class IVersionEvent(IObjectEvent):
-    """A versioning event.
-    """
-    versioned = schema.Object(IVersioned)
-    version = schema.Object(IVersion)
-    message = schema.Text(description=u"Message accompanying versioning event")
-
-class VersionEvent(ObjectEvent):
-    interface.implements(IVersionEvent)
-    def __init__(self, object, versioned, version, msg):
-        self.object = object
-        self.versioned = versioned
-        self.version = version
-        self.message = msg
-
-class IVersionCreated(IVersionEvent):
-    """A new version was created, but is not yet saved to the db.
-    """
-class VersionCreated(VersionEvent):
-    interface.implements(IVersionCreated)
-
-class IVersionReverted(IVersionEvent, lifecycleevent.IObjectModifiedEvent):
-    """The context version was reverted.
-    """
-class VersionReverted(VersionEvent):
-    interface.implements(IVersionReverted)
-    descriptions = ()
-'''
-
 
 class IVersionCreatedEvent(IObjectEvent):
     """A new version was created (manually or automatically).

@@ -14,8 +14,16 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy import zopepolicy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
+import zope.i18n
 import zope.i18nmessageid
 _ = zope.i18nmessageid.MessageFactory("bungeni")
+
+def translate(msgid, **kwargs):
+    """Translate to default domain if none is provided
+    """
+    if kwargs.get("domain", None) is None:
+        kwargs["domain"] = "bungeni"
+    return zope.i18n.translate(msgid, **kwargs)
 
 
 def cache_item(mapping, key, value):
@@ -119,7 +127,7 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
                 roles[role] = zopepolicy.SettingAsBoolean[setting]
         # The lines below include the group that a document has been assigned
         # to into the lookup hierarchy.
-        group_assignments = getattr(parent, "group_assignment", list())
+        group_assignments = getattr(parent, "sa_group_assignments", [])
         for group_assignment in group_assignments:
             group = group_assignment.principal
             #!+GROUP_ASSIGNMENT.GROUP assert isinstance(group, domain.Group), group
