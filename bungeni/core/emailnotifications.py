@@ -1,3 +1,11 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""
+
+$Id$
+"""
 log = __import__("logging").getLogger("bungeni.core.emailnotifications")
 
 import os
@@ -13,8 +21,10 @@ from bungeni.utils import common
 from zope.pagetemplate.pagetemplatefile import PageTemplate
 from zope.cachedescriptors.property import CachedProperty
 from bungeni.alchemist import Session
-from bungeni.core.interfaces import (IMessageQueueConfig, IBungeniMailer,
-    INotificationEvent
+from bungeni.core.interfaces import (
+    IMessageQueueConfig, 
+    IBungeniMailer,
+    INotificationEvent,
 )
 from bungeni.core.notifications import get_mq_connection
 from bungeni.models import domain

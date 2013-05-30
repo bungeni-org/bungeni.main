@@ -7,7 +7,6 @@ Sets up notification machinery for each document type.
  
 $Id$
 """
-
 log = __import__("logging").getLogger("bungeni.core.notifications")
 
 import os

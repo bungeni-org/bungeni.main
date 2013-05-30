@@ -2,7 +2,7 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-""" Utilities to serialize objects to XML
+"""Utilities to serialize objects to XML
 
 $Id$
 """
@@ -48,6 +48,11 @@ from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
 import bungeni.core
 
 from bungeni.models import interfaces, domain, settings
+from bungeni.feature.interfaces import (
+    IFeatureVersion,
+    IFeatureEvent,
+    IFeatureAttachment,
+)
 from bungeni.models.utils import is_column_binary
 from bungeni.utils import register, naming, common
 from bungeni.ui.interfaces import IVocabularyTextField, ITreeVocabulary
@@ -112,14 +117,14 @@ def get_origin_chamber(context):
 #!+REFACTORING(mb, Mar-2013) This can be made more general to work in
 # other instances
 class memoized(object):
-    '''Decorator. Caches a function's return value each time it is called.
+    """Decorator. Caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned
     (not reevaluated).
     adapted from http://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
     
     Since serialize functions are run in threads, we use a thread local as 
     a cache.
-    '''
+    """
     def __init__(self, func):
         self.func = func
     def __call__(self, *args, **kwargs):
@@ -212,15 +217,15 @@ def publish_to_xml(context):
         try:
             zope.security.management.getInteraction()
         except zope.security.interfaces.NoInteraction:
-            principal = zope.security.testing.Principal('user', 'manager', ())
+            principal = zope.security.testing.Principal("user", "manager", ())
             zope.security.management.newInteraction(create_participation(principal))
         include = []
         # data dict to be published
         data = {}
 
-        if interfaces.IFeatureVersion.providedBy(context):
+        if IFeatureVersion.providedBy(context):
             include.append("versions")
-        if interfaces.IFeatureAudit.providedBy(context):
+        if IFeatureEvent.providedBy(context):
             include.append("event")
         
         exclude = ["data", "event", "attachments"]
@@ -247,10 +252,10 @@ def publish_to_xml(context):
         # xml file path
         file_path = os.path.join(path, stringKey(context)) 
         
-        #files to zip
+        # files to zip
         files = []
         
-        if interfaces.IFeatureAttachment.providedBy(context):
+        if IFeatureAttachment.providedBy(context):
             attachments = getattr(context, "attachments", None)
             if attachments:
                 data["attachments"] = []
@@ -274,16 +279,16 @@ def publish_to_xml(context):
         # in if more than one chamber exists)
         data["origin_chamber"] = get_origin_chamber(context)
         
-        #add any additional files to file list
+        # add any additional files to file list
         files = files + PersistFiles.get_files(root_key)
         # zipping xml, attached files plus any binary fields
         # also remove the temporary files
         if files:
-            #generate temporary xml file
+            # generate temporary xml file
             temp_xml = tmp(delete=False)
             temp_xml.write(serialize(data, name=obj_type))
             temp_xml.close()
-            #write attachments/binary fields to zip
+            # write attachments/binary fields to zip
             with  ZipFile("%s.zip" % (file_path), "w") as zip_file:
                 for f in files:
                     zip_file.write(f, os.path.basename(f))
@@ -319,7 +324,7 @@ def publish_to_xml(context):
             files.append("%s.%s" %(file_path, "zip"))
         remove_files(files)
 
-        #clear the cache
+        # clear the cache
         PersistFiles.clear_files(root_key)
 
 
@@ -545,7 +550,7 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
 def get_serializable_parent(obj):
     """Get serializable parent object
     """
-    if hasattr(obj, 'head') and interfaces.IDoc.providedBy(obj.head):
+    if hasattr(obj, "head") and interfaces.IDoc.providedBy(obj.head):
         serializable_head = get_serializable_parent(obj.head)
         if serializable_head:
             queue_object_serialization(serializable_head)
@@ -666,7 +671,7 @@ def serialization_notifications():
             TIMER_DELAYS["serialize_setup"] *= 2
         return
     channel = connection.channel()
-    #create exchange
+    # create exchange
     channel.exchange_declare(exchange=SERIALIZE_EXCHANGE,
         type="fanout", durable=True)
     channel.queue_declare(queue=SERIALIZE_QUEUE, durable=True)
@@ -937,7 +942,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
     for prop in extra_props:
         if prop.startswith("_"):
             continue
-        #play it safe if lookup fails and log exception
+        # play it safe if lookup fails and log exception
         try:
             val = getattr(obj, prop)
             if isinstance(val, (basestring, int)):
