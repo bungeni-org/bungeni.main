@@ -248,7 +248,7 @@ def new_descriptor_fields(edescriptor):
         clocs = []
         for cloc_elem in f_elem.getchildren():
             modes = xas(cloc_elem, "modes")
-            roles = capi.schema.qualified_roles(xas(cloc_elem, "roles", ROLES_DEFAULT))
+            roles = capi.schema.qualified_roles(xas(cloc_elem, "roles", ROLES_DEFAULT).split())
             tag = cloc_elem.tag
             if tag == "show":
                 clocs.append(show(modes=modes, roles=roles))

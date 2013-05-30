@@ -171,7 +171,7 @@ def load_facets(workflow_name, workflow_elem):
 def get_permissions_from_allows(workflow_name, elem):
     def gen_allow_permissions(allow_elem):
         pid = capi.schema.qualified_pid(workflow_name, xas(allow_elem, "permission"))
-        for role in capi.schema.qualified_roles(xas(allow_elem, "roles")):
+        for role in capi.schema.qualified_roles(xas(allow_elem, "roles").split()):
             yield (GRANT, pid, role)
     perms = []
     for allow in elem.iterchildren("allow"):
@@ -473,7 +473,7 @@ def _load(workflow_name, workflow):
         if "trigger" in kw:
             kw["trigger"] = trigger_value_map[kw["trigger"]]
         # roles -> permission - one-to-one per transition
-        roles = capi.schema.qualified_roles(kw.pop("roles", ""))
+        roles = capi.schema.qualified_roles(kw.pop("roles", "").split())
         if not is_zcml_permissionable(t):
             assert not roles, "Workflow [%s] - non-permissionable transition " \
                 "does not allow @roles [%s]." % (workflow_name, roles) #!+RNC

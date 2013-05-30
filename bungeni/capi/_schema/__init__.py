@@ -88,13 +88,13 @@ def qualified_pid(ptk, pa):
     return "bungeni.%s.%s" % qualified_permission_action(ptk, pa)
 
 
-def qualified_roles(roles):
-    """space-separated-str -> [role_id]
-    Parse space separated string into a list of qualified role ids where 
-    each role word-str may be: "Role" or ".Role" or "bungeni.Role"
+def qualified_roles(role_ids):
+    """role_ids:[role_id] -> [qualified_role_id]
+    Normalize list of possibly-unqualified role ids into a list of qualified 
+    role ids where each role word-str may be: "Role" or ".Role" or "bungeni.Role"
     """
     qrs = []
-    for r in roles.split():
+    for r in role_ids:
         if r.startswith("bungeni."):
             qrs.append(r)
         elif r.startswith("."):
