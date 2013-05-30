@@ -34,6 +34,7 @@ import interfaces
 
 from bungeni.models import interfaces as model_ifaces
 from bungeni.models.settings import SearchSettings
+from bungeni.feature.interfaces import IFeatureWorkspace
 
 from bungeni.utils import register
 from bungeni.utils.common import getattr_ancestry
@@ -58,7 +59,7 @@ def container_obj_key(key):
 def make_workspace_url(obj_id, type_name, status, context, chamber_id):
     if obj_id and type_name and status:
         domain_class = capi.get_type_info(type_name).domain_model
-        if model_ifaces.IFeatureWorkspace.implementedBy(domain_class):
+        if IFeatureWorkspace.implementedBy(domain_class):
             ws_roles = common.get_workspace_roles()
             tabs_config = zope.component.getUtility(IWorkspaceTabsUtility)
             ti = capi.get_type_info(domain_class)

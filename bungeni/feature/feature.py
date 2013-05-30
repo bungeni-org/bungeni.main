@@ -489,13 +489,11 @@ def create_feature_manager(domain_class, base_class, manager_iface, suffix, **pa
     """Instantiate a scheduling manager instance for `domain_class`.
     """
     manager_name = "%s%s" % (domain_class.__name__, suffix)
-    if manager_name in globals().keys(): #!+KEYS
-        log.error("Feature manager named %s already exists", manager_name)
-        return
-
+    assert manager_name not in globals(), "Feature manager named %s already exists" % (manager_name)
+    
     ti = capi.get_type_info(domain_class)
     domain_iface = ti.interface
-
+    
     globals()[manager_name] = type(manager_name, (base_class,), {})
     manager = globals()[manager_name]
     known_params = manager_iface.names()

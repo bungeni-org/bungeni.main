@@ -20,8 +20,10 @@ class IWorkspaceMIManager(IViewletManager):
         section.
     """
 
+''' !+ ?!?!
 class ISchedulingManager(IViewletManager):
     """Scheduling viewlet manager."""
+'''
 
 
 class ISchedulingViewlet(IViewlet):

@@ -20,12 +20,12 @@ from bungeni.core import audit
 
 
 VERSIONABLE_SUBTYPES_AS_FEATURES = (
-    # feature_sub_type_name, sa_container_attr_name
+    # feature_subtype_name, sa_container_attr_name
     ("attachment", "attachments"), # Doc
     ("event", "sa_events"), # Doc
     ("signatory", "sa_signatories"), # Doc
-    ("group_assignment", "sa_group_assignments"), # Doc, Group !+not a "group" feature
-    #("member", "group_members"), # Group !+not a "group" feature
+    ("group_assignment", "sa_group_assignments"), # Doc, Group !+not a group "optional feature"
+    #("member", "group_members"), # Group !+not a group "optional feature"
 )
 
 
@@ -47,9 +47,6 @@ def version_tree(ob, root=False, reversion=False):
     reversion:bool -- whether this is a revert to a previous version or not, in 
         which case ob is the older version to revert to.
     
-    --
-    current root types: Doc (only Event...), Attachment 
-    current child types: (only Event doc, that may not parent Events), Attachment
     """
     assert feature.provides_feature(ob, "version"), "Not versionable! %s" % (ob) # !+reversion?
     
@@ -60,10 +57,10 @@ def version_tree(ob, root=False, reversion=False):
     child_obs = []
     child_versions = []
     
-    for feature_name, sa_list_attr_name in VERSIONABLE_SUBTYPES_AS_FEATURES:
-        if feature.get_feature_interface(feature_name).providedBy(ob):
-            if feature.provides_feature(feature_name, "version"):
-                child_obs.extend(getattr(ob, sa_list_attr_name))
+    for feature_subtype_name, sa_container_attr_name in VERSIONABLE_SUBTYPES_AS_FEATURES:
+        if feature.get_feature_interface(feature_subtype_name).providedBy(ob):
+            if feature.provides_feature(feature_subtype_name, "version"):
+                child_obs.extend(getattr(ob, sa_container_attr_name))
     
     for child in child_obs:
         child_dirty, child_version = version_tree(child)
