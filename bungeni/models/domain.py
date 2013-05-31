@@ -352,6 +352,9 @@ class Sitting(Entity):
     sreports = one2many("sreports",
         "bungeni.models.domain.SittingReportContainer", "sitting_id")
 
+    @property
+    def duration(self):
+        return IDCDescriptiveProperties(self).duration
 
 class SittingAttendance(Entity):
     """A record of attendance at a meeting.

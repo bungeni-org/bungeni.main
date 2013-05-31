@@ -208,6 +208,12 @@ class SittingDescriptiveProperties(DescriptiveProperties):
                 context.end_date.strftime('%H:%M'))
     
     @property
+    def duration(self):
+        return "%s &rarr; %s" % (
+            self.formatDate(self.context.start_date, "dateTime"),
+            self.formatDate(self.context.end_date, "dateTime"))
+    
+    @property
     def description(self):
         context = _merged(self.context)
         return "%s %s (%s %s %s)" % (translate_i18n(_(u"Sitting scheduled for")),
@@ -516,10 +522,6 @@ class ReportDescriptiveProperties(DescriptiveProperties):
     def title(self):
         context = _merged(self.context)
         return u'%s' % self.translate(context, "title")
-    
-    @property
-    def description(self):
-        return self.title
 
 @register.adapter()
 class SittingReportDescriptiveProperties(ReportDescriptiveProperties):

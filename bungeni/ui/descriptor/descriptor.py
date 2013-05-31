@@ -1478,11 +1478,11 @@ class SittingDescriptor(ModelDescriptor):
     order = 17
     localizable = True
     fields = [
-        F(name="short_name",
-            label="Name of activity",
-            required=True,
+        F(name="duration", # [derived]
+            label="Duration",
+            required=False,
             localizable=[
-                show("view edit add listing"),
+                show("listing"),
             ],
         ),
         LanguageField("language"),
@@ -1492,7 +1492,7 @@ class SittingDescriptor(ModelDescriptor):
             label="Date",
             required=True,
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
             ],
             value_type="duration", # !+DURATION, in listing "consumes" also "end_date"
             render_type="datetime",
@@ -1501,7 +1501,7 @@ class SittingDescriptor(ModelDescriptor):
             label="End",
             required=True,
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
             ],
             value_type="datetime", # !+DURATION, in listing "consumed" by "start_date"
             render_type="datetime",
@@ -1553,6 +1553,13 @@ class SittingDescriptor(ModelDescriptor):
             value_type="vocabulary",
             render_type="single_select",
             vocabulary="sitting_convocation_types", 
+        ),
+        F(name="short_name",
+            label="Notes",
+            required=False,
+            localizable=[
+                show("view edit add listing"),
+            ],
         ),
     ]
     schema_invariants = [constraints.end_after_start]

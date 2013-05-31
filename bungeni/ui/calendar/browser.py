@@ -300,6 +300,7 @@ class CalendarView(BungeniBrowserView):
         limit_start = ISchedulingContext(self.context).start_date
         limit_end = ISchedulingContext(self.context).end_date
         cal_globals = dict(
+            context_group = self.title,
             limit_start=limit_start.isoformat() if limit_start else None,
             limit_end=limit_end.isoformat() if limit_end else None,
             ical_url=self.ical_url,
