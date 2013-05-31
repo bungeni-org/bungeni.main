@@ -294,9 +294,10 @@ class Search(form.PageForm, browser.BungeniBrowserView):
     @form.action(_(u"Search"), name="execute-search")
     def handle_search(self, action, data):
         self.show_results = True
-        #data["role"] = \
-        #    common.get_context_roles(self.context, self.request.principal) + \
-        #    common.get_workspace_roles() + ["bungeni.Anonymous"]
+        user_roles = (
+            common.get_request_context_roles_roles(self.request) +
+            common.get_workspace_roles() + ["bungeni.Anonymous"])
+        data["role"] = list(set(user_roles))
         data["page"] = self.request.form.get("page", 1)
         self.search_results = execute_search(data, self.prefix, 
             self.request, self.context)
