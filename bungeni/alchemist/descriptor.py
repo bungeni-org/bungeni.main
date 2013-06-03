@@ -346,18 +346,20 @@ class Field(object):
         # not a localizable role we display everything that is displayable;
         # on the other hand, when Admin is a localizable role, we treat it 
         # just like any other role.
-        if "bungeni.Admin" not in self.__class__._roles:
-            if "bungeni.Admin" in user_roles:
-                return True
+        # !+ADMIN(mr, jun-2013) changing field visibility behavior for Admin, 
+        # now making a field ALWAYS visible if user has the Admin role
+        #if "bungeni.Admin" not in self.__class__._roles:
+        if "bungeni.Admin" in user_roles:
+            return True
         # displayable and localizable, process localizable (show) declarations
         for loc in self.localizable:
             if mode in loc.modes:
                 for role in user_roles:
                     if role in loc.roles:
                         return True
+                    # !+NON_LOCALIZABLE_FIELDS(mb, dec-2012) workaround to display 
+                    # fields for non-localizable types see thread: http://goo.gl/6B7fo
                     elif loc.roles == roles.SYSTEM_ROLES:
-                        #!+FIELDS(mb, Dec-2012) workaround to display fields
-                        # for non-localizable types see thread: http://goo.gl/6B7fo
                         if not loc._from_hide:
                             return True
         return False
