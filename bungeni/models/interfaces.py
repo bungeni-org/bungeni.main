@@ -39,15 +39,16 @@ class IBungeniApplication(IApplication):
     """Bungeni Application.
     """
 
+
+
+
 class IBungeniAdmin(IContainer):
     """Admin Container.
     """
-
 class IAdminUserContainer(interface.Interface):
     """A container that returns object for the admin ui, marked with 
     admin interface markers.
     """
-
 ''' !+UNUSED(mr, nov-2010)
 class IAdminGroupContainer(interface.Interface):
     pass
@@ -68,16 +69,19 @@ class IBungeniUser(interface.Interface):
     """A user in bungeni.
     """
 IUser = IBungeniUser
+class IUserContainer(IAlchemistContainer): pass
 
 class IGroup(interface.Interface):
     """A group in bungeni.
     """
-class IUserContainer(IAlchemistContainer): pass
 
 
 class IBungeniContainer(IAlchemistContainer):
     """Parliamentary container.
     """
+
+
+# !+CUSTOM
 
 class IChamber(IGroup):
     """Marker interface for parliament chamber group.
@@ -149,6 +153,9 @@ class ICommitteeStaffContainer(IGroupMemberContainer): pass
 class IOfficeMember(IGroupMember): pass
 class IOfficeMemberContainer(IAlchemistContainer): pass
 
+# /!+CUSTOM
+
+
 class IOwned(interface.Interface):
     """Object supports having an "owner" i.e. an owner:user attribute.
     """
@@ -159,7 +166,7 @@ class IOwned(interface.Interface):
 class ISerializable(interface.Interface):
     """Marker interface for serializable types"""
 
-class IBungeniContent(IOwned):
+class IBungeniContent(interface.Interface):
     """Parliamentary content
     !+IAlchemistContent merge?
     
@@ -334,7 +341,7 @@ class ISearchSettings(interface.Interface):
         default=u"http://localhost:8088/exist/restxq/ontology_bungeni"
     )
 
-class IAttachment(IOwned): pass
+class IAttachment(interface.Interface): pass
 class IAttachmentContainer(IAlchemistContainer): pass
 # !+VERSION_CLASS_PER_TYPE
 class IAttachedFileVersion(interface.Interface): pass 

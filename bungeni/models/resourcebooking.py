@@ -6,6 +6,8 @@
 
 $Id$
 """
+''' !+BookedResources
+
 log = __import__("logging").getLogger("bungeni.models.resourcebooking")
 
 
@@ -163,4 +165,6 @@ def unbook_resource(sitting, resource):
     for result in results:
         session.delete(result)
         session.flush()
+
+'''
 

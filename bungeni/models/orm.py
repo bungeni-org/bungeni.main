@@ -18,340 +18,8 @@ import domain
 from bungeni.utils.naming import polymorphic_identity
 
 
-mapper(domain.Principal, schema.principal,
-    # principal should only be created as user or group
-    #polymorphic_identity=polymorphic_identity(domain.Principal),
-    polymorphic_on=schema.principal.c.type, # polymorphic discriminator
-    properties={}
-)
 
-
-# Users
-# general representation of a person
-mapper(domain.User, schema.user,
-    inherits=domain.Principal,
-    polymorphic_identity=polymorphic_identity(domain.User),
-    properties={
-        # !+ADDRESS naming, use addresses
-        "user_addresses": relation(domain.UserAddress,
-            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("head", remote_side=schema.principal.c.principal_id)
-        ),
-        "subscriptions": relation(domain.Doc,
-            secondary=schema.doc_principal,
-            secondaryjoin=rdb.and_(
-                schema.user.c.user_id == schema.doc_principal.c.principal_id,
-                schema.doc_principal.c.doc_id == schema.doc.c.doc_id,
-                schema.doc_principal.c.activity == "user_subscription",
-            ),
-        ),
-    },
-    # the fallback sort_on ordering for user items
-    order_by=[schema.user.c.last_name, schema.user.c.first_name, 
-            schema.user.c.middle_name, schema.user.c.user_id],
-)
-
-mapper(domain.AdminUser, schema.admin_user,
-    properties={
-        "user": relation(domain.User)
-    }
-)
-
-
-# Hash for password restore link
-mapper(domain.PasswordRestoreLink, schema.password_restore_link,
-    properties={
-        "user": relation(domain.User, uselist=False),
-    }
-)
-
-# Groups
-
-mapper(domain.Group, schema.group,
-    inherits=domain.Principal,
-    polymorphic_identity=polymorphic_identity(domain.Group),
-    properties={
-        "group_members": relation(domain.GroupMember),
-        "group_title_types": relation(domain.TitleType),
-        "contained_groups": relation(domain.Group,
-            primaryjoin=rdb.and_(
-                schema.group.c.group_id == schema.group.c.parent_group_id
-            ),
-            backref=backref("parent_group",
-                remote_side=schema.group.c.group_id)
-        ),
-        # !+ADDRESS naming, use addresses
-        "group_addresses": relation(domain.GroupAddress,
-            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("head", remote_side=schema.principal.c.principal_id)
-        ),
-        # "keywords": relation(domain.Keyword, secondary=schema.group_keywords),
-        
-        "audits": relation(domain.GroupAudit, # !+ARCHETYPE_MAPPER
-            primaryjoin=rdb.and_(
-                schema.group.c.group_id == schema.group_audit.c.group_id
-            ),
-            backref="audit_head",
-            uselist=True,
-            lazy=True,
-            order_by=schema.group_audit.c.audit_id.desc(),
-            cascade="all",
-            passive_deletes=False, # SA default
-        ),
-        "sa_group_assignments": relation(domain.GroupAssignment,
-            primaryjoin=rdb.and_(
-                schema.group.c.group_id == schema.doc_principal.c.principal_id,
-            ),
-            foreign_keys=[schema.doc_principal.c.principal_id],
-            lazy=False,
-            uselist=True,
-        )
-    },
-)
-
-# Keywords for groups
-#mapper(domain.Keyword, schema.keywords,
-#    properties = {
-#       "group": relation(domain.Group, 
-#            secondary=schema.group_keyword, backref="keyword"
-#       ),
-#    }
-#)
-
-# delegate rights to act on behalf of a user
-mapper(domain.UserDelegation, schema.user_delegation,
-    properties={
-        "user": relation(domain.User,
-            primaryjoin=rdb.and_(
-                schema.user_delegation.c.user_id == schema.user.c.user_id
-            ),
-            uselist=False,
-            lazy=True
-        ),
-        "delegation": relation(domain.User,
-            primaryjoin=rdb.and_(
-                (schema.user_delegation.c.delegation_id ==
-                    schema.user.c.user_id),
-                schema.user.c.active_p == "A"
-            ),
-            uselist=False,
-            lazy=True
-        ),
-    }
-)
-
-
-mapper(domain.DocPrincipal, schema.doc_principal,
-    polymorphic_on=schema.doc_principal.c.activity, # polymorphic discriminator
-    polymorphic_identity=polymorphic_identity(domain.DocPrincipal),
-    properties={
-        "principal": relation(domain.Principal, uselist=False),
-        "doc": relation(domain.Doc, uselist=False),
-        "audits": relation(domain.DocPrincipalAudit, # !+ARCHETYPE_MAPPER
-            primaryjoin=rdb.and_(
-                    *[ pk_col == schema.doc_principal_audit.c.get(pk_col.name)
-                       for pk_col in schema.doc_principal.primary_key ]
-            ),
-            backref="audit_head",
-            uselist=True,
-            lazy=True,
-            order_by=schema.doc_principal_audit.c.audit_id.desc(),
-            cascade="all",
-            passive_deletes=False, # SA default
-        ),
-    }
-)
-
-mapper(domain.GroupAssignment,
-    inherits=domain.DocPrincipal,
-    polymorphic_identity=polymorphic_identity(domain.GroupAssignment),
-)
-
-mapper(domain.UserSubscription,
-    inherits=domain.DocPrincipal,
-    polymorphic_identity=polymorphic_identity(domain.UserSubscription),
-)
-
-mapper(domain.UserEditing,
-    inherits=domain.DocPrincipal,
-    polymorphic_identity=polymorphic_identity(domain.UserEditing),
-)
-
-
-# group subclasses
-
-mapper(domain.Government,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Government)
-)
-
-mapper(domain.Chamber,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Chamber)
-)
-
-mapper(domain.PoliticalGroup,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.PoliticalGroup)
-)
-
-mapper(domain.Ministry,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Ministry)
-)
-
-mapper(domain.Committee,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Committee)
-)
-
-mapper(domain.JointCommittee,
-    inherits=domain.Committee,
-    polymorphic_identity=polymorphic_identity(domain.JointCommittee)
-)
-
-mapper(domain.Office,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Office)
-)
-
-
-# Ministers and Committee members are defined by their group membership in a 
-# ministry or committee (group)
-
-# we need to specify join clause for user explicitly because we have multiple fk
-# to the user table.
-mapper(domain.GroupMember, schema.member,
-    polymorphic_identity=polymorphic_identity(domain.GroupMember),
-    polymorphic_on=schema.member.c.member_type,
-    properties={
-        "user": relation(domain.User,
-            primaryjoin=rdb.and_(schema.member.c.user_id == schema.user.c.user_id),
-            uselist=False,
-            backref="group_membership",
-            lazy=False),
-        "group": relation(domain.Group,
-            primaryjoin=(schema.member.c.group_id == schema.group.c.group_id),
-            uselist=False,
-            lazy=True),
-        "replaced": relation(domain.GroupMember,
-            primaryjoin=rdb.and_(
-                schema.member.c.replaced_id == schema.member.c.member_id),
-            uselist=False,
-            lazy=True),
-        "sub_roles": relation(domain.MemberRole),
-        "member_titles": relation(domain.MemberTitle),
-        "audits": relation(domain.GroupMemberAudit, # !+ARCHETYPE_MAPPER
-            primaryjoin=rdb.and_(
-                #   *[ pk_col == schema.member_audit.c.get(pk_col.name)
-                #      for pk_col in schema.member.primary_key ]
-                schema.member.c.member_id == schema.member_audit.c.member_id,
-            ),
-            backref="audit_head",
-            uselist=True,
-            lazy=True,
-            order_by=schema.member_audit.c.audit_id.desc(),
-            cascade="all",
-            passive_deletes=False, # SA default
-        ),
-    },
-    # the fallback sort_on ordering for member items
-    order_by=schema.user, # !+ineffective? !+SORT_ON_USER
-)
-# !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
-domain.GroupMember.head = domain.GroupMember.user
-
-mapper(domain.MemberRole, schema.member_role,
-    properties={
-        "member": relation(domain.GroupMember)
-    }
-)
-
-mapper(domain.Member,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.Member),
-    properties={ # !+ why these properties?
-        "start_date": column_property(
-            schema.member.c.start_date.label("start_date")),
-        "end_date": column_property(
-            schema.member.c.end_date.label("end_date")),
-    },
-)
-
-mapper(domain.Minister,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.Minister)
-)
-
-mapper(domain.CommitteeMember,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.CommitteeMember)
-)
-
-mapper(domain.PoliticalGroupMember,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.PoliticalGroupMember)
-)
-
-mapper(domain.OfficeMember,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.OfficeMember)
-)
-
-# staff assigned to a group (committee, ...)
-
-mapper(domain.CommitteeStaff,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
-)
-
-mapper(domain.Session, schema.session,
-    properties={
-        "group": relation(domain.Chamber, lazy=False),
-    }
-)
-
-mapper(domain.AgendaTextRecord, schema.agenda_text_record)
-
-mapper(domain.Sitting, schema.sitting,
-    properties={
-        "group": relation(domain.Group,
-            primaryjoin=schema.sitting.c.group_id == schema.group.c.group_id,
-            uselist=False,
-            lazy=True
-        ),
-        "start_date": column_property(
-            schema.sitting.c.start_date.label("start_date")
-        ),
-        "end_date": column_property(
-            schema.sitting.c.end_date.label("end_date")
-        ),
-        "item_schedule": relation(domain.ItemSchedule,
-            order_by=schema.item_schedule.c.real_order,
-            cascade="all"
-        ),
-        "sa_attendance": relation(domain.SittingAttendance,
-            cascade="all"
-        ),
-        "reports": relation(domain.SittingReport,
-            cascade="all"
-        ),
-        "venue": relation(domain.Venue, lazy=False),
-        "debate_record": relation(domain.DebateRecord, lazy=True)
-    }
-)
-
-
-''' !+BookedResources
-mapper(domain.ResourceType, schema.resource_types)
-mapper(domain.Resource, schema.resources)
-mapper(domain.ResourceBooking, schema.resourcebookings)
-'''
-
-mapper(domain.Venue, schema.venue)
-
-
-# vertical properties
+# extended attributes - vertical properties
 
 mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)
@@ -360,7 +28,70 @@ mapper(domain.vp.Binary, schema.vp_binary)
 mapper(domain.vp.Number, schema.vp_integer)
 
 
-# doc 
+# change, audit, version
+
+mapper(domain.Change, schema.change,
+    # !+ always created with a concrete {type}_audit record
+    #polymorphic_on=schema.change.c.action, # polymorphic discriminator
+    #polymorphic_identity="*" !+
+    properties={
+        "audit": relation(domain.Audit,
+            primaryjoin=rdb.and_(schema.change.c.audit_id ==
+                schema.audit.c.audit_id),
+            backref=backref("change", uselist=False),
+            uselist=False,
+            lazy=True,
+        ),
+        "user": relation(domain.User,
+            primaryjoin=rdb.and_(schema.change.c.user_id ==
+                schema.user.c.user_id),
+            uselist=False,
+            lazy=False
+        ),
+        "children": relation(domain.Change,
+            primaryjoin=rdb.and_(
+                schema.change.c.audit_id == schema.change_tree.c.parent_id,
+            ),
+            secondary=schema.change_tree,
+            secondaryjoin=rdb.and_(
+                schema.change_tree.c.child_id == schema.change.c.audit_id,
+                # child.action == action, # !+constraint
+            ),
+            backref=backref("parent",
+                uselist=False
+            ),
+            uselist=True,
+            lazy=True,
+        ),
+    }
+)
+mapper(domain.ChangeTree, schema.change_tree)
+
+''' !+NO_INHERIT_VERSION mapping domain.Version is actually unnecessary
+#vm = mapper(domain.Version,
+mapper(domain.Version,
+    inherits=domain.Change,
+    polymorphic_on=schema.change.c.action, # polymorphic discriminator
+    polymorphic_identity=polymorphic_identity(domain.Version), #!+only concrete {type}_audit record are created
+)
+# !+polymorphic_identity_multi only allows a single value... e.g. if needed to 
+# add a 2nd value such as "reversion" would not be able to -- but seems we 
+# should be able to tweak the version mapper's polymorphic_map to allow 
+# multiple values for polymorphic_identity (but does not work anyway 
+# attachment.versions does not pick up reversions):
+#vm.polymorphic_map["reversion"] = vm.polymorphic_map["version"]
+#del vm
+'''
+
+mapper(domain.Audit, schema.audit,
+    polymorphic_on=schema.audit.c.audit_type, # polymorphic discriminator
+    polymorphic_identity=polymorphic_identity(domain.Audit)
+)
+
+
+# ARCHETYPES
+
+# doc
 
 mapper(domain.Doc, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
@@ -429,66 +160,6 @@ mapper(domain.Doc, schema.doc,
     }
 )
 
-
-# audit
-
-mapper(domain.Audit, schema.audit,
-    polymorphic_on=schema.audit.c.audit_type, # polymorphic discriminator
-    polymorphic_identity=polymorphic_identity(domain.Audit)
-)
-mapper(domain.Change, schema.change,
-    # !+ always created with a concrete {type}_audit record
-    #polymorphic_on=schema.change.c.action, # polymorphic discriminator
-    #polymorphic_identity="*" !+
-    properties={
-        "audit": relation(domain.Audit,
-            primaryjoin=rdb.and_(schema.change.c.audit_id ==
-                schema.audit.c.audit_id),
-            backref=backref("change", uselist=False),
-            uselist=False,
-            lazy=True,
-        ),
-        "user": relation(domain.User,
-            primaryjoin=rdb.and_(schema.change.c.user_id ==
-                schema.user.c.user_id),
-            uselist=False,
-            lazy=False
-        ),
-        "children": relation(domain.Change,
-            primaryjoin=rdb.and_(
-                schema.change.c.audit_id == schema.change_tree.c.parent_id,
-            ),
-            secondary=schema.change_tree,
-            secondaryjoin=rdb.and_(
-                schema.change_tree.c.child_id == schema.change.c.audit_id,
-                # child.action == action, # !+constraint
-            ),
-            backref=backref("parent",
-                uselist=False
-            ),
-            uselist=True,
-            lazy=True,
-        ),
-    }
-)
-mapper(domain.ChangeTree, schema.change_tree)
-
-''' !+NO_INHERIT_VERSION mapping domain.Version is actually unnecessary
-#vm = mapper(domain.Version,
-mapper(domain.Version,
-    inherits=domain.Change,
-    polymorphic_on=schema.change.c.action, # polymorphic discriminator
-    polymorphic_identity=polymorphic_identity(domain.Version), #!+only concrete {type}_audit record are created
-)
-# !+polymorphic_identity_multi only allows a single value... e.g. if needed to 
-# add a 2nd value such as "reversion" would not be able to -- but seems we 
-# should be able to tweak the version mapper's polymorphic_map to allow 
-# multiple values for polymorphic_identity (but does not work anyway 
-# attachment.versions does not pick up reversions):
-#vm.polymorphic_map["reversion"] = vm.polymorphic_map["version"]
-#del vm
-'''
-
 mapper(domain.DocAudit, schema.doc_audit,
     inherits=domain.Audit,
     polymorphic_identity=polymorphic_identity(domain.Doc) # on head class
@@ -527,26 +198,7 @@ mapper(domain.DocVersion,
 )
 
 
-mapper(domain.GroupAudit, schema.group_audit,
-    inherits=domain.Audit,
-    polymorphic_identity=polymorphic_identity(domain.Group) # on head class
-)
-mapper(domain.GroupMemberAudit, schema.member_audit,
-    inherits=domain.Audit,
-    polymorphic_identity=polymorphic_identity(domain.GroupMember) # on head class
-)
-mapper(domain.DocPrincipalAudit, schema.doc_principal_audit,
-    inherits=domain.Audit,
-    polymorphic_identity=polymorphic_identity(domain.DocPrincipal) # on head class
-)
-
-
-
-mapper(domain.AgendaItem,
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
-)
-
+# event 
 
 mapper(domain.Event,
     inherits=domain.Doc,
@@ -568,6 +220,310 @@ mapper(domain.Event,
 # - behave also "like" a parliamentary document
 # - AgendaItem should NOT support Event?
 # - Event should NOT support Event
+
+
+
+# principal: user, group
+
+mapper(domain.Principal, schema.principal,
+    # principal should only be created as user or group
+    #polymorphic_identity=polymorphic_identity(domain.Principal),
+    polymorphic_on=schema.principal.c.type, # polymorphic discriminator
+    properties={}
+)
+
+# user - general representation of a person
+mapper(domain.User, schema.user,
+    inherits=domain.Principal,
+    polymorphic_identity=polymorphic_identity(domain.User),
+    properties={
+        # !+ADDRESS naming, use addresses
+        "user_addresses": relation(domain.UserAddress,
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
+            backref=backref("head", remote_side=schema.principal.c.principal_id)
+        ),
+        "subscriptions": relation(domain.Doc,
+            secondary=schema.doc_principal,
+            secondaryjoin=rdb.and_(
+                schema.user.c.user_id == schema.doc_principal.c.principal_id,
+                schema.doc_principal.c.doc_id == schema.doc.c.doc_id,
+                schema.doc_principal.c.activity == "user_subscription",
+            ),
+        ),
+    },
+    # the fallback sort_on ordering for user items
+    order_by=[schema.user.c.last_name, schema.user.c.first_name, 
+            schema.user.c.middle_name, schema.user.c.user_id],
+)
+
+mapper(domain.AdminUser, schema.admin_user,
+    properties={
+        "user": relation(domain.User)
+    }
+)
+
+# delegate rights to act on behalf of a user
+mapper(domain.UserDelegation, schema.user_delegation,
+    properties={
+        "user": relation(domain.User,
+            primaryjoin=rdb.and_(
+                schema.user_delegation.c.user_id == schema.user.c.user_id
+            ),
+            uselist=False,
+            lazy=True
+        ),
+        "delegation": relation(domain.User,
+            primaryjoin=rdb.and_(
+                (schema.user_delegation.c.delegation_id ==
+                    schema.user.c.user_id),
+                schema.user.c.active_p == "A"
+            ),
+            uselist=False,
+            lazy=True
+        ),
+    }
+)
+
+# hash for password restore link
+mapper(domain.PasswordRestoreLink, schema.password_restore_link,
+    properties={
+        "user": relation(domain.User, uselist=False),
+    }
+)
+
+# group
+mapper(domain.Group, schema.group,
+    inherits=domain.Principal,
+    polymorphic_identity=polymorphic_identity(domain.Group),
+    properties={
+        "group_members": relation(domain.GroupMember),
+        "group_title_types": relation(domain.TitleType),
+        "contained_groups": relation(domain.Group,
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == schema.group.c.parent_group_id
+            ),
+            backref=backref("parent_group",
+                remote_side=schema.group.c.group_id)
+        ),
+        # !+ADDRESS naming, use addresses
+        "group_addresses": relation(domain.GroupAddress,
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
+            backref=backref("head", remote_side=schema.principal.c.principal_id)
+        ),
+        # "keywords": relation(domain.Keyword, secondary=schema.group_keywords),
+        
+        "audits": relation(domain.GroupAudit, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == schema.group_audit.c.group_id
+            ),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            order_by=schema.group_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
+        ),
+        "sa_group_assignments": relation(domain.GroupAssignment,
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == schema.doc_principal.c.principal_id,
+            ),
+            foreign_keys=[schema.doc_principal.c.principal_id],
+            lazy=False,
+            uselist=True,
+        )
+    },
+)
+mapper(domain.GroupAudit, schema.group_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.Group) # on head class
+)
+
+
+# member 
+
+# we need to specify join clause for user explicitly because we have multiple fk
+# to the user table.
+mapper(domain.GroupMember, schema.member,
+    polymorphic_identity=polymorphic_identity(domain.GroupMember),
+    polymorphic_on=schema.member.c.member_type,
+    properties={
+        "user": relation(domain.User,
+            primaryjoin=rdb.and_(schema.member.c.user_id == schema.user.c.user_id),
+            uselist=False,
+            backref="group_membership",
+            lazy=False),
+        "group": relation(domain.Group,
+            primaryjoin=(schema.member.c.group_id == schema.group.c.group_id),
+            uselist=False,
+            lazy=True),
+        "replaced": relation(domain.GroupMember,
+            primaryjoin=rdb.and_(
+                schema.member.c.replaced_id == schema.member.c.member_id),
+            uselist=False,
+            lazy=True),
+        "sub_roles": relation(domain.MemberRole),
+        "member_titles": relation(domain.MemberTitle),
+        "audits": relation(domain.GroupMemberAudit, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                #   *[ pk_col == schema.member_audit.c.get(pk_col.name)
+                #      for pk_col in schema.member.primary_key ]
+                schema.member.c.member_id == schema.member_audit.c.member_id,
+            ),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            order_by=schema.member_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
+        ),
+    },
+    # the fallback sort_on ordering for member items
+    order_by=schema.user, # !+ineffective? !+SORT_ON_USER
+)
+# !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
+domain.GroupMember.head = domain.GroupMember.user
+mapper(domain.GroupMemberAudit, schema.member_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.GroupMember) # on head class
+)
+
+mapper(domain.MemberRole, schema.member_role,
+    properties={
+        "member": relation(domain.GroupMember)
+    }
+)
+
+mapper(domain.MemberTitle, schema.member_title,
+    properties={
+        "title_type": relation(domain.TitleType, uselist=False, lazy=False),
+        "member": relation(domain.GroupMember, uselist=False, lazy=False),
+    }
+)
+
+mapper(domain.TitleType, schema.title_type,
+    properties={"group": relation(domain.Group, uselist=False, lazy=False)}
+)
+
+
+# SUPPORT TYPES
+
+# doc_principal
+
+mapper(domain.DocPrincipal, schema.doc_principal,
+    polymorphic_on=schema.doc_principal.c.activity, # polymorphic discriminator
+    polymorphic_identity=polymorphic_identity(domain.DocPrincipal),
+    properties={
+        "principal": relation(domain.Principal, uselist=False),
+        "doc": relation(domain.Doc, uselist=False),
+        "audits": relation(domain.DocPrincipalAudit, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                    *[ pk_col == schema.doc_principal_audit.c.get(pk_col.name)
+                       for pk_col in schema.doc_principal.primary_key ]
+            ),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            order_by=schema.doc_principal_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
+        ),
+    }
+)
+mapper(domain.DocPrincipalAudit, schema.doc_principal_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.DocPrincipal) # on head class
+)
+
+mapper(domain.GroupAssignment,
+    inherits=domain.DocPrincipal,
+    polymorphic_identity=polymorphic_identity(domain.GroupAssignment),
+)
+
+mapper(domain.UserSubscription,
+    inherits=domain.DocPrincipal,
+    polymorphic_identity=polymorphic_identity(domain.UserSubscription),
+)
+
+mapper(domain.UserEditing,
+    inherits=domain.DocPrincipal,
+    polymorphic_identity=polymorphic_identity(domain.UserEditing),
+)
+
+
+# sitting, session
+
+mapper(domain.Sitting, schema.sitting,
+    properties={
+        "group": relation(domain.Group,
+            primaryjoin=schema.sitting.c.group_id == schema.group.c.group_id,
+            uselist=False,
+            lazy=True
+        ),
+        "start_date": column_property(
+            schema.sitting.c.start_date.label("start_date")
+        ),
+        "end_date": column_property(
+            schema.sitting.c.end_date.label("end_date")
+        ),
+        "item_schedule": relation(domain.ItemSchedule,
+            order_by=schema.item_schedule.c.real_order,
+            cascade="all"
+        ),
+        "sa_attendance": relation(domain.SittingAttendance,
+            cascade="all"
+        ),
+        "reports": relation(domain.SittingReport,
+            cascade="all"
+        ),
+        "venue": relation(domain.Venue, lazy=False),
+        "debate_record": relation(domain.DebateRecord, lazy=True)
+    }
+)
+
+mapper(domain.AgendaTextRecord, schema.agenda_text_record)
+
+
+''' !+BookedResources
+mapper(domain.ResourceType, schema.resource_types)
+mapper(domain.Resource, schema.resources)
+mapper(domain.ResourceBooking, schema.resourcebookings)
+'''
+
+mapper(domain.Report,
+    inherits=domain.Doc,
+    polymorphic_identity=polymorphic_identity(domain.Report)
+)
+
+mapper(domain.SittingReport, schema.sitting_report,
+    properties={
+        "sitting": relation(domain.Sitting,
+            lazy=True,
+            uselist=False
+        ),
+        "report": relation(domain.Report, # !+doc.head
+            backref="sittingreport",
+            lazy=True,
+            uselist=False
+        ),
+    }
+)
+
+mapper(domain.Venue, schema.venue)
+
+
+
+# address
+mapper(domain.UserAddress, schema.address,
+    properties={
+        "country": relation(domain.Country, uselist=False, lazy=False),
+    },
+)
+mapper(domain.GroupAddress, schema.address,
+    properties={
+        "country": relation(domain.Country, uselist=False, lazy=False),
+    },
+)
+
 
 mapper(domain.Attachment, schema.attachment,
     properties={
@@ -721,47 +677,6 @@ mapper(domain.SittingAttendance, schema.sitting_attendance,
     }
 )
 
-mapper(domain.TitleType, schema.title_type,
-    properties={"group": relation(domain.Group, uselist=False, lazy=False)}
-)
-mapper(domain.MemberTitle, schema.member_title,
-    properties={
-        "title_type": relation(domain.TitleType, uselist=False, lazy=False),
-        "member": relation(domain.GroupMember, uselist=False, lazy=False),
-    }
-)
-
-mapper(domain.UserAddress, schema.address,
-    properties={
-        "country": relation(domain.Country, uselist=False, lazy=False),
-    },
-)
-mapper(domain.GroupAddress, schema.address,
-    properties={
-        "country": relation(domain.Country, uselist=False, lazy=False),
-    },
-)
-
-
-mapper(domain.Report,
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.Report)
-)
-
-mapper(domain.SittingReport, schema.sitting_report,
-    properties={
-        "sitting": relation(domain.Sitting,
-            lazy=True,
-            uselist=False
-        ),
-        "report": relation(domain.Report, # !+doc.head
-            backref="sittingreport",
-            lazy=True,
-            uselist=False
-        ),
-    }
-)
-
 mapper(domain.ObjectTranslation, schema.translation)
 
 mapper(domain.TimeBasedNotication, schema.time_based_notification)
@@ -786,13 +701,11 @@ mapper(domain.DebateRecord, schema.debate_record,
         ),
     }
 )
-
 mapper(domain.DebateRecordItem, schema.debate_record_item,
     properties={
         "debate_record": relation(domain.DebateRecord, lazy=True)
     }
 )
-
 mapper(domain.DebateDoc, schema.debate_doc,
     inherits=domain.DebateRecordItem,
     polymorphic_on=schema.debate_record_item.c.type,
@@ -801,7 +714,6 @@ mapper(domain.DebateDoc, schema.debate_doc,
         "doc": relation(domain.Doc, lazy=True)
     }
 )
-
 mapper(domain.DebateSpeech, schema.debate_speech,
     inherits=domain.DebateRecordItem,
     polymorphic_on=schema.debate_record_item.c.type,
@@ -810,9 +722,7 @@ mapper(domain.DebateSpeech, schema.debate_speech,
         "user": relation(domain.User, lazy=True)
     }
 )
-
 mapper(domain.DebateMedia, schema.debate_media)
-
 mapper(domain.DebateTake, schema.debate_take,
     properties={
         "transcriber": relation(domain.User, lazy=True),
@@ -834,13 +744,102 @@ mapper(domain.OAuthAuthorizationToken, schema.oauth_authorization_token,
             lazy=False),
     }
 )
-
 mapper(domain.OAuthAccessToken, schema.oauth_access_token,
     properties={
         "authorization_token": relation(domain.OAuthAuthorizationToken,
             uselist=False, lazy=False),
     }
 )
+
+
+# !+CUSTOM
+
+mapper(domain.AgendaItem,
+    inherits=domain.Doc,
+    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
+)
+
+mapper(domain.Government,
+    inherits=domain.Group,
+    polymorphic_identity=polymorphic_identity(domain.Government)
+)
+
+mapper(domain.Chamber,
+    inherits=domain.Group,
+    polymorphic_identity=polymorphic_identity(domain.Chamber)
+)
+
+mapper(domain.PoliticalGroup,
+    inherits=domain.Group,
+    polymorphic_identity=polymorphic_identity(domain.PoliticalGroup)
+)
+
+mapper(domain.Ministry,
+    inherits=domain.Group,
+    polymorphic_identity=polymorphic_identity(domain.Ministry)
+)
+
+mapper(domain.Committee,
+    inherits=domain.Group,
+    polymorphic_identity=polymorphic_identity(domain.Committee)
+)
+
+mapper(domain.JointCommittee,
+    inherits=domain.Committee,
+    polymorphic_identity=polymorphic_identity(domain.JointCommittee)
+)
+
+mapper(domain.Office,
+    inherits=domain.Group,
+    polymorphic_identity=polymorphic_identity(domain.Office)
+)
+
+
+
+mapper(domain.Member,
+    inherits=domain.GroupMember,
+    polymorphic_identity=polymorphic_identity(domain.Member),
+    properties={ # !+ why these properties?
+        "start_date": column_property(
+            schema.member.c.start_date.label("start_date")),
+        "end_date": column_property(
+            schema.member.c.end_date.label("end_date")),
+    },
+)
+
+mapper(domain.Minister,
+    inherits=domain.GroupMember,
+    polymorphic_identity=polymorphic_identity(domain.Minister)
+)
+
+mapper(domain.CommitteeMember,
+    inherits=domain.GroupMember,
+    polymorphic_identity=polymorphic_identity(domain.CommitteeMember)
+)
+
+mapper(domain.PoliticalGroupMember,
+    inherits=domain.GroupMember,
+    polymorphic_identity=polymorphic_identity(domain.PoliticalGroupMember)
+)
+
+mapper(domain.OfficeMember,
+    inherits=domain.GroupMember,
+    polymorphic_identity=polymorphic_identity(domain.OfficeMember)
+)
+
+# staff assigned to a group (committee, ...)
+
+mapper(domain.CommitteeStaff,
+    inherits=domain.GroupMember,
+    polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
+)
+
+mapper(domain.Session, schema.session,
+    properties={
+        "group": relation(domain.Chamber, lazy=False),
+    }
+)
+
 
 
 # !+IChange-vertical-properties special case: 

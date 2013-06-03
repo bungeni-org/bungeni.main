@@ -25,48 +25,13 @@ from sqlalchemy.orm import object_mapper
 from bungeni.models import interfaces
 
 
-def object_hierarchy_type(object):
-    if isinstance(object, User):
-        return "user"
-    if isinstance(object, Group):
-        return "group"
-    if isinstance(object, Doc):
-        return "doc"
-    return ""
-
-
-AUDIT_ACTIONS = ("add", "modify", "workflow", "remove", "version", "translate")
-
-def assert_valid_change_action(action):
-    assert action in AUDIT_ACTIONS, \
-        "Invalid audit action: %s. Must be one of: %s" % (
-            action, AUDIT_ACTIONS)
-
-def get_changes(auditable, *actions):
-    """Get changelog for auditable context, filtered for actions.
-    """
-    for action in actions:
-        assert_valid_change_action(action)
-    # lazy loading - merge to avoid sqlalchemy.orm.exc.DetachedInstanceError
-    auditable = alchemist.Session().merge(auditable)
-    # !+ for some reason, on event creation (with minimal log for one workflow 
-    # and one add change) the following does not pick up the one workflow change:
-    return [ c for c in auditable.changes if c.action in actions ]
-
-def get_audit_table_name(kls):
-    return "%s_audit" % (alchemist.utils.get_local_table(kls).name)
-
-def get_mapped_object_id(ob):
-    # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
-    return object_mapper(ob).primary_key_from_instance(ob)[0]
-
-#
+# base entity support
 
 class HeadParentedMixin(object):
     """For sub-objects of a "head" object.
     
     Changes the behaviour of __parent__ to by default return the head object 
-    UNLESS a non-None __parent__ is hard-set explicitly set on the sub-instance
+    UNLESS a non-None __parent__ is hard-set explicitly on the sub-instance
     (e.g. as within an alchemist container listing, alchemist sets the 
     __parent__ to the container).
     
@@ -139,363 +104,6 @@ class Entity(object):
              for c in object_mapper(self).primary_key ]
 
 
-
-class Principal(Entity):
-    """Base model for a Principal, that is a User or a Group.
-    """
-    principal_type = None
-
-class User(Principal):
-    """Domain Object For A User. General representation of a person.
-    """
-    principal_type = "user"
-    available_dynamic_features = ["address"]
-    
-    interface.implements(
-        interfaces.IBungeniUser, 
-        interfaces.ITranslatable, 
-        interfaces.ISerializable
-    )
-    
-    def __init__(self, login=None, **kw):
-        if login:
-            self.login = login
-        super(User, self).__init__(**kw)
-        self.salt = self._makeSalt()
-    
-    def on_create(self):
-        from bungeni.core.workflows import utils
-        utils.assign_ownership(self)
-    
-    # !+SORT_ON_USER(mr, may-2013) make the __lt__ method on every domian model
-    # be derived from configuration i.e. from descriptor.sort_on?
-    def __lt__(self, other):
-        return ((self.last_name, self.first_name, self.middle_name, self.user_id) < 
-            (other.last_name, other.first_name, other.middle_name, other.user_id))
-    
-    def _makeSalt(self):
-        return "".join(random.sample(string.letters[:52], 12))
-    
-    def _password():
-        doc = "Set the password, encrypting it. Cannot retrieve."
-        def fget(self):
-            return None
-        def fset(self, password):
-            self.password = self.encode(password)
-        return locals()
-    _password = property(**_password())
-    
-    def encode(self, password):
-        return md5.md5(password + self.salt).hexdigest()
-    
-    def checkPassword(self, password_attempt):
-        attempt = self.encode(password_attempt)
-        return attempt == self.password
-    
-    def status():
-        doc = """A "status" attribute as alias onto "active_p" attribute."""
-        def fget(self):
-            return self.active_p
-        def fset(self, value):
-            self.active_p = value
-        return locals()
-    status = property(**status())
-    
-    delegations = one2many("delegations",
-        "bungeni.models.domain.UserDelegationContainer", "user_id")
-
-class AdminUser(Entity):
-    """An admin user"""
-
-class UserDelegation(Entity):
-    """Delegate rights to act on behalf of a user to another user.
-    """
-    interface.implements(interfaces.IUserDelegation)
-
-class PasswordRestoreLink(object):
-    """Object containing hash and expiration date for
-    password restoration form"""
-    
-    def expired(self):
-        return self.expiration_date < datetime.datetime.now() 
-
-
-######
-
-class Group(Principal):
-    """An abstract collection of users.
-    """
-    principal_type = "group"
-    available_dynamic_features = ["audit", "version", "sitting", "address"]
-    interface.implements(
-        interfaces.IGroup,
-        interfaces.ITranslatable,
-        interfaces.ISerializable
-    )
-    
-    publications = one2many("publications", 
-        "bungeni.models.domain.ReportContainer", "group_id")
-    
-    def __init__(self, **kw):
-        super(Group, self).__init__(**kw)
-    
-    def on_create(self):
-        """Application-internal creation logic i.e. logic NOT subject to config.
-        """
-        # requires self db id to have been updated
-        from bungeni.core.workflows import utils
-        utils.assign_ownership(self)
-        utils.unset_group_local_role(self)
-    
-    def active_membership(self, user_id):
-        session = alchemist.Session()
-        query = session.query(GroupMember).filter(
-            sql.and_(
-                GroupMember.group_id == self.group_id,
-                GroupMember.user_id == user_id,
-                GroupMember.active_p == True
-            )
-        )
-        if query.count() == 0:
-            return False
-        else:
-            return True
-
-
-class GroupMember(HeadParentedMixin, Entity):
-    """A user's membership in a group-abstract basis for 
-    ministers, committee_members, etc.
-    """
-    available_dynamic_features = ["audit", "version"]
-    interface.implements(
-        interfaces.IGroupMember,
-        interfaces.ITranslatable,
-        interfaces.ISerializable
-    )
-    
-    subroles = one2many("subroles", 
-        "bungeni.models.domain.MemberRoleContainer", "member_id")
-    
-    @property
-    def image(self): 
-        return self.user.image
-    @property
-    def first_name(self):
-        return self.user.first_name
-    @property
-    def last_name(self):
-        return self.user.last_name
-    
-    # !+SORT_ON_USER
-    def __lt__(self, other):
-        return self.user < other.user
-
-
-class CommitteeStaff(GroupMember):
-    """Committee Staff.
-    """
-    interface.implements(interfaces.ICommitteeStaff)
-
-
-class MemberRole(Entity):
-    """Association between an group member and subroles
-       that are granted when a document is assigned to a user
-    """
-    interface.implements(interfaces.IMemberRole)
-    
-    @property
-    def group(self):
-        return self.member.group
-
-
-class DocPrincipal(Entity):
-    """A qualified association between a doc and a principal.
-    """
-    available_dynamic_features = ["audit", "version"]
-
-class GroupAssignment(DocPrincipal):
-    """Association between a doc and a group it's been assigned to.
-    """
-    interface.implements(interfaces.IGroupAssignment)
-    
-    @property # !+StatusGroupAssignment
-    def status(self):
-        """Placeholder getter for workflow status."""
-        return "_"
-
-class UserSubscription(DocPrincipal):
-    """The document a user is tracking.
-    """
-
-class UserEditing(DocPrincipal):
-    """The legislative document that the user is currently being editing.
-    """
-    
-
-# auditable (by default), but not a Doc
-class Sitting(Entity):
-    """Scheduled meeting for a group (chamber, committee, etc).
-    """
-    available_dynamic_features = ["audit", "version", "attachment",
-        "notification", "email"]
-    # !+SITTING_AUDIT cannot support audit/version without a sitting_audit db table ?!
-    interface.implements(
-        interfaces.ISitting,
-        interfaces.ITranslatable,
-        interfaces.IScheduleContent,
-        interfaces.ISerializable
-    )
-    attendance = one2many("attendance",
-        "bungeni.models.domain.SittingAttendanceContainer", "sitting_id")
-    items = one2many("items",
-        "bungeni.models.domain.ItemScheduleContainer", "sitting_id")
-    sreports = one2many("sreports",
-        "bungeni.models.domain.SittingReportContainer", "sitting_id")
-
-    @property
-    def duration(self):
-        return IDCDescriptiveProperties(self).duration
-
-class SittingAttendance(Entity):
-    """A record of attendance at a meeting.
-    """
-    interface.implements(
-        interfaces.ISittingAttendance,
-    )
-
-
-#
-
-class Legislature(object):
-    """The conceptual "parliament" singleton, that may be composed of one or 
-    two chambers. 
-    
-    Always use the bungeni.capi.capi.legislature property to retrieve the same 
-    Legislature singleton instance from anywhere in the application.
-
-    The Legislature type is really just a "placeholder" instance to collect 
-    legislature-related capi parameters.
-    """
-    _instance = None
-    
-    def __new__(cls, *args, **kw):
-        if not cls._instance:
-            cls._instance = super(Legislature, cls).__new__(cls, *args, **kw)
-            # "once-only" init
-            from bungeni.capi import capi
-            self, d = cls._instance, capi._legislature 
-            self.bicameral = d["bicameral"] # bool
-            self.full_name = d["full_name"] # unicode
-            self.election_date = d["election_date"]
-            self.start_date = d["start_date"]
-            self.end_date = d["end_date"]
-            self.country_code = d["country_code"] # 2-letter
-        return cls._instance
-
-#
-
-
-class Chamber(Group):
-    """A chamber in parliament.
-    """
-    interface.implements(interfaces.IChamber)
-
-class Member(GroupMember):
-    """Member of a Chamber i.e. of "Parliament")
-    """
-    interface.implements(interfaces.IMember)
-
-class PoliticalGroup(Group):
-    """A political group in a parliament.
-    """
-    interface.implements(
-        interfaces.IPoliticalGroup,
-        interfaces.ITranslatable
-    )
-
-class PoliticalGroupMember(GroupMember):
-    """Member of a political group, defined by its group membership.
-    """
-    interface.implements(
-        interfaces.IPoliticalGroupMember,
-    )
-
-class Government(Group):
-    """A government.
-    """
-    interface.implements(
-        interfaces.IGovernment,
-    )
-
-class Ministry(Group):
-    """A government ministry.
-    """
-    interface.implements(
-        interfaces.IMinistry,
-    )
-class Minister(GroupMember):
-    """A Minister, defined as member of a ministry group.
-    """
-    interface.implements(
-        interfaces.IMinister,
-    )
-
-
-class Committee(Group):
-    """A parliamentary committee of MPs.
-    """
-    interface.implements(interfaces.ICommittee)
-
-class JointCommittee(Committee):
-    """Joint Committee"""
-    interface.implements(interfaces.IJointCommittee)
-
-class CommitteeMember(GroupMember):
-    """A Member of a committee defined by its membership to a committee (group).
-    """
-    interface.implements(interfaces.ICommitteeMember)
-
-class Office(Group):
-    """Parliamentary Office like speakers office, clerks office etc. 
-    Internal only.
-    """
-    interface.implements(
-        interfaces.IOffice,
-    )
-
-class OfficeMember(GroupMember):
-    """Clerks, .... 
-    """
-    interface.implements(
-        interfaces.IOfficeMember,
-    )
-
-
-class Address(HeadParentedMixin, Entity):
-    """Address base class
-    !+ note corresponding tbls exist only for subclasses
-    """
-    available_dynamic_features = []
-    interface.implements(interfaces.IAddress)
-    
-    def on_create(self):
-        """Application-internal creation logic i.e. logic NOT subject to config.
-        """
-        # requires self db id to have been updated
-        from bungeni.core.workflows import utils
-        utils.assign_ownership(self)
-
-# !+ADDRESS get rid of these two classes, just use Address?
-class UserAddress(Address):
-    """User address (personal)
-    """
-    interface.implements(interfaces.IUserAddress)
-class GroupAddress(Address):
-    """Group address (official)
-    """
-    interface.implements(interfaces.IGroupAddress)
-
-
 # extended attributes - vertical properties
 
 class VerticalProperty(Entity):
@@ -541,46 +149,32 @@ class vp(object):
         """
 
 
-class Doc(Entity):
-    """Base class for a workflowed parliamentary document.
+# change, audit, version
+
+AUDIT_ACTIONS = ("add", "modify", "workflow", "remove", "version", "translate")
+
+def assert_valid_change_action(action):
+    assert action in AUDIT_ACTIONS, \
+        "Invalid audit action: %s. Must be one of: %s" % (
+            action, AUDIT_ACTIONS)
+
+def get_changes(auditable, *actions):
+    """Get changelog for auditable context, filtered for actions.
     """
-    # allowed dynamic features by this archetype (inherited by sub-types)
-    available_dynamic_features = ["audit", "version", "attachment", "event",
-        "signatory", "schedule", "workspace", "notification",
-        "email", "download", "user_assignment", "group_assignment"]
-    interface.implements(
-        interfaces.IBungeniContent,  # IOwned
-        interfaces.IDoc,
-        interfaces.ITranslatable,
-        interfaces.ISerializable
-    )
-    
-    def on_create(self):
-        """Application-internal creation logic i.e. logic NOT subject to config.
-        """
-        # requires self db id to have been updated
-        from bungeni.core.workflows import utils
-        utils.assign_ownership(self)
-        # !+utils.setParliamentId(self)
-    
-    # !+AlchemistManagedContainer these attribute names are part of public URLs!
-    # !+item_id->head_id
-    
-    def _get_workflow_date(self, *states):
-        """ (states:seq(str) -> date
-        Get the date of the most RECENT workflow transition to any one of 
-        the workflow states specified as input parameters. 
-        
-        Returns None if no such workflow states has been transited to as yet.
-        """
-        assert states, "Must specify at least one workflow state."
-        # order of self.changes is reverse chronological (newest first)
-        for c in get_changes(self, "workflow"):
-            if c.audit.status in states:
-                return c.date_active
-    
-    extended_properties = [
-    ]
+    for action in actions:
+        assert_valid_change_action(action)
+    # lazy loading - merge to avoid sqlalchemy.orm.exc.DetachedInstanceError
+    auditable = alchemist.Session().merge(auditable)
+    # !+ for some reason, on event creation (with minimal log for one workflow 
+    # and one add change) the following does not pick up the one workflow change:
+    return [ c for c in auditable.changes if c.action in actions ]
+
+def get_audit_table_name(kls):
+    return "%s_audit" % (alchemist.utils.get_local_table(kls).name)
+
+def get_mapped_object_id(ob):
+    # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
+    return object_mapper(ob).primary_key_from_instance(ob)[0]
 
 
 class Change(HeadParentedMixin, Entity):
@@ -769,6 +363,54 @@ class Audit(HeadParentedMixin, Entity):
     def label(self):
         return getattr(self, self.label_attribute_name)
 
+
+# ARCHETYPES
+
+
+# doc
+
+class Doc(Entity):
+    """Base class for a workflowed parliamentary document.
+    """
+    # allowed dynamic features by this archetype (inherited by sub-types)
+    available_dynamic_features = ["audit", "version", "attachment", "event",
+        "signatory", "schedule", "workspace", "notification",
+        "email", "download", "user_assignment", "group_assignment"]
+    interface.implements(
+        interfaces.IOwned,
+        interfaces.IBungeniContent,
+        interfaces.IDoc,
+        interfaces.ITranslatable,
+        interfaces.ISerializable
+    )
+    
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        # requires self db id to have been updated
+        from bungeni.core.workflows import utils
+        utils.assign_ownership(self)
+        # !+utils.setParliamentId(self)
+    
+    # !+AlchemistManagedContainer these attribute names are part of public URLs!
+    # !+item_id->head_id
+    
+    def _get_workflow_date(self, *states):
+        """ (states:seq(str) -> date
+        Get the date of the most RECENT workflow transition to any one of 
+        the workflow states specified as input parameters. 
+        
+        Returns None if no such workflow states has been transited to as yet.
+        """
+        assert states, "Must specify at least one workflow state."
+        # order of self.changes is reverse chronological (newest first)
+        for c in get_changes(self, "workflow"):
+            if c.audit.status in states:
+                return c.date_active
+    
+    extended_properties = [
+    ]
+
 class DocAudit(Audit):
     """An audit record for a document.
     """
@@ -797,10 +439,180 @@ class DocVersion(Version):
     #    "bungeni.models.domain.DocVersionContainer", "head_id")
 
 
+# event
+
+class Event(HeadParentedMixin, Doc):
+    """Base class for an event on a document.
+    """
+    #!+chamber_id is (has always been) left null for events, how best to 
+    # handle this, possible related constraint e.g. head_id must NOT be null, 
+    # validation, ... ?
+    available_dynamic_features = ["audit", "version", "attachment",
+        "notification", "email"]
+    interface.implements(
+        interfaces.IEvent,
+    )
+
+
+
+# principal: user, group
+
+class Principal(Entity):
+    """Base model for a Principal, that is a User or a Group.
+    """
+    principal_type = None
+
+
+class User(Principal):
+    """Domain Object For A User. General representation of a person.
+    """
+    principal_type = "user"
+    available_dynamic_features = ["address"]
+    
+    interface.implements(
+        interfaces.IBungeniUser, 
+        interfaces.ITranslatable, 
+        interfaces.ISerializable
+    )
+    
+    def __init__(self, login=None, **kw):
+        if login:
+            self.login = login
+        super(User, self).__init__(**kw)
+        self.salt = self._makeSalt()
+    
+    def on_create(self):
+        from bungeni.core.workflows import utils
+        utils.assign_ownership(self)
+    
+    # !+SORT_ON_USER(mr, may-2013) make the __lt__ method on every domian model
+    # be derived from configuration i.e. from descriptor.sort_on?
+    def __lt__(self, other):
+        return ((self.last_name, self.first_name, self.middle_name, self.user_id) < 
+            (other.last_name, other.first_name, other.middle_name, other.user_id))
+    
+    def _makeSalt(self):
+        return "".join(random.sample(string.letters[:52], 12))
+    
+    def _password():
+        doc = "Set the password, encrypting it. Cannot retrieve."
+        def fget(self):
+            return None
+        def fset(self, password):
+            self.password = self.encode(password)
+        return locals()
+    _password = property(**_password())
+    
+    def encode(self, password):
+        return md5.md5(password + self.salt).hexdigest()
+    
+    def checkPassword(self, password_attempt):
+        attempt = self.encode(password_attempt)
+        return attempt == self.password
+    
+    def status():
+        doc = """A "status" attribute as alias onto "active_p" attribute."""
+        def fget(self):
+            return self.active_p
+        def fset(self, value):
+            self.active_p = value
+        return locals()
+    status = property(**status())
+    
+    delegations = one2many("delegations",
+        "bungeni.models.domain.UserDelegationContainer", "user_id")
+
+
+class AdminUser(Entity):
+    """An admin user"""
+
+class UserDelegation(Entity):
+    """Delegate rights to act on behalf of a user to another user.
+    """
+    interface.implements(interfaces.IUserDelegation)
+
+class PasswordRestoreLink(object):
+    """Object containing hash and expiration date for
+    password restoration form"""
+    
+    def expired(self):
+        return self.expiration_date < datetime.datetime.now() 
+
+
+class Group(Principal):
+    """An abstract collection of users.
+    """
+    principal_type = "group"
+    available_dynamic_features = ["audit", "version", "sitting", "address"]
+    interface.implements(
+        interfaces.IGroup,
+        interfaces.ITranslatable,
+        interfaces.ISerializable
+    )
+    
+    publications = one2many("publications", 
+        "bungeni.models.domain.ReportContainer", "group_id")
+    
+    def __init__(self, **kw):
+        super(Group, self).__init__(**kw)
+    
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        # requires self db id to have been updated
+        from bungeni.core.workflows import utils
+        utils.assign_ownership(self)
+        utils.unset_group_local_role(self)
+    
+    def active_membership(self, user_id):
+        session = alchemist.Session()
+        query = session.query(GroupMember).filter(
+            sql.and_(
+                GroupMember.group_id == self.group_id,
+                GroupMember.user_id == user_id,
+                GroupMember.active_p == True
+            )
+        )
+        if query.count() == 0:
+            return False
+        else:
+            return True
+
 class GroupAudit(Audit):
     """An audit record for a group.
     """
     label_attribute_name = "short_name"
+
+
+# member 
+
+class GroupMember(HeadParentedMixin, Entity):
+    """A user's membership in a group-abstract basis for 
+    ministers, committee_members, etc.
+    """
+    available_dynamic_features = ["audit", "version"]
+    interface.implements(
+        interfaces.IGroupMember,
+        interfaces.ITranslatable,
+        interfaces.ISerializable
+    )
+    
+    subroles = one2many("subroles", 
+        "bungeni.models.domain.MemberRoleContainer", "member_id")
+    
+    @property
+    def image(self): 
+        return self.user.image
+    @property
+    def first_name(self):
+        return self.user.first_name
+    @property
+    def last_name(self):
+        return self.user.last_name
+    
+    # !+SORT_ON_USER
+    def __lt__(self, other):
+        return self.user < other.user
 
 class GroupMemberAudit(Audit):
     """An audit record for a group member.
@@ -809,6 +621,42 @@ class GroupMemberAudit(Audit):
     @property
     def label(self):
         return IDCDescriptiveProperties(self.audit_head).title
+
+
+class MemberRole(Entity):
+    """Association between an group member and subroles that are granted when 
+    a document is assigned to a user.
+    """
+    interface.implements(interfaces.IMemberRole)
+    
+    @property
+    def group(self):
+        return self.member.group
+
+
+class MemberTitle(Entity):
+    """The role title a member has in a specific context and one 
+    official address for a official role.
+    """
+    interface.implements(
+        interfaces.IMemberTitle,
+        interfaces.ITranslatable
+    )
+
+class TitleType(Entity):
+    """Types of titles in groups
+    """
+    interface.implements(interfaces.ITitleType, interfaces.ITranslatable)
+
+
+# SUPPORT TYPES
+
+# doc_principal
+
+class DocPrincipal(Entity):
+    """A qualified association between a doc and a principal.
+    """
+    available_dynamic_features = ["audit", "version"]
 
 class DocPrincipalAudit(Audit):
     """An audit record for a doc_principal record.
@@ -825,30 +673,151 @@ class DocPrincipalAudit(Audit):
         return self.audit_head.status
 
 
-#!+CUSTOM
-class AgendaItem(Doc):
-    """Generic Agenda Item that can be scheduled on a sitting.
+class GroupAssignment(DocPrincipal):
+    """Association between a doc and a group it's been assigned to.
+    """
+    interface.implements(interfaces.IGroupAssignment)
+    
+    @property # !+StatusGroupAssignment
+    def status(self):
+        """Placeholder getter for workflow status."""
+        return "_"
+
+class UserSubscription(DocPrincipal):
+    """The document a user is tracking.
+    """
+
+class UserEditing(DocPrincipal):
+    """The legislative document that the user is currently being editing.
+    """
+    
+
+# sitting, session
+
+class Sitting(Entity):
+    """Scheduled meeting for a group (chamber, committee, etc).
+    """
+    available_dynamic_features = ["audit", "version", "notification", "email"]
+    # !+SITTING_AUDIT cannot support audit/version without a sitting_audit db table ?!
+    interface.implements(
+        interfaces.ISitting,
+        interfaces.ITranslatable,
+        interfaces.IScheduleContent,
+        interfaces.ISerializable
+    )
+    attendance = one2many("attendance",
+        "bungeni.models.domain.SittingAttendanceContainer", "sitting_id")
+    items = one2many("items",
+        "bungeni.models.domain.ItemScheduleContainer", "sitting_id")
+    sreports = one2many("sreports",
+        "bungeni.models.domain.SittingReportContainer", "sitting_id")
+
+    @property
+    def duration(self):
+        return IDCDescriptiveProperties(self).duration
+
+class SittingAttendance(Entity):
+    """A record of attendance at a meeting.
     """
     interface.implements(
-        interfaces.IBungeniParliamentaryContent, # !+only used by AgendaItem?! Get rid of it, or rename accordingly
-        interfaces.IAgendaItem,
+        interfaces.ISittingAttendance,
     )
-#AgendaItemAudit
+
+class Session(Entity):
+    interface.implements(
+        interfaces.ISession,
+        interfaces.ITranslatable,
+        interfaces.IScheduleContent
+    )
+    
+    sittings = one2many("sittings",
+        "bungeni.models.domain.SittingContainer", "session_id",
+        [("group_id", "chamber_id")]
+    )
+    
+    @property
+    def group_id(self):
+        return self.chamber_id
 
 
-class Event(HeadParentedMixin, Doc):
-    """Base class for an event on a document.
+class Heading(Entity):
+    """A heading in a report.
     """
-    #!+chamber_id is (has always been) left null for events, how best to 
-    # handle this, possible related constraint e.g. head_id must NOT be null, 
-    # validation, ... ?
-    available_dynamic_features = ["audit", "version", "attachment",
+    interface.implements(
+        interfaces.IHeading,
+        interfaces.IScheduleText,
+        interfaces.IScheduleContent,
+        interfaces.ITranslatable, 
+    )
+    
+    type = "heading"
+    
+    @property
+    def status_date(self):
+        return None
+
+
+class Report(Doc):
+    """Agendas and minutes.
+    """
+    available_dynamic_features = ["audit", "version", "download",
         "notification", "email"]
     interface.implements(
-        interfaces.IEvent,
+        interfaces.IReport,
+        interfaces.ITranslatable,
     )
-#EventAudit
 
+class SittingReport(Entity):
+    """Which reports are created for this sitting.
+    """
+    from bungeni.feature.interfaces import IFeatureDownload
+    interface.implements(
+        interfaces.ISittingReport,
+        interfaces.IOwned,
+        interfaces.IBungeniContent,
+        IFeatureDownload, # !+not worklfowed
+    )
+    
+    def __getattr__(self, name):
+        """Look up values in either report or sitting"""
+        try:
+            return super(SittingReport, self).__getattr__(name)
+        except AttributeError:
+            try:
+                return object.__getattribute__(self.report, name)
+            except AttributeError:
+                return object.__getattribute__(self.sitting, name)
+
+
+# address
+
+class Address(HeadParentedMixin, Entity):
+    """Address base class
+    !+ note corresponding tbls exist only for subclasses
+    """
+    available_dynamic_features = []
+    interface.implements(interfaces.IAddress)
+    
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        # requires self db id to have been updated
+        from bungeni.core.workflows import utils
+        utils.assign_ownership(self)
+
+# !+ADDRESS get rid of these two classes, just use Address?
+class UserAddress(Address):
+    """User address (personal)
+    """
+    interface.implements(interfaces.IUserAddress)
+class GroupAddress(Address):
+    """Group address (official)
+    """
+    interface.implements(interfaces.IGroupAddress)
+
+
+
+# attachment
 
 class Attachment(HeadParentedMixin, Entity):
     """A file attachment to a document. 
@@ -856,7 +825,8 @@ class Attachment(HeadParentedMixin, Entity):
     available_dynamic_features = ["audit", "version", "notification",
         "email"]
     interface.implements(
-        interfaces.IAttachment, # IOwned
+        interfaces.IOwned,
+        interfaces.IAttachment,
     )
     
     @property # !+OWNERSHIP
@@ -888,30 +858,15 @@ class AttachmentVersion(Version):
         return "obj-%s-%s" % (self.audit.attachment_id, self.seq)
 
 
-class Heading(Entity):
-    """A heading in a report.
-    """
-    interface.implements(
-        interfaces.IHeading,
-        interfaces.IScheduleText,
-        interfaces.IScheduleContent,
-        interfaces.ITranslatable, 
-    )
-    
-    type = "heading"
-    
-    @property
-    def status_date(self):
-        return None
+# signatory
 
-# auditable (by default), but not a Doc
 class Signatory(Entity):
     """Signatory for a Bill or Motion or other doc.
     """
-    available_dynamic_features = ["audit", "version", "attachment",
-        "notification", "email"]
+    available_dynamic_features = ["audit", "version", "notification", "email"]
     interface.implements(
-        interfaces.IBungeniContent, # IOwned
+        interfaces.IOwned,
+        interfaces.IBungeniContent,
         interfaces.ISignatory,
     )
     
@@ -939,52 +894,44 @@ class SignatoryAudit(Audit):
     def user(self):
         return self.audit_head.user
 
-#############
 
-class Session(Entity):
+
+# legislature
+
+class Legislature(object):
+    """The conceptual "parliament" singleton, that may be composed of one or 
+    two chambers. 
+    
+    Always use the bungeni.capi.capi.legislature property to retrieve the same 
+    Legislature singleton instance from anywhere in the application.
+
+    The Legislature type is really just a "placeholder" instance to collect 
+    legislature-related capi parameters.
     """
-    """
-    interface.implements(
-        interfaces.ISession,
-        interfaces.ITranslatable,
-        interfaces.IScheduleContent
-    )
+    _instance = None
+    
+    def __new__(cls, *args, **kw):
+        if not cls._instance:
+            cls._instance = super(Legislature, cls).__new__(cls, *args, **kw)
+            # "once-only" init
+            from bungeni.capi import capi
+            self, d = cls._instance, capi._legislature 
+            self.bicameral = d["bicameral"] # bool
+            self.full_name = d["full_name"] # unicode
+            self.election_date = d["election_date"]
+            self.start_date = d["start_date"]
+            self.end_date = d["end_date"]
+            self.country_code = d["country_code"] # 2-letter
+        return cls._instance
 
-    sittings = one2many("sittings",
-        "bungeni.models.domain.SittingContainer", "session_id",
-        [("group_id", "chamber_id")]
-    )
 
-    @property
-    def group_id(self):
-        return self.chamber_id
-
-
-# ###############
+# other sys/support types
 
 class Country(Entity):
     """Country.
     """
     interface.implements(
         interfaces.ICountry,
-    )
-
-
-# ##########
-
-class TitleType(Entity):
-    """Types of titles in groups
-    """
-    interface.implements(interfaces.ITitleType, interfaces.ITranslatable)
-
-
-class MemberTitle(Entity):
-    """The role title a member has in a specific context and one 
-    official address for a official role.
-    """
-    interface.implements(
-        interfaces.IMemberTitle,
-        interfaces.ITranslatable
     )
 
 
@@ -1085,7 +1032,8 @@ class ItemSchedule(Entity):
     @property
     def type_document(self):
         return not self.type_heading
-    
+
+
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
     """
@@ -1108,10 +1056,12 @@ class ItemScheduleVote(Entity):
     def name(self):
         return "vote-record-%d.xml" % self.vote_id
 
+
 class Holiday(object):
     """Is this day a holiday?
     if a date in in the table it is otherwise not
     """
+
 
 ''' !+BookedResources
 class Resource (object):
@@ -1133,37 +1083,6 @@ class Venue(Entity):
         interfaces.IScheduleContent
     )
 
-
-class Report(Doc):
-    """Agendas and minutes.
-    """
-    available_dynamic_features = ["audit", "version", "download",
-        "notification", "email"]
-    interface.implements(
-        interfaces.IReport,
-        interfaces.ITranslatable,
-    )
-
-class SittingReport(Entity):
-    """Which reports are created for this sitting.
-    """
-    from bungeni.feature.interfaces import IFeatureDownload
-    interface.implements(
-        interfaces.ISittingReport,
-        interfaces.IBungeniContent,
-        IFeatureDownload, # !+not worklfowed
-    )
-    
-    def __getattr__(self, name):
-        """Look up values in either report or sitting"""
-        try:
-            return super(SittingReport, self).__getattr__(name)
-        except AttributeError:
-            try:
-                return object.__getattribute__(self.report, name)
-            except AttributeError:
-                return object.__getattribute__(self.sitting, name)
-
 # !+ this should really be called "FieldTranslation", and docstring should be pertinent!!
 class ObjectTranslation(object):
     """Get the translations for an Object.
@@ -1173,12 +1092,15 @@ class TimeBasedNotication(Entity):
     """Time based Notifications
     """
 
+
+# debate record
+
 # !+NO_DESCRIPTOR
 class DebateRecord(Entity):
     """Debate record object associated with a sitting
     """
-    available_dynamic_features = ["audit", "version", "attachment",
-        "workspace", "notification", "email", "user_assignment"]
+    available_dynamic_features = ["audit", "version", "workspace", 
+        "notification", "email", "user_assignment"]
     interface.implements(interfaces.IDebateRecord)
     media = one2many("media",
         "bungeni.models.domain.DebateMediaContainer", "debate_record_id")
@@ -1213,6 +1135,9 @@ class DebateTake(Entity):
     """
     interface.implements(interfaces.IDebateTake)
 
+
+# oauth
+
 class OAuthApplication(Entity):
     """OAuth application registration
     """
@@ -1232,3 +1157,95 @@ class OAuthAccessToken(Entity):
     """OAuth access token
     """
     interface.implements(interfaces.IOAuthAccessToken)
+
+
+# !+CUSTOM
+
+class AgendaItem(Doc):
+    """Generic Agenda Item that can be scheduled on a sitting.
+    """
+    interface.implements(
+        interfaces.IBungeniParliamentaryContent, # !+only used by AgendaItem?! Get rid of it, or rename accordingly
+        interfaces.IAgendaItem,
+    )
+
+class Chamber(Group):
+    """A chamber in parliament.
+    """
+    interface.implements(interfaces.IChamber)
+
+class Member(GroupMember):
+    """Member of a Chamber i.e. of "Parliament")
+    """
+    interface.implements(interfaces.IMember)
+
+class PoliticalGroup(Group):
+    """A political group in a parliament.
+    """
+    interface.implements(
+        interfaces.IPoliticalGroup,
+        interfaces.ITranslatable
+    )
+
+class PoliticalGroupMember(GroupMember):
+    """Member of a political group, defined by its group membership.
+    """
+    interface.implements(
+        interfaces.IPoliticalGroupMember,
+    )
+
+class Government(Group):
+    """A government.
+    """
+    interface.implements(
+        interfaces.IGovernment,
+    )
+
+class Ministry(Group):
+    """A government ministry.
+    """
+    interface.implements(
+        interfaces.IMinistry,
+    )
+class Minister(GroupMember):
+    """A Minister, defined as member of a ministry group.
+    """
+    interface.implements(
+        interfaces.IMinister,
+    )
+
+class Committee(Group):
+    """A parliamentary committee of MPs.
+    """
+    interface.implements(interfaces.ICommittee)
+
+class JointCommittee(Committee):
+    """Joint Committee"""
+    interface.implements(interfaces.IJointCommittee)
+
+class CommitteeMember(GroupMember):
+    """A Member of a committee defined by its membership to a committee (group).
+    """
+    interface.implements(interfaces.ICommitteeMember)
+
+class CommitteeStaff(GroupMember):
+    """Committee Staff.
+    """
+    interface.implements(interfaces.ICommitteeStaff)
+
+class Office(Group):
+    """Parliamentary Office like speakers office, clerks office etc. 
+    Internal only.
+    """
+    interface.implements(
+        interfaces.IOffice,
+    )
+
+class OfficeMember(GroupMember):
+    """Clerks, .... 
+    """
+    interface.implements(
+        interfaces.IOfficeMember,
+    )
+
+

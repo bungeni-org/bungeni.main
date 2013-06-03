@@ -17,11 +17,7 @@ from bungeni.utils import naming
 metadata = sa.MetaData()
 
 
-# users and groups because of the zope users and groups
-PrincipalSequence = sa.Sequence("principal_sequence")
-
-
-# vertical properties
+# extended attributes - vertical properties
 
 vp_text = sa.Table("vp_text", metadata,
     sa.Column("object_id", sa.Integer, primary_key=True, nullable=False),
@@ -56,7 +52,7 @@ vp_integer = sa.Table("vp_integer", metadata,
 )
 
 
-# audit 
+# change, audit, version
 
 # generic change information -- visibility of a change record depends
 # the permissions of the parent object "at the time" of the change
@@ -179,574 +175,9 @@ def get_audit_table_columns(table):
     return columns
 
 
-#######################
-# Users 
-#######################
+# ARCHETYPES
 
-principal = sa.Table("principal", metadata,
-    sa.Column("principal_id", sa.Integer, PrincipalSequence, primary_key=True),
-    # !+PRINCIPAL_NAME(mr, mar-2013) should really be THE (natural) primary key,
-    # and replace principal_id altogether!
-    # !+principal_name sa.Column("principal_name", sa.Unicode(50), unique=True, nullable=False),
-    # for polymorphic_identity
-    sa.Column("type", sa.String(30), nullable=False),
-)
-
-
-user = sa.Table("user", metadata,
-    sa.Column("user_id", sa.Integer, 
-        sa.ForeignKey("principal.principal_id"),
-        primary_key=True),
-    # !+principal(mr, feb-2013) "login" should really be "principal_name" here
-    sa.Column("login", sa.Unicode(80), 
-        # !+principal_name sa.ForeignKey("principal.principal_name"),
-        unique=True,
-        nullable=False),
-    sa.Column("salutation", sa.Unicode(128)), # !+vocabulary?
-    sa.Column("title", sa.Unicode(128)), # !+vocabulary?
-    sa.Column("first_name", sa.Unicode(256), nullable=False),
-    sa.Column("last_name", sa.Unicode(256), nullable=False),
-    sa.Column("middle_name", sa.Unicode(256)),
-    sa.Column("email", sa.String(512), nullable=False),
-    sa.Column("gender", sa.String(1),
-        sa.CheckConstraint("""gender in ('M', 'F')""")  # (M)ale (F)emale
-    ),
-    sa.Column("date_of_birth", sa.Date),
-    sa.Column("birth_country", sa.String(2),
-        sa.ForeignKey("country.country_id")
-    ),
-    sa.Column("birth_nationality", sa.String(2),
-        sa.ForeignKey("country.country_id")
-    ),
-    sa.Column("current_nationality", sa.String(2),
-        sa.ForeignKey("country.country_id")
-    ),
-    sa.Column("marital_status", sa.Unicode(128),
-        default=None,
-        nullable=True,
-    ),
-    sa.Column("uri", sa.Unicode(1024), unique=True),
-    sa.Column("date_of_death", sa.Date),
-    sa.Column("type_of_id", sa.String(1)),
-    sa.Column("national_id", sa.Unicode(256)),
-    sa.Column("password", sa.String(36)
-        # we store salted md5 hash hexdigests
-    ),
-    sa.Column("salt", sa.String(24)),
-    sa.Column("description", sa.UnicodeText),
-    sa.Column("remarks", sa.UnicodeText),
-    sa.Column("image", sa.Binary),
-    # !+active_p(mr, sep-2011) why is this "workflow status" column named
-    # "active_p" and not "status"? Rename...
-    # !+active_p(mr, sep-2011) why have identically named columns here and on 
-    # member, with one being a string and other a bool?
-    sa.Column("active_p", sa.String(1),
-        sa.CheckConstraint("""active_p in ('A', 'I', 'D')"""),
-        # !+active_p(mr, sep-2011) workflow status columns MUST not have a
-        # default value--it is up to the workflow to decide what this should be!
-        #default="A", # active/inactive/deceased
-    ),
-    #!+receive_notification comment out for now - will be used for user preferences
-    sa.Column("receive_notification", sa.Boolean, default=True),
-    sa.Column("language", sa.String(5), nullable=False),
-    sa.Column("home_language", sa.String(5), nullable=True),
-)
-
-admin_user = sa.Table("admin_user", metadata,
-    sa.Column("user_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True,
-    )
-)
-
-
-# delegate rights to act on behalf of a user to another user
-user_delegation = sa.Table("user_delegation", metadata,
-    sa.Column("user_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True
-    ),
-    sa.Column("delegation_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True
-    )
-)
-
-
-# password restore links
-password_restore_link = sa.Table("password_restore_link", metadata,
-    sa.Column("user_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True
-    ),
-    sa.Column("hash", sa.Unicode(256), nullable=False),
-    sa.Column("expiration_date", sa.DateTime(timezone=False), nullable=False) 
-) 
-
-
-#########################
-# Countries
-#########################
-
-country = sa.Table("country", metadata,
-    sa.Column("country_id", sa.String(2), primary_key=True),
-    sa.Column("iso_name", sa.Unicode(80), nullable=False),
-    sa.Column("country_name", sa.Unicode(80), nullable=False),
-    sa.Column("iso3", sa.String(3)),
-    sa.Column("numcode", sa.Integer),
-    sa.Column("language", sa.String(5), nullable=False),
-)
-
-#######################
-# Groups
-#######################
-# we use a very normalized form here to represent all kinds of
-# groups and their relations to other things in the system.
-
-group = sa.Table("group", metadata,
-    sa.Column("group_id", sa.Integer,
-        sa.ForeignKey("principal.principal_id"),
-        primary_key=True),
-    sa.Column("short_name", sa.Unicode(512), nullable=False),
-    sa.Column("full_name", sa.Unicode(1024)),
-    sa.Column("acronym", sa.Unicode(32), nullable=True),
-    sa.Column("principal_name", sa.Unicode(32), 
-        # !+login_regex - principal_name should also be a valid login name
-        # !+principal_name sa.ForeignKey("principal.principal_name"),
-        unique=True,
-        nullable=False),
-    sa.Column("description", sa.UnicodeText),
-    sa.Column("body", sa.UnicodeText),
-    sa.Column("status", sa.Unicode(32)),
-    sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=sa.sql.text("now()"),
-        nullable=False
-    ),
-    sa.Column("start_date", sa.Date, nullable=False),
-    sa.Column("end_date", sa.Date),
-    # !+ rename to "group_type" (consistent with doc table: type/doc_type?
-    # or rename doc.doc_type to doc.sub_type?
-    sa.Column("sub_type", sa.Unicode(128), nullable=True),
-    sa.Column("parent_group_id", sa.Integer,
-        sa.ForeignKey("group.group_id")
-     ),
-    sa.Column("language", sa.String(5), nullable=False),
-    # the role gained by being a member of this group
-    sa.Column("group_role", sa.Unicode(256), nullable=False),
-    # is the group "permament", "temporary", ... ?
-    sa.Column("group_mandate", sa.Unicode(128)),
-)
-group_audit = make_audit_table(group, metadata)
-
-
-
-# the personal role of a user in terms of their membership in this group:
-# The personal roles a person may have varies with the context 
-# e.g. in a party one may have the role spokesperson, member, ...
-
-title_type = sa.Table("title_type", metadata,
-    sa.Column("title_type_id", sa.Integer, primary_key=True),
-    sa.Column("group_id", sa.Integer, 
-                sa.ForeignKey("group.group_id"), nullable=False),
-    sa.Column("title_name", sa.Unicode(40), nullable=False),
-    sa.Column("user_unique", sa.Boolean, default=False,), # nullable=False),
-    sa.Column("sort_order", sa.Integer(2), nullable=False),
-    sa.Column("language", sa.String(5), nullable=False),
-)
-
-# sub roles to be granted when a document is assigned to a user
-member_role = sa.Table("member_role", metadata,
-    sa.Column("member_id", sa.Integer,
-        sa.ForeignKey("member.member_id"),
-        primary_key=True),
-    sa.Column("role_id", sa.Unicode(256), nullable=False,
-        primary_key=True),
-    sa.Column("is_global", sa.Boolean, default=False),
-)
-
-
-doc_principal = sa.Table("doc_principal", metadata,
-    sa.Column("doc_id", sa.Integer,
-        sa.ForeignKey("doc.doc_id"),
-        primary_key=True),
-    sa.Column("principal_id", sa.Integer, 
-        sa.ForeignKey("principal.principal_id"),
-        primary_key=True),
-    # relationship qualifier, also the item's polymorphic identity
-    sa.Column("activity", sa.Unicode(16), primary_key=True, nullable=False),
-    sa.Column("date", sa.DateTime(timezone=False), 
-        server_default=sa.sql.text("now()"),
-        nullable=False),
-)
-doc_principal_audit = make_audit_table(doc_principal, metadata)
-
-
-# group memberships encompasses any user participation in a group, including
-# substitutions.
-
-member = sa.Table("member", metadata,
-    sa.Column("member_id", sa.Integer, primary_key=True),
-    sa.Column("user_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        nullable=False
-    ),
-    sa.Column("group_id", sa.Integer,
-        sa.ForeignKey("group.group_id"),
-        nullable=False
-    ),
-    sa.Column("status", sa.Unicode(32)),
-    sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=sa.sql.text("now()"),
-        nullable=False
-    ),
-    sa.Column("start_date", sa.Date,
-        default=datetime.now,
-        nullable=False
-    ),
-    sa.Column("end_date", sa.Date),
-    sa.Column("notes", sa.UnicodeText),
-    # we use this as an easier query to end_date in queries, needs to be set by
-    # a cron process against end_date < current_time
-    sa.Column("active_p", sa.Boolean, default=True),
-    # these fields are only present when a membership is result of substitution
-    # unique because you can only replace one specific group member.
-    sa.Column("replaced_id", sa.Integer,
-        sa.ForeignKey("member.member_id"),
-        unique=True
-    ),
-    sa.Column("substitution_type", sa.Unicode(100)),
-    # the type of membership, polymorphic identity
-    sa.Column("member_type", sa.String(30), default="member", nullable=False),
-    sa.Column("language", sa.String(5), nullable=False),
-    # Representation of this member (in a chamber or any other group):
-    # - geo: the region/province/constituency (divisions and order may be in any
-    # way as appropriate for the given parliamentary territory)
-    # - sig: represented Special Interest Group (s)
-    # Values should be a Hierarchical Controlled Vocabulary Micro Data Format: 
-    # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
-    # which is a double-colon "::" separated sequence of *key phrases*.
-    sa.Column("representation_geo", sa.UnicodeText, nullable=True),
-    sa.Column("representation_sig", sa.UnicodeText, nullable=True),
-    # how the user became a member of this group
-    sa.Column("election_type", sa.Unicode(128),
-        default="elected", # elected, nominated, ex officio, co-opted, ...
-        nullable=True),
-    sa.Column("election_date", sa.Date, 
-        server_default=sa.sql.text("now()::date"),
-        nullable=True),
-    sa.Column("leave_reason", sa.Unicode(40)),
-    sa.schema.UniqueConstraint("user_id", "group_id"),
-)
-member_audit = make_audit_table(member, metadata)
-
-
-##############
-# Titles
-##############
-# To indicate the title a person has in a specific context (Ministry, 
-# Committee, Chamber, ...) and for what period (from - to)
-
-member_title = sa.Table("member_title", metadata,
-    sa.Column("member_title_id", sa.Integer, primary_key=True),
-    sa.Column("member_id", sa.Integer,
-        sa.ForeignKey("member.member_id"),
-        nullable=False
-    ),
-    # title of user"s group role
-    sa.Column("title_type_id", sa.Integer,
-        sa.ForeignKey("title_type.title_type_id"),
-        nullable=False
-    ),
-    sa.Column("start_date", sa.Date, default=datetime.now, nullable=False),
-    sa.Column("end_date", sa.Date),
-    sa.Column("language", sa.String(5), nullable=False),
-    sa.schema.UniqueConstraint("member_id", "title_type_id")
-)
-
-
-############
-# Addresses
-############
-
-address = sa.Table("address", metadata,
-    sa.Column("address_id", sa.Integer, primary_key=True),
-    # user or group address
-    sa.Column("principal_id", sa.Integer,
-        sa.ForeignKey("principal.principal_id"),
-        nullable=False
-    ),
-    sa.Column("logical_address_type", sa.Unicode(128),
-        default=u"office",
-        nullable=False,
-    ),
-    sa.Column("postal_address_type", sa.Unicode(128),
-        default=u"street",
-        nullable=False,
-    ),
-    sa.Column("street", sa.Unicode(256), nullable=True),
-    sa.Column("city", sa.Unicode(256), nullable=True),
-    sa.Column("zipcode", sa.Unicode(20)),
-    sa.Column("country_id", sa.String(2),
-        sa.ForeignKey("country.country_id"),
-        nullable=True
-    ),
-    sa.Column("phone", sa.Unicode(256)),
-    sa.Column("fax", sa.Unicode(256)),
-    sa.Column("email", sa.String(512)),
-    sa.Column("status", sa.Unicode(16)),
-    sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=sa.sql.text("now()"),
-        nullable=False
-    ),
-)
-
-
-##################
-# Activity 
-#
-
-session = sa.Table("session", metadata,
-    sa.Column("session_id", sa.Integer, primary_key=True),
-    sa.Column("chamber_id", sa.Integer, # group_id
-        sa.ForeignKey("group.group_id"),
-        nullable=False
-    ),
-    sa.Column("short_name", sa.Unicode(512), nullable=False), #!+ACRONYM
-    sa.Column("full_name", sa.Unicode(1024), nullable=False), #!+NAME
-    sa.Column("start_date", sa.Date, nullable=False),
-    sa.Column("end_date", sa.Date),
-    sa.Column("notes", sa.UnicodeText),
-    sa.Column("language", sa.String(5), nullable=False),
-)
-
-sitting = sa.Table("sitting", metadata,
-    sa.Column("sitting_id", sa.Integer, primary_key=True),
-    sa.Column("group_id", sa.Integer,
-        sa.ForeignKey("group.group_id"),
-        nullable=False
-    ),
-    sa.Column("session_id", sa.Integer,
-        sa.ForeignKey("session.session_id"),
-        nullable=True
-    ),
-    sa.Column("short_name", sa.Unicode(512), nullable=True),
-    sa.Column("start_date", sa.DateTime(timezone=False), nullable=False),
-    sa.Column("end_date", sa.DateTime(timezone=False), nullable=False),
-    sa.Column("sitting_length", sa.Integer),
-    # if a sitting is recurring this is the id of the original sitting
-    # there is no foreign key to the original sitting
-    # like sa.ForeignKey("sitting.sitting_id")
-    # to make it possible to delete the original sitting
-    sa.Column("recurring_id", sa.Integer),
-    sa.Column("recurring_type", sa.String(32)),
-    sa.Column("recurring_end_date", sa.DateTime(timezone=False), 
-        nullable=True),
-    
-    sa.Column("status", sa.Unicode(48)),
-    sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=sa.sql.text("now()"),
-        nullable=False
-    ),
-    # venue for the sitting
-    sa.Column("venue_id", sa.Integer, sa.ForeignKey("venue.venue_id")),
-    sa.Column("language", sa.String(5), nullable=False),
-    # other vocabularies
-    sa.Column("activity_type", sa.Unicode(1024)),
-    sa.Column("meeting_type", sa.Unicode(1024)),
-    sa.Column("convocation_type", sa.Unicode(1024)),
-)
-
-sitting_attendance = sa.Table("sitting_attendance", metadata,
-    sa.Column("sitting_id", sa.Integer,
-        sa.ForeignKey("sitting.sitting_id"),
-        primary_key=True
-    ),
-    sa.Column("member_id", sa.Integer,
-        sa.ForeignKey("user.user_id"),
-        primary_key=True
-    ),
-    sa.Column("attendance_type", sa.Unicode(128),
-        default=u'present',
-        nullable=False,
-    ),
-)
-
-# headings
-heading = sa.Table("heading", metadata,
-    sa.Column("heading_id", sa.Integer, primary_key=True),
-    sa.Column("text", sa.Unicode(512), nullable=False),
-    sa.Column("status", sa.Unicode(32)),
-    sa.Column("language", sa.String(5), nullable=False),
-    sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"))
-)
-
-
-# venues for sittings:
-
-venue = sa.Table("venue", metadata,
-    sa.Column("venue_id", sa.Integer, primary_key=True),
-    sa.Column("short_name", sa.Unicode(512), nullable=False),
-    sa.Column("description", sa.UnicodeText),
-    sa.Column("body", sa.UnicodeText),
-    sa.Column("language", sa.String(5), nullable=False),
-    sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"))
-)
-
-
-''' !+BookedResources
-# resources for sittings like rooms ...
-
-resource_types = sa.Table("resource_types", metadata,
-    sa.Column("resource_type_id", sa.Integer, primary_key=True),
-    sa.Column("short_name", sa.Unicode(512), nullable=False), #!+ACRONYM
-    sa.Column("language", sa.String(5), nullable=False),
-)
-
-resources = sa.Table("resources", metadata,
-    sa.Column("resource_id", sa.Integer, primary_key=True),
-    sa.Column("resource_type_id", sa.Integer,
-        sa.ForeignKey("resource_types.resource_type_id"),
-        nullable=False
-    ),
-    sa.Column("short_name", sa.Unicode(512), nullable=False),
-    sa.Column("description", sa.UnicodeText),
-    sa.Column("language", sa.String(5), nullable=False),
-)
-
-resourcebookings = sa.Table("resourcebookings", metadata,
-    sa.Column("resource_id", sa.Integer,
-        sa.ForeignKey("resources.resource_id"),
-        primary_key=True
-    ),
-    sa.Column("sitting_id", sa.Integer,
-        sa.ForeignKey("sitting.sitting_id"),
-        primary_key=True
-    ),
-)
-'''
-
-
-item_schedule = sa.Table("item_schedule", metadata,
-    sa.Column("schedule_id", sa.Integer, primary_key=True),
-    # !+object_id/object_type - use object_id/object_type as elsewhere
-    sa.Column("item_id", sa.Integer, nullable=False),
-    sa.Column("item_type", sa.String(30), nullable=False),
-    sa.Column("sitting_id", sa.Integer,
-        sa.ForeignKey("sitting.sitting_id"),
-        nullable=False
-    ),
-    sa.Column("planned_order", sa.Integer),
-    sa.Column("real_order", sa.Integer),
-    # item was discussed on this sitting sitting
-    sa.Column("active", sa.Boolean, default=True),
-    # workflow status of the item for this schedule
-    # NOT workflow status of this item_schedule!
-    sa.Column("item_status", sa.Unicode(64),)
-)
-
-editorial_note = sa.Table("editorial_note", metadata,
-    sa.Column("editorial_note_id", sa.Integer, primary_key=True),
-    sa.Column("text", sa.UnicodeText, nullable=True),
-    sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"),
-        nullable=True
-    ),
-    sa.Column("language", sa.String(5), nullable=False)
-)
-
-# store text record for a sitting or 
-agenda_text_record = sa.Table("agenda_text_record", metadata,
-    sa.Column("text_record_id", sa.Integer, primary_key=True),
-    sa.Column("text", sa.UnicodeText, nullable=False),
-    sa.Column("record_type", sa.String(30), nullable=False),
-    sa.Column("language", sa.String(5), nullable=False),
-)
-
-# to produce the proceedings:
-# capture the discussion on this item
-
-item_schedule_discussion = sa.Table("item_schedule_discussion", metadata,
-    sa.Column("discussion_id", sa.Integer, primary_key=True),
-    sa.Column("schedule_id", sa.Integer,
-        sa.ForeignKey("item_schedule.schedule_id")),
-    sa.Column("body", sa.UnicodeText),
-    sa.Column("sitting_time", sa.Time(timezone=False)),
-    sa.Column("language", sa.String(5),
-        nullable=False,
-        default="en"
-    ),
-)
-
-item_schedule_vote = sa.Table("item_schedule_vote", metadata,
-    sa.Column("vote_id", sa.Integer, primary_key=True),
-    sa.Column("schedule_id", sa.Integer,
-        sa.ForeignKey("item_schedule.schedule_id")),
-    sa.Column("time", sa.Time(timezone=False)),
-    sa.Column("issue_item", sa.Unicode(1024)),
-    sa.Column("issue_sub_item", sa.Unicode(1024)),
-    sa.Column("document_uri", sa.Unicode(1024)),
-    sa.Column("question", sa.Unicode(1024)),
-    sa.Column("description", sa.UnicodeText),
-    sa.Column("notes", sa.UnicodeText),
-    sa.Column("result", sa.Unicode(255)),
-    sa.Column("vote_type", sa.Unicode(255)),
-    sa.Column("majority_type", sa.Unicode(255)),
-    sa.Column("eligible_votes", sa.Integer),
-    sa.Column("cast_votes", sa.Integer),
-    sa.Column("votes_for", sa.Integer),
-    sa.Column("votes_against", sa.Integer),
-    sa.Column("votes_abstained", sa.Integer),
-    sa.Column("roll_call", FSBlob(32)),
-    sa.Column("mimetype", sa.Unicode(127)),
-    sa.Column("language", sa.String(5),
-        nullable=False,
-        default="en"
-    ),
-)
-
-sitting_report = sa.Table("sitting_report", metadata,
-    sa.Column("report_id", sa.Integer,
-        sa.ForeignKey("doc.doc_id"), primary_key=True
-    ),
-    sa.Column("sitting_id", sa.Integer,
-        sa.ForeignKey("sitting.sitting_id"), primary_key=True
-    ),
-)
-
-
-# NOT a parliamentary_item
-# !+doc_attachment
-attachment = sa.Table("attachment", metadata,
-    sa.Column("attachment_id", sa.Integer, primary_key=True),
-    # the id of the "owning" head document
-    # !+doc_attachment -- this assumes that attachments are only for doc?
-    sa.Column("head_id", sa.Integer,
-        sa.ForeignKey("doc.doc_id"),
-        nullable=False
-    ),
-    # attachment_type #!+attached_file_type
-    sa.Column("type", sa.Unicode(128),
-        default=u"document",
-        nullable=False,
-    ),
-    sa.Column("title", sa.Unicode(255), nullable=False), #!+file
-    sa.Column("description", sa.UnicodeText), #!+file
-    sa.Column("body", sa.UnicodeText),
-    sa.Column("data", FSBlob(32)), #!+file
-    sa.Column("name", sa.String(200)), #!+file
-    sa.Column("mimetype", sa.String(127)), #!+file
-    sa.Column("status", sa.Unicode(48)),
-    sa.Column("status_date", sa.DateTime(timezone=False),
-        server_default=sa.sql.text("now()"),
-        nullable=False
-    ),
-    sa.Column("language", sa.String(5), nullable=False),
-)
-attachment_index = sa.Index("attachment_head_id_idx", attachment.c["head_id"])
-attachment_audit = make_audit_table(attachment, metadata)
-
-
-# Document:
-# base table for a workflowed parliamentary document
+# doc - base table for a workflowed parliamentary document
 doc_sequence = sa.Sequence("doc_sequence")
 doc = sa.Table("doc", metadata,
     # DB id
@@ -946,6 +377,561 @@ doc = sa.Table("doc", metadata,
 )
 doc_index = sa.Index("doc_status_idx", doc.c["status"])
 doc_audit = make_audit_table(doc, metadata)
+
+
+# principal: user, group
+
+PrincipalSequence = sa.Sequence("principal_sequence")
+
+principal = sa.Table("principal", metadata,
+    sa.Column("principal_id", sa.Integer, PrincipalSequence, primary_key=True),
+    # !+PRINCIPAL_NAME(mr, mar-2013) should really be THE (natural) primary key,
+    # and replace principal_id altogether!
+    # !+principal_name sa.Column("principal_name", sa.Unicode(50), unique=True, nullable=False),
+    # for polymorphic_identity
+    sa.Column("type", sa.String(30), nullable=False),
+)
+
+user = sa.Table("user", metadata,
+    sa.Column("user_id", sa.Integer, 
+        sa.ForeignKey("principal.principal_id"),
+        primary_key=True),
+    # !+principal(mr, feb-2013) "login" should really be "principal_name" here
+    sa.Column("login", sa.Unicode(80), 
+        # !+principal_name sa.ForeignKey("principal.principal_name"),
+        unique=True,
+        nullable=False),
+    sa.Column("salutation", sa.Unicode(128)), # !+vocabulary?
+    sa.Column("title", sa.Unicode(128)), # !+vocabulary?
+    sa.Column("first_name", sa.Unicode(256), nullable=False),
+    sa.Column("last_name", sa.Unicode(256), nullable=False),
+    sa.Column("middle_name", sa.Unicode(256)),
+    sa.Column("email", sa.String(512), nullable=False),
+    sa.Column("gender", sa.String(1),
+        sa.CheckConstraint("""gender in ('M', 'F')""")  # (M)ale (F)emale
+    ),
+    sa.Column("date_of_birth", sa.Date),
+    sa.Column("birth_country", sa.String(2),
+        sa.ForeignKey("country.country_id")
+    ),
+    sa.Column("birth_nationality", sa.String(2),
+        sa.ForeignKey("country.country_id")
+    ),
+    sa.Column("current_nationality", sa.String(2),
+        sa.ForeignKey("country.country_id")
+    ),
+    sa.Column("marital_status", sa.Unicode(128),
+        default=None,
+        nullable=True,
+    ),
+    sa.Column("uri", sa.Unicode(1024), unique=True),
+    sa.Column("date_of_death", sa.Date),
+    sa.Column("type_of_id", sa.String(1)),
+    sa.Column("national_id", sa.Unicode(256)),
+    sa.Column("password", sa.String(36)
+        # we store salted md5 hash hexdigests
+    ),
+    sa.Column("salt", sa.String(24)),
+    sa.Column("description", sa.UnicodeText),
+    sa.Column("remarks", sa.UnicodeText),
+    sa.Column("image", sa.Binary),
+    # !+active_p(mr, sep-2011) why is this "workflow status" column named
+    # "active_p" and not "status"? Rename...
+    # !+active_p(mr, sep-2011) why have identically named columns here and on 
+    # member, with one being a string and other a bool?
+    sa.Column("active_p", sa.String(1),
+        sa.CheckConstraint("""active_p in ('A', 'I', 'D')"""),
+        # !+active_p(mr, sep-2011) workflow status columns MUST not have a
+        # default value--it is up to the workflow to decide what this should be!
+        #default="A", # active/inactive/deceased
+    ),
+    #!+receive_notification comment out for now - will be used for user preferences
+    sa.Column("receive_notification", sa.Boolean, default=True),
+    sa.Column("language", sa.String(5), nullable=False),
+    sa.Column("home_language", sa.String(5), nullable=True),
+)
+
+admin_user = sa.Table("admin_user", metadata,
+    sa.Column("user_id", sa.Integer,
+        sa.ForeignKey("user.user_id"),
+        primary_key=True,
+    )
+)
+
+
+# delegate rights to act on behalf of a user to another user
+user_delegation = sa.Table("user_delegation", metadata,
+    sa.Column("user_id", sa.Integer,
+        sa.ForeignKey("user.user_id"),
+        primary_key=True
+    ),
+    sa.Column("delegation_id", sa.Integer,
+        sa.ForeignKey("user.user_id"),
+        primary_key=True
+    )
+)
+
+# password restore links
+password_restore_link = sa.Table("password_restore_link", metadata,
+    sa.Column("user_id", sa.Integer,
+        sa.ForeignKey("user.user_id"),
+        primary_key=True
+    ),
+    sa.Column("hash", sa.Unicode(256), nullable=False),
+    sa.Column("expiration_date", sa.DateTime(timezone=False), nullable=False) 
+) 
+
+
+# group - we use a very normalized form here to represent all kinds of
+# groups and their relations to other things in the system.
+group = sa.Table("group", metadata,
+    sa.Column("group_id", sa.Integer,
+        sa.ForeignKey("principal.principal_id"),
+        primary_key=True),
+    sa.Column("short_name", sa.Unicode(512), nullable=False),
+    sa.Column("full_name", sa.Unicode(1024)),
+    sa.Column("acronym", sa.Unicode(32), nullable=True),
+    sa.Column("principal_name", sa.Unicode(32), 
+        # !+login_regex - principal_name should also be a valid login name
+        # !+principal_name sa.ForeignKey("principal.principal_name"),
+        unique=True,
+        nullable=False),
+    sa.Column("description", sa.UnicodeText),
+    sa.Column("body", sa.UnicodeText),
+    sa.Column("status", sa.Unicode(32)),
+    sa.Column("status_date", sa.DateTime(timezone=False),
+        server_default=sa.sql.text("now()"),
+        nullable=False
+    ),
+    sa.Column("start_date", sa.Date, nullable=False),
+    sa.Column("end_date", sa.Date),
+    # !+ rename to "group_type" (consistent with doc table: type/doc_type?
+    # or rename doc.doc_type to doc.sub_type?
+    sa.Column("sub_type", sa.Unicode(128), nullable=True),
+    sa.Column("parent_group_id", sa.Integer,
+        sa.ForeignKey("group.group_id")
+     ),
+    sa.Column("language", sa.String(5), nullable=False),
+    # the role gained by being a member of this group
+    sa.Column("group_role", sa.Unicode(256), nullable=False),
+    # is the group "permament", "temporary", ... ?
+    sa.Column("group_mandate", sa.Unicode(128)),
+)
+group_audit = make_audit_table(group, metadata)
+
+
+# member 
+
+# group memberships encompasses any user participation in a group, including
+# substitutions.
+member = sa.Table("member", metadata,
+    sa.Column("member_id", sa.Integer, primary_key=True),
+    sa.Column("user_id", sa.Integer,
+        sa.ForeignKey("user.user_id"),
+        nullable=False
+    ),
+    sa.Column("group_id", sa.Integer,
+        sa.ForeignKey("group.group_id"),
+        nullable=False
+    ),
+    sa.Column("status", sa.Unicode(32)),
+    sa.Column("status_date", sa.DateTime(timezone=False),
+        server_default=sa.sql.text("now()"),
+        nullable=False
+    ),
+    sa.Column("start_date", sa.Date,
+        default=datetime.now,
+        nullable=False
+    ),
+    sa.Column("end_date", sa.Date),
+    sa.Column("notes", sa.UnicodeText),
+    # we use this as an easier query to end_date in queries, needs to be set by
+    # a cron process against end_date < current_time
+    sa.Column("active_p", sa.Boolean, default=True),
+    # these fields are only present when a membership is result of substitution
+    # unique because you can only replace one specific group member.
+    sa.Column("replaced_id", sa.Integer,
+        sa.ForeignKey("member.member_id"),
+        unique=True
+    ),
+    sa.Column("substitution_type", sa.Unicode(100)),
+    # the type of membership, polymorphic identity
+    sa.Column("member_type", sa.String(30), default="member", nullable=False),
+    sa.Column("language", sa.String(5), nullable=False),
+    # Representation of this member (in a chamber or any other group):
+    # - geo: the region/province/constituency (divisions and order may be in any
+    # way as appropriate for the given parliamentary territory)
+    # - sig: represented Special Interest Group (s)
+    # Values should be a Hierarchical Controlled Vocabulary Micro Data Format: 
+    # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
+    # which is a double-colon "::" separated sequence of *key phrases*.
+    sa.Column("representation_geo", sa.UnicodeText, nullable=True),
+    sa.Column("representation_sig", sa.UnicodeText, nullable=True),
+    # how the user became a member of this group
+    sa.Column("election_type", sa.Unicode(128),
+        default="elected", # elected, nominated, ex officio, co-opted, ...
+        nullable=True),
+    sa.Column("election_date", sa.Date, 
+        server_default=sa.sql.text("now()::date"),
+        nullable=True),
+    sa.Column("leave_reason", sa.Unicode(40)),
+    sa.schema.UniqueConstraint("user_id", "group_id"),
+)
+member_audit = make_audit_table(member, metadata)
+
+# sub roles to be granted when a document is assigned to a user
+member_role = sa.Table("member_role", metadata,
+    sa.Column("member_id", sa.Integer,
+        sa.ForeignKey("member.member_id"),
+        primary_key=True),
+    sa.Column("role_id", sa.Unicode(256), nullable=False,
+        primary_key=True),
+    sa.Column("is_global", sa.Boolean, default=False),
+)
+
+# title - to indicate the title a person has in a specific context (Ministry, 
+# Committee, Chamber, ...) and for what period (from - to)
+member_title = sa.Table("member_title", metadata,
+    sa.Column("member_title_id", sa.Integer, primary_key=True),
+    sa.Column("member_id", sa.Integer,
+        sa.ForeignKey("member.member_id"),
+        nullable=False
+    ),
+    # title of user"s group role
+    sa.Column("title_type_id", sa.Integer,
+        sa.ForeignKey("title_type.title_type_id"),
+        nullable=False
+    ),
+    sa.Column("start_date", sa.Date, default=datetime.now, nullable=False),
+    sa.Column("end_date", sa.Date),
+    sa.Column("language", sa.String(5), nullable=False),
+    sa.schema.UniqueConstraint("member_id", "title_type_id")
+)
+
+# the personal role of a user in terms of their membership in this group:
+# The personal roles a person may have varies with the context 
+# e.g. in a party one may have the role spokesperson, member, ...
+title_type = sa.Table("title_type", metadata,
+    sa.Column("title_type_id", sa.Integer, primary_key=True),
+    sa.Column("group_id", sa.Integer, 
+                sa.ForeignKey("group.group_id"), nullable=False),
+    sa.Column("title_name", sa.Unicode(40), nullable=False),
+    sa.Column("user_unique", sa.Boolean, default=False,), # nullable=False),
+    sa.Column("sort_order", sa.Integer(2), nullable=False),
+    sa.Column("language", sa.String(5), nullable=False),
+)
+
+
+
+# SUPPORT TYPES
+
+# doc_principal - !+VP composite-PK means no VP support for doc_principal
+
+doc_principal = sa.Table("doc_principal", metadata,
+    sa.Column("doc_id", sa.Integer,
+        sa.ForeignKey("doc.doc_id"),
+        primary_key=True),
+    sa.Column("principal_id", sa.Integer, 
+        sa.ForeignKey("principal.principal_id"),
+        primary_key=True),
+    # relationship qualifier, also the item's polymorphic identity
+    sa.Column("activity", sa.Unicode(16), primary_key=True, nullable=False),
+    sa.Column("date", sa.DateTime(timezone=False), 
+        server_default=sa.sql.text("now()"),
+        nullable=False),
+)
+doc_principal_audit = make_audit_table(doc_principal, metadata)
+
+
+# sitting, session
+
+session = sa.Table("session", metadata,
+    sa.Column("session_id", sa.Integer, primary_key=True),
+    sa.Column("chamber_id", sa.Integer, # group_id
+        sa.ForeignKey("group.group_id"),
+        nullable=False
+    ),
+    sa.Column("short_name", sa.Unicode(512), nullable=False), #!+ACRONYM
+    sa.Column("full_name", sa.Unicode(1024), nullable=False), #!+NAME
+    sa.Column("start_date", sa.Date, nullable=False),
+    sa.Column("end_date", sa.Date),
+    sa.Column("notes", sa.UnicodeText),
+    sa.Column("language", sa.String(5), nullable=False),
+)
+
+sitting = sa.Table("sitting", metadata,
+    sa.Column("sitting_id", sa.Integer, primary_key=True),
+    sa.Column("group_id", sa.Integer,
+        sa.ForeignKey("group.group_id"),
+        nullable=False
+    ),
+    sa.Column("session_id", sa.Integer,
+        sa.ForeignKey("session.session_id"),
+        nullable=True
+    ),
+    sa.Column("short_name", sa.Unicode(512), nullable=True),
+    sa.Column("start_date", sa.DateTime(timezone=False), nullable=False),
+    sa.Column("end_date", sa.DateTime(timezone=False), nullable=False),
+    sa.Column("sitting_length", sa.Integer),
+    # if a sitting is recurring this is the id of the original sitting
+    # there is no foreign key to the original sitting
+    # like sa.ForeignKey("sitting.sitting_id")
+    # to make it possible to delete the original sitting
+    sa.Column("recurring_id", sa.Integer),
+    sa.Column("recurring_type", sa.String(32)),
+    sa.Column("recurring_end_date", sa.DateTime(timezone=False), 
+        nullable=True),
+    
+    sa.Column("status", sa.Unicode(48)),
+    sa.Column("status_date", sa.DateTime(timezone=False),
+        server_default=sa.sql.text("now()"),
+        nullable=False
+    ),
+    # venue for the sitting
+    sa.Column("venue_id", sa.Integer, sa.ForeignKey("venue.venue_id")),
+    sa.Column("language", sa.String(5), nullable=False),
+    # other vocabularies
+    sa.Column("activity_type", sa.Unicode(1024)),
+    sa.Column("meeting_type", sa.Unicode(1024)),
+    sa.Column("convocation_type", sa.Unicode(1024)),
+)
+
+sitting_attendance = sa.Table("sitting_attendance", metadata,
+    sa.Column("sitting_id", sa.Integer,
+        sa.ForeignKey("sitting.sitting_id"),
+        primary_key=True
+    ),
+    sa.Column("member_id", sa.Integer,
+        sa.ForeignKey("user.user_id"),
+        primary_key=True
+    ),
+    sa.Column("attendance_type", sa.Unicode(128),
+        default=u'present',
+        nullable=False,
+    ),
+)
+
+# headings
+heading = sa.Table("heading", metadata,
+    sa.Column("heading_id", sa.Integer, primary_key=True),
+    sa.Column("text", sa.Unicode(512), nullable=False),
+    sa.Column("status", sa.Unicode(32)),
+    sa.Column("language", sa.String(5), nullable=False),
+    sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"))
+)
+
+
+# venues for sittings:
+
+venue = sa.Table("venue", metadata,
+    sa.Column("venue_id", sa.Integer, primary_key=True),
+    sa.Column("short_name", sa.Unicode(512), nullable=False),
+    sa.Column("description", sa.UnicodeText),
+    sa.Column("body", sa.UnicodeText),
+    sa.Column("language", sa.String(5), nullable=False),
+    sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"))
+)
+
+
+''' !+BookedResources
+# resources for sittings like rooms ...
+
+resource_types = sa.Table("resource_types", metadata,
+    sa.Column("resource_type_id", sa.Integer, primary_key=True),
+    sa.Column("short_name", sa.Unicode(512), nullable=False), #!+ACRONYM
+    sa.Column("language", sa.String(5), nullable=False),
+)
+
+resources = sa.Table("resources", metadata,
+    sa.Column("resource_id", sa.Integer, primary_key=True),
+    sa.Column("resource_type_id", sa.Integer,
+        sa.ForeignKey("resource_types.resource_type_id"),
+        nullable=False
+    ),
+    sa.Column("short_name", sa.Unicode(512), nullable=False),
+    sa.Column("description", sa.UnicodeText),
+    sa.Column("language", sa.String(5), nullable=False),
+)
+
+resourcebookings = sa.Table("resourcebookings", metadata,
+    sa.Column("resource_id", sa.Integer,
+        sa.ForeignKey("resources.resource_id"),
+        primary_key=True
+    ),
+    sa.Column("sitting_id", sa.Integer,
+        sa.ForeignKey("sitting.sitting_id"),
+        primary_key=True
+    ),
+)
+'''
+
+
+# address 
+
+address = sa.Table("address", metadata,
+    sa.Column("address_id", sa.Integer, primary_key=True),
+    # user or group address
+    sa.Column("principal_id", sa.Integer,
+        sa.ForeignKey("principal.principal_id"),
+        nullable=False
+    ),
+    sa.Column("logical_address_type", sa.Unicode(128),
+        default=u"office",
+        nullable=False,
+    ),
+    sa.Column("postal_address_type", sa.Unicode(128),
+        default=u"street",
+        nullable=False,
+    ),
+    sa.Column("street", sa.Unicode(256), nullable=True),
+    sa.Column("city", sa.Unicode(256), nullable=True),
+    sa.Column("zipcode", sa.Unicode(20)),
+    sa.Column("country_id", sa.String(2),
+        sa.ForeignKey("country.country_id"),
+        nullable=True
+    ),
+    sa.Column("phone", sa.Unicode(256)),
+    sa.Column("fax", sa.Unicode(256)),
+    sa.Column("email", sa.String(512)),
+    sa.Column("status", sa.Unicode(16)),
+    sa.Column("status_date", sa.DateTime(timezone=False),
+        server_default=sa.sql.text("now()"),
+        nullable=False
+    ),
+)
+
+
+# country
+
+country = sa.Table("country", metadata,
+    sa.Column("country_id", sa.String(2), primary_key=True),
+    sa.Column("iso_name", sa.Unicode(80), nullable=False),
+    sa.Column("country_name", sa.Unicode(80), nullable=False),
+    sa.Column("iso3", sa.String(3)),
+    sa.Column("numcode", sa.Integer),
+    sa.Column("language", sa.String(5), nullable=False),
+)
+
+
+item_schedule = sa.Table("item_schedule", metadata,
+    sa.Column("schedule_id", sa.Integer, primary_key=True),
+    # !+object_id/object_type - use object_id/object_type as elsewhere
+    sa.Column("item_id", sa.Integer, nullable=False),
+    sa.Column("item_type", sa.String(30), nullable=False),
+    sa.Column("sitting_id", sa.Integer,
+        sa.ForeignKey("sitting.sitting_id"),
+        nullable=False
+    ),
+    sa.Column("planned_order", sa.Integer),
+    sa.Column("real_order", sa.Integer),
+    # item was discussed on this sitting sitting
+    sa.Column("active", sa.Boolean, default=True),
+    # workflow status of the item for this schedule
+    # NOT workflow status of this item_schedule!
+    sa.Column("item_status", sa.Unicode(64),)
+)
+
+editorial_note = sa.Table("editorial_note", metadata,
+    sa.Column("editorial_note_id", sa.Integer, primary_key=True),
+    sa.Column("text", sa.UnicodeText, nullable=True),
+    sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"),
+        nullable=True
+    ),
+    sa.Column("language", sa.String(5), nullable=False)
+)
+
+# store text record for a sitting or 
+agenda_text_record = sa.Table("agenda_text_record", metadata,
+    sa.Column("text_record_id", sa.Integer, primary_key=True),
+    sa.Column("text", sa.UnicodeText, nullable=False),
+    sa.Column("record_type", sa.String(30), nullable=False),
+    sa.Column("language", sa.String(5), nullable=False),
+)
+
+# to produce the proceedings:
+# capture the discussion on this item
+
+item_schedule_discussion = sa.Table("item_schedule_discussion", metadata,
+    sa.Column("discussion_id", sa.Integer, primary_key=True),
+    sa.Column("schedule_id", sa.Integer,
+        sa.ForeignKey("item_schedule.schedule_id")),
+    sa.Column("body", sa.UnicodeText),
+    sa.Column("sitting_time", sa.Time(timezone=False)),
+    sa.Column("language", sa.String(5),
+        nullable=False,
+        default="en"
+    ),
+)
+
+item_schedule_vote = sa.Table("item_schedule_vote", metadata,
+    sa.Column("vote_id", sa.Integer, primary_key=True),
+    sa.Column("schedule_id", sa.Integer,
+        sa.ForeignKey("item_schedule.schedule_id")),
+    sa.Column("time", sa.Time(timezone=False)),
+    sa.Column("issue_item", sa.Unicode(1024)),
+    sa.Column("issue_sub_item", sa.Unicode(1024)),
+    sa.Column("document_uri", sa.Unicode(1024)),
+    sa.Column("question", sa.Unicode(1024)),
+    sa.Column("description", sa.UnicodeText),
+    sa.Column("notes", sa.UnicodeText),
+    sa.Column("result", sa.Unicode(255)),
+    sa.Column("vote_type", sa.Unicode(255)),
+    sa.Column("majority_type", sa.Unicode(255)),
+    sa.Column("eligible_votes", sa.Integer),
+    sa.Column("cast_votes", sa.Integer),
+    sa.Column("votes_for", sa.Integer),
+    sa.Column("votes_against", sa.Integer),
+    sa.Column("votes_abstained", sa.Integer),
+    sa.Column("roll_call", FSBlob(32)),
+    sa.Column("mimetype", sa.Unicode(127)),
+    sa.Column("language", sa.String(5),
+        nullable=False,
+        default="en"
+    ),
+)
+
+sitting_report = sa.Table("sitting_report", metadata,
+    sa.Column("report_id", sa.Integer,
+        sa.ForeignKey("doc.doc_id"), primary_key=True
+    ),
+    sa.Column("sitting_id", sa.Integer,
+        sa.ForeignKey("sitting.sitting_id"), primary_key=True
+    ),
+)
+
+
+# NOT a parliamentary_item
+# !+doc_attachment
+attachment = sa.Table("attachment", metadata,
+    sa.Column("attachment_id", sa.Integer, primary_key=True),
+    # the id of the "owning" head document
+    # !+doc_attachment -- this assumes that attachments are only for doc?
+    sa.Column("head_id", sa.Integer,
+        sa.ForeignKey("doc.doc_id"),
+        nullable=False
+    ),
+    # attachment_type #!+attached_file_type
+    sa.Column("type", sa.Unicode(128),
+        default=u"document",
+        nullable=False,
+    ),
+    sa.Column("title", sa.Unicode(255), nullable=False), #!+file
+    sa.Column("description", sa.UnicodeText), #!+file
+    sa.Column("body", sa.UnicodeText),
+    sa.Column("data", FSBlob(32)), #!+file
+    sa.Column("name", sa.String(200)), #!+file
+    sa.Column("mimetype", sa.String(127)), #!+file
+    sa.Column("status", sa.Unicode(48)),
+    sa.Column("status_date", sa.DateTime(timezone=False),
+        server_default=sa.sql.text("now()"),
+        nullable=False
+    ),
+    sa.Column("language", sa.String(5), nullable=False),
+)
+attachment_index = sa.Index("attachment_head_id_idx", attachment.c["head_id"])
+attachment_audit = make_audit_table(attachment, metadata)
+
+
 
 
 signatory = sa.Table("signatory", metadata,
