@@ -68,16 +68,6 @@
     />
     
     <!-- Application Setup Event Dispatcher -->
-    <!--Group Membership roles-->
-    <subscriber for="bungeni.models.interfaces.IMemberRole
-            zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-        handler=".roles.member_role_added"
-    />
-    <!--Group Membership roles-->
-    <subscriber for="bungeni.models.interfaces.IMemberRole
-            zope.lifecycleevent.interfaces.IObjectRemovedEvent"
-        handler=".roles.member_role_deleted"
-    />
     <!--Traverser for workspace containers-->
     <adapter for="bungeni.core.interfaces.IWorkspaceContainer
             zope.publisher.interfaces.IPublisherRequest"

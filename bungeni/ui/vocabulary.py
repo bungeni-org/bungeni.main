@@ -59,7 +59,6 @@ from bungeni.core.interfaces import IWorkspaceContainer
 from bungeni.core.translation import translate_obj
 from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.core.workflows.utils import get_group_local_role
 
 from bungeni.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
@@ -261,8 +260,9 @@ class GroupSubRoleFactory(BaseVocabularyFactory):
                 getattr(context, "__parent__", None))
             if not context:
                 raise NotImplementedError("Context does not implement IGroup")
-        trusted = removeSecurityProxy(context)
-        role = getUtility(IRole, get_group_local_role(trusted))
+        group = removeSecurityProxy(context)
+        assert interfaces.IGroup.providedBy(group), group
+        role = getUtility(IRole, group.group_role)
         for sub_role in ISubRoleAnnotations(role).sub_roles:
             terms.append(vocabulary.SimpleTerm(sub_role, sub_role, sub_role))
         return vocabulary.SimpleVocabulary(terms)
@@ -488,7 +488,7 @@ class SpecializedMemberSource(BaseVocabularyFactory):
             # consider only if not yet included in terms
             if user.user_id not in [ t.value for t in terms ]:
                 
-                # !+ conditional on GroupMember.root_container (declarative spec) ?
+                # !+DECLARATIVE_ROOT_CONTAINER conditional on GroupMember.root_container ?
                 # i.e. a user must be a member of root_container to be eligible...
                 # !+ self.chamber.active_membership(user.user_id) ?
                 if user not in [ m.user for m in self.chamber.group_members ]:

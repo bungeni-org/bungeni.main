@@ -58,21 +58,6 @@ def unset_role(role_id, principal_id, context):
     IPrincipalRoleMap(context).unsetRoleForPrincipal(role_id, principal_id)
 
 
-''' !+OBSOLETED replaced with more generic assign_ownership
-def assign_role_owner_to_login(context):
-    """Assign bungeni.Owner role on context to the currently logged in user.
-    """
-    current_user_login = common.get_request_login()
-    log.debug("assign_role_owner_to_login [%s] user:%s" % (
-        context, current_user_login))
-    assign_role("bungeni.Owner", current_user_login, context)
-    #if getattr(context, "owner_id", None):
-    #    session = Session()
-    #    owner = session.query(domain.User).get(context.owner_id)
-    #    if owner and (owner.login != current_user_login):
-    #        assign_role("bungeni.Owner", owner.login, context)
-'''
-
 def assign_ownership(context):
     """Assign editorial (all context types) and legal (only legal types)
     "ownership" roles.
@@ -100,7 +85,10 @@ def assign_ownership(context):
         log.debug("assign_ownership: role %r to user %r on [%s]" % (
             "bungeni.Owner", owner_login, context))
         assign_role("bungeni.Owner", owner_login, context)
-    
+    else:
+        log.warn("assign_ownership: NO owner could be determined from [%s] - "
+            "NOT assigning role %r to any user" % (context, "bungeni.Owner"))
+
 
 def user_is_context_owner(context):
     """Test if current user is the context owner e.g. to check if someone 
@@ -112,6 +100,7 @@ def user_is_context_owner(context):
     """
     user = _determine_related_user(context, user_attr_name="owner")
     return is_current_or_delegated_user(user)
+
 
 def _determine_related_user(context, user_attr_name="owner"):
     """Get the user instance that is the value of the {user_attr_name} attribute.
@@ -203,37 +192,32 @@ is_pi_scheduled = dbutils.is_pi_scheduled
 
 unschedule_doc = dbutils.unschedule_doc
 
-
-def get_group_local_role(group):
-    assert interfaces.IGroup.providedBy(group)
-    return group.group_role
-
-
-def get_group_context(context):
-    if interfaces.IOffice.providedBy(context):
-        return get_chamber_for_group(context)
-    elif interfaces.IGovernment.providedBy(context):
-        # !+LEGISLATURE, GLOBAL? 
-        return common.get_application()
-    else:
-        return context
-
 # groups
 # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
-def _set_group_local_role(context, unset=False):
-    group = context
-    role = get_group_local_role(group)
-    prm = IPrincipalRoleMap(get_group_context(group))
-    if not unset:
-        prm.assignRoleToPrincipal(role, group.principal_name)
+
+def get_group_context(context):
+    # !+DECLARATIVE_ROOT_CONTAINER this should be part of the group type declaration
+    # !+CUSTOM
+    if interfaces.IOffice.providedBy(context):
+        trace_label, gcontext = "IOffice", get_chamber_for_group(context)
+    elif interfaces.IGovernment.providedBy(context):
+        # !+LEGISLATURE, GLOBAL? 
+        trace_label, gcontext = "IGovernment", common.get_application()
     else:
-        prm.unsetRoleForPrincipal(role, group.principal_name)
+        trace_label, gcontext = "INada", context
+    print "!+GET_GROUP_CONTEXT [%s] (%s) -> %s" % (trace_label, context, gcontext)
+    return gcontext
 
-def set_group_local_role(context):
-    _set_group_local_role(context, unset=False)
+def set_group_local_role(group):
+    role_id = group.group_role
+    prm = IPrincipalRoleMap(get_group_context(group))
+    prm.assignRoleToPrincipal(role_id, group.principal_name)
 
-def unset_group_local_role(context):
-    _set_group_local_role(context, unset=True)
+def unset_group_local_role(group):
+    role_id = group.group_role
+    prm = IPrincipalRoleMap(get_group_context(group))
+    prm.unsetRoleForPrincipal(role_id, group.principal_name)
+
 
 def dissolveChildGroups(groups, context):
     for group in groups:

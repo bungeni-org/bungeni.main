@@ -16,11 +16,22 @@ from zope.security.proxy import removeSecurityProxy
 
 log = __import__("logging").getLogger("bungeni.core.events")
 
-from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.lifecycleevent import (
+    IObjectCreatedEvent,
+    IObjectModifiedEvent, 
+    IObjectRemovedEvent,
+)
 
 from bungeni.alchemist import Session
+from bungeni.core.workflows.utils import get_group_context
 from bungeni.models import domain
-from bungeni.models.interfaces import IGroup, IGroupMember, IBungeniParliamentaryContent
+from bungeni.models.interfaces import (
+    IGroup, 
+    IGroupMember, 
+    IMemberRole,
+    IBungeniParliamentaryContent,
+)
 from bungeni.utils import register
 
 
@@ -49,5 +60,21 @@ def timestamp(ob, event):
     # causes an ObjectMofiedEvent on head doc to be caught here... thus
     # updating its timestamp. Is this the desired behaviour?
     removeSecurityProxy(ob).timestamp = datetime.datetime.now()
+
+
+@register.handler(adapts=(IMemberRole, IObjectModifiedEvent))
+def member_role_added(member_role, event):
+    if member_role.is_global:
+        prm = IPrincipalRoleMap(get_group_context(member_role.member.group))
+        prm.assignRoleToPrincipal(
+            member_role.role_id, member_role.member.user.login)
+
+
+@register.handler(adapts=(IMemberRole, IObjectRemovedEvent))
+def member_role_deleted(member_role, event):
+    if member_role.is_global:
+        prm = IPrincipalRoleMap(get_group_context(member_role.member.group))
+        prm.unsetRoleForPrincipal(
+            member_role.role_id, member_role.member.user.login)
 
 

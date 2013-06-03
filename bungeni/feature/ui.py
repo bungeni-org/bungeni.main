@@ -123,7 +123,7 @@ def setup_customization_ui():
         
         # plone content menu (for custom types)
         # !+ doc-types were previously being layered on IWorkspaceOrAdminSectionLayer
-        # !+ there was previously no reg for IReportConatiner and one of the member
+        # !+ there was previously no reg for IReportContainer and one of the member
         # containers, plus there was inconsistency in permission for 
         # IOfficeMemberContainer (was bungeni.office.Add).
         register_menu_item(type_key, "Add", "Add %s..." % (type_title), 
