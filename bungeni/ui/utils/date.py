@@ -15,7 +15,7 @@ from zope.i18n.locales import locales
 
 import datetime
 import re
-from bungeni.ui.utils import common
+from bungeni.utils import common
 from bungeni.capi import capi
 
 # date

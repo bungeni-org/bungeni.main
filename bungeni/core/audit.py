@@ -50,8 +50,7 @@ from bungeni.models import domain
 from bungeni.core.interfaces import TranslationCreatedEvent
 from bungeni.core.translation import translate_obj
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
-from bungeni.ui.utils import common
-from bungeni.utils import register
+from bungeni.utils import common, register
 
 
 def _trace_audit_handler(ah):

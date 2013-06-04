@@ -1405,12 +1405,12 @@ class DateFilterWidget(form.PageForm):
         self.widgets = form.setUpWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             form=self, adapters=self.adapters, ignore_request=True)
-
+    
     @form.action(_(u"Ok"), name="ok")
     def handle_ok(self, action, data):
         #Handled by Javascript
         pass
-
+    
     @form.action(_(u"Clear"), name="clear")
     def handle_clear(self, action, data):
         #Handled by Javascript
@@ -1418,9 +1418,7 @@ class DateFilterWidget(form.PageForm):
 
 
 def date_input_search_widget(table_id, field_id):
-    import bungeni.ui.utils.common
-    form = DateFilterWidget(common.get_application(), 
-        bungeni.ui.utils.common.get_request(), 
+    form = DateFilterWidget(common.get_application(), common.get_request(),
         table_id, field_id)
     html = '<div id="date_input_search_widget_%(table_id)s_%(field_id)s" style="display: none;">%(html)s</div>' \
            % {"table_id": table_id,

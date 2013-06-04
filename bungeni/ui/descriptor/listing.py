@@ -37,7 +37,8 @@ from bungeni.models import domain
 from bungeni.models.utils import get_login_user, get_member_of_chamber
 from bungeni.models.interfaces import IOwned
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
-from bungeni.ui.utils import common, date, url
+from bungeni.ui.utils import date, url
+from bungeni.utils import common
 from bungeni.ui.i18n import _
 from bungeni.capi import capi
 
