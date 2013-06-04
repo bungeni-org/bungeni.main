@@ -179,7 +179,7 @@ def get_workspace_roles():
     pg = []
     Allow = zope.securitypolicy.settings.Allow
     for group in groups:
-        context = bungeni.core.workflows.utils.get_group_context(group)
+        context = bungeni.core.workflows.utils.get_group_privilege_extent_context(group)
         prm = zope.component.queryAdapter(
             context, IPrincipalRoleMap, default=None)
         if prm:

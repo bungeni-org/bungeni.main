@@ -542,6 +542,7 @@ class PasswordRestoreLink(object):
 class Group(Principal):
     """An abstract collection of users.
     """
+    privilege_extent = "group"
     principal_type = "group"
     available_dynamic_features = ["audit", "version", "sitting", "address"]
     interface.implements(
@@ -1197,6 +1198,7 @@ class PoliticalGroupMember(GroupMember):
 class Government(Group):
     """A government.
     """
+    privilege_extent = "legislature"
     interface.implements(
         interfaces.IGovernment,
     )
@@ -1237,6 +1239,7 @@ class Office(Group):
     """Parliamentary Office like speakers office, clerks office etc. 
     Internal only.
     """
+    privilege_extent = "chamber"
     interface.implements(
         interfaces.IOffice,
     )

@@ -46,28 +46,42 @@
   </define>
   <define name="EVENT">
     <element name="event">
-      <ref name="TYPE.attlist"/>
+      <ref name="TYPE.common_attlist"/>
     </element>
   </define>
   <define name="DOC">
     <element name="doc">
-      <ref name="TYPE.attlist"/>
+      <ref name="TYPE.common_attlist"/>
     </element>
   </define>
   <define name="GROUP">
     <element name="group">
-      <ref name="TYPE.attlist"/>
+      <ref name="TYPE.common_attlist"/>
+      <optional>
+        <!--
+          how far-reaching are the privileges from being a member of the group,
+          the group itself, the group's chamber, or the entire legislature?
+        -->
+        <attribute name="privilege_extent">
+          <choice>
+            <value>legislature</value>
+            <value>chamber</value>
+            <value>group</value>
+          </choice>
+        </attribute>
+      </optional>
       <zeroOrMore>
+        <!-- default is "group" -->
         <ref name="MEMBER"/>
       </zeroOrMore>
     </element>
   </define>
   <define name="MEMBER">
     <element name="member">
-      <ref name="TYPE.attlist"/>
+      <ref name="TYPE.common_attlist"/>
     </element>
   </define>
-  <define name="TYPE.attlist">
+  <define name="TYPE.common_attlist">
     <!-- the type name used throughout the system as the type key -->
     <attribute name="name">
       <ref name="SYMBOL_NAME"/>

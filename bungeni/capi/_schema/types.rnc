@@ -29,17 +29,20 @@ grammar {
         (EVENT* & DOC* & GROUP*)
     }
     
-    EVENT = element event { TYPE.attlist }
-    DOC = element doc { TYPE.attlist }
+    EVENT = element event { TYPE.common_attlist }
+    DOC = element doc { TYPE.common_attlist }
     GROUP = element group { 
-        TYPE.attlist,
+        TYPE.common_attlist,
+        # how far-reaching are the privileges from being a member of the group,
+        # the group itself, the group's chamber, or the entire legislature?
+        attribute privilege_extent { "legislature" | "chamber" | "group" }?, # default is "group"
         
         MEMBER*
     }
-    MEMBER = element member { TYPE.attlist }
+    MEMBER = element member { TYPE.common_attlist }
     
     
-    TYPE.attlist =
+    TYPE.common_attlist =
         
         # the type name used throughout the system as the type key
         attribute name { SYMBOL_NAME }, 

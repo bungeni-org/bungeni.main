@@ -55,7 +55,7 @@ from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import register, naming
 from bungeni.capi import capi
-from bungeni.core.workflows.utils import get_group_context
+from bungeni.core.workflows.utils import get_group_privilege_extent_context
 TRUE_VALS = "true", "1"
 
 
@@ -593,7 +593,7 @@ class EditForm(BaseForm, ui.EditForm):
 class GroupEditForm(EditForm):
     def _do_save(self, data):
         group_role_changed = False
-        prm = IPrincipalRoleMap(get_group_context(self.context))
+        prm = IPrincipalRoleMap(get_group_privilege_extent_context(self.context))
         if (data["group_role"] != self.context.group_role):
             if (prm.getSetting(self.context.group_role,
                 self.context.principal_name) == Allow):

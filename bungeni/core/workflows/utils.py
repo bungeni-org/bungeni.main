@@ -10,6 +10,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
 
+from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.core.workflow.interfaces import IWorkflowController, \
     NoTransitionAvailableError, InvalidStateError
@@ -186,36 +187,32 @@ def set_doc_type_number(doc):
     doc.type_number = dbutils.get_max_type_number(doc.__class__) + 1
 
 
-
 is_pi_scheduled = dbutils.is_pi_scheduled
 
-
 unschedule_doc = dbutils.unschedule_doc
+
 
 # groups
 # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
 
-def get_group_context(context):
-    # !+DECLARATIVE_ROOT_CONTAINER this should be part of the group type declaration
-    # !+CUSTOM
-    if interfaces.IOffice.providedBy(context):
-        trace_label, gcontext = "IOffice", get_chamber_for_group(context)
-    elif interfaces.IGovernment.providedBy(context):
-        # !+LEGISLATURE, GLOBAL? 
-        trace_label, gcontext = "IGovernment", common.get_application()
-    else:
-        trace_label, gcontext = "INada", context
-    print "!+GET_GROUP_CONTEXT [%s] (%s) -> %s" % (trace_label, context, gcontext)
-    return gcontext
+def get_group_privilege_extent_context(group):
+    privilege_extent = removeSecurityProxy(group.__class__).privilege_extent
+    if privilege_extent == "group":
+        return group
+    elif privilege_extent == "chamber":
+        return get_chamber_for_group(group)
+    elif privilege_extent == "legislature":
+        return common.get_application()
+    raise ValueError(group)
 
 def set_group_local_role(group):
     role_id = group.group_role
-    prm = IPrincipalRoleMap(get_group_context(group))
+    prm = IPrincipalRoleMap(get_group_privilege_extent_context(group))
     prm.assignRoleToPrincipal(role_id, group.principal_name)
 
 def unset_group_local_role(group):
     role_id = group.group_role
-    prm = IPrincipalRoleMap(get_group_context(group))
+    prm = IPrincipalRoleMap(get_group_privilege_extent_context(group))
     prm.unsetRoleForPrincipal(role_id, group.principal_name)
 
 

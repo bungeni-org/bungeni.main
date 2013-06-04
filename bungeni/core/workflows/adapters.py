@@ -131,6 +131,7 @@ def register_custom_types():
     # group/member types
     for egroup in enabled_elems(etypes.iterchildren("group")):
         group_type_key, ti = type_info.register_new_custom_type(*parse_elem(egroup))
+        ti.domain_model.privilege_extent = xas(egroup, "privilege_extent", "group")
         for emember in enabled_elems(egroup.iterchildren("member")):
             type_key, ti = type_info.register_new_custom_type(*parse_elem(emember))
             ti.within_type_key = group_type_key

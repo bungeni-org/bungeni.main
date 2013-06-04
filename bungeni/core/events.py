@@ -24,7 +24,7 @@ from zope.lifecycleevent import (
 )
 
 from bungeni.alchemist import Session
-from bungeni.core.workflows.utils import get_group_context
+from bungeni.core.workflows.utils import get_group_privilege_extent_context
 from bungeni.models import domain
 from bungeni.models.interfaces import (
     IGroup, 
@@ -65,7 +65,8 @@ def timestamp(ob, event):
 @register.handler(adapts=(IMemberRole, IObjectModifiedEvent))
 def member_role_added(member_role, event):
     if member_role.is_global:
-        prm = IPrincipalRoleMap(get_group_context(member_role.member.group))
+        prm = IPrincipalRoleMap(
+            get_group_privilege_extent_context(member_role.member.group))
         prm.assignRoleToPrincipal(
             member_role.role_id, member_role.member.user.login)
 
@@ -73,7 +74,8 @@ def member_role_added(member_role, event):
 @register.handler(adapts=(IMemberRole, IObjectRemovedEvent))
 def member_role_deleted(member_role, event):
     if member_role.is_global:
-        prm = IPrincipalRoleMap(get_group_context(member_role.member.group))
+        prm = IPrincipalRoleMap(
+            get_group_privilege_extent_context(member_role.member.group))
         prm.unsetRoleForPrincipal(
             member_role.role_id, member_role.member.user.login)
 
