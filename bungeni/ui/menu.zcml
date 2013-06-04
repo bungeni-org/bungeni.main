@@ -186,6 +186,23 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="31"
     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMemberRole"
+        action="edit"
+        title="Edit member role"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.member_role.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMemberRole"
+        action="delete"
+        title="Delete member role"
+        order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.member_role.Delete"
+    />
+
     <browser:menuItem menu="additems"
         for="bungeni.feature.interfaces.IFeatureSignatory"
         title="Add signatory..."

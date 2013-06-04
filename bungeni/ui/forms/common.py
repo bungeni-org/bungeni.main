@@ -41,13 +41,12 @@ from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.language import CurrentLanguageVocabulary, get_language_by_name
 from bungeni.core.workflows.utils import set_group_local_role, unset_group_local_role
-from bungeni.models.interfaces import IVersion, IBungeniContent, \
-    IAttachmentContainer #, ISittingContainer
+from bungeni.models.interfaces import IVersion, IAttachmentContainer #, IBungeniContent, ISittingContainer
 from bungeni.models import domain
 from bungeni.models.utils import get_login_user
 from bungeni.feature.interfaces import ISignatoryManager
 from bungeni.ui.forms.fields import filterFields
-from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
+from bungeni.ui.interfaces import IBungeniSkin, IFormAddLayer, IFormEditLayer, \
     IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer
 from bungeni.ui.i18n import _, translate
 from bungeni.ui import browser
@@ -304,6 +303,10 @@ class AddForm(BaseForm, ui.AddForm):
     interface.implements(ILocation, IDCDescriptiveProperties)
     description = None
     
+    def __init__(self, *args):
+        super(AddForm, self).__init__(*args)
+        interface.alsoProvides(self.request, IFormAddLayer)
+    
     # !+ why the difference, converge to AddForm.@domain_model !
     def getDomainModel(self):
         return getattr(self.context, "domain_model", self.context.__class__)
@@ -461,11 +464,12 @@ class EditForm(BaseForm, ui.EditForm):
     def __init__(self, *args):
         # !+view/viewlet(mr, jul-2011)
         super(EditForm, self).__init__(*args)
+        # !+IFormEditLayer(mr, jun-2013) why only for IBungeniContent?
         # For bungeni content, mark the request that we are in edit mode e.g. 
         # useful for when editing a question's response, but not wanting to 
         # offer option to submit the response while in response edit mode. 
-        if IBungeniContent.providedBy(self.context): # and self.mode=="edit"
-            interface.alsoProvides(self.request, IFormEditLayer)
+        #if IBungeniContent.providedBy(self.context): # and self.mode=="edit"
+        interface.alsoProvides(self.request, IFormEditLayer)
     
     # !+EDIT_FORM_TRANSLATION(mr, feb-2013) what is all this conditional 
     # translation-related logic here? It seems to be debris from some earlier 

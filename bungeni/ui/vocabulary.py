@@ -44,6 +44,8 @@ from bungeni.models.interfaces import (
     IGroupMember,
     IGroupAssignment,
     IGroupAssignmentContainer,
+    IMemberRole,
+    IMemberRoleContainer,
     IDoc,
     ITranslatable,
     ISignatory,
@@ -60,10 +62,10 @@ from bungeni.core.translation import translate_obj
 from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
 
-from bungeni.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
 from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
-from bungeni.utils import misc, naming
+from bungeni.ui.utils.common import in_add_mode
+from bungeni.utils import common, misc, naming
 
 try:
     import json
@@ -236,13 +238,14 @@ class GroupRoleFactory(BaseVocabularyFactory):
         for name, role in roles:
             # Roles that must not be assigned to users in an office
             # !+ROLE_QUALIFIER need better role qualifiers, to make this dynamic from conf
-            if name in ["bungeni.Anonymous",
-                        "bungeni.Authenticated",
-                        "bungeni.Drafter",
-                        "bungeni.Owner",
-                        "bungeni.Signatory",
-                        "zope.Manager",
-                        "bungeni.Admin",
+            if name in [
+                    "bungeni.Anonymous",
+                    "bungeni.Authenticated",
+                    "bungeni.Drafter",
+                    "bungeni.Owner",
+                    "bungeni.Signatory",
+                    "zope.Manager",
+                    "bungeni.Admin",
                 ]:
                 continue
             if not ISubRoleAnnotations(role).is_sub_role:
@@ -254,17 +257,32 @@ component.provideUtility(GroupRoleFactory(), IVocabularyFactory, "group_role")
 
 class GroupSubRoleFactory(BaseVocabularyFactory):
     def __call__(self, context):
-        terms = []
+        if IMemberRoleContainer.providedBy(context):
+            # !+ IN_ADD_MODE = True ?
+            member = removeSecurityProxy(context).__parent__
+        elif IMemberRole.providedBy(context):
+            member = removeSecurityProxy(context).member
+        else:
+            raise ValueError("Vocabulary group_sub_role unexpected context: %s", context)
+        ''' !+
         while not IGroup.providedBy(context):
             context = (getattr(context, "group", None) or 
                 getattr(context, "__parent__", None))
             if not context:
                 raise NotImplementedError("Context does not implement IGroup")
         group = removeSecurityProxy(context)
-        assert interfaces.IGroup.providedBy(group), group
+        '''
+        group = member.group
+        assert IGroup.providedBy(group), group
+        # if in edit mode, exclude any sub roles this member already has
+        IN_ADD_MODE = in_add_mode()
+        member_sub_role_ids = [ mr.role_id for mr in member.sub_roles ]
+        terms = []
         role = getUtility(IRole, group.group_role)
-        for sub_role in ISubRoleAnnotations(role).sub_roles:
-            terms.append(vocabulary.SimpleTerm(sub_role, sub_role, sub_role))
+        for sub_role_id in ISubRoleAnnotations(role).sub_roles:
+            if IN_ADD_MODE and sub_role_id in member_sub_role_ids:
+                continue # member already has this sub role
+            terms.append(vocabulary.SimpleTerm(sub_role_id, sub_role_id, sub_role_id))
         return vocabulary.SimpleVocabulary(terms)
 group_sub_role_factory = GroupSubRoleFactory()
 component.provideUtility(group_sub_role_factory, IVocabularyFactory, "group_sub_role")

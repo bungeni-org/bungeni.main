@@ -22,8 +22,6 @@ import zope.lifecycleevent
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
 from bungeni.utils import error, misc
-from bungeni.ui.interfaces import IFormEditLayer
-from bungeni.ui.utils import common
 
 
 GRANT, DENY = 1, 0
@@ -34,16 +32,6 @@ IntAsSetting = {
     1: Allow,
     0: Deny
 }
-
-
-def in_edit_mode():
-    """Is current UI view in mode "edit" i.e. are we modifying bungeni content?
-    
-    As general practice, to avoid user surprises, we do not allow a workflow 
-    transition when UI is displaying the doc in "edit" mode (and possibly with
-    unsaved modifications).
-    """
-    return IFormEditLayer.providedBy(common.get_request())
 
 
 class Facet(object):
@@ -751,7 +739,11 @@ class WorkflowController(object):
         # now filter these transitions to retrieve all possible
         # transitions in this context, and return their ids
         filtered_transitions = []
-        IN_EDIT_MODE = in_edit_mode()
+        # as general practice, to avoid user surprises, we do not allow a 
+        # workflow transition when UI is displaying the doc in "edit" mode 
+        # (and possibly with unsaved modifications).
+        from bungeni.ui.utils import common
+        IN_EDIT_MODE = common.in_edit_mode()
         for transition in transitions:
             if trigger_ifilter is not None and transition.trigger != trigger_ifilter:
                 continue

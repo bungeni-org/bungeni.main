@@ -7,7 +7,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.utils import date
-from bungeni.ui.utils.common import get_request
+from bungeni.utils.common import get_request
 from bungeni.ui.i18n import _
 
 from bungeni.core.workflow.states import get_object_state

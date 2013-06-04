@@ -26,21 +26,6 @@ from bungeni.capi import capi
 from bungeni.utils import common
 
 
-# !+ move to utils.common
-
-
-def get_request():
-    """ () -> either(IRequest, None)
-    
-    Raises zope.security.interfaces.NoInteraction if no interaction (and no 
-    request).
-    """
-    # use queryInteraction() to raise 
-    interaction = zope.security.management.getInteraction()
-    for participation in interaction.participations:
-        if zope.publisher.interfaces.IRequest.providedBy(participation):
-            return participation
-
 ''' !+REQUEST_CACHED(mr, sep-2011) experimetally replacing with a different 
     implementation that does not require that the request be already 
     initialized.
@@ -105,7 +90,7 @@ def get_traversed_context(request=None, index=-1):
     By default, we pick off the last traversed (as per "index").
     """
     if request is None:
-        request = get_request()
+        request = common.get_request()
     if request is not None:
         return IAnnotations(request).get("contexts")[index]
 
@@ -226,7 +211,7 @@ def get_request_context_roles(request):
     - handles case when user is not authenticated
     - handles case for when user is "admin"
     """
-    request = request or get_request()
+    request = request or common.get_request()
     if request is None:
         context = None
         principal = None
@@ -252,17 +237,28 @@ def get_request_context_roles(request):
     return roles
 
 
+def in_add_mode():
+    """Is current UI view in mode "add" i.e. are we adding content?
+    """
+    return bungeni.ui.interfaces.IFormAddLayer.providedBy(common.get_request())
+
+def in_edit_mode():
+    """Is current UI view in mode "edit" i.e. are we modifying content?
+    """
+    return bungeni.ui.interfaces.IFormEditLayer.providedBy(common.get_request())
+
 def is_public_layer(request):
     """Is this request within one of the "public" sections?
     """
     return bungeni.ui.interfaces.IAnonymousSectionLayer.providedBy(request)
 
-    
+
 def is_admin(context):
     """Check if current interaction has admin privileges on specified context
     """
     return zope.security.management.getInteraction().checkPermission(
         "zope.ManageSite", context)
+
 
 sort_dir_funcs = dict(asc=sql.asc, desc=sql.desc)
 def list_container_items(container_instance, permission=None):

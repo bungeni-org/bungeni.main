@@ -14,8 +14,8 @@ log = __import__("logging").getLogger("bungeni.ui.utils.url")
 import sys
 import zope
 
-from bungeni.ui.utils import common, debug
-from bungeni.utils import register
+from bungeni.ui.utils import debug
+from bungeni.utils import common, register
 from ploned.ui.interfaces import IBodyCSS
 from bungeni.models import utils
 
