@@ -2,17 +2,18 @@
 
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.app.component.hooks import getSite
+from zope.security.proxy import removeSecurityProxy
 from zope.component import getUtility
 import bungeni.ui.utils as ui_utils
 from bungeni.alchemist.container import stringKey
-from bungeni.alchemist import Session
-from bungeni.models.domain import Doc
 from bungeni.models.roles import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 from bungeni.core import workspace
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.core.interfaces import IWorkspaceTabsUtility
+from bungeni.utils import naming
 
 
+''' !+UNUSED
 class CustomAbsoluteURL(AbsoluteURL):
     section = ""
     subsection = ""
@@ -21,16 +22,15 @@ class CustomAbsoluteURL(AbsoluteURL):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
         return '%s/%s/%s/%s' % (base_url, self.section, self.subsection,\
                stringKey(self.context))
-
-    __call__ = __str__
     
+    __call__ = __str__
+'''
 
-""" Workspace section
-"""
 
 class WorkspaceAbsoluteURLView(AbsoluteURL):
-    
-    subsection = ''
+    """Workspace section.
+    """
+    subsection = ""
     
     def __str__(self):
         tabs_utility = getUtility(IWorkspaceTabsUtility)
@@ -51,6 +51,8 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
 
 
     
+''' !+MEMBERS
+
 """ Members section
 """
 class MembersAbsoluteURLView(CustomAbsoluteURL):
@@ -64,6 +66,8 @@ class PoliticalGroupMembersAbsoluteURLView(CustomAbsoluteURL):
     """    
     section = "members"
     subsection = "political-groups"
+'''
+
 
 
 ''' !+ARCHIVE
@@ -179,119 +183,57 @@ class AgendaItemArchiveAbsoluteURLView(ArchiveSectionParliamentItem):
 
 
 
-""" Admin section
-"""
-class ParliamentAdminAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for chambers in admin section
-    """   
-    def __str__(self):
-        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/chambers/%s' % (base_url, stringKey(self.context))
+# Admin section
 
-    __call__ = __str__
-    
-
-class AdminSectionParliamentItem(AbsoluteURL):
-    """ Custom absolute url for parliament items in admin section
+class DocAdminSectionURLView(AbsoluteURL):
+    """Custom absolute url for doc in admin section
     """
-    subsection = ""
-    
     def __str__(self):
+        doc = removeSecurityProxy(self.context)
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
-               (base_url, self.context.chamber_id, self.subsection, stringKey(self.context))
-
+        return "%s/admin/content/chambers/obj-%s/%s/%s" % (
+                    base_url, 
+                    doc.chamber_id, 
+                    naming.plural(naming.polymorphic_identity(type(doc))), 
+                    stringKey(doc))
     __call__ = __str__
 
-
-class QuestionAdminAbsoluteURLView(AdminSectionParliamentItem):
-    """ Custom absolute url for questions in admin section
+class GroupAdminAbsoluteURLView(AbsoluteURL):
+    """Custom absolute url for groups in admin section
     """
-    subsection = "questions"
-    
-    
-class ReportAdminAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for reports in admin section
-    """
-    subsection = "preports"
-    
+    def _group_url_path(self, group):
+        url_comps = []
+        group = removeSecurityProxy(group)
+        while group:
+            url_comps.insert(0, "%s/%s" % (
+                    naming.plural(naming.polymorphic_identity(type(group))),
+                    stringKey(group)))
+            group = removeSecurityProxy(group.parent_group)
+        return "/".join(url_comps)
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
-               (base_url, self.context.group_id, self.subsection, stringKey(self.context))
-
+        return "%s/admin/content/%s" % (base_url, self._group_url_path(self.context))
     __call__ = __str__
 
-
-class TabledDocumentAdminAbsoluteURLView(AdminSectionParliamentItem):
-    """ Custom absolute url for tabled documents in admin section
+class GroupMemberAdminAbsoluteURLView(GroupAdminAbsoluteURLView):
+    """Custom absolute url for group members in admin section
     """
-    subsection = "tableddocuments"
-    
-
-class MotionAdminAbsoluteURLView(AdminSectionParliamentItem):
-    """ Custom absolute url for motions in admin section
-    """
-    subsection = "motions"
-    
-
-class BillAdminAbsoluteURLView(AdminSectionParliamentItem):
-    """ Custom absolute url for bills in admin section
-    """
-    subsection = "bills"
-    
-    
-class CommitteeAdminAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for committees in admin section
-    """
-    subsection = "committees"
-    
     def __str__(self):
+        member = removeSecurityProxy(self.context)
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
-               (base_url, self.context.parent_group_id, self.subsection, stringKey(self.context))
-
+        return "%s/%s/%s/%s" % (
+            base_url,
+            super(GroupMemberAdminAbsoluteURLView, self)._group_url_path(member.group),
+            naming.plural(naming.polymorphic_identity(type(member))),
+            stringKey(member))
     __call__ = __str__
-    
-    
-class MemberAdminAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for parliament members in admin section
-    """
-    subsection = "members"
-    
-    def __str__(self):
-        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/chambers/obj-%s/%s/%s' % \
-               (base_url, self.context.group_id, self.subsection, stringKey(self.context))
-
-    __call__ = __str__
-
-
-class OfficeAdminAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for offices in admin section
-    """
-    
-    def __str__(self):
-        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/offices/%s' % \
-               (base_url, stringKey(self.context))
-
-    __call__ = __str__
-
-
-class AgendaItemAdminAbsoluteURLView(AdminSectionParliamentItem):
-    """ Custom absolute url for agenda items in admin section
-    """
-    subsection = "agenda_items"
-    
 
 class UserAdminAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for users in admin section
+    """Custom absolute url for users in admin section.
     """
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/users/%s' % (base_url, stringKey(self.context))
-
+        return "%s/admin/content/users/%s" % (base_url, stringKey(self.context))
     __call__ = __str__
-    
+
 

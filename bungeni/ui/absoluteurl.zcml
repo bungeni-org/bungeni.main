@@ -60,22 +60,20 @@
         />
     
     
-    <!-- Members section -->
-
+    <!-- Members section --><!-- !+MEMBERS
     <browser:view name="get_url"
         for="bungeni.models.interfaces.IMember"
         class=".absoluteurl.MembersAbsoluteURLView"
         layer=".interfaces.IMembersSectionLayer"
         permission="zope.Public"
     />
-
     <browser:view name="get_url"
         for="bungeni.models.interfaces.IPoliticalGroup"
         class=".absoluteurl.PoliticalGroupMembersAbsoluteURLView"
         layer=".interfaces.IMembersSectionLayer"
         permission="zope.Public"
     />
-        
+    -->
  
  
      <!-- Archive section -->
@@ -156,14 +154,6 @@
     />
     
     <browser:view
-        for="bungeni.models.interfaces.IOffice"
-        name="get_url"
-        class=".absoluteurl.OfficeArchiveAbsoluteURLView"
-        layer=".interfaces.IArchiveSectionLayer"
-        permission="zope.Public"
-        />
-
-    <browser:view
         for="bungeni.models.interfaces.IAgendaItem"
         name="get_url"
         class=".absoluteurl.AgendaItemArchiveAbsoluteURLView"
@@ -171,100 +161,33 @@
         permission="zope.Public"
         />
     -->
-        
+    
     
     <!-- Admin section -->
-
-    <browser:view
-        for="bungeni.models.interfaces.IChamber"
+    <browser:view for="bungeni.models.interfaces.IGroup"
         name="get_url"
-        class=".absoluteurl.ParliamentAdminAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />
-
-    <!-- !+CUSTOM
-    <browser:view
-        for="bungeni.models.interfaces.IQuestion"
-        name="get_url"
-        class=".absoluteurl.QuestionAdminAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />
-    -->
-    
-    <browser:view
-        for="bungeni.models.interfaces.IReport"
-        name="get_url"
-        class=".absoluteurl.ReportAdminAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />    
-
-    <!-- !+CUSTOM
-    <browser:view
-        for="bungeni.models.interfaces.ITabledDocument"
-        name="get_url"
-        class=".absoluteurl.TabledDocumentAdminAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />
-    
-    <browser:view
-        for="bungeni.models.interfaces.IMotion"
-        name="get_url"
-        class=".absoluteurl.MotionAdminAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />
-
-    <browser:view
-        for="bungeni.models.interfaces.IBill"
-        name="get_url"
-        class=".absoluteurl.BillAdminAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />
-    -->
-    
-    <browser:view
-        for="bungeni.models.interfaces.ICommittee"
-        name="get_url"
-        class=".absoluteurl.CommitteeAdminAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />
-
-    <browser:view name="get_url"
-        for="bungeni.models.interfaces.IMember"
-        class=".absoluteurl.MemberAdminAbsoluteURLView"
+        class=".absoluteurl.GroupAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
     />
-    
-    <browser:view
-        for="bungeni.models.interfaces.IOffice"
+    <browser:view for="bungeni.models.interfaces.IDoc"
         name="get_url"
-        class=".absoluteurl.OfficeAdminAbsoluteURLView"
+        class=".absoluteurl.DocAdminSectionURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
-        />
-
-    <browser:view
-        for="bungeni.models.interfaces.IAgendaItem"
-        name="get_url"
-        class=".absoluteurl.AgendaItemAdminAbsoluteURLView"
+    />
+    <browser:view name="get_url"
+        for="bungeni.models.interfaces.IGroupMember"
+        class=".absoluteurl.GroupMemberAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
-        />
-
-    <browser:view
-        for="bungeni.models.interfaces.IBungeniUser"
+    />
+    <browser:view for="bungeni.models.interfaces.IBungeniUser"
         name="get_url"
         class=".absoluteurl.UserAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
-        />
+    />
 
 </configure>
 
