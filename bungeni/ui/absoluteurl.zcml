@@ -43,21 +43,16 @@
         />
     -->
     
-    <browser:view
-        for="bungeni.models.interfaces.IAgendaItem"
-        name="get_url"
+    <browser:view name="get_url" for="bungeni.models.interfaces.IAgendaItem"
         class=".absoluteurl.WorkspaceAbsoluteURLView"
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         permission="zope.Public"
-        />
-
-    <browser:view
-        for="bungeni.models.interfaces.ICommittee"
-        name="get_url"
+    />
+    <browser:view name="get_url" for="bungeni.models.interfaces.ICommittee"
         class=".absoluteurl.WorkspaceAbsoluteURLView"
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         permission="zope.Public"
-        />
+    />
     
     
     <!-- Members section --><!-- !+MEMBERS
@@ -164,26 +159,22 @@
     
     
     <!-- Admin section -->
-    <browser:view for="bungeni.models.interfaces.IGroup"
-        name="get_url"
+    <browser:view name="get_url" for="bungeni.models.interfaces.IGroup"
         class=".absoluteurl.GroupAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
     />
-    <browser:view for="bungeni.models.interfaces.IDoc"
-        name="get_url"
+    <browser:view name="get_url" for="bungeni.models.interfaces.IDoc"
         class=".absoluteurl.DocAdminSectionURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
     />
-    <browser:view name="get_url"
-        for="bungeni.models.interfaces.IGroupMember"
+    <browser:view name="get_url" for="bungeni.models.interfaces.IGroupMember"
         class=".absoluteurl.GroupMemberAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"
     />
-    <browser:view for="bungeni.models.interfaces.IBungeniUser"
-        name="get_url"
+    <browser:view name="get_url" for="bungeni.models.interfaces.IBungeniUser"
         class=".absoluteurl.UserAdminAbsoluteURLView"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.Public"

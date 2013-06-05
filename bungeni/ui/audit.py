@@ -412,6 +412,7 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
                 dc and dc.title or self.context.title
             )
 
+# !+TIMELINE_VIEWLET parametrize audit feature further (for timeline vs auditlog)
 @register.viewlet(IFeatureAudit, manager=ISubFormViewletManager, 
     name="keep-zca-happy-timeline", protect=register.PROTECT_VIEWLET_PUBLIC)
 class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
@@ -425,6 +426,7 @@ class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
         browser.BungeniItemsViewlet.__init__(self, context, request, view, manager)
         AuditLogMixin.__init__(self)
         self.view_title = _(self.__class__.view_title)
+
 
 
 

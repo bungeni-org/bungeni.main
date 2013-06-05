@@ -18,7 +18,7 @@ from z3c.traverser.traverser import NameTraverserPlugin
 from bungeni.alchemist import Session
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.workflows.utils import view_permission
-from bungeni.core.workflow.interfaces import IWorkflowController
+from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 from bungeni.models import domain
 from bungeni.models.interfaces import IAlchemistContainer
 from bungeni.feature.interfaces import IFeatureAudit
@@ -77,7 +77,9 @@ class TimelineRSSValues(RSSValues):
     """
     @property
     def values(self):
-        return domain.get_changes(self.context, "modify", "add")
+        param_audit_actions = \
+            IWorkflow(self.context).get_feature("audit").params["audit_actions"]
+        return domain.get_changes(self.context, *param_audit_action)
 
 
 class DebateTraverserPlugin(NameTraverserPlugin):
