@@ -42,21 +42,21 @@ def formatted_user_email(user):
     return '"%s %s" <%s>' % (user.first_name, user.last_name, user.email)
 
 
-def assign_role(role_id, principal_id, context):
+def set_role(role_id, principal_name, context):
     """Add or activate implied role on this context, for implied principal.
     !+check if already defined and active, inactive?
     !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
     """
     log.debug("Assigning role [%s] to principal [%s] on [%s]", 
-        role_id, principal_id, context)
-    # throws IntegrityError when principal_id is None
-    IPrincipalRoleMap(context).assignRoleToPrincipal(role_id, principal_id)
+        role_id, principal_name, context)
+    # throws IntegrityError when principal_name is None
+    IPrincipalRoleMap(context).assignRoleToPrincipal(role_id, principal_name)
 
 
-def unset_role(role_id, principal_id, context):
+def unset_role(role_id, principal_name, context):
     log.debug("Unsetting role [%s] for principal [%s] on [%s]", 
-        role_id, principal_id, context)
-    IPrincipalRoleMap(context).unsetRoleForPrincipal(role_id, principal_id)
+        role_id, principal_name, context)
+    IPrincipalRoleMap(context).unsetRoleForPrincipal(role_id, principal_name)
 
 
 def assign_ownership(context):
@@ -74,7 +74,7 @@ def assign_ownership(context):
     current_user_login = common.get_request_login()
     log.debug("assign_ownership: role %r to user %r on [%s]" % (
         "bungeni.Drafter", current_user_login, context))
-    assign_role("bungeni.Drafter", current_user_login, context)
+    set_role("bungeni.Drafter", current_user_login, context)
     
     # bungeni.Owner - selected types
     owner_login = None
@@ -85,7 +85,7 @@ def assign_ownership(context):
     if owner_login is not None:
         log.debug("assign_ownership: role %r to user %r on [%s]" % (
             "bungeni.Owner", owner_login, context))
-        assign_role("bungeni.Owner", owner_login, context)
+        set_role("bungeni.Owner", owner_login, context)
     else:
         log.warn("assign_ownership: NO owner could be determined from [%s] - "
             "NOT assigning role %r to any user" % (context, "bungeni.Owner"))
@@ -206,14 +206,12 @@ def get_group_privilege_extent_context(group):
     raise ValueError(group)
 
 def set_group_local_role(group):
-    role_id = group.group_role
-    prm = IPrincipalRoleMap(get_group_privilege_extent_context(group))
-    prm.assignRoleToPrincipal(role_id, group.principal_name)
+    set_role(group.group_role, group.principal_name, 
+        get_group_privilege_extent_context(group))
 
 def unset_group_local_role(group):
-    role_id = group.group_role
-    prm = IPrincipalRoleMap(get_group_privilege_extent_context(group))
-    prm.unsetRoleForPrincipal(role_id, group.principal_name)
+    unset_role(group.group_role, group.principal_name, 
+        get_group_privilege_extent_context(group))
 
 
 def dissolveChildGroups(groups, context):
