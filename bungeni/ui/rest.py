@@ -25,7 +25,7 @@ class Users(REST):
     
     def GET(self):
         if "auth" in self.request.keys():
-            cols = [user.c.user_id ]
+            cols = [user.c.user_id]
             if self.request["auth"] != "None":
                 cols.extend([user.c.password, user.c.salt])
             session = Session()
@@ -44,12 +44,12 @@ class Users(REST):
 
         elif "login" in self.request.keys():
             session = Session()
-            user = session.query(domain.User).filter(
+            usr = session.query(domain.User).filter(
                 sa.and_(
                     domain.User.login == self.request["login"],
                     domain.User.active_p == "A")
                 ).one()
-            return self.json_response(user)       
+            return self.json_response(usr)       
         elif "user_name" in self.request.keys():
             session = Session()
             user_values = session.query(domain.User).filter(
@@ -197,12 +197,12 @@ class Groups(REST):
                 ).all()
             data ={}
             if len(group_values) == 1:
-                group = group_values[0]
+                grp = group_values[0]
                 data = {
-                    "principal_name": group.principal_name,
-                    "groupid" :  group.principal_name,
-                    "title" : group.short_name or u"",
-                    "description" : group.description or u"",
+                    "principal_name": grp.principal_name,
+                    "groupid" :  grp.principal_name,
+                    "title" : grp.short_name or u"",
+                    "description" : grp.description or u"",
                     }
             return self.json_response(data) 
         elif "user_name" in self.request.keys():
@@ -210,11 +210,11 @@ class Groups(REST):
                 domain.Group.principal_name == self.request["user_name"]).all()
             data ={}
             if len(group_values) == 1:
-                group = group_values[0]
+                grp = group_values[0]
                 data =  {
-                    "groupid" :  group.principal_name,
-                    "title" : group.short_name or u"",
-                    "description" : group.description or u"",
+                    "groupid" :  grp.principal_name,
+                    "title" : grp.short_name or u"",
+                    "description" : grp.description or u"",
                     }
             return self.json_response(data)                
         else:
