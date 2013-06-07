@@ -229,19 +229,20 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
             if xas(descriptor_elem, "sort_dir"): # default cls.sort_dir: "desc"
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
             update_new_descriptor_cls_from_ti(ti)
-        
-        # finish model/descriptor setup from feature configuration
-        for feature in ti.workflow.features:
-            feature.setup_ui(ti.domain_model)
-        # custom container viewlets
-        for i, ic in enumerate(ti.descriptor_model.info_containers):
-            if ic.viewlet:
-                sfv_cls = new_container_sub_form_viewlet_cls(ti.type_key, ic)
-    
     else:
         # non-custom
         cls = update_descriptor_cls(type_key, order, 
             fields, info_containers, constraints, validations)
+    
+    # finish model/descriptor setup from feature configuration
+    if ti.workflow:
+        for feature in ti.workflow.features:
+            feature.setup_ui(ti.domain_model)
+    # custom container viewlets
+    for i, ic in enumerate(ti.descriptor_model.info_containers):
+        if ic.viewlet:
+            sfv_cls = new_container_sub_form_viewlet_cls(ti.type_key, ic)
+    
     log.debug("Localized descriptor [%s] %s", type_key, ti)
     return cls
 

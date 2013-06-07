@@ -300,12 +300,12 @@ class DatabaseSource(BaseVocabularyFactory):
     # across DatabaseSource and SpecializedSource to (token, title, value)
     # !+SOURCE_FACTORY(mr, aug-2012) merge DatabaseSource and SpecializedSource 
     # down to only one source factory class.
-    def __init__(self, domain_model, token_field, value_field, 
+    def __init__(self, type_key, token_field, value_field, 
             title_field=None, 
             title_getter=None, 
             order_by=None
         ):
-        self.domain_model = domain_model
+        self.type_key = type_key
         self.token_field = token_field
         self.value_field = value_field
         assert title_field is None or title_getter is None, \
@@ -314,6 +314,10 @@ class DatabaseSource(BaseVocabularyFactory):
         self.title_field = title_field
         self.title_getter = title_getter
         self.order_by = order_by
+    
+    @property
+    def domain_model(self):
+        return capi.get_type_info(self.type_key).domain_model
     
     def construct_query(self, context):
         query = Session().query(self.domain_model)
@@ -338,8 +342,11 @@ class DatabaseSource(BaseVocabularyFactory):
         return vocabulary.SimpleVocabulary(terms)
 
 
+# !+CUSTOM auto-generate a generic vocabulary for every enabled custom type 
+# in the system. keyed on type_key ? 
+# Take title off domain model for the type, or dc adapter for its archetype.
 chamber_factory = DatabaseSource(
-    domain.Chamber, "short_name", "group_id",
+    "chamber", "short_name", "group_id",
     title_getter=lambda ob: "%s (%s-%s)" % (
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
@@ -347,26 +354,28 @@ chamber_factory = DatabaseSource(
 component.provideUtility(chamber_factory, IVocabularyFactory, "chamber")
 
 committee_factory = DatabaseSource(
-    domain.Committee, "short_name", "group_id",
+    "committee", "short_name", "group_id",
     title_getter=lambda ob: get_translated_group_label(ob)
 )
 component.provideUtility(committee_factory, IVocabularyFactory, "committee")
 
+# !+/CUSTOM
+
 
 country_factory = DatabaseSource(
-    domain.Country, "country_id", "country_id",
+    "country", "country_id", "country_id",
     title_field="country_name",
 )
 component.provideUtility(country_factory, IVocabularyFactory, "country")
 
 report_factory = DatabaseSource(
-    domain.Report, "doc_id", "doc_id",
+    "report", "doc_id", "doc_id",
     title_getter=lambda ob: IDCDescriptiveProperties(ob).title
 )
 component.provideUtility(report_factory, IVocabularyFactory, "report")
 
 sitting_factory = DatabaseSource(
-    domain.Sitting, "sitting_id", "sitting_id",
+    "sitting", "sitting_id", "sitting_id",
     title_getter=lambda ob: IDCDescriptiveProperties(ob).title
 )
 component.provideUtility(sitting_factory, IVocabularyFactory, "sitting")
