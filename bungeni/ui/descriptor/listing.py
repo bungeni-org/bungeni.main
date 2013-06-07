@@ -357,14 +357,14 @@ def vocabulary_column(name, title, vocabulary):
             # !+NONE_LOOKUPERROR(mr, jul-2012) probably a vdex, 
             # and getattr(context, name)...
             value = getattr(context, name)
-            m = "LookpError: vocabulary [%s] term value [%s] " \
+            m = "******** LookupError: vocabulary [%s, length:%s] term value [%s] " \
                 "for context [%s.%s]" % (
-                    vocabulary, value, context, name)
+                    vocabulary, len(vocabulary), value, context, name)
+            log.error(m)
             # we should only have a LookupError on a None value (and it is not 
-            # defined in the vocabulary)
-            assert value is None, m
-            log.warn(m)
-            return None
+            # defined in the vocabulary), in which case we return None
+            if value is not None:
+                raise
     return column.GetterColumn(title, getter)
 
 

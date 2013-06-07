@@ -25,7 +25,7 @@ from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IContentViewManager
 
 from bungeni.models import domain, interfaces
-from bungeni.feature.interfaces import IFeatureAttachment, IFeatureSchedule
+from bungeni.feature.interfaces import IFeatureSchedule
 
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
@@ -64,16 +64,16 @@ class AboveContentViewletManager(manager.ViewletManagerBase):
         return [(name, viewlet) for name, viewlet in viewlets if
             viewlet.available]
 
+
 class SubformViewlet(table.AjaxContainerListing):
     """A container listing of the items indicated by "sub_attr_name".
     """
-
     template = ViewPageTemplateFile("templates/generic-sub-container.pt")
-
+    
     def render(self):
         need("yui-datatable")
         return self.template()
-
+    
     def __init__(self, context, request, view, manager):
         # The parent for SubformViewlets is the context (not the view)
         self.__parent__ = context
@@ -84,16 +84,16 @@ class SubformViewlet(table.AjaxContainerListing):
         # return getattr(self, '_parent', self.context)
         self.request = request
         self.manager = manager
-
+    
     sub_attr_name = None
     @property
     def context(self):
         return getattr(self._context, self.sub_attr_name)
-
+    
     @property
     def view_name(self):
         return self.sub_attr_name # self.context.__name__
-
+    
     @property
     def for_display(self):
         return len(self.context) > 0
@@ -131,26 +131,6 @@ class RssLinkViewlet(viewlet.ViewletBase):
 
 #
 
-@register.viewlet(interfaces.IChamber,
-    manager=IContentViewManager,
-    name="bungeni.viewlet.session",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class SessionViewlet(SubformViewlet):
-    sub_attr_name = "sessions"
-    weight = 50
-
-class SignatoriesViewlet(SubformViewlet):
-    sub_attr_name = "signatories"
-
-
-@register.viewlet(interfaces.IChamber,
-    manager=IContentViewManager,
-    name="bungeni.viewlet.member",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class MemberViewlet(SubformViewlet):
-    sub_attr_name = "members"
-    weight = 20
-
 class SittingAttendanceViewlet(SubformViewlet):
     sub_attr_name = "attendance"
     weight = 55
@@ -169,8 +149,6 @@ class SittingScheduleViewlet(SubformViewlet):
     weight = 70
     form_name = _("scheduled items")
 
-class MinistersViewlet(SubformViewlet):
-    sub_attr_name = "ministers"
 
 ''' !+MINISTRY_DOCS(mr, apr-2013)
 class BillsViewlet(SubformViewlet):
@@ -187,68 +165,6 @@ class AgendaItemsViewlet(SubformViewlet):
 class MinistriesViewlet(SubformViewlet):
     sub_attr_name = "ministries"
 
-@register.viewlet(interfaces.IChamber,
-    manager=IContentViewManager,
-    name="bungeni.viewlet.committees",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class CommitteesViewlet(SubformViewlet):
-    sub_attr_name = "committees"
-    weight = 10
-
-class CommitteeStaffViewlet(SubformViewlet):
-    sub_attr_name = "committee_staff"
-
-class CommitteeMembersViewlet(SubformViewlet):
-    sub_attr_name = "committee_members"
-
-
-@register.viewlet(interfaces.IGroup, 
-    manager=ISubFormViewletManager,
-    name="keep-zca-happy-addresses",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class AddressesViewlet(SubformViewlet):
-    sub_attr_name = "addresses"
-    weight = 99
-    @property
-    def form_name(self):
-        return _(u"Contacts")
-
-
-@register.viewlet(interfaces.IChamber,
-    manager=IContentViewManager,
-    name="bungeni.viewlet.political-groups",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class PoliticalGroupsViewlet(SubformViewlet):
-    sub_attr_name = "political_groups"
-    weight = 30
-
-class OfficeMembersViewlet(SubformViewlet):
-    sub_attr_name = "office_members"
-
-
-@register.viewlet(interfaces.IPoliticalGroup,
-    manager=ISubFormViewletManager,
-    name="bungeni.viewlet.political-group-members",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class PoliticalGroupMembersViewlet(SubformViewlet):
-    sub_attr_name = "political_group_members"
-    weight = 10
-
-class SittingsViewlet(SubformViewlet):
-    sub_attr_name = "sittings"
-
-@register.viewlet(IFeatureAttachment,
-    manager=ISubFormViewletManager,
-    name="keep-zca-happy-attachments",
-    protect=register.PROTECT_VIEWLET_PUBLIC)
-class FileListingViewlet(SubformViewlet):
-    """Viewlet to list attachments of a given document (head).
-    """
-    # An Attachment is a record in the attachment table.
-    view_title = "Attachments"
-    view_id = "attachments"
-    weight = 50
-    sub_attr_name = "files"
 
 
 # BungeniAttributeDisplay
@@ -324,7 +240,6 @@ class DocMinutesViewlet(browser.BungeniItemsViewlet):
         if not items:
             self.for_display = False
         return items
-            
     
     def update(self):
         self.items = self._get_items()
@@ -378,17 +293,16 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
                 item["end_date"] = get_relevant_date("end_date")
                 items.append(item)
         return items
-
+    
     def update(self):
         self.items = self._get_items()
-
-
 
 def _get_public_states_for(*tis):
     ps = set()
     for ti in tis:
         ps.update(ti.workflow.get_state_ids(tagged=["public"]))
     return list(ps)
+
 
 class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """A tab with bills, motions etc for an MP 

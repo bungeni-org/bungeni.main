@@ -41,7 +41,7 @@ def apply_customization_workflow(type_key, ti):
         classImplements(domain_model, IWorkflowed)
     # dynamic features from workflow - setup domain/mapping as needed
     for feature in workflow.features:
-        feature.setup(domain_model)
+        feature.setup_model(domain_model)
 
 
 def register_specific_workflow_adapter(ti):

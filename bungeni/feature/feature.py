@@ -22,10 +22,7 @@ from zope.component import getGlobalSiteManager
 import sqlalchemy as sa
 from sqlalchemy.orm import mapper, class_mapper, relation
 from bungeni.alchemist.catalyst import MODEL_MODULE
-from bungeni.alchemist.model import (
-    add_container_property_to_model,
-    mapper_add_relation_vertical_property
-)
+from bungeni.alchemist.model import mapper_add_relation_vertical_property
 from bungeni.alchemist.descriptor import classproperty
 from bungeni.alchemist import utils
 from bungeni.models import domain, schema, interfaces as model_ifaces
@@ -66,6 +63,32 @@ ppv_space_separated_state_ids = ppv_sst
 
 def ppv_int(value, default=None):
     return int(value or default or 0)
+
+
+# containers
+
+def add_info_container_to_descriptor(cls, 
+        container_attr_name, target_type_key, rel_attr_name, indirect_key=None
+    ):
+    """For containers that are defined as part of a feature, need an 
+    InfoContainer instance added to the descriptor (corresponding 
+    bungeni.alchemist.model.add_container_property_to_model() and creation 
+    of SubFormViewlet viewlet are done downstream).
+    """
+    ti = capi.get_type_info(cls)
+    info_containers = ti.descriptor_model.info_containers
+    container_attr_names = [ ci.container_attr_name for ci in info_containers ]
+    assert container_attr_name not in container_attr_names, \
+        (container_attr_name, container_attr_names)
+    from bungeni.ui.descriptor.localization import InfoContainer
+    # !+INFO_CONTAINER_SEQ for "feature" containers, we remember a "smallish" 
+    # seq number, so that we can sort later, and they order before those from 
+    # explicit "container" 
+    seq = len(info_containers)
+    # note: feature-bound containers always get a viewlet
+    info_containers.append(
+        InfoContainer(container_attr_name, target_type_key, rel_attr_name, 
+            indirect_key, seq, "feature", viewlet=True))
 
 
 # Base Workflow Feature
@@ -113,7 +136,7 @@ class Feature(object):
             "Feature %r not one that is available %s for this type %s" % (
                 self.name, cls.available_dynamic_features, cls)
     
-    def setup(self, cls):
+    def setup_model(self, cls):
         """Executed on adapters.load_workflow().
         """
         self.assert_available_for_type(cls)
@@ -134,12 +157,20 @@ class Feature(object):
             #assert not self.feature_interface.implementedBy(cls), \
             #    (self, cls, "feature already supported")
             interface.classImplements(cls, self.feature_interface)
-            self.decorate(cls)
+            self.decorate_model(cls)
+    
+    def setup_ui(self, cls):
+        """Executed on localization.forms_localization_check_reload().
+        """
+        self.decorate_ui(cls)
     
     def validate(self, cls):
         pass
     
-    def decorate(self, cls):
+    def decorate_model(self, cls):
+        pass
+    
+    def decorate_ui(self, cls):
         pass
     
     def __str__(self):
@@ -164,7 +195,7 @@ class Audit(Feature):
     }
     subordinate_interface = model_ifaces.IChange # !+IAudit?
     
-    def decorate(self, cls):
+    def decorate_model(self, cls):
         # Assumption: if a domain class is explicitly pre-defined, then it is 
         # assumed that all necessary setup is also taken care of. 
         # Typically, only the sub-classes of an archetype (mapped to a same 
@@ -227,7 +258,8 @@ class Audit(Feature):
         
         # extended attributes - propagate any on head cls also to its audit_cls
         for vp_name, vp_type in cls.extended_properties:
-            mapper_add_relation_vertical_property(audit_cls, vp_name, vp_type)
+            mapper_add_relation_vertical_property(
+                audit_cls, vp_name, vp_type)
         # !+NOTE: capi.get_type_info(cls).descriptor_model is still None
 
         # cls.changes <-> change.audit.audit_head=doc:
@@ -275,10 +307,9 @@ class Attachment(Feature):
     subordinate_interface = model_ifaces.IAttachment
     depends_on = Version, # !+ domain.Attachment is expected to be versionable
     
-    def decorate(self, cls):
-        add_container_property_to_model(cls, "files", 
-            "bungeni.models.domain.AttachmentContainer", "head_id")
-
+    def decorate_ui(self, cls):
+        add_info_container_to_descriptor(cls, "files", "attachment", "head_id")
+    
 
 class Event(Feature):
     """Support for the "event" feature. For Doc types (other than Event itself).
@@ -292,14 +323,12 @@ class Event(Feature):
     }
     subordinate_interface = model_ifaces.IEvent
     
-    def decorate(self, cls):
+    def decorate_ui(self, cls):
         # container property per enabled event type
         for event_type_key in self.params["types"]:
             if capi.has_type_info(event_type_key):
                 container_property_name = naming.plural(event_type_key)
-                container_class_name = naming.container_class_name(event_type_key)
-                add_container_property_to_model(cls, container_property_name,
-                    "bungeni.models.domain.%s" % (container_class_name), "head_id")
+                add_info_container_to_descriptor(cls, container_property_name, event_type_key, "head_id")
             else:
                 log.warn("IGNORING feature %r ref to disabled type %r", 
                     self.name, event_type_key)
@@ -319,11 +348,12 @@ class Signatory(Feature):
     }
     subordinate_interface = model_ifaces.ISignatory
     
-    def decorate(self, cls):
-        add_container_property_to_model(cls, "signatories", 
-            "bungeni.models.domain.SignatoryContainer", "head_id")
+    def decorate_model(self, cls):
         import bungeni.models.signatories
         bungeni.models.signatories.createManagerFactory(cls, **self.params)
+    
+    def decorate_ui(self, cls):
+        add_info_container_to_descriptor(cls, "signatories", "signatory", "head_id")
 
 
 class Sitting(Feature):
@@ -337,12 +367,9 @@ class Sitting(Feature):
     # !+ chamber MUST have "sitting" feature enabled! 
     # !+ agenda_item should probably not be a custom type
     
-    def decorate(self, cls):
-        # add containers required by "sitting" feature:
-        add_container_property_to_model(cls, "sittings",
-            "bungeni.models.domain.SittingContainer", "group_id")    
-        add_container_property_to_model(cls, "agenda_items",
-            "bungeni.models.domain.AgendaItemContainer", "group_id")
+    def decorate_ui(self, cls):
+        add_info_container_to_descriptor(cls, "sittings", "sitting", "group_id")
+        add_info_container_to_descriptor(cls, "agenda_items", "agenda_item", "group_id")
 
 
 class Schedule(Feature):
@@ -356,7 +383,7 @@ class Schedule(Feature):
     }
     subordinate_interface = None # !+?
     
-    def decorate(self, cls):
+    def decorate_model(self, cls):
         manager = create_feature_manager(cls, SchedulingManager,
             interfaces.ISchedulingManager, "SchedulingManager", 
             **self.params
@@ -372,13 +399,11 @@ class Address(Feature):
     feature_parameters = {}
     subordinate_interface = model_ifaces.IAddress
     
-    def decorate(self, cls):
+    def decorate_ui(self, cls):
         if issubclass(cls, domain.Group):
-            add_container_property_to_model(cls, "addresses",
-                "bungeni.models.domain.GroupAddressContainer", "principal_id")
+            add_info_container_to_descriptor(cls, "addresses", "group_address", "principal_id")
         elif issubclass(cls, domain.User):
-            add_container_property_to_model(cls, "addresses",
-                "bungeni.models.domain.UserAddressContainer", "principal_id")
+            add_info_container_to_descriptor(cls, "addresses", "user_address", "principal_id")
 
 
 class Workspace(Feature):
@@ -415,7 +440,7 @@ class Download(Feature):
     }
     subordinate_interface = None
     
-    def decorate(self, cls):
+    def decorate_model(self, cls):
         manager = create_feature_manager(cls, DownloadManager,
             interfaces.IDownloadManager, "DownloadManager", 
             **self.params
@@ -446,9 +471,8 @@ class GroupAssignment(Feature):
     # Or, alternatively, each "group_assignment" enabling needs to be "part of" 
     # a qualified "event" feature.
     
-    def decorate(self, cls):
-        add_container_property_to_model(cls, "group_assignments",
-            "bungeni.models.domain.GroupAssignmentContainer", "doc_id")
+    def decorate_ui(self, cls):
+        add_info_container_to_descriptor(cls, "group_assignments", "group_assignment", "doc_id")
 
 
 

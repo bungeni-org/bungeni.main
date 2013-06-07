@@ -154,7 +154,7 @@ Add a user address
   >>> session.flush()
   >>> int(user_address_1.address_id)
   1
-  >>> len(list(mp_1.addresses))
+  >>> len(list(mp_1.user_addresses))
   1
 
 Add a group address
@@ -169,7 +169,7 @@ Add a group address
   >>> session.flush()
   >>> int(group_address_1.address_id)
   2
-  >>> len(list(chamber.addresses))
+  >>> len(list(chamber.group_addresses))
   1
 
 Government

@@ -106,6 +106,7 @@ grammar {
         # when @indirect_key is not set, the foreign key defined in underlying 
         # data model determines the relation.
         attribute indirect_key { SYMBOL_NAME }?,
+        attribute viewlet { xsd:boolean }?, # default:false
         attribute note { text }?
     }
     

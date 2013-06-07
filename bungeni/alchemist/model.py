@@ -175,8 +175,8 @@ def add_derived_property_to_model(domain_model, name, derived):
 
 # containers
 
-def add_container_property_to_model(domain_model, 
-        name, container_qualname, rel_attr, indirect_key=None
+def add_container_property_to_model(
+        domain_model, name, container_qualname, rel_attr, indirect_key=None
     ):
     """Add an alchemist container attribute to domain_model. 
     These attributes are only catalysed (re-instrumented on domain_model) if 
@@ -241,20 +241,11 @@ def localize_domain_model_from_descriptor_class(domain_model, descriptor_cls):
         instrument_extended_properties(audit_kls)
     
     # containers
-    from bungeni.capi import capi
-    for name, target_type_key, rel_attr, indirect in descriptor_cls.info_containers:
-        try:
-            tti = capi.get_type_info(target_type_key)
-        except KeyError:
-            # target type not enabled
-            log.warn("Ignoring %r container property %r to disabled type: %s.%s", 
-                type_key, name, target_type_key, rel_attr)
-            continue
-        
+    for ic in descriptor_cls.info_containers:
         container_qualname = "bungeni.models.domain.%s" % (
-            naming.container_class_name(target_type_key))
-        add_container_property_to_model(domain_model, 
-            name, container_qualname, rel_attr, indirect)
+            naming.container_class_name(ic.target_type_key))
+        add_container_property_to_model(domain_model, ic.container_attr_name, 
+            container_qualname, ic.rel_attr_name, ic.indirect_key)
 
 localize_domain_model_from_descriptor_class.DONE = []
 

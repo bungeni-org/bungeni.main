@@ -236,6 +236,12 @@
         </attribute>
       </optional>
       <optional>
+        <attribute name="viewlet">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <!-- default:false -->
         <attribute name="note"/>
       </optional>
     </element>

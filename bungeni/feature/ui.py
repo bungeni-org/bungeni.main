@@ -23,6 +23,8 @@ ZCML_SLUG = """
     
     <include package="zope.browsermenu" file="meta.zcml" />
     <include package="zope.browserpage" file="meta.zcml" />
+    <include package="zope.viewlet" file="meta.zcml" />
+
 {ui_zcml_decls}
 
 </configure>
@@ -65,6 +67,16 @@ def setup_customization_ui():
                 class="{class_}"
                 permission="bungeni.{type_key}.{privilege}"
                 layer="{layer}"
+            />"""
+    
+    def register_container_viewlet(type_key, name, for_):
+        UI_ZC_DECLS.append(register_container_viewlet.TMPL.format(**locals()))    
+    register_container_viewlet.TMPL = """
+            <browser:viewlet name="bungeni.viewlet.{name}"
+                manager="bungeni.ui.forms.interfaces.ISubFormViewletManager"
+                for="{for_}"
+                class="bungeni.ui.forms.viewlets.{name}"
+                permission="zope.Public"
             />"""
     
     def model_title(type_key):
@@ -182,6 +194,16 @@ def setup_customization_ui():
                 menu="context_actions", 
                 order=99,
                 layer="bungeni.ui.interfaces.IAdminSectionLayer")
+        
+        # custom container viewlets
+        # we sort info_containers on seq (such that "feature" ones precede all 
+        # "container" ones) and make it immutable (no further changes allowed)
+        ti.descriptor_model.info_containers = tuple(
+            sorted(ti.descriptor_model.info_containers, key=lambda ic: ic.seq))
+        for ic in ti.descriptor_model.info_containers:
+            if ic.viewlet:
+                register_container_viewlet(
+                    type_key, ic.viewlet_name, model_interface_qualname)
         
         # workspace
         if ti.workflow.has_feature("workspace"):

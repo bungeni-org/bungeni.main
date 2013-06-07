@@ -26,7 +26,9 @@ xas, xab, xai = misc.xml_attr_str, misc.xml_attr_bool, misc.xml_attr_int
 
 # constants 
 
-from bungeni.ui.descriptor import descriptor as DESCRIPTOR_MODULE
+import bungeni.ui.descriptor.descriptor as DESCRIPTOR_MODULE
+import bungeni.ui.forms.viewlets as VIEWLET_MODULE
+
 
 PATH_UI_FORMS_SYSTEM = capi.get_path_for("forms", "ui.xml")
 ROLES_DEFAULT = " ".join(Field._roles)
@@ -160,7 +162,7 @@ def forms_localization_check_reload(event):
             type_key = xas(edescriptor, "name")
             descriptor_cls = localize_descriptor(type_key, edescriptor)
             DESC_ELEMS_MODIFIED_SINCE[type_key] = edescriptor
-    # "custom" descriptors
+    
     for type_key, ti in capi.iter_type_info(scope="custom"):
         # only check "dedicated" descriptor files
         if ti.descriptor_key == type_key:
@@ -176,6 +178,7 @@ def forms_localization_check_reload(event):
             if ti.descriptor_key in DESC_ELEMS_MODIFIED_SINCE:
                 descriptor_elem = DESC_ELEMS_MODIFIED_SINCE[ti.descriptor_key]
                 descriptor_cls = localize_descriptor(type_key, descriptor_elem, scope="custom")
+    
     DESC_ELEMS_MODIFIED_SINCE.clear()
 
 
@@ -190,8 +193,17 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
     order = xai(descriptor_elem, "order")
     fields = new_descriptor_fields(descriptor_elem)
     
-    info_containers = [ parse_container(c_elem) 
-        for c_elem in descriptor_elem.findall("container") ]
+    _info_containers = [ 
+        new_info_container(seq + 1, c_elem)
+        for (seq, c_elem) in enumerate(descriptor_elem.findall("container")) ]
+    info_containers = [ 
+        ic for ic in _info_containers
+        if capi.has_type_info(ic.target_type_key) ]
+    for ic in _info_containers:
+        if ic not in info_containers:
+            # target type not enabled
+            log.warn("Ignoring %r container property %r to disabled type: %s.%s", 
+                type_key, ic.container_attr_name, ic.target_type_key, ic.rel_attr_name)
     
     integrity = descriptor_elem.find("integrity")
     if integrity is not None:
@@ -202,7 +214,6 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
     else:
         constraints, validations = (), ()
     
-    domain_model = ti.domain_model
     if scope=="custom":
         try:
             cls = update_descriptor_cls(type_key, order, 
@@ -218,6 +229,15 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
             if xas(descriptor_elem, "sort_dir"): # default cls.sort_dir: "desc"
                 cls.sort_dir = xas(descriptor_elem, "sort_dir")
             update_new_descriptor_cls_from_ti(ti)
+        
+        # finish model/descriptor setup from feature configuration
+        for feature in ti.workflow.features:
+            feature.setup_ui(ti.domain_model)
+        # custom container viewlets
+        for i, ic in enumerate(ti.descriptor_model.info_containers):
+            if ic.viewlet:
+                sfv_cls = new_container_sub_form_viewlet_cls(ti.type_key, ic)
+    
     else:
         # non-custom
         cls = update_descriptor_cls(type_key, order, 
@@ -226,14 +246,35 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
     return cls
 
 
-def parse_container(container_elem):
+class InfoContainer(object):
+    def __init__(self, container_attr_name, target_type_key, rel_attr_name, 
+            indirect_key, seq, _origin, viewlet=True,
+        ):
+        self.container_attr_name = container_attr_name
+        self.target_type_key = target_type_key
+        self.rel_attr_name = rel_attr_name
+        self.indirect_key = indirect_key
+        self.seq = seq
+        self.viewlet = viewlet # bool
+        self.viewlet_name = None # set on viewlet cls creation
+        self._origin = _origin # "feature" | "container"
+    def __str__(self):
+        return misc.named_repr(self, self.container_attr_name)
+    __repr__ = __str__
+
+def new_info_container(seq, container_elem):
+    # !+ @view_title:i18n_key, @view_id:token, @weight:int ?
     target_type_key, rel_attr_name = xas(container_elem, "match").split(".", 1)
-    return (
+    return InfoContainer(
         xas(container_elem, "name") or naming.plural(target_type_key), 
         target_type_key, 
-        rel_attr_name, 
-        xas(container_elem, "indirect_key")
+        rel_attr_name,
+        xas(container_elem, "indirect_key"),
+        seq * 100, # !+INFO_CONTAINER_SEQ a "largish" seq for "container" containers
+        "container",
+        viewlet=xab(container_elem, "viewlet", False),
     )
+
 
 def new_descriptor_fields(edescriptor):
     """(Re-)build (in desired order) all fields from newly loaded 
@@ -322,6 +363,24 @@ def update_descriptor_cls(type_key, order,
     # push back on alchemist model interface !+
     reset_zope_schema_properties_on_model_interface(cls)
     return cls
+
+
+def new_container_sub_form_viewlet_cls(type_key, info_container):
+    """Generate a new viewlet class for this custom container attribute.
+    """
+    info_container.viewlet_name = \
+        container_sub_form_viewlet_cls_name(type_key, info_container)
+    cls = type(info_container.viewlet_name, (VIEWLET_MODULE.SubformViewlet,), {
+        "sub_attr_name": info_container.container_attr_name,
+        "weight": (1 + info_container.seq) * 10,
+    })
+    # set on VIEWLET_MODULE
+    setattr(VIEWLET_MODULE, info_container.viewlet_name, cls)
+    return cls
+
+def container_sub_form_viewlet_cls_name(type_key, info_container):
+    return "_".join(["SFV", type_key, info_container.container_attr_name])
+
 
 def reset_zope_schema_properties_on_model_interface(descriptor_cls):
     type_key = naming.type_key("descriptor_class_name", descriptor_cls.__name__)
