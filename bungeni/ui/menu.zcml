@@ -153,14 +153,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="40"
     />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IGovernment"
-        title="Add ministry..."
-        action="./ministries/add"
-        permission="bungeni.ministry.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="70"
-    />
     
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IGroupMember"
@@ -868,23 +860,6 @@
             permission="bungeni.attachment.View"
         />
     </browser:menuItems>
-
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGovernment"
-        action="edit"
-        title="Edit government"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.government.Edit"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGovernment"
-        action="delete"
-        title="Delete"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.government.Delete"
-    />
     
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupAddress"

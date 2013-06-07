@@ -160,7 +160,11 @@ def setup_customization_ui():
                     menu="additems", 
                     order=41,
                     layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
-        
+                # group CalendarView
+                register_form_view(type_key, "View", "schedule",
+                    model_interface_qualname,
+                    "bungeni.ui.calendar.browser.CalendarView")
+
         # member
         if issubclass(ti.domain_model, domain.GroupMember):
             # !+ all were: layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -195,12 +199,14 @@ def setup_customization_ui():
         # custom container viewlets
         # we sort info_containers on seq (such that "feature" ones precede all 
         # "container" ones) and make it immutable (no further changes allowed)
-        ti.descriptor_model.info_containers = tuple(
-            sorted(ti.descriptor_model.info_containers, key=lambda ic: ic.seq))
-        for ic in ti.descriptor_model.info_containers:
-            if ic.viewlet:
-                register_container_viewlet(
-                    type_key, ic.viewlet_name, model_interface_qualname)
+        # !+descriptor/restore.py ti.descriptor_model is None when running this utility
+        if ti.descriptor_model:
+            ti.descriptor_model.info_containers = tuple(
+                sorted(ti.descriptor_model.info_containers, key=lambda ic: ic.seq))
+            for ic in ti.descriptor_model.info_containers:
+                if ic.viewlet:
+                    register_container_viewlet(
+                        type_key, ic.viewlet_name, model_interface_qualname)
         
         # workspace
         if ti.workflow.has_feature("workspace"):

@@ -65,7 +65,6 @@ def new_custom_domain_model(type_key, domain_interface, archetype_key):
     from sqlalchemy.orm import mapper
     mapper(domain_model, 
         inherits=archetype,
-        polymorphic_on=utils.get_local_table(archetype).c.type,
         polymorphic_identity=type_key, #naming.polymorphic_identity(domain_model),
     )
     log.info("new_custom_domain_model [%s] %s.%s" % (

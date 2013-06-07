@@ -144,12 +144,14 @@ def deactivateGroupMembers(group):
     deactivateGroupMemberTitles(group)
 
 
+
 def endChildGroups(group):
     """Upon dissolution of a chamber for all committees,
     offices and political groups of this chamber the end date is set 
     or upon dissolution of a government for all ministries 
     of this government the end date is set
     (in order to be able to dissolve those groups)"""
+    # !+CUSTOM un-hardwire all refs to custom group types
     def _end_chamber_group(group_class, parent_id, end_date):
         groups = session.query(group_class).filter(
             sa.and_(group_class.status == "active",

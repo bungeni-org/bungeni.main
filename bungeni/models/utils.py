@@ -21,6 +21,7 @@ from bungeni.utils import common
 
 # legislature and chambers
 
+# !+CUSTOM
 def get_chamber_for_context(context):
     """Return the chamber in which the context exists.
     """
@@ -45,6 +46,7 @@ def get_chamber_for_context(context):
     return chamber
 
 
+# !+CUSTOM
 def get_chamber_for_group(group):
     """Cascade up first group ancestry to chamber, returning it (or None).
     """

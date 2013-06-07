@@ -759,42 +759,10 @@ mapper(domain.AgendaItem,
     polymorphic_identity=polymorphic_identity(domain.AgendaItem),
 )
 
-mapper(domain.Government,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Government)
-)
-
 mapper(domain.Chamber,
     inherits=domain.Group,
     polymorphic_identity=polymorphic_identity(domain.Chamber)
 )
-
-mapper(domain.PoliticalGroup,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.PoliticalGroup)
-)
-
-mapper(domain.Ministry,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Ministry)
-)
-
-mapper(domain.Committee,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Committee)
-)
-
-mapper(domain.JointCommittee,
-    inherits=domain.Committee,
-    polymorphic_identity=polymorphic_identity(domain.JointCommittee)
-)
-
-mapper(domain.Office,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Office)
-)
-
-
 
 mapper(domain.Member,
     inherits=domain.GroupMember,
@@ -807,32 +775,6 @@ mapper(domain.Member,
     },
 )
 
-mapper(domain.Minister,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.Minister)
-)
-
-mapper(domain.CommitteeMember,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.CommitteeMember)
-)
-
-mapper(domain.PoliticalGroupMember,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.PoliticalGroupMember)
-)
-
-mapper(domain.OfficeMember,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.OfficeMember)
-)
-
-# staff assigned to a group (committee, ...)
-
-mapper(domain.CommitteeStaff,
-    inherits=domain.GroupMember,
-    polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
-)
 
 mapper(domain.Session, schema.session,
     properties={

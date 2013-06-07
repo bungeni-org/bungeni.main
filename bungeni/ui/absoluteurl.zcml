@@ -48,7 +48,7 @@
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         permission="zope.Public"
     />
-    <browser:view name="get_url" for="bungeni.models.interfaces.ICommittee"
+    <browser:view name="get_url" for="bungeni.models.interfaces.IGroup"
         class=".absoluteurl.WorkspaceAbsoluteURLView"
         layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         permission="zope.Public"

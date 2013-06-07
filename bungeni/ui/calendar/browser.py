@@ -269,6 +269,7 @@ class CalendarView(BungeniBrowserView):
     @property
     def groups_data(self):
         group_list = []
+        # !+CUSTOM
         try:
             group = self.context.get_group()
             if model_interfaces.ICommittee.providedBy(group):

@@ -195,16 +195,15 @@ class AppSetup(object):
             description=_(u"Workspace Scheduling"),
             default_name="index",
             marker=interfaces.IWorkspaceScheduling)
-        ws_sched["committees"] = QueryContent(
+        ws_sched["committees"] = QueryContent( # !+CUSTOM
             container_getter(get_chamber_for_context, "committees"),
             title=_("section_scheduling_committees", default=u"Committees"),
-            #!+marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules"))
         ws_sched["documents"] = WorkspaceSchedulableContainer(
             name=_(u"schedulable items"),
             title=_(u"schedulable items"),
             description=_(u"documents available for scheduling"))
-        ws_sched["sittings"] = QueryContent(
+        ws_sched["sittings"] = QueryContent( # !+FEATURE
             container_getter(get_chamber_for_context, "sittings"),
             title=_("section_scheduling_sittings", default=u"Sittings"),
             description=_(u"Plenary Sittings"))
@@ -298,6 +297,7 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="serialization-manager")
         
+        # !+CUSTOM
         content[u"chambers"] = domain.ChamberContainer()
         to_locatable_container(domain.Chamber, content[u"chambers"])
         content[u"governments"] = domain.GovernmentContainer()
@@ -305,6 +305,7 @@ class AppSetup(object):
         content[u"joint-committees"] = domain.JointCommitteeContainer()
         to_locatable_container(domain.JointCommittee,
             content["joint-committees"])
+        
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
 
@@ -325,3 +326,5 @@ class AppSetup(object):
         )
         admin[u"applications"] = domain.OAuthApplicationContainer()
         to_locatable_container(domain.OAuthApplication, admin[u"applications"])
+
+

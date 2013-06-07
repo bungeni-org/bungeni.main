@@ -280,23 +280,4 @@ to e.g. "bungeni.{type}.Edit").
      weight="10"
      />
 
-    <!-- !_CUSTOM -->
-    <browser:viewlet name="bungeni.viewlet.mp-items"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.MemberItemsViewlet"
-        for="bungeni.models.interfaces.IMember"
-        permission="zope.Public"
-        weight="40"
-    />
-
-  <browser:viewlet
-     name="bungeni.viewlet.minstries"
-     manager="bungeni.alchemist.interfaces.IContentViewManager"
-     class=".viewlets.MinistriesViewlet"
-     for="bungeni.models.interfaces.IGovernment"
-     permission="zope.Public"
-     weight="10"
-     />
-
-    
 </configure>

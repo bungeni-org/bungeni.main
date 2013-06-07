@@ -511,8 +511,8 @@ class JSLCache(object):
 JSLCaches = {
     #"addresses": +! needs invalidation testing
     #    JSLCache(49, mfaces.IGroupAddress, ["GroupAddress"]),
-    "committees": 
-        JSLCache(49, mfaces.ICommittee, ["Committee"]),
+    #"committees": 
+    #    JSLCache(49, mfaces.ICommittee, ["Committee"]),
     #"bills": 
     #    JSLCache(99, mfaces.IBill, ["Bill"]),
     #"signatories": 
@@ -525,33 +525,33 @@ JSLCaches = {
     #    JSLCache(99, mfaces.IMotion, ["Motion"]),
     #"tableddocuments": 
     #    JSLCache(99, mfaces.ITabledDocument, ["TabledDocument"]),
-    "agendaitems": 
-        JSLCache(99, mfaces.IAgendaItem, ["AgendaItem"]),
+    #"agendaitems": 
+    #    JSLCache(99, mfaces.IAgendaItem, ["AgendaItem"]),
     "preports": 
         JSLCache(49, mfaces.IReport, ["Report"]),
     "attendance": 
         JSLCache(99, mfaces.ISittingAttendance, ["SittingAttendance"]),
-    "members": # alias: "current"
-        JSLCache(99, mfaces.IMember, ["Member"]),
-    "political-groups": # alias: "politicalgroups"
-        JSLCache(49, mfaces.IPoliticalGroup, ["PoliticalGroup"]),
-    "chambers":
-        JSLCache(49, mfaces.IChamber, ["Chamber"]),
-    "governments": 
-        JSLCache(49, mfaces.IGovernment, ["Government"]),
+    #"members": # alias: "current"
+    #    JSLCache(99, mfaces.IMember, ["Member"]),
+    #"political-groups": # alias: "politicalgroups"
+    #    JSLCache(49, mfaces.IPoliticalGroup, ["PoliticalGroup"]),
+    #"chambers":
+    #    JSLCache(49, mfaces.IChamber, ["Chamber"]),
+    #"governments": 
+    #    JSLCache(49, mfaces.IGovernment, ["Government"]),
     "sessions": 
         JSLCache(49, mfaces.ISession, ["Session"]),
     "sittings": 
         JSLCache(49, mfaces.ISitting, ["Sitting"]),
-    "committeestaff": 
-        JSLCache(49, mfaces.ICommitteeStaff, ["CommitteeStaff"]),
-    "committeemembers": 
-        JSLCache(49, mfaces.ICommitteeMember, ["CommitteeMember"]),
-    "ministries": 
-        JSLCache(49, mfaces.IMinistry, ["Ministry"]),
+    #"committeestaff": 
+    #    JSLCache(49, mfaces.ICommitteeStaff, ["CommitteeStaff"]),
+    #"committeemembers": 
+    #    JSLCache(49, mfaces.ICommitteeMember, ["CommitteeMember"]),
+    #"ministries": 
+    #    JSLCache(49, mfaces.IMinistry, ["Ministry"]),
 }
 # aliases for same JSLCache instances
-JSLCaches["current"] = JSLCaches["members"]
+#JSLCaches["current"] = JSLCaches["members"]
 
 
 def get_CacheByClassName():

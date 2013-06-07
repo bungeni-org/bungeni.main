@@ -102,7 +102,6 @@
     <!-- scheduling -->
     <adapter factory=".schedule.PlenarySchedulingContext" />
     <adapter factory=".schedule.GroupSchedulingContext" />
-    <adapter factory=".schedule.ParliamentSchedulingContext" />
     <adapter factory=".schedule.SessionSchedulingContext" />
     <adapter factory=".schedule.SchedulingContextTraverser" />
     <adapter factory=".schedule.SittingContainerSchedulingContext" />

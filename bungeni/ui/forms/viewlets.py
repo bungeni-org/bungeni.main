@@ -162,10 +162,6 @@ class QuestionsViewlet(SubformViewlet):
 class AgendaItemsViewlet(SubformViewlet):
     sub_attr_name = "agenda_items"
 
-class MinistriesViewlet(SubformViewlet):
-    sub_attr_name = "ministries"
-
-
 
 # BungeniAttributeDisplay
 # !+BungeniViewlet(mr) make these inherit from browser.BungeniViewlet
@@ -252,9 +248,9 @@ class DocMinutesViewlet(browser.BungeniItemsViewlet):
 
 @register.viewlet(interfaces.IGroupMember,
     manager=ISubFormViewletManager,
-    name="bungeni.viewlet.offices-held",
+    name="bungeni.viewlet.memberships",
     protect=register.PROTECT_VIEWLET_PUBLIC)
-class OfficesHeldViewlet(browser.BungeniItemsViewlet):
+class MembershipsViewlet(browser.BungeniItemsViewlet):
     weight = 30
     
     render = ViewPageTemplateFile("templates/offices-held-viewlet.pt")
@@ -308,10 +304,17 @@ def _get_public_states_for(*tis):
     return list(ps)
 
 
+# !+CUSTOM
+@register.viewlet(interfaces.IMember,
+    manager=ISubFormViewletManager,
+    name="bungeni.viewlet.mp-items",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """A tab with bills, motions etc for an MP 
     (the "parliamentary activities" tab of of the "member" view)
     """
+    #!+weight = 40 
+    
     states = _get_public_states_for( *[ ti 
         for (key, ti) in capi.iter_type_info() 
         if ti.custom and issubclass(ti.domain_model, domain.Doc) ] )

@@ -80,48 +80,17 @@ class IBungeniContainer(IAlchemistContainer):
     """Parliamentary container.
     """
 
-
-# !+CUSTOM
-
-class IChamber(IGroup):
-    """Marker interface for parliament chamber group.
-    """
-class IChamberContainer(IAlchemistContainer): pass
-
-class IGovernment(IGroup):
-    """Marker interface for group Government.
-    """
-class IGovernmentContainer(IAlchemistContainer): pass
-
-class IMinistry(IGroup):
-    """Marker interface for group ministry """
-class IMinistryContainer(IAlchemistContainer): pass
-
-class ICommittee(IGroup):
-    """Marker interface for committees.
-    """
-class ICommitteeContainer(IAlchemistContainer): pass
-
-class IJointCommittee(ICommittee):
-    """Marker interface for joint committee.
-    """
-class IJointCommitteeContainer(ICommitteeContainer): pass
-
-class IPoliticalGroup(IGroup):
-    """Marker interface for political group (inside parliament).
-    """
-class IPoliticalGroupContainer(IAlchemistContainer): pass
-
-class IOffice(IGroup):
-    """Marker interface for a parliamentary office.
-    """
-class IOfficeContainer(IAlchemistContainer): pass
-
-
 class IGroupMember(interface.Interface):
     """Group membership in bungeni.
     """
 class IGroupMemberContainer(IBungeniContainer): pass
+
+
+# !+CUSTOM
+class IChamber(IGroup): pass
+class IMember(IGroupMember): pass
+# /!+CUSTOM
+
 
 class IMemberRole(interface.Interface):
     """Group membership sub roles in bungeni.
@@ -134,26 +103,6 @@ class IGroupAssignment(IDocPrincipal):
     """Doc group assignment.
     """
 class IGroupAssignmentContainer(IBungeniContainer): pass
-
-class IMember(IGroupMember): pass
-class IMemberContainer(IGroupMemberContainer): pass
-
-class IPoliticalGroupMember(IGroupMember): pass
-class IPoliticalGroupMemberContainer(IGroupMemberContainer): pass
-
-class IMinister(IGroupMember): pass
-class IMinisterContainer(IGroupMemberContainer): pass
-
-class ICommitteeMember(IGroupMember): pass
-class ICommitteeMemberContainer(IGroupMemberContainer): pass
-
-class ICommitteeStaff(IGroupMember): pass
-class ICommitteeStaffContainer(IGroupMemberContainer): pass
-
-class IOfficeMember(IGroupMember): pass
-class IOfficeMemberContainer(IAlchemistContainer): pass
-
-# /!+CUSTOM
 
 
 class IOwned(interface.Interface):
