@@ -168,7 +168,7 @@ class UserDescriptor(ModelDescriptor):
             required=True,
             description="Must contain only letters, numbers, a period (.) "
                 "and underscore (_). Should start with a letter and be "
-                "between 3 and 20 characters long",
+                "between 3 and 79 characters long",
             localizable=[
                 show("add view"), # db-not-null-ui-add
                 hide("listing"),

@@ -31,7 +31,7 @@ VALUETYPE = {
     "language": {},
     "vocabulary": {}, # !+ constraint ?
     "email": {"constraint": constraints.check_email},
-    "login": {"min_length": 3, "max_length": 20, "constraint": constraints.check_login},
+    "login": {"min_length": 3, "max_length": 79, "constraint": constraints.check_login},
     "password": {},
     "image": {},
     "file": {},
