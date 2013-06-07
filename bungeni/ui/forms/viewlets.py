@@ -85,7 +85,7 @@ class SubformViewlet(table.AjaxContainerListing):
         self.request = request
         self.manager = manager
     
-    sub_attr_name = None
+    sub_attr_name = None # container_attr_name
     @property
     def context(self):
         return getattr(self._context, self.sub_attr_name)
@@ -170,6 +170,10 @@ class MinistriesViewlet(SubformViewlet):
 # BungeniAttributeDisplay
 # !+BungeniViewlet(mr) make these inherit from browser.BungeniViewlet
 
+@register.viewlet(interfaces.IGroupMember,
+    manager=ISubFormViewletManager,
+    name="bungeni.viewlet.group-member-personal-info",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class PersonInfo(BungeniAttributeDisplay):
     """Bio Info / personal data about the MP.
     """

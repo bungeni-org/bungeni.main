@@ -306,8 +306,8 @@
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IOffice"
-        title="Add title..."
+        for="bungeni.models.interfaces.IGroup"
+        title="Add title type..."
         action="./title_types/add"
         permission="bungeni.title_type.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
