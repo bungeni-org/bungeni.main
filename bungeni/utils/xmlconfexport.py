@@ -27,6 +27,8 @@ def write_all():
     # list of conditions used in workflows
     write_to_custom("workflows", "_conditions.xml", output_conditions())
     # list of workflow features per type
+    write_to_custom("workflows", "_features_by_type.xml", output_features_by_type())
+    # features
     write_to_custom("workflows", "_features.xml", output_features())
     # list of workflow features per type
     write_to_custom("workflows", "_actions.xml", output_actions())
@@ -237,8 +239,8 @@ def output_all_roles():
     li_roles.append("</roles>")
     return ("\n".join(li_roles)).encode("utf-8")    
     
-   
-def output_features():
+ 
+def output_features_by_type():
     """
     provides a list of features per type
     """
@@ -271,7 +273,59 @@ def output_features():
                     {"name": dyn_feature, "wf": workflow}
                 )
             li_features.append("  </features>")
-    li_features.append("</featuresByType>")                    
+    li_features.append("</featuresByType>")
+    return "\n".join(li_features).encode("utf-8")    
+
+
+def output_features():
+    """
+    provides a list of features 
+    """
+
+    from bungeni.capi import capi
+    from zope.dottedname.resolve import resolve
+    from bungeni.alchemist.catalyst import MODEL_MODULE
+    from bungeni.utils import naming
+    from bungeni.feature.feature import get_feature_cls
+
+    # get a list of available types in a list
+    li_available_types = []
+    for type_key, ti in capi.iter_type_info():
+        li_available_types.append(type_key)
+        
+    li_features = []
+    li_features.append("<features>")
+    li_unique_features = []
+    
+    for type_key, ti in capi.iter_type_info():
+        obj =  resolve("%s.%s" % (MODEL_MODULE.__name__, naming.model_name(type_key)))       
+        if len(obj.available_dynamic_features) > 0:
+            for dyn_feature in obj.available_dynamic_features:
+                # check if feature is a type
+                li_unique_features.append('%s' % dyn_feature)
+    li_unique_features = list(set(li_unique_features))
+    for f in li_unique_features:
+        fcls = get_feature_cls(f)
+        li_features.append(' <feature name="%s" >' % f)
+	if fcls.depends_on is not None:
+                li_features.append('  <depends>')
+                for depends in fcls.depends_on:
+			li_features.append('   <depend>%s</depend>' % depends.name)
+                li_features.append('  </depends>') 
+  	if fcls.feature_parameters is not None:
+                if len(fcls.feature_parameters) > 0 :
+			li_features.append('  <params>')
+			for key, val in fcls.feature_parameters.iteritems():
+				li_features.append('    <param name="%s">' % key)
+                        	for key2, val2 in val.iteritems():
+					li_features.append('     <%(name)s>%(value)s</%(name)s>' %
+						{"name": key2, "value": val2 } )
+				li_features.append('    </param>')
+			li_features.append('  </params>') 	
+	li_features.append(' </feature>')
+    li_features.append("</features>")
+    
+    print "\n".join(li_features).encode("utf-8")               
     return "\n".join(li_features).encode("utf-8")    
 
 
