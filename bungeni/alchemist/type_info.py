@@ -226,6 +226,8 @@ class TI(object):
             return "custom"
         if self.descriptor_model is not None:
             return self.descriptor_model.scope
+        else:
+            return "system" # ModelDescriptor.scope default
     
     @property
     def permission_type_key(self):

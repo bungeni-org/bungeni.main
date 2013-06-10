@@ -123,24 +123,30 @@ def forms_localization_init():
     # first create / update descriptor classes as per config
     forms_localization_check_reload(None)
     
-    # then, do the once-only update of each domain model
-    for type_key, ti in capi.iter_type_info(scope="system"):
-        alchemist.model.localize_domain_model_from_descriptor_class(
-            ti.domain_model, ti.descriptor_model)
-        #!+CATALYSE_SYSTEM_DESCRIPTORS -- all non-custom types have already 
-        # catalysed on import of ui.descriptor, and may not "catalyse twice"
-        # so just working around it by "calling" less of alchemist.catalyst.catalyse(ti)
-        # Make ui.descriptor.catalyse_system_descriptors to be more selective,
-        # and then catalyse remaining support types here?
-        #alchemist.catalyst.catalyse(ti)
-        #!+re-apply_security breaks edit event view (fields shown in view mode!)
-        #alchemist.catalyst.apply_security(ti)
-        alchemist.catalyst.generate_collection_traversal(ti)
-    
-    for type_key, ti in capi.iter_type_info(scope="custom"):
-        alchemist.model.localize_domain_model_from_descriptor_class(
-            ti.domain_model, ti.descriptor_model)
-        alchemist.catalyst.catalyse(ti)
+    # then, do the once-only update/setup of each domain model
+    for type_key, ti in capi.iter_type_info():
+        
+        # localize model from descriptor
+        if ti.descriptor_model:
+            alchemist.model.localize_domain_model_from_descriptor_class(
+                ti.domain_model, ti.descriptor_model)
+        else:
+            log.warn("Skipping localization - descripor for model %s is None", 
+                ti.domain_model)
+        
+        # catalyze
+        if ti.scope != "custom":
+            #!+CATALYSE_SYSTEM_DESCRIPTORS -- all non-custom types have already 
+            # catalysed on import of ui.descriptor, and may not "catalyse twice"
+            # so just working around it by "calling" less of alchemist.catalyst.catalyse(ti)
+            # Make ui.descriptor.catalyse_system_descriptors to be more selective,
+            # and then catalyse remaining support types here?
+            #alchemist.catalyst.catalyse(ti)
+            #!+re-apply_security breaks edit event view (fields shown in view mode!)
+            #alchemist.catalyst.apply_security(ti)
+            alchemist.catalyst.generate_collection_traversal(ti)
+        else:
+            alchemist.catalyst.catalyse(ti)
 
 
 @capi.bungeni_custom_errors
