@@ -193,17 +193,16 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
     order = xai(descriptor_elem, "order")
     fields = new_descriptor_fields(descriptor_elem)
     
-    _info_containers = [ 
-        new_info_container(seq + 1, c_elem)
-        for (seq, c_elem) in enumerate(descriptor_elem.findall("container")) ]
-    info_containers = [ 
-        ic for ic in _info_containers
-        if capi.has_type_info(ic.target_type_key) ]
-    for ic in _info_containers:
-        if ic not in info_containers:
-            # target type not enabled
-            log.warn("Ignoring %r container property %r to disabled type: %s.%s", 
-                type_key, ic.container_attr_name, ic.target_type_key, ic.rel_attr_name)
+    info_containers = []
+    for c_elem in descriptor_elem.findall("container"):
+        # !+ @view_title:i18n_key, @view_id:token, @weight:int ?
+        target_type_key, rel_attr_name = xas(c_elem, "match").split(".", 1)
+        container_attr_name = xas(c_elem, "name") or naming.plural(target_type_key)
+        indirect_key = xas(c_elem, "indirect_key")
+        viewlet = xab(c_elem, "viewlet", False)
+        add_info_container(type_key, info_containers, 
+            container_attr_name, target_type_key, rel_attr_name, indirect_key, 
+            viewlet=viewlet, _origin="container")
     
     integrity = descriptor_elem.find("integrity")
     if integrity is not None:
@@ -241,7 +240,7 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
     # custom container viewlets
     for i, ic in enumerate(ti.descriptor_model.info_containers):
         if ic.viewlet:
-            sfv_cls = new_container_sub_form_viewlet_cls(ti.type_key, ic)
+            sfv_cls = new_container_sub_form_viewlet_cls(ti.type_key, ic, i)
     
     log.debug("Localized descriptor [%s] %s", type_key, ti)
     return cls
@@ -249,13 +248,12 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
 
 class InfoContainer(object):
     def __init__(self, container_attr_name, target_type_key, rel_attr_name, 
-            indirect_key, seq, _origin, viewlet=True,
+            indirect_key, viewlet=True, _origin="container"
         ):
         self.container_attr_name = container_attr_name
         self.target_type_key = target_type_key
         self.rel_attr_name = rel_attr_name
         self.indirect_key = indirect_key
-        self.seq = seq
         self.viewlet = viewlet # bool
         self.viewlet_name = None # set on viewlet cls creation
         self._origin = _origin # "feature" | "container"
@@ -263,18 +261,27 @@ class InfoContainer(object):
         return misc.named_repr(self, self.container_attr_name)
     __repr__ = __str__
 
-def new_info_container(seq, container_elem):
-    # !+ @view_title:i18n_key, @view_id:token, @weight:int ?
-    target_type_key, rel_attr_name = xas(container_elem, "match").split(".", 1)
-    return InfoContainer(
-        xas(container_elem, "name") or naming.plural(target_type_key), 
-        target_type_key, 
-        rel_attr_name,
-        xas(container_elem, "indirect_key"),
-        seq * 100, # !+INFO_CONTAINER_SEQ a "largish" seq for "container" containers
-        "container",
-        viewlet=xab(container_elem, "viewlet", False),
-    )
+
+def add_info_container(type_key, info_containers, 
+        container_attr_name, target_type_key, rel_attr_name, indirect_key, 
+        viewlet=None, _origin=None
+    ):
+    container_attr_names = [ ci.container_attr_name for ci in info_containers ]
+    assert container_attr_name not in container_attr_names, \
+        (container_attr_name, container_attr_names)
+    if capi.has_type_info(target_type_key):
+        info_containers.append(InfoContainer(
+                container_attr_name,
+                target_type_key,
+                rel_attr_name,
+                indirect_key,
+                viewlet=viewlet,
+                _origin=_origin))
+    else:
+        # target type not enabled
+        log.warn("Ignoring %r container property %r to disabled type: %s.%s", 
+            type_key, container_attr_name, target_type_key, rel_attr_name)
+        return
 
 
 def new_descriptor_fields(edescriptor):
@@ -366,14 +373,14 @@ def update_descriptor_cls(type_key, order,
     return cls
 
 
-def new_container_sub_form_viewlet_cls(type_key, info_container):
+def new_container_sub_form_viewlet_cls(type_key, info_container, seq):
     """Generate a new viewlet class for this custom container attribute.
     """
     info_container.viewlet_name = \
         container_sub_form_viewlet_cls_name(type_key, info_container)
     cls = type(info_container.viewlet_name, (VIEWLET_MODULE.SubformViewlet,), {
         "sub_attr_name": info_container.container_attr_name,
-        "weight": (1 + info_container.seq) * 10,
+        "weight": (1 + seq) * 10,
     })
     # set on VIEWLET_MODULE
     setattr(VIEWLET_MODULE, info_container.viewlet_name, cls)

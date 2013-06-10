@@ -197,12 +197,14 @@ def setup_customization_ui():
                 layer="bungeni.ui.interfaces.IAdminSectionLayer")
         
         # custom container viewlets
-        # we sort info_containers on seq (such that "feature" ones precede all 
-        # "container" ones) and make it immutable (no further changes allowed)
+        # we re-sort info_containers such that "feature" ones precede all 
+        # "container" ones and make immutable (no further changes allowed)
         # !+descriptor/restore.py ti.descriptor_model is None when running this utility
         if ti.descriptor_model:
-            ti.descriptor_model.info_containers = tuple(
-                sorted(ti.descriptor_model.info_containers, key=lambda ic: ic.seq))
+            ics = ti.descriptor_model.info_containers
+            ti.descriptor_model.info_containers = tuple(sorted(ics, 
+                    key=lambda ic: (ic._origin!="feature", ics.index(ic)) # f:(0,i) c:(1,i)
+            ))
             for ic in ti.descriptor_model.info_containers:
                 if ic.viewlet:
                     register_container_viewlet(

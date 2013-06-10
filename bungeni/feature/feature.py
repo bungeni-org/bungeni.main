@@ -46,10 +46,10 @@ def provides_feature(discriminator, feature_name):
     """Does the domain model identified by discriminator provide the named feature?
     """
     if not (type(discriminator) is type and issubclass(discriminator, domain.Entity)):
-        cls = capi.get_type_info(discriminator).domain_model
+        model = capi.get_type_info(discriminator).domain_model
     else:
-        cls = discriminator
-    return get_feature_interface(feature_name).implementedBy(cls)
+        model = discriminator
+    return get_feature_interface(feature_name).implementedBy(model)
 
 
 # param parser/validator utils
@@ -67,7 +67,7 @@ def ppv_int(value, default=None):
 
 # containers
 
-def add_info_container_to_descriptor(cls, 
+def add_info_container_to_descriptor(model, 
         container_attr_name, target_type_key, rel_attr_name, indirect_key=None
     ):
     """For containers that are defined as part of a feature, need an 
@@ -75,20 +75,11 @@ def add_info_container_to_descriptor(cls,
     bungeni.alchemist.model.add_container_property_to_model() and creation 
     of SubFormViewlet viewlet are done downstream).
     """
-    ti = capi.get_type_info(cls)
-    info_containers = ti.descriptor_model.info_containers
-    container_attr_names = [ ci.container_attr_name for ci in info_containers ]
-    assert container_attr_name not in container_attr_names, \
-        (container_attr_name, container_attr_names)
-    from bungeni.ui.descriptor.localization import InfoContainer
-    # !+INFO_CONTAINER_SEQ for "feature" containers, we remember a "smallish" 
-    # seq number, so that we can sort later, and they order before those from 
-    # explicit "container" 
-    seq = len(info_containers)
-    # note: feature-bound containers always get a viewlet
-    info_containers.append(
-        InfoContainer(container_attr_name, target_type_key, rel_attr_name, 
-            indirect_key, seq, "feature", viewlet=True))
+    ti = capi.get_type_info(model)
+    from bungeni.ui.descriptor.localization import add_info_container
+    add_info_container(ti.type_key, ti.descriptor_model.info_containers,
+        container_attr_name, target_type_key, rel_attr_name, indirect_key, 
+        viewlet=True, _origin="feature")
 
 
 # Base Workflow Feature
@@ -131,46 +122,47 @@ class Feature(object):
             kws[key] = ppv(kws[key], fp["default"])
         return kws
     
-    def assert_available_for_type(self, cls):
-        assert self.name in cls.available_dynamic_features, \
-            "Feature %r not one that is available %s for this type %s" % (
-                self.name, cls.available_dynamic_features, cls)
+    #
     
-    def setup_model(self, cls):
-        """Executed on adapters.load_workflow().
-        """
-        self.assert_available_for_type(cls)
+    def validate_model(self, model):
+        # assert this feature is available for model
+        assert self.name in model.available_dynamic_features, \
+            "Feature %r not one that is available %s for this type %s" % (
+                self.name, model.available_dynamic_features, model)
         # "feature recursion" is categorically NOT allowed
         if self.subordinate_interface:
-            assert not self.subordinate_interface.implementedBy(cls), \
-                (self, cls, "feature recursion")
+            assert not self.subordinate_interface.implementedBy(model), \
+                (self, model, "feature recursion")
         if self.enabled:
             # dependent features
             if self.depends_on:
                 for fi in self.depends_on:
-                    assert provides_feature(cls, fi.name), \
-                        (self, cls, fi, "dependent feature disabled")
-            self.validate(cls)
+                    assert provides_feature(model, fi.name), \
+                        (self, model, fi, "dependent feature disabled")
             # !+determine if class implements an interface NOT via inheritance
             # e.g. EventResponse will already "implement" Audit as super class 
             # Event already does
-            #assert not self.feature_interface.implementedBy(cls), \
-            #    (self, cls, "feature already supported")
-            interface.classImplements(cls, self.feature_interface)
-            self.decorate_model(cls)
+            #assert not self.feature_interface.implementedBy(model), \
+            #    (self, model, "feature already supported")
     
-    def setup_ui(self, cls):
+    def setup_model(self, model):
+        """Executed on adapters.load_workflow().
+        """
+        self.validate_model(model)
+        if self.enabled:
+            interface.classImplements(model, self.feature_interface)
+            self.decorate_model(model)
+    
+    def setup_ui(self, model):
         """Executed on localization.forms_localization_check_reload().
         """
-        self.decorate_ui(cls)
+        if self.enabled: # !+ only ever gets called for enabled types?
+            self.decorate_ui(model)
     
-    def validate(self, cls):
+    def decorate_model(self, model):
         pass
     
-    def decorate_model(self, cls):
-        pass
-    
-    def decorate_ui(self, cls):
+    def decorate_ui(self, model):
         pass
     
     def __str__(self):
@@ -195,7 +187,7 @@ class Audit(Feature):
     }
     subordinate_interface = model_ifaces.IChange # !+IAudit?
     
-    def decorate_model(self, cls):
+    def decorate_model(self, model):
         # Assumption: if a domain class is explicitly pre-defined, then it is 
         # assumed that all necessary setup is also taken care of. 
         # Typically, only the sub-classes of an archetype (mapped to a same 
@@ -205,12 +197,12 @@ class Audit(Feature):
             audit_cls_name = "%sAudit" % (auditable_class.__name__)
             return getattr(MODEL_MODULE, audit_cls_name, None)
         
-        def get_base_audit_class(cls):
+        def get_base_audit_class(model):
             """Identify what should be the BASE audit class for a 
-            {cls}Audit class to inherit from, and return it.
+            {model}Audit class to inherit from, and return it.
             """
-            assert interfaces.IFeatureAudit.implementedBy(cls), cls
-            ti = capi.get_type_info(cls)
+            assert interfaces.IFeatureAudit.implementedBy(model), model
+            ti = capi.get_type_info(model)
             if ti.archetype is None:
                 # !+ should this be allowed to ever happen? 
                 # i.e. require each type to declare an archetype?
@@ -220,33 +212,33 @@ class Audit(Feature):
                 if base_audit_class is None:
                     # fallback to get the audit class for the sys archetype
                     base_audit_class = get_audit_class_for(ti.sys_archetype)
-                assert base_audit_class is not None, (cls, ti.archetype, base_audit_class)
+                assert base_audit_class is not None, (model, ti.archetype, base_audit_class)
             return base_audit_class
         
-        def new_audit_class(cls):
-            """Create, set on MODEL_MODULE, and map {cls}Audit class.
+        def new_audit_class(model):
+            """Create, set on MODEL_MODULE, and map {model}Audit class.
             """
-            base_audit_cls = get_base_audit_class(cls)
-            audit_cls = base_audit_cls.auditFactory(cls)
+            base_audit_cls = get_base_audit_class(model)
+            audit_cls = base_audit_cls.auditFactory(model)
             # set on MODEL_MODULE
             setattr(MODEL_MODULE, audit_cls.__name__, audit_cls)
             # mapper for newly created audit_cls
             mapper(audit_cls,
                 inherits=base_audit_cls,
-                polymorphic_identity=naming.polymorphic_identity(cls)
+                polymorphic_identity=naming.polymorphic_identity(model)
             )
             log.info("GENERATED new_audit_class %s(%s) for type %s",
-                audit_cls, base_audit_cls, cls)
+                audit_cls, base_audit_cls, model)
             return audit_cls
         
         # domain - audit class
-        audit_cls = get_audit_class_for(cls)
+        audit_cls = get_audit_class_for(model)
         if audit_cls is None: 
-            audit_cls = new_audit_class(cls)
+            audit_cls = new_audit_class(model)
         
         # auditor - head cls
         import bungeni.core.audit
-        bungeni.core.audit.set_auditor(cls)
+        bungeni.core.audit.set_auditor(model)
         
         # mapper - audit class
         # assumption: audit_cls uses single inheritance only (and not only for 
@@ -257,22 +249,22 @@ class Audit(Feature):
                 audit_cls, domain.Audit)
         
         # extended attributes - propagate any on head cls also to its audit_cls
-        for vp_name, vp_type in cls.extended_properties:
+        for vp_name, vp_type in model.extended_properties:
             mapper_add_relation_vertical_property(
                 audit_cls, vp_name, vp_type)
-        # !+NOTE: capi.get_type_info(cls).descriptor_model is still None
+        # !+NOTE: capi.get_type_info(model).descriptor_model is still None
 
-        # cls.changes <-> change.audit.audit_head=doc:
+        # model.changes <-> change.audit.audit_head=doc:
         # doc[@TYPE] <-- TYPE_audit <-> audit <-> change
                 
         # get head table for kls, and its audit table.
-        tbl = utils.get_local_table(cls)
+        tbl = utils.get_local_table(model)
         # NOT mapped_table, as when cls_mapper.single=False (e.g. for 
         # the case of the group type) it gves an sa.sql.expression.Join,
         # and not a table object:
         #   principal JOIN "group" ON principal.principal_id = "group".group_id
         audit_tbl = getattr(schema, naming.audit_table_name(tbl.name))
-        cls_mapper = class_mapper(cls)
+        cls_mapper = class_mapper(model)
         cls_mapper.add_property("changes", relation(domain.Change,
                 # join condition, may be determined by a composite primary key
                 primaryjoin=sa.and_( *[
@@ -307,8 +299,8 @@ class Attachment(Feature):
     subordinate_interface = model_ifaces.IAttachment
     depends_on = Version, # !+ domain.Attachment is expected to be versionable
     
-    def decorate_ui(self, cls):
-        add_info_container_to_descriptor(cls, "files", "attachment", "head_id")
+    def decorate_ui(self, model):
+        add_info_container_to_descriptor(model, "files", "attachment", "head_id")
     
 
 class Event(Feature):
@@ -323,12 +315,12 @@ class Event(Feature):
     }
     subordinate_interface = model_ifaces.IEvent
     
-    def decorate_ui(self, cls):
+    def decorate_ui(self, model):
         # container property per enabled event type
         for event_type_key in self.params["types"]:
             if capi.has_type_info(event_type_key):
                 container_property_name = naming.plural(event_type_key)
-                add_info_container_to_descriptor(cls, container_property_name, event_type_key, "head_id")
+                add_info_container_to_descriptor(model, container_property_name, event_type_key, "head_id")
             else:
                 log.warn("IGNORING feature %r ref to disabled type %r", 
                     self.name, event_type_key)
@@ -348,12 +340,12 @@ class Signatory(Feature):
     }
     subordinate_interface = model_ifaces.ISignatory
     
-    def decorate_model(self, cls):
+    def decorate_model(self, model):
         import bungeni.models.signatories
-        bungeni.models.signatories.createManagerFactory(cls, **self.params)
+        bungeni.models.signatories.createManagerFactory(model, **self.params)
     
-    def decorate_ui(self, cls):
-        add_info_container_to_descriptor(cls, "signatories", "signatory", "head_id")
+    def decorate_ui(self, model):
+        add_info_container_to_descriptor(model, "signatories", "signatory", "head_id")
 
 
 class Sitting(Feature):
@@ -367,9 +359,9 @@ class Sitting(Feature):
     # !+ chamber MUST have "sitting" feature enabled! 
     # !+ agenda_item should probably not be a custom type
     
-    def decorate_ui(self, cls):
-        add_info_container_to_descriptor(cls, "sittings", "sitting", "group_id")
-        add_info_container_to_descriptor(cls, "agenda_items", "agenda_item", "group_id")
+    def decorate_ui(self, model):
+        add_info_container_to_descriptor(model, "sittings", "sitting", "group_id")
+        add_info_container_to_descriptor(model, "agenda_items", "agenda_item", "group_id")
 
 
 class Schedule(Feature):
@@ -383,12 +375,12 @@ class Schedule(Feature):
     }
     subordinate_interface = None # !+?
     
-    def decorate_model(self, cls):
-        manager = create_feature_manager(cls, SchedulingManager,
+    def decorate_model(self, model):
+        manager = create_feature_manager(model, SchedulingManager,
             interfaces.ISchedulingManager, "SchedulingManager", 
             **self.params
         )
-        assert manager is not None, cls
+        assert manager is not None, model
 
 
 class Address(Feature):
@@ -399,11 +391,11 @@ class Address(Feature):
     feature_parameters = {}
     subordinate_interface = model_ifaces.IAddress
     
-    def decorate_ui(self, cls):
-        if issubclass(cls, domain.Group):
-            add_info_container_to_descriptor(cls, "addresses", "group_address", "principal_id")
-        elif issubclass(cls, domain.User):
-            add_info_container_to_descriptor(cls, "addresses", "user_address", "principal_id")
+    def decorate_ui(self, model):
+        if issubclass(model, domain.Group):
+            add_info_container_to_descriptor(model, "addresses", "group_address", "principal_id")
+        elif issubclass(model, domain.User):
+            add_info_container_to_descriptor(model, "addresses", "user_address", "principal_id")
 
 
 class Workspace(Feature):
@@ -440,12 +432,12 @@ class Download(Feature):
     }
     subordinate_interface = None
     
-    def decorate_model(self, cls):
-        manager = create_feature_manager(cls, DownloadManager,
+    def decorate_model(self, model):
+        manager = create_feature_manager(model, DownloadManager,
             interfaces.IDownloadManager, "DownloadManager", 
             **self.params
         )
-        assert manager is not None, cls
+        assert manager is not None, model
 
 
 class UserAssignment(Feature):
@@ -471,8 +463,8 @@ class GroupAssignment(Feature):
     # Or, alternatively, each "group_assignment" enabling needs to be "part of" 
     # a qualified "event" feature.
     
-    def decorate_ui(self, cls):
-        add_info_container_to_descriptor(cls, "group_assignments", "group_assignment", "doc_id")
+    def decorate_ui(self, model):
+        add_info_container_to_descriptor(model, "group_assignments", "group_assignment", "doc_id")
 
 
 
