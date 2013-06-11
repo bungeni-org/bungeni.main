@@ -418,7 +418,7 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
 class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     view_title = "Timeline"
     view_id = "timeline"
-    weight = 20
+    weight = 200
     
     render = ViewPageTemplateFile("templates/listing-viewlet.pt")
     

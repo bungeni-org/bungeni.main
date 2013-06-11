@@ -33,6 +33,27 @@ ZCML_SLUG = """
 UI_ZC_DECLS = []
 
 
+# utils
+
+def new_container_sub_form_viewlet_cls(type_key, info_container, order):
+    """Generate a new viewlet class for this custom container attribute.
+    """
+    info_container.viewlet_name = \
+        container_sub_form_viewlet_cls_name(type_key, info_container)
+    import bungeni.ui.forms.viewlets as VIEWLET_MODULE
+    cls = type(info_container.viewlet_name, (VIEWLET_MODULE.SubformViewlet,), {
+        "sub_attr_name": info_container.container_attr_name,
+        "weight": (1 + order) * 10,
+    })
+    # set on VIEWLET_MODULE
+    setattr(VIEWLET_MODULE, info_container.viewlet_name, cls)
+    return cls
+
+def container_sub_form_viewlet_cls_name(type_key, info_container):
+    return "_".join(["SFV", type_key, info_container.container_attr_name])
+
+
+
 def setup_customization_ui():
     """Called from ui.app.on_wsgi_application_created_event -- must be called
     late, at least as long as there other ui zcml directives (always executed 
@@ -196,17 +217,12 @@ def setup_customization_ui():
                 order=99,
                 layer="bungeni.ui.interfaces.IAdminSectionLayer")
         
-        # custom container viewlets
-        # we re-sort info_containers such that "feature" ones precede all 
-        # "container" ones and make immutable (no further changes allowed)
+        # create/register custom container viewlets
         # !+descriptor/restore.py ti.descriptor_model is None when running this utility
         if ti.descriptor_model:
-            ics = ti.descriptor_model.info_containers
-            ti.descriptor_model.info_containers = tuple(sorted(ics, 
-                    key=lambda ic: (ic._origin!="feature", ics.index(ic)) # f:(0,i) c:(1,i)
-            ))
-            for ic in ti.descriptor_model.info_containers:
+            for i, ic in enumerate(ti.descriptor_model.info_containers):
                 if ic.viewlet:
+                    sfv_cls = new_container_sub_form_viewlet_cls(type_key, ic, i)
                     register_container_viewlet(
                         type_key, ic.viewlet_name, model_interface_qualname)
         

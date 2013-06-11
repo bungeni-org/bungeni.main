@@ -27,8 +27,6 @@ xas, xab, xai = misc.xml_attr_str, misc.xml_attr_bool, misc.xml_attr_int
 # constants 
 
 import bungeni.ui.descriptor.descriptor as DESCRIPTOR_MODULE
-import bungeni.ui.forms.viewlets as VIEWLET_MODULE
-
 
 PATH_UI_FORMS_SYSTEM = capi.get_path_for("forms", "ui.xml")
 ROLES_DEFAULT = " ".join(Field._roles)
@@ -184,7 +182,6 @@ def forms_localization_check_reload(event):
             if ti.descriptor_key in DESC_ELEMS_MODIFIED_SINCE:
                 descriptor_elem = DESC_ELEMS_MODIFIED_SINCE[ti.descriptor_key]
                 descriptor_cls = localize_descriptor(type_key, descriptor_elem, scope="custom")
-    
     DESC_ELEMS_MODIFIED_SINCE.clear()
 
 
@@ -243,10 +240,15 @@ def localize_descriptor(type_key, descriptor_elem, scope="system"):
     if ti.workflow:
         for feature in ti.workflow.features:
             feature.setup_ui(ti.domain_model)
-    # custom container viewlets
-    for i, ic in enumerate(ti.descriptor_model.info_containers):
-        if ic.viewlet:
-            sfv_cls = new_container_sub_form_viewlet_cls(ti.type_key, ic, i)
+    
+    # custom container order - re-sort info_containers such that "container" 
+    # ones precede all "feature" ones, plus make the list immutable i.e. no 
+    # further changes allowed.
+    ics = ti.descriptor_model.info_containers
+    ti.descriptor_model.info_containers = tuple(sorted(ics,
+            # False sorts before True (as 0 sorts before 1)
+            key=lambda ic: ic._origin == "feature"
+    ))
     
     log.debug("Localized descriptor [%s] %s", type_key, ti)
     return cls
@@ -377,23 +379,6 @@ def update_descriptor_cls(type_key, order,
     # push back on alchemist model interface !+
     reset_zope_schema_properties_on_model_interface(cls)
     return cls
-
-
-def new_container_sub_form_viewlet_cls(type_key, info_container, seq):
-    """Generate a new viewlet class for this custom container attribute.
-    """
-    info_container.viewlet_name = \
-        container_sub_form_viewlet_cls_name(type_key, info_container)
-    cls = type(info_container.viewlet_name, (VIEWLET_MODULE.SubformViewlet,), {
-        "sub_attr_name": info_container.container_attr_name,
-        "weight": (1 + seq) * 10,
-    })
-    # set on VIEWLET_MODULE
-    setattr(VIEWLET_MODULE, info_container.viewlet_name, cls)
-    return cls
-
-def container_sub_form_viewlet_cls_name(type_key, info_container):
-    return "_".join(["SFV", type_key, info_container.container_attr_name])
 
 
 def reset_zope_schema_properties_on_model_interface(descriptor_cls):
