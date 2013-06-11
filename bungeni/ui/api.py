@@ -42,7 +42,7 @@ class APISectionView(BrowserPage):
 
 class APIObjectView(BrowserPage):
     def __call__(self):
-        data = obj2dict(self.context, 0)
+        data = obj2dict(self.context, 1, exclude=["data", "versions", "audits", "changes", "permissions"])
         misc.set_json_headers(self.request)
         return simplejson.dumps(data, default=dthandler)
 
