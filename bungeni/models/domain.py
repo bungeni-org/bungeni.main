@@ -96,6 +96,13 @@ class Entity(object):
         """
         pass
     
+    def on_delete(self):
+        """Hook to call on deletion of an instance, to handle any business 
+        setdown/logic that the application MUST (i.e. not subject to any user
+        configuration) take care of.
+        """
+        pass
+    
     @property
     def pk(self):
         """ () -> [(pk_name, pk_value)] -- intended primarily as debug utility.
@@ -629,6 +636,22 @@ class MemberRole(Entity):
     a document is assigned to a user.
     """
     interface.implements(interfaces.IMemberRole)
+    
+    def on_create(self):
+        """Application-internal creation logic i.e. logic NOT subject to config.
+        """
+        from bungeni.core.workflows import utils
+        if self.is_global:
+            utils.set_role(self.role_id, self.member.user.login, 
+                utils.get_group_privilege_extent_context(self.member.group))
+    
+    def on_delete(self):
+        """Application-internal deletion logic i.e. logic NOT subject to config.
+        """
+        from bungeni.core.workflows import utils
+        if self.is_global:
+            utils.unset_role(self.role_id, self.member.user.login, 
+                utils.get_group_privilege_extent_context(self.member.group))
     
     @property
     def group(self):

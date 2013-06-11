@@ -16,6 +16,7 @@ from bungeni.feature.interfaces import ISchedulingManager
 from bungeni.utils import register
 from bungeni.core.workflow.interfaces import IWorkflowController
 
+
 @register.handler(adapts=(interfaces.ISitting, IObjectRemovedEvent))
 @register.handler(adapts=(interfaces.IItemSchedule, IObjectRemovedEvent))
 def retract_scheduled_items(context, event):
@@ -23,21 +24,22 @@ def retract_scheduled_items(context, event):
     or when the sitting is deleted.
     """
     def retract_item(item):
-        manager = interfaces.ISchedulingManager(item, None)
+        manager = ISchedulingManager(item, None)
         if manager is None:
             return
         wfc = IWorkflowController(item, None)
         if wfc is None:
             return
-
-        #take back to schedule pending
+        
+        # take back to schedule pending
         for state in manager.schedulable_states:
             transitions = wfc.getFireableTransitionIdsToward(state)
             if transitions:
                 wfc.fireTransition(transitions[0])
                 break
-
+    
     if interfaces.IItemSchedule.providedBy(context):
         retract_item(context.item)
     elif interfaces.ISitting.providedBy(context):
         map(retract_item, context.items.values())
+

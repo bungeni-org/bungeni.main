@@ -1,3 +1,13 @@
+
+'''
+
+
+!+ CLEANOUT THIS FILE !
+
+
+'''
+
+
 from datetime import datetime
 from datetime import time
 from datetime import date
@@ -211,9 +221,9 @@ def generate_recurrence_dates(recurrence_start_date,
     if (extra != "no") and (extra != ""):
         try:
             rrule_count = int(extra)
-        except TypeError, ValueError:
+        except (TypeError, ValueError):
             rrule_count = None
-    freq_map = {"day":DAILY,"week":WEEKLY,"month":MONTHLY,"year":YEARLY}
+    freq_map = {"day": DAILY, "week": WEEKLY, "month": MONTHLY, "year": YEARLY}
     freq = freq_map[rec_type]
     if count != "":
         interval = int(count)

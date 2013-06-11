@@ -856,9 +856,11 @@ class DeleteForm(PageForm):
     def handle_delete(self, action, data):
         count = self.delete_subobjects()
         container = self.context.__parent__
-        trusted = removeSecurityProxy(self.context)
+        ob = removeSecurityProxy(self.context)
         session = Session()
-        session.delete(trusted)
+        session.delete(ob)
+        # execute domain.Entity on delete hook
+        ob.on_delete()
         count += 1
         try:
             session.flush()

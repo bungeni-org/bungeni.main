@@ -15,18 +15,9 @@ log = __import__("logging").getLogger("bungeni.core.events")
 import datetime
 
 from zope.security.proxy import removeSecurityProxy
-from zope.lifecycleevent import (
-    IObjectCreatedEvent,
-    IObjectModifiedEvent, 
-    IObjectRemovedEvent,
-)
+from zope.lifecycleevent import IObjectModifiedEvent
 
 from bungeni.alchemist import Session
-from bungeni.core.workflows.utils import (
-    get_group_privilege_extent_context,
-    set_role,
-    unset_role
-)
 from bungeni.models import domain
 from bungeni.models.interfaces import (
     IGroupMember, 
@@ -62,17 +53,4 @@ def timestamp(ob, event):
     # updating its timestamp. Is this the desired behaviour?
     removeSecurityProxy(ob).timestamp = datetime.datetime.now()
 
-
-# !+ these should NOT be event-driven !
-@register.handler(adapts=(IMemberRole, IObjectCreatedEvent))
-def member_role_added(member_role, event):
-    if member_role.is_global:
-        set_role(member_role.role_id, member_role.member.user.login, 
-            get_group_privilege_extent_context(member_role.member.group))
-
-@register.handler(adapts=(IMemberRole, IObjectRemovedEvent))
-def member_role_deleted(member_role, event):
-    if member_role.is_global:
-        unset_role(member_role.role_id, member_role.member.user.login, 
-            get_group_privilege_extent_context(member_role.member.group))
 

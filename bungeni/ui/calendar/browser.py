@@ -41,7 +41,6 @@ from sqlalchemy import orm
 from sqlalchemy.sql.expression import or_
 
 from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.schedule import SittingContainerSchedulingContext
 from bungeni.core.workflow.interfaces import (
     IWorkflowController, InvalidTransitionError
 )
@@ -1106,7 +1105,7 @@ class ScheduleAddView(BrowserView):
                                 )
                         wfc.fireAutomatic()
                     
-                    #update text for text records
+                    # update text for text records
                     text_record = removeSecurityProxy(current_record.item)
                     if model_interfaces.IScheduleText.providedBy(text_record):
                         schedule_item_type = domain.AgendaTextRecord.type
