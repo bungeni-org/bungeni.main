@@ -22,8 +22,11 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.i18n import _
-from bungeni.core.translation import ( is_translation,get_translation_for,
-    translate_i18n)
+from bungeni.core.translation import (
+    is_translation,
+    get_field_translations,
+    translate_i18n
+)
 from bungeni.core.language import get_default_language, get_language_by_name
 
 from bungeni.ui.utils import date, misc
@@ -96,7 +99,7 @@ class DescriptiveProperties(object):
             return getattr(context, name, "")
         if interfaces.ITranslatable.providedBy(context):
             if context.language != lang:
-                translation = get_translation_for(context, lang)
+                translation = get_field_translations(context, lang)
                 if translation:
                     translation = filter(lambda tr:tr.field_name==name, 
                         translation)
@@ -118,7 +121,7 @@ class DocDescriptiveProperties(DescriptiveProperties):
     def mover(self):
         context = _merged(self.context)
         # !+TRANSLATE_MESS(mr, oct-2012) this is content data and NOT a UI msgid?
-        # Should then be using translate_obj ?!
+        # Should then be using translated ?!
         return translate_i18n(
             IDCDescriptiveProperties(context.owner).title_member)
     

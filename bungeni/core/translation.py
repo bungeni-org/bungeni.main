@@ -36,8 +36,9 @@ from bungeni.models import domain
 from bungeni.utils import naming
 from bungeni.core.language import get_default_language
 
-def get_translation_for(context, lang):
-    """Get the translation for context in language lang
+
+def get_field_translations(context, lang):
+    """Get the FieldTranslation items for context fields in language lang
     NOTE: context may NOT be None
     """
     assert ITranslatable.providedBy(context), "%s %s" % (lang, context)
@@ -46,46 +47,53 @@ def get_translation_for(context, lang):
     mapper = orm.object_mapper(trusted)
     pk = getattr(trusted, mapper.primary_key[0].name)
     session = Session()
-    query = session.query(domain.ObjectTranslation).filter(
+    query = session.query(domain.FieldTranslation).filter(
         sql.and_(
-            domain.ObjectTranslation.object_type == type_key,
-            domain.ObjectTranslation.object_id == pk,
-            domain.ObjectTranslation.lang == lang
+            domain.FieldTranslation.object_type == type_key,
+            domain.FieldTranslation.object_id == pk,
+            domain.FieldTranslation.lang == lang
         )
     )
     return query.all()
 
-def translate_obj(context, lang=None):
+
+def translated(context, lang=None):
     """Translate an ITranslatable content object (context, that may NOT be None)
     into the specified language or that defined in the request
     -> copy of the object translated into language of the request
     """
-    trusted = removeSecurityProxy(context)
     if lang is None:
         lang = get_default_language()
-    translation = get_translation_for(trusted, lang)
-    obj = copy(trusted)
-    for field_translation in translation:
-        setattr(obj, field_translation.field_name, 
-            field_translation.field_text)
+    # only translate if needed i.e. if target language is other than context's original
+    if context.language == lang:
+        return context
+    # ok, translate...
+    # !+TRANSLATED mark translated obj with the translation lang?
+    # plus, is it ok to translate object then get an attr that triggers 
+    # dynamic SA/db requests?
+    obj = copy(removeSecurityProxy(context))
+    field_translations = get_field_translations(context, lang)
+    for field_translation in field_translations:
+        setattr(obj, field_translation.field_name, field_translation.field_text)
     return obj
+
 
 '''
 def translate_attr(obj, pk, attr_name, lang=None):
-    """Translate a single object attribute, an optimization on translate_obj().
+    """Translate a single object attribute, an optimization on translated().
         
         !+TRANSLATE_ATTR(mr, sep-2010) as it turnes out (at least for a simple
-        object e.g. ministry) this is slower than using translate_obj(obj).
+        object e.g. ministry) this is slower than using translated(obj).
     """
     if lang is None:
         lang = get_request_language()
     session = Session()
-    query = session.query(domain.ObjectTranslation).filter(
+    query = session.query(domain.FieldTranslation).filter(
         sql.and_(
-            domain.ObjectTranslation.object_type == obj.__class__.__name__,
-            domain.ObjectTranslation.object_id == pk,
-            domain.ObjectTranslation.field_name == attr_name,
-            domain.ObjectTranslation.lang == lang
+            domain.FieldTranslation.object_type == obj.__class__.__name__,
+            domain.FieldTranslation.object_id == pk,
+            domain.FieldTranslation.field_name == attr_name,
+            domain.FieldTranslation.lang == lang
         )
     )
     from sqlalchemy.orm.exc import NoResultFound
@@ -106,10 +114,10 @@ def get_available_translations(context):
         mapper = orm.object_mapper(trusted)
         pk = getattr(trusted, mapper.primary_key[0].name)
         session = Session()
-        query = session.query(domain.ObjectTranslation).filter(
+        query = session.query(domain.FieldTranslation).filter(
                 sql.and_(
-                    domain.ObjectTranslation.object_id == pk,
-                    domain.ObjectTranslation.object_type == type_key)
+                    domain.FieldTranslation.object_id == pk,
+                    domain.FieldTranslation.object_type == type_key)
             ).distinct().values("lang", "object_id")
         return dict(query)
     except:

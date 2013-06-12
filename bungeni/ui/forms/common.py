@@ -37,8 +37,7 @@ from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from bungeni.core.interfaces import TranslationCreatedEvent
 from bungeni.core.language import get_default_language
-from bungeni.core.translation import is_translation
-from bungeni.core.translation import get_translation_for
+from bungeni.core.translation import is_translation, get_field_translations
 from bungeni.core.language import CurrentLanguageVocabulary, get_language_by_name
 from bungeni.core.workflows.utils import set_group_local_role, unset_group_local_role
 from bungeni.models.interfaces import IVersion, IAttachmentContainer #, IBungeniContent, ISittingContainer
@@ -689,7 +688,7 @@ class TranslateForm(AddForm):
         #get the translation if available
         language = self.request.get("language")
 
-        translation = get_translation_for(self.context, language)
+        translation = get_field_translations(self.context, language)
         if translation:
             self.is_translation = True
         else:
@@ -721,7 +720,7 @@ class TranslateForm(AddForm):
         head = self.context
         if capi.pivot_languages:
             for plang in capi.pivot_languages:
-                trans = get_translation_for(head, plang)
+                trans = get_field_translations(head, plang)
                 if trans:
                     head = copy(removeSecurityProxy(head))
                     for field_translation in trans:
@@ -764,7 +763,7 @@ class TranslateForm(AddForm):
         pk = getattr(trusted, mapper.primary_key[0].name)
         
         curr_trans_by_name = dict( (ct.field_name, ct) 
-            for ct in get_translation_for(self.context, data["language"]))
+            for ct in get_field_translations(self.context, data["language"]) )
         
         def is_changed(context, field_name, new_field_text):
             if field_name in curr_trans_by_name:
@@ -782,7 +781,7 @@ class TranslateForm(AddForm):
                 if field_name in curr_trans_by_name:
                     translation = curr_trans_by_name[field_name]
                 else:
-                    translation = domain.ObjectTranslation()
+                    translation = domain.FieldTranslation()
                     translation.object_id = pk
                     translation.object_type = naming.polymorphic_identity(trusted.__class__)
                     translation.field_name = field_name

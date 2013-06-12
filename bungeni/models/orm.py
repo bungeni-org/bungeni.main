@@ -677,7 +677,7 @@ mapper(domain.SittingAttendance, schema.sitting_attendance,
     }
 )
 
-mapper(domain.ObjectTranslation, schema.translation)
+mapper(domain.FieldTranslation, schema.translation)
 
 mapper(domain.TimeBasedNotication, schema.time_based_notification)
 

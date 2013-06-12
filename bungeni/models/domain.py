@@ -1107,9 +1107,9 @@ class Venue(Entity):
         interfaces.IScheduleContent
     )
 
-# !+ this should really be called "FieldTranslation", and docstring should be pertinent!!
-class ObjectTranslation(object):
-    """Get the translations for an Object.
+
+class FieldTranslation(object):
+    """Get the field/attribute translations for an Entity instance.
     """
 
 class TimeBasedNotication(Entity):

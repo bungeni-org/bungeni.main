@@ -52,17 +52,22 @@ def provides_feature(discriminator, feature_name):
     return get_feature_interface(feature_name).implementedBy(model)
 
 
-# param parser/validator utils
 
-def ppv_sst(value, default):
-    """Space separated tokens."""
-    return (value or default or "").split()
-ppv_space_separated_type_keys = ppv_sst
-ppv_space_separated_role_ids = ppv_sst
-ppv_space_separated_state_ids = ppv_sst
-
-def ppv_int(value, default=None):
-    return int(value or default or 0)
+class PPV(object):
+    """param parser/validator (convenient namespace)
+    """
+    
+    @staticmethod
+    def sst(value, default):
+        """Space separated tokens."""
+        return (value or default or "").split()
+    space_separated_type_keys = sst
+    space_separated_role_ids = sst
+    space_separated_state_ids = sst
+    
+    @staticmethod
+    def integer(value, default=None):
+        return int(value or default or 0)
 
 
 # containers
@@ -118,7 +123,7 @@ class Feature(object):
             "feature %r - configurable parameters here are: %s" % (
                 key, self.name, self.feature_parameters.keys())
             fp = self.feature_parameters[key]
-            ppv = globals()["ppv_%s" % (fp["type"])]
+            ppv = getattr(PPV, fp["type"])
             kws[key] = ppv(kws[key], fp["default"])
         return kws
     
@@ -141,7 +146,7 @@ class Feature(object):
                         (self, model, fi, "dependent feature disabled")
             # !+determine if class implements an interface NOT via inheritance
             # e.g. EventResponse will already "implement" Audit as super class 
-            # Event already does
+            # Event already does !+get_base_cls?
             #assert not self.feature_interface.implementedBy(model), \
             #    (self, model, "feature already supported")
     
@@ -175,15 +180,16 @@ class Feature(object):
 class Audit(Feature):
     """Support for the "audit" feature.
     """
+    # parameter defaults
+    AUDIT_ACTIONS = " ".join(domain.AUDIT_ACTIONS) # "add modify workflow remove version translate"
+    INCLUDE_SUBTYPES = "attachment event signatory group_assignment member"
+    DISPLAY_COLUMNS = "user date_active object description note date_audit"
+    
     feature_interface = interfaces.IFeatureAudit
     feature_parameters = {
-        "audit_actions": dict(type="sst",
-            # "add modify workflow remove version translate"
-            default=" ".join(domain.AUDIT_ACTIONS)),
-        "include_subtypes": dict(type="sst",
-            default="attachment event signatory group_assignment member"),
-        "display_columns": dict(type="sst", 
-            default="user date_active object description note date_audit"),
+        "audit_actions": dict(type="sst", default=AUDIT_ACTIONS),
+        "include_subtypes": dict(type="sst", default=INCLUDE_SUBTYPES),
+        "display_columns": dict(type="sst", default=DISPLAY_COLUMNS),
     }
     subordinate_interface = model_ifaces.IChange # !+IAudit?
     
@@ -331,8 +337,8 @@ class Signatory(Feature):
     """
     feature_interface = interfaces.IFeatureSignatory
     feature_parameters = {
-        "min_signatories": dict(type="int", default=0),
-        "max_signatories": dict(type="int", default=0),
+        "min_signatories": dict(type="integer", default=0),
+        "max_signatories": dict(type="integer", default=0),
         "submitted_states": dict(type="space_separated_state_ids", default="submitted_signatories"),
         "draft_states": dict(type="space_separated_state_ids", default="draft redraft"),
         "expire_states": dict(type="space_separated_state_ids", default="submitted"),
@@ -441,7 +447,7 @@ class Download(Feature):
 
 
 class UserAssignment(Feature):
-    """Support for the "user_assignment" feature.
+    """Support for the "user_assignment" feature (Doc). !+User?
     """
     feature_interface = interfaces.IFeatureUserAssignment
     feature_parameters = {
@@ -452,7 +458,7 @@ class UserAssignment(Feature):
 
 
 class GroupAssignment(Feature):
-    """Support for the "group_assignment" feature.
+    """Support for the "group_assignment" feature (Doc). !+Group?
     """
     feature_interface = interfaces.IFeatureGroupAssignment
     feature_parameters = {}
@@ -485,7 +491,7 @@ class SchedulingManager(object):
 
 @register.adapter(adapts=(interfaces.IFeatureDownload,))
 class DownloadManager(object):
-    """ Store download feature properties for a downloadable type.
+    """Store download feature properties for a downloadable type.
     """
     interface.implements(interfaces.IDownloadManager)
     

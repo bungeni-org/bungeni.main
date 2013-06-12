@@ -58,7 +58,7 @@ from bungeni.models.interfaces import (
 )
 from bungeni.core.interfaces import IWorkspaceContainer
 
-from bungeni.core.translation import translate_obj
+from bungeni.core.translation import translated
 from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
 
@@ -82,7 +82,7 @@ VDEX_FILE_REGEX = re.compile("^[a-z]+[a-z|_]+\.vdex$")
 def get_translated_group_label(group):
     """Get a translated display text to refer to the group.
     """
-    g = translate_obj(group)
+    g = translated(group)
     return "%s - %s" % (g.short_name, g.full_name)
 
 
@@ -333,7 +333,7 @@ class DatabaseSource(BaseVocabularyFactory):
         title_getter = self.title_getter or (lambda ob: getattr(ob, title_field))
         for ob in results:
             if ITranslatable.providedBy(ob):
-                ob = translate_obj(ob)
+                ob = translated(ob)
             terms.append(vocabulary.SimpleTerm(
                     value = getattr(ob, self.value_field), 
                     token = getattr(ob, self.token_field),
@@ -399,7 +399,7 @@ class SpecializedSource(BaseVocabularyFactory):
         terms = []
         title_field = self.title_field or self.token_field
         for ob in results:
-            obj = translate_obj(ob)
+            obj = translated(ob)
             terms.append(vocabulary.SimpleTerm(
                     value = getattr(obj, self.value_field), 
                     token = getattr(obj, self.token_field),
@@ -459,7 +459,7 @@ class GroupTitleTypesFactory(SpecializedSource):
         results = query.all()
         terms = []
         for ob in results:
-            obj = translate_obj(ob)
+            obj = translated(ob)
             terms.append(vocabulary.SimpleTerm(
                     value = obj.title_type_id, 
                     token = obj.title_type_id,
@@ -846,7 +846,7 @@ class MemberTitleSource(SpecializedSource):
         results = query.all()
         terms = []
         for ob in results:
-            obj = translate_obj(ob)
+            obj = translated(ob)
             terms.append(
                 vocabulary.SimpleTerm(
                     value = getattr(obj, 'user_role_type_id'), 
@@ -867,7 +867,7 @@ class OwnerOrLoggedInUserSource(SpecializedSource):
         except (AttributeError, AssertionError):
             user = utils.get_login_user()
         title_field = self.title_field or self.token_field
-        obj = translate_obj(user)
+        obj = translated(user)
         terms = [
             vocabulary.SimpleTerm(
                 value=getattr(obj, self.value_field), 

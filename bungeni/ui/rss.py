@@ -22,7 +22,7 @@ from bungeni.alchemist import utils
 from bungeni.models.domain import User
 from bungeni.feature.interfaces import IFeatureAttachment
 from bungeni.core.interfaces import IRSSValues
-from bungeni.core.translation import translate_obj
+from bungeni.core.translation import translated
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.capi import capi
 
@@ -87,7 +87,7 @@ class RSSView(BrowserView):
 
         for item in self.values:
             #Trying to translate item to the current language
-            i18n_item = translate_obj(item, self.request.locale.id.language)
+            i18n_item = translated(item, self.request.locale.id.language)
             item_url = self.get_item_url(item)
             self.channel_element.appendChild(self.generate_item(self.get_title(i18n_item),
                                                                 self.get_description(i18n_item),
@@ -178,7 +178,7 @@ class TimelineRSSView(RSSView):
     # for Timeline/AuditLog e.g. no indication of change action...
     
     def __init__(self, context, request):
-        self.i18n_context = translate_obj(context, request.locale.id.language)
+        self.i18n_context = translated(context, request.locale.id.language)
         super(TimelineRSSView, self).__init__(context, request)
 
     @property
@@ -242,7 +242,7 @@ class AkomantosoRSSView(RSSView):
 
         for item in self.values:
             #Trying to translate item to the current language
-            i18n_item = translate_obj(item, self.request.locale.id.language)
+            i18n_item = translated(item, self.request.locale.id.language)
             item_url = self.get_item_url(item)
             self.channel_element.appendChild(self.generate_item(self.get_title(i18n_item),
                                                                 item_url,
@@ -291,7 +291,7 @@ class AkomantosoXMLView(BrowserView):
         self.response = xmllib.Document()
     
     def __call__(self):
-        ob = translate_obj(self.context, self.request.locale.id.language)
+        ob = translated(self.context, self.request.locale.id.language)
         akomantoso_element = self.create_base_structure()
         akomantoso_element.appendChild(self.create_body_structure(ob))
         self.response.appendChild(akomantoso_element)

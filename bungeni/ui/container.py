@@ -316,7 +316,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         # !+ lang should always be valid here... make not optional, assert?
         if lang is None:
             lang = get_default_language()
-        return [ translation.translate_obj(node, lang) for node in nodes ]
+        return [ translation.translated(node, lang) for node in nodes ]
 
     def _json_values(self, nodes):
         """

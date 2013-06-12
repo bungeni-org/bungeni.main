@@ -273,7 +273,7 @@ def setup_customization_ui():
         
         # workspace add titles to strings for i18n
         for ws_tab in capi.workspace_tabs:
-            naming.MSGIDS.add(('section_workspace_%s' % ws_tab, ws_tab))
+            naming.MSGIDS.add(("section_workspace_%s" % ws_tab, ws_tab))
         
         # events
         if ti.workflow.has_feature("event"):
@@ -290,8 +290,8 @@ def setup_customization_ui():
                         order=21,
                         layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
                 else:
-                    log.warn('IGNORING feature "event" ref to disabled type %r', 
-                        event_type_key)
+                    log.warn("IGNORING feature %r ref to disabled type %r", 
+                        "event", event_type_key)
         
         # register other non-workspace menu items for custom types (only once)
         # custom events !+GET_ARCHETYPE

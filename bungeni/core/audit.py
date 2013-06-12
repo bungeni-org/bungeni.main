@@ -48,7 +48,7 @@ from bungeni.feature.interfaces import IFeatureAudit
 from bungeni.models import schema
 from bungeni.models import domain
 from bungeni.core.interfaces import TranslationCreatedEvent
-from bungeni.core.translation import translate_obj
+from bungeni.core.translation import translated
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.utils import common, register
 
@@ -181,7 +181,7 @@ class _AuditorFactory(object):
         # !+TRANSLATION_VERSION(mr, feb-2013) the audited values for the (head) 
         # object are those for the newly submitted translation BUT a "translation"
         # should really be bound to a specific *version* of the object, not to head.
-        translated_ob = translate_obj(ob, event.language)
+        translated_ob = translated(ob, event.language)
         translated_ob.language = event.language
         # !+TRANSLATE_DESCRIPTION(mr, feb-2013) this should really be passed
         # on such that is is picked up by the change description formattter,

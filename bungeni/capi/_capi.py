@@ -199,6 +199,7 @@ class CAPI(object):
         derived_def = getattr(derived_module, derived) # raises AttributeError
         assert derived_def.func_code.co_argcount == 1, \
             "Field derived callable %r must have exactly 1 parameter." % (derived_def)
+        # !+TRANSLATED should the context be ALWAYS translated here?
         return wrapped_callable(derived_def)
     
     

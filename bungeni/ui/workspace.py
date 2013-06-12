@@ -134,7 +134,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
             lang = get_default_language()
         for index, node in enumerate(nodes):
             if ITranslatable.providedBy(node):
-                nodes[index] = translation.translate_obj(node, lang)
+                nodes[index] = translation.translated(node, lang)
         return nodes
     
     def get_batch(self, start=0, limit=25, lang=None):

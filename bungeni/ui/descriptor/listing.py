@@ -382,7 +382,7 @@ def enumeration_column(name, title,
     assert enum_value_attr is not None
     def getter(item, formatter):
         enum_obj = getattr(item, item_reference_attr)
-        enum_obj = translation.translate_obj(enum_obj)
+        enum_obj = translation.translated(enum_obj)
         return getattr(enum_obj, enum_value_attr)
     return column.GetterColumn(title, getter)
 

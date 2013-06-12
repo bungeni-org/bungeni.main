@@ -122,7 +122,7 @@ class TranslationStatus(MessageViewlet):
                 if lang == context_lang:
                     is_translated = True
                     break
-                trans = translation.get_translation_for(self.context, lang)
+                trans = translation.get_field_translations(self.context, lang)
                 if trans:
                     is_translated = True
                     break

@@ -58,7 +58,7 @@ class WorkspaceContentAdapter(object):
             if self.context.language in untranslated:
                 untranslated.remove(self.context.language)
             for pivot_lang in untranslated:
-                if translation.get_translation_for(self.context, pivot_lang):
+                if translation.get_field_translations(self.context, pivot_lang):
                     untranslated.remove(pivot_lang)
             if len(untranslated):
                 i18n_langs = []
