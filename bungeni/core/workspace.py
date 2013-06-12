@@ -223,7 +223,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         this property returns the id of the chamber the currently logged in
         user is a member of
         """
-        chamber = utils.get_login_user_chamber()
+        chamber = utils.get_user_chamber(utils.get_login_user())
         return chamber.group_id
 
     def __getitem__(self, name):
@@ -243,7 +243,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
     def __setitem__(self, name, item):
         session = Session()
-        chamber = utils.get_login_user_chamber()
+        chamber = utils.get_user_chamber(utils.get_login_user())
         item.chamber_id = chamber.group_id
         session.add(item)
 
@@ -319,7 +319,7 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
     def __init__(self, context):
         self.context = context
-        chamber = utils.get_login_user_chamber()
+        chamber = utils.get_user_chamber(utils.get_login_user())
         if chamber:
             self.object_type = chamber.type
             self.oid = chamber.group_id

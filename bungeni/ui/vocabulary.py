@@ -608,7 +608,7 @@ class MemberDelegationSource(MemberSource):
         
         if IAlchemistContainer.providedBy(ctx):
             if IWorkspaceContainer.providedBy(ctx):
-                self.chamber = utils.get_login_user_chamber()
+                self.chamber = utils.get_user_chamber(utils.get_login_user())
             else:
                 # {Doc}Container - "add" doc
                 assert IDoc.implementedBy(ctx.domain_model), ctx

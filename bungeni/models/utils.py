@@ -25,12 +25,12 @@ from bungeni.utils import common
 def get_chamber_for_context(context):
     """Return the chamber in which the context exists.
     """
-    # first look for current chamber from context tree
+    # first look for current chamber from context traversal stack
     chamber = common.getattr_ancestry(context, None, "__parent__",
         acceptable=interfaces.IChamber.providedBy)
     # !+ should this ever be None here? Cases when it is:
     # - in workspace, the "contextual" chamber is not defined in the traversal 
-    #   hierarchy (even if all doc instacnes define the "chamber" attr directly).
+    #   hierarchy (even if all doc instances define the "chamber" attr directly).
     # - context is an event (no chamber/group set) and user is a non-mp minister
     if chamber is None:
         # is context a sub-document? If so, take the chamber of the head doc:
@@ -38,11 +38,13 @@ def get_chamber_for_context(context):
             head = context.head
             if hasattr(head, "chamber"):
                 chamber = head.chamber
+                log.warn(" !+ CONTEXT [%s] has no ANCESTOR chamber... trying via "
+                    "HEAD, GOT [%s]", context, chamber)
     if chamber is None:
         # check logged in user's chamber
-        chamber = get_login_user_chamber()
-        log.warn(" !+ CONTEXT [%s] HAS NO ANCESTOR CHAMBER... trying via "
-            "login_user: [%s]", context, chamber)
+        chamber = get_user_chamber(get_login_user())
+        log.warn(" !+ CONTEXT [%s] has no ANCESTOR or HEAD chamber... "
+            "trying via login_user, GOT [%s]", context, chamber)
     return chamber
 
 
@@ -68,15 +70,13 @@ def get_user_delegations(user):
     return delegations
 
 
-def get_login_user_chamber():
-    user = get_login_user()
-    if user:
-        user_delegations = get_user_delegations(user)
-        if user_delegations:
-            user = user_delegations[0].user
-        for gm in user.group_membership:
-            # cascade up first group ancestry, to chamber (or None)
-            return get_chamber_for_group(gm.group)
+def get_user_chamber(user):
+    user_delegations = get_user_delegations(user)
+    if user_delegations:
+        user = user_delegations[0].user
+    for gm in user.group_membership:
+        # cascade up first group ancestry, to chamber (or None)
+        return get_chamber_for_group(gm.group)
 
 
 def get_login_user():
@@ -87,6 +87,7 @@ def get_login_user():
     try:
         return get_user_for_login(login)
     except sa.orm.exc.NoResultFound:
+        # !+ why is this silenced?
         return
 
 
