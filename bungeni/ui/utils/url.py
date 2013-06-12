@@ -64,13 +64,19 @@ def get_subsection_name(request=None):
 class BodyCSSClass(object):
     
     def get_body_css_class(self):
-        # Add custom css classes to the list below
+        # add custom css classes to the list below
         chamber_type = "default"
-        chamber = utils.get_user_chamber(utils.get_login_user())
-        if chamber and chamber.sub_type:
-            chamber_type = chamber.sub_type
-        classes = ["yui-skin-sam", "section-bungeni-%s" % get_section_name(),
-                   "chamber-%s" % chamber_type]
+        user = utils.get_login_user()
+        if user:
+            # IBungeniAuthenticatedSkin
+            chamber = utils.get_user_chamber(user)
+            if chamber and chamber.sub_type:
+                chamber_type = chamber.sub_type
+        classes = [
+            "yui-skin-sam",
+            "section-bungeni-%s" % get_section_name(),
+            "chamber-%s" % chamber_type 
+        ]
         return " ".join(classes)
 
 

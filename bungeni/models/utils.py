@@ -42,9 +42,14 @@ def get_chamber_for_context(context):
                     "HEAD, GOT [%s]", context, chamber)
     if chamber is None:
         # check logged in user's chamber
-        chamber = get_user_chamber(get_login_user())
-        log.warn(" !+ CONTEXT [%s] has no ANCESTOR or HEAD chamber... "
-            "trying via login_user, GOT [%s]", context, chamber)
+        user = get_login_user()
+        if user:
+            chamber = get_user_chamber(user)
+            log.warn(" !+ CONTEXT [%s] has no ANCESTOR or HEAD chamber... "
+                "trying via login_user, GOT [%s]", context, chamber)
+        else:
+            log.warn(" !+ CONTEXT [%s] has no ANCESTOR or HEAD chamber... "
+                "and no USER is logged in.", context)
     return chamber
 
 
