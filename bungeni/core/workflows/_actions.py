@@ -34,7 +34,6 @@ from bungeni.core.version import (
 #message_template = "New version on workflow transition to: %(status)s"
 #message = message_template % context.__dict__
 
-
 from bungeni.core.workflows.utils import (
     
     # when a doc reaches a state that semantically implies "receive"
@@ -48,7 +47,11 @@ from bungeni.core.workflows.utils import (
     
     # when a sitting's agenda is published
     schedule_sitting_items,
-    
+)
+
+from bungeni.core.workflows.dbutils import (
+    # utility to help create parametrized "transfer to chamber" actions
+    spawn_doc, # parameters: (from_doc, chamber_type, type_key, state_id)
 )
 
 

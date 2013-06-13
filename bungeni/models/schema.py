@@ -508,6 +508,8 @@ group = sa.Table("group", metadata,
     # !+ rename to "group_type" (consistent with doc table: type/doc_type?
     # or rename doc.doc_type to doc.sub_type?
     sa.Column("sub_type", sa.Unicode(128), nullable=True),
+    # !+ should we add a constraint such as chamber.sub_type must be unique?
+    # i.e. can only have one "active" chamber of any given type
     sa.Column("parent_group_id", sa.Integer,
         sa.ForeignKey("group.group_id")
      ),

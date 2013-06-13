@@ -1,16 +1,131 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-# db specific utilities to retrive values, restriction etc
-# from the db implementation
+"""db specific utilities to retrive values, restriction etc 
+from the db implementation.
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.core.workflows")
+
 
 from zope.security.proxy import removeSecurityProxy
 import sqlalchemy as sa
 from sqlalchemy.orm import mapper
+
 from bungeni.alchemist import Session
 import bungeni.models.domain as domain
 import bungeni.models.schema as schema
 import bungeni.models.interfaces as interfaces
 from bungeni.utils.misc import describe
-from bungeni.ui.i18n import _
+from bungeni import _
+
+
+def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id):
+    """Utility to help create parametrized "transfer to chamber" actions.
+    
+    Note: if an explicit version prior to spawning, include the "version" action
+    in the actions of the workflow destination state.
+    
+    Returns the newly spawned doc.
+    """
+    from bungeni.core.workflow.interfaces import IStateController
+    from bungeni.utils import naming
+    from bungeni.capi import capi
+    
+    source_doc = removeSecurityProxy(source_doc)
+    session = Session()
+    session.merge(source_doc)
+    
+    # get the singleton "active" chamber of target_chamber_type
+    target_chamber = session.query(domain.Chamber
+        ).filter(sa.and_(
+                domain.Chamber.sub_type == target_chamber_type, 
+                domain.Chamber.status == "active")).one()
+    
+    # get target domain model type, source/target descriptors
+    source_ti = capi.get_type_info(source_doc.__class__)
+    target_ti = capi.get_type_info(target_type_key)
+    
+    # create target instance
+    target_doc = target_ti.domain_model()
+    session.add(target_doc)
+    
+    # set "key" values
+    target_doc.chamber = target_chamber
+    target_doc.head = source_doc
+    target_doc.owner = source_doc.owner
+    
+    # transfer values
+    for attr_name in [
+            #files -> not carried over !+ parametrize as optional?
+            #signatories -> not carried over
+            #events -> not carried over
+            
+            #"doc_id", -> auto
+            #"chamber_id", -> target_chamber.group_id
+            #"owner_id",
+            #"type", -> auto, from target_type
+            "doc_type",
+            "doc_procedure",
+            #"type_number", -> a progressive number by type?
+            #"registry_number", -> a reference to this resource !+ when do we set it here?
+            # "uri", -> ?
+            "acronym",
+            "title",
+            "sub_title",
+            "description",
+            "summary",
+            "language",
+            "body",
+            #"status",
+            #"status_date",
+            #"group_id", -> we do not carry this over?
+            "subject",
+            "doc_date",
+            "coverage",
+            "doc_urgency",
+            "geolocation",
+            #"head_id", -> here, this is the "origin" document 
+            #"timestamp", -> auto
+            
+            "source_title",
+            "source_creator",
+            "source_subject",
+            "source_description",
+            "source_publisher",
+            "source_publisher_address",
+            "source_contributors",
+            "source_date",
+            "source_type",
+            "source_format",
+            "source_doc_source",
+            "source_language",
+            "source_relation",
+            "source_coverage",
+            "source_rights",
+        ]:
+        source_value = getattr(source_doc, attr_name)
+        if source_value is not None:
+            setattr(target_doc, attr_name, source_value)
+    
+    # transfer any extended properties
+    for (xp_name, xp_type) in target_ti.domain_model.extended_properties:
+        if has_attr(source_doc, xp_name):
+            source_value = getattr(source_doc, xp_name)
+            if source_value is not None:
+                setattr(target_doc, xp_name, source_value)
+    
+    # status (needs values to be updated first), also does a db flush()
+    IStateController(target_doc).set_status(target_state_id)
+    
+    log.info("Spawned new document [%s] : (%r, %r, %r) -- from: %s", 
+        target_doc, target_chamber_type, target_type_key, target_state_id, source_doc)
+    return target_doc
+
+
+
 
 def get_max_type_number(domain_model):
     """Get the current maximum numeric value for this domain_model's type_number.
