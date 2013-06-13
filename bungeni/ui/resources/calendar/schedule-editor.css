@@ -26,6 +26,12 @@
 .list-minutes.yui-dt-liner {
     width:96% !important;
 }
+.yui-layout-bd.layout-custom-wrapper {
+    text-align:right !important;
+}
+.yui-skin-sam .yui-dt-bd {
+    overflow-x:hidden;
+}
 
 .schedule-available-item-filters button em {
     font-style: normal;

@@ -118,11 +118,12 @@ YAHOO.bungeni.scheduling = function(){
         
         /**
          * @method renderSchedulerControls
-         * @description Renders buttons at bottom of agenda datatable to 
+         * @description Renders buttons at top of agenda datatable to 
          * perform global actions on the agenda
          **/
         var renderScheduleControls = function(args){
-            var container = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("bottom").body;
+            var container = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("top").body;
+            YAHOO.util.Dom.addClass(container, 'layout-custom-wrapper'); 
             // add save button
             var save_button = new YAHOO.widget.Button({
                 label: SGlobals.save_button_text,
@@ -337,7 +338,7 @@ YAHOO.bungeni.scheduling = function(){
             collapse: true,
         },
         {
-            position:'bottom',
+            position:'top',
             body: '',
             header: '',
             gutter: "2 2",
@@ -358,6 +359,7 @@ YAHOO.bungeni.scheduling = function(){
                 units: (AgendaConfig.layoutConfig || DEFAULT_LAYOUT_CONFIG)
             }
         );
+        console.log(layout);
         layout.on("render", function(){
             YAHOO.bungeni.schedule = function(){
                 var editor = new YAHOO.widget.TextareaCellEditor();
