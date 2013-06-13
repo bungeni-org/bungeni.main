@@ -29,6 +29,8 @@ from bungeni.ui.i18n import _
 from bungeni.ui.utils import common, url, report_tools
 from bungeni.ui.reporting.interfaces import IReportGenerator, ReportException
 from bungeni.ui.calendar.data import ExpandedSitting
+from bungeni.utils.common import get_request
+
 
 BUNGENI_REPORTS_NS="http://bungeni.org/reports"
 
@@ -180,7 +182,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
     def generateReport(self):
         """Generate report content based on report template and context
         """
-        request = common.get_request()
+        request = get_request()
         
         def process_single_node(node, context, typ, src):
             clean_element(node)

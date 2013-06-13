@@ -84,7 +84,7 @@ WIDGETS = {
             listing.truncatable_text_column, None),
     ("text", "rich_text"):
         (widgets.HTMLDisplay, widgets.RichTextEditor, widgets.RichTextEditor, 
-            None, None, None),
+            None, listing.truncatable_text_column, None),
     ("text", "radio"):
         (None, widgets.CustomRadioWidget, widgets.CustomRadioWidget, None, None, None),
     ("text", "single_select"): # !+ merge with ("vocabulary", "single_select")
