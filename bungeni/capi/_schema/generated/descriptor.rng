@@ -304,6 +304,7 @@
       <value>combined_name</value>
       <!-- !+ -->
       <value>group</value>
+      <value>uri</value>
     </choice>
   </define>
   <define name="FIELD_RENDER_TYPE">
@@ -320,6 +321,7 @@
       <value>number</value>
       <value>image</value>
       <value>file</value>
+      <value>uri</value>
       <value>no_input</value>
     </choice>
     <!-- !+ remove? -->

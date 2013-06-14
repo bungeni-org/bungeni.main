@@ -24,11 +24,19 @@ from bungeni import _
 
 def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id):
     """Utility to help create parametrized "transfer to chamber" actions.
-    
-    Note: if an explicit version prior to spawning, include the "version" action
-    in the actions of the workflow destination state.
-    
     Returns the newly spawned doc.
+    
+    Notes:
+    
+    - sub-docs "signatories", "attachments", "events" are not carried over to 
+        the new doc
+    
+    - the "owner" of the new doc is the original owner i.e. the member of the 
+        originating chamber (but this could be changed on the spawned document?)
+    
+    - if an explicit version prior to spawning is desired, include the "version"
+        action in the actions of the workflow destination state.
+    
     """
     from bungeni.core.workflow.interfaces import IStateController
     from bungeni.utils import naming

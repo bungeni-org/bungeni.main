@@ -35,7 +35,7 @@ from zc.resourcelibrary import need
 from sqlalchemy.orm.exc import NoResultFound
 
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import url, debug, date, misc
+from bungeni.ui.utils import url, uri, debug, date, misc
 from bungeni.ui.calendar.data import TIME_OPTIONS
 from bungeni.utils import common
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
@@ -116,10 +116,10 @@ def CustomRadioWidget(field, request):
     return RadioWidget(field, vocabulary, request)
 
 class DefaultFileInputWidget(FileWidget):
-    '''
+    """
     This is the default FileInputWidget implementation, 
     other FileInputWidget types extend this
-    '''
+    """
 
     _missing = u""
 
@@ -209,11 +209,11 @@ class DefaultFileInputWidget(FileWidget):
 
 
 class ImageInputWidget(DefaultFileInputWidget):
-    '''
+    """
     render a inputwidget that displays the current
     image and lets you choose to delete, replace or just
     leave the current image as is.
-    '''
+    """
     __call__ = ViewPageTemplateFile("templates/image-widget.pt")
 
     @property
@@ -222,10 +222,10 @@ class ImageInputWidget(DefaultFileInputWidget):
 
 
 class FileInputWidget(DefaultFileInputWidget):
-    '''
+    """
     Upload file attachments
     Replace file attachments
-    '''
+    """
     fileURL = "./download"
 
     def _toFieldValue(self, (update_action, upload)):
@@ -893,6 +893,17 @@ class UserURLDisplayWidget(zope.formlib.widget.DisplayWidget):
         return _render_link_to_mp_or_user(user_id, self.context, self.request)
 
 
+class URIDisplayWidget(zope.formlib.widget.DisplayWidget):
+    """Display the URI of the item, for use by forms in "view" mode.
+    """
+    def __call__(self):
+        name = self.name
+        if name.endswith("_id"):
+            name = name[:-len("_id")]
+        related_item = getattr(self.context.context, name)
+        return uri.get_uri(related_item)
+
+
 class widget(object):
     """Traverce adapter for getting widget by name from form views
     """
@@ -932,7 +943,7 @@ template = """
     """
 
 
-OPT_PREFIX = 'yui_'
+OPT_PREFIX = "yui_"
 LEN_OPT_PREFIX = len(OPT_PREFIX)
 
 
@@ -996,7 +1007,7 @@ class _AutoCompleteWidget(itemswidgets.ItemsEditWidgetBase):
 
         items = filter(check_item, list(self.vocabulary)) if query else \
             list(self.vocabulary)
-        items = map(lambda x: s % {'id': x.token, 'name': self.textForValue(x)},
+        items = map(lambda x: s % {"id": x.token, "name": self.textForValue(x)},
             items)
 
         return "[%s]" % ",\n".join(items)
@@ -1005,7 +1016,7 @@ class _AutoCompleteWidget(itemswidgets.ItemsEditWidgetBase):
     def oDS(self):
         if self.remote_data:
             url = "%s/++widget++%s/filter" % \
-                (str(self.request.URL), self.name.split('.')[-1])
+                (str(self.request.URL), self.name.split(".")[-1])
             return """
                 var oDS = new YAHOO.util.XHRDataSource("%s");
                 oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
@@ -1015,7 +1026,7 @@ class _AutoCompleteWidget(itemswidgets.ItemsEditWidgetBase):
                   fields : ["name", "id"]
                 };
             """ % url
-        kw = {"dsname": self.name.replace('.', '_'),
+        kw = {"dsname": self.name.replace(".", "_"),
               "data": self.dataSource,
               }
         return """
@@ -1053,7 +1064,7 @@ class _AutoCompleteWidget(itemswidgets.ItemsEditWidgetBase):
     @property
     def javascript(self):
         kw = {"id": self.name,
-              "dsname": self.name.replace('.', '_'),
+              "dsname": self.name.replace(".", "_"),
               "oDS": self.oDS,
               "data": self.dataSource,
               "options": self.options,

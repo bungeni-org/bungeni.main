@@ -45,6 +45,7 @@ from bungeni.alchemist import Session
 def format_date(date):
     return time.strftime("%Y-%m-%d %H:%M:%S", date.timetuple())
 
+
 class SchedulingContextTraverser(SimpleComponentTraverser):
     """Custom scheduling context traverser which allows traversing to
     calendar days (using integer timestamps) or a ``get_%s`` method
@@ -78,6 +79,7 @@ class SchedulingContextTraverser(SimpleComponentTraverser):
         return ProxyFactory(LocationProxy(
             removeSecurityProxy(obj), container=self.context, name=name))
 
+
 class PrincipalGroupSchedulingContext(object):
     interface.implements(ISchedulingContext)
 
@@ -92,7 +94,7 @@ class PrincipalGroupSchedulingContext(object):
     def label(self):
         group = self.get_group()
         if group is not None:
-            return u"%s (%s)" % (group.short_name, group.full_name)
+            return group.short_name
         return _(u"Unknown user group")
     
     def get_group(self, name="group"):
@@ -130,6 +132,7 @@ class PrincipalGroupSchedulingContext(object):
         unproxied.__parent__ = ProxyFactory(LocationProxy(
             unproxied.__parent__, container=self, name="group"))
         return sittings
+
 
 class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IBungeniApplication)
@@ -178,6 +181,7 @@ class SessionSchedulingContext(PrincipalGroupSchedulingContext):
     def group_id(self):
         return self.__parent__.chamber_id
 
+
 class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ISittingContainer)
 
@@ -202,4 +206,5 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     def get_group(self, name=None):
         assert name is None
         return get_chamber_for_context(self.__parent__)
+
 

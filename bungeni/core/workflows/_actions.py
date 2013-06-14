@@ -51,7 +51,8 @@ from bungeni.core.workflows.utils import (
 
 from bungeni.core.workflows.dbutils import (
     # utility to help create parametrized "transfer to chamber" actions
-    spawn_doc, # parameters: (from_doc, chamber_type, type_key, state_id)
+    # PARAMETERS: (source_doc, target_chamber_type, target_type_key, target_state_id)
+    spawn_doc,
 )
 
 

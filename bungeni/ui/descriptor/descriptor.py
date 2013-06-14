@@ -900,6 +900,7 @@ class DocDescriptor(ModelDescriptor):
         "owner_id", # DB_REQUIRED
         "registry_number",
         "uri",
+        "head_id",
         #"group_id", # !+group_id only exposed in specific custom doc types
         "status",
         "status_date", # DB_REQUIRED
@@ -916,8 +917,7 @@ class DocDescriptor(ModelDescriptor):
         #"signatories", 
         #"attachments",
         #"events",
-        # head_id
-
+        
         "source_title",
         "source_creator",
         "source_subject",
@@ -1005,6 +1005,14 @@ class DocDescriptor(ModelDescriptor):
                 hide("edit listing"), 
                 # !+ should hide-in-edit mean -> if show-in-view then show in view-mode?
             ],
+        ),
+        F(name="head_id",
+            label="Originating Document",
+            localizable=[
+                show("view listing"),
+            ],
+            value_type="uri",
+            render_type="uri",
         ),
         F(name="acronym",
             label="Acronym",

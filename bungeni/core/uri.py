@@ -2,29 +2,33 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-""" Handler that generates Akoma Ntoso uri for parliamentary content.  
+"""Handler that generates Akoma Ntoso uri for parliamentary content.  
 """
 
 import bungeni.ui.utils as ui_utils
 from bungeni.capi import capi
 
-def generate_uri(object, event):
+
+# !+GET_URI duplication?
+
+def generate_uri(item, event):
     uri = ""
     
-    if object.type == "bill":
-        if object.publication_date is not None and object.registry_number:
+    if item.type == "bill":
+        if item.publication_date is not None and item.registry_number:
             uri = "/bungeni/%s/%s/%s/%s/%s@/main" % (capi.legislature.country_code,
-                                                     object.type, 
-                                                     object.publication_date,
-                                                     object.registry_number, 
-                                                     object.language)
+                                                     item.type, 
+                                                     item.publication_date,
+                                                     item.registry_number, 
+                                                     item.language)
     else:
-        if object.status_date is not None and object.registry_number:
+        if item.status_date is not None and item.registry_number:
             uri = "/bungeni/%s/%s/%s/%s/%s@/main" % (capi.legislature.country_code,
-                                                     object.type, 
-                                                     object.status_date.date(),
-                                                     object.registry_number, 
-                                                     object.language)
+                                                     item.type, 
+                                                     item.status_date.date(),
+                                                     item.registry_number, 
+                                                     item.language)
+    
+    if item.uri is None and uri:
+        item.uri = uri
 
-    if object.uri is None and uri:
-        object.uri = uri

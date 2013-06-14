@@ -40,6 +40,7 @@ VALUETYPE = {
     "signatory": {}, # !+
     #"combined_name": {}, # !+DERIVED_LISTING_FILTERING
     "group": {},
+    "uri": {},
 }
 
 
@@ -58,6 +59,7 @@ RENDERTYPE = {
     "number": schema.Int,
     "image": schema.Bytes,
     "file": schema.Bytes,
+    "uri": schema.TextLine,
     # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
     "single_select": schema.Choice, 
     "radio": schema.Choice, 
@@ -135,6 +137,8 @@ WIDGETS = {
     ("file", "file"):
         (widgets.FileDisplayWidget, widgets.FileEditWidget, widgets.FileAddWidget, None,
             None, None),
+    ("uri", "uri"):
+        (widgets.URIDisplayWidget, None, None, None, listing.uri_column, None),
     ("user", "no_input"): # !+User.user_id
         (None, widgets.HiddenTextWidget, widgets.HiddenTextWidget, None,
             listing.user_name_column,

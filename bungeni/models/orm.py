@@ -156,7 +156,17 @@ mapper(domain.Doc, schema.doc,
             primaryjoin=schema.doc.c.doc_id == schema.doc_principal.c.doc_id,
             lazy=False,
             uselist=True,
-        )
+        ),
+        # for sub-items, "ead" points to parent doc
+        # for spawned docs, "head" points to origin doc (typically from other chamber)
+        "head": relation(domain.Doc,
+            primaryjoin=rdb.and_(
+               schema.doc.c.head_id == schema.doc.c.doc_id,
+            ),
+            remote_side=schema.doc.c.doc_id,
+            uselist=False,
+            lazy=True,
+        ),
     }
 )
 
@@ -203,18 +213,6 @@ mapper(domain.DocVersion,
 mapper(domain.Event,
     inherits=domain.Doc,
     polymorphic_identity=polymorphic_identity(domain.Event),
-    properties={
-        "head": relation(domain.Doc,
-            primaryjoin=rdb.and_(
-               schema.doc.c.head_id == schema.doc.c.doc_id,
-               # !+unnecessary (explicit constraint of no events on events)
-               schema.doc.c.type != polymorphic_identity(domain.Event),
-            ),
-            remote_side=schema.doc.c.doc_id,
-            uselist=False,
-            lazy=True,
-        ),
-    },
 )
 #!+EVENTS on parliamentary documents:
 # - behave also "like" a parliamentary document

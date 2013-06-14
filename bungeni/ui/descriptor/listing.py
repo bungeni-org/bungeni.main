@@ -37,7 +37,7 @@ from bungeni.models import domain
 from bungeni.models.utils import get_login_user, get_member_of_chamber
 from bungeni.models.interfaces import IOwned
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
-from bungeni.ui.utils import date, url
+from bungeni.ui.utils import date, url, uri
 from bungeni.utils import common
 from bungeni.ui.i18n import _
 from bungeni.capi import capi
@@ -177,6 +177,17 @@ def truncatable_text_column(name, title, vocabulary=None,
         else:
             return untruncated_markup % (value)
     return _column(name, title, renderer)
+
+
+def uri_column(name, title, vocabulary=None):
+    if name.endswith("_id"):
+        name = name[:-len("_id")]
+    def getter(item, formatter):
+        related_item = getattr(item, name)
+        if related_item:
+            return uri.get_uri(getattr(item, name))
+        return ""
+    return column.GetterColumn(title, getter)
 
 
 # !+ mv combined_name_column to a property Group.combined_name, merge...

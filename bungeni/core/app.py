@@ -215,7 +215,7 @@ class AppSetup(object):
             container_getter(get_chamber_for_context, "venues"),
             title=_("section_scheduling_venues", default=u"Venues"),
             description=_(u"Venues"))
-        ws_sched["agendaitems"] = QueryContent(
+        ws_sched["agenda_items"] = QueryContent(
             container_getter(get_chamber_for_context, "agenda_items"),
             title=_("section_scheduling_agenda_items", 
                 default=u"Agenda items"),

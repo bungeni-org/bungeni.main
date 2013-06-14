@@ -24,11 +24,12 @@ from bungeni.feature.interfaces import IFeatureAttachment
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.translation import translated
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.capi import capi
 
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
-from bungeni.ui.i18n import _
+from bungeni.ui.utils import uri
+from bungeni import _
+
 
 AKOMA_NTOSO_TYPES = ["act", "bill", "report", "judgement", "debateRecord", "doc"]
 CUSTOM_FBR_WORK_NAMES = {
@@ -38,6 +39,7 @@ def get_fbr_work_name(item_type):
     return CUSTOM_FBR_WORK_NAMES.get(item_type) or "".join(
         map(unicode.capitalize, item_type.split("_"))
     )
+
 
 class RSSView(BrowserView):
     """ Base class that can generate
@@ -83,7 +85,7 @@ class RSSView(BrowserView):
         )
 
     def __call__(self):
-        self.request.response.setHeader('Content-Type', 'application/rss+xml')
+        self.request.response.setHeader("Content-Type", "application/rss+xml")
 
         for item in self.values:
             #Trying to translate item to the current language
@@ -169,6 +171,7 @@ class RSSView(BrowserView):
     def _format_date(self, dt):
         return email.Utils.formatdate(time.mktime(dt.timetuple()))
 
+
 class TimelineRSSView(RSSView):
     """ Base view for generiting
         feed for timeline of object.
@@ -194,7 +197,7 @@ class TimelineRSSView(RSSView):
         return IDCDescriptiveProperties(self.context).description
 
     def __call__(self):
-        self.request.response.setHeader('Content-Type', 'application/rss+xml')
+        self.request.response.setHeader("Content-Type", "application/rss+xml")
         # Taking object url for timeline item
         item_url = self.get_item_url(self.context)
         for item in self.values:
@@ -238,7 +241,7 @@ class AkomantosoRSSView(RSSView):
     view_name = u"/feed.akomantoso"
 
     def __call__(self):
-        self.request.response.setHeader('Content-Type', 'application/rss+xml')
+        self.request.response.setHeader("Content-Type", "application/rss+xml")
 
         for item in self.values:
             #Trying to translate item to the current language
@@ -277,7 +280,6 @@ class AkomantosoRSSView(RSSView):
 
 # Views to form XML in akomantoso format
 # for certain objects
-
 
 class AkomantosoXMLView(BrowserView):
     """ Base class to generate XML
@@ -319,7 +321,7 @@ class AkomantosoXMLView(BrowserView):
         """ Creates bill specific akomantoso xml 
         """
         bill_element = self.create_element(self.document_type)
-        country = self.get_country(ob)
+        country = uri.get_country(ob)
         meta_element = self.create_element("meta")
         bill_element.appendChild(meta_element)
         
@@ -357,7 +359,7 @@ class AkomantosoXMLView(BrowserView):
         # Original
         original_element = self.create_element("original", 
             id="orig", 
-            href=self.get_frbr_expression_url(ob), 
+            href=uri.get_frbr_expression_url(ob), 
             showAs=self.get_title(ob))
         references_element.appendChild(original_element)
         # Parliament TLCOrganization
@@ -396,8 +398,7 @@ class AkomantosoXMLView(BrowserView):
                 for file in files:
                     attachment_element = self.create_element("attachment",
                         id="att%s" % file.attachment_id,
-                        href=(self.get_frbr_expression_url(ob) + 
-                            "/" + file.name),
+                        href="%s/%s" % (uri.get_frbr_expression_url(ob), file.name),
                         showAs=file.title
                     )
                     attachments_element.appendChild(attachment_element)
@@ -408,7 +409,7 @@ class AkomantosoXMLView(BrowserView):
         publication_element = self.create_element("publication",
             name=ob.type,
             showAs="",
-            date=self.get_publication_date(ob).strftime("%Y-%m-%d")
+            date=uri.get_publication_date(ob)
         )
         return publication_element
     
@@ -418,11 +419,11 @@ class AkomantosoXMLView(BrowserView):
         frbrwork_element = self.response.createElement("FRBRWork")
 
         frbrwork_element.appendChild(
-            self.create_element("this", value=self.get_frbr_work_url(ob))
+            self.create_element("this", value=uri.get_frbr_work_url(ob))
         )
         frbrwork_element.appendChild(
             self.create_element("uri", 
-                value=self.get_frbr_work_url(ob).replace("/main", "")
+                value=uri.get_frbr_work_url(ob).replace("/main", "")
             )
         )
         frbrwork_element.appendChild(
@@ -442,11 +443,11 @@ class AkomantosoXMLView(BrowserView):
         frbr_expression_element = self.response.createElement("FRBRExpression")
 
         frbr_expression_element.appendChild(
-            self.create_element("this", value=self.get_frbr_expression_url(ob))
+            self.create_element("this", value=uri.get_frbr_expression_url(ob))
         )
         frbr_expression_element.appendChild(
             self.create_element("uri", 
-                value=self.get_frbr_expression_url(ob).replace("/main", "")
+                value=uri.get_frbr_expression_url(ob).replace("/main", "")
             )
         )
         frbr_expression_element.appendChild(
@@ -468,14 +469,12 @@ class AkomantosoXMLView(BrowserView):
         )
         frbr_manifestation_element.appendChild(
             self.create_element("this", 
-                value=self.get_frbr_manifestation_url(ob)
+                value=uri.get_frbr_manifestation_url(ob)
             )
         )
         frbr_manifestation_element.appendChild(
             self.create_element("uri", 
-                value=self.get_frbr_manifestation_url(ob).replace(
-                    "/main", ".akn"
-                )
+                value=uri.get_frbr_manifestation_url(ob).replace("/main", ".akn")
             )
         )
         frbr_manifestation_element.appendChild(
@@ -489,45 +488,12 @@ class AkomantosoXMLView(BrowserView):
         )
         return frbr_manifestation_element
 
-    def get_frbr_work_url(self, ob):
-        return "/%s/%s/%s/main" % (self.get_country(ob),
-            ob.type,
-            self.get_publication_date(ob).strftime("%Y-%m-%d")
-        )
-
-    def get_frbr_expression_url(self, ob):
-        return "/%s/%s/%s/%s/%s@/main" % (self.get_country(ob),
-            ob.type,
-            self.get_publication_date(ob).strftime("%Y-%m-%d"),
-            ob.registry_number,
-            ob.language
-        )
-
-    def get_frbr_manifestation_url(self, ob):
-        return "/%s/%s/%s/%s@/main.xml" % (self.get_country(ob),
-            ob.type,
-            self.get_publication_date(ob).strftime("%Y-%m-%d"),
-            ob.language
-        )
-    
-    def get_country(self, ob):
-        """The 2-letter country code for this bungeni instance.
-        """
-        return capi.legislature.country_code
-    
-    def get_publication_date(self, item):
-        publication_date = None
-        for attr in ["publication_date", "submission_date", "status_date"]:
-            publication_date = getattr(item, attr, None)
-            if publication_date:
-                break
-        return publication_date
-
     def get_title(self, item):
         return IDCDescriptiveProperties(item).title
 
     def get_body(self, item):
-        return item.body or u''
+        return item.body or u""
+
 
 class SubscriptionView(BrowserView):
     """View to manipulate with user's subscriptions (add or remove).

@@ -140,7 +140,8 @@ grammar {
         "member" | # !+ should be "archetype generic" e.g. should not assume "member of parliament"
         "signatory" | # !+
         "combined_name" | # !+
-        "group"
+        "group" |
+        "uri"
     )
     
     FIELD_RENDER_TYPE = (
@@ -156,6 +157,7 @@ grammar {
         "number" |
         "image" |
         "file" |
+        "uri" |
         "no_input" # !+ remove?
     )
     FIELD_RENDER_TYPE_VOCABULARY = (
