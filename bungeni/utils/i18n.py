@@ -15,9 +15,11 @@
 #!+I18N(mb, sep-2012)
 This is a custom version of lovely.recipe 1.0.0 I18n recipe including
 fixes to allow:
-- initialization python in buildout (used in generated scripts)
+- initialization python in buildout (used in generated scripts) !+ still necessary (mr, jun-2013)?
 - inclusion of extra paths in buildout configuration
 TODO: Submit changes to lovely.recipe code repository on launchpad
+
+!+I18N(mr, jun-2013) review this module, may not be needed...
 """
 __docformat__ = "restructuredtext"
 

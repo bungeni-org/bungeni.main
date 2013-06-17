@@ -78,6 +78,7 @@ class CAPI(object):
         self.default_language
         self.right_to_left_languages
     
+    
     # the legislature
     
     @property
@@ -265,6 +266,7 @@ class CAPI(object):
         """
         return bc.oauth_hmac_key
     
+    
     # utility methods
     
     def get_root_path(self):
@@ -277,35 +279,6 @@ class CAPI(object):
         """Get absolute path, under bungeni_custom, for path_components.
         """
         return os.path.join(self.get_root_path(), *path_components)
-    
-    def put_env(self, key):
-        """Set capi value for {key} as the environment variable {key}
-        i.e. use to set os.environ[key].
-        
-        Wrapper on os.put_env(key, string_value) -- to take care of
-        the value string-casting required by os.put_env while still 
-        allowing the liberty of data-typing values of capi attributes 
-        as needed.
-        """
-        value = getattr(self, key)
-        try:
-            os.environ[key] = value
-            # OK, value is a string... done.
-        except TypeError:
-            # putenv() argument 2 must be string, not <...>
-            # i.e. value is NOT a string... try string-casting:
-            try:
-                # some zope code expects sequences to be specified as a 
-                # COMMA or SPACE separated STRING, so we first try the value 
-                # as a sequence, and serialize it to an environment variable 
-                # value as expected by zope
-                os.environ[key] = " ".join(value)
-            except TypeError:
-                # not a sequence, just fallback on repr(value)
-                os.environ[key] = repr(value)
-                # ensure that the original object value defines a __repr__ 
-                # that can correctly re-instantiate the original object
-                assert eval(os.environ[key]) == value
     
     _is_modified_since_last_times = {} # {path: (last_checked, last_modified)}
     def is_modified_since(self, abspath, modified_on_first_check=True):
@@ -330,6 +303,7 @@ class CAPI(object):
             # last_checked==0, this is the first check
             return modified_on_first_check
         return (old_last_modified < last_modified)
+    
     
     # type registry
     

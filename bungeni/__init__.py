@@ -14,16 +14,10 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy import zopepolicy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-import zope.i18n
-import zope.i18nmessageid
-_ = zope.i18nmessageid.MessageFactory("bungeni")
 
-def translate(msgid, **kwargs):
-    """Translate to default domain if none is provided
-    """
-    if kwargs.get("domain", None) is None:
-        kwargs["domain"] = "bungeni"
-    return zope.i18n.translate(msgid, **kwargs)
+# utils for defining i18n literal msgids and for translating them !+NON_STANDARD_I18N
+from bungeni.utils.misc import setup_i18n_message_factory_translate
+_, translate = setup_i18n_message_factory_translate("bungeni")
 
 
 def cache_item(mapping, key, value):

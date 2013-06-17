@@ -130,7 +130,7 @@ def get_caller_module_name(depth=1):
     return sys._getframe(depth).f_globals["__name__"]
 
 
-#
+# 
 
 def describe(funcdesc):
     """
@@ -144,6 +144,42 @@ def describe(funcdesc):
         return func
     return decorate            
 
+
+# i18n
+
+def setup_i18n_message_factory_translate(domain):
+    """Utility to guarantee that env is setup correctly (and mo files compiled)
+    prior to fixing an i18n message factory. 
+    
+    Returns (_, translate) to be used throughout the bungeni app for defining
+    i18n literal msgids and for translating them. !+NON_STANDARD_I18N
+    """
+    # prepare env
+    import bungeni_custom as bc
+    put_env("zope_i18n_allowed_languages", bc.zope_i18n_allowed_languages)
+    put_env("zope_i18n_compile_mo_files", bc.zope_i18n_compile_mo_files)
+    
+    # get the i18n message factory
+    # !+NON_STANDARD_I18N - this is NOT the equivalent of the gettext(msgid) 
+    # utility that is within python programs is normally aliased to _().
+    import zope.i18n
+    import zope.i18nmessageid
+    _ = zope.i18nmessageid.MessageFactory(domain)
+    
+    # define the translate function 
+    # !+NON_STANDARD_I18N - this is the equivalent of the gettext.gettext(msgid) 
+    # that is what is usually aliased as _() in the local namespace
+    def translate(msgid, **kwargs):
+        """Translate to default domain if none is provided
+        """
+        if kwargs.get("domain", None) is None:
+            kwargs["domain"] = domain
+        return zope.i18n.translate(msgid, **kwargs)
+
+    return _, translate
+
+
+#
 
 def put_env(key, value):
     """Set the the environment variable {key} to {value}
@@ -172,8 +208,10 @@ def put_env(key, value):
             # ensure that the original object value defines a __repr__ 
             # that can correctly re-instantiate the original object
             assert eval(os.environ[key]) == value
-            
-            
+
+
+# 
+
 def get_bungeni_installation_dir():
     """Get the path to the bungeni installation directory.
     """
