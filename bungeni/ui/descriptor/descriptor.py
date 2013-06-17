@@ -506,7 +506,7 @@ class GroupDescriptor(ModelDescriptor):
                 show("view edit add"),
             ],
             value_type="text",
-            render_type="rich_text",
+            render_type="text_box",
         ),
         F(name="body",
             label="Body",
@@ -2075,7 +2075,7 @@ class OAuthApplicationDescriptor(ModelDescriptor):
         ),
         F(name="secret",
           label="Application Secret",
-          localizable=[show("view"), hide("add")],
+          localizable=[show("view")],
           required=True,
           value_type="text",
           render_type="text_line"
