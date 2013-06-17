@@ -1416,10 +1416,15 @@ def register_vdex_vocabularies():
     for file_name in os.listdir(vocab_dir):
         if re.match(VDEX_FILE_REGEX, file_name) is not None:
             try:
+                log.info("Loading VDEX file: %s", file_name)
                 vdex = VDEXManager(open(file_name))
             except imsvdex.vdex.VDEXError:
                 log.error("Exception while loading VDEX file %s", file_name)
-                continue
+                raise #continue !+ such an error should never be silenced!
+                # !+ criteria for registering vocabularies should not simply 
+                # be on matching file name found on disk e.g. on an @enabled 
+                # attr inside each file, or a declaration of enabled vocabularies 
+                # in e.g. types.xml.
             if vdex.isBoolean():
                 vocab_class = BoolFlatVDEXVocabularyFactory
             elif vdex.isFlat():

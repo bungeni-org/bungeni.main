@@ -266,13 +266,13 @@ def F(name=None, label=None, description=None,
             required=required
         )
         if vocabulary is not None:
-            #check if vocabulary exists
+            # check if the vocabulary is registered
             try:
                 reg_vocab = component.getUtility(
                     schema.interfaces.IVocabularyFactory, name=vocabulary)
             except component.interfaces.ComponentLookupError:
-                raise Exception("Vocabulary named '%s' does not exist. "
-                    "Check your configuration." % vocabulary)
+                raise LookupException(
+                    "Vocabulary named %r not found in registry." % vocabulary)
             render_property_kwargs["vocabulary"] = vocabulary
         render_property_kwargs.update(VALUETYPE[value_type])
         render_property = RType(**render_property_kwargs)
