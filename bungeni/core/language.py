@@ -222,8 +222,8 @@ class SelectedLanguage(BaseLanguageProvider):
         except zope.security.interfaces.NoInteraction:
             return None
 
+
 def get_default_language():
-    default_language = None
     language_providers = getUtilitiesFor(ILanguageProvider)
     provider_list = [(p[0], p[1]) for p in language_providers]
     sorted_providers = sorted(provider_list, key=lambda p: p[1].PRECEDENCE)
@@ -231,11 +231,9 @@ def get_default_language():
         _language = provider()
         log.debug("Looking for language in %s found %s", name, _language)
         if _language and (_language in capi.zope_i18n_allowed_languages):
-            default_language = _language
-            log.debug(
-                "Got default language as %s from provider %s", _language, name)
-            break
-    return default_language
+            log.debug("Got default language as %s from provider %s", _language, name)
+            return _language
+
 
 DEFAULT_LANGUAGE_KEY = "bungeni.ui.default_language"
 class Negotiator(Negotiator):

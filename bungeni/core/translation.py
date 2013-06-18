@@ -127,20 +127,4 @@ def is_translation(context):
     return IVersion.providedBy(context) and \
            context.status in (u"draft_translation",)
 
-def translate_i18n(message_id, language=None, domain="bungeni"):
-    """Get message_id translation from catalogs.
-    """
-    translate(message_id, language=language, domain=domain)
-    # !+translate_i18n(mr, jun-2013) tmp bypass of logic below, using standard 
-    # bungeni.translate do we need to mv target_language logic to bungeni.translate?
-    '''
-    from zope.i18n import translate
-    #!+I18N(murithi, july-2011) should not be used if message ids exist in 
-    # translation catalogs and a locale-aware context exists.
-    try:
-        to_language = language or get_default_language()
-    except NoInteraction:
-        to_language = capi.default_language
-    return translate(message_id, target_language=to_language, domain=domain)
-    '''
 

@@ -23,13 +23,12 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.language import get_default_language
-from bungeni.core.translation import translate_i18n
 
 from bungeni.ui.utils import common, url, report_tools
 from bungeni.ui.reporting.interfaces import IReportGenerator, ReportException
 from bungeni.ui.calendar.data import ExpandedSitting
 from bungeni.utils.common import get_request
-from bungeni import _
+from bungeni import _, translate
 
 BUNGENI_REPORTS_NS="http://bungeni.org/reports"
 
@@ -97,7 +96,7 @@ def add_empty_listing_node(listing_node):
     """
     no_items_tag = "p"
     no_items_node = etree.Element(no_items_tag)
-    no_items_node.text = translate_i18n(_(u"No items found"))
+    no_items_node.text = translate(_(u"No items found"))
 
     #add to previous element of listing node - then drop it
     prev_element = listing_node.getprevious()

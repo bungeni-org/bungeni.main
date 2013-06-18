@@ -17,7 +17,7 @@ from bungeni.ui.utils import url
 from bungeni.feature.interfaces import ISignatoryManager
 from bungeni.core import translation
 from bungeni.capi import capi
-from bungeni import _
+from bungeni import _, translate
 
 
 class WorkspaceContextNavigation(StructureAwareViewlet):
@@ -32,8 +32,7 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
         for key in directory.keys():
             tab_url = url.absoluteURL(directory[key], self.request)
             tab = {}
-            tab["title"] = translation.translate_i18n(
-                "section_workspace_%s" % key)
+            tab["title"] = translate("section_workspace_%s" % key)
             tab["tab_type"] = directory[key].__name__
             tab["url"] = tab_url
             tab["active"] = self.request.getURL().startswith(tab_url)

@@ -37,7 +37,7 @@ from bungeni.feature.interfaces import (
     IDownloadManager,
 )
 
-from bungeni.core.translation import get_available_translations, translate_i18n
+from bungeni.core.translation import get_available_translations
 from bungeni.core.language import get_language, get_all_languages
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core import schedule
@@ -525,10 +525,9 @@ class DownloadDocumentMenu(BrowserMenu):
             for doc_type, title in manager.get_allowed_types():
                 if doc_templates:
                     for template in doc_templates:
-                        i18n_title = translate_i18n(title)
+                        i18n_title = translate(title)
                         if add_template_to_title:
-                            title="%s [%s]" % (i18n_title, 
-                                template.get("title")),
+                            title="%s [%s]" % (i18n_title, template.get("title")),
                         results.append(dict(
                             title=title,
                             description="",

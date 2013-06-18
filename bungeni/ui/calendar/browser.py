@@ -45,7 +45,6 @@ from bungeni.core.workflow.interfaces import (
     IWorkflowController, InvalidTransitionError
 )
 from bungeni.core.language import get_default_language
-from bungeni.core.translation import translate_i18n
 
 from ploned.ui.interfaces import IStructuralView
 from bungeni.ui.browser import BungeniBrowserView
@@ -64,7 +63,7 @@ from bungeni.alchemist import Session
 from bungeni.ui import vocabulary
 
 from bungeni.utils import register, naming
-from bungeni import _
+from bungeni import _, translate
 
 
 # Filter key names prefix - for available items listings
@@ -310,16 +309,16 @@ class CalendarView(BungeniBrowserView):
                 if field.field.required
             ],
             view_url=self.url,
-            venues_view_title=translate_i18n(TITLE_VENUES_VIEW),
-            text_group=translate_i18n(FIELD_GROUP),
-            text_start_date=translate_i18n(FIELD_START_DATE),
-            text_end_date=translate_i18n(FIELD_END_DATE),
-            text_venue=translate_i18n(FIELD_VENUE),
-            text_activity_type=translate_i18n(_(u"Activity Type")),
-            text_meeting_type=translate_i18n(_(u"Meeting Type")),
-            text_convocation_type=translate_i18n(_(u"Convocation Type")),
-            text_sitting=translate_i18n(TITLE_SITTING),
-            text_view=translate_i18n(ACTION_VIEW_SITTING),
+            venues_view_title=translate(TITLE_VENUES_VIEW),
+            text_group=translate(FIELD_GROUP),
+            text_start_date=translate(FIELD_START_DATE),
+            text_end_date=translate(FIELD_END_DATE),
+            text_venue=translate(FIELD_VENUE),
+            text_activity_type=translate(_(u"Activity Type")),
+            text_meeting_type=translate(_(u"Meeting Type")),
+            text_convocation_type=translate(_(u"Convocation Type")),
+            text_sitting=translate(TITLE_SITTING),
+            text_view=translate(ACTION_VIEW_SITTING),
             error_messages=dict(
                 default=_(u"Please check the highlighted sittings. " 
                     "Failed to apply changes"),
@@ -498,15 +497,11 @@ class ScheduleJSONListing(ScheduleJSONListingDocuments):
             wfc = IWorkflowController(node.item, None)
             if wfc is None:
                 return
-            item["wf_state"] = translate_i18n(
-                wfc.state_controller.get_state().title
-            )
+            item["wf_state"] = translate(wfc.state_controller.get_state().title)
             item["wf_actions"] = [ 
                 dict(
                     value=transition, 
-                    text=translate_i18n(
-                        wfc.workflow.get_transition(transition).title
-                    )
+                    text=translate(wfc.workflow.get_transition(transition).title)
                 )
                 for transition in wfc.getFireableTransitionIds()
             ]

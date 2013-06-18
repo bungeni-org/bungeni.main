@@ -25,13 +25,13 @@ from bungeni import _
 from bungeni.core.translation import (
     is_translation,
     get_field_translations,
-    translate_i18n
 )
 from bungeni.core.language import get_default_language, get_language_by_name
 
 from bungeni.ui.utils import date, misc
 from bungeni.utils import register
 from bungeni.capi import capi
+from bungeni import translate
 
 
 def _merged(context):
@@ -122,8 +122,7 @@ class DocDescriptiveProperties(DescriptiveProperties):
         context = _merged(self.context)
         # !+TRANSLATE_MESS(mr, oct-2012) this is content data and NOT a UI msgid?
         # Should then be using translated ?!
-        return translate_i18n(
-            IDCDescriptiveProperties(context.owner).title_member)
+        return translate(IDCDescriptiveProperties(context.owner).title_member)
     
     @property
     def title(self):
@@ -147,56 +146,6 @@ class DocDescriptiveProperties(DescriptiveProperties):
         return self.translate(doc, "description")
 
 
-''' !+CUSTOM
-@register.adapter()
-class QuestionDescriptiveProperties(DocDescriptiveProperties):
-    component.adapts(interfaces.IQuestion)
-    
-    @property
-    def description(self):
-        context = _merged(self.context)
-        text = "%s %s %s" % (translate_i18n(_("Submitted by")),
-                            context.owner.first_name, context.owner.last_name)
-        if context.group:
-            text += " to %s" % IDCDescriptiveProperties(context.group).title
-        return text + "."
-
-
-@register.adapter()
-class BillDescriptiveProperties(DocDescriptiveProperties):
-    component.adapts(interfaces.IBill)
-    
-    @property
-    def description(self):
-        context = _merged(self.context)
-        text = "%s %s %s" % (translate_i18n(_("Submitted by")),
-                            context.owner.first_name, context.owner.last_name)
-        if context.publication_date:
-            text += " (%s %s)" % (translate_i18n(_(u"published on")),
-                                  self.formatDate(context.publication_date))
-        return text + "."
-
-
-@register.adapter()
-class MotionDescriptiveProperties(DocDescriptiveProperties):
-    component.adapts(interfaces.IMotion)
-    
-    @property
-    def description(self):
-        context = _merged(self.context)
-        text = "%s %s %s" % (translate_i18n(_(u"Submitted by")),
-                            context.owner.first_name, context.owner.last_name)
-        if context.notice_date:
-            text += " (%s %s)" % (translate_i18n(_(u"notice given on")),
-                                  self.formatDate(context.notice_date))
-        return text + "."
-'''
-
-# AgendaItem
-# TabledDocument
-# Event
-
-
 @register.adapter()
 class SittingDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.ISitting)
@@ -204,7 +153,7 @@ class SittingDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        return "%s %s, %s %s %s" % (translate_i18n(_(u"Sitting:")), 
+        return "%s %s, %s %s %s" % (translate(_(u"Sitting:")), 
                 self.translate(context.group, "short_name"), 
                 context.start_date.strftime('%Y-%m-%d, %H:%M'), 
                 _(u"to"), 
@@ -219,7 +168,7 @@ class SittingDescriptiveProperties(DescriptiveProperties):
     @property
     def description(self):
         context = _merged(self.context)
-        return "%s %s (%s %s %s)" % (translate_i18n(_(u"Sitting scheduled for")),
+        return "%s %s (%s %s %s)" % (translate(_(u"Sitting scheduled for")),
                 self.translate(context.group, "short_name"),
                 context.start_date.strftime('%Y-%m-%d %H:%M'), 
                 _(u"to"),
@@ -234,11 +183,11 @@ class SittingDescriptiveProperties(DescriptiveProperties):
                 "group_name": IDCDescriptiveProperties(context.group).title,
                 "sitting_venue": (
                     IDCDescriptiveProperties(context.venue).title 
-                    if context.venue else translate_i18n(_(u"no venue"))
+                    if context.venue else translate(_(u"no venue"))
                 )
             }
         )
-        return translate_i18n(sitting_title)
+        return translate(sitting_title)
 
 @register.adapter()
 class DebateRecordDescriptiveProperties(DescriptiveProperties):
@@ -247,7 +196,7 @@ class DebateRecordDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        return "%s %s, %s %s %s" % (translate_i18n(_(u"Debate Record:")), 
+        return "%s %s, %s %s %s" % (translate(_(u"Debate Record:")), 
                 self.translate(context.sitting, "short_name"), 
                 context.sitting.start_date.strftime('%Y-%m-%d, %H:%M'), 
                 _(u"to"), 
@@ -256,7 +205,7 @@ class DebateRecordDescriptiveProperties(DescriptiveProperties):
     @property
     def description(self):
         context = _merged(self.context)
-        return "%s %s (%s %s %s)" % (translate_i18n(_(u"Debate record of ")),
+        return "%s %s (%s %s %s)" % (translate(_(u"Debate record of ")),
                 self.translate(context.sitting, "short_name"),
                 context.sitting.start_date.strftime('%Y-%m-%d %H:%M'), 
                 _(u"to"),
@@ -291,8 +240,7 @@ class EditorialNoteDescriptiveProperties(DescriptiveProperties):
     
     @property
     def title(self):
-        return translate_i18n(
-            capi.get_type_info(self.context).descriptor_model.display_name)
+        return translate(capi.get_type_info(self.context).descriptor_model.display_name)
     
     @property
     def description(self):
@@ -323,7 +271,7 @@ class VersionDescriptiveProperties(DescriptiveProperties):
     
     @property
     def description(self):
-        return "%s %s" % (translate_i18n(_(u"Last modified")), 
+        return "%s %s" % (translate(_(u"Last modified")), 
             self.context.change.date
         )
 
@@ -449,7 +397,7 @@ class SignatoryDescriptiveProperties(DescriptiveProperties):
     @property
     def status(self):
         context = _merged(self.context)
-        return translate_i18n(misc.get_wf_state(context))
+        return translate(misc.get_wf_state(context))
 
 
 @register.adapter()
@@ -494,7 +442,7 @@ class ChangeDescriptiveProperties(DescriptiveProperties):
     
     @property
     def description(self):
-        return "%s (%s)" %(translate_i18n(self.context.description),
+        return "%s (%s)" %(translate(self.context.description),
                 self.formatDate(self.context.date_active))
 
 

@@ -155,9 +155,9 @@ def setup_i18n_message_factory_translate(domain):
     i18n literal msgids and for translating them. !+NON_STANDARD_I18N
     """
     # prepare env
-    import bungeni_custom as bc
-    put_env("zope_i18n_allowed_languages", bc.zope_i18n_allowed_languages)
-    put_env("zope_i18n_compile_mo_files", bc.zope_i18n_compile_mo_files)
+    from bungeni.capi import capi
+    put_env("zope_i18n_allowed_languages", capi.zope_i18n_allowed_languages)
+    put_env("zope_i18n_compile_mo_files", capi.zope_i18n_compile_mo_files)
     
     # get the i18n message factory
     # !+NON_STANDARD_I18N - this is NOT the equivalent of the gettext(msgid) 
@@ -170,10 +170,16 @@ def setup_i18n_message_factory_translate(domain):
     # !+NON_STANDARD_I18N - this is the equivalent of the gettext.gettext(msgid) 
     # that is what is usually aliased as _() in the local namespace
     def translate(msgid, **kwargs):
-        """Translate to default domain if none is provided
+        """Translate msgid from catalogs using default domain if none provided.
+        
+        API: zope.i18n.translate(msgid, domain=None,
+                mapping=None, context=None, target_language=None, default=None)
         """
         if kwargs.get("domain", None) is None:
             kwargs["domain"] = domain
+        if kwargs.get("target_language", None) is None:
+            from bungeni.core.language import get_default_language
+            kwargs["target_language"] = get_default_language() or capi.default_language
         return zope.i18n.translate(msgid, **kwargs)
     
     return _, translate

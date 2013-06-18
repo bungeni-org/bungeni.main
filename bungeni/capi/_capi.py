@@ -17,7 +17,6 @@ import zope.interface
 from zope.dottedname.resolve import resolve
 from zope.cachedescriptors import property as cached_property
 from bungeni.utils import error
-from bungeni.alchemist import type_info
 import bungeni_custom as bc
 
 
@@ -327,12 +326,14 @@ class CAPI(object):
         
         Raise KeyError if no entry matched.
         """
+        from bungeni.alchemist import type_info
         return type_info._get(discriminator)
     
     def iter_type_info(self, scope=None):
         """Return iterator on all registered (key, TypeInfo) entries.
         scope:either(None, "system", "archetype", "custom")
         """
+        from bungeni.alchemist import type_info
         for type_key, ti in type_info._iter():
             if (scope is None or ti.scope == scope):
                 yield type_key, ti
