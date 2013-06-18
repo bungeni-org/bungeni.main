@@ -35,12 +35,12 @@ from bungeni.alchemist import Session
 from bungeni.models import domain, interfaces
 from appy.pod.renderer import Renderer
 
-
 from bungeni.capi import capi
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, misc
 from bungeni.ui.reporting import generators
 from bungeni.ui import vocabulary
+from bungeni import _
+
 
 def unescape(text):
     def fixup(m):

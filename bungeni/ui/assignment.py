@@ -19,14 +19,13 @@ from zc.table import column
 from zope import formlib
 
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.ui.i18n import _
 from bungeni.ui.table import TableFormatter
 from bungeni.ui import forms
 from bungeni.ui.utils import url, common
 from bungeni.capi import capi
 from bungeni.models.interfaces import ISubRoleAnnotations
 from bungeni import utils
-
+from bungeni import _
 
 class UserAssignmentView(forms.common.BaseForm):
     """View for user assignments. Allows users with adequate permissions

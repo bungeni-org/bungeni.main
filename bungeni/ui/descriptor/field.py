@@ -12,10 +12,11 @@ from zope import component, schema
 from bungeni.alchemist.descriptor import Field
 from bungeni.ui import widgets
 from bungeni.ui.fields import VocabularyTextField
-from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import listing, constraints
 from bungeni.utils import naming
 from bungeni.capi import capi
+from bungeni import _
+
 
 # supported value types
 # {str: {property-kwarg:value}}

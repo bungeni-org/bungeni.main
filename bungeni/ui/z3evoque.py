@@ -187,7 +187,7 @@ def set_get_gettext():
         # wrap t.gettext to intercept and log possibly untranslated msgids
         def _gt(msgid):
             try: 
-                msgstr = t.gettext(msgid)
+                msgstr = t.ugettext(msgid)
                 return msgstr
             finally:
                 if msgid == msgstr and msgid not in _untranslated:

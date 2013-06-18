@@ -9,7 +9,8 @@ from bungeni.rest.interfaces import IRESTLayer
 from zope.configuration import fields
 from zope import schema
 from zope.viewlet.interfaces import IViewletManager
-from bungeni.ui.i18n import _
+from bungeni import _
+
 
 class IBungeniSkin(IPlonedSkin, IYUILayer):
     """Bungeni application skin."""

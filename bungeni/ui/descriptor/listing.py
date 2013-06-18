@@ -26,7 +26,6 @@ from sqlalchemy.exc import ArgumentError
 
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
-from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
 import zope.formlib
@@ -39,8 +38,8 @@ from bungeni.models.interfaces import IOwned
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui.utils import date, url, uri
 from bungeni.utils import common
-from bungeni.ui.i18n import _
 from bungeni.capi import capi
+from bungeni import _, translate
 
 
 # support utils 

@@ -10,6 +10,7 @@ from bungeni.core.language import (get_all_languages, I18N_COOKIE_NAME,
 from bungeni.core.translation import get_available_translations
 import bungeni.ui.utils as ui_utils
 
+
 class LanguageViewlet(object):
     """Language selection viewlet."""
     

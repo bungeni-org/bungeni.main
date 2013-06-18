@@ -18,7 +18,7 @@ from bungeni.alchemist.descriptor import ModelDescriptor, show, hide, classprope
 import bungeni.core.workflows.adapters # needed by standalone scripts !+review
 
 from bungeni.ui.forms import validations
-from bungeni.ui.i18n import _
+from bungeni import _
 from bungeni.ui import vocabulary # !+
 from bungeni.ui.descriptor import constraints
 from bungeni.ui.descriptor.field import F

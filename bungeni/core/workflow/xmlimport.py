@@ -10,7 +10,6 @@ log = __import__("logging").getLogger("bungeni.core.workflow.xmlimport")
 
 import os
 
-from zope.i18n import translate
 from zope.dottedname.resolve import resolve
 from zope.component import provideUtility
 from zope.security.interfaces import IPermission
@@ -581,7 +580,7 @@ def add_retract_transitions(wf):
             transition.source and 
             transition.trigger in [interfaces.MANUAL, interfaces.SYSTEM])
     ]
-    from bungeni.ui.i18n import _
+    from bungeni import _, translate
     for transition in terminal_transitions:
         roles = get_roles(transition)
         if roles:
@@ -592,7 +591,7 @@ def add_retract_transitions(wf):
             title = _("revert_transition_title",
                 default="Undo - ${title}",
                 mapping={
-                    "title": translate(transition.title, domain="bungeni")
+                    "title": translate(transition.title)
                 }
             )
             title = "Undo - %s" % (transition.title)

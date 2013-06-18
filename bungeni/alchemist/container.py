@@ -80,8 +80,7 @@ def valueKey(identity_key):
 
 
 #from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory("zope")
+from bungeni import _
 import bungeni.alchemist
 from zc.table import column, table
 class ContainerListing(form.DisplayForm):

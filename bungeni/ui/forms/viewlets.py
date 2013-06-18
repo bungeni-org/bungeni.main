@@ -9,7 +9,6 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.forms.viewlets")
 
 from zope import interface
-from zope.i18n import translate
 from zope.viewlet import manager, viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.formlib import form
@@ -27,7 +26,6 @@ from bungeni.alchemist.interfaces import IContentViewManager
 from bungeni.models import domain, interfaces
 from bungeni.feature.interfaces import IFeatureSchedule
 
-from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.ui import table
 from bungeni.ui.utils import misc
@@ -37,6 +35,8 @@ from interfaces import (ISubFormViewletManager,
 from bungeni.ui.interfaces import IBungeniAuthenticatedSkin
 from bungeni.utils import register
 from bungeni.capi import capi
+from bungeni import _, translate
+
 
 # !+SubformViewlet(mr, oct-2010) in this usage case this this should really
 # be made to inherit from browser.BungeniViewlet (but, note that

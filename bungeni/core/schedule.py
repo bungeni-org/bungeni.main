@@ -35,8 +35,9 @@ from bungeni.models.utils import get_chamber_for_context
 from bungeni.core.interfaces import (
     ISchedulingContext, 
     IWorkspaceScheduling, 
-    IDailySchedulingContext)
-from bungeni.core.i18n import _
+    IDailySchedulingContext,
+)
+from bungeni import _
 from bungeni.core.proxy import LocationProxy
 from bungeni.ui.calendar import utils
 from bungeni.alchemist import Session

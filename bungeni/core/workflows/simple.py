@@ -7,7 +7,7 @@
 from bungeni.core.workflow import interfaces as iworkflow
 from bungeni.core.workflow import states as workflow
 
-from bungeni.core.i18n import _
+from bungeni import _
 
 def states():
     return [

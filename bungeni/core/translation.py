@@ -16,7 +16,6 @@ from copy import copy
 
 from zope.security.proxy import removeSecurityProxy
 from zope.security.interfaces import NoInteraction
-from zope.i18n import translate
 
 from sqlalchemy import orm, sql
 
@@ -35,6 +34,7 @@ from bungeni.models.interfaces import IVersion, ITranslatable
 from bungeni.models import domain
 from bungeni.utils import naming
 from bungeni.core.language import get_default_language
+from bungeni import translate
 
 
 def get_field_translations(context, lang):
@@ -130,6 +130,11 @@ def is_translation(context):
 def translate_i18n(message_id, language=None, domain="bungeni"):
     """Get message_id translation from catalogs.
     """
+    translate(message_id, language=language, domain=domain)
+    # !+translate_i18n(mr, jun-2013) tmp bypass of logic below, using standard 
+    # bungeni.translate do we need to mv target_language logic to bungeni.translate?
+    '''
+    from zope.i18n import translate
     #!+I18N(murithi, july-2011) should not be used if message ids exist in 
     # translation catalogs and a locale-aware context exists.
     try:
@@ -137,4 +142,5 @@ def translate_i18n(message_id, language=None, domain="bungeni"):
     except NoInteraction:
         to_language = capi.default_language
     return translate(message_id, target_language=to_language, domain=domain)
+    '''
 

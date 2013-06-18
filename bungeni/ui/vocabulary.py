@@ -25,7 +25,6 @@ from zope.app.container.interfaces import IContainer
 from zope.component import getUtility
 from zope.component import getUtilitiesFor
 from zope.securitypolicy.interfaces import IRole
-from i18n import _
 
 import sqlalchemy.sql.expression as sql
 
@@ -66,6 +65,7 @@ from bungeni.ui.interfaces import ITreeVocabulary
 from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
 from bungeni.ui.utils.common import in_add_mode
 from bungeni.utils import common, misc, naming
+from bungeni import _
 
 try:
     import json

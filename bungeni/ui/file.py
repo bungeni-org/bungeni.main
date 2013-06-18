@@ -23,9 +23,10 @@ from bungeni.models.interfaces import IAttachmentContainer, \
 from bungeni.feature.interfaces import IFeatureAttachment
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui import browser
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import date, url
 from bungeni.utils import register
+from bungeni import _
+
 
 class RawView(BrowserView):
     implements(IPublishTraverse)

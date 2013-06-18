@@ -22,9 +22,10 @@ from bungeni.models.utils import get_user_chamber, get_login_user
 from bungeni.ui.utils import date
 from bungeni.utils import common
 from bungeni.alchemist import Session
-from bungeni.ui.i18n import _
 
 from bungeni.capi import capi
+from bungeni import _
+
 
 #!+CACHING(mb, Feb-2013) cache this
 def get_schedulable_states(type_key):

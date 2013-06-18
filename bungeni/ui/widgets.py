@@ -28,13 +28,11 @@ from zope.formlib.widgets import (TextAreaWidget, FileWidget, RadioWidget,
 from zope.formlib import itemswidgets
 from zope.formlib import form
 from zope.formlib.namedtemplate import NamedTemplate
-from zope.i18n import translate
 from zope import schema
 from zc.resourcelibrary import need
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, uri, debug, date, misc
 from bungeni.ui.calendar.data import TIME_OPTIONS
 from bungeni.utils import common
@@ -42,7 +40,7 @@ from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
     IAdminSectionLayer
 from bungeni.models.utils import get_login_user, get_user, get_member_of_chamber
 from bungeni.core.language import get_default_language
-
+from bungeni import _, translate
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 

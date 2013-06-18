@@ -23,7 +23,7 @@ from bungeni.models import domain
 from bungeni.models import schema
 from sqlalchemy import desc
 from sqlalchemy import sql
-from bungeni.ui.i18n import _
+from bungeni import _
 
 
 # !+ COMBINE ui.utils.{queries, statements} WITH models.{queries, utils}

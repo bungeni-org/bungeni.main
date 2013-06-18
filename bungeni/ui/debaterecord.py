@@ -22,11 +22,11 @@ from zope.formlib.namedtemplate import NamedTemplate
 from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models.interfaces import IDebateTakeContainer
-from bungeni.ui.i18n import _
 from bungeni.ui import forms
 from bungeni.core.interfaces import IDebateRecordConfig
 from bungeni.ui.utils import url, common
 from bungeni.ui.browser import BungeniBrowserView
+from bungeni import _
 
 
 class DebateRecordView(BungeniBrowserView):

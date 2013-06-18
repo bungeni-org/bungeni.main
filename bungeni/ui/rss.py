@@ -12,7 +12,6 @@ import email
 import xml.dom.minidom as xmllib
 
 from zope.component import getAdapter
-from zope.i18n import translate
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.traversing.browser import absoluteURL
@@ -28,7 +27,7 @@ from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
 from bungeni.ui.utils import uri
-from bungeni import _
+from bungeni import _, translate
 
 
 AKOMA_NTOSO_TYPES = ["act", "bill", "report", "judgement", "debateRecord", "doc"]

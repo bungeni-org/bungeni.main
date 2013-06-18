@@ -20,7 +20,6 @@ from bungeni.models import interfaces
 from bungeni.models import schema
 from bungeni.models import venue
 from bungeni.models import domain
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import queries
 from bungeni.ui.calendar.utils import generate_dates
 from bungeni.ui.calendar.utils import datetimedict
@@ -28,6 +27,7 @@ from bungeni.capi import capi
 from bungeni.utils.misc import describe
 #from zope.security.proxy import removeSecurityProxy
 from interfaces import Modified
+from bungeni import _
 
 
 # utils

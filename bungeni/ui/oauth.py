@@ -18,7 +18,6 @@ from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.formlib.namedtemplate import NamedTemplate
-from bungeni.ui.i18n import _
 from bungeni.ui import forms, widgets
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.capi import capi
@@ -26,6 +25,7 @@ from bungeni.models import domain
 from bungeni.models.utils import get_login_user
 from bungeni.alchemist import Session
 from bungeni.ui.utils import url, misc
+from bungeni import _
 
 
 def get_key():

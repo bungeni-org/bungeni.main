@@ -17,7 +17,7 @@ from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflowed
 from bungeni.ui import z3evoque
 from bungeni.ui.utils import date, debug, misc
-from bungeni.ui.i18n import _
+from bungeni import _
 
 
 # browser page

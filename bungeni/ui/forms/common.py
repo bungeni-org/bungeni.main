@@ -47,13 +47,13 @@ from bungeni.feature.interfaces import ISignatoryManager
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormAddLayer, IFormEditLayer, \
     IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer
-from bungeni.ui.i18n import _, translate
 from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import register, naming
 from bungeni.capi import capi
+from bungeni import _, translate
 from bungeni.core.workflows.utils import get_group_privilege_extent_context
 TRUE_VALS = "true", "1"
 

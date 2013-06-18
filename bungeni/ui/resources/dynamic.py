@@ -11,12 +11,13 @@ import zope.interface
 from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
 import zope.cachedescriptors.property
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
 from bungeni.utils import common
 from bungeni.core.translation import translate_i18n as i18n
 from bungeni.core.language import get_default_language
 from bungeni.ui.calendar import data
+from bungeni import _
+
 
 class CachedProperties(object):
     @zope.cachedescriptors.property.cachedIn("__available_docs_container__")

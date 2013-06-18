@@ -12,7 +12,8 @@ import zope.schema
 
 from bungeni.core.language import get_default_language
 from bungeni.ui import vocabulary
-from bungeni.ui.i18n import _
+from bungeni import _
+
 
 class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
     ids = zope.schema.TextLine(title=u"ID", description=u"Sitting ID",

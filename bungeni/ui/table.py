@@ -1,19 +1,19 @@
 # encoding: utf-8
 import os
-from zope.i18n import translate
 from zope.security import proxy
 from zc.resourcelibrary import need
 from zc.table import batching
 from zope.app.pagetemplate import ViewPageTemplateFile
 from ore import yuiwidget
 from bungeni.ui import container
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
 from bungeni.ui.widgets import text_input_search_widget
 from bungeni.capi import capi
 import bungeni.alchemist
 from bungeni.alchemist import utils
 from bungeni.utils import naming
+from bungeni import _, translate
+
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 

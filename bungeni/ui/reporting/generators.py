@@ -25,14 +25,14 @@ from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import translate_i18n
 
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import common, url, report_tools
 from bungeni.ui.reporting.interfaces import IReportGenerator, ReportException
 from bungeni.ui.calendar.data import ExpandedSitting
 from bungeni.utils.common import get_request
-
+from bungeni import _
 
 BUNGENI_REPORTS_NS="http://bungeni.org/reports"
+
 
 def value_repr(val):
     #!+REPORTING(mb, Nov-2012) Representation should reuse descriptor
@@ -178,7 +178,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
                     mapping={"path": self.report_template_file}
                 )
             )
-        
+    
     def generateReport(self):
         """Generate report content based on report template and context
         """

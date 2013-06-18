@@ -697,11 +697,11 @@ def serialization_notifications():
 import collections
 import zope.component
 import zope.schema as schema
-from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from sqlalchemy.orm import RelationshipProperty, ColumnProperty
 from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni import translate
 
 
 def get_permissions_dict(permissions):

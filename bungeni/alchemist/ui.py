@@ -22,9 +22,6 @@ __all__ = [
 
 #
 
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory("bungeni")
-
 import copy, math, itertools
 from zope import interface
 from zope.security.proxy import removeSecurityProxy
@@ -39,6 +36,8 @@ from bungeni.alchemist.interfaces import (
     IAlchemistContent,
 )
 import bungeni.alchemist
+from bungeni import _
+
 
 def setUpFields(domain_model, mode):
     """

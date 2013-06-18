@@ -1,14 +1,12 @@
 
 from zope import interface
 from zope.security.proxy import removeSecurityProxy
-from zope.i18n import translate
 from zope.i18n.locales import locales
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.utils import date
 from bungeni.utils.common import get_request
-from bungeni.ui.i18n import _
 
 from bungeni.core.workflow.states import get_object_state
 from bungeni.core import translation
@@ -18,6 +16,7 @@ from bungeni.alchemist import utils
 from bungeni.models.interfaces import ITranslatable
 
 from bungeni.capi import capi
+from bungeni import _, translate
 
 
 class WorkspaceContentAdapter(object):

@@ -21,7 +21,7 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 
 from bungeni.models import interfaces
 from bungeni.models import domain
-from bungeni.core.i18n import _
+from bungeni import _
 from bungeni.core.translation import (
     is_translation,
     get_field_translations,

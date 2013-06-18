@@ -28,7 +28,7 @@ from bungeni.ui import interfaces as ui_ifaces, browser
 from bungeni.ui.widgets import MultiCheckBoxWidget, TextWidget
 from bungeni.ui.utils import common, date
 from bungeni.ui.utils.url import absoluteURL
-from bungeni.ui.i18n import _
+from bungeni import _
 
 import interfaces
 

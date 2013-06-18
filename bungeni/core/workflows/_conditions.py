@@ -17,7 +17,7 @@ from bungeni.feature.interfaces import ISignatoryManager
 #from bungeni.models import domain
 from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
-from bungeni.ui.i18n import _
+from bungeni import _
 from bungeni.utils import naming
 from bungeni.utils.misc import describe
 

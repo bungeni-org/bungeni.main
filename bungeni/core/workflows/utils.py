@@ -26,7 +26,7 @@ from bungeni.feature.interfaces import ISchedulingManager
 from bungeni.utils import common
 from bungeni.ui.utils import debug
 from bungeni.utils.misc import describe
-from bungeni.ui.i18n import _
+from bungeni import _
 #from bungeni.alchemist import Session
 
 import re

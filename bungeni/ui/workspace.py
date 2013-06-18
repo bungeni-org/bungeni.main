@@ -7,7 +7,6 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
 from zope.formlib import form
-from zope.i18n import translate
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zc.resourcelibrary import need
@@ -17,7 +16,6 @@ from bungeni.alchemist import utils, Session
 from bungeni.core import translation
 from bungeni.core.language import get_default_language
 from bungeni.core.content import WorkspaceSection
-from bungeni.core.i18n import _
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
     IWorkspaceContainer,
     IWorkspaceUnderConsiderationContainer,
@@ -34,6 +32,8 @@ from bungeni.utils import register
 from bungeni.capi import capi
 from bungeni.ui.widgets import date_input_search_widget
 from bungeni.models import domain
+from bungeni import _, translate
+
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 

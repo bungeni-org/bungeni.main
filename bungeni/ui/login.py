@@ -32,7 +32,7 @@ from bungeni.models.utils import get_login_user
 from bungeni.ui import widgets
 import bungeni.ui.utils as ui_utils
 from bungeni.ui.forms.common import BaseForm, EditForm
-from bungeni.ui.i18n import _
+from bungeni import _
 
 
 SECRET_KEY = "bungeni"

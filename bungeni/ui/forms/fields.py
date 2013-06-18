@@ -8,11 +8,13 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.forms.fields")
 
+
+from copy import copy
+
 from zope.security.proxy import removeSecurityProxy
 from zope import security
 from zope import interface
 from zope.formlib import form
-from zope.i18n import translate
 from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.core.workflow import interfaces
 from bungeni.alchemist.ui import DynamicFields
@@ -21,13 +23,12 @@ from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.ui.forms.workflow import bindTransitions
-from bungeni.ui.i18n import _
 from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.models.interfaces import ITranslatable
 from bungeni.core.translation import get_field_translations
 from bungeni.core.language import get_all_languages, get_default_language
-from copy import copy
+from bungeni import _, translate
 
 
 def filterFields(context, form_fields):

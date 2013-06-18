@@ -13,9 +13,9 @@ from zope.formlib import form
 from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 
-from bungeni.ui.i18n import _
 from bungeni.core.workflow import interfaces
 from bungeni.utils import common
+from bungeni import _
 
 
 def bindTransitions(form_instance, transitions, wf):

@@ -21,7 +21,6 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.browsermenu.interfaces import IBrowserMenu
 from zope.publisher.defaultview import queryDefaultViewName
 #from zope.annotation.interfaces import IAnnotations
-from zope.i18n import translate
 
 from ore.wsgiapp.interfaces import IApplication
 
@@ -36,6 +35,7 @@ from bungeni.core.language import get_default_language
 from bungeni.ui.utils import url, debug
 from bungeni.ui import browser
 from bungeni.models.utils import get_chamber_for_context
+from bungeni import translate
 
 
 def _get_context_chain(context):

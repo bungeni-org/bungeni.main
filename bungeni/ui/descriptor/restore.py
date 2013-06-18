@@ -182,7 +182,7 @@ def dump_i18n_message_ids():
     print "Processing UI Field i18n MSGID file: %s" % (msgids_py_source_file_path)
     msgids_py_source_preamble = [
         "# automatically generated: dump_i18n_message_ids",
-        "from bungeni.ui.i18n import _", 
+        "from bungeni import _", 
         ""]
     def make_message(msgid):
         """generate message with unique id if any or use string as id"""

@@ -25,10 +25,10 @@ from bungeni.models.interfaces import ISittingAttendance
 from bungeni.models.domain import SittingAttendance
 
 from bungeni.ui.browser import BungeniBrowserView
-from bungeni.ui.i18n import _
 from bungeni.ui.table import TableFormatter
 from bungeni.ui import forms
 from bungeni.ui.utils import url
+from bungeni import _
 
 
 class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):

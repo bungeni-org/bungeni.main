@@ -1,17 +1,16 @@
 import datetime
 from zope import interface
 from zope import schema
-from zope.i18n import translate
 from zope.formlib import form
 from zope.formlib.namedtemplate import NamedTemplate
 from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.models.interfaces import IChamber
 
-from bungeni.ui.i18n import _
 from bungeni.ui import cookies
 from bungeni.ui import vocabulary
 from bungeni.ui.widgets import TextDateWidget as DateWidget
+from bungeni import _, translate
 
 
 class ArchiveDatesForm(form.PageForm):

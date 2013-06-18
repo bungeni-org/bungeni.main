@@ -14,7 +14,6 @@ from zope.security.management import getInteraction
 import zc.table
 from zc.table import column
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security import checkPermission
 
@@ -24,12 +23,11 @@ from bungeni.feature.interfaces import IFeatureAudit
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.core.workflows.utils import view_permission
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
-from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import listing
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.utils import register, naming
-
+from bungeni import _, translate
 
 # Data
 

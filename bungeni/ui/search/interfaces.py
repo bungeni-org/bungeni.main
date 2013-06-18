@@ -4,12 +4,13 @@ import zope.schema as schema
 
 from bungeni.core.interfaces import IWorkspaceSection, IWorkspaceTabsUtility
 
-from bungeni.ui.i18n import _
 from bungeni.ui.vocabulary import BaseVocabularyFactory
 from bungeni.ui.utils.common import get_workspace_roles
 
 from bungeni.utils import naming
 from bungeni.capi import capi
+from bungeni import _
+
 
 DEFAULT_LIMIT = 10
 

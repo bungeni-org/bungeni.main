@@ -15,8 +15,9 @@ import re
 import zope.schema
 from zope.interface import Invalid
 from bungeni.utils.misc import describe
-from bungeni.ui.i18n import _
 from bungeni.capi import capi
+from bungeni import _
+
 
 # field constraints
 

@@ -32,7 +32,6 @@ from bungeni.core import location
 from bungeni.core.content import (Section, AdminSection, AkomaNtosoSection,
     WorkspaceSection, APISection, OAuthSection)
 from bungeni.core.content import QueryContent
-from bungeni.core.i18n import _
 from bungeni.core.workspace import (WorkspaceContainer,
     WorkspaceUnderConsiderationContainer,
     WorkspaceTrackedDocumentsContainer,
@@ -45,6 +44,7 @@ from bungeni.core.serialize import serialization_notifications
 from bungeni.ui.utils import url  # !+ core dependency on ui
 from bungeni.capi import capi
 from bungeni.utils import common, naming, register
+from bungeni import _
 
 
 

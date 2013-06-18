@@ -50,7 +50,6 @@ from bungeni.core.translation import translate_i18n
 from ploned.ui.interfaces import IStructuralView
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.calendar import utils, config, interfaces, data
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, date
 from bungeni.ui.menu import get_actions
 from bungeni.ui.widgets import LanguageLookupWidget
@@ -65,6 +64,8 @@ from bungeni.alchemist import Session
 from bungeni.ui import vocabulary
 
 from bungeni.utils import register, naming
+from bungeni import _
+
 
 # Filter key names prefix - for available items listings
 FILTER_PREFIX = "filter_"

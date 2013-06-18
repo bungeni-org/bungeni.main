@@ -32,7 +32,6 @@ from bungeni.core.language import get_default_language
 
 from bungeni.ui import widgets
 from bungeni.ui import vocabulary
-from bungeni.ui.i18n import _, translate
 from bungeni.ui.utils import date
 from bungeni.ui.interfaces import IWorkspaceReportGeneration
 from bungeni.ui.reporting import generators
@@ -40,6 +39,8 @@ from bungeni.ui.calendar.data import ExpandedSitting, ReportContext
 
 from bungeni.capi import capi
 from bungeni.utils import register, naming
+from bungeni import _, translate
+
 
 class DateTimeFormatMixin(object):
     """Helper methods to format and localize date and time objects

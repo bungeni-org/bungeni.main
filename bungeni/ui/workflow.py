@@ -18,7 +18,6 @@ from zope.security.proxy import removeSecurityProxy
 from zope.formlib.widgets import TextAreaWidget
 from zc.table import column
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-from zope.i18n import translate
 
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
@@ -43,10 +42,10 @@ from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui.utils.url import absoluteURL
 from zope.app.pagetemplate import ViewPageTemplateFile
-from bungeni.ui.i18n import _
 from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
 from bungeni.utils import common, register
+from bungeni import _, translate
 
 
 def _label(change):

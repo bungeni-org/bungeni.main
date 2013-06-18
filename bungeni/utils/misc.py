@@ -175,7 +175,7 @@ def setup_i18n_message_factory_translate(domain):
         if kwargs.get("domain", None) is None:
             kwargs["domain"] = domain
         return zope.i18n.translate(msgid, **kwargs)
-
+    
     return _, translate
 
 

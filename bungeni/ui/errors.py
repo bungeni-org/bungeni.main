@@ -11,8 +11,9 @@ log = __import__("logging").getLogger("bungeni.ui.errors")
 import zope.publisher.browser
 from zope.authentication.interfaces import IUnauthenticatedPrincipal
 
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
+from bungeni import _
+
 
 class BaseErrorView(zope.publisher.browser.BrowserView):
     

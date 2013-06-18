@@ -14,7 +14,8 @@ from zope.interface import implements
 from zope.component import getUtility
 from zope.schema.interfaces import ValidationError
 from bungeni.ui.interfaces import IVocabularyTextField
-from bungeni.ui.i18n import _
+from bungeni import _
+
 
 class InvalidVocabularySelection(ValidationError):
     __doc__ = _("""Choose items from provided vocabulary""")

@@ -21,7 +21,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
 from bungeni.core.workflows import utils
 from bungeni.utils.misc import describe
-from bungeni.ui.i18n import _
+from bungeni import _
 
 # version
 # - create a new version of an object and return it

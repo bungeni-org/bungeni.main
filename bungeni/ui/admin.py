@@ -17,8 +17,9 @@ from bungeni.core.serialize import batch_serialize
 from bungeni.ui import browser
 from bungeni.ui.interfaces import IBungeniSkin, ISerializationManager
 from bungeni.ui.widgets import TextWidget, DateWidget
-from bungeni.ui.i18n import _
 from bungeni.utils import register
+from bungeni import _
+
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="email-settings",
     protect={"zope.ManageSite": register.VIEW_DEFAULT_ATTRS})

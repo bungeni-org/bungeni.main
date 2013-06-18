@@ -19,7 +19,7 @@ import string
 from lxml import html
 
 from bungeni.core.workflow import interfaces
-from bungeni.ui.i18n import _
+from bungeni import _
 
 
 # file system 

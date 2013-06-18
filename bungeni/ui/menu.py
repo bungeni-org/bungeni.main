@@ -22,7 +22,6 @@ from zope.browsermenu.interfaces import IBrowserMenu
 import zope.browsermenu
 from zope.publisher.interfaces import IPublishTraverse, NotFound
 from zope.security import proxy, checkPermission
-from zope.i18n import translate
 import z3c.menu.ready2go.item
 
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
@@ -43,12 +42,14 @@ from bungeni.core.language import get_language, get_all_languages
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core import schedule
 
-from bungeni.ui.i18n import  _
 from bungeni.ui.utils import url, misc
 from bungeni.ui import interfaces
 
 from bungeni.capi import capi
 from bungeni.utils import naming
+from bungeni import _, translate
+
+
 
 class BrowserMenu(zope.browsermenu.menu.BrowserMenu):
     pass
