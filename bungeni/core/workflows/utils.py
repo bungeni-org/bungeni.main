@@ -82,6 +82,8 @@ def assign_ownership(context):
         owner_login = _determine_related_user(context).login
     elif interfaces.IUser.providedBy(context):
         owner_login = context.login
+    elif interfaces.IGroup.providedBy(context):
+        owner_login = context.principal_name
     if owner_login is not None:
         log.debug("assign_ownership: role %r to user %r on [%s]" % (
             "bungeni.Owner", owner_login, context))
@@ -89,7 +91,6 @@ def assign_ownership(context):
     else:
         log.warn("assign_ownership: NO owner could be determined from [%s] - "
             "NOT assigning role %r to any user" % (context, "bungeni.Owner"))
-
 
 def user_is_context_owner(context):
     """Test if current user is the context owner e.g. to check if someone 
@@ -101,7 +102,6 @@ def user_is_context_owner(context):
     """
     user = _determine_related_user(context, user_attr_name="owner")
     return is_current_or_delegated_user(user)
-
 
 def _determine_related_user(context, user_attr_name="owner"):
     """Get the user instance that is the value of the {user_attr_name} attribute.

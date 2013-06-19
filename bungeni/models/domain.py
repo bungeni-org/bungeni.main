@@ -477,6 +477,7 @@ class User(Principal):
     available_dynamic_features = ["address"]
     
     interface.implements(
+        # !+ interfaces.IOwned ?
         interfaces.IBungeniUser, 
         interfaces.ITranslatable, 
         interfaces.ISerializable
@@ -553,6 +554,7 @@ class Group(Principal):
     principal_type = "group"
     available_dynamic_features = ["audit", "version", "sitting", "address"]
     interface.implements(
+        interfaces.IOwned,
         interfaces.IGroup,
         interfaces.ITranslatable,
         interfaces.ISerializable
@@ -849,7 +851,7 @@ class Attachment(HeadParentedMixin, Entity):
     available_dynamic_features = ["audit", "version", "notification",
         "email"]
     interface.implements(
-        #!+interfaces.IOwned, !+IDrafted?
+        interfaces.IDrafted,
         interfaces.IAttachment,
     )
     

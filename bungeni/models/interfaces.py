@@ -105,11 +105,21 @@ class IGroupAssignment(IDocPrincipal):
 class IGroupAssignmentContainer(IBungeniContainer): pass
 
 
-class IOwned(interface.Interface):
-    """Object supports having an "owner" i.e. an owner:user attribute.
+class IDrafted(interface.Interface):
+    """Object supports having an "drafter" i.e. a drafter:user attribute.
+    """
+    def drafter():
+        """Get the user instance that is the drafter of this item i.e. the user 
+        that has been assigned "bungeni.Drafter" role on this item.
+        """
+
+class IOwned(IDrafted):
+    """Object supports having an "owner" i.e. an owner:principal attribute.
     """
     def owner():
-        """Get the user instance that is the owner of this item.
+        """Get the user instance that is the owner of this item i.e. the 
+        principal (user or group) that has been assigned the "bungeni.Owner" 
+        role on this item.
         """
 
 class ISerializable(interface.Interface):

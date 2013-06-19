@@ -105,7 +105,7 @@ mapper(domain.Doc, schema.doc,
         # to be determined via the PrincipalRoleMap implemented below (implying 
         # that the user.owner_id column may actually not be necessary).
         #
-        # the (singular) "bungeni.Owner" user for this instance (via the PrincipalRoleMap)
+        # the (singular) "bungeni.Owner" principal for this instance (via the PrincipalRoleMap)
         "owner": relation(domain.User,
             secondary=bas.schema.principal_role_map,
             secondaryjoin=rdb.and_(
@@ -132,7 +132,9 @@ mapper(domain.Doc, schema.doc,
                 bas.schema.principal_role_map.c.role_id == "bungeni.Drafter",
             ),
             uselist=False,
-            lazy=False),
+            lazy=False
+            #!+viewonly=True
+        ),
         
         # !+AlchemistManagedContainer, X same as amc_X.values(), property @X?
         # !+ARCHETYPE_MAPPER(mr, apr-2012) keep this mapper property always 
@@ -333,6 +335,38 @@ mapper(domain.Group, schema.group,
     inherits=domain.Principal,
     polymorphic_identity=polymorphic_identity(domain.Group),
     properties={
+        # the (singular) "bungeni.Owner" group for this instance (via the PrincipalRoleMap)
+        "owner": relation(domain.Group,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.group.c.principal_name,
+            ),
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == bas.schema.principal_role_map.c.object_id,
+                #schema.group.c.group_id == schema.principal.c.principal_id,
+                schema.principal.c.type == bas.schema.principal_role_map.c.object_type,
+                bas.schema.principal_role_map.c.role_id == "bungeni.Owner",
+            ),
+            uselist=False,
+            lazy=False,
+            #!+viewonly=True,
+        ),
+        # the (singular) "bungeni.Drafter" user for this instance (via the PrincipalRoleMap)
+        "drafter": relation(domain.User,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.group.c.group_id == bas.schema.principal_role_map.c.object_id,
+                #schema.group.c.group_id == schema.principal.c.principal_id, !+None!
+                schema.principal.c.type == bas.schema.principal_role_map.c.object_type,
+                bas.schema.principal_role_map.c.role_id == "bungeni.Drafter",
+            ),
+            uselist=False,
+            lazy=False,
+            #!+viewonly=True,
+        ),
         "group_members": relation(domain.GroupMember),
         "group_title_types": relation(domain.TitleType),
         "contained_groups": relation(domain.Group,
@@ -576,7 +610,9 @@ mapper(domain.Attachment, schema.attachment,
                 bas.schema.principal_role_map.c.role_id == "bungeni.Drafter",
             ),
             uselist=False,
-            lazy=False),
+            lazy=False
+            #!+viewonly=True
+        ),
         "head": relation(domain.Doc,
             primaryjoin=(schema.attachment.c.head_id == schema.doc.c.doc_id),
             uselist=False,
@@ -689,6 +725,8 @@ mapper(domain.ItemScheduleVote, schema.item_schedule_vote,
 
 mapper(domain.Signatory, schema.signatory,
     properties={
+        # +! owner
+        # +! drafter
         "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
         "member": relation(domain.Member,

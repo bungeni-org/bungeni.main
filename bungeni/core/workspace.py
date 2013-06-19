@@ -591,13 +591,13 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
         return url_id
 
     @staticmethod
-    def value_key(identity_key):
-        if not isinstance(identity_key, basestring):
+    def value_key(principal_name):
+        if not isinstance(principal_name, basestring):
             raise ValueError
-        properties = identity_key.split("-")
-        if len(properties) != 3:
-            raise ValueError
-        principal_name = identity_key.replace("-", ".")
+        #properties = principal_name.split("-")
+        #if len(properties) != 3:
+        #    raise ValueError
+        #principal_name = principal_name.replace("-", ".")
         return domain.Group, principal_name
 
     def title_column(self, domain_class):
