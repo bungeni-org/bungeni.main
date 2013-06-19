@@ -63,7 +63,7 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
     # set "key" values
     target_doc.chamber = target_chamber
     target_doc.head = source_doc
-    target_doc.owner = source_doc.owner
+    target_doc.owner_id = source_doc.owner.user_id # !+PrincipalRoleMap
     
     # transfer values
     for attr_name in [

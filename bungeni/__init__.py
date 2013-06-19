@@ -77,7 +77,7 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
         #    decision = self._group_based_cashed_prinper(
         #        object, principal, groups, permission)
         #assert decision is None, "#### ZOPEPOLICY #### %s" % (vars())
-
+        
         roles = self.cached_roles(object, permission)
         if roles:
             # get decision from: zope_principal_role_map
@@ -89,7 +89,7 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
                 if setting and (role in roles):
                     return True
         return False
-
+    
     def cached_principal_roles(self, parent, principal):
         cache = self.cache(parent)
         try:
@@ -100,7 +100,7 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
             return cache_principal_roles[principal]
         except KeyError:
             pass
-
+        
         if parent is None:
             roles = dict(
                 [(role, zopepolicy.SettingAsBoolean[setting])
@@ -109,11 +109,11 @@ class BungeniSecurityPolicy(zopepolicy.ZopeSecurityPolicy):
             roles['zope.Anonymous'] = True  # Everybody has Anonymous
             cache_principal_roles[principal] = roles
             return roles
-
+        
         roles = self.cached_principal_roles(
             removeSecurityProxy(getattr(parent, '__parent__', None)),
             principal)
-
+        
         prinrole = IPrincipalRoleMap(parent, None)
         if prinrole:
             roles = roles.copy()

@@ -92,16 +92,48 @@ mapper(domain.Audit, schema.audit,
 # ARCHETYPES
 
 # doc
-
+import bungeni.alchemist.security as bas
 mapper(domain.Doc, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Doc),
     properties={
+        #"owner": relation(domain.User,
+        #    primaryjoin=rdb.and_(schema.doc.c.owner_id == schema.user.c.user_id),
+        #    uselist=False,
+        #    lazy=False),
+        # !+PrincipalRoleMap replacing above implementation of "owner" property
+        # to be determined via the PrincipalRoleMap implemented below (implying 
+        # that the user.owner_id column may actually not be necessary).
+        #
+        # the (singular) "bungeni.Owner" user for this instance (via the PrincipalRoleMap)
         "owner": relation(domain.User,
-            primaryjoin=rdb.and_(schema.doc.c.owner_id ==
-                schema.user.c.user_id),
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.doc.c.doc_id == bas.schema.principal_role_map.c.object_id,
+                schema.doc.c.type == bas.schema.principal_role_map.c.object_type,
+                bas.schema.principal_role_map.c.role_id == "bungeni.Owner",
+            ),
+            uselist=False,
+            lazy=False,
+            #!+viewonly=True,
+        ),
+        # the (singular) "bungeni.Drafter" user for this instance (via the PrincipalRoleMap)
+        "drafter": relation(domain.User,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.doc.c.doc_id == bas.schema.principal_role_map.c.object_id,
+                schema.doc.c.type == bas.schema.principal_role_map.c.object_type,
+                bas.schema.principal_role_map.c.role_id == "bungeni.Drafter",
+            ),
             uselist=False,
             lazy=False),
+        
         # !+AlchemistManagedContainer, X same as amc_X.values(), property @X?
         # !+ARCHETYPE_MAPPER(mr, apr-2012) keep this mapper property always 
         # present on predefined archetype mapper, or dynamically instrument it 
@@ -213,6 +245,13 @@ mapper(domain.DocVersion,
 mapper(domain.Event,
     inherits=domain.Doc,
     polymorphic_identity=polymorphic_identity(domain.Event),
+    properties={
+        # !+PrincipalRoleMap tmp "owner" property -- event does not have a bungeni.Owner assigned
+        "owner": relation(domain.User,
+            primaryjoin=rdb.and_(schema.doc.c.owner_id == schema.user.c.user_id),
+            uselist=False,
+            lazy=False),
+    }
 )
 #!+EVENTS on parliamentary documents:
 # - behave also "like" a parliamentary document
@@ -525,6 +564,19 @@ mapper(domain.GroupAddress, schema.address,
 
 mapper(domain.Attachment, schema.attachment,
     properties={
+        # the (singular) "bungeni.Drafter" user for this instance (via the PrincipalRoleMap)
+        "drafter": relation(domain.User,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.attachment.c.attachment_id == bas.schema.principal_role_map.c.object_id,
+                bas.schema.principal_role_map.c.object_type == "attachment",
+                bas.schema.principal_role_map.c.role_id == "bungeni.Drafter",
+            ),
+            uselist=False,
+            lazy=False),
         "head": relation(domain.Doc,
             primaryjoin=(schema.attachment.c.head_id == schema.doc.c.doc_id),
             uselist=False,
@@ -640,8 +692,8 @@ mapper(domain.Signatory, schema.signatory,
         "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
         "member": relation(domain.Member,
-            primaryjoin=rdb.and_(schema.signatory.c.user_id == 
-                schema.member.c.user_id),
+            primaryjoin=rdb.and_(
+                schema.signatory.c.user_id == schema.member.c.user_id),
             foreign_keys=[schema.member.c.user_id],
             uselist=False,
         ),

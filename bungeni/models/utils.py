@@ -117,6 +117,7 @@ def is_current_or_delegated_user(user):
     return False
 
 
+''' !+PrincipalRoleMap(mr, jun-2013) implement as an orm property as necessary
 def get_owner_for_context(context):
     """Get the user who is the bungeni.Owner (via the PrincipalRoleMap) for
     the context, if any. Raise ValueError if multiple, return None if none.
@@ -128,6 +129,7 @@ def get_owner_for_context(context):
         if len(logins) > 1:
             raise ValueError("Ambiguous, multiple Owner roles assigned.")
         return get_user_for_login(logins[0])
+'''
 
 
 def get_pids_with_role_on_context(context, role_id):

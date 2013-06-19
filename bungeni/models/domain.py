@@ -849,14 +849,16 @@ class Attachment(HeadParentedMixin, Entity):
     available_dynamic_features = ["audit", "version", "notification",
         "email"]
     interface.implements(
-        interfaces.IOwned,
+        #!+interfaces.IOwned, !+IDrafted?
         interfaces.IAttachment,
     )
     
+    ''' !+PrincipalRoleMap attachments have a "drafter" but not an "owner"
     @property # !+OWNERSHIP
     def owner(self):
         from bungeni.models import utils # !+domain should not depend on utils
         return utils.get_owner_for_context(self)
+    '''
     
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
@@ -897,6 +899,9 @@ class Signatory(Entity):
     @property
     def owner(self):
         return self.user
+    
+    #def on_create(self):
+    # !+ASSIGN_OWNERSHIP see models.signatories -> bungeni.Owner, bungei.Signatory
     
     # !+OWNER_TO_DRAFTER(mr, apr-2013) switch current Owner role to 
     # Drafter for (editorial owner only) signatories

@@ -346,7 +346,7 @@ Motions
   >>> motion = domain.AssemblyMotion()
   >>> motion.title = u"Motion"
   >>> motion.language = 'en'
-  >>> motion.owner = mp_1
+  >>> motion.owner_id = mp_1.user_id
   >>> session.add(motion)
   >>> session.flush()
 
@@ -360,7 +360,7 @@ Note that the questions workflow is tested separated (see workflows/question.txt
   >>> question = domain.AssemblyQuestion()
   >>> question.title = u"question"
   >>> question.language = 'en'
-  >>> question.owner = mp_2
+  >>> question.owner_id = mp_2.user_id
   >>> question.question_type = "ordinary"
   >>> session.add(question)
   >>> session.flush()
@@ -376,7 +376,7 @@ Bill
   >>> bill.title = u"Bill"
   >>> bill.doc_type = "member"
   >>> bill.language = 'en'
-  >>> bill.owner = mp_3
+  >>> bill.owner_id = mp_3.user_id
   >>> session.add(bill)
   >>> session.flush()
 

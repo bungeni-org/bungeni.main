@@ -51,7 +51,7 @@ Initialise a report
    >>> report.end_date = datetime.datetime.now()
    >>> report.note = "This is a test"
    >>> report.title = "Sitting Agenda"
-   >>> report.owner = mp_1
+   >>> report.owner_id = mp_1.user_id
    >>> report.language = "en"
    >>> report.created_date = datetime.datetime.now()
    >>> report.group = chamber
@@ -89,7 +89,7 @@ Initialise a Bill
    >>> bill = domain.Bill()
    >>> bill.body = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> bill.title = "Test Bill"
-   >>> bill.owner = mp_1
+   >>> bill.owner_id = mp_1.user_id
    >>> bill.doc_type = "government"
    >>> bill.language = "en"
    >>> bill.created_date = datetime.datetime.now()
@@ -120,7 +120,7 @@ Initialise a Motion
    >>> motion = domain.Motion()
    >>> motion.body = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> motion.title = "Test motion"
-   >>> motion.owner = mp_1
+   >>> motion.owner_id = mp_1.user_id
    >>> motion.language = "en"
    >>> motion.created_date = datetime.datetime.now()
    >>> motion.group = chamber
@@ -150,7 +150,7 @@ Initialise a Tabled Document
    >>> tableddocument = domain.TabledDocument()
    >>> tableddocument.body = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> tableddocument.title = "Test Tabled Document"
-   >>> tableddocument.owner = mp_1
+   >>> tableddocument.owner_id = mp_1.user_id
    >>> tableddocument.language = "en"
    >>> tableddocument.created_date = datetime.datetime.now()
    >>> tableddocument.group = chamber
@@ -180,7 +180,7 @@ Initialise an Agenda Item
    >>> agendaitem = domain.AgendaItem()
    >>> agendaitem.body = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> agendaitem.title = "Sitting Agenda"
-   >>> agendaitem.owner = mp_1
+   >>> agendaitem.owner_id = mp_1.user_id
    >>> agendaitem.language = "en"
    >>> agendaitem.created_date = datetime.datetime.now()
    >>> agendaitem.group = chamber
@@ -211,7 +211,7 @@ Initialise a Question
    >>> question = domain.Question()
    >>> agendaitem.body = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> question.title = "Sitting Agenda"
-   >>> question.owner = mp_1
+   >>> question.owner_id = mp_1.user_id
    >>> question.language = "en"
    >>> question.question_type = "ordinary"
    >>> question.created_date = datetime.datetime.now()
@@ -241,3 +241,5 @@ Cleanup
 --------
    >>> session.flush()
    >>> session.close()
+
+

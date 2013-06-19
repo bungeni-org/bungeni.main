@@ -18,7 +18,8 @@ from zope.component import getGlobalSiteManager
 from zope.cachedescriptors import property as cached_property
 
 from bungeni.alchemist import Session
-from bungeni.models import domain, utils as model_utils
+from bungeni.models import domain
+from bungeni.models.utils import get_login_user
 from bungeni.models.interfaces import ISignatory
 from bungeni.feature import interfaces
 from bungeni.utils import register
@@ -60,12 +61,14 @@ def _allow_withdraw_signature(context):
     return ((manager.document_submitted() or manager.auto_sign()) and
         manager.is_consented_signatory() and not manager.is_owner())
 
+
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
 def doc_workflow(ob, event):
     wfc = IWorkflowController(ob, None)
     if wfc:
         manager = interfaces.ISignatoryManager(ob)
         manager.fire_workflow_actions()
+
 
 @register.handler(adapts=(ISignatory, 
     zope.lifecycleevent.interfaces.IObjectCreatedEvent))
@@ -166,13 +169,13 @@ class SignatoryValidator(object):
         )
 
     def is_signatory(self, user=None):
-        user = user or model_utils.get_login_user()
+        user = user or get_login_user()
         if user:
             return user.user_id in [ sgn.user_id for sgn in self.signatories ] 
         return False
     
     def is_consented_signatory(self, user=None):
-        user = user or model_utils.get_login_user()
+        user = user or get_login_user()
         if user:
             return user.user_id in [ sgn.user_id for sgn in 
                 filter(
@@ -204,10 +207,7 @@ class SignatoryValidator(object):
         return self.wf_status in self.open_states
 
     def is_owner(self):
-        login_user = model_utils.get_login_user()
-        return (
-            (model_utils.get_owner_for_context(self.context) == login_user) or 
-            (login_user == self.context.owner))
+        return get_login_user() == self.context.owner
     
     def can_sign(self):
         """Check if the current user can sign a document.

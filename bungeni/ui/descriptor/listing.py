@@ -34,7 +34,6 @@ from zc.table import column
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import domain
 from bungeni.models.utils import get_login_user, get_member_of_chamber
-from bungeni.models.interfaces import IOwned
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui.utils import date, url, uri
 from bungeni.utils import common
@@ -314,9 +313,13 @@ def workflow_column(name, title, vocabulary=None):
         # current user and others. Here it is added only to "status" columns
         # but a generic "row-level" means to mark such rows as different 
         # from the others may be a useful feature.
-        if IWorkspaceSectionLayer.providedBy(request) and IOwned.providedBy(item):
+        if IWorkspaceSectionLayer.providedBy(request):
+            if hasattr(item, "owner"):
+                item_user = item.owner
+            elif hasattr(item, "drafter"):
+                item_user = item.drafter
             # !+delegation?
-            if item.owner == get_login_user():
+            if item_user == get_login_user():
                 state_title = "<b>%s</b> *" % (state_title)
         return state_title
     return column.GetterColumn(title, getter)
