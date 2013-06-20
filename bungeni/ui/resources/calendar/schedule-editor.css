@@ -32,6 +32,9 @@
 .yui-skin-sam .yui-dt-bd {
     overflow-x:hidden;
 }
+.yui-dt-scrollable .yui-dt-bd  {
+    height:445px !important;
+}
 
 .schedule-available-item-filters button em {
     font-style: normal;

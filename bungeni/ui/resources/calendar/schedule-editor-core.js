@@ -359,7 +359,6 @@ YAHOO.bungeni.scheduling = function(){
                 units: (AgendaConfig.layoutConfig || DEFAULT_LAYOUT_CONFIG)
             }
         );
-        console.log(layout);
         layout.on("render", function(){
             YAHOO.bungeni.schedule = function(){
                 var editor = new YAHOO.widget.TextareaCellEditor();

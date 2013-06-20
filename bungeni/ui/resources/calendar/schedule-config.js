@@ -518,6 +518,7 @@ YAHOO.bungeni.config = function () {
                         id: el.id + "-add-text-record-button",
                         menu: menu
                     });
+                    button._menu.cfg.setProperty('visible',false);
                     var clickHandler = function (type, args) {
                         menuItem = args[1];
                         if (menuItem) {

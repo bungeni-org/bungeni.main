@@ -489,7 +489,7 @@ YAHOO.bungeni.agendaconfig = function(){
             resize: true,
         },
         {
-            position:'bottom',
+            position:'top',
             body: '',
             header: '',
             gutter: "2 2",
