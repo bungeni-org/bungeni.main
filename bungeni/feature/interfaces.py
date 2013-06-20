@@ -98,7 +98,7 @@ class ISignatoryManager(interface.Interface):
         """Check that the document is in draft stage
         """
     
-    def expire_signatures():
+    def elapse_signatures():
         """Should pending signatures be archived
         """
     

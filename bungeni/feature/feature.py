@@ -341,7 +341,7 @@ class Signatory(Feature):
         "max_signatories": dict(type="integer", default=0),
         "submitted_states": dict(type="space_separated_state_ids", default="submitted_signatories"),
         "draft_states": dict(type="space_separated_state_ids", default="draft redraft"),
-        "expire_states": dict(type="space_separated_state_ids", default="submitted"),
+        "elapse_states": dict(type="space_separated_state_ids", default="submitted"),
         "open_states": dict(type="space_separated_state_ids", default=None),
     }
     subordinate_interface = model_ifaces.ISignatory

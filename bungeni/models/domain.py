@@ -902,11 +902,13 @@ class Signatory(Entity):
     def owner(self):
         return self.user
     
-    #def on_create(self):
-    # !+ASSIGN_OWNERSHIP see models.signatories -> bungeni.Owner, bungei.Signatory
-    
-    # !+OWNER_TO_DRAFTER(mr, apr-2013) switch current Owner role to 
-    # Drafter for (editorial owner only) signatories
+    def on_create(self):
+        from bungeni.core.workflows import utils
+        utils.assign_ownership(self)
+        from bungeni.feature.interfaces import ISignatoryManager
+        manager = ISignatoryManager(self.head)
+        if manager.document_submitted() or manager.auto_sign():
+            utils.set_role("bungeni.Signatory", self.user.login, self.head)
     
     @property
     def party(self):

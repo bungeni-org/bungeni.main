@@ -195,7 +195,7 @@ def pi_signature_period_expired(context):
     """The document has been submitted"""
     manager = ISignatoryManager(context.head, None)
     if manager is not None:
-        return manager.expire_signatures()
+        return manager.elapse_signatures()
     return False
 
 @describe(_(u"signatory: Require parent document to have been redrafted"))

@@ -79,11 +79,13 @@ def assign_ownership(context):
     # bungeni.Owner - selected types
     owner_login = None
     if interfaces.is_legal_doc(context):
-        owner_login = _determine_related_user(context).login
+        owner_login = _determine_related_user(context,user_attr_name="owner").login
     elif interfaces.IUser.providedBy(context):
         owner_login = context.login
     elif interfaces.IGroup.providedBy(context):
         owner_login = context.principal_name
+    elif interfaces.ISignatory.providedBy(context):
+        owner_login = _determine_related_user(context, user_attr_name="user").login
     if owner_login is not None:
         log.debug("assign_ownership: role %r to user %r on [%s]" % (
             "bungeni.Owner", owner_login, context))
