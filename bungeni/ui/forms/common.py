@@ -19,7 +19,6 @@ from zope.security.proxy import removeSecurityProxy
 from zope.event import notify
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IChoice
-from zope.cachedescriptors import property as cached_property
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
@@ -51,7 +50,7 @@ from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
-from bungeni.utils import register, naming
+from bungeni.utils import misc, naming, register
 from bungeni.capi import capi
 from bungeni import _, translate
 from bungeni.core.workflows.utils import get_group_privilege_extent_context
@@ -264,11 +263,11 @@ class BaseForm(formlib.form.FormBase):
     # !+BaseForm(mr, oct-2012) combine this BaseForm with alchemist.ui.BaseForm
     # e.g. following props "overlap" into "defn focus" of alchemist.ui.BaseForm
     
-    @cached_property.cachedIn("__cached_descriptor__")
+    @misc.cached_property
     def model_descriptor(self):
         return utils.get_descriptor(self.domain_model)
 
-    @cached_property.cachedIn("__cached_domain__")
+    @misc.cached_property
     def domain_model(self):
         unproxied = removeSecurityProxy(self.context)
         if IAlchemistContainer.providedBy(unproxied):

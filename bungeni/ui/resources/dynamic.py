@@ -10,9 +10,8 @@ import json
 import zope.interface
 from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
-import zope.cachedescriptors.property
 from bungeni.ui.utils import url
-from bungeni.utils import common
+from bungeni.utils import common, misc
 from bungeni.core.language import get_default_language
 from bungeni.ui.calendar import data
 from bungeni.capi import capi
@@ -20,7 +19,8 @@ from bungeni import _, translate
 
 
 class CachedProperties(object):
-    @zope.cachedescriptors.property.cachedIn("__available_docs_container__")
+    
+    @misc.cached_property
     def items_container(self):
         """The URL to a container listing documents available for scheduling
         """
@@ -29,7 +29,7 @@ class CachedProperties(object):
         request = common.get_request()
         app_url = request.getApplicationURL()
         return url.absoluteURL(container, request).replace(app_url, "")
-        
+
 cached_props = CachedProperties()
 
 RESOURCE_MAPPING = {

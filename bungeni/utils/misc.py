@@ -73,6 +73,23 @@ def named_repr(obj, name):
         obj.__module__, type(obj).__name__, name, hex(id(obj)))
 
 
+# cache
+
+def cached_property(f):
+    """Cached property decorator, caching on bound instance and auto-deriving 
+    the cache attribute name from the original function name.
+    
+    Note: if f is itself a decorated func, the name of original function must be
+    correctly bubbled up to it i.e. the decorated renamed to original func name.
+    """
+    attr_name = "_cached_%s" % (f.__name__)
+    def fget(instance):
+        if not hasattr(instance, attr_name):
+            setattr(instance, attr_name, f(instance))
+        return getattr(instance, attr_name)
+    return property(fget)
+
+
 # list
 
 def get_keyed_item(seq, value, key="name"):

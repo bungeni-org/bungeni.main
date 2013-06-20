@@ -15,8 +15,7 @@ import time
 import os
 import zope.interface
 from zope.dottedname.resolve import resolve
-from zope.cachedescriptors import property as cached_property
-from bungeni.utils import error
+from bungeni.utils import error, misc
 import bungeni_custom as bc
 
 
@@ -214,43 +213,43 @@ class CAPI(object):
     @property
     @bungeni_custom_errors
     def long_text_column_listings_truncate_at(self):
-        """When listing text columns, only display first so many characters."""
+        """When listing text columns, only display first so many characters.
+        """
         return int(bc.long_text_column_listings_truncate_at)
     
     def xml_workspace_tabs_file(self):
-        """helper function used by workspace tab info APIs"""
-        TABS_FILE = "tabs.xml"    
+        """Helper function used by workspace tab info APIs.
+        """
         from lxml import etree
-        ws_path = self.get_path_for("workspace")
-        file_path = os.path.join(ws_path, TABS_FILE)
+        file_path = os.path.join(self.get_path_for("workspace"), "tabs.xml")
         tabs = etree.fromstring(open(file_path).read()) 
         return tabs                
     
-    @cached_property.cachedIn("__workspace_tabs_count_refresh__")
+    @misc.cached_property
     @bungeni_custom_errors
     def workspace_tab_count_cache_refresh_time(self):
-        """The duration in seconds between tab count refresh operations"""
+        """The duration in seconds between tab count refresh operations.
+        """
         tabs = self.xml_workspace_tabs_file()
         tabs_count_refresh = tabs.attrib["tab_count_cache_refresh_time"]
         return int(tabs_count_refresh)
     
-    @cached_property.cachedIn("__workspace_tabs__")
+    @misc.cached_property
     @bungeni_custom_errors
     def workspace_tabs(self):
-        """The tabs in the workspace"""
+        """The tabs in the workspace.
+        """
         ws_tabs = []
         tabs = self.xml_workspace_tabs_file()
         for tab in tabs.iterchildren(tag="tab"):
             ws_tabs.append(tab.attrib["id"])
         return ws_tabs    
     
-    @cached_property.cachedIn("__oauth_access_token_expiry_time__")
     @bungeni_custom_errors
     def oauth_access_token_expiry_time(self):
         """time in seconds before an access token expires"""
         return int(bc.oauth_access_token_expiry_time)
     
-    @cached_property.cachedIn("__oauth_authorization_token_expiry_time__")
     @bungeni_custom_errors
     def oauth_authorization_token_expiry_time(self):
         """time in seconds before an oauth authorization code expires
@@ -258,7 +257,6 @@ class CAPI(object):
         """
         return int(bc.oauth_authorization_token_expiry_time)
     
-    @cached_property.cachedIn("__oauth_hmac_key__")
     @bungeni_custom_errors
     def oauth_hmac_key(self):
         """String used to to generate nonces. KEEP SECRET.

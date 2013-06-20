@@ -26,7 +26,7 @@ from bungeni.capi import capi
 from bungeni.utils import common
 
 
-''' !+REQUEST_CACHED(mr, sep-2011) experimetally replacing with a different 
+''' !+REQUEST_CACHED(mr, sep-2011) experimentally replacing with a different 
     implementation that does not require that the request be already 
     initialized.
 
@@ -76,6 +76,7 @@ def _clear_request_cache():
     rc = getattr(thread_local, "_request_cache", None)
     if rc is not None:
         rc.clear()
+# !+ see also: bungeni.utils.misc.cached_property
 
 
 def get_traversed_context(request=None, index=-1):

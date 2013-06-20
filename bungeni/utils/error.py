@@ -36,6 +36,9 @@ def exceptions_as(exc_kls, other_than=()):
                     raise # re-raise unchanged
                 else:
                     raise exc_kls, m, e_traceback
+        # remember original callable/details
+        _errorable_f._f = f
+        _errorable_f.__name__ = f.__name__
         return _errorable_f
     return _exceptions_as
 

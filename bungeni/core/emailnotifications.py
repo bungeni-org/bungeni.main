@@ -19,7 +19,6 @@ from zope import component
 from zope import interface
 from bungeni.utils import common
 from zope.pagetemplate.pagetemplatefile import PageTemplate
-from zope.cachedescriptors.property import CachedProperty
 from bungeni.alchemist import Session
 from bungeni.core.interfaces import (
     IMessageQueueConfig, 
@@ -30,7 +29,7 @@ from bungeni.core.notifications import get_mq_connection
 from bungeni.models import domain
 from bungeni.models.settings import EmailSettings
 from bungeni.capi import capi
-from bungeni.utils import register
+from bungeni.utils import register, misc
 from bungeni.ui.reporting.generators import get_attr
 
 
@@ -43,7 +42,7 @@ class BungeniSMTPMailer(object):
 
     interface.implements(IBungeniMailer)
 
-    @CachedProperty
+    @misc.cached_property
     def settings(self):
         return EmailSettings(common.get_application())
 
