@@ -41,8 +41,6 @@ from bungeni.core.language import CurrentLanguageVocabulary, get_language_by_nam
 from bungeni.core.workflows.utils import set_group_local_role, unset_group_local_role
 from bungeni.models.interfaces import IVersion, IAttachmentContainer #, IBungeniContent, ISittingContainer
 from bungeni.models import domain
-from bungeni.models.utils import get_login_user
-from bungeni.feature.interfaces import ISignatoryManager
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormAddLayer, IFormEditLayer, \
     IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer
@@ -917,13 +915,11 @@ class SignOpenDocumentForm(PageForm):
             return _(u"You may not sign this document")
     
     def _can_sign_document(self, action):
-        manager = ISignatoryManager(self.context)
-        return manager.can_sign()
-
+        return self.context.signatory_manager.can_sign()
+    
     def _can_review_signature(self, action):
-        manager = ISignatoryManager(self.context)
-        return manager.is_signatory(get_login_user())
-
+        return self.context.signatory_manager.is_signatory()
+    
     def redirect_to_review(self):
         self.request.response.redirect("./signatory-review")
 
@@ -933,9 +929,7 @@ class SignOpenDocumentForm(PageForm):
     @formlib.form.action(_(u"Sign Document"), name="sign_document", 
         condition=_can_sign_document)
     def handle_sign_document(self, action, data):
-        user = get_login_user()
-        manager = ISignatoryManager(self.context)
-        manager.sign_document(user.user_id)
+        self.context.signatory_manager.sign_document()
         self.request.response.redirect(self.nextURL())
 
     @formlib.form.action(_(u"Review Signature"), name="review_signature", 

@@ -13,7 +13,6 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from zope.security import checkPermission
-from bungeni.feature.interfaces import ISignatoryManager
 #from bungeni.models import domain
 from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
@@ -168,7 +167,7 @@ def signatory_auto_sign(context):
     if not utils.user_is_context_owner(context.head):
         return True
     #!+(mb, Jul-2012) move all signatory logic to signatory manager
-    if ISignatoryManager(context.head).auto_sign():
+    if context.head.signatory_manager.auto_sign():
         return True
     return False
 
@@ -178,14 +177,14 @@ def signatory_manual_sign(context):
 
 @describe(_(u"signatory: Require signatories"))
 def pi_has_signatories(context):
-    manager = ISignatoryManager(context, None)
+    manager = getattr(context, "signatory_manager", None) #!+
     if manager is not None:
         return manager.validate_signatories()
     return True
 
 @describe(_(u"signatory: Require consented signatories"))
 def pi_signatories_check(context):
-    manager = ISignatoryManager(context, None)
+    manager = getattr(context, "signatory_manager", None) #!+
     if manager is not None:
         return manager.validate_consented_signatories()
     return True
@@ -193,7 +192,7 @@ def pi_signatories_check(context):
 @describe(_(u"signatory: Require signature period to have expired"))
 def pi_signature_period_expired(context):
     """The document has been submitted"""
-    manager = ISignatoryManager(context.head, None)
+    manager = getattr(context.head, "signatory_manager", None) #!+
     if manager is not None:
         return manager.elapse_signatures()
     return False
@@ -201,12 +200,12 @@ def pi_signature_period_expired(context):
 @describe(_(u"signatory: Require parent document to have been redrafted"))
 def pi_document_redrafted(context):
     """Parent document has been redrafted"""
-    manager = ISignatoryManager(context.head, None)
+    manager = getattr(context.head, "signatory_manager", None) #!+
     return manager and manager.document_is_draft()
 
 @describe(_(u"signatory: Require the signature to have been withdrawn"))
 def pi_unsign_signature(context):
-    manager = ISignatoryManager(context.head, None)
+    manager = getattr(context.head, "signatory_manager", None) #!+
     if manager:
         return ((pi_document_redrafted(context) and 
             user_is_not_parent_document_owner(context))
@@ -215,7 +214,7 @@ def pi_unsign_signature(context):
 
 @describe(_(u"signatory: Require the signatory be allowed to sign"))
 def pi_allow_signature(context):
-    manager = ISignatoryManager(context.head, None)
+    manager = getattr(context.head, "signatory_manager", None) #!+
     if manager is not None:
         return utils.user_is_context_owner(context) and manager.allow_signature()
     return False
@@ -224,7 +223,7 @@ def pi_allow_signature(context):
 def pi_allow_signature_actions(context):
     """allow/disallow other signature actions => such as withdraw and reject
     """
-    manager = ISignatoryManager(context.head, None)
+    manager = getattr(context.head, "signatory_manager", None) #!+
     if manager is not None:
         return (utils.user_is_context_owner(context) and 
             (manager.document_submitted() or manager.auto_sign()) and

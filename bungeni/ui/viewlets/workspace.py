@@ -14,7 +14,6 @@ from ploned.ui.viewlet import StructureAwareViewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.utils import url
-from bungeni.feature.interfaces import ISignatoryManager
 from bungeni.core import translation
 from bungeni.capi import capi
 from bungeni import _, translate
@@ -81,7 +80,7 @@ class SignatoriesStatus(MessageViewlet):
     def getMessages(self):
         messages = []
         message = {"level": "info", "header": _("Signatories"), "text": u""}
-        validator = ISignatoryManager(self.context, None)
+        validator = getattr(self.context, "signatory_manager", None)
         if validator and validator.require_signatures():
             if validator.validate_consented_signatories():
                 message["text"] = _("signature_requirement_met",

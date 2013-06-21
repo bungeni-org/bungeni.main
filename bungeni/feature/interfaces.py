@@ -102,18 +102,22 @@ class ISignatoryManager(interface.Interface):
         """Should pending signatures be archived
         """
     
-    def update_signatories():
-        """Fire any workflow transitions within current state.
-        This should update all signatures depending on parent document state.
+    def allow_sign_document():
+        """Check if doc is open for signatures and current user is allowed to sign.
+        """
+    def allow_withdraw_signature():
+        """Check if current user is a signatory and that the doc allows signature actions.
         """
     
-    def setup_roles():
-        """Set local signatories/owner roles on document and signature
-        objects.
+    def on_signatory_doc_workflow_transition():
+        """Fire off any changes after workflow change on parent doc, such as:
+        
+        setup_roles: set any local signatory roles on doc and any owner/drafter 
+        roles on signature objects.
+        
+        update_signatories: fire any workflow transitions within current state;
+        this should update all signatures depending on parent document state.
         """
-    
-    def fire_workflow_actions():
-        """Fire off any changes after workflow change on parent document"""
 
 class ISchedulingManager(interface.Interface):
     """Configurator for class implementing scheduling feature

@@ -336,9 +336,11 @@ class Signatory(Feature):
     """Support for the "signatory" feature. For Doc types.
     """
     feature_interface = interfaces.IFeatureSignatory
-    feature_parameters = {
-        "min_signatories": dict(type="integer", default=0),
-        "max_signatories": dict(type="integer", default=0),
+    feature_parameters = {    
+        "min_signatories": dict(type="integer", default=0,
+            doc="minimum consented signatories"),
+        "max_signatories": dict(type="integer", default=0,
+            doc="maximum consented signatories"),
         "submitted_states": dict(type="space_separated_state_ids", default="submitted_signatories"),
         "draft_states": dict(type="space_separated_state_ids", default="draft redraft"),
         "elapse_states": dict(type="space_separated_state_ids", default="submitted"),
@@ -347,8 +349,37 @@ class Signatory(Feature):
     subordinate_interface = model_ifaces.ISignatory
     
     def decorate_model(self, model):
-        import bungeni.models.signatories
-        bungeni.models.signatories.createManagerFactory(model, **self.params)
+        # additional feature parameter validation
+        assert not set.intersection(
+                set(self.params["submitted_states"]), 
+                set(self.params["draft_states"]), 
+                set(self.params["elapse_states"])), \
+                    "draft, submitted and expired states must be distinct lists"
+        
+        # add a "signatory_manager" (cached) property to model
+        assert "signatory_manager" not in model.__dict__, \
+            "Model %s already has an attribute %r" % (model, "signatory_manager")
+        def get_signatory_manager(self):
+            return interfaces.ISignatoryManager(self)
+        model.signatory_manager = misc.cached_property(get_signatory_manager)
+        # !+LocationErrorWorkaround above gives zope.location.interfaces.LocationError 
+        # (in ui/menu.zcml menuItem declarations) if we use:
+        #       filter="context/signatory_manager/allow_withdraw_signature"
+        #       filter="context/signatory_manager/allow_sign_document"
+        # so defining dedicated "shortcut properties" to these...
+        def allow_withdraw_signature(self):
+            return self.signatory_manager.allow_withdraw_signature
+        model.allow_withdraw_signature = property(allow_withdraw_signature)
+        def allow_sign_document(self):
+            return self.signatory_manager.allow_sign_document
+        model.allow_sign_document = property(allow_sign_document)
+        # !+
+        
+        # setup the signatory manager for this model
+        from bungeni.models import signatories
+        manager = create_feature_manager(model, self, signatories.SignatoryManager,
+            interfaces.ISignatoryManager, "SignatoryManager")
+        assert manager is not None, model
     
     def decorate_ui(self, model):
         add_info_container_to_descriptor(model, "signatories", "signatory", "head_id")
@@ -376,16 +407,16 @@ class Schedule(Feature):
     """
     feature_interface = interfaces.IFeatureSchedule
     feature_parameters = {
-        "schedulable_states": dict(type="space_separated_state_ids", default=None),
-        "scheduled_states": dict(type="space_separated_state_ids", default=None),
+        "schedulable_states": dict(type="space_separated_state_ids", default=None,
+            doc="object's schedulable states"),
+        "scheduled_states": dict(type="space_separated_state_ids", default=None,
+            doc="object's scheduled states"),
     }
     subordinate_interface = None # !+?
     
     def decorate_model(self, model):
-        manager = create_feature_manager(model, SchedulingManager,
-            interfaces.ISchedulingManager, "SchedulingManager", 
-            **self.params
-        )
+        manager = create_feature_manager(model, self, SchedulingManager,
+            interfaces.ISchedulingManager, "SchedulingManager")
         assert manager is not None, model
 
 
@@ -434,15 +465,14 @@ class Download(Feature):
     """
     feature_interface = interfaces.IFeatureDownload
     feature_parameters = {
-        "allowed_types": dict(type="sst", default=None)
+        "allowed_types": dict(type="sst", default=None,
+            doc="allowed download types")
     }
     subordinate_interface = None
     
     def decorate_model(self, model):
-        manager = create_feature_manager(model, DownloadManager,
-            interfaces.IDownloadManager, "DownloadManager", 
-            **self.params
-        )
+        manager = create_feature_manager(model, self, DownloadManager,
+            interfaces.IDownloadManager, "DownloadManager")
         assert manager is not None, model
 
 
@@ -473,10 +503,28 @@ class GroupAssignment(Feature):
         add_info_container_to_descriptor(model, "group_assignments", "group_assignment", "doc_id")
 
 
+#
 
-# !+ unconvolute code below + cleanout "duplication" in models.signatories
+def create_feature_manager(domain_class, feature, base_class, manager_iface, suffix):
+    """Instantiate a feature manager instance for {domain_class}.
+    """
+    manager_name = "%s%s" % (domain_class.__name__, suffix)
+    assert manager_name not in globals(), "Feature manager named %s already exists" % (manager_name)
+    manager = globals()[manager_name] = type(manager_name, (base_class,), {
+            "feature": feature
+        })
+    
+    for config_name, config_value in feature.params.iteritems():
+        setattr(manager, config_name, config_value)
+    manager_iface.validateInvariants(manager)
+    
+    domain_iface = capi.get_type_info(domain_class).interface
+    gsm = getGlobalSiteManager()
+    gsm.registerAdapter(manager, (domain_iface,), manager_iface)
+    return manager_name
 
 
+#
 
 class SchedulingManager(object):
     """Store scheduling configuration properties for a schedulable type.
@@ -497,6 +545,9 @@ class DownloadManager(object):
     
     allowed_types = ()
     
+    def __init__(self, context):
+        self.context = context
+    
     def get_allowed_types(self):
         if len(self.allowed_types):
             return filter(lambda typ: typ[0] in self.allowed_types,
@@ -504,33 +555,5 @@ class DownloadManager(object):
         else:
             return interfaces.DOWNLOAD_TYPES
     
-    def __init__(self, context):
-        self.context = context
-
-def create_feature_manager(domain_class, base_class, manager_iface, suffix, **params):
-    """Instantiate a scheduling manager instance for `domain_class`.
-    """
-    manager_name = "%s%s" % (domain_class.__name__, suffix)
-    assert manager_name not in globals(), "Feature manager named %s already exists" % (manager_name)
-    
-    ti = capi.get_type_info(domain_class)
-    domain_iface = ti.interface
-    
-    globals()[manager_name] = type(manager_name, (base_class,), {})
-    manager = globals()[manager_name]
-    known_params = manager_iface.names()
-    for config_name, config_value in params.iteritems():
-        assert config_name in known_params, ("Check your feature "
-            "configuration for %s. Only these parameters may be "
-            "configured %s" % (domain_class.__name__, known_params))
-        config_type = type(getattr(manager, config_name))
-        if config_type in (tuple, list):
-            config_value = map(str.strip, config_value)
-        setattr(manager, config_name, config_type(config_value))
-    manager_iface.validateInvariants(manager)
-    
-    gsm = getGlobalSiteManager()
-    gsm.registerAdapter(manager, (domain_iface,), manager_iface)
-    return manager_name
 
 

@@ -905,8 +905,7 @@ class Signatory(Entity):
     def on_create(self):
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)
-        from bungeni.feature.interfaces import ISignatoryManager
-        manager = ISignatoryManager(self.head)
+        manager = self.head.signatory_manager
         if manager.document_submitted() or manager.auto_sign():
             utils.set_role("bungeni.Signatory", self.user.login, self.head)
     
