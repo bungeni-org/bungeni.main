@@ -15,6 +15,8 @@ import inspect
 import math
 import string
 import random
+import sys
+import traceback
 from StringIO import StringIO
 from zipfile import ZipFile
 
@@ -201,7 +203,6 @@ def publish_to_xml(context):
     attachments - XML is saved in zip archive with all attached files. 
     """
 
-
     context = zope.security.proxy.removeSecurityProxy(context)
     obj_type = IWorkflow(context).name
     
@@ -222,30 +223,32 @@ def publish_to_xml(context):
         include = []
         # data dict to be published
         data = {}
-
         if IFeatureVersion.providedBy(context):
             include.append("versions")
         if IFeatureEvent.providedBy(context):
             include.append("event")
         
         exclude = ["data", "event", "attachments"]
-        
-        data.update(
-            obj2dict(context, 1, 
+        updated_dict = obj2dict(context, 1, 
                 parent=None,
                 include=include,
                 exclude=exclude,
                 root_key=root_key
             )
+        
+        data.update(
+            updated_dict
         )
+        
         tags = IStateController(context).get_state().tags
         if tags:
             data["tags"] = tags
         permissions = get_object_state_rpm(context).permissions
         data["permissions"] = get_permissions_dict(permissions)
         
-        # setup path to save serialized data 
+        # setup path to save serialized data
         path = os.path.join(setupStorageDirectory(), obj_type)
+        log.info("Setting up path to write to : %s" % path)
         if not os.path.exists(path):
             os.makedirs(path)
         
@@ -433,6 +436,8 @@ def serialization_notifications_callback(channel, method, properties, body):
             try:
                 publish_to_xml(obj)
             except Exception, e:
+                ex_type, ex, tb = sys.exc_info()
+                log.info("Error while publish_to_xml : %s", repr(traceback.format_tb(exc_traceback)))
                 notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
                     obj=obj, message=obj_data, error=e
                 )
@@ -506,6 +511,7 @@ def init_thread(*args, **kw):
     task_thread = SerializeThread(target=serialization_worker)
     task_thread.start()
     TIMER_DELAYS[task_thread.name] = delay
+    return task_thread
     
 
 def batch_serialize(type_key="*", start_date=None, end_date=None):
@@ -686,8 +692,11 @@ def serialization_notifications():
     channel.queue_bind(queue=SERIALIZE_OUTPUT_QUEUE,
         exchange=SERIALIZE_OUTPUT_EXCHANGE,
         routing_key=SERIALIZE_OUTPUT_ROUTING_KEY)
+    worker_threads = []
     for i in range(mq_utility.get_number_of_workers()):
-        init_thread()
+        a_thread = init_thread()
+        worker_threads.append(a_thread)
+    return worker_threads
 
 
 
