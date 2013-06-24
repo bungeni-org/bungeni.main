@@ -248,11 +248,9 @@ def schedule_sitting_items(context):
             debug.log_exc_info(sys.exc_info(), log.error)
     
     for schedule in context.items.values():
-        wfc = IWorkflowController(schedule.item, None)
-        if wfc is None:
-            continue
         if not IFeatureSchedule.providedBy(schedule.item):
             continue
+        wfc = IWorkflowController(schedule.item)
         wf = wfc.workflow
         schedule_feature = wf.get_feature("schedule")
         scheduled_states = schedule_feature.p.scheduled_states
@@ -263,7 +261,7 @@ def schedule_sitting_items(context):
                     fireTransitionScheduled(schedule.item, wfc, target_state)
         except InvalidStateError:
             # try to fire to next logical scheduled state
-            if wfc.state_controller.get_status() in schedulable_states:
+            if schedule.item.status in schedulable_states: # !+is_schedulable
                 transition_ids = wfc.getFireableTransitionIds()
                 for transition_id in transition_ids:
                     transition = wf.get_transition(transition_id)

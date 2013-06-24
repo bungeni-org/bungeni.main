@@ -915,10 +915,10 @@ class SignOpenDocumentForm(PageForm):
             return _(u"You may not sign this document")
     
     def _can_sign_document(self, action):
-        return self.context.signatory_manager.can_sign()
+        return self.context.signatory_feature.can_sign(self.context)
     
     def _can_review_signature(self, action):
-        return self.context.signatory_manager.is_signatory()
+        return self.context.signatory_feature.is_signatory(self.context)
     
     def redirect_to_review(self):
         self.request.response.redirect("./signatory-review")
@@ -929,7 +929,7 @@ class SignOpenDocumentForm(PageForm):
     @formlib.form.action(_(u"Sign Document"), name="sign_document", 
         condition=_can_sign_document)
     def handle_sign_document(self, action, data):
-        self.context.signatory_manager.sign_document()
+        self.context.signatory_feature.sign_document(self.context)
         self.request.response.redirect(self.nextURL())
 
     @formlib.form.action(_(u"Review Signature"), name="review_signature", 

@@ -17,11 +17,11 @@ import datetime
 
 from zope import interface, location
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-from bungeni import alchemist
-from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import object_mapper
 
+from bungeni import alchemist
+from bungeni.alchemist.traversal import one2many, one2manyindirect
 from bungeni.models import interfaces
 
 
@@ -905,8 +905,10 @@ class Signatory(Entity):
     def on_create(self):
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)
-        manager = self.head.signatory_manager
-        if manager.document_submitted() or manager.auto_sign():
+        signatory_feature = self.head.signatory_feature
+        if (signatory_feature.document_submitted(self.head) or 
+                signatory_feature.auto_sign(self.head)
+            ):
             utils.set_role("bungeni.Signatory", self.user.login, self.head)
     
     @property

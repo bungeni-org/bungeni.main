@@ -41,7 +41,7 @@ class BungeniBrowserView(zope.publisher.browser.BrowserPage):
     """
     
     # the instance of the ViewProvideViewletManager
-    provide = z3evoque.ViewProvideViewletManager()    
+    provide = z3evoque.ViewProvideViewletManager()
     
     @property
     def page_title(self):

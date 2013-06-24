@@ -34,7 +34,6 @@ from bungeni.models.interfaces import (
 from bungeni.feature.interfaces import (
     IFeatureAudit,
     IFeatureDownload,
-    IDownloadManager,
 )
 
 from bungeni.core.translation import get_available_translations
@@ -520,9 +519,8 @@ class DownloadDocumentMenu(BrowserMenu):
         _url = url.absoluteURL(context, request)
         if IFeatureDownload.providedBy(context):
             doc_templates = self.documentTemplates(request.locale)
-            manager = IDownloadManager(context)
             add_template_to_title = len(doc_templates) > 1
-            for doc_type, title in manager.get_allowed_types():
+            for doc_type, title in context.download_feature.get_allowed_types():
                 if doc_templates:
                     for template in doc_templates:
                         i18n_title = translate(title)

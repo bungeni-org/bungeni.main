@@ -9,6 +9,7 @@
 $Id$
 """
 
+from zope.security.proxy import removeSecurityProxy
 from zope.app.component.hooks import getSite
 from ploned.ui.viewlet import StructureAwareViewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
@@ -54,6 +55,7 @@ class WorkspaceUnderConsiderationNavigation(WorkspaceContextNavigation):
     folder = "under-consideration"
     css_class = "workspace-under-consideration"
 
+
 class MessageViewlet(object):
     """display a message with optional level info
     """
@@ -80,17 +82,18 @@ class SignatoriesStatus(MessageViewlet):
     def getMessages(self):
         messages = []
         message = {"level": "info", "header": _("Signatories"), "text": u""}
-        validator = getattr(self.context, "signatory_manager", None)
-        if validator and validator.require_signatures():
-            if validator.validate_consented_signatories():
+        context = removeSecurityProxy(self.context)
+        signatory_feature = context.signatory_feature
+        if signatory_feature and signatory_feature.needs_signatures():
+            if signatory_feature.validate_consented_signatories(context):
                 message["text"] = _("signature_requirement_met",
                     default=(u"This document has the required number of "
                         u"signatories. ${signed_members} member(s) have signed"
                         u". ${required_members} signature(s) required."
                     ),
                     mapping = {
-                        "signed_members": validator.consented_signatories,
-                        "required_members": validator.min_signatories
+                        "signed_members": signatory_feature.num_consented_signatories(context),
+                        "required_members": signatory_feature.p.min_signatories
                     }
                 )
             else:
@@ -102,12 +105,13 @@ class SignatoriesStatus(MessageViewlet):
                             u"${signed_members} member(s) have signed."
                         ),
                         mapping={
-                            "required_members": validator.min_signatories,
-                            "signed_members": validator.consented_signatories
+                            "required_members": signatory_feature.p.min_signatories,
+                            "signed_members": signatory_feature.num_consented_signatories(context)
                         }
                 )
             messages.append(message)
         return messages
+
 
 class TranslationStatus(MessageViewlet):
     def getMessages(self):
@@ -130,3 +134,5 @@ class TranslationStatus(MessageViewlet):
                         "text": u"This document has no pivot translation."}
                 )
         return messages
+
+

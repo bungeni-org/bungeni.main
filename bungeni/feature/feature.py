@@ -18,7 +18,6 @@ log = __import__("logging").getLogger("bungeni.feature")
 
 
 from zope import interface
-from zope.component import getGlobalSiteManager
 import sqlalchemy as sa
 from sqlalchemy.orm import mapper, class_mapper, relation
 from bungeni.alchemist.catalyst import MODEL_MODULE
@@ -28,7 +27,7 @@ from bungeni.alchemist import utils
 from bungeni.models import domain, schema, interfaces as model_ifaces
 from bungeni.models import orm # !+ needed to execute mappings
 from bungeni.feature import interfaces
-from bungeni.utils import naming, register, misc
+from bungeni.utils import naming, misc
 from bungeni.capi import capi
 
 
@@ -38,7 +37,14 @@ def get_feature_interface(feature_name):
     return getattr(interfaces, "IFeature%s" % naming.model_name(feature_name))
 
 def get_feature_cls(feature_name):
-    return globals()[naming.model_name(feature_name)]
+    feature_cls_name = naming.model_name(feature_name)
+    try:
+        return globals()[feature_cls_name]
+    except KeyError:
+        feature_module_name = "feature_%s" % (feature_name)
+        feature_module = __import__("bungeni.feature.%s" % (feature_module_name),
+            fromlist=[feature_module_name])
+        return getattr(feature_module, feature_cls_name)
 
 
 def get_feature(discriminator, feature_name):
@@ -177,6 +183,7 @@ class Feature(object):
     # hooks to be redefined by subclasses
     
     def validate_parameters(self):
+        """Additional feature parameter validation."""
         pass
     
     def decorate_model(self, model):
@@ -344,60 +351,6 @@ class Event(Feature):
                     self.name, event_type_key)
 
 
-class Signatory(Feature):
-    """Support for the "signatory" feature. For Doc types.
-    """
-    feature_interface = interfaces.IFeatureSignatory
-    feature_parameters = {    
-        "min_signatories": dict(type="integer", default=0,
-            doc="minimum consented signatories"),
-        "max_signatories": dict(type="integer", default=0,
-            doc="maximum consented signatories"),
-        "submitted_states": dict(type="space_separated_state_ids", default="submitted_signatories"),
-        "draft_states": dict(type="space_separated_state_ids", default="draft redraft"),
-        "elapse_states": dict(type="space_separated_state_ids", default="submitted"),
-        "open_states": dict(type="space_separated_state_ids", default=None),
-    }
-    subordinate_interface = model_ifaces.ISignatory
-    
-    def validate_parameters(self):
-        # additional feature parameter validation
-        assert not set.intersection(
-                set(self.p.submitted_states), 
-                set(self.p.draft_states), 
-                set(self.p.elapse_states)), \
-                    "draft, submitted and expired states must be distinct lists"
-    
-    def decorate_model(self, model):
-        # add a "signatory_manager" (cached) property to model
-        assert "signatory_manager" not in model.__dict__, \
-            "Model %s already has an attribute %r" % (model, "signatory_manager")
-        def get_signatory_manager(self):
-            return interfaces.ISignatoryManager(self)
-        model.signatory_manager = misc.cached_property(get_signatory_manager)
-        # !+LocationErrorWorkaround above gives zope.location.interfaces.LocationError 
-        # (in ui/menu.zcml menuItem declarations) if we use:
-        #       filter="context/signatory_manager/allow_withdraw_signature"
-        #       filter="context/signatory_manager/allow_sign_document"
-        # so defining dedicated "shortcut properties" to these...
-        def allow_withdraw_signature(self):
-            return self.signatory_manager.allow_withdraw_signature
-        model.allow_withdraw_signature = property(allow_withdraw_signature)
-        def allow_sign_document(self):
-            return self.signatory_manager.allow_sign_document
-        model.allow_sign_document = property(allow_sign_document)
-        # !+
-        
-        # setup the signatory manager for this model
-        from bungeni.models import signatories
-        manager = create_feature_manager(model, self, signatories.SignatoryManager,
-            interfaces.ISignatoryManager, "SignatoryManager")
-        assert manager is not None, model
-    
-    def decorate_ui(self, model):
-        add_info_container_to_descriptor(model, "signatories", "signatory", "head_id")
-
-
 class Sitting(Feature):
     """Support for the "sitting" feature.
     For Group types, means support for holding sittings.
@@ -468,22 +421,6 @@ class Email(Feature):
     depends_on = Notification,
 
 
-class Download(Feature):
-    """Support downloading as pdf/odt/rss/akomantoso.
-    """
-    feature_interface = interfaces.IFeatureDownload
-    feature_parameters = {
-        "allowed_types": dict(type="sst", default=None,
-            doc="allowed download types")
-    }
-    subordinate_interface = None
-    
-    def decorate_model(self, model):
-        manager = create_feature_manager(model, self, DownloadManager,
-            interfaces.IDownloadManager, "DownloadManager")
-        assert manager is not None, model
-
-
 class UserAssignment(Feature):
     """Support for the "user_assignment" feature (Doc). !+User?
     """
@@ -509,49 +446,5 @@ class GroupAssignment(Feature):
     
     def decorate_ui(self, model):
         add_info_container_to_descriptor(model, "group_assignments", "group_assignment", "doc_id")
-
-
-#
-
-def create_feature_manager(domain_class, feature, base_class, manager_iface, suffix):
-    """Instantiate a feature manager instance for {domain_class}.
-    """
-    manager_name = "%s%s" % (domain_class.__name__, suffix)
-    assert manager_name not in globals(), "Feature manager named %s already exists" % (manager_name)
-    manager = globals()[manager_name] = type(manager_name, (base_class,), {
-            "feature": feature
-        })
-    
-    for config_name in feature.p:
-        setattr(manager, config_name, feature.p[config_name])
-    manager_iface.validateInvariants(manager)
-    
-    domain_iface = capi.get_type_info(domain_class).interface
-    gsm = getGlobalSiteManager()
-    gsm.registerAdapter(manager, (domain_iface,), manager_iface)
-    return manager
-
-
-#
-
-
-@register.adapter(adapts=(interfaces.IFeatureDownload,))
-class DownloadManager(object):
-    """Store download feature properties for a downloadable type.
-    """
-    interface.implements(interfaces.IDownloadManager)
-    
-    allowed_types = ()
-    
-    def __init__(self, context):
-        self.context = context
-    
-    def get_allowed_types(self):
-        if len(self.allowed_types):
-            return filter(lambda typ: typ[0] in self.allowed_types,
-                interfaces.DOWNLOAD_TYPES)
-        else:
-            return interfaces.DOWNLOAD_TYPES
-    
 
 
