@@ -172,6 +172,17 @@ class Feature(object):
         self.validate_model(model)
         if self.enabled:
             interface.classImplements(model, self.feature_interface)
+            # add a convenient "{name}_feature" (cached) property to model
+            feature_name = self.name
+            feature_property_name = "%s_feature" % (feature_name)
+            assert feature_property_name not in model.__dict__, \
+                "Model %s already has an attribute %r" % (
+                    model, feature_property_name)
+            def _get_feature(self):
+                return get_feature(self, feature_name)
+            _get_feature.__name__ = feature_property_name
+            setattr(model, feature_property_name, misc.cached_property(_get_feature))
+            # additional model preparations
             self.decorate_model(model)
     
     def setup_ui(self, model):

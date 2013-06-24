@@ -8,9 +8,9 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.feature.download")
 
+
 from bungeni.feature import feature
 from bungeni.feature import interfaces
-from bungeni.utils import misc
 
 
 class Download(feature.Feature):
@@ -28,14 +28,6 @@ class Download(feature.Feature):
             "Allowed download types: %s. You entered: %s" % (
                 ", ".join(interfaces.DOWNLOAD_TYPE_KEYS),
                 ", ".join(self.p.allowed_types))
-    
-    def decorate_model(self, model):
-        # add a "download_feature" (cached) property to model
-        assert "download_feature" not in model.__dict__, \
-            "Model %s already has an attribute %r" % (model, "download_feature")
-        def get_download_feature(self):
-            return feature.get_feature(self, "download")
-        model.download_feature = misc.cached_property(get_download_feature)
     
     
     # feature class utilities

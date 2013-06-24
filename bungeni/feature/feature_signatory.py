@@ -19,7 +19,7 @@ from bungeni.models import domain, interfaces as model_ifaces
 from bungeni.models.utils import get_login_user
 from bungeni.feature import feature
 from bungeni.feature import interfaces
-from bungeni.utils import register, misc
+from bungeni.utils import register
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
 from bungeni.core.workflows import utils
 
@@ -72,13 +72,6 @@ class Signatory(feature.Feature):
                     "draft, submitted and expired states must be distinct lists"
     
     def decorate_model(self, model):
-        # add a "signatory_feature" (cached) property to model
-        assert "signatory_feature" not in model.__dict__, \
-            "Model %s already has an attribute %r" % (model, "signatory_feature")
-        def get_signatory_feature(self):
-            return feature.get_feature(self, "signatory")
-        model.signatory_feature = misc.cached_property(get_signatory_feature)
-        
         def allow_sign_document(self):
             """Check if doc is open for signatures and current user is allowed to 
             sign. Used in bungeni/ui/menu.zcml to filter out "sign document action".
