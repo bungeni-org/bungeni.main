@@ -12,7 +12,7 @@ log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 from bungeni.models import  interfaces
-from bungeni.feature.interfaces import ISchedulingManager
+from bungeni.feature import feature
 from bungeni.utils import register
 from bungeni.core.workflow.interfaces import IWorkflowController
 
@@ -24,15 +24,13 @@ def retract_scheduled_items(context, event):
     or when the sitting is deleted.
     """
     def retract_item(item):
-        manager = ISchedulingManager(item, None)
-        if manager is None:
-            return
-        wfc = IWorkflowController(item, None)
-        if wfc is None:
+        schedule_feature = feature.get_feature(item, "schedule")
+        if schedule_feature is None:
             return
         
         # take back to schedule pending
-        for state in manager.schedulable_states:
+        wfc = IWorkflowController(item)
+        for state in schedule_feature.p.schedulable_states:
             transitions = wfc.getFireableTransitionIdsToward(state)
             if transitions:
                 wfc.fireTransition(transitions[0])

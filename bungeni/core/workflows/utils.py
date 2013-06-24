@@ -21,7 +21,7 @@ from bungeni.models.utils import (
     is_current_or_delegated_user, 
     get_user,
 )
-from bungeni.feature.interfaces import ISchedulingManager
+from bungeni.feature.interfaces import IFeatureSchedule
 
 from bungeni.utils import common
 from bungeni.ui.utils import debug
@@ -251,21 +251,23 @@ def schedule_sitting_items(context):
         wfc = IWorkflowController(schedule.item, None)
         if wfc is None:
             continue
-        wf = wfc.workflow
-        manager = ISchedulingManager(schedule.item, None)
-        if not manager:
+        if not IFeatureSchedule.providedBy(schedule.item):
             continue
+        wf = wfc.workflow
+        schedule_feature = wf.get_feature("schedule")
+        scheduled_states = schedule_feature.p.scheduled_states
+        schedulable_states = schedule_feature.p.schedulable_states
         try:
-            for target_state in manager.scheduled_states:
+            for target_state in scheduled_states:
                 if wf.get_state(target_state):
                     fireTransitionScheduled(schedule.item, wfc, target_state)
         except InvalidStateError:
             # try to fire to next logical scheduled state
-            if (wfc.state_controller.get_status() in manager.schedulable_states):
+            if wfc.state_controller.get_status() in schedulable_states:
                 transition_ids = wfc.getFireableTransitionIds()
                 for transition_id in transition_ids:
                     transition = wf.get_transition(transition_id)
-                    if (transition.destination in manager.scheduled_states): 
+                    if transition.destination in scheduled_states: 
                         fireTransitionScheduled(schedule.item, wfc,
                             toward=transition.destination)
                         break
@@ -278,9 +280,9 @@ def check_agenda_finalized(context):
         #!+TYPES(mb, march-2012) There might be a more elegant approach here
         # to filter out 'text records' from the schedule
         if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
-            manager = ISchedulingManager(schedule.item)            
+            schedule_feature = wfc.wf.get_feature("schedule")
             return (wfc.state_controller.get_status() not in 
-                manager.scheduled_states
+                schedule_feature.p.scheduled_states
             )
         else:
             return True

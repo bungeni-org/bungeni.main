@@ -17,7 +17,7 @@ from sqlalchemy import orm, sql
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.interfaces import IScheduleText
-from bungeni.feature.interfaces import ISchedulingManager
+from bungeni.feature import feature
 from bungeni.models.utils import get_user_chamber, get_login_user
 from bungeni.ui.utils import date
 from bungeni.utils import common
@@ -29,20 +29,17 @@ from bungeni import _
 
 #!+CACHING(mb, Feb-2013) cache this
 def get_schedulable_states(type_key):
-    ti = capi.get_type_info(type_key)
-    manager = ISchedulingManager(ti.domain_model(), None)
-    if manager:
-        return ISchedulingManager(ti.domain_model()).schedulable_states
-    else:
-        return []
+    schedule_feature = feature.get_feature(type_key, "schedule")
+    if schedule_feature:
+        return schedule_feature.p.schedulable_states
+    return []
 
 def get_scheduled_states(type_key):
-    ti = capi.get_type_info(type_key)
-    manager = ISchedulingManager(ti.domain_model(), None)
-    if manager:
-        return ISchedulingManager(ti.domain_model()).scheduled_states
-    else:
-        return []
+    schedule_feature = feature.get_feature(type_key, "schedule")
+    if schedule_feature:
+        return schedule_feature.p.scheduled_states
+    return []
+
 def can_schedule(type_key, workflow):
     """Determine if the current user can schedule this document type.
     i.e. if they have the global workflow permission to schedule a document.

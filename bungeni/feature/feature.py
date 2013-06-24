@@ -40,8 +40,10 @@ def get_feature_interface(feature_name):
 def get_feature_cls(feature_name):
     return globals()[naming.model_name(feature_name)]
 
-#def get_cls_workflow_feature(cls, feature_name):
-#    return capi.get_type_info(cls).workflow.get_feature(feature_name)
+
+def get_feature(discriminator, feature_name):
+    return capi.get_type_info(discriminator).workflow.get_feature(feature_name)
+
 def provides_feature(discriminator, feature_name):
     """Does the domain model identified by discriminator provide the named feature?
     """
@@ -112,9 +114,19 @@ class Feature(object):
     def __init__(self, enabled=True, note=None, **kws):
         self.enabled = enabled
         self.note = note
-        self.params = self.validated_params(kws)
+        self.p = misc.bunch(**self.parse_parameters(kws))
+        self.validate_parameters()
     
-    def validated_params(self, kws):
+    def __str__(self):
+        return misc.named_repr(self, self.name)
+    __repr__ = __str__
+    
+    #
+    
+    def parse_parameters(self, kws):
+        """Parse and normalize (add missing entries, using defaults) parameters, 
+        returning them as a dict object.
+        """
         for key in self.feature_parameters:
             if key not in kws:
                 kws[key] = self.feature_parameters[key]["default"]
@@ -126,8 +138,6 @@ class Feature(object):
             ppv = getattr(PPV, fp["type"])
             kws[key] = ppv(kws[key], fp["default"])
         return kws
-    
-    #
     
     def validate_model(self, model):
         # assert this feature is available for model
@@ -164,15 +174,17 @@ class Feature(object):
         if self.enabled: # !+ only ever gets called for enabled types?
             self.decorate_ui(model)
     
+    # hooks to be redefined by subclasses
+    
+    def validate_parameters(self):
+        pass
+    
     def decorate_model(self, model):
         pass
     
     def decorate_ui(self, model):
         pass
     
-    def __str__(self):
-        return misc.named_repr(self, self.name)
-    __repr__ = __str__
 
 
 # Feature Implementations
@@ -323,7 +335,7 @@ class Event(Feature):
     
     def decorate_ui(self, model):
         # container property per enabled event type
-        for event_type_key in self.params["types"]:
+        for event_type_key in self.p.types:
             if capi.has_type_info(event_type_key):
                 container_property_name = naming.plural(event_type_key)
                 add_info_container_to_descriptor(model, container_property_name, event_type_key, "head_id")
@@ -348,14 +360,15 @@ class Signatory(Feature):
     }
     subordinate_interface = model_ifaces.ISignatory
     
-    def decorate_model(self, model):
+    def validate_parameters(self):
         # additional feature parameter validation
         assert not set.intersection(
-                set(self.params["submitted_states"]), 
-                set(self.params["draft_states"]), 
-                set(self.params["elapse_states"])), \
+                set(self.p.submitted_states), 
+                set(self.p.draft_states), 
+                set(self.p.elapse_states)), \
                     "draft, submitted and expired states must be distinct lists"
-        
+    
+    def decorate_model(self, model):
         # add a "signatory_manager" (cached) property to model
         assert "signatory_manager" not in model.__dict__, \
             "Model %s already has an attribute %r" % (model, "signatory_manager")
@@ -414,11 +427,6 @@ class Schedule(Feature):
     }
     subordinate_interface = None # !+?
     
-    def decorate_model(self, model):
-        manager = create_feature_manager(model, self, SchedulingManager,
-            interfaces.ISchedulingManager, "SchedulingManager")
-        assert manager is not None, model
-
 
 class Address(Feature):
     """Support for the "address" feature.
@@ -514,28 +522,18 @@ def create_feature_manager(domain_class, feature, base_class, manager_iface, suf
             "feature": feature
         })
     
-    for config_name, config_value in feature.params.iteritems():
-        setattr(manager, config_name, config_value)
+    for config_name in feature.p:
+        setattr(manager, config_name, feature.p[config_name])
     manager_iface.validateInvariants(manager)
     
     domain_iface = capi.get_type_info(domain_class).interface
     gsm = getGlobalSiteManager()
     gsm.registerAdapter(manager, (domain_iface,), manager_iface)
-    return manager_name
+    return manager
 
 
 #
 
-class SchedulingManager(object):
-    """Store scheduling configuration properties for a schedulable type.
-    """
-    interface.implements(interfaces.ISchedulingManager)
-    
-    schedulable_states = ()
-    scheduled_states = ()
-    
-    def __init__(self, context):
-        self.context = context
 
 @register.adapter(adapts=(interfaces.IFeatureDownload,))
 class DownloadManager(object):

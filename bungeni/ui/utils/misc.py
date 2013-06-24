@@ -62,35 +62,8 @@ def makeList(itemIds):
     else:
          raise TypeError(_("Form values must be of type string or list"))
 
-# object
 
-class bunch(dict):
-    """
-    A dictionary-bunch of values, with convenient dotted access.
-    Limitation: keys must be valid object attribute names.
-    Inspiration: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52308
-    """
-    def __init__(self, **kwds):
-        dict.__init__(self, kwds)
-        self.__dict__ = self
-
-    def __getstate__(self):
-        return self
-
-    def __setstate__(self, state):
-        self.update(state)
-        self.__dict__ = self
-
-    def update_from_object(self, obj, no_underscored=True):
-        """ (obj:object) -> None
-        Sets each key in dir(obj) as key=getattr(object, key) in self.
-        If no_underscored, then exclude "private" (leading "_") and 
-        "protected" (leading "__") attributes.
-        """
-        for name in dir(obj):
-            if not (no_underscored and name.startswith("_")):
-                self[name] = getattr(obj, name)
-
+#
 
 REGEX_FOR_SLUGS = re.compile(u"[^\w\.]")
 def slugify(string_to_slug):
@@ -114,7 +87,7 @@ def slugify(string_to_slug):
     """
     assert isinstance(string_to_slug, basestring)
     slug = unicode(string_to_slug)
-    slug = re.sub(REGEX_FOR_SLUGS, u'_', slug)
+    slug = re.sub(REGEX_FOR_SLUGS, u"_", slug)
     return slug
 
 

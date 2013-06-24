@@ -40,13 +40,13 @@ class ChangeDataProvider(object):
     
     @property
     def param_audit_actions(self):
-        return self.head_audit_feature.params["audit_actions"]
+        return self.head_audit_feature.p.audit_actions
     @property
     def param_include_subtypes(self):
-        return self.head_audit_feature.params["include_subtypes"]
+        return self.head_audit_feature.p.include_subtypes
     @property
     def param_display_columns(self):
-        return self.head_audit_feature.params["display_columns"]
+        return self.head_audit_feature.p.display_columns
     
     
     def change_data_items(self):

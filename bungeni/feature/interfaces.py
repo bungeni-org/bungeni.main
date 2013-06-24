@@ -119,12 +119,6 @@ class ISignatoryManager(interface.Interface):
         this should update all signatures depending on parent document state.
         """
 
-class ISchedulingManager(interface.Interface):
-    """Configurator for class implementing scheduling feature
-    """
-    schedulable_states = interface.Attribute("""object's schedulable states""")
-    scheduled_states = interface.Attribute("""object's scheduled states""")
-
 
 DOWNLOAD_TYPES = [
     ("pdf", _("as pdf")),

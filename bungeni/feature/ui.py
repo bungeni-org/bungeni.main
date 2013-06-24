@@ -278,7 +278,8 @@ def setup_customization_ui():
         # events
         if ti.workflow.has_feature("event"):
             log.debug("Setting up UI for feature %r for type %r", "event", type_key)
-            for event_type_key in ti.workflow.get_feature("event").params["types"]:
+            event_feature = ti.workflow.get_feature("event")
+            for event_type_key in event_feature.p.types:
                 if capi.has_type_info(event_type_key):
                     container_property_name = naming.plural(event_type_key)
                     # add menu item

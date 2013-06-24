@@ -60,9 +60,9 @@ class UserAssignmentView(forms.common.BaseForm):
                     feature = f
         if feature:
             if role_type == "assigner":
-                return capi.schema.qualified_roles(feature.params["assigner_roles"])
+                return capi.schema.qualified_roles(feature.p.assigner_roles)
             elif role_type == "assignable":
-                return capi.schema.qualified_roles(feature.params["assignable_roles"])
+                return capi.schema.qualified_roles(feature.p.assignable_roles)
         return []
 
     def assignable_roles(self):
