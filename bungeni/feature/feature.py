@@ -37,6 +37,10 @@ def get_feature_interface(feature_name):
     return getattr(interfaces, "IFeature%s" % naming.model_name(feature_name))
 
 def get_feature_cls(feature_name):
+    """Get the Feature implementation class by the feature name.
+    
+    All retrieval of Feature classes MUST be done vis this utility.
+    """
     feature_cls_name = naming.model_name(feature_name)
     try:
         return globals()[feature_cls_name]
@@ -157,9 +161,10 @@ class Feature(object):
         if self.enabled:
             # dependent features
             if self.depends_on:
-                for fi in self.depends_on:
-                    assert provides_feature(model, fi.name), \
-                        (self, model, fi, "dependent feature disabled")
+                for feature_name in self.depends_on:
+                    feature_cls = get_feature_cls(feature_name)
+                    assert provides_feature(model, feature_name), \
+                        (self, model, feature_name, "dependent feature disabled")
             # !+determine if class implements an interface NOT via inheritance
             # e.g. EventResponse will already "implement" Audit as super class 
             # Event already does !+get_base_cls?
@@ -323,7 +328,7 @@ class Version(Feature):
     feature_interface = interfaces.IFeatureVersion
     feature_parameters = {}
     subordinate_interface = model_ifaces.IVersion
-    depends_on = Audit,
+    depends_on = "audit",
     # !+VERSION_CLASS_PER_TYPE
 
 
@@ -333,7 +338,7 @@ class Attachment(Feature):
     feature_interface = interfaces.IFeatureAttachment
     feature_parameters = {}
     subordinate_interface = model_ifaces.IAttachment
-    depends_on = Version, # !+ domain.Attachment is expected to be versionable
+    depends_on = "version", # !+ domain.Attachment is expected to be versionable
     
     def decorate_ui(self, model):
         add_info_container_to_descriptor(model, "files", "attachment", "head_id")
@@ -429,7 +434,7 @@ class Email(Feature):
     feature_interface = interfaces.IFeatureEmail
     feature_parameters = {}
     subordinate_interface = None
-    depends_on = Notification,
+    depends_on = "notification",
 
 
 class UserAssignment(Feature):
