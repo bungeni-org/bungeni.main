@@ -27,6 +27,7 @@ from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
 from bungeni.ui.utils import uri
+from bungeni.utils import naming
 from bungeni import _, translate
 
 
@@ -35,9 +36,7 @@ CUSTOM_FBR_WORK_NAMES = {
     "bill": "Enactment"
 }
 def get_fbr_work_name(item_type):
-    return CUSTOM_FBR_WORK_NAMES.get(item_type) or "".join(
-        map(unicode.capitalize, item_type.split("_"))
-    )
+    return CUSTOM_FBR_WORK_NAMES.get(item_type) or naming.camel(item_type)
 
 
 class RSSView(BrowserView):

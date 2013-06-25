@@ -91,7 +91,7 @@ def setup_customization_ui():
             />"""
     
     def register_container_viewlet(type_key, name, for_):
-        UI_ZC_DECLS.append(register_container_viewlet.TMPL.format(**locals()))    
+        UI_ZC_DECLS.append(register_container_viewlet.TMPL.format(**locals()))
     register_container_viewlet.TMPL = """
             <browser:viewlet name="bungeni.viewlet.{name}"
                 manager="bungeni.ui.forms.interfaces.ISubFormViewletManager"
@@ -100,8 +100,8 @@ def setup_customization_ui():
                 permission="zope.Public"
             />"""
     
-    def model_title(type_key):
-        return naming.split_camel(naming.model_name(type_key))
+    #def model_title(type_key):
+    #    return naming.split_camel(naming.model_name(type_key))
     
     UI_ZC_DECLS[:] = []
     # we assume that non-custom types have already been set up as needed
@@ -110,7 +110,8 @@ def setup_customization_ui():
             
             <!-- {type_key} -->""".format(type_key=type_key))
         
-        type_title = model_title(type_key)
+        type_title = ti.label
+        
         # model interface is defined, but container interface is not yet
         model_interface_qualname = naming.qualname(ti.interface)
         container_interface_qualname = "bungeni.models.interfaces.%s" % (
@@ -168,14 +169,16 @@ def setup_customization_ui():
                 # !+CHAMBER_SITTING clarify/regularize for chamber (e.g. can
                 # already add an agenda item via workspace menus, etc).
                 # add sitting
-                register_menu_item("sitting", "Add", "Add %s..." % (model_title("sitting")),
+                sitting_ti = capi.get_type_info("sitting")
+                register_menu_item("sitting", "Add", "Add %s..." % (sitting_ti.label),
                     model_interface_qualname,
                     "./sittings/add",
                     menu="additems", 
                     order=40,
                     layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
                 # add agenda_item !+CUSTOM?
-                register_menu_item("agenda_item", "Add", "Add %s..." % (model_title("agenda_item")),
+                agenda_item_ti = capi.get_type_info("agenda_item")
+                register_menu_item("agenda_item", "Add", "Add %s..." % (agenda_item_ti.label),
                     model_interface_qualname,
                     "./agenda_items/add",
                     menu="additems", 
@@ -282,8 +285,9 @@ def setup_customization_ui():
             for event_type_key in event_feature.p.types:
                 if capi.has_type_info(event_type_key):
                     container_property_name = naming.plural(event_type_key)
+                    event_type_ti = capi.get_type_info(event_type_key)
                     # add menu item
-                    title = "{t} {e}".format(t=type_title, e=model_title(event_type_key))
+                    title = "{t} {e}".format(t=type_title, e=event_type_ti.label)
                     register_menu_item(event_type_key, "Add", "Add %s" %(title),
                         model_interface_qualname, 
                         "./%s/add" % (container_property_name), 
