@@ -82,8 +82,15 @@ def assign_ownership(context):
         owner_login = _determine_related_user(context,user_attr_name="owner").login
     elif interfaces.IUser.providedBy(context):
         owner_login = context.login
-    elif interfaces.IGroup.providedBy(context):
-        owner_login = context.principal_name
+    # !+GROUP_AS_GROUP_OWNER having the group itself be the "owner principal" is 
+    # problematic -- as every member of the group would also become the Owner of 
+    # the group, a privilege that is also passed on down onto each doc "belonging" 
+    # to the group... so, either Drafter/Owner roles on a group NOT transfer 
+    # down to each "doc" associated with the group, or use distinct roles for 
+    # this privilege e.g. GroupOwner/GroupDrafter, or just do not assign Owner
+    # (as long as they are stricly not necessary)...
+    #elif interfaces.IGroup.providedBy(context):
+    #    owner_login = context.principal_name
     elif interfaces.ISignatory.providedBy(context):
         owner_login = _determine_related_user(context, user_attr_name="user").login
     if owner_login is not None:

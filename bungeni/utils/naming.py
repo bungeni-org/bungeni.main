@@ -50,6 +50,11 @@ def split_camel(name):
     s1 = un_camel.first_cap_re.sub(r"\1 \2", name)
     return un_camel.all_cap_re.sub(r"\1 \2", s1)
 
+def capit(phrase):
+    """Capitalize each (space separated word) in phrase.
+    """
+    return " ".join([ s.capitalize for s in phrase.split() ])
+
 
 def singular(pname):
     """Get the english singular of (plural) name (inverse of plural)

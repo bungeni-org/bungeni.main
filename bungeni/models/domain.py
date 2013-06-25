@@ -477,7 +477,7 @@ class User(Principal):
     available_dynamic_features = ["address"]
     
     interface.implements(
-        # !+ interfaces.IOwned ?
+        interfaces.IOwned,
         interfaces.IBungeniUser, 
         interfaces.ITranslatable, 
         interfaces.ISerializable
@@ -554,7 +554,7 @@ class Group(Principal):
     principal_type = "group"
     available_dynamic_features = ["audit", "version", "sitting", "address"]
     interface.implements(
-        interfaces.IOwned,
+        interfaces.IDrafted,
         interfaces.IGroup,
         interfaces.ITranslatable,
         interfaces.ISerializable
@@ -898,9 +898,10 @@ class Signatory(Entity):
         interfaces.ISignatory,
     )
     
-    @property
-    def owner(self):
-        return self.user
+    # !+ORM
+    #@property
+    #def owner(self):
+    #    return self.user
     
     def on_create(self):
         from bungeni.core.workflows import utils

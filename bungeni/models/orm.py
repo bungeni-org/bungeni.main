@@ -15,8 +15,8 @@ from sqlalchemy.orm import mapper, class_mapper, relation, column_property, \
 
 import schema
 import domain
+import bungeni.alchemist.security as bas
 from bungeni.utils.naming import polymorphic_identity
-
 
 
 # extended attributes - vertical properties
@@ -92,7 +92,6 @@ mapper(domain.Audit, schema.audit,
 # ARCHETYPES
 
 # doc
-import bungeni.alchemist.security as bas
 mapper(domain.Doc, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Doc),
@@ -276,6 +275,38 @@ mapper(domain.User, schema.user,
     inherits=domain.Principal,
     polymorphic_identity=polymorphic_identity(domain.User),
     properties={
+        # the (singular) "bungeni.Owner" user for this instance (via the PrincipalRoleMap)
+        "owner": relation(domain.User,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.user.c.user_id == bas.schema.principal_role_map.c.object_id,
+                #schema.user.c.user_id == schema.principal.c.principal_id,
+                schema.principal.c.type == bas.schema.principal_role_map.c.object_type,
+                bas.schema.principal_role_map.c.role_id == "bungeni.Owner",
+            ),
+            uselist=False,
+            lazy=False,
+            #!+viewonly=True,
+        ),
+        # the (singular) "bungeni.Drafter" user for this instance (via the PrincipalRoleMap)
+        "drafter": relation(domain.User,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.user.c.user_id == bas.schema.principal_role_map.c.object_id,
+                #schema.group.c.group_id == schema.principal.c.principal_id, !+None!
+                schema.principal.c.type == bas.schema.principal_role_map.c.object_type,
+                bas.schema.principal_role_map.c.role_id == "bungeni.Drafter",
+            ),
+            uselist=False,
+            lazy=False,
+            #!+viewonly=True,
+        ),
         # !+ADDRESS naming, use addresses
         "user_addresses": relation(domain.UserAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
@@ -330,11 +361,8 @@ mapper(domain.PasswordRestoreLink, schema.password_restore_link,
     }
 )
 
-# group
-mapper(domain.Group, schema.group,
-    inherits=domain.Principal,
-    polymorphic_identity=polymorphic_identity(domain.Group),
-    properties={
+
+''' !+GROUP_AS_GROUP_OWNER
         # the (singular) "bungeni.Owner" group for this instance (via the PrincipalRoleMap)
         "owner": relation(domain.Group,
             secondary=bas.schema.principal_role_map,
@@ -351,6 +379,12 @@ mapper(domain.Group, schema.group,
             lazy=False,
             #!+viewonly=True,
         ),
+'''
+# group
+mapper(domain.Group, schema.group,
+    inherits=domain.Principal,
+    polymorphic_identity=polymorphic_identity(domain.Group),
+    properties={
         # the (singular) "bungeni.Drafter" user for this instance (via the PrincipalRoleMap)
         "drafter": relation(domain.User,
             secondary=bas.schema.principal_role_map,
@@ -725,8 +759,36 @@ mapper(domain.ItemScheduleVote, schema.item_schedule_vote,
 
 mapper(domain.Signatory, schema.signatory,
     properties={
-        # +! owner
-        # +! drafter
+        "owner": relation(domain.User,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.signatory.c.signatory_id == bas.schema.principal_role_map.c.object_id,
+                bas.schema.principal_role_map.c.object_type == "signatory",
+                bas.schema.principal_role_map.c.role_id == "bungeni.Owner",
+            ),
+            uselist=False,
+            lazy=False,
+            #!+viewonly=True,
+        ),
+        # the (singular) "bungeni.Drafter" user for this instance (via the PrincipalRoleMap)
+        "drafter": relation(domain.User,
+            secondary=bas.schema.principal_role_map,
+            secondaryjoin=rdb.and_(
+                bas.schema.principal_role_map.c.principal_id == schema.user.c.login,
+            ),
+            primaryjoin=rdb.and_(
+                schema.signatory.c.signatory_id == bas.schema.principal_role_map.c.object_id,
+                bas.schema.principal_role_map.c.object_type == "signatory",
+                bas.schema.principal_role_map.c.role_id == "bungeni.Drafter",
+            ),
+            uselist=False,
+            lazy=False
+            #!+viewonly=True
+        ),
+        
         "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
         "member": relation(domain.Member,
