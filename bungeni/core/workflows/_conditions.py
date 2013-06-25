@@ -138,19 +138,20 @@ def user_may_edit_context_parent(context):
 
 # signatory
 
+
 #!+INCORRENTLY named... only checks that owner of child is same as of parent!
-@describe(_(u"signatory: Require the user to be the owner of the parent document"))
+@describe(_(u"sub-type: Require the user to be the owner of the parent document"))
 def user_is_parent_document_owner(context):
     return context.owner.login == context.head.owner.login
 
-@describe(_(u"signatory: Require the user not to be the owner of the parent document"))
+@describe(_(u"sub-type: Require the user not to be the owner of the parent document"))
 def user_is_not_parent_document_owner(context):
     return not user_is_parent_document_owner(context)
 
 
 
 @describe(_(u"signatory: Require the owner to be the signatory. Auto-signs the document"))
-def signatory_auto_sign(context):
+def signatory_auto_sign(signatory):
     """Determines whether signature is automatically signed when a signatory
     is added.
     
@@ -159,74 +160,75 @@ def signatory_auto_sign(context):
     member. The assumption is that the user has provided a list of consented
     signatories to the document.
     """
-    if user_is_parent_document_owner(context):
+    #if user_is_parent_document_owner(signatory):
+    # !+ called before signatory is created! Owner role not yet set...
+    if signatory.user_id == signatory.head.owner_id:
         return True
     # if user adding signatory is not parent document owner, then auto sign
     #!+SIGNATORIES(mb, aug-2011) this could be tricky versus checking if parent
     # document is in a 'working_draft' state
-    if not utils.user_is_context_owner(context.head):
+    head = signatory.head
+    if not utils.user_is_context_owner(head):
         return True
-    return context.head.signatory_feature.auto_sign(context.head)
-
+    return head.signatory_feature.auto_sign(head)
 
 @describe(_(u"signatory: Require the signatory to manually sign the document"))
-def signatory_manual_sign(context):
-    return not signatory_auto_sign(context)
+def signatory_manual_sign(signatory):
+    return not signatory_auto_sign(signatory)
 
 
-@describe(_(u"signatory: Require signatories"))
-def pi_has_signatories(context):
-    signatory_feature = context.signatory_feature
+@describe(_(u"doc: Require signatories"))
+def pi_has_signatories(doc):
+    signatory_feature = doc.signatory_feature
     if signatory_feature:
-        return signatory_feature.has_signatories(context)
+        return signatory_feature.has_signatories(doc)
     return True
 
-@describe(_(u"signatory: Require consented signatories"))
-def pi_signatories_check(context):
-    signatory_feature = context.signatory_feature
+@describe(_(u"doc: Check consented signatories"))
+def pi_signatories_check(doc):
+    signatory_feature = doc.signatory_feature
     if signatory_feature:
-        return signatory_feature.validate_consented_signatories(context)
+        return signatory_feature.validate_consented_signatories(doc)
     return True
+
 
 @describe(_(u"signatory: Require signature period to have expired"))
-def pi_signature_period_expired(context):
+def pi_signature_period_expired(signatory):
     """The document has been submitted"""
-    signatory_feature = context.signatory_feature
-    return signatory_feature and signatory_feature.elapse_signatures(context)
+    signatory_feature = signatory.head.signatory_feature
+    return signatory_feature and signatory_feature.elapse_signatures(signatory)
 
-@describe(_(u"signatory: Require parent document to have been redrafted"))
+@describe(_(u"doc: Require parent document to have been redrafted"))
 def pi_document_redrafted(context):
     """Parent document has been redrafted"""
     signatory_feature = context.signatory_feature
     return signatory_feature and signatory_feature.document_is_draft(context)
 
-
 @describe(_(u"signatory: Require the signature to have been withdrawn"))
-def pi_unsign_signature(context):
-    signatory_feature = context.head.signatory_feature
+def pi_unsign_signature(signatory):
+    signatory_feature = signatory.head.signatory_feature
     return (signatory_feature and
-            pi_document_redrafted(context.head) and 
-            user_is_not_parent_document_owner(context))
-
+            pi_document_redrafted(signatory.head) and 
+            user_is_not_parent_document_owner(signatory))
 
 @describe(_(u"signatory: Require the signatory be allowed to sign"))
-def pi_allow_signature(context):
-    signatory_feature = context.head.signatory_feature
+def pi_allow_signature(signatory):
+    signatory_feature = signatory.head.signatory_feature
     return (signatory_feature and 
-            utils.user_is_context_owner(context) and 
-            signatory_feature.allow_signature(context))
+            utils.user_is_context_owner(signatory) and 
+            signatory_feature.allow_signature(signatory))
 
 
 @describe(_(u"signatory: Require the signatory to be allowed to withdraw or reject"))
-def pi_allow_signature_actions(context):
+def pi_allow_signature_actions(signatory):
     """allow/disallow other signature actions => such as withdraw and reject
     """
-    signatory_feature = context.head.signatory_feature
+    signatory_feature = signatory.head.signatory_feature
     return (signatory_feature and 
-            utils.user_is_context_owner(context) and 
-            (signatory_feature.document_submitted(context) or 
-                signatory_feature.auto_sign(context)) and
-            user_is_not_parent_document_owner(context))
+            utils.user_is_context_owner(signatory) and 
+            (signatory_feature.document_submitted(signatory.head) or 
+                signatory_feature.auto_sign(signatory.head)) and
+            user_is_not_parent_document_owner(signatory))
 
 
 # auditables
