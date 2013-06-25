@@ -72,20 +72,21 @@ class Signatory(feature.Feature):
                     "draft, submitted and expired states must be distinct lists"
     
     def decorate_model(self, model):
-        def allow_sign_document(self):
+        sf = self # signatory feature (this instance)
+        def allow_sign_document(context):
             """Check if doc is open for signatures and current user is allowed to 
             sign. Used in bungeni/ui/menu.zcml to filter out "sign document action".
             """
-            sf = self.signatory_feature
-            return ((sf.can_sign(self) and sf.allow_signature(self)) or 
-                (sf.is_signatory(self) and not sf.is_consented_signatory(self)))
-        def allow_withdraw_signature(self):
+            assert sf is context.signatory_feature, (sf.name, context, sf)
+            return ((sf.can_sign(context) and sf.allow_signature(context)) or 
+                (sf.is_signatory(context) and not sf.is_consented_signatory(context)))
+        def allow_withdraw_signature(context):
             """Check if current user is a signatory and that the doc allows signature
             actions. Used in bungeni/ui/menu.zcml to filter out "review signature" action.
             """
-            sf = self.signatory_feature
-            return ((sf.document_submitted(self) or sf.auto_sign(self)) and
-                sf.is_consented_signatory(self) and not sf.is_owner(self))
+            assert sf is context.signatory_feature, (sf.name, context, sf)
+            return ((sf.document_submitted(context) or sf.auto_sign(context)) and
+                sf.is_consented_signatory(context) and not sf.is_owner(context))
         model.allow_sign_document = property(allow_sign_document)
         model.allow_withdraw_signature = property(allow_withdraw_signature)
     
@@ -146,27 +147,27 @@ class Signatory(feature.Feature):
         """
         return context.status in self.p.draft_states
     
-    def on_signatory_doc_workflow_transition(self, head):
+    def on_signatory_doc_workflow_transition(self, context):
         """Perform any workflow related actions on signatories and/or parent.
         """
-        # make head owner a default signatory when doc is submitted to 
+        # make (head)context owner a default signatory when doc is submitted to 
         # signatories for consent
-        if self.document_submitted(head):
-            if not self.is_signatory(head, user=head.owner):
-                new_signatory(head.owner_id, head.doc_id)
+        if self.document_submitted(context):
+            if not self.is_signatory(context, user=context.owner):
+                new_signatory(context.owner_id, context.doc_id)
         # setup roles
-        for signatory in head.sa_signatories:
+        for signatory in context.sa_signatories:
             login = signatory.user.login
-            if self.document_submitted(head):
-                utils.set_role("bungeni.Signatory", login, head)
+            if self.document_submitted(context):
+                utils.set_role("bungeni.Signatory", login, context)
                 utils.set_role("bungeni.Owner", login, signatory)
-            elif self.document_is_draft(head):
-                utils.unset_role("bungeni.Signatory", login, head)
-            elif self.elapse_signatures(head):
+            elif self.document_is_draft(context):
+                utils.unset_role("bungeni.Signatory", login, context)
+            elif self.elapse_signatures(context):
                 if signatory.status not in SIGNATORY_CONSENTED_STATES:
-                    utils.unset_role("bungeni.Signatory", login, head)
+                    utils.unset_role("bungeni.Signatory", login, context)
         # update signatories
-        for signatory in head.sa_signatories:
+        for signatory in context.sa_signatories:
             wfc = IWorkflowController(signatory)
             wfc.fireAutomatic()
     
