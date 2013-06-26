@@ -85,7 +85,7 @@ class SignatoriesStatus(MessageViewlet):
         context = removeSecurityProxy(self.context)
         signatory_feature = context.signatory_feature
         if signatory_feature and signatory_feature.needs_signatures():
-            if signatory_feature.validate_consented_signatories(context):
+            if signatory_feature.valid_num_consented_signatories(context):
                 message["text"] = _("signature_requirement_met",
                     default=(u"This document has the required number of "
                         u"signatories. ${signed_members} member(s) have signed"

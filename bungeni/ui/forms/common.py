@@ -34,7 +34,10 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import ui
 from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from bungeni.core.interfaces import TranslationCreatedEvent
+from bungeni.core.interfaces import (
+    TranslationCreatedEvent, 
+    IWorkspaceContainer,
+)
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation, get_field_translations
 from bungeni.core.language import CurrentLanguageVocabulary, get_language_by_name
@@ -42,8 +45,12 @@ from bungeni.core.workflows.utils import set_group_local_role, unset_group_local
 from bungeni.models.interfaces import IVersion, IAttachmentContainer #, IBungeniContent, ISittingContainer
 from bungeni.models import domain
 from bungeni.ui.forms.fields import filterFields
-from bungeni.ui.interfaces import IBungeniSkin, IFormAddLayer, IFormEditLayer, \
-    IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer
+from bungeni.ui.interfaces import (
+    IBungeniSkin, 
+    IFormAddLayer, 
+    IFormEditLayer,
+    IGenenerateVocabularyDefault,
+)
 from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
@@ -405,49 +412,46 @@ class AddForm(BaseForm, ui.AddForm):
         #cascade_modifications(ob)
         return ob
     
-    @formlib.form.action(
-        _(u"Save and view"),
-        name="save_and_view",
+    @formlib.form.action(_(u"Save and view"), name="save_and_view",
         condition=formlib.form.haveInputWidgets)
     def handle_add_and_view(self, action, data):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
         if not self._next_url:
-            self._next_url = url.absoluteURL(ob, self.request) + \
-                "?portal_status_message=%s added" % name
-
+            self._next_url = "%s/?portal_status_message=%s Added" % (
+                    url.absoluteURL(ob, self.request), name)
+    
     @formlib.form.action(_(u"Cancel"), name="cancel",
-                         validator=ui.null_validator)
+        validator=ui.null_validator)
     def handle_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         if not self._next_url:
             self._next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(self._next_url)
     
-    @formlib.form.action(_(u"Save"), name="save",
-                         condition=formlib.form.haveInputWidgets)
+    @formlib.form.action(_(u"Save"), name="save", 
+        condition=formlib.form.haveInputWidgets)
     def handle_add(self, action, data):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
         if not self._next_url:
-            self._next_url = url.absoluteURL(ob, self.request) + \
-                             "/edit?portal_status_message=%s Added" % name
-
+            self._next_url = "%s/edit?portal_status_message=%s Added" % (
+                    url.absoluteURL(ob, self.request), name)
+    
     @formlib.form.action(_(u"Save and add another"),
-                         name="save_and_add_another",
-                         condition=formlib.form.haveInputWidgets)
+            name="save_and_add_another",
+            condition=formlib.form.haveInputWidgets)
     def handle_add_and_add_another(self, action, data):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
         if not self._next_url:
-            if IWorkspaceMyDocumentsSectionLayer.providedBy(self.request):
-                item_type = capi.get_type_info(ob).workflow_key
-                self._next_url = url.absoluteURL(self.context, self.request) + \
-                             "/add_%s?portal_status_message=%s Added" % \
-                             (item_type, name)
-            else:
-                self._next_url = url.absoluteURL(self.context, self.request) + \
-                             "/add?portal_status_message=%s Added" % name
+            action_verb = "add"
+            if IWorkspaceContainer.providedBy(self.__parent__):
+                type_key = capi.get_type_info(ob).type_key
+                action_verb = "add_%s" % (type_key)
+            self._next_url = "%s/%s?portal_status_message=%s Added" % (
+                    url.absoluteURL(self.context, self.request), action_verb, name)
+
 
 @register.view(domain.Attachment, layer=IBungeniSkin, name="edit",
     protect={"bungeni.attachment.Edit": register.VIEW_DEFAULT_ATTRS})

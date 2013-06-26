@@ -112,7 +112,7 @@ class Signatory(feature.Feature):
                 cs for cs in removeSecurityProxy(context).sa_signatories 
                 if cs.status in SIGNATORY_CONSENTED_STATES ])
     
-    def validate_consented_signatories(self, context):
+    def valid_num_consented_signatories(self, context):
         """Validate number of consented signatories against min and max.
         """
         return (

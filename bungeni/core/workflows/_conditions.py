@@ -103,7 +103,7 @@ def not_has_date_of_death(context):
 
 # child items
 
-@describe(_(u"attachments, events etc: Require parent document to be in draft state"))
+@describe(_(u"subtype: Require parent document to be in draft state"))
 def context_parent_is_draft(context):
     """Is parent context in a draft state?
     A doc is a draft iff its current current state is tagged with "draft".
@@ -111,21 +111,21 @@ def context_parent_is_draft(context):
     parent_state = get_object_state(context.head)
     return "draft" in parent_state.tags
 
-@describe(_(u"attachments, events etc: Require parent document not to be in draft state"))
+@describe(_(u"subtype: Require parent document not to be in draft state"))
 def context_parent_is_not_draft(context):
     return not context_parent_is_draft(context)
 
-@describe(_(u"attachments, events etc: Require parent document to be visible to the public"))
+@describe(_(u"subtype: Require parent document to be visible to the public"))
 def context_parent_is_public(context):
     """Is the parent context public i.e. can Anonymous see it?
     """
     return context_is_public(context.head)
     
-@describe(_(u"attachments, events etc: Require parent document not to be visible to the public"))
+@describe(_(u"subtype: Require parent document not to be visible to the public"))
 def context_parent_is_not_public(context):
     return not context_is_public(context.head)
 
-@describe(_(u"attachments, events etc: Require parent document to be editable by the user"))
+@describe(_(u"subtype: Require parent document to be editable by the user"))
 def user_may_edit_context_parent(context):
     """Does user have edit permission on the context's parent?
     For a context that is a workflowed sub-object, such as an Attachment or 
@@ -135,20 +135,17 @@ def user_may_edit_context_parent(context):
     permission = "bungeni.%s.Edit" % (naming.polymorphic_identity(type(parent)))
     return checkPermission(permission, parent)
 
-
-# signatory
-
-
 #!+INCORRENTLY named... only checks that owner of child is same as of parent!
-@describe(_(u"sub-type: Require the user to be the owner of the parent document"))
+@describe(_(u"subtype: Require the user to be the owner of the parent document"))
 def user_is_parent_document_owner(context):
     return context.owner.login == context.head.owner.login
 
-@describe(_(u"sub-type: Require the user not to be the owner of the parent document"))
+@describe(_(u"subtype: Require the user not to be the owner of the parent document"))
 def user_is_not_parent_document_owner(context):
     return not user_is_parent_document_owner(context)
 
 
+# signatory
 
 @describe(_(u"signatory: Require the owner to be the signatory. Auto-signs the document"))
 def signatory_auto_sign(signatory):
@@ -176,51 +173,27 @@ def signatory_auto_sign(signatory):
 def signatory_manual_sign(signatory):
     return not signatory_auto_sign(signatory)
 
-
-@describe(_(u"doc: Require signatories"))
-def pi_has_signatories(doc):
-    signatory_feature = doc.signatory_feature
-    if signatory_feature:
-        return signatory_feature.has_signatories(doc)
-    return True
-
-@describe(_(u"doc: Check consented signatories"))
-def pi_signatories_check(doc):
-    signatory_feature = doc.signatory_feature
-    if signatory_feature:
-        return signatory_feature.validate_consented_signatories(doc)
-    return True
-
-
 @describe(_(u"signatory: Require signature period to have expired"))
-def pi_signature_period_expired(signatory):
+def signatory_period_elapsed(signatory):
     """The document has been submitted"""
-    signatory_feature = signatory.head.signatory_feature
-    return signatory_feature and signatory_feature.elapse_signatures(signatory)
-
-@describe(_(u"doc: Require parent document to have been redrafted"))
-def pi_document_redrafted(context):
-    """Parent document has been redrafted"""
-    signatory_feature = context.signatory_feature
-    return signatory_feature and signatory_feature.document_is_draft(context)
+    head = signatory.head
+    signatory_feature = head.signatory_feature
+    return signatory_feature and signatory_feature.elapse_signatures(head)
 
 @describe(_(u"signatory: Require the signature to have been withdrawn"))
-def pi_unsign_signature(signatory):
-    signatory_feature = signatory.head.signatory_feature
-    return (signatory_feature and
-            pi_document_redrafted(signatory.head) and 
-            user_is_not_parent_document_owner(signatory))
+def signatory_allows_unsign(signatory):
+    return (doc_is_draft(signatory.head) and 
+        user_is_not_parent_document_owner(signatory))
 
 @describe(_(u"signatory: Require the signatory be allowed to sign"))
-def pi_allow_signature(signatory):
+def signatory_allowed_sign(signatory):
     signatory_feature = signatory.head.signatory_feature
     return (signatory_feature and 
             utils.user_is_context_owner(signatory) and 
-            signatory_feature.allow_signature(signatory))
-
+            signatory_feature.allow_signature(signatory.head))
 
 @describe(_(u"signatory: Require the signatory to be allowed to withdraw or reject"))
-def pi_allow_signature_actions(signatory):
+def signatory_allowed_actions(signatory):
     """allow/disallow other signature actions => such as withdraw and reject
     """
     signatory_feature = signatory.head.signatory_feature
@@ -231,30 +204,24 @@ def pi_allow_signature_actions(signatory):
             user_is_not_parent_document_owner(signatory))
 
 
-# auditables
+@describe(_(u"doc: Require signatories"))
+def doc_has_signatories(doc):
+    signatory_feature = doc.signatory_feature
+    if signatory_feature:
+        return signatory_feature.has_signatories(doc)
+    return True
 
-''' !+AUDITABLES_UNUSED(mr, apr-2012)
-from bungeni.feature.interfaces import IFeatureAudit
-def user_is_state_creator(context):
-    """Did the current user create current state - based on workflow log?
-    """
-    is_state_creator = False
-    if IFeatureAudit.providedBy(context):
-        current_user = model_utils.get_login_user()
-        if current_user:
-            for _object_change in reversed(
-                    domain.get_changes(context.changes, "workflow")
-                ):
-                extras = _object_change.extras
-                if extras and (extras.get("destination") == context.status):
-                    if _object_change.user.login == current_user.login:
-                        is_state_creator = True
-                break
-    return is_state_creator
+@describe(_(u"doc: Check consented signatories"))
+def doc_valid_num_consented_signatories(doc):
+    signatory_feature = doc.signatory_feature
+    if signatory_feature:
+        return signatory_feature.valid_num_consented_signatories(doc)
+    return True
 
-def user_is_state_creator_and_owner(context):
-    return user_is_state_creator(context) and utils.user_is_context_owner(context)
+def doc_is_draft(doc):
+    """Parent document has been redrafted"""
+    signatory_feature = doc.signatory_feature
+    return signatory_feature and signatory_feature.document_is_draft(doc)
 
-def user_is_state_creator_not_owner(context):
-    return user_is_state_creator(context) and not utils.user_is_context_owner(context)
-'''
+
+
