@@ -716,12 +716,16 @@ class UserNotMPSource(SpecializedMemberSource):
     So, context here is EITHER a MemberContainer OR a Member.
     """
     def construct_query(self, ctx):
-        if IAlchemistContainer.providedBy(ctx):
+        exclude_ids = set()
+        if IAlchemistContainer.providedBy(ctx): # inherits from IContainer
             # MemberContainer - "add" member (Committee, Office)
             assert IGroupMember.implementedBy(ctx.domain_model), ctx
             # the group is the context's __parent__
             assert IGroup.providedBy(ctx.__parent__), ctx
             self.chamber = utils.get_chamber_for_group(ctx.__parent__)
+            # exclude_ids to filter out users already added to a membership container
+            for member in ctx.values():
+                exclude_ids.add(member.user_id)
         else:
             # Member - "view" member
             assert IGroupMember.providedBy(ctx), ctx
@@ -732,10 +736,15 @@ class UserNotMPSource(SpecializedMemberSource):
         mp_user_ids = sql.select(
             [schema.member.c.user_id], 
             schema.member.c.group_id == self.chamber.group_id)
-        query = Session().query(domain.User).filter(
-            sql.and_(
-                sql.not_(domain.User.user_id.in_(mp_user_ids)),
-                domain.User.active_p == "A"))
+        query = Session().query(domain.User
+            # no mp users
+            ).filter(
+                sql.and_(
+                    sql.not_(domain.User.user_id.in_(mp_user_ids)),
+                    domain.User.active_p == "A")
+            # exlude users (already members in "add" mode)
+            ).filter(
+                sql.not_(domain.User.user_id.in_(list(exclude_ids))))
         return query
 component.provideUtility(UserNotMPSource(), IVocabularyFactory, "user_not_mp")
 
