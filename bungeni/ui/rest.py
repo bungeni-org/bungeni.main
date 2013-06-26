@@ -286,7 +286,7 @@ class Roles(REST):
                 sa.or_(
                     security_schema.principal_role_map.c.object_type==None,
                     security_schema.principal_role_map.c.object_type==
-                    "parliament"
+                    "chamber"
                     ),
                 security_schema.principal_role_map.c.principal_id==principal_id,
                 security_schema.principal_role_map.c.setting==True)))         
