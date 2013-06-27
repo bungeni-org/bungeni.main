@@ -197,7 +197,7 @@ def get_next_prog(context):
     return connection.execute(sequence)
 '''
 
-def is_pi_scheduled(doc):
+def is_doc_scheduled(doc):
     return len(getActiveItemSchedule(doc)) >= 1
     
 def getActiveItemSchedule(doc):

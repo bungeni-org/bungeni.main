@@ -196,7 +196,7 @@ def set_doc_type_number(doc):
     doc.type_number = dbutils.get_max_type_number(doc.__class__) + 1
 
 
-is_pi_scheduled = dbutils.is_pi_scheduled
+is_doc_scheduled = dbutils.is_doc_scheduled
 
 unschedule_doc = dbutils.unschedule_doc
 

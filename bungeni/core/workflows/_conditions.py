@@ -60,7 +60,7 @@ def context_is_public(context):
 def is_scheduled(doc):
     """Is doc scheduled?
     """
-    return utils.is_pi_scheduled(doc)
+    return utils.is_doc_scheduled(doc)
 
 
 # group
