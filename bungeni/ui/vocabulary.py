@@ -104,7 +104,8 @@ class BaseVocabularyFactory(object):
     )
 
 
-# vdex 
+# vdex
+
 VDEX_BOOL_PROFILE_TYPE = "booleanTerms"
 class VDEXManager(imsvdex.vdex.VDEXManager):
     default_language = capi.default_language
@@ -115,7 +116,7 @@ class VDEXManager(imsvdex.vdex.VDEXManager):
         returns true if the VDEX profile type denotes a bool type vocabulary
         """ 
         vdex = self.tree._root
-        return vdex.get('profileType') == VDEX_BOOL_PROFILE_TYPE
+        return vdex.get("profileType") == VDEX_BOOL_PROFILE_TYPE
 
 class VDEXVocabularyMixin(object):
     interface.implements(IBaseVocabulary)
@@ -411,7 +412,7 @@ class SpecializedSource(BaseVocabularyFactory):
 class VenueFactory(BaseVocabularyFactory):
     def __call__(self, context):
         chamber = utils.get_chamber_for_context(context)
-        results =[ venue for venue in chamber.venues.values() ]
+        results = [ venue for venue in chamber.venues.values() ]
         terms = []
         for ob in results:
             terms.append(
@@ -450,6 +451,7 @@ class GroupTitleTypesFactory(SpecializedSource):
         return session.query(domain.TitleType) \
                 .filter(schema.title_type.c.group_id == context.group_id)
     
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         while not IGroup.providedBy(context):
             context = context.__parent__
@@ -490,13 +492,27 @@ component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 
 # Chamber Member vocabularies
 
+def filter_query_users_not_members_in_group(query, group):
+    # exlude users who are already members of group
+    exclude_ids = [ m.user_id for m in group.group_members ]
+    return query.filter(sql.not_(domain.User.user_id.in_(exclude_ids)))
+
+def filter_query_users_members_in_group(query, group):
+    # include only users who are already members of group
+    include_ids = [ m.user_id for m in group.group_members ]
+    return query.filter(domain.User.user_id.in_(include_ids))
+
+
 class SpecializedMemberSource(BaseVocabularyFactory):
     """Base class for Member vocabularies for various scenarios.
-    """
-    chamber = None # set in self.construct_query
-    context_user = None # set in self.construct_query
     
-    # !+ why context optional?
+    NOTE: sub-classes MUST set self.chamber and (when NOT within IAlchemistContainer)
+    self.context_user attributes in self.construct_query
+    """
+    chamber = None # subs MUST set in self.construct_query
+    context_user = None # subs MUST set in self.construct_query (when not in IAlchemistContainer)
+    
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         query = self.construct_query(removeSecurityProxy(context))
         results = query.all() # either([Member], [User])
@@ -519,14 +535,14 @@ class SpecializedMemberSource(BaseVocabularyFactory):
                 # i.e. a user must be a member of root_container to be eligible...
                 # !+ self.chamber.active_membership(user.user_id) ?
                 if user not in [ m.user for m in self.chamber.group_members ]:
-                    log.warn("Adding chamber [%s] non-member user [%s] to "
-                        "vocabulary [%s] terms for context [%s]",
-                            self.chamber.group_id, user.user_id, self, context)
                     #raise ValueError("%s: context user %r not a member of chamber %r" % (
                     #    self, user.login, self.chamber.principal_name))
                     
-                    # !+ check if context user is NOT a member of this chamber -- should never happen?
-                    # !+ still true? must add user, to avoid exception from view form
+                    # must add user, to avoid exception from view form
+                    # !+ still true? should this ever happen?
+                    log.warn("Adding chamber [%s] non-member user [%s] to "
+                        "vocabulary [%s] terms for context [%s]",
+                            self.chamber.group_id, user.user_id, self, context)
                     terms.append(vocabulary.SimpleTerm(
                             value=user.user_id,
                             token=user.user_id,
@@ -542,25 +558,28 @@ class MemberSource(SpecializedMemberSource):
     """The list of Users (Group Container context) or Members (Member context).
     
     ASSUMPTION:
-    "chamber_member" vocabulary, for "user_id" of Committee, PoliticalGroup, ...
+    "chamber_member" vocabulary, for "user_id" of CommitteeMember, PoliticalGroupMember, ...
     So, context here is EITHER a MemberContainer OR a Member.
     """
     
     def construct_query(self, ctx):
         session = Session()
         if IAlchemistContainer.providedBy(ctx):
-            # MemberContainer - "add" member (Committee, PoliticalGroup)
+            # MemberContainer - "add" mode -> member (Committee, PoliticalGroup)
             assert IGroupMember.implementedBy(ctx.domain_model), ctx
             # the group is the context's __parent__
             assert IGroup.providedBy(ctx.__parent__), ctx
-            self.chamber = utils.get_chamber_for_group(ctx.__parent__)
-            # potentials to become Members are all Users who ARE already members of the Chamber
+            group = ctx.__parent__
+            self.chamber = utils.get_chamber_for_group(group)
+            # user query
+            query = Session().query(domain.User).filter(domain.User.active_p == "A")
+            # candidate Members are all Users who ARE already members of the related Chamber
             # !+ this logic is for groups within a chamber... 
-            member_user_ids = [ m.user_id for m in self.chamber.group_members ]
-            query = session.query(domain.User
-                ).filter(
-                    #sql.not_( !+negation with ColumnOperators.in_(), method notin_ in v0.8
-                    domain.Member.user_id.in_(member_user_ids))
+            # !+ tie logic to "privilege_extent" (or generalization thereof) ?
+            query = filter_query_users_members_in_group(query, self.chamber)
+            # filter out users who are already members of this group
+            if self.chamber is not group:
+                query = filter_query_users_not_members_in_group(query, group)
         else:
             # Member - "view" member
             assert IGroupMember.providedBy(ctx), ctx
@@ -610,7 +629,7 @@ class MemberDelegationSource(MemberSource):
             if IWorkspaceContainer.providedBy(ctx):
                 self.chamber = utils.get_user_chamber(utils.get_login_user())
             else:
-                # {Doc}Container - "add" doc
+                # {Doc}Container - "add" mode -> doc
                 assert IDoc.implementedBy(ctx.domain_model), ctx
                 # chamber is a __parent__ ancestor
                 # !+ in admin, the chamber is the context's __parent__
@@ -671,7 +690,7 @@ class MemberSignatorySource(MemberSource):
     
     def construct_query(self, ctx):
         if IAlchemistContainer.providedBy(ctx):
-            # SignatoryContainer - "add" signatory
+            # SignatoryContainer - "add" mode -> signatory
             assert ISignatoryContainer.providedBy(ctx), ctx
             signatory_container = ctx
             # __parent__ is the doc
@@ -716,35 +735,28 @@ class UserNotMPSource(SpecializedMemberSource):
     So, context here is EITHER a MemberContainer OR a Member.
     """
     def construct_query(self, ctx):
-        exclude_ids = set()
         if IAlchemistContainer.providedBy(ctx): # inherits from IContainer
-            # MemberContainer - "add" member (Committee, Office)
+            # MemberContainer - "add" mode -> member (Committee, Office)
             assert IGroupMember.implementedBy(ctx.domain_model), ctx
             # the group is the context's __parent__
             assert IGroup.providedBy(ctx.__parent__), ctx
-            self.chamber = utils.get_chamber_for_group(ctx.__parent__)
-            # exclude_ids to filter out users already added to a membership container
-            for member in ctx.values():
-                exclude_ids.add(member.user_id)
+            group = ctx.__parent__
+            self.chamber = utils.get_chamber_for_group(group)
         else:
             # Member - "view" member
             assert IGroupMember.providedBy(ctx), ctx
             assert IGroup.providedBy(ctx.group), ctx
-            self.chamber = utils.get_chamber_for_group(ctx.group)   
+            group = ctx.group
+            self.chamber = utils.get_chamber_for_group(group)   
             self.context_user = ctx.user
         
-        mp_user_ids = sql.select(
-            [schema.member.c.user_id], 
-            schema.member.c.group_id == self.chamber.group_id)
-        query = Session().query(domain.User
-            # no mp users
-            ).filter(
-                sql.and_(
-                    sql.not_(domain.User.user_id.in_(mp_user_ids)),
-                    domain.User.active_p == "A")
-            # exlude users (already members in "add" mode)
-            ).filter(
-                sql.not_(domain.User.user_id.in_(list(exclude_ids))))
+        # user query
+        query = Session().query(domain.User).filter(domain.User.active_p == "A")
+        # filter out members of related chamber
+        query = filter_query_users_not_members_in_group(query, self.chamber)
+        # filter out users who are already members of this group
+        if self.chamber is not group:
+            query = filter_query_users_not_members_in_group(query, group)
         return query
 component.provideUtility(UserNotMPSource(), IVocabularyFactory, "user_not_mp")
 
@@ -758,8 +770,8 @@ class MinistrySource(SpecializedSource):
         self.value_field = value_field
     
     def construct_query(self, context):
-        session= Session()
-        trusted=removeSecurityProxy(context)
+        session = Session()
+        trusted = removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
         chamber = utils.get_chamber_for_context(trusted)
         if chamber:
@@ -795,7 +807,8 @@ class MinistrySource(SpecializedSource):
         else:
             query = session.query(domain.Ministry)
         return query
-               
+    
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         query = self.construct_query(context)
         results = query.all()
@@ -916,7 +929,8 @@ class GroupSource(SpecializedSource):
         groups = Session().query(domain.Group).order_by(
             domain.Group.short_name, domain.Group.full_name)
         return groups
-
+    
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         results = self.construct_query(context).all()
         terms = []
@@ -963,19 +977,18 @@ group_assignment = GroupAssignmentSource(
 component.provideUtility(group_assignment, IVocabularyFactory,
     "group_assignment")
 
+
 class MembershipUserSource(UserSource):
-    """Filter out users already added to a membership container
+    """Filter out users already added to a membership container.
+    Note: currently used by "chamber"  
     """
     def construct_query(self, context):
         users = super(MembershipUserSource, self).construct_query(context)
         trusted = removeSecurityProxy(context)
-        exclude_ids = set()
-        if IContainer.providedBy(trusted):
-            for member in trusted.values():
-                exclude_ids.add(member.user_id)
-            users = users.filter(
-                sql.not_(domain.User.user_id.in_(list(exclude_ids)))
-            )
+        if IAlchemistContainer.providedBy(trusted): # IContainer
+            # "add" mode - exlude users who already members
+            group = trusted.__parent__
+            users = filter_query_users_not_members_in_group(users, group)
         return users
 member = MembershipUserSource(
     token_field="user_id",
@@ -1010,7 +1023,8 @@ class SittingAttendanceSource(SpecializedSource):
                 sql.and_(domain.User.user_id.in_(all_member_ids),
                     ~ domain.User.user_id.in_(attended_ids)))
             return query
-                 
+    
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         query = self.construct_query(context)
         results = query.all()
@@ -1078,6 +1092,7 @@ class SubstitutionSource(SpecializedSource):
                 domain.GroupMember.group_id == group_id)
         return query
     
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         query = self.construct_query(context)
         results = query.all()
@@ -1230,7 +1245,8 @@ class QuerySource(object):
             query = query.order_by(self.domain_model.c[self.order_by_field])
         
         return query
-        
+    
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         query = self.construct_query(context)
         results = query.all()
@@ -1332,6 +1348,7 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
                 return term
         return None
     
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         return vocabulary.SimpleVocabulary(self.terms)
 
