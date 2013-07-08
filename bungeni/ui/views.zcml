@@ -577,6 +577,12 @@
 		permission="zope.Public"
 		layer="bungeni.ui.interfaces.IBungeniAPILayer"
 	/>
+	<browser:page name="change_workflow_state"
+		for="bungeni.core.workflow.interfaces.IWorkflowed"
+		class=".api.APIWorkflowTransition"
+		permission="zope.Public"
+		layer="bungeni.ui.interfaces.IBungeniAPILayer"
+	/>
    <!-- OAuth -->
    <browser:page
       for="bungeni.models.domain.OAuthApplicationContainer"

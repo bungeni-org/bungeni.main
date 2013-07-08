@@ -12,7 +12,11 @@ from zope.formlib.namedtemplate import NamedTemplate
 from bungeni import translate
 from bungeni.alchemist import container, Session
 from bungeni.core.serialize import obj2dict
-from bungeni.core.workflow.interfaces import IWorkflowController
+from bungeni.core.workflow.interfaces import (
+    IWorkflowController,
+    WorkflowRuntimeError,
+    InvalidTransitionError
+    )
 from bungeni.ui.workspace import WorkspaceAddForm
 from bungeni.ui.forms.common import AddForm, EditForm
 from bungeni.ui.browser import BungeniBrowserView
@@ -222,5 +226,27 @@ class APIWorkflow(BungeniBrowserView):
             transitions[tid] = {"url":item_url, "title":title}
         misc.set_json_headers(self.request)
         return simplejson.dumps(transitions)
+
+class APIWorkflowTransition(BungeniBrowserView):
+    def __call__(self):
+        transition_id = self.request.get("transition_id", None)
+        if transition_id:
+            wfc = IWorkflowController(self.context)
+            wf = wfc.workflow
+            try:
+                wf.get_transition(transition_id)
+            except InvalidTransitionError:
+                self.request.response.setStatus(400)
+                return "Invalid Transition"
+            try:    
+                wfc.fireTransition(transition_id)
+            except WorkflowRuntimeError:
+                self.request.response.setStatus(400)
+                return "Runtime error occured while executing transition"
+            self.request.response.setStatus(200)
+            return "Success"
+        else:
+            self.request.response.setStatus(400)
+            return "No transition id supplied"
                 
     
