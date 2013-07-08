@@ -196,7 +196,7 @@ class OAuthAuthorizeForm(form.FormBase):
         authorization_token.authorization = authorization
         authorization_token.authorization_code = get_key()
         authorization_token.expiry = datetime.now() + timedelta(
-            seconds=capi.oauth_authorization_token_expiry_time)
+            seconds=capi.oauth_authorization_token_expiry_time())
         authorization_token.refresh_token = get_key()
         return authorization_token
 
@@ -230,13 +230,13 @@ class OAuthAuthorizeForm(form.FormBase):
     def generate_nonce(self, client_id, auth_time):
         data = "{0}:{1}:{2}".format(
             client_id, get_login_user().user_id, auth_time)
-        return hmac.new(capi.oauth_hmac_key, data, hashlib.sha1).hexdigest()
+        return hmac.new(capi.oauth_hmac_key(), data, hashlib.sha1).hexdigest()
 
     def verify_data(self, action, data):
         errors = []
         for key, value in self.request.form.iteritems():
             data[key] = value
-        t_delta = timedelta(seconds=capi.oauth_authorization_token_expiry_time)
+        t_delta = timedelta(seconds=capi.oauth_authorization_token_expiry_time())
         auth_time = datetime.fromtimestamp(float(data["time"]))
         max_time = auth_time + t_delta
         if (datetime.now() > max_time):
@@ -445,14 +445,14 @@ class OAuthAccessToken(BrowserPage):
         access_token = domain.OAuthAccessToken()
         access_token.access_token = get_key()
         access_token.authorization_token = authorization_token
-        t_delta = timedelta(seconds=capi.oauth_access_token_expiry_time)
+        t_delta = timedelta(seconds=capi.oauth_access_token_expiry_time())
         access_token.expiry = datetime.now() + t_delta
         session.add(access_token)
         session.flush()
         data = {
             "access_token": access_token.access_token,
             "token_type": "bearer",
-            "expires_in": capi.oauth_access_token_expiry_time,
+            "expires_in": capi.oauth_access_token_expiry_time(),
             "refresh_token": access_token.authorization_token.refresh_token
         }
         misc.set_json_headers(self.request)

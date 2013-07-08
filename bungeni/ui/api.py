@@ -9,8 +9,10 @@ from zope.security.proxy import removeSecurityProxy
 from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.formlib.namedtemplate import NamedTemplate
+from bungeni import translate
 from bungeni.alchemist import container, Session
 from bungeni.core.serialize import obj2dict
+from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.ui.workspace import WorkspaceAddForm
 from bungeni.ui.forms.common import AddForm, EditForm
 from bungeni.ui.browser import BungeniBrowserView
@@ -204,3 +206,21 @@ class APIAddForm(AddForm):
 class APIWorkspaceAddForm(APIAddForm, WorkspaceAddForm):
     """Add form for docs that have workspace Feature
     """
+    
+class APIWorkflow(BungeniBrowserView):
+    def __call__(self):
+        wfc = IWorkflowController(self.context)
+        wf = wfc.workflow
+        tids = wfc.getManualTransitionIds()
+        transitions = {}
+        context_url = url.absoluteURL(self.context, self.request)
+        for tid in tids:
+            item_url = "%s/change_workflow_state?transition_id=%s" % (context_url, tid)
+            title = translate(wf.get_transition(tid).title,
+                domain="bungeni",
+                context=self.request)
+            transitions[tid] = {"url":item_url, "title":title}
+        misc.set_json_headers(self.request)
+        return simplejson.dumps(transitions)
+                
+    
