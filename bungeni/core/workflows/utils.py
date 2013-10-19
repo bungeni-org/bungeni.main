@@ -285,7 +285,7 @@ def check_agenda_finalized(context):
         #!+TYPES(mb, march-2012) There might be a more elegant approach here
         # to filter out 'text records' from the schedule
         if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
-            schedule_feature = wfc.wf.get_feature("schedule")
+            schedule_feature = wfc.workflow.get_feature("schedule")
             return (wfc.state_controller.get_status() not in 
                 schedule_feature.p.scheduled_states
             )

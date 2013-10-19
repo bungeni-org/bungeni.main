@@ -19,6 +19,7 @@ from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.interfaces import IScheduleText
 from bungeni.feature import feature
 from bungeni.models.utils import get_user_chamber, get_login_user
+from bungeni.models.utils import get_chamber_for_context
 from bungeni.ui.utils import date
 from bungeni.utils import common
 from bungeni.alchemist import Session
@@ -167,8 +168,11 @@ class SchedulableItemsGetter(object):
                 items_query = items_query.filter(expression)
         if self.group_filter and not IScheduleText.implementedBy(self.domain_class):
             if hasattr(self.domain_class, "chamber_id") and self.group_id:
+                #filter by the current chamber
+                #!+(SCHEDULING, Oct-2013) Todo: rework to get group documents
                 items_query = items_query.filter(
-                    self.domain_class.chamber_id==self.group_id
+                    self.domain_class.chamber_id==
+                        get_chamber_for_context(self.context).group_id
                 )
             elif hasattr(self.domain_class, "group_id") and self.group_id:
                 items_query = items_query.filter(
