@@ -41,8 +41,10 @@ from bungeni.utils.common import getattr_ancestry
 from bungeni.capi import capi
 
 class SearchTextWidget(TextWidget):
+
+    displayWidth = 90
+
     def __call__(self):
-        displayWidth = 90
         button_el = widget.renderElement("span", contents="&nbsp;", 
             id="advanced_options_button")
         advanced_input = widget.renderElement("input", name="advanced",
@@ -295,7 +297,7 @@ class Search(form.PageForm, browser.BungeniBrowserView):
     def handle_search(self, action, data):
         self.show_results = True
         user_roles = (
-            common.get_request_context_roles_roles(self.request) +
+            common.get_request_context_roles(self.request) +
             common.get_workspace_roles() + ["bungeni.Anonymous"])
         data["role"] = list(set(user_roles))
         data["page"] = self.request.form.get("page", 1)
