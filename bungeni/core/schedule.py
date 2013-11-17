@@ -9,12 +9,10 @@ $Id$
 
 log = __import__("logging").getLogger("bungeni.core.schedule")
 
-import datetime
 import time
 
 from zope import interface
 from zope import component
-from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
 from zope.security.proxy import ProxyFactory
 from zope.publisher.interfaces.browser import IHTTPRequest
@@ -32,16 +30,11 @@ from bungeni.models.interfaces import (
 )
 from bungeni.models import domain
 from bungeni.models.utils import get_chamber_for_context
-from bungeni.core.interfaces import (
-    ISchedulingContext, 
-    IWorkspaceScheduling, 
-    IDailySchedulingContext,
-)
-from bungeni import _
+from bungeni.core.interfaces import ISchedulingContext, IWorkspaceScheduling
 from bungeni.core.proxy import LocationProxy
-from bungeni.ui.calendar import utils
 from bungeni.alchemist import Session
 
+from bungeni import _
 
 def format_date(date):
     return time.strftime("%Y-%m-%d %H:%M:%S", date.timetuple())
@@ -57,24 +50,19 @@ class SchedulingContextTraverser(SimpleComponentTraverser):
     interface.implementsOnly(IPublishTraverse)
     
     def publishTraverse(self, request, name):
+        # this is the primary condition; traverse to ``name`` by
+        # looking up methods on this class
         try:
-            timestamp = int(name)
-            obj = DailySchedulingContext(
-                self.context, utils.datetimedict.fromtimestamp(timestamp))
-        except (ValueError, TypeError):
-            # this is the primary condition; traverse to ``name`` by
-            # looking up methods on this class
-            try:
-                method = getattr(self.context, 'get_%s' % name)
-            except AttributeError:
-                # fall back to default traversal (view lookup)
-                def method():
-                    return super(
-                        SchedulingContextTraverser, self).publishTraverse(
-                        request, name)
+            method = getattr(self.context, 'get_%s' % name)
+        except AttributeError:
+            # fall back to default traversal (view lookup)
+            def method():
+                return super(
+                    SchedulingContextTraverser, self).publishTraverse(
+                    request, name)
 
-            obj = method()
-            assert ILocation.providedBy(obj)
+        obj = method()
+        assert ILocation.providedBy(obj)
         log.debug("SchedulingContextTraverser.publishTraverse: " \
             "self=%s context=%s name=%s obj=%s" % (self, self.context, name, obj))
         return ProxyFactory(LocationProxy(
@@ -132,7 +120,7 @@ class PrincipalGroupSchedulingContext(object):
             )
         unproxied.__parent__ = ProxyFactory(LocationProxy(
             unproxied.__parent__, container=self, name="group"))
-        return sittings
+        return unproxied
 
 
 class PlenarySchedulingContext(PrincipalGroupSchedulingContext):

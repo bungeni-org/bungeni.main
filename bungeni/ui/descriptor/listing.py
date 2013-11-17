@@ -26,19 +26,19 @@ from sqlalchemy.exc import ArgumentError
 
 from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
-from zope.dublincore.interfaces import IDCDescriptiveProperties
+#from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
 import zope.formlib
 from zc.table import column
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import domain
-from bungeni.models.utils import get_login_user, get_member_of_chamber
+from bungeni.models.utils import get_login_user
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui.utils import date, url, uri
 from bungeni.utils import common
 from bungeni.capi import capi
-from bungeni import _, translate
+from bungeni import translate
 
 
 # support utils 
@@ -290,10 +290,6 @@ def member_linked_name_column(name, title, vocabulary=None):
             item_user.__parent__ = parent
             href = url.absoluteURL(item_user, request)
         else:
-            #!+BUSINESS(mb, feb-2013) is deprecated
-            # else we link direct to the MP's "public" view
-            #mp = get_member_of_chamber(related_user.user_id)
-            #href = "/members/current/obj-%s/" % (mp.member_id)
             return related_user.combined_name
         return zope.formlib.widget.renderElement("a",
             contents=related_user.combined_name,  # User.combined_name derived property
@@ -314,12 +310,13 @@ def workflow_column(name, title, vocabulary=None):
         # but a generic "row-level" means to mark such rows as different 
         # from the others may be a useful feature.
         if IWorkspaceSectionLayer.providedBy(request):
+            item_user = None
             if hasattr(item, "owner"):
                 item_user = item.owner
             elif hasattr(item, "drafter"):
                 item_user = item.drafter
             # !+delegation?
-            if item_user == get_login_user():
+            if item_user and (item_user == get_login_user()):
                 state_title = "<b>%s</b> *" % (state_title)
         return state_title
     return column.GetterColumn(title, getter)

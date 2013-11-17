@@ -58,12 +58,13 @@ class SearchDocumentTypes(BaseVocabularyFactory):
                     title=_(naming.split_camel(info.domain_model.__name__))
                 ))
         terms.sort(key=lambda item:item.value)
-        all_types=",".join([t.value for t in terms])
-        terms.insert(0, schema.vocabulary.SimpleTerm(
-            value=all_types,
-            token=all_types,
-            title=_(u"* all document types")
-        ))
+        if len(terms) > 1:
+            all_types=",".join([t.value for t in terms])
+            terms.insert(0, schema.vocabulary.SimpleTerm(
+                value=all_types,
+                token=all_types,
+                title=_(u"* all document types")
+            ))
         return schema.vocabulary.SimpleVocabulary(terms)
 search_document_types = SearchDocumentTypes()
 
