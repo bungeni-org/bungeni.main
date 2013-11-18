@@ -437,7 +437,7 @@ def serialization_notifications_callback(channel, method, properties, body):
                 publish_to_xml(obj)
             except Exception, e:
                 ex_type, ex, tb = sys.exc_info()
-                log.info("Error while publish_to_xml : %s", repr(traceback.format_tb(exc_traceback)))
+                log.info("Error while publish_to_xml : %s", repr(traceback.format_tb(tb)))
                 notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
                     obj=obj, message=obj_data, error=e
                 )
