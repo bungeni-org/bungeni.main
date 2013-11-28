@@ -143,6 +143,16 @@ class WorkspaceBaseContainer(AlchemistContainer):
         column = table.columns[utk["title"]]
         return column
 
+    def filter_group(self, query, domain_class, kw):
+        if kw.get("filter_group", None):
+            try:
+                group_id = int(kw.get("filter_group"))
+                if hasattr(domain_class, 'group_id'):
+                    query = query.filter(domain_class.group_id==group_id)
+            except ValueError:
+                pass
+        return query
+
     def filter_title(self, query, domain_class, kw):
         if kw.get("filter_title", None):
             column = self.title_column(domain_class)
@@ -262,6 +272,8 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)).enable_eagerloads(False)
+            #filter on group
+            query = self.filter_group(query, domain_class, kw)
             #filter on title
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date

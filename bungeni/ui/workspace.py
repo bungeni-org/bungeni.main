@@ -143,11 +143,13 @@ class WorkspaceContainerJSONListing(BrowserPage):
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
         filter_status_date = self.request.get("filter_status_date", "")
+        filter_group = self.request.get("filter_group", "")
         results, self.set_size = context.query(
             filter_title=filter_title,
             filter_type=filter_type,
             filter_status=filter_status,
             filter_status_date=filter_status_date,
+            filter_group=filter_group,
             sort_on=self.sort_on,
             sort_dir=self.sort_dir,
             start=start,
@@ -281,6 +283,7 @@ class WorkspaceContainerListing(BrowserPage):
     workspace_fields = workspace_doc_fields
 
     def __call__(self):
+        need("workspace-globals")
         need("yui-datatable")
         self.context = removeSecurityProxy(self.context)
         return self.render()

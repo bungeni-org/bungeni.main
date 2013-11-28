@@ -310,7 +310,8 @@
             dynamicData: true,
             // Enables dynamic server-driven data
             MSG_SORTASC: "Click to filter and sort ascending",
-            MSG_SORTDESC: "Click to filter and sort descending"
+            MSG_SORTDESC: "Click to filter and sort descending",
+            SELECTED_INBOX: null,
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
 
@@ -454,6 +455,9 @@
                 var qstr = '&filter_type=' + item_type.val();
                 var status = $("#input_status option:selected");
                 qstr = qstr + '&filter_status=' + status.val();
+                if(oSelf.configs.SELECTED_INBOX){
+                    qstr = qstr + '&filter_group=' + oSelf.configs.SELECTED_INBOX;
+                }
                 return qstr;
             };
         var get_status_date_filter = function (oSelf) {
@@ -499,15 +503,48 @@
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
        
- 
-        
-        
         var fnRequestReceived = function() {
             workspace_tab_count_ajax();
             jQuery.unblockUI();
         };
 
+        var fnRenderMultiWorkspaceMenu = function() {
+            dt = this;
+            console.log(dt.getDataSource());
+            var wsButtons = new YAHOO.widget.ButtonGroup({ 
+                id:  "workspace-filter-buttons", 
+                name:  "workspace-filter-buttons-control",
+                container: "workspace-multiple-inboxes",
+            });
+
+            var updateSelectedInbox = function(event){
+                dt.configs.SELECTED_INBOX = event.newValue;
+                request = dt.get("generateRequest")(dt.getState(), dt);
+                dt.getDataSource().sendRequest(request,
+                    {
+                        success: dt.onDataReturnInitializeTable,
+                        scope: dt
+                    }
+                );
+            }
+            wsButtons.on("valueChange", updateSelectedInbox);
+            wsButtons.addButton({
+                label: workspace_globals.chamber_name,
+                value: "",
+                checked: true
+            });
+            for (index in workspace_globals.groups){
+                group = workspace_globals.groups[index];
+                wsButtons.addButton({
+                    label: group.name,
+                    value: group.group_id
+                })
+            }
+            dt.unsubscribeAll("initEvent", fnRenderMultiWorkspaceMenu);
+        }
+
         table.subscribe("postRenderEvent", fnRequestReceived);
+        table.subscribe("initEvent", fnRenderMultiWorkspaceMenu);
         // Update totalRecords on the fly with value from server
         table.handleDataReturnPayload = function (oRequest, oResponse, oPayload) {
             oPayload = oPayload || {

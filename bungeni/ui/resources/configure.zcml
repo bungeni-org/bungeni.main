@@ -59,7 +59,13 @@
                 css/ui.dynatree.css"               
        />
   </resourceLibrary>
-  
+  <resourceLibrary name="workspace-globals">
+    <directory
+      source="."
+      include="workspace-globals.js"
+      factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
+    />
+  </resourceLibrary>
   <resourceLibrary name="diff-form" require="jquery">
     <directory source="difform"
       include="js/nowediting.js"

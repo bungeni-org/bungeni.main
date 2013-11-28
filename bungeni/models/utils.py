@@ -74,6 +74,18 @@ def get_user_delegations(user):
         domain.UserDelegation.delegation_id == user.user_id).all()
     return delegations
 
+def get_user_groups(user):
+    """Get all user groups"""
+    session = Session()
+    query = session.query(domain.Group).join(
+        domain.GroupMember).filter(
+            sql.expression.and_(
+                    domain.GroupMember.user_id == user.user_id,
+                    domain.GroupMember.active_p == True,
+                    #domain.Group.status.in_(status)
+            )
+        )
+    return query.all()
 
 def get_user_chamber(user):
     user_delegations = get_user_delegations(user)

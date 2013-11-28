@@ -12,6 +12,7 @@ from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
 from bungeni.ui.utils import url
 from bungeni.utils import common, misc
+from bungeni.models import utils as model_utils
 from bungeni.core.language import get_default_language
 from bungeni.ui.calendar import data
 from bungeni.capi import capi
@@ -34,7 +35,8 @@ cached_props = CachedProperties()
 
 RESOURCE_MAPPING = {
     "scheduler-globals.js": "scheduler_globals",
-    "calendar-globals.js": "calendar_globals"
+    "calendar-globals.js": "calendar_globals",
+    "workspace-globals.js": "workspace_globals"
 }
 
 RESOURCE_HEADERS = {}
@@ -223,7 +225,14 @@ def get_globals(group_name, target_language=None):
                     u"event.\n Do you want still want to add it?"), **kwargs
             ),
             "message_okay": translate(OKAY, **kwargs),
-        }
+        },
+        "WORKSPACE_GLOBALS": {
+            "groups": [ dict(group_id=g.group_id, name=g.short_name) for g in
+                    model_utils.get_user_groups(model_utils.get_login_user())
+            ],
+            "chamber_name": model_utils.get_user_chamber(
+                model_utils.get_login_user()).short_name
+        },
     }
     return globals_map.get(group_name, {})
 
@@ -266,3 +275,7 @@ class DynamicDirectoryFactory(object):
             get_globals("CALENDAR_GLOBALS", target_language=self.language)
         )
 
+    def workspace_globals(self):
+        return """var workspace_globals = %s;""" % json.dumps(
+            get_globals("WORKSPACE_GLOBALS", target_language=self.language)
+        )
