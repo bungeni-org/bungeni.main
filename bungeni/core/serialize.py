@@ -116,6 +116,20 @@ def get_origin_chamber(context):
                 return get_origin_chamber(context.head)
     return chamber_id
 
+def generate_random_filename():
+    """
+    Generates a random string, which is used to uniquely suffix the 
+    serialized file name. The problem with using just obj-xx.xml file names is
+    that they are not unique per message. For instance, an object can go 
+    through multiple transitions,and each generates a separate serialize 
+    message, but the same serialized file. As the exist sync process is 
+    independent of of the serialize process the message may be out of sync 
+    with the file being processed
+    """
+    import base64
+    import uuid
+    return base64.urlsafe_b64encode(uuid.uuid4().bytes)
+
 #!+REFACTORING(mb, Mar-2013) This can be made more general to work in
 # other instances
 class memoized(object):
@@ -207,7 +221,9 @@ def publish_to_xml(context):
     obj_type = IWorkflow(context).name
     
     #locking
-    lock_name = "%s-%s" %(obj_type, stringKey(context))
+    random_name_sfx = generate_random_filename()
+    context_file_name = "%s-%s" % (stringKey(context), random_name_sfx)
+    lock_name = "%s-%s" %(obj_type, context_file_name)
     with LockStore.get_lock(lock_name):
         #root key (used to cache files to zip)
         root_key = make_key()
@@ -253,8 +269,7 @@ def publish_to_xml(context):
             os.makedirs(path)
         
         # xml file path
-        file_path = os.path.join(path, stringKey(context)) 
-        
+        file_path = os.path.join(path, context_file_name) 
         # files to zip
         files = []
         
@@ -298,13 +313,11 @@ def publish_to_xml(context):
                 # write the xml
                 zip_file.write(temp_xml.name, "%s.xml" % os.path.basename(file_path))
             files.append(temp_xml.name)
-
         else:
             # save serialized xml to file
             with open("%s.xml" % (file_path), "w") as xml_file:
                 xml_file.write(serialize(data, name=obj_type))
                 xml_file.close()
-
         # publish to rabbitmq outputs queue
         connection = bungeni.core.notifications.get_mq_connection()
         if not connection:
