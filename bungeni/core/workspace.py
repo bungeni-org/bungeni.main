@@ -287,6 +287,8 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             for domain_class, status in object_roles_domain_status.iteritems():
                 query = session.query(domain_class).filter(
                     domain_class.status.in_(status)).enable_eagerloads(False)
+                #filter on group
+                query = self.filter_group(query, domain_class, kw)
                 #filter on title
                 query = self.filter_title(query, domain_class, kw)
                 #filter on status_date

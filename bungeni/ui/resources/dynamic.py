@@ -10,6 +10,7 @@ import json
 import zope.interface
 from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 from bungeni.ui.utils import url
 from bungeni.utils import common, misc
 from bungeni.models import utils as model_utils
@@ -226,13 +227,6 @@ def get_globals(group_name, target_language=None):
             ),
             "message_okay": translate(OKAY, **kwargs),
         },
-        "WORKSPACE_GLOBALS": {
-            "groups": [ dict(group_id=g.group_id, name=g.short_name) for g in
-                    model_utils.get_user_groups(model_utils.get_login_user())
-            ],
-            "chamber_name": model_utils.get_user_chamber(
-                model_utils.get_login_user()).short_name
-        },
     }
     return globals_map.get(group_name, {})
 
@@ -276,6 +270,15 @@ class DynamicDirectoryFactory(object):
         )
 
     def workspace_globals(self):
-        return """var workspace_globals = %s;""" % json.dumps(
-            get_globals("WORKSPACE_GLOBALS", target_language=self.language)
-        )
+        user = model_utils.get_login_user()
+        chamber = model_utils.get_user_chamber(user)
+        groups = [ g for g in model_utils.get_user_groups(user)
+            if (g.group_id != chamber.group_id)
+         ]
+        group_data = {
+            "groups": [ dict(group_id=g.group_id,
+                name=IDCDescriptiveProperties(g).title)
+                for g in groups ],
+            "chamber_name": chamber.short_name
+        }
+        return """var workspace_globals = %s;""" % json.dumps(group_data)
