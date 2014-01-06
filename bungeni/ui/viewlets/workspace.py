@@ -15,6 +15,7 @@ from ploned.ui.viewlet import StructureAwareViewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.utils import url
+from bungeni.core.interfaces import IWorkspaceDocuments
 from bungeni.core import translation
 from bungeni.capi import capi
 from bungeni import _, translate
@@ -32,7 +33,10 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
         for key in directory.keys():
             tab_url = url.absoluteURL(directory[key], self.request)
             tab = {}
-            tab["title"] = translate("section_workspace_%s" % key)
+            if IWorkspaceDocuments.providedBy(directory):
+                tab["title"] = translate("section_workspace_%s" % key)
+            else:
+                tab["title"] = directory[key].title
             tab["tab_type"] = directory[key].__name__
             tab["url"] = tab_url
             tab["active"] = self.request.getURL().startswith(tab_url)
