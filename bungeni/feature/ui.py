@@ -169,8 +169,7 @@ def setup_customization_ui():
                 # !+CHAMBER_SITTING clarify/regularize for chamber (e.g. can
                 # already add an agenda item via workspace menus, etc).
                 # add sitting
-                sitting_ti = capi.get_type_info("sitting")
-                register_menu_item("sitting", "Add", "Add %s..." % (sitting_ti.label),
+                register_menu_item("sitting", "Add", "Add sitting...",
                     model_interface_qualname,
                     "./sittings/add",
                     menu="additems", 
