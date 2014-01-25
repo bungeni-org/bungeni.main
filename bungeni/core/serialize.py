@@ -223,125 +223,129 @@ def publish_to_xml(context):
     #locking
     random_name_sfx = generate_random_filename()
     context_file_name = "%s-%s" % (stringKey(context), random_name_sfx)
-    lock_name = "%s-%s" %(obj_type, context_file_name)
-    with LockStore.get_lock(lock_name):
-        #root key (used to cache files to zip)
-        root_key = make_key()
+    #lock_name = "%s-%s" %(obj_type, context_file_name)
+    #!+LOCKING(AH, 25-01-2014) disabling file locking
+    #! locking was reqiured when the serializer used ta constant file name
+    #! for an object. Now serialized file names are unique, and non repeated
+    #with LockStore.get_lock(lock_name):
+    #    
+    #root key (used to cache files to zip)
+    root_key = make_key()
 
-        #create a fake interaction to ensure items requiring a participation
-        #are serialized 
-        #!+SERIALIZATION(mb, Jan-2013) review this approach
-        try:
-            zope.security.management.getInteraction()
-        except zope.security.interfaces.NoInteraction:
-            principal = zope.security.testing.Principal("user", "manager", ())
-            zope.security.management.newInteraction(create_participation(principal))
-        include = []
-        # data dict to be published
-        data = {}
-        if IFeatureVersion.providedBy(context):
-            include.append("versions")
-        if IFeatureEvent.providedBy(context):
-            include.append("event")
-        
-        exclude = ["data", "event", "attachments"]
-        updated_dict = obj2dict(context, 1, 
-                parent=None,
-                include=include,
-                exclude=exclude,
-                root_key=root_key
-            )
-        
-        data.update(
-            updated_dict
+    #create a fake interaction to ensure items requiring a participation
+    #are serialized 
+    #!+SERIALIZATION(mb, Jan-2013) review this approach
+    try:
+        zope.security.management.getInteraction()
+    except zope.security.interfaces.NoInteraction:
+        principal = zope.security.testing.Principal("user", "manager", ())
+        zope.security.management.newInteraction(create_participation(principal))
+    include = []
+    # data dict to be published
+    data = {}
+    if IFeatureVersion.providedBy(context):
+        include.append("versions")
+    if IFeatureEvent.providedBy(context):
+        include.append("event")
+
+    exclude = ["data", "event", "attachments"]
+    updated_dict = obj2dict(context, 1, 
+	    parent=None,
+	    include=include,
+	    exclude=exclude,
+	    root_key=root_key
         )
-        
-        tags = IStateController(context).get_state().tags
-        if tags:
-            data["tags"] = tags
-        permissions = get_object_state_rpm(context).permissions
-        data["permissions"] = get_permissions_dict(permissions)
-        
-        # setup path to save serialized data
-        path = os.path.join(setupStorageDirectory(), obj_type)
-        log.info("Setting up path to write to : %s" % path)
-        if not os.path.exists(path):
-            os.makedirs(path)
-        
-        # xml file path
-        file_path = os.path.join(path, context_file_name) 
-        # files to zip
-        files = []
-        
-        if IFeatureAttachment.providedBy(context):
-            attachments = getattr(context, "attachments", None)
-            if attachments:
-                data["attachments"] = []
-                for attachment in attachments:
-                    # serializing attachment
-                    attachment_dict = obj2dict(attachment, 1,
-                        parent=context,
-                        exclude=["data", "event", "versions"])
-                    # saving attachment to tmp
-                    attached_file = tmp(delete=False)
-                    attached_file.write(attachment.data)
-                    attached_file.flush()
-                    attached_file.close()
-                    files.append(attached_file.name)
-                    attachment_dict["saved_file"] = os.path.basename(
-                        attached_file.name
-                    )
-                    data["attachments"].append(attachment_dict)
 
-        # add explicit origin chamber for this object (used to partition data
-        # in if more than one chamber exists)
-        data["origin_chamber"] = get_origin_chamber(context)
-        
-        # add any additional files to file list
-        files = files + PersistFiles.get_files(root_key)
-        # zipping xml, attached files plus any binary fields
-        # also remove the temporary files
-        if files:
-            # generate temporary xml file
-            temp_xml = tmp(delete=False)
-            temp_xml.write(serialize(data, name=obj_type))
-            temp_xml.close()
-            # write attachments/binary fields to zip
-            with  ZipFile("%s.zip" % (file_path), "w") as zip_file:
-                for f in files:
-                    zip_file.write(f, os.path.basename(f))
-                # write the xml
-                zip_file.write(temp_xml.name, "%s.xml" % os.path.basename(file_path))
-            files.append(temp_xml.name)
-        else:
-            # save serialized xml to file
-            with open("%s.xml" % (file_path), "w") as xml_file:
-                xml_file.write(serialize(data, name=obj_type))
-                xml_file.close()
-        # publish to rabbitmq outputs queue
-        connection = bungeni.core.notifications.get_mq_connection()
-        if not connection:
-            return
-        channel = connection.channel()
-        publish_file_path = "%s.%s" %(file_path, ("zip" if files else "xml"))
-        channel.basic_publish(
-            exchange=SERIALIZE_OUTPUT_EXCHANGE,
-            routing_key=SERIALIZE_OUTPUT_ROUTING_KEY,
-            body=simplejson.dumps({"type": "file", "location": publish_file_path }),
-            properties=pika.BasicProperties(content_type="text/plain",
-                delivery_mode=2
-            )
+    data.update(
+        updated_dict
+    )
+
+    tags = IStateController(context).get_state().tags
+    if tags:
+        data["tags"] = tags
+    permissions = get_object_state_rpm(context).permissions
+    data["permissions"] = get_permissions_dict(permissions)
+
+    # setup path to save serialized data
+    path = os.path.join(setupStorageDirectory(), obj_type)
+    log.info("Setting up path to write to : %s" % path)
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    # xml file path
+    file_path = os.path.join(path, context_file_name) 
+    # files to zip
+    files = []
+
+    if IFeatureAttachment.providedBy(context):
+        attachments = getattr(context, "attachments", None)
+        if attachments:
+	    data["attachments"] = []
+	    for attachment in attachments:
+	        # serializing attachment
+	        attachment_dict = obj2dict(attachment, 1,
+	            parent=context,
+	            exclude=["data", "event", "versions"])
+	        # saving attachment to tmp
+	        attached_file = tmp(delete=False)
+	        attached_file.write(attachment.data)
+	        attached_file.flush()
+	        attached_file.close()
+	        files.append(attached_file.name)
+	        attachment_dict["saved_file"] = os.path.basename(
+	            attached_file.name
+	        )
+	        data["attachments"].append(attachment_dict)
+
+    # add explicit origin chamber for this object (used to partition data
+    # in if more than one chamber exists)
+    data["origin_chamber"] = get_origin_chamber(context)
+
+    # add any additional files to file list
+    files = files + PersistFiles.get_files(root_key)
+    # zipping xml, attached files plus any binary fields
+    # also remove the temporary files
+    if files:
+        # generate temporary xml file
+        temp_xml = tmp(delete=False)
+        temp_xml.write(serialize(data, name=obj_type))
+        temp_xml.close()
+        # write attachments/binary fields to zip
+        with  ZipFile("%s.zip" % (file_path), "w") as zip_file:
+	    for f in files:
+	        zip_file.write(f, os.path.basename(f))
+	    # write the xml
+	    zip_file.write(temp_xml.name, "%s.xml" % os.path.basename(file_path))
+        files.append(temp_xml.name)
+    else:
+        # save serialized xml to file
+        with open("%s.xml" % (file_path), "w") as xml_file:
+	    xml_file.write(serialize(data, name=obj_type))
+	    xml_file.close()
+    # publish to rabbitmq outputs queue
+    connection = bungeni.core.notifications.get_mq_connection()
+    if not connection:
+        return
+    channel = connection.channel()
+    publish_file_path = "%s.%s" %(file_path, ("zip" if files else "xml"))
+    channel.basic_publish(
+        exchange=SERIALIZE_OUTPUT_EXCHANGE,
+        routing_key=SERIALIZE_OUTPUT_ROUTING_KEY,
+        body=simplejson.dumps({"type": "file", "location": publish_file_path }),
+        properties=pika.BasicProperties(content_type="text/plain",
+	    delivery_mode=2
         )
-        
-        #clean up - remove any files if zip was/was not created
-        if files:
-            files.append("%s.%s" %(file_path, "xml"))
-        else:
-            files.append("%s.%s" %(file_path, "zip"))
-        remove_files(files)
+    )
 
-        # clear the cache
-        PersistFiles.clear_files(root_key)
+    #clean up - remove any files if zip was/was not created
+    if files:
+        files.append("%s.%s" %(file_path, "xml"))
+    else:
+        files.append("%s.%s" %(file_path, "zip"))
+    remove_files(files)
+
+    # clear the cache
+    PersistFiles.clear_files(root_key)
 
 
 def serialize(data, name="object"):
