@@ -510,7 +510,6 @@
 
         var fnRenderMultiWorkspaceMenu = function() {
             dt = this;
-            console.log(dt.getDataSource());
             var wsButtons = new YAHOO.widget.ButtonGroup({ 
                 id:  "workspace-filter-buttons", 
                 name:  "workspace-filter-buttons-control",
@@ -529,7 +528,7 @@
             }
             wsButtons.on("valueChange", updateSelectedInbox);
             wsButtons.addButton({
-                label: workspace_globals.chamber_name,
+                label: workspace_globals.all_documents_tab,
                 value: "",
                 checked: true
             });

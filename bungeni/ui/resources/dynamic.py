@@ -271,14 +271,13 @@ class DynamicDirectoryFactory(object):
 
     def workspace_globals(self):
         user = model_utils.get_login_user()
-        chamber = model_utils.get_user_chamber(user)
-        groups = [ g for g in model_utils.get_user_groups(user)
-            if (g.group_id != chamber.group_id)
-         ]
+        groups = [ g for g in model_utils.get_user_groups(user) ]
+        groups.sort(key=lambda g:g.group_id)
         group_data = {
             "groups": [ dict(group_id=g.group_id,
                 name=IDCDescriptiveProperties(g).title)
                 for g in groups ],
-            "chamber_name": chamber.short_name
+            "all_documents_tab": translate('all documents',
+                target_language=self.language)
         }
         return """var workspace_globals = %s;""" % json.dumps(group_data)

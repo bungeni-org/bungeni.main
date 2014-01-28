@@ -59,6 +59,9 @@ class WorkspaceUnderConsiderationNavigation(WorkspaceContextNavigation):
     folder = "under-consideration"
     css_class = "workspace-under-consideration"
 
+class WorkspaceMultiInbox(StructureAwareViewlet):
+    """Render multi inbox markup"""
+    render = ViewPageTemplateFile("templates/workspace-multi-inbox.pt")
 
 class MessageViewlet(object):
     """display a message with optional level info
