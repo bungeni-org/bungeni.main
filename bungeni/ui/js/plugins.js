@@ -530,13 +530,14 @@
             wsButtons.addButton({
                 label: workspace_globals.all_documents_tab,
                 value: "",
-                checked: true
+                checked: (workspace_globals.current_inbox=="")
             });
             for (index in workspace_globals.groups){
                 group = workspace_globals.groups[index];
                 wsButtons.addButton({
                     label: group.name,
-                    value: group.group_id
+                    value: group.group_id,
+                    checked: (workspace_globals.current_inbox==group.group_id),
                 })
             }
             dt.unsubscribeAll("initEvent", fnRenderMultiWorkspaceMenu);

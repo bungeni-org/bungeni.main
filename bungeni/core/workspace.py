@@ -43,7 +43,7 @@ from bungeni.ui.container import get_date_strings, string_to_date
 from bungeni.core.workflows.utils import view_permission
 
 TabCountRecord = namedtuple("TabCountRecord", ["timestamp", "count"])
-
+CURRENT_INBOX_COOKIE_NAME = 'workspace.current_inbox'
 
 class WorkspaceBaseContainer(AlchemistContainer):
     __name__ = __parent__ = None
@@ -255,6 +255,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
         session = Session()
         chamber = utils.get_user_chamber(utils.get_login_user())
         item.chamber_id = chamber.group_id
+        # !+ to be set to current group in multi inbox fashion 
+        item.group_id = chamber.group_id
         session.add(item)
 
 

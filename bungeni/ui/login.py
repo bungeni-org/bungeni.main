@@ -32,6 +32,7 @@ from bungeni.models.utils import get_login_user
 from bungeni.ui import widgets
 import bungeni.ui.utils as ui_utils
 from bungeni.ui.forms.common import BaseForm, EditForm
+from bungeni.core.workspace import CURRENT_INBOX_COOKIE_NAME
 from bungeni import _
 
 
@@ -83,6 +84,7 @@ class Logout(BrowserView):
     def __call__( self ):
         self.request.response.expireCookie("wc.cookiecredentials")
         self.request.response.expireCookie(I18N_COOKIE_NAME)
+        self.request.response.expireCookie(CURRENT_INBOX_COOKIE_NAME)
         site_url = ui_utils.url.absoluteURL(getSite(), self.request)
         self.request.response.redirect( site_url )
 

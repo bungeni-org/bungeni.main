@@ -27,13 +27,13 @@ from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
 from bungeni.core.workspace import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
+from bungeni.core.workspace import CURRENT_INBOX_COOKIE_NAME
 #from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.utils import register
 from bungeni.capi import capi
 from bungeni.ui.widgets import date_input_search_widget
 from bungeni.models import domain
 from bungeni import _, translate
-
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 
@@ -143,7 +143,9 @@ class WorkspaceContainerJSONListing(BrowserPage):
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
         filter_status_date = self.request.get("filter_status_date", "")
-        filter_group = self.request.get("filter_group", "")
+        filter_group = self.request.get("filter_group",
+            self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME, "")
+        )
         results, self.set_size = context.query(
             filter_title=filter_title,
             filter_type=filter_type,
@@ -165,6 +167,11 @@ class WorkspaceContainerJSONListing(BrowserPage):
     def __call__(self):
         start, limit = self.get_offsets()  # ? start=0&limit=25
         lang = get_default_language()
+        #set inbox cookie if any:
+        current_inbox = self.request.get("filter_group", None)
+        if current_inbox:
+            self.request.response.setCookie(CURRENT_INBOX_COOKIE_NAME,
+                current_inbox, path='/')
         return self.json_batch(start, limit, lang)
 
 
