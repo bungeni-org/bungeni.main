@@ -255,8 +255,15 @@ class WorkspaceBaseContainer(AlchemistContainer):
         session = Session()
         chamber = utils.get_user_chamber(utils.get_login_user())
         item.chamber_id = chamber.group_id
-        # !+ to be set to current group in multi inbox fashion 
-        item.group_id = chamber.group_id
+        group_id = chamber.group_id
+        request = common.get_request()
+        inbox_id = request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
+        if inbox_id is not None:
+            try:
+                group_id = int(inbox_id)
+            except ValueError:
+                pass
+        item.group_id = group_id
         session.add(item)
 
 
@@ -335,6 +342,18 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
     def __init__(self, context):
         self.context = context
+        if IWorkspaceContainer.providedBy(self.context):
+            request = common.get_request()
+            group_id = request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
+            if group_id is not None:
+                try:
+                    group_id = int(group_id)
+                    group = utils.get_group(group_id)
+                    self.object_type = group.type
+                    self.oid = group_id
+                    return
+                except ValueError:
+                    pass
         chamber = utils.get_user_chamber(utils.get_login_user())
         if chamber:
             self.object_type = chamber.type

@@ -10,6 +10,8 @@ from zope.formlib import form
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zc.resourcelibrary import need
+from zope.browsermenu.interfaces import IBrowserMenu
+
 from bungeni.alchemist.container import contained
 from bungeni.alchemist.ui import createInstance
 from bungeni.alchemist import utils, Session
@@ -19,7 +21,8 @@ from bungeni.core.content import WorkspaceSection
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
     IWorkspaceContainer,
     IWorkspaceUnderConsiderationContainer,
-    IWorkspaceGroupsContainer)
+    IWorkspaceGroupsContainer,
+)
 from bungeni.models.interfaces import ITranslatable
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
@@ -425,6 +428,16 @@ class WorkspaceTabCount(BrowserPage):
             data[key] = app["workspace"]["my-documents"][key].count(
                 read_from_cache, **filters)
         return simplejson.dumps(data)
+
+@register.view(IWorkspaceContainer, name="get_workspace_menu.json",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+class WorkspaceGroupMenu(BrowserPage):
+
+    def __call__(self):
+        menu = component.queryUtility(IBrowserMenu,
+            "workspace_add_parliamentary_content")
+        items = menu.getMenuItems(self.context, self.request)
+        return simplejson.dumps(items)
 
 class WorkspaceAddForm(AddForm):
     

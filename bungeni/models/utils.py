@@ -216,6 +216,12 @@ def get_user(user_id):
     """
     return Session().query(domain.User).get(user_id)
 
+def get_group(group_id):
+    """Get the Group instance for group_id.
+    Raises sqlalchemy.orm.exc.NoResultFound
+    """
+    return Session().query(domain.Group).get(group_id)
+
 
 # misc
 def is_column_binary(column):
