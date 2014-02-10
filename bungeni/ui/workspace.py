@@ -169,7 +169,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
         lang = get_default_language()
         #set inbox cookie if any:
         current_inbox = self.request.get("filter_group", None)
-        if current_inbox:
+        if current_inbox is not None:
             self.request.response.setCookie(CURRENT_INBOX_COOKIE_NAME,
                 current_inbox, path='/')
         return self.json_batch(start, limit, lang)
@@ -413,13 +413,17 @@ class WorkspaceTabCount(BrowserPage):
     def __call__(self):
         data = {}
         app = getSite()
+        filters = {}
         keys = app["workspace"]["my-documents"].keys()
         read_from_cache = True
         if self.request.get("cache") == "false":
             read_from_cache = False
+            #include group filter
+            filters["filter_group"] = self.request.getCookies().get(
+                CURRENT_INBOX_COOKIE_NAME, "")
         for key in keys:
             data[key] = app["workspace"]["my-documents"][key].count(
-                read_from_cache)
+                read_from_cache, **filters)
         return simplejson.dumps(data)
 
 class WorkspaceAddForm(AddForm):

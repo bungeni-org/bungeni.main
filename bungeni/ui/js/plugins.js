@@ -311,7 +311,6 @@
             // Enables dynamic server-driven data
             MSG_SORTASC: "Click to filter and sort ascending",
             MSG_SORTDESC: "Click to filter and sort descending",
-            SELECTED_INBOX: null,
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
 
@@ -398,17 +397,21 @@
         }
     };
 
-    var workspace_tab_count_ajax = function(i, o) {
+    var workspace_tab_count_ajax = function(cache) {
         var tab_count_url = "/workspace/tabcount";
+        cache = cache || "true";
         $.ajax({
-                type: "GET",
-                    url: tab_count_url,
-                    cache: false,
-                    processData: false,
-                    success: function(data){
-                    workspace_tab_count_response(data);
-                }   
-            });
+            type: "GET",
+            url: tab_count_url,
+            cache: false,
+            data: {
+                cache: cache
+            },
+            processData: true,
+            success: function(data){
+                workspace_tab_count_response(data);
+            }   
+        });
     }
     $.fn.yuiWorkspaceDataTable = function (context_name, link_url, data_url, fields, columns, table_id, item_type, status, rows_per_page) {
         if (!YAHOO.widget.DataTable) {
@@ -455,7 +458,7 @@
                 var qstr = '&filter_type=' + item_type.val();
                 var status = $("#input_status option:selected");
                 qstr = qstr + '&filter_status=' + status.val();
-                if(oSelf.configs.SELECTED_INBOX){
+                if(oSelf.configs.SELECTED_INBOX != null){
                     qstr = qstr + '&filter_group=' + oSelf.configs.SELECTED_INBOX;
                 }
                 return qstr;
@@ -498,13 +501,15 @@
             dynamicData: true,
             // Enables dynamic server-driven data  
             MSG_SORTASC: "Click to filter and sort ascending",
-            MSG_SORTDESC: "Click to filter and sort descending"
-
+            MSG_SORTDESC: "Click to filter and sort descending",
+            SELECTED_INBOX: null,
+            CACHE_TAB_COUNT: true,
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
        
         var fnRequestReceived = function() {
-            workspace_tab_count_ajax();
+            var cache = this.configs.CACHE_TAB_COUNT.toString();
+            workspace_tab_count_ajax(cache);
             jQuery.unblockUI();
         };
 
@@ -518,6 +523,7 @@
 
             var updateSelectedInbox = function(event){
                 dt.configs.SELECTED_INBOX = event.newValue;
+                dt.configs.CACHE_TAB_COUNT = false;
                 request = dt.get("generateRequest")(dt.getState(), dt);
                 dt.getDataSource().sendRequest(request,
                     {
@@ -708,7 +714,7 @@
 
     $.fn.workspace_count = function (){
         $.each($(this), function (i, o) {
-                workspace_tab_count_ajax();
+                workspace_tab_count_ajax("true");
                 return this;
             });
     };

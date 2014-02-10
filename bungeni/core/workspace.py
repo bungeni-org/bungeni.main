@@ -319,7 +319,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             self.set_tab_count(principal.id, count)
         return (results, count)
 
-    def count(self, read_from_cache=True):
+    def count(self, read_from_cache=True, **kw):
         """Count of items in a container
         """
         principal = common.get_request_principal()
@@ -328,7 +328,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
                     capi.workspace_tab_count_cache_refresh_time) > time.time()
             ):
             return self.tab_count_cache[principal.id].count
-        results, count = self._query()
+        results, count = self._query(**kw)
         return count
 
 class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
