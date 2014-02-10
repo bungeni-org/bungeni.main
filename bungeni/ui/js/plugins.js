@@ -413,6 +413,43 @@
             }   
         });
     }
+
+    /**
+     * Generate new dom entries for contextual add menu.
+     **/
+    var update_add_menu = function(data){
+        var menu_items = JSON.parse(data);
+        var container = $("#workspace_add_content ul");
+        $(container).empty();
+        for (index in menu_items){
+            var entry = menu_items[index];
+            var list_element = $("<li>", { class: 'separator' });
+            var link_element = $("<a>", {
+                href: entry.url,
+                text: entry.title,
+                title: entry.title,
+                id: entry.extra.id,
+            });
+            container.append(list_element.append(link_element));
+        }
+    }
+    /**
+     * Requests add menu items for current context.
+     * Display only items addable within a particular group.
+     **/
+    var workspace_refresh_add_menu = function(){
+        
+        var add_menu_url = "./get_workspace_menu.json";
+        $.ajax({
+            type: "GET",
+            url: add_menu_url,
+            cache: false,
+            success: function(data){
+                update_add_menu(data);
+            }   
+        });
+    }
+    
     $.fn.yuiWorkspaceDataTable = function (context_name, link_url, data_url, fields, columns, table_id, item_type, status, rows_per_page) {
         if (!YAHOO.widget.DataTable) {
             return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
@@ -510,6 +547,7 @@
         var fnRequestReceived = function() {
             var cache = this.configs.CACHE_TAB_COUNT.toString();
             workspace_tab_count_ajax(cache);
+            workspace_refresh_add_menu();
             jQuery.unblockUI();
         };
 
