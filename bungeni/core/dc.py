@@ -286,6 +286,12 @@ class GroupDescriptiveProperties(DescriptiveProperties):
         #!+return group.combined_name
         return self.translate(group, "full_name")
 
+    @property
+    def short_title(self):
+        group = _merged(self.context)
+        #!+return group.combined_name
+        return self.translate(group, "short_name")
+
 
 @register.adapter()
 class GroupAssignmentDescriptiveProperties(DescriptiveProperties):

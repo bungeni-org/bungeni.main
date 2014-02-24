@@ -277,7 +277,7 @@ class DynamicDirectoryFactory(object):
         groups.sort(key=lambda g:g.group_id)
         group_data = {
             "groups": [ dict(group_id=str(g.group_id),
-                name=IDCDescriptiveProperties(g).title)
+                name=IDCDescriptiveProperties(g).short_title)
                 for g in groups ],
             "all_documents_tab": translate('all documents',
                 target_language=self.language),
