@@ -110,7 +110,7 @@ def setup_customization_ui():
             
             <!-- {type_key} -->""".format(type_key=type_key))
         
-        type_title = ti.label
+        type_title = ti.label or ti.type_key
         
         # model interface is defined, but container interface is not yet
         model_interface_qualname = naming.qualname(ti.interface)
@@ -286,7 +286,7 @@ def setup_customization_ui():
                     container_property_name = naming.plural(event_type_key)
                     event_type_ti = capi.get_type_info(event_type_key)
                     # add menu item
-                    title = "{t} {e}".format(t=type_title, e=event_type_ti.label)
+                    title = "{t} {e}".format(t=type_title, e=(event_type_ti.label or event_type_ti.type_key))
                     register_menu_item(event_type_key, "Add", "Add %s" %(title),
                         model_interface_qualname, 
                         "./%s/add" % (container_property_name), 
