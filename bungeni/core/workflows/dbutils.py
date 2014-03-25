@@ -39,6 +39,7 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
     
     """
     from bungeni.core.workflow.interfaces import IStateController
+    from bungeni.core.workflows.utils import assign_ownership
     from bungeni.utils import naming
     from bungeni.capi import capi
     
@@ -127,6 +128,9 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
     
     # status (needs values to be updated first), also does a db flush()
     IStateController(target_doc).set_status(target_state_id)
+    
+    # !+PrincipalRoleMap
+    assign_ownership(target_doc)
     
     log.info("Spawned new document [%s] : (%r, %r, %r) -- from: %s", 
         target_doc, target_chamber_type, target_type_key, target_state_id, source_doc)
