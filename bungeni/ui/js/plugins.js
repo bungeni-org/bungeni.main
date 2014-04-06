@@ -451,6 +451,7 @@
     }
     
     $.fn.yuiWorkspaceDataTable = function (context_name, link_url, data_url, fields, columns, table_id, item_type, status, rows_per_page) {
+        YAHOO.bungeni.workspace.WORKSPACE_CONTEXT = true;
         if (!YAHOO.widget.DataTable) {
             return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
         }
@@ -495,8 +496,8 @@
                 var qstr = '&filter_type=' + item_type.val();
                 var status = $("#input_status option:selected");
                 qstr = qstr + '&filter_status=' + status.val();
-                if(oSelf.configs.SELECTED_INBOX != null){
-                    qstr = qstr + '&filter_group=' + oSelf.configs.SELECTED_INBOX;
+                if(YAHOO.bungeni.workspace.SELECTED_INBOX != null){
+                    qstr = qstr + '&filter_group=' + YAHOO.bungeni.workspace.SELECTED_INBOX;
                 }
                 return qstr;
             };
@@ -539,56 +540,17 @@
             // Enables dynamic server-driven data  
             MSG_SORTASC: "Click to filter and sort ascending",
             MSG_SORTDESC: "Click to filter and sort descending",
-            SELECTED_INBOX: null,
-            CACHE_TAB_COUNT: true,
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
        
         var fnRequestReceived = function() {
-            var cache = this.configs.CACHE_TAB_COUNT.toString();
+            var cache = YAHOO.bungeni.workspace.CACHE_TAB_COUNT.toString();
             workspace_tab_count_ajax(cache);
             workspace_refresh_add_menu();
             jQuery.unblockUI();
         };
 
-        var fnRenderMultiWorkspaceMenu = function() {
-            dt = this;
-            var wsButtons = new YAHOO.widget.ButtonGroup({ 
-                id:  "workspace-filter-buttons", 
-                name:  "workspace-filter-buttons-control",
-                container: "workspace-multiple-inboxes",
-            });
-
-            var updateSelectedInbox = function(event){
-                dt.configs.SELECTED_INBOX = event.newValue;
-                dt.configs.CACHE_TAB_COUNT = false;
-                request = dt.get("generateRequest")(dt.getState(), dt);
-                dt.getDataSource().sendRequest(request,
-                    {
-                        success: dt.onDataReturnInitializeTable,
-                        scope: dt
-                    }
-                );
-            }
-            wsButtons.on("valueChange", updateSelectedInbox);
-            wsButtons.addButton({
-                label: workspace_globals.all_documents_tab,
-                value: "",
-                checked: (workspace_globals.current_inbox=="")
-            });
-            for (index in workspace_globals.groups){
-                group = workspace_globals.groups[index];
-                wsButtons.addButton({
-                    label: group.name,
-                    value: group.group_id,
-                    checked: (workspace_globals.current_inbox==group.group_id),
-                })
-            }
-            dt.unsubscribeAll("initEvent", fnRenderMultiWorkspaceMenu);
-        }
-
         table.subscribe("postRenderEvent", fnRequestReceived);
-        table.subscribe("initEvent", fnRenderMultiWorkspaceMenu);
         // Update totalRecords on the fly with value from server
         table.handleDataReturnPayload = function (oRequest, oResponse, oPayload) {
             oPayload = oPayload || {

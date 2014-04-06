@@ -41,6 +41,14 @@ from bungeni import _, translate
 _path = os.path.split(os.path.abspath(__file__))[0]
 
 
+def set_inbox_cookie(request):
+    """Sets current inbox group ID
+    """
+    current_inbox = request.get("filter_group", None)
+    if current_inbox is not None:
+        request.response.setCookie(CURRENT_INBOX_COOKIE_NAME,
+            current_inbox, path='/')
+
 class WorkspaceField(object):
 
     def __init__(self, name, title):
@@ -170,11 +178,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
     def __call__(self):
         start, limit = self.get_offsets()  # ? start=0&limit=25
         lang = get_default_language()
-        #set inbox cookie if any:
-        current_inbox = self.request.get("filter_group", None)
-        if current_inbox is not None:
-            self.request.response.setCookie(CURRENT_INBOX_COOKIE_NAME,
-                current_inbox, path='/')
+        set_inbox_cookie(self.request)
         return self.json_batch(start, limit, lang)
 
 
@@ -293,7 +297,7 @@ class WorkspaceContainerListing(BrowserPage):
     workspace_fields = workspace_doc_fields
 
     def __call__(self):
-        need("workspace-globals")
+        need("workspace-multi-inbox")
         need("yui-datatable")
         self.context = removeSecurityProxy(self.context)
         return self.render()
@@ -428,6 +432,16 @@ class WorkspaceTabCount(BrowserPage):
             data[key] = app["workspace"]["my-documents"][key].count(
                 read_from_cache, **filters)
         return simplejson.dumps(data)
+
+@register.view(WorkspaceSection, name="switchgroup",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+@register.view(IWorkspaceContainer, name="switchgroup",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+class WorkspaceSwitchGroup(BrowserPage):
+
+    def __call__(self):
+        set_inbox_cookie(self.request)
+        return self.request.response.redirect("./")
 
 @register.view(IWorkspaceContainer, name="get_workspace_menu.json",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})

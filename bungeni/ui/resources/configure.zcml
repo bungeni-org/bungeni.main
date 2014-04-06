@@ -66,6 +66,11 @@
       factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
     />
   </resourceLibrary>
+  <resourceLibrary name="workspace-multi-inbox" require="yui-button workspace-globals">
+    <directory source="workspace"
+      include="multi-inbox.js"
+    />
+  </resourceLibrary>
   <resourceLibrary name="diff-form" require="jquery">
     <directory source="difform"
       include="js/nowediting.js"

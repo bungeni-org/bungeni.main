@@ -13,6 +13,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.app.component.hooks import getSite
 from ploned.ui.viewlet import StructureAwareViewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
+from zc.resourcelibrary import need
 
 from bungeni.ui.utils import url
 from bungeni.core.interfaces import IWorkspaceDocuments
@@ -62,6 +63,9 @@ class WorkspaceUnderConsiderationNavigation(WorkspaceContextNavigation):
 class WorkspaceMultiInbox(StructureAwareViewlet):
     """Render multi inbox markup"""
     render = ViewPageTemplateFile("templates/workspace-multi-inbox.pt")
+
+    def update(self):
+        need("workspace-multi-inbox")
 
 class MessageViewlet(object):
     """display a message with optional level info
