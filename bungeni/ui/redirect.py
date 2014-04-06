@@ -13,6 +13,7 @@ import datetime
 from zope.publisher.browser import BrowserView
 from zope import interface
 from zope.publisher.interfaces import IPublishTraverse
+from zope.security.proxy import removeSecurityProxy
 
 from bungeni.ui.utils import url, common
 from bungeni.models.utils import get_login_user, get_chamber_for_context
@@ -97,7 +98,7 @@ class SignatoryReview(BrowserView):
         _filters = {"user_id": user_id}
         _signatories = signatories.query(**_filters)
         if len(_signatories) == 1:
-            signatory = _signatories[0]
+            signatory = removeSecurityProxy(_signatories[0])
             _signatory = signatories.get(signatory.signatory_id)
             review_url = "/".join(
                 (url.absoluteURL(_signatory, request), u"workflow")

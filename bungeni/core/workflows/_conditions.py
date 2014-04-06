@@ -135,14 +135,13 @@ def user_may_edit_context_parent(context):
     permission = "bungeni.%s.Edit" % (naming.polymorphic_identity(type(parent)))
     return checkPermission(permission, parent)
 
-#!+INCORRENTLY named... only checks that owner of child is same as of parent!
-@describe(_(u"subtype: Require the user to be the owner of the parent document"))
-def user_is_parent_document_owner(context):
-    return context.owner.login == context.head.owner.login
+@describe(_(u"subtype: Require the signatory to be the owner of the parent document"))
+def signatory_is_parent_document_owner(context):
+    return context.user.login == context.head.owner.login
 
-@describe(_(u"subtype: Require the user not to be the owner of the parent document"))
-def user_is_not_parent_document_owner(context):
-    return not user_is_parent_document_owner(context)
+@describe(_(u"subtype: Require the signatory not to be the owner of the parent document"))
+def signatory_is_not_parent_document_owner(context):
+    return not signatory_is_parent_document_owner(context)
 
 
 # signatory
@@ -183,7 +182,7 @@ def signatory_period_elapsed(signatory):
 @describe(_(u"signatory: Require the signature to have been withdrawn"))
 def signatory_allows_unsign(signatory):
     return (doc_is_draft(signatory.head) and 
-        user_is_not_parent_document_owner(signatory))
+        signatory_is_not_parent_document_owner(signatory))
 
 @describe(_(u"signatory: Require the signatory be allowed to sign"))
 def signatory_allowed_sign(signatory):
@@ -201,7 +200,7 @@ def signatory_allowed_actions(signatory):
             utils.user_is_context_owner(signatory) and 
             (signatory_feature.document_submitted(signatory.head) or 
                 signatory_feature.auto_sign(signatory.head)) and
-            user_is_not_parent_document_owner(signatory))
+            signatory_is_not_parent_document_owner(signatory))
 
 
 @describe(_(u"doc: Require signatories"))
