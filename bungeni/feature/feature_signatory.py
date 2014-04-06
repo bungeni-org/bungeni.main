@@ -33,6 +33,15 @@ SIGNATORY_CONSENTED_STATE = SIGNATORY_CONSENTED_STATES[0]
 def on_signatory_doc_workflow_transition(ob, event):
     ob.signatory_feature.on_signatory_doc_workflow_transition(ob)
 
+def get_signatory(context, user):
+    """Get signatory record for user  
+    """
+    if user is not None:
+        filters = { "user_id": user.user_id }
+        signatories = context.signatories.query(**filters)
+        if len(signatories) == 1:
+            return removeSecurityProxy(signatories[0])
+    return None
 
 def new_signatory(user_id, head_id):
     """Create a new signatory instance for user on doc.
@@ -105,7 +114,7 @@ class Signatory(feature.Feature):
     # contextual
     
     def has_signatories(self, context):
-        return bool(len(context.sa_signatories))
+        return bool(len(context.signatories))
     
     def num_consented_signatories(self, context):
         return len([ 
@@ -179,17 +188,13 @@ class Signatory(feature.Feature):
     
     def is_signatory(self, context, user=None):
         user = user or get_login_user()
-        for sgn in context.sa_signatories:
-            if sgn.user_id == user.user_id:
-                return True
-        return False
+        return (get_signatory(context, user) is not None)
     
     def is_consented_signatory(self, context, user=None):
         user = user or get_login_user()
-        if user:
-            for cs in context.sa_signatories:
-                if cs.status in SIGNATORY_CONSENTED_STATES:
-                    return True
+        signatory = get_signatory(context, user)
+        if signatory and (signatory.status in SIGNATORY_CONSENTED_STATES):
+            return True
         return False
     
     def can_sign(self, context):
@@ -204,11 +209,7 @@ class Signatory(feature.Feature):
         Called from ui.forms.common.SignOpenDocumentForm.handle_sign_document().
         """
         user = get_login_user()
-        signatory = None
-        for sgn in context.sa_signatories:
-            if sgn.user_id == user.user_id:
-                signatory = removeSecurityProxy(sgn)
-                break
+        signatory = get_signatory(context, user)
         if not signatory:
             signatory = new_signatory(user.user_id, context.doc_id)
         else:
