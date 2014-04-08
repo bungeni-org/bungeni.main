@@ -41,10 +41,14 @@ def new_container_sub_form_viewlet_cls(type_key, info_container, order):
     info_container.viewlet_name = \
         container_sub_form_viewlet_cls_name(type_key, info_container)
     import bungeni.ui.forms.viewlets as VIEWLET_MODULE
-    cls = type(info_container.viewlet_name, (VIEWLET_MODULE.SubformViewlet,), {
-        "sub_attr_name": info_container.container_attr_name,
-        "weight": (1 + order) * 10,
-    })
+    cls = type(
+        info_container.viewlet_name,
+        (VIEWLET_MODULE.SubformViewlet,), 
+        {
+            "sub_attr_name": info_container.container_attr_name, 
+            "weight": (1 + order) * 10,
+        }
+    )
     # set on VIEWLET_MODULE
     setattr(VIEWLET_MODULE, info_container.viewlet_name, cls)
     return cls

@@ -98,8 +98,8 @@ class ContainerListing(form.DisplayForm):
         self.columns = columns
         super(ContainerListing, self).update()
     
-    def render(self):
-        return self.index()
+    #def render(self):
+    #    return self.index()
     
     def listing(self):
         return self.formatter()
