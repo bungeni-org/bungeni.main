@@ -98,6 +98,9 @@ class SubformViewlet(table.AjaxContainerListing):
     def for_display(self):
         return len(self.context) > 0
 
+    def update(self):
+        super(SubformViewlet, self).update()
+
 
 # RSS
 
