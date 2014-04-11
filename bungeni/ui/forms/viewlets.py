@@ -12,7 +12,9 @@ from zope import interface
 from zope.viewlet import manager, viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.formlib import form
+from zope.security import checkPermission
 from zope.security.proxy import removeSecurityProxy
+
 from zc.resourcelibrary import need
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import sqlalchemy.sql.expression as sql
@@ -24,6 +26,7 @@ from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IContentViewManager
 
 from bungeni.models import domain, interfaces
+from bungeni.core.workflows.utils import view_permission
 from bungeni.feature.interfaces import IFeatureSchedule
 
 from bungeni.ui import browser
@@ -96,8 +99,14 @@ class SubformViewlet(table.AjaxContainerListing):
     
     @property
     def for_display(self):
-        return len(self.context) > 0
-
+        """Do not display viewlet unless the user can view at least one item.
+        """
+        if len(self.context):
+            for item in self.context.values():
+                if checkPermission(view_permission(item), item):
+                    return True
+        return False
+    
     def update(self):
         super(SubformViewlet, self).update()
 
