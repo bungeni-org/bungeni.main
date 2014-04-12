@@ -41,6 +41,11 @@ def in_state(context, *state_ids):
     """
     return bool(context) and context.status in state_ids
 
+def child_in_state(context, type_key, *state_ids):
+    """Is the context child document, identified by type_key, in one of the 
+    specified state_ids?
+    """
+    return in_state(child(context, type_key), *state_ids)
 
 
 # common
