@@ -10,6 +10,7 @@ $Id$
 """
 
 from zope.security.proxy import removeSecurityProxy
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.app.component.hooks import getSite
 from ploned.ui.viewlet import StructureAwareViewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
@@ -17,6 +18,8 @@ from zc.resourcelibrary import need
 
 from bungeni.ui.utils import url
 from bungeni.core.interfaces import IWorkspaceDocuments
+from bungeni.core.workspace import CURRENT_INBOX_COOKIE_NAME
+from bungeni.models.interfaces import IDoc
 from bungeni.core import translation
 from bungeni.capi import capi
 from bungeni import _, translate
@@ -65,6 +68,13 @@ class WorkspaceMultiInbox(StructureAwareViewlet):
     render = ViewPageTemplateFile("templates/workspace-multi-inbox.pt")
 
     def update(self):
+        self.current_inbox = None
+        context = removeSecurityProxy(self.context)
+        inbox_id = self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
+        if IDoc.providedBy(context) and inbox_id is None:
+            if context.group_id is not None:
+                self.current_inbox = IDCDescriptiveProperties(context.group
+                    ).short_title
         need("workspace-multi-inbox")
 
 class MessageViewlet(object):
