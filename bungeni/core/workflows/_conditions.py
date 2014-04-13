@@ -186,7 +186,9 @@ def signatory_period_elapsed(signatory):
 
 @describe(_(u"signatory: Require the signature to have been withdrawn"))
 def signatory_allows_unsign(signatory):
-    return (doc_is_draft(signatory.head) and 
+    doc = signatory.head
+    signatory_feature = doc.signatory_feature
+    return (signatory_feature and signatory_feature.auto_unsign(doc) and 
         signatory_is_not_parent_document_owner(signatory))
 
 @describe(_(u"signatory: Require the signatory be allowed to sign"))
@@ -221,11 +223,5 @@ def doc_valid_num_consented_signatories(doc):
     if signatory_feature:
         return signatory_feature.valid_num_consented_signatories(doc)
     return True
-
-def doc_is_draft(doc):
-    """Parent document has been redrafted"""
-    signatory_feature = doc.signatory_feature
-    return signatory_feature and signatory_feature.document_is_draft(doc)
-
 
 

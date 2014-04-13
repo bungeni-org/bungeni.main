@@ -67,7 +67,7 @@ class Signatory(feature.Feature):
         "max_signatories": dict(type="integer", default=0,
             doc="maximum consented signatories"),
         "submitted_states": dict(type="space_separated_state_ids", default="submitted_signatories"),
-        "draft_states": dict(type="space_separated_state_ids", default="draft redraft"),
+        "unsign_states": dict(type="space_separated_state_ids", default="redraft"),
         "elapse_states": dict(type="space_separated_state_ids", default="submitted"),
         "open_states": dict(type="space_separated_state_ids", default=None),
     }
@@ -76,7 +76,7 @@ class Signatory(feature.Feature):
     def validate_parameters(self):
         assert not set.intersection(
                 set(self.p.submitted_states), 
-                set(self.p.draft_states), 
+                set(self.p.unsign_states), 
                 set(self.p.elapse_states)), \
                     "draft, submitted and expired states must be distinct lists"
     
@@ -140,7 +140,12 @@ class Signatory(feature.Feature):
     
     def auto_sign(self, context):
         return context.status in self.p.open_states
-    
+
+    def auto_unsign(self, context):
+        """Check that a document is being redrafted - unsign signatures.
+        """
+        return context.status in self.p.unsign_states
+
     def elapse_signatures(self, context):
         """Should pending signatures be archived.
         """
@@ -150,11 +155,6 @@ class Signatory(feature.Feature):
         """Check that the document has been submitted.
         """
         return context.status in self.p.submitted_states
-    
-    def document_is_draft(self, context):
-        """Check that a document is being redrafted.
-        """
-        return context.status in self.p.draft_states
     
     def on_signatory_doc_workflow_transition(self, context):
         """Perform any workflow related actions on signatories and/or parent.
@@ -170,7 +170,7 @@ class Signatory(feature.Feature):
             if self.document_submitted(context):
                 utils.set_role("bungeni.Signatory", login, context)
                 utils.set_role("bungeni.Owner", login, signatory)
-            elif self.document_is_draft(context):
+            elif self.auto_unsign(context):
                 utils.unset_role("bungeni.Signatory", login, context)
             elif self.elapse_signatures(context):
                 if signatory.status not in SIGNATORY_CONSENTED_STATES:
