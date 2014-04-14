@@ -70,7 +70,8 @@ class WorkspaceMultiInbox(StructureAwareViewlet):
     def update(self):
         self.current_inbox = None
         context = removeSecurityProxy(self.context)
-        inbox_id = self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
+        inbox_id = (self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
+            or None)
         if IDoc.providedBy(context) and inbox_id is None:
             if context.group_id is not None:
                 self.current_inbox = IDCDescriptiveProperties(context.group
