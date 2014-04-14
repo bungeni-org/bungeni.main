@@ -304,3 +304,5 @@ class ChangePasswordForm(BaseForm):
             self.user._password = password
         
         self.status = _("Password changed")
+
+

@@ -119,6 +119,10 @@ dl.enableFormTabbing dd {
     padding-top: 2em;
 }
 
+.section-bungeni-login input {
+    width: 20em;
+}
+/* !+login-form(mr, apr-2014) unused? */
 #login-form {
     width: 30em; 
     margin: 0 auto;
