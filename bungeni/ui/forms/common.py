@@ -348,7 +348,7 @@ class AddForm(BaseForm, ui.AddForm):
                     ).filter(col == data[key]).count()
                 if not value:
                     continue
-                widget = self.widgets[ key ]
+                widget = self.widgets[key]
                 error = formlib.form.WidgetInputError(
                     widget.name, widget.label,
                     _(u"A record with this value already exists"))
@@ -517,11 +517,43 @@ class EditForm(BaseForm, ui.EditForm):
 
     def validate(self, action, data):
         errors = super(EditForm, self).validate(action, data)
-
+        errors += self.validateUnique(action, data)
         for validator in getattr(self.model_descriptor, "custom_validators", ()):
             errors += validator(action, data, self.context, self.context.__parent__)
-
         return errors
+    
+    def validateUnique(self, action, data):
+        #!+validateUnique merge with AddForm.validateUnique
+        #return AddForm.validateUnique(self, action, data)
+        errors = []
+        domain_model = removeSecurityProxy(self.domain_model)
+        
+        # find unique columns in data model.. TODO do this statically
+        mapper = sa.orm.class_mapper(domain_model)
+        ucols = list(ui.unique_columns(mapper))
+        
+        # query out any existing values with the same unique values,
+        session = Session()
+        # find data matching unique columns
+        for key, col in ucols:
+            if key in data:
+                # on edit ignore new value if its the same as the previous value
+                if (isinstance(self.context, domain_model) and
+                    data[key] == getattr(self.context, key, None)
+                   ):
+                   continue
+                value = session.query(domain_model
+                    ).filter(col == data[key]).count()
+                if not value:
+                    continue
+                widget = self.widgets[key]
+                error = formlib.form.WidgetInputError(
+                    widget.name, widget.label,
+                    _(u"A record with this value already exists"))
+                widget._error = error
+                errors.append(error)
+        return errors
+
 
     def filter_fields(self):
         return filterFields(self.context, self.form_fields)
