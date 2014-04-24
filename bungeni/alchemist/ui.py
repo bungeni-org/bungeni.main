@@ -161,6 +161,7 @@ def setUpColumns(domain_model):
     columns.extend(remainder)
     return columns
 
+
 # alchemist.ui.core
 
 class Getter(object):
@@ -264,7 +265,9 @@ class DynamicFields(object):
         order to unambigously identify the field thats problematic. but presumably those
         are very fast due to the unique constraint.
         
-        TODO : assumes column == attribute         
+        TODO : assumes column == attribute
+        
+        !+BASEFORM-VALIDATEUNIQUE merge with almost identical ui.forms.common.BaseForm.validateUnique
         """
         errors = form.getWidgetsData(self.widgets, self.prefix, data) + \
             form.checkInvariants(self.form_fields, data) 
@@ -279,7 +282,6 @@ class DynamicFields(object):
         
         errors = []
         # query out any existing values with the same unique values,
-        
         s = bungeni.alchemist.Session()        
         # find data matching unique columns
         for key, col in ucols:
@@ -299,9 +301,11 @@ class DynamicFields(object):
         if errors:
             return tuple(errors)
 
+
 # alchemist.ui.content
 
 class BaseForm(object):
+    # !+BASEFORM merge with ui.forms.common.BaseForm
     name_template = "%sForm"
     template = namedtemplate.NamedTemplate("alchemist.form")
     
@@ -334,6 +338,7 @@ class BaseForm(object):
             self.__dict__["form_fields"] = form_fields
         return locals()
     form_fields = property(**form_fields())
+
 
 
 class AddForm(BaseForm, form.AddForm):
