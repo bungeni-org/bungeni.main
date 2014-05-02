@@ -412,7 +412,11 @@ class SpecializedSource(BaseVocabularyFactory):
 class VenueFactory(BaseVocabularyFactory):
     def __call__(self, context):
         chamber = utils.get_chamber_for_context(context)
-        results = [ venue for venue in chamber.venues.values() ]
+        if chamber is not None:
+            results = [ venue for venue in chamber.venues.values() ]
+        else:
+            # we are "out" of chamber, get all venues...
+            results = Session().query(domain.Venue).all()
         terms = []
         for ob in results:
             terms.append(
@@ -428,7 +432,12 @@ component.provideUtility(venue_factory, IVocabularyFactory, "venue")
 class SessionFactory(BaseVocabularyFactory):
     def __call__(self, context):
         chamber = utils.get_chamber_for_context(context)
-        results =[ sess for sess in chamber.sessions.values() ]
+        if chamber is not None:
+            results = [ sess for sess in chamber.sessions.values() ]
+        else:
+            # !+IN_CHAMBER here presumably context is a Sitting associated to 
+            # a Group that is NOT within a Chamber... no sessions in this case!
+            results = []
         terms = []
         for ob in results:
             terms.append(
@@ -447,7 +456,7 @@ class GroupTitleTypesFactory(SpecializedSource):
         pass
     
     def construct_query(self, context):
-        session= Session()
+        session = Session()
         return session.query(domain.TitleType) \
                 .filter(schema.title_type.c.group_id == context.group_id)
     
@@ -574,7 +583,7 @@ class MemberSource(SpecializedMemberSource):
             # user query
             query = Session().query(domain.User).filter(domain.User.active_p == "A")
             # candidate Members are all Users who ARE already members of the related Chamber
-            # !+ this logic is for groups within a chamber... 
+            # !+IN_CHAMBER this logic is for groups within a chamber... 
             # !+ tie logic to "privilege_extent" (or generalization thereof) ?
             query = filter_query_users_members_in_group(query, self.chamber)
             # filter out users who are already members of this group
@@ -635,6 +644,7 @@ class MemberDelegationSource(MemberSource):
                 # !+ in admin, the chamber is the context's __parent__
                 assert IGroup.providedBy(ctx.__parent__), ctx
                 self.chamber = utils.get_chamber_for_group(ctx.__parent__)
+                # !+IN_CHAMBER this logic is for groups within a chamber...
         else:
             # !+VERSION descriptor for DocVersion also uses this vocabulary for the 
             # "owner_id" field, but the source data we want here is tied to the 
@@ -1230,7 +1240,7 @@ class QuerySource(object):
     
     def construct_query(self, context):
         session = Session()
-        trusted=removeSecurityProxy(context)
+        trusted = removeSecurityProxy(context)
         if self.filter_value:
             query = session.query(self.domain_model).filter(
                 self.domain_model.c[self.filter_field] == 

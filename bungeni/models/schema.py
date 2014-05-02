@@ -731,6 +731,7 @@ venue = sa.Table("venue", metadata,
     sa.Column("description", sa.UnicodeText),
     sa.Column("body", sa.UnicodeText),
     sa.Column("language", sa.String(5), nullable=False),
+    # !+ app assumption: the referenced group here is *always* a chamber?
     sa.Column("group_id", sa.Integer, sa.ForeignKey("group.group_id"))
 )
 
