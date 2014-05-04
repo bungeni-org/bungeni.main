@@ -131,14 +131,21 @@ class SchedulableItemsGetter(object):
     
     @property
     def group_id(self):
-        parent = self.context
-        while parent is not None:
-            group_id = getattr(parent, "group_id", None)
-            if group_id:
-                return group_id
-            else:
-                parent = parent.__parent__
-        return None
+        group_id = None
+        if IScheduleText.implementedBy(self.domain_class):
+            #use current chamber if any as group id
+            chamber = get_chamber_for_context(self.context)
+            if chamber:
+                group_id = chamber.group_id
+        else:
+            parent = self.context
+            while parent is not None:
+                group_id = getattr(parent, "group_id", None)
+                if group_id:
+                    break
+                else:
+                    parent = parent.__parent__
+        return group_id
     
     def query(self):
         items_query = Session().query(self.domain_class)
@@ -175,6 +182,11 @@ class SchedulableItemsGetter(object):
                         get_chamber_for_context(self.context).group_id
                 )
             elif hasattr(self.domain_class, "group_id") and self.group_id:
+                items_query = items_query.filter(
+                    self.domain_class.group_id==self.group_id
+                )
+        elif self.group_filter and IScheduleText.implementedBy(self.domain_class):
+            if hasattr(self.domain_class, "group_id") and self.group_id:
                 items_query = items_query.filter(
                     self.domain_class.group_id==self.group_id
                 )

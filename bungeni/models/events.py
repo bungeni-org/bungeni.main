@@ -29,6 +29,16 @@ def set_chamber_id(context, event):
             chamber = utils.get_chamber_for_group(context.group)
             context.chamber_id = chamber.group_id
 
+@register.handler(adapts=(interfaces.IScheduleText, IObjectCreatedEvent))
+def set_schedule_text_group(context, event):
+    """Sets the current chamber id as group id of schedule meta
+
+    Headings and Notes
+    """
+    if hasattr(context, "group_id"):
+        current_chamber = utils.get_chamber_for_context(context)
+        if current_chamber is not None:
+            context.group_id = current_chamber.group_id
 
 @register.handler(adapts=(interfaces.ISitting, IObjectCreatedEvent))
 @register.handler(adapts=(interfaces.ISitting, IObjectModifiedEvent))

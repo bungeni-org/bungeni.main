@@ -47,7 +47,9 @@ def get_feature_cls(feature_name):
 
 
 def get_feature(discriminator, feature_name):
-    return capi.get_type_info(discriminator).workflow.get_feature(feature_name)
+    type_info = capi.get_type_info(discriminator)
+    if type_info.workflow is not None:
+        return type_info.workflow.get_feature(feature_name)
 
 def provides_feature(discriminator, feature_name):
     """Does the domain model identified by discriminator provide the named feature?
