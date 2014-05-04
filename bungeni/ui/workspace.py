@@ -68,7 +68,9 @@ workspace_doc_fields = [
     WorkspaceField("status_date", 
         _("workspace_column_status_date", default="status date")),
     WorkspaceField("translation_status", 
-        _("workspace_column_translation_status", default="missing translations"))
+        _("workspace_column_translation_status", default="missing translations")),
+    WorkspaceField("document_group", 
+        _("workspace_column_document_group", default="document group"))
     ]
 
 
@@ -189,6 +191,9 @@ COLUMN_DEFS = {
     "default": """{label:"%(label)s", key:"sort_%(key)s",
         sortable:true, resizeable:true,
         children: [{key:"%(key)s", sortable:false}]}""",
+    "document_group": """{label:"%(label)s", key:"%(key)s",
+        sortable:false, resizeable:false,
+        children: [{key:"%(key)s", label:"&nbsp;", sortable:false}]}""",
     "translation_status": """{label:"%(label)s", key:"%(key)s",
         sortable:false, resizeable:false,
         children: [{key:"%(key)s", label:"&nbsp;", sortable:false}]}""",

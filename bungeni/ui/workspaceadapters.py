@@ -51,6 +51,13 @@ class WorkspaceContentAdapter(object):
         return date_formatter.format(value)
 
     @property
+    def document_group(self):
+        if hasattr(self.context, 'group_id'):
+            return IDCDescriptiveProperties(self.context.group).short_title
+        elif hasattr(self.context, 'chamber_id'):
+            return IDCDescriptiveProperties(self.context.chamber).short_tile
+
+    @property
     def translation_status(self):
         if ITranslatable.providedBy(self.context) and len(capi.pivot_languages):
             untranslated = list(capi.pivot_languages)
