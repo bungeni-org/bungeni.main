@@ -349,9 +349,10 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
                 try:
                     group_id = int(group_id)
                     group = utils.get_group(group_id)
-                    self.object_type = group.type
-                    self.oid = group_id
-                    return
+                    if group:
+                        self.object_type = group.type
+                        self.oid = group_id
+                        return
                 except ValueError:
                     pass
         chamber = utils.get_user_chamber(utils.get_login_user())
