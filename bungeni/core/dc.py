@@ -14,6 +14,8 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.role import IRole
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import zope.traversing.interfaces
+import HTMLParser
+
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from bungeni.alchemist import Session, utils
@@ -323,7 +325,7 @@ class UserDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        return context.combined_name
+        return HTMLParser.HTMLParser().unescape(context.combined_name)
     
     @property
     def title_member(self):
