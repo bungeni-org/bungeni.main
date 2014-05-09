@@ -11,9 +11,12 @@ from sqlalchemy.orm import class_mapper
 from bungeni.alchemist.interfaces import IManagedContainer
 
 
-# type_info - conveniences on capi.get_type_info
-# - discriminator may be as specified in: core.type_info._get
-# - raises KeyError if not matched
+# type_info - capi.get_type_info utility conveniences, with following API
+#   (discriminator) -> (object, None)
+# where: 
+#   discriminator may be as specified in: alchemist.type_info._get
+#   raises KeyError, if discriminator is not matched to a type
+#   returns either the corresponding object or None
 
 def get_descriptor(discriminator):
     from bungeni.capi import capi

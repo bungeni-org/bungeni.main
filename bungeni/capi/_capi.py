@@ -312,7 +312,7 @@ class CAPI(object):
             return False
     
     def get_type_info(self, discriminator):
-        """Get the TypeInfo instance for discriminator (see core.type_info). 
+        """Get the TypeInfo instance for discriminator (see alchemist.type_info). 
         
         The discriminator may be any of:
             type_key: str (the lowercase underscore-separated of domain cls name)

@@ -47,7 +47,10 @@ def get_feature_cls(feature_name):
 
 
 def get_feature(discriminator, feature_name):
-    type_info = capi.get_type_info(discriminator)
+    """Get the named workflow feature instance (not necessarily enabled), 
+    or None.
+    """
+    type_info = capi.get_type_info(discriminator) # KeyError
     if type_info.workflow is not None:
         return type_info.workflow.get_feature(feature_name)
 

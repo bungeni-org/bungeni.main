@@ -52,9 +52,9 @@ class WorkspaceContentAdapter(object):
 
     @property
     def document_group(self):
-        if hasattr(self.context, 'group_id') and self.context.group is not None:
+        if hasattr(self.context, "group_id") and self.context.group is not None:
             return IDCDescriptiveProperties(self.context.group).short_title
-        elif hasattr(self.context, 'chamber_id'):
+        elif hasattr(self.context, "chamber_id"):
             return IDCDescriptiveProperties(self.context.chamber).short_tile
 
     @property
