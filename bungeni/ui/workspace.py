@@ -156,9 +156,10 @@ class WorkspaceContainerJSONListing(BrowserPage):
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
         filter_status_date = self.request.get("filter_status_date", "")
-        filter_group = self.request.get("filter_group",
-            self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME, "")
-        )
+        if "filter_group" in self.request:
+            filter_group = self.request.get("filter_group")
+        else:
+            filter_group = self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME, "")
         results, self.set_size = context.query(
             filter_title=filter_title,
             filter_type=filter_type,

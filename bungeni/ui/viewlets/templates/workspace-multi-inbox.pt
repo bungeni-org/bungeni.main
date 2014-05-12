@@ -1,12 +1,14 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n_domain="bungeni" tal:omit-tag="">
-      <div id="workspace-multiple-inboxes">
-        <span tal:condition="view/current_inbox"
-            class="yui-button-checked yui-button yui-radio-button yui-radio-button-checked">
-            <span class="first-child">
-                <button type="button" tal:content="view/current_inbox">group</button>
+      <div id="workspace-multiple-inboxes" tal:condition="view/show_tabs">
+      </div>
+      <div tal:condition="view/current_inbox">
+            <span tal:condition="view/current_inbox"
+                class="yui-button-checked yui-button yui-radio-button yui-radio-button-checked">
+                <span class="first-child">
+                    <button type="button" tal:content="view/current_inbox">group</button>
+                </span>
             </span>
-        </span>
       </div>
 </html>

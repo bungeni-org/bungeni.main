@@ -342,7 +342,8 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
     def __init__(self, context):
         self.context = context
-        if IWorkspaceContainer.providedBy(self.context):
+        #!+WORKSPACE INBOXES(mb, May-2013) Disabled permission checking
+        """if IWorkspaceContainer.providedBy(self.context):
             request = common.get_request()
             group_id = request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
             if group_id is not None:
@@ -354,7 +355,7 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
                         self.oid = group_id
                         return
                 except ValueError:
-                    pass
+                    pass"""
         chamber = utils.get_user_chamber(utils.get_login_user())
         if chamber:
             self.object_type = chamber.type

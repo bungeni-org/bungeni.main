@@ -69,11 +69,13 @@ class WorkspaceMultiInbox(StructureAwareViewlet):
 
     def update(self):
         self.current_inbox = None
+        self.show_tabs = True
         context = removeSecurityProxy(self.context)
         inbox_id = (self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
             or None)
-        if IDoc.providedBy(context) and inbox_id is None:
-            if context.group_id is not None:
+        if IDoc.providedBy(context):
+            self.show_tabs = False
+            if inbox_id is None and context.group_id is not None:
                 self.current_inbox = IDCDescriptiveProperties(context.group
                     ).short_title
         need("workspace-multi-inbox")

@@ -11,14 +11,7 @@ YAHOO.bungeni.workspace.multiInbox = function(){
     var INBOX_CONTAINER = "workspace-multiple-inboxes";
     var dataTable = null;
 
-    Event.onAvailable(INBOX_CONTAINER, function(){
-        //no rendering of buttons if in document mode
-        if (!YAHOO.bungeni.workspace.WORKSPACE_CONTEXT &&
-            workspace_globals.current_inbox==""
-        ){
-            return;
-        }
-        
+    Event.onAvailable(INBOX_CONTAINER, function(){        
         var wsButtons = new YAHOO.widget.ButtonGroup({ 
             id:  "workspace-filter-buttons", 
             name:  "workspace-filter-buttons-control",
