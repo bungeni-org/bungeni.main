@@ -42,7 +42,7 @@
         weight="99"
     />
     <browser:viewlet name="bungeni.workspace_multi_inbox"
-        layer="..interfaces.IWorkspaceOrAdminSectionLayer"
+        layer="..interfaces.IWorkspaceMyDocumentsSectionLayer"
         class=".workspace.WorkspaceMultiInbox"
         manager="ploned.ui.interfaces.IPortalHeaderManager"
         permission="bungeni.ui.workspace.View"

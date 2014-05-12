@@ -68,7 +68,7 @@ workspace_doc_fields = [
     WorkspaceField("status_date", 
         _("workspace_column_status_date", default="status date")),
     WorkspaceField("translation_status", 
-        _("workspace_column_translation_status", default="missing translations")),
+        _("workspace_column_translation_status", default="translations")),
     WorkspaceField("document_group", 
         _("workspace_column_document_group", default="document group"))
     ]

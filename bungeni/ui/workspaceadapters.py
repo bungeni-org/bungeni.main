@@ -13,7 +13,7 @@ from bungeni.core import translation
 from bungeni.core.language import get_default_language
 
 from bungeni.alchemist import utils
-from bungeni.models.interfaces import ITranslatable
+from bungeni.models.interfaces import ITranslatable, IDoc
 
 from bungeni.capi import capi
 from bungeni import _, translate
@@ -52,10 +52,12 @@ class WorkspaceContentAdapter(object):
 
     @property
     def document_group(self):
-        if hasattr(self.context, "group_id") and self.context.group is not None:
-            return IDCDescriptiveProperties(self.context.group).short_title
-        elif hasattr(self.context, "chamber_id"):
-            return IDCDescriptiveProperties(self.context.chamber).short_tile
+        if IDoc.providedBy(self.context):
+            if hasattr(self.context, "group_id") and self.context.group is not None:
+                return IDCDescriptiveProperties(self.context.group).short_title
+            elif hasattr(self.context, "chamber_id"):
+                return IDCDescriptiveProperties(self.context.chamber).short_tile
+        return translate("n/a", context=get_request())
 
     @property
     def translation_status(self):
