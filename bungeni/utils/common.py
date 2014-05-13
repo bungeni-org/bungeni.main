@@ -12,6 +12,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.utils.common")
 
 import zope.component
+from zope.annotation.interfaces import IAnnotations
 from zope.app.appsetup.appsetup import getConfigContext
 from zope.publisher.interfaces import IRequest
 from zope.security.management import getInteraction
@@ -60,6 +61,21 @@ def get_request_login():
     if principal is not None:
         return principal.id
 
+def get_traversed_context(request=None, index=-1):
+    """ (request:either(IRequest, None), indix:int) -> either(IRequest, None)
+    
+    Requires that the "contexts" list has been prepared on the request, see
+    the event handler: bungeni.ui.publication.remember_traversed_context()
+
+    As an optimization, if the caller already has a reference to the current 
+    request, it may optionally be passed in as a parameter.
+
+    By default, we pick off the last traversed (as per "index").
+    """
+    if request is None:
+        request = get_request()
+    if request is not None:
+        return IAnnotations(request).get("contexts")[index]
 
 
 # pick data

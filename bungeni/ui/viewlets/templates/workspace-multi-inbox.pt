@@ -4,8 +4,7 @@
       <div id="workspace-multiple-inboxes" tal:condition="view/show_tabs">
       </div>
       <div tal:condition="view/current_inbox">
-            <span tal:condition="view/current_inbox"
-                class="yui-button-checked yui-button yui-radio-button yui-radio-button-checked">
+            <span class="yui-button-checked yui-button yui-radio-button yui-radio-button-checked">
                 <span class="first-child">
                     <button type="button" tal:content="view/current_inbox">group</button>
                 </span>

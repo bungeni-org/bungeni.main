@@ -16,7 +16,7 @@ from zope.lifecycleevent.interfaces import IObjectCreatedEvent, \
 from sqlalchemy import sql, orm
 import domain, utils, interfaces
 from bungeni.core.interfaces import ISchedulingContext # !+MODEL_DEPENDENCY_CORE
-from bungeni.utils import register
+from bungeni.utils import register, common
 
 
 @register.handler(adapts=(interfaces.IAgendaItem, IObjectCreatedEvent))
@@ -31,14 +31,16 @@ def set_chamber_id(context, event):
 
 @register.handler(adapts=(interfaces.IScheduleText, IObjectCreatedEvent))
 def set_schedule_text_group(context, event):
-    """Sets the current chamber id as group id of schedule meta
+    """Sets the current group id of schedule meta
 
     Headings and Notes
     """
-    if hasattr(context, "group_id"):
-        current_chamber = utils.get_chamber_for_context(context)
-        if current_chamber is not None:
-            context.group_id = current_chamber.group_id
+    if hasattr(context, "group_id") and context.group_id is None:
+        request_context = common.get_traversed_context()
+        scheduling_context = ISchedulingContext(
+            request_context.context.__parent__, None)
+        if scheduling_context is not None:            
+            context.group_id = scheduling_context.group_id
 
 @register.handler(adapts=(interfaces.ISitting, IObjectCreatedEvent))
 @register.handler(adapts=(interfaces.ISitting, IObjectModifiedEvent))

@@ -272,7 +272,8 @@ class Sitting(Feature):
     def decorate_ui(self, model):
         add_info_container_to_descriptor(model, "sittings", "sitting", "group_id")
         add_info_container_to_descriptor(model, "agenda_items", "agenda_item", "group_id")
-
+        add_info_container_to_descriptor(model, "headings", "heading", "group_id")
+        add_info_container_to_descriptor(model, "editorial_notes", "editorial_note", "group_id")
 
 class Schedule(Feature):
     """Support for the "schedule" feature.

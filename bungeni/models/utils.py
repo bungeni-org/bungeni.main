@@ -85,7 +85,15 @@ def get_user_groups(user):
                     #domain.Group.status.in_(status)
             )
         )
-    return query.all()
+    groups = query.all()
+    group_ids = [ group.group_id for group in groups ]
+    # add parent group
+    parent_groups = []
+    for group in groups:
+        if group.parent_group_id and group.parent_group_id not in group_ids:
+            parent_groups.append(group.parent_group)
+            group_ids.append(group.parent_group_id)
+    return parent_groups + groups
 
 def get_user_chamber(user):
     user_delegations = get_user_delegations(user)
