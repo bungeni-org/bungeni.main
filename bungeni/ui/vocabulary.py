@@ -503,12 +503,12 @@ component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 
 def filter_query_users_not_members_in_group(query, group):
     # exlude users who are already members of group
-    exclude_ids = [ m.user_id for m in group.group_members ]
+    exclude_ids = [ m.user_id for m in removeSecurityProxy(group).group_members ]
     return query.filter(sql.not_(domain.User.user_id.in_(exclude_ids)))
 
 def filter_query_users_members_in_group(query, group):
     # include only users who are already members of group
-    include_ids = [ m.user_id for m in group.group_members ]
+    include_ids = [ m.user_id for m in removeSecurityProxy(group).group_members ]
     return query.filter(domain.User.user_id.in_(include_ids))
 
 
@@ -770,6 +770,38 @@ class UserNotMPSource(SpecializedMemberSource):
         return query
 component.provideUtility(UserNotMPSource(), IVocabularyFactory, "user_not_mp")
 
+
+class UserNotInGroupSource(SpecializedSource):
+    """All active users who are not, in some way or another, 
+    already member of the context group.
+    """
+    def construct_query(self, ctx):
+        if IAlchemistContainer.providedBy(ctx): # inherits from IContainer
+            # MemberContainer - "add" mode -> member (Committee, Office)
+            assert IGroupMember.implementedBy(ctx.domain_model), ctx
+            # the group is the context's __parent__
+            assert IGroup.providedBy(ctx.__parent__), ctx
+            group = ctx.__parent__
+            #self.chamber = utils.get_chamber_for_group(group)
+        else:
+            # Member - "view" member
+            assert IGroupMember.providedBy(ctx), ctx
+            assert IGroup.providedBy(ctx.group), ctx
+            group = ctx.group
+            #self.chamber = utils.get_chamber_for_group(group)   
+            #self.context_user = ctx.user
+
+        # user query
+        query = Session().query(domain.User).filter(domain.User.active_p == "A")
+        # filter out members of related chamber
+        query = filter_query_users_not_members_in_group(query, group)
+        return query
+user_not_in_group = UserNotInGroupSource(
+    token_field="user_id", 
+    title_field="combined_name", 
+    value_field="user_id"
+)
+component.provideUtility(user_not_in_group, IVocabularyFactory, "user_not_in_group")
 
 
 class MinistrySource(SpecializedSource):
