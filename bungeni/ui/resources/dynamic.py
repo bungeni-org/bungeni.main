@@ -285,3 +285,5 @@ class DynamicDirectoryFactory(object):
                 CURRENT_INBOX_COOKIE_NAME, "")
         }
         return """var workspace_globals = %s;""" % json.dumps(group_data)
+
+

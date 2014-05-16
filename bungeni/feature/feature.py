@@ -76,6 +76,7 @@ class PPV(object):
     space_separated_type_keys = sst
     space_separated_role_ids = sst
     space_separated_state_ids = sst
+    space_separated_names = sst
     
     @staticmethod
     def integer(value, default=None):
@@ -242,7 +243,7 @@ class Event(Feature):
     feature_parameters = {
         # parameter "types":
         # - may "allow" multiple event types
-        # - if none specified, "event" is assumed as the default.
+        # - if none specified, "event" is assumed as the default
         "types": dict(type="space_separated_type_keys", default="event")
     }
     subordinate_interface = model_ifaces.IEvent
@@ -304,11 +305,22 @@ class Address(Feature):
             add_info_container_to_descriptor(model, "addresses", "user_address", "principal_id")
 
 
+
+
+# !+ resolve why assembly/senate duplicate menu items in admin add legislative content....
+
 class Workspace(Feature):
     """Support for the "workspace" feature.
     """
     feature_interface = interfaces.IFeatureWorkspace
-    feature_parameters = {}
+    feature_parameters = {
+        # parameter "group_names": apply "workspace" feature only to the 
+        # specified groups (identified by their unique principal_name).
+        # Each group *instance* within which a document type may be created in 
+        # MUST be declared in this way. This is to replace assumption to-date 
+        # that a legislative document may only be created within a chamber.
+        "group_names": dict(type="space_separated_names", default=None)
+    }
     subordinate_interface = None
 
 

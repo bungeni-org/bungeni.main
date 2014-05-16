@@ -64,9 +64,10 @@ def setup_customization_ui():
     very late) that need to have been executed prior to this e.g. 
     creation of specific menus such as "context_actions".
     """
-    
+    # http://docs.zope.org/zope3/ZCML/http_co__sl__sl_namespaces.zope.org_sl_browser/menuItems/index.html
     def register_menu_item(type_key, privilege, title, for_, action,
             menu="context_actions", 
+            filter_="python: True",
             order=10,
             layer="bungeni.ui.interfaces.IBungeniSkin"
         ):
@@ -77,9 +78,10 @@ def setup_customization_ui():
                 for="{for_}"
                 action="{action}"
                 title="{title}"
+                filter="{filter_}"
                 order="{order}"
-                permission="bungeni.{type_key}.{privilege}"
                 layer="{layer}"
+                permission="bungeni.{type_key}.{privilege}"
             />"""
     
     def register_form_view(type_key, privilege, name, for_, class_,
@@ -235,23 +237,39 @@ def setup_customization_ui():
             log.debug("Setting up UI for feature %r for type %r", "workspace", type_key)
             
             # add menu item
+            # !+AUTO_UI_ZCML_MENU_ITEMS: workspace_add_parliamentary_content
             # !+workspace_feature_add(mr, oct-2012) note that an enabled
             # workspace feature also implies "add" functionality for the type
             first_tab = capi.workspace_tabs[0]
             action = "../../{first_tab}/add_{k}".format(
                 first_tab=first_tab, k=type_key)
-            register_menu_item(type_key, "Add", type_title, "*", action,
-                menu="workspace_add_parliamentary_content", order=7)
-            
+            register_menu_item(type_key, "Add", type_title, 
+                "bungeni.models.interfaces.IGroup",
+                action,
+                menu="workspace_add_parliamentary_content",
+                filter_="python: context.group_filter_menuitem(%r)" % (type_key),
+                order=7)
+            register_menu_item(type_key, "Add", type_title, 
+                "bungeni.core.interfaces.IWorkspaceContainer", 
+                action,
+                menu="workspace_add_parliamentary_content",
+                filter_="python: context.workspace_filter_menuitem(%r)" % (type_key),
+                order=7)
+
             # add menu item -> for admin ?!
+            # !+AUTO_UI_ZCML_MENU_ITEMS: context_add_parliamentary_content
             # !+ why a duplicated (almost identical) menu item for admin?
-            # !+ criteria here is having workspace enabled... but, cirterion 
+            # !+ criteria here is having workspace enabled... but, criterion 
             # should be simply that of being "parliamentary"? Do we need to 
             # formalize this distinction?
             # !+ need a formal "container attribute" naming convention!
-            action = "{k}/add".format(k=naming.plural(type_key)) 
-            register_menu_item(type_key, "Add", type_title, "*", action,
-                menu="context_add_parliamentary_content", order=7)
+            action = "{k}/add".format(k=naming.plural(type_key))
+            register_menu_item(type_key, "Add", type_title, 
+                "bungeni.models.interfaces.IGroup",
+                action,
+                menu="context_add_parliamentary_content",
+                filter_="python: context.group_filter_menuitem(%r)" % (type_key),
+                order=7)
             
             # edit menu item
             # !+ edit/delete used to be on layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
@@ -288,11 +306,13 @@ def setup_customization_ui():
                     container_property_name = naming.plural(event_type_key)
                     event_type_ti = capi.get_type_info(event_type_key)
                     # add menu item
-                    title = "{t} {e}".format(t=type_title, e=(event_type_ti.label or event_type_ti.type_key))
+                    title = "{t} {e}".format(
+                        t=type_title, 
+                        e=(event_type_ti.label or event_type_ti.type_key))
                     register_menu_item(event_type_key, "Add", "Add %s" %(title),
                         model_interface_qualname, 
                         "./%s/add" % (container_property_name), 
-                        menu="additems", 
+                        menu="additems",
                         order=21,
                         layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
                 else:

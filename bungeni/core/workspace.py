@@ -281,11 +281,11 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)).enable_eagerloads(False)
-            #filter on group
+            # filter on group
             query = self.filter_group(query, domain_class, kw)
-            #filter on title
+            # filter on title
             query = self.filter_title(query, domain_class, kw)
-            #filter on status_date
+            # filter on status_date
             query = self.filter_status_date(query, domain_class, kw)
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
@@ -296,11 +296,11 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             for domain_class, status in object_roles_domain_status.iteritems():
                 query = session.query(domain_class).filter(
                     domain_class.status.in_(status)).enable_eagerloads(False)
-                #filter on group
+                # filter on group
                 query = self.filter_group(query, domain_class, kw)
-                #filter on title
+                # filter on title
                 query = self.filter_title(query, domain_class, kw)
-                #filter on status_date
+                # filter on status_date
                 query = self.filter_status_date(query, domain_class, kw)
                 # Order results
                 query = self.order_query(query, domain_class, kw, reverse)
@@ -338,6 +338,20 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         results, count = self._query(**kw)
         return count
     
+    def workspace_filter_menuitem(self, type_key):
+        """Should this menuItem be displayed for this (workspace context, doc type, user)?
+        !+WORKSPACE_GROUP_CONTEXTS should be refined further to specific groups, 
+        not just be WorkspaceContainer-wide (for all groups)!
+        """
+        ti = capi.get_type_info(type_key)
+        group_names = ti.workflow.get_feature("workspace").p["group_names"]
+        if group_names:
+            user = utils.get_login_user()
+            for group in utils.get_user_groups(user):
+                if group.principal_name in group_names:
+                    return True
+        return False
+
 
 class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     

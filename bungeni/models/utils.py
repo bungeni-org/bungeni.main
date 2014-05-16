@@ -75,7 +75,8 @@ def get_user_delegations(user):
     return delegations
 
 def get_user_groups(user):
-    """Get all user groups"""
+    """Get all user groups (including parent groups).
+    """
     session = Session()
     query = session.query(domain.Group).join(
         domain.GroupMember).filter(

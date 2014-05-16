@@ -104,18 +104,22 @@
     />
     
     <!-- CONTENT SUBMENUS -->
+    <!-- !+AUTO_UI_ZCML_MENU_ITEMS: workspace_add_parliamentary_content -->
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.core.interfaces.IWorkspaceContainer"
         layer=".interfaces.IWorkspaceMyDocumentsSectionLayer"
-        title="Add parliamentary content..."
+        title="Add legislative content..."
         action="workspace_add_content"
         permission="bungeni.ui.workspace.View"
         submenu="workspace_add_parliamentary_content"
     />
-    <!-- !+BUNGENI_CUSTOM -->
+    <!-- !+BUNGENI_CUSTOM should this be configuration, e.g. on the Group type 
+         that supports "document content", a group "document" feature?
+    -->
+    <!-- !+AUTO_UI_ZCML_MENU_ITEMS: context_add_parliamentary_content -->
     <browser:subMenuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IChamber"
-        title="Add parliamentary content..."
+        for="bungeni.models.interfaces.IGroup"
+        title="Add legislative content..."
         action="add_parliamentary_content"
         permission="bungeni.chamber.View"
         layer=".interfaces.IAdminSectionLayer"
