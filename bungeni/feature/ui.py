@@ -247,13 +247,13 @@ def setup_customization_ui():
                 "bungeni.models.interfaces.IGroup",
                 action,
                 menu="workspace_add_parliamentary_content",
-                filter_="python: context.group_filter_menuitem(%r)" % (type_key),
+                filter_="python: context.is_type_workspaced(%r)" % (type_key),
                 order=7)
             register_menu_item(type_key, "Add", type_title, 
                 "bungeni.core.interfaces.IWorkspaceContainer", 
                 action,
                 menu="workspace_add_parliamentary_content",
-                filter_="python: context.workspace_filter_menuitem(%r)" % (type_key),
+                filter_="python: context.is_type_workspaced(%r)" % (type_key),
                 order=7)
 
             # add menu item -> for admin ?!
@@ -268,7 +268,7 @@ def setup_customization_ui():
                 "bungeni.models.interfaces.IGroup",
                 action,
                 menu="context_add_parliamentary_content",
-                filter_="python: context.group_filter_menuitem(%r)" % (type_key),
+                filter_="python: context.is_type_workspaced(%r)" % (type_key),
                 order=7)
             
             # edit menu item

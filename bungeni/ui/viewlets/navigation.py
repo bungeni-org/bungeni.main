@@ -34,7 +34,9 @@ from bungeni.core import location
 from bungeni.core.language import get_default_language
 from bungeni.ui.utils import url, debug
 from bungeni.ui import browser
+from bungeni.models.interfaces import IDoc, IGroup
 from bungeni.models.utils import get_chamber_for_context
+from bungeni.utils.naming import polymorphic_identity
 from bungeni import translate
 
 
@@ -386,7 +388,6 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             parent = context.__parent__
             assert parent is not None
             _url = url.absoluteURL(parent, self.request)
-            
             # append managed containers as child nodes            
             if include_siblings is True:
                 if IApplication.providedBy(parent):
@@ -439,6 +440,15 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         
         for key, container in containers:
             assert IAlchemistContainer.providedBy(container)
+            
+            # do not include doc containers for docs who do not specifically 
+            # declare the parent group instance as a workspace.group_name
+            if IDoc.implementedBy(container.domain_model):
+                group = container.__parent__
+                assert IGroup.providedBy(group)
+                if not group.is_type_workspaced(polymorphic_identity(container.domain_model)):
+                    continue
+            
             label = container.domain_model.__name__
             descriptor = utils.get_descriptor(container.domain_model)
             order = 999
@@ -485,4 +495,5 @@ class TopLevelContainerNavigation(NavigationTreeViewlet):
         # we require the tree to begin with a container object
         if not IReadContainer.providedBy(inst.chain[-1]):
             return
+
 

@@ -130,3 +130,5 @@ class SerializationManager(form.PageForm, browser.BungeniBrowserView):
         self.status = _("Sent ${item_count} items for serialization",
             mapping = { "item_count": item_count }
         )
+
+

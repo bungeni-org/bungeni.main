@@ -588,14 +588,16 @@ class Group(Principal):
         else:
             return True
 
-    def group_filter_menuitem(self, type_key):
-        """Should this menuItem be displayed for this (group context, doc type, user)?
+    def is_type_workspaced(self, type_key):
+        """Is this type workspaced within this group context (for user)?
         """
         from bungeni.capi import capi
         ti = capi.get_type_info(type_key)
-        group_names = ti.workflow.get_feature("workspace").p["group_names"]
-        return self.principal_name in group_names
-
+        workspace_feature = ti.workflow.get_feature("workspace")
+        if workspace_feature is not None:
+            group_names = workspace_feature.p["group_names"]
+            return self.principal_name in group_names
+        return False
 
 class GroupAudit(Audit):
     """An audit record for a group.

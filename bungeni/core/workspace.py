@@ -338,18 +338,20 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         results, count = self._query(**kw)
         return count
     
-    def workspace_filter_menuitem(self, type_key):
-        """Should this menuItem be displayed for this (workspace context, doc type, user)?
+    def is_type_workspaced(self, type_key):
+        """Is this type workspaced for this !+workspace context (for user)?
         !+WORKSPACE_GROUP_CONTEXTS should be refined further to specific groups, 
         not just be WorkspaceContainer-wide (for all groups)!
         """
         ti = capi.get_type_info(type_key)
-        group_names = ti.workflow.get_feature("workspace").p["group_names"]
-        if group_names:
-            user = utils.get_login_user()
-            for group in utils.get_user_groups(user):
-                if group.principal_name in group_names:
-                    return True
+        workspace_feature = ti.workflow.get_feature("workspace")
+        if workspace_feature is not None:
+            group_names = workspace_feature.p["group_names"]
+            if group_names:
+                user = utils.get_login_user()
+                for group in utils.get_user_groups(user):
+                    if group.principal_name in group_names:
+                        return True
         return False
 
 
