@@ -217,7 +217,7 @@ class IWorkspaceTabsUtility(interface.Interface):
         """
     def set_content(role, tab, workflow_name, status):
         """Set workspace info"""
-    def register_item_type(domain_class, item_type):
+    def register_domain_type(domain_class, type_key):
         """Set the domain class and type info that is used to generate URLS"""
     def get_domain(key):
         """Given a type, returns the domain_class"""

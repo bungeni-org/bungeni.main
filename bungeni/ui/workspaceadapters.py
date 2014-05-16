@@ -32,8 +32,7 @@ class WorkspaceContentAdapter(object):
     @property
     def type(self):
         descriptor = utils.get_descriptor(self.context.__class__)
-        item_type = descriptor.display_name if descriptor \
-            else self.context.type
+        item_type = descriptor.display_name if descriptor else self.context.type
         request = get_request()
         return translate(item_type, context=request)
 
@@ -72,8 +71,10 @@ class WorkspaceContentAdapter(object):
                 i18n_langs = []
                 locale = locales.getLocale(get_default_language().split("-")[0], None)
                 for lang in untranslated:
-                    if (locale and locale.displayNames and 
-                        locale.displayNames.languages):
+                    if (locale and 
+                            locale.displayNames and 
+                            locale.displayNames.languages
+                        ):
                         i18n_langs.append(
                             locale.displayNames.languages.get(lang, lang))
                         continue
@@ -81,3 +82,5 @@ class WorkspaceContentAdapter(object):
                 return ", ".join(i18n_langs)
             return translate(_("translated"), context=get_request())
         return translate("n/a", context=get_request())
+
+

@@ -65,8 +65,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
         primary_key = mapper.primary_key_from_instance(unproxied)
         domain_class = instance.__class__
         workspace_utility = component.getUtility(IWorkspaceTabsUtility)
-        item_type = workspace_utility.get_type(domain_class)
-        return "%s-%d" % (item_type, primary_key[0])
+        type_key = workspace_utility.get_type(domain_class)
+        return "%s-%d" % (type_key, primary_key[0])
 
     @staticmethod
     def value_key(identity_key):
@@ -337,7 +337,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             return self.tab_count_cache[principal.id].count
         results, count = self._query(**kw)
         return count
-
+    
 
 class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
@@ -397,7 +397,8 @@ class WorkspaceTabsUtility(object):
     interface.implements(IWorkspaceTabsUtility)
 
     workspaces = {}
-    domain_type = {}
+    domain_types_by_key = {}
+    domain_types_by_type = {}
 
     def set_content(self, role, tab, domain_class, status):
         """ Sets the workspace info
@@ -411,22 +412,22 @@ class WorkspaceTabsUtility(object):
         if status not in self.workspaces[role][tab][domain_class]:
             self.workspaces[role][tab][domain_class].append(status)
 
-    def register_item_type(self, domain_class, item_type):
-        """ Stores domain_class -> item_type and vice versa in a dictionary eg.
+    def register_domain_type(self, domain_class, type_key):
+        """ Stores domain_class -> type_key and vice versa in a dictionary eg.
         domain.Bill -> bill. Used by the Workspace Container to set the
         contained object names and to retrieve the contained objects given
         a name.
         """
-        if item_type in self.domain_type.keys():
+        if type_key in self.domain_types_by_key:
             raise ValueError(
                 "Multiple workspace declarations with same name - %s") % (
-                    item_type)
-        if domain_class in self.domain_type.keys():
+                    type_key)
+        if domain_class in self.domain_types_by_type:
             raise ValueError(
                 "Multiple workspace domain classes with same name - %s") % (
                     domain_class)
-        self.domain_type[item_type] = domain_class
-        self.domain_type[domain_class] = item_type
+        self.domain_types_by_key[type_key] = domain_class
+        self.domain_types_by_type[domain_class] = type_key
     
     def get_role_domains(self, role, tab):
         """Returns a list of domain classes that a role will see for a
@@ -438,16 +439,14 @@ class WorkspaceTabsUtility(object):
         return []
 
     def get_domain(self, key):
-        """Passed a type string returns the domain class."""
-        if key in self.domain_type:
-            return self.domain_type[key]
-        return None
+        """Passed a type string returns the domain class or None.
+        """
+        return self.domain_types_by_key.get(key, None)
 
-    def get_type(self, key):
-        """Passed a domain class returns a string."""
-        if key in self.domain_type:
-            return self.domain_type[key]
-        return None
+    def get_type(self, domain_class):
+        """Passed a domain class returns the type_key or None.
+        """
+        return self.domain_types_by_type.get(domain_class, None)
 
     def get_tab(self, role, domain_class, status):
         """Returns the tab an object should be in, given its domain class,
@@ -487,8 +486,8 @@ def load_workspace(file_name, domain_class, workflow):
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)
     workspace = capi.schema.validate_file_rng("workspace", file_path)
-    item_type = file_name.split(".")[0]
-    workspace_utility.register_item_type(domain_class, item_type)
+    type_key = file_name.split(".")[0]
+    workspace_utility.register_domain_type(domain_class, type_key)
     for state in workspace.iterchildren(tag="state"):
         # Raises invalid state error if there is no such state defined in the
         # workflow

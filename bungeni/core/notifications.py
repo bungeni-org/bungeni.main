@@ -377,7 +377,8 @@ class NotificationsUtility(object):
     implements(INotificationsUtility)
     time_based = {}
     transition_based = {}
-    domain_type = {}
+    domain_types_by_key = {}
+    domain_types_by_type = {}
 
     def set_transition_based_notification(self, domain_class, state, roles):
         if domain_class not in self.transition_based:
@@ -422,30 +423,31 @@ class NotificationsUtility(object):
     #!+NOTIFICATIONS(miano, feb 2012) Similar to
     # bungeni.core.workspace.WorkspaceUtility
     # TODO - make more generic
-    def register_item_type(self, domain_class, item_type):
-        """ Stores domain_class -> item_type and vice versa in a dictionary eg.
+    def register_domain_type(self, domain_class, type_key):
+        """ Stores domain_class -> type_key and vice versa in a dictionary eg.
         domain.Bill -> bill.
         """
-        if item_type in self.domain_type.keys():
-            raise ValueError("Multiple notification declarations"
-                             "with same name - %s") % (item_type)
-        if domain_class in self.domain_type.keys():
-            raise ValueError("Multiple notification domain classes"
-                             "with same name - %s") % (domain_class)
-        self.domain_type[item_type] = domain_class
-        self.domain_type[domain_class] = item_type
-
+        if type_key in self.domain_types_by_key:
+            raise ValueError(
+                "Multiple notification declarations with same name - %s") % (
+                    type_key)
+        if domain_class in self.domain_types_by_type:
+            raise ValueError(
+                "Multiple notification domain classes with same name - %s") % (
+                    domain_class)
+        self.domain_types_by_key[type_key] = domain_class
+        self.domain_types_by_type[domain_class] = type_key
+    
     def get_domain(self, key):
-        """Passed a type string returns the domain class"""
-        if key in self.domain_type:
-            return self.domain_type[key]
-        return None
+        """Passed a type string returns the domain class or None.
+        """
+        return self.domain_types_by_key.get(key, None)
 
-    def get_type(self, key):
-        """Passed a domain class returns a string"""
-        if key in self.domain_type:
-            return self.domain_type[key]
-        return None
+    def get_type(self, domain_class):
+        """Passed a domain class returns the type_key or None.
+        """
+        return self.domain_types_by_type.get(domain_class, None)
+    #!+/NOTIFICATIONS
 
 component.provideUtility(NotificationsUtility())
 
@@ -458,8 +460,8 @@ def load_notification_config(file_name, domain_class):
     path = capi.get_path_for("notifications")
     file_path = os.path.join(path, file_name)
     notification = capi.schema.validate_file_rng("notifications", file_path)
-    item_type = file_name.split(".")[0]
-    notifications_utility.register_item_type(domain_class, item_type)
+    type_key = file_name.split(".")[0]
+    notifications_utility.register_domain_type(domain_class, type_key)
     for notify in notification.iterchildren("notify"):
         roles = capi.schema.qualified_roles(notify.get("roles").split())
         for role in roles:
