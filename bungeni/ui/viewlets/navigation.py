@@ -34,8 +34,8 @@ from bungeni.core import location
 from bungeni.core.language import get_default_language
 from bungeni.ui.utils import url, debug
 from bungeni.ui import browser
-from bungeni.models.interfaces import IDoc, IGroup
-from bungeni.models.utils import get_chamber_for_context
+from bungeni.models.interfaces import IDoc, IGroup, IGroupMember
+from bungeni.models.utils import get_chamber_for_context, get_ancestor_group_for_context
 from bungeni.utils.naming import polymorphic_identity
 from bungeni import translate
 
@@ -444,9 +444,10 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             # do not include doc containers for docs who do not specifically 
             # declare the parent group instance as a workspace.group_name
             if IDoc.implementedBy(container.domain_model):
-                group = container.__parent__
+                group = get_ancestor_group_for_context(container)
                 assert IGroup.providedBy(group)
-                if not group.is_type_workspaced(polymorphic_identity(container.domain_model)):
+                doc_type_key = polymorphic_identity(container.domain_model)
+                if not group.is_type_workspaced(doc_type_key):
                     continue
             
             label = container.domain_model.__name__

@@ -75,7 +75,7 @@ def make_workspace_url(obj_id, type_name, status, context, chamber_id):
 def get_parl_container(context, chamber_id):
     parl = None
     chamber_key = container_obj_key(chamber_id)
-    container = getattr_ancestry(context, None, 
+    container = getattr_ancestry(context,
         acceptable=model_ifaces.IChamberContainer.providedBy)
     if not container:
         #check locally for container
@@ -345,7 +345,7 @@ class SearchBox(browser.BungeniViewlet):
 
     @property
     def search_section(self):
-        return getattr_ancestry(self.context, None,
+        return getattr_ancestry(self.context,
             acceptable=ISearchableSection.providedBy)
 
     @property
