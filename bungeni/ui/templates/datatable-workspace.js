@@ -12,6 +12,7 @@ var %(table_id)s = {};
                                                        '%(table_id)s',
                                                        %(item_types)s,
                                                        %(status)s,
+                                                       %(document_groups)s,
                                                        %(rows_per_page)s)
                 });
 })(jQuery);

@@ -414,44 +414,7 @@
         });
     }
 
-    /**
-     * Generate new dom entries for contextual add menu.
-     **/
-    var update_add_menu = function(data){
-        var menu_items = JSON.parse(data);
-        var container = $("#workspace_add_content ul");
-        $(container).empty();
-        for (index in menu_items){
-            var entry = menu_items[index];
-            var list_element = $("<li>", { class: 'separator' });
-            var link_element = $("<a>", {
-                href: entry.url,
-                text: entry.title,
-                title: entry.title,
-                id: entry.extra.id,
-            });
-            container.append(list_element.append(link_element));
-        }
-    }
-    /**
-     * Requests add menu items for current context.
-     * Display only items addable within a particular group.
-     **/
-    var workspace_refresh_add_menu = function(){
-        
-        var add_menu_url = "./get_workspace_menu.json";
-        $.ajax({
-            type: "GET",
-            url: add_menu_url,
-            cache: false,
-            success: function(data){
-                update_add_menu(data);
-            }   
-        });
-    }
-    
-    $.fn.yuiWorkspaceDataTable = function (context_name, link_url, data_url, fields, columns, table_id, item_type, status, rows_per_page) {
-        YAHOO.bungeni.workspace.WORKSPACE_CONTEXT = true;
+    $.fn.yuiWorkspaceDataTable = function (context_name, link_url, data_url, fields, columns, table_id, item_type, status, document_groups, rows_per_page) {
         if (!YAHOO.widget.DataTable) {
             return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
         }
@@ -496,8 +459,9 @@
                 var qstr = '&filter_type=' + item_type.val();
                 var status = $("#input_status option:selected");
                 qstr = qstr + '&filter_status=' + status.val();
-                if(YAHOO.bungeni.workspace.SELECTED_INBOX != null){
-                    qstr = qstr + '&filter_group=' + YAHOO.bungeni.workspace.SELECTED_INBOX;
+                var document_group = $("#input_group_id option:selected").val();
+                if(document_group != null){
+                    qstr = qstr + '&filter_group=' + document_group;
                 }
                 return qstr;
             };
@@ -544,9 +508,7 @@
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
        
         var fnRequestReceived = function() {
-            var cache = YAHOO.bungeni.workspace.CACHE_TAB_COUNT.toString();
-            workspace_tab_count_ajax(cache);
-            workspace_refresh_add_menu();
+            workspace_tab_count_ajax("true");
             jQuery.unblockUI();
         };
 
@@ -591,7 +553,8 @@
         var thEl = name_column.getThEl();
         thEl.innerHTML = "";
         thEl.appendChild(input);
-        // Set the html for the item_types
+
+        // Set up item type filter
         var type_column = table_columns.getColumn(1);
         thEl = type_column.getThEl();
         var item_type_select = document.createElement('select');
@@ -610,6 +573,8 @@
         }
         thEl.innerHTML = "";
         thEl.appendChild(item_type_select);
+
+        //Set up status filter
         var status_column = table_columns.getColumn(2);
         var status_select = document.createElement('select');
         status_select.setAttribute('type', 'text');
@@ -617,7 +582,6 @@
         var status_select_id = 'input_' + status_column.getKey();
         status_select.setAttribute('id', status_select_id);
         thEl = status_column.getThEl();
-        i = 0;
         for (prop in status) {
             var s = prop.split("+");
             if (s.length == 1) {
@@ -633,6 +597,31 @@
         }
         thEl.innerHTML = "";
         thEl.appendChild(status_select);
+
+        //Set up document group filter
+        var group_column = table_columns.getColumn(5);
+        if (group_column != null){
+            var group_select = document.createElement('select');
+            group_select.setAttribute('type', 'text');
+            group_select.setAttribute('name', 'filter_' + group_column.getKey());
+            var group_select_id = 'input_' + group_column.getKey();
+            group_select.setAttribute('id', group_select_id);
+            thEl = group_column.getThEl();
+            for (index in document_groups) {
+                var option = document.createElement('option');
+                option.value = document_groups[index][0];
+                option.text = document_groups[index][1];
+                try {
+                    group_select.add(option, null);
+                } catch (ex) {
+                    group_select.add(option); // IE only
+                }
+            }
+            thEl.innerHTML = "";
+            thEl.appendChild(group_select);
+        }
+
+        // Set up date filter
         var status_date_column = table_columns.getColumn(3);
         input = document.createElement('input');
         input.setAttribute('type', 'text');

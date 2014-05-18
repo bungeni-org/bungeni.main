@@ -10,12 +10,9 @@ import json
 import zope.interface
 from zope.app.component.hooks import getSite
 import zope.publisher.interfaces.browser
-from zope.dublincore.interfaces import IDCDescriptiveProperties
 from bungeni.ui.utils import url
 from bungeni.utils import common, misc
-from bungeni.models import utils as model_utils
 from bungeni.core.language import get_default_language
-from bungeni.core.workspace import CURRENT_INBOX_COOKIE_NAME
 from bungeni.ui.calendar import data
 from bungeni.capi import capi
 from bungeni import _, translate
@@ -38,7 +35,6 @@ cached_props = CachedProperties()
 RESOURCE_MAPPING = {
     "scheduler-globals.js": "scheduler_globals",
     "calendar-globals.js": "calendar_globals",
-    "workspace-globals.js": "workspace_globals"
 }
 
 RESOURCE_HEADERS = {}
@@ -270,20 +266,4 @@ class DynamicDirectoryFactory(object):
         return """var calendar_globals = %s;""" % json.dumps(
             get_globals("CALENDAR_GLOBALS", target_language=self.language)
         )
-
-    def workspace_globals(self):
-        user = model_utils.get_login_user()
-        groups = [ g for g in model_utils.get_user_groups(user) ]
-        groups.sort(key=lambda g:g.group_id)
-        group_data = {
-            "groups": [ dict(group_id=str(g.group_id),
-                name=IDCDescriptiveProperties(g).short_title)
-                for g in groups ],
-            "all_documents_tab": translate('all documents',
-                target_language=self.language),
-            "current_inbox": self.request.getCookies().get(
-                CURRENT_INBOX_COOKIE_NAME, "")
-        }
-        return """var workspace_globals = %s;""" % json.dumps(group_data)
-
 

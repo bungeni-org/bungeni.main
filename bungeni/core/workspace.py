@@ -43,7 +43,6 @@ from bungeni.ui.container import get_date_strings, string_to_date
 from bungeni.core.workflows.utils import view_permission
 
 TabCountRecord = namedtuple("TabCountRecord", ["timestamp", "count"])
-CURRENT_INBOX_COOKIE_NAME = 'workspace.current_inbox'
 
 class WorkspaceBaseContainer(AlchemistContainer):
     __name__ = __parent__ = None
@@ -149,6 +148,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
                 group_id = int(kw.get("filter_group"))
                 if hasattr(domain_class, 'group_id'):
                     query = query.filter(domain_class.group_id==group_id)
+                elif hasattr(domain_class, 'chamber_id'):
+                    query = query.filter(domain_class.chamber_id==group_id)
             except ValueError:
                 pass
         return query
@@ -256,16 +257,9 @@ class WorkspaceBaseContainer(AlchemistContainer):
         chamber = utils.get_user_chamber(utils.get_login_user())
         item.chamber_id = chamber.group_id
         group_id = chamber.group_id
-        request = common.get_request()
-        inbox_id = request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
-        if inbox_id is not None:
-            try:
-                group_id = int(inbox_id)
-            except ValueError:
-                pass
         item.group_id = group_id
         session.add(item)
-    
+
     def is_type_workspaced(self, type_key):
         """Is this type workspaced for this !+workspace context (for user)?
         !+WORKSPACE_GROUP_CONTEXTS should be refined further to specific groups, 
@@ -281,8 +275,6 @@ class WorkspaceBaseContainer(AlchemistContainer):
                     if group.principal_name in group_names:
                         return True
         return False
-
-
 
 class WorkspaceContainer(WorkspaceBaseContainer):
     interface.implements(IWorkspaceContainer)
@@ -355,28 +347,10 @@ class WorkspaceContainer(WorkspaceBaseContainer):
         results, count = self._query(**kw)
         return count
 
-
 class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     
     def __init__(self, context):
         self.context = context
-        #!+WORKSPACE_INBOXES(mb, may-2014) Disabled permission checking
-        """
-        if IWorkspaceContainer.providedBy(self.context):
-            request = common.get_request()
-            group_id = request.getCookies().get(CURRENT_INBOX_COOKIE_NAME)
-            if group_id is not None:
-                try:
-                    group_id = int(group_id)
-                except ValueError:
-                    pass
-                else:
-                    group = utils.get_group(group_id)
-                    if group:
-                        self.object_type = group.type
-                        self.oid = group_id
-                        return
-        """
         chamber = utils.get_user_chamber(utils.get_login_user())
         if chamber:
             self.object_type = chamber.type
@@ -579,6 +553,7 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
         for domain_class, status in domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)).enable_eagerloads(False)
+            query = self.filter_group(query, domain_class, kw)
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
             query = self.filter_status_date(query, domain_class, kw)
@@ -616,6 +591,7 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
                     ).enable_eagerloads(False
                     ).join(domain.UserSubscription
                     ).filter(domain.UserSubscription.principal_id == user.user_id)
+                query = self.filter_group(query, domain_class, kw)
                 query = self.filter_title(query, domain_class, kw)
                 #filter on status_date
                 query = self.filter_status_date(query, domain_class, kw)
@@ -626,7 +602,6 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                          reverse=reverse)
         return (results, count)
-
 
 class WorkspaceGroupsContainer(WorkspaceBaseContainer):
 
@@ -717,5 +692,4 @@ class WorkspaceSchedulableContainer(WorkspaceUnderConsiderationContainer):
                 states = workflow.get_state_ids(tagged=["public"])
                 domain_status_map[ti.domain_model] = states
         return domain_status_map
-
 

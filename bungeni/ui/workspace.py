@@ -1,5 +1,6 @@
 import os
 import simplejson
+
 from sqlalchemy import distinct
 from zope import component
 from zope.publisher.browser import BrowserPage
@@ -10,7 +11,7 @@ from zope.formlib import form
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zc.resourcelibrary import need
-from zope.browsermenu.interfaces import IBrowserMenu
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.alchemist.container import contained
 from bungeni.alchemist.ui import createInstance
@@ -23,31 +24,37 @@ from bungeni.core.interfaces import (IWorkspaceTabsUtility,
     IWorkspaceUnderConsiderationContainer,
     IWorkspaceGroupsContainer,
 )
+
 from bungeni.models.interfaces import ITranslatable
+from bungeni.models import domain
+from bungeni.models import utils as model_utils
+
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
 from bungeni.core.workspace import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
-from bungeni.core.workspace import CURRENT_INBOX_COOKIE_NAME
 #from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.utils import register
 from bungeni.capi import capi
 from bungeni.ui.widgets import date_input_search_widget
-from bungeni.models import domain
+
 from bungeni import _, translate
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 
 
-def set_inbox_cookie(request):
-    """Sets current inbox group ID
+def get_document_groups():
+    """Get Document Groups
     """
-    current_inbox = request.get("filter_group", None)
-    if current_inbox is not None:
-        request.response.setCookie(CURRENT_INBOX_COOKIE_NAME,
-            current_inbox, path='/')
+    group_options = [("", "-")]
+    user = model_utils.get_login_user()
+    groups = [ g for g in model_utils.get_user_groups(user) ]
+    group_values = [ (g.group_id, IDCDescriptiveProperties(g).short_title)
+        for g in groups ]
+    group_options += group_values
+    return group_options
 
 class WorkspaceField(object):
 
@@ -69,8 +76,8 @@ workspace_doc_fields = [
         _("workspace_column_status_date", default="status date")),
     WorkspaceField("translation_status", 
         _("workspace_column_translation_status", default="translations")),
-    WorkspaceField("document_group", 
-        _("workspace_column_document_group", default="document group"))
+    WorkspaceField("group_id", 
+        _("workspace_column_document_group", default="group"))
     ]
 
 
@@ -156,10 +163,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
         filter_status_date = self.request.get("filter_status_date", "")
-        if "filter_group" in self.request:
-            filter_group = self.request.get("filter_group")
-        else:
-            filter_group = self.request.getCookies().get(CURRENT_INBOX_COOKIE_NAME, "")
+        filter_group = self.request.get("filter_group", "")
         results, self.set_size = context.query(
             filter_title=filter_title,
             filter_type=filter_type,
@@ -181,7 +185,6 @@ class WorkspaceContainerJSONListing(BrowserPage):
     def __call__(self):
         start, limit = self.get_offsets()  # ? start=0&limit=25
         lang = get_default_language()
-        set_inbox_cookie(self.request)
         return self.json_batch(start, limit, lang)
 
 
@@ -192,9 +195,6 @@ COLUMN_DEFS = {
     "default": """{label:"%(label)s", key:"sort_%(key)s",
         sortable:true, resizeable:true,
         children: [{key:"%(key)s", sortable:false}]}""",
-    "document_group": """{label:"%(label)s", key:"%(key)s",
-        sortable:false, resizeable:false,
-        children: [{key:"%(key)s", label:"&nbsp;", sortable:false}]}""",
     "translation_status": """{label:"%(label)s", key:"%(key)s",
         sortable:false, resizeable:false,
         children: [{key:"%(key)s", label:"&nbsp;", sortable:false}]}""",
@@ -259,6 +259,8 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         config = super(WorkspaceDataTableFormatter, self).getDataTableConfig()
         item_types = self.get_item_types()
         config["item_types"] = simplejson.dumps(item_types)
+        document_groups = get_document_groups()
+        config["document_groups"] = simplejson.dumps(document_groups)
         all_item_status = dict()
         status = dict([("", "-")])
         for item_type in item_types:
@@ -303,7 +305,6 @@ class WorkspaceContainerListing(BrowserPage):
     workspace_fields = workspace_doc_fields
 
     def __call__(self):
-        need("workspace-multi-inbox")
         need("yui-datatable")
         self.context = removeSecurityProxy(self.context)
         return self.render()
@@ -365,6 +366,8 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
         config = table.ContextDataTableFormatter.getDataTableConfig(self)
         item_types = self.get_item_types()
         config["item_types"] = simplejson.dumps(item_types)
+        document_groups = get_document_groups()
+        config["document_groups"] = simplejson.dumps(document_groups)
         all_item_status = dict()
         status = dict([("", "-")])
         for item_type in item_types:
@@ -406,6 +409,7 @@ class WorkspaceGroupsFormatter(WorkspaceDataTableFormatter):
         item_types = self.get_item_types()
         config["item_types"] = simplejson.dumps(item_types)
         config["status"] = simplejson.dumps(dict([("", "-")]))
+        config["document_groups"] = "[]"
         return config
 
 
@@ -431,33 +435,11 @@ class WorkspaceTabCount(BrowserPage):
         read_from_cache = True
         if self.request.get("cache") == "false":
             read_from_cache = False
-            #include group filter
-            filters["filter_group"] = self.request.getCookies().get(
-                CURRENT_INBOX_COOKIE_NAME, "")
         for key in keys:
             data[key] = app["workspace"]["my-documents"][key].count(
                 read_from_cache, **filters)
         return simplejson.dumps(data)
 
-@register.view(WorkspaceSection, name="switchgroup",
-    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
-@register.view(IWorkspaceContainer, name="switchgroup",
-    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
-class WorkspaceSwitchGroup(BrowserPage):
-
-    def __call__(self):
-        set_inbox_cookie(self.request)
-        return self.request.response.redirect("./")
-
-@register.view(IWorkspaceContainer, name="get_workspace_menu.json",
-    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
-class WorkspaceGroupMenu(BrowserPage):
-
-    def __call__(self):
-        menu = component.queryUtility(IBrowserMenu,
-            "workspace_add_parliamentary_content")
-        items = menu.getMenuItems(self.context, self.request)
-        return simplejson.dumps(items)
 
 class WorkspaceAddForm(AddForm):
     

@@ -50,7 +50,7 @@ class WorkspaceContentAdapter(object):
         return date_formatter.format(value)
 
     @property
-    def document_group(self):
+    def group_id(self):
         if IDoc.providedBy(self.context):
             if hasattr(self.context, "group_id") and self.context.group is not None:
                 return IDCDescriptiveProperties(self.context.group).short_title
