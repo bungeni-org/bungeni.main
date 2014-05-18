@@ -241,13 +241,12 @@ class AppSetup(object):
         for type_key, ti in capi.iter_type_info():
             if model_interfaces.IScheduleContent.implementedBy(ti.domain_model):
                 container_property_name = naming.plural(type_key)
-                container_class_name = naming.container_class_name(type_key)
+                container_name = naming.model_name(container_property_name)
                 if not ws_sched.has_key(container_property_name):
-                    ws_sched[container_property_name] = \
-                        getattr(domain, container_class_name)()
-                    to_locatable_container(
-                        ti.domain_model, ws_sched[container_property_name])
-        
+                    ws_sched[container_property_name] = QueryContent(
+                        container_getter(get_chamber_for_context, container_property_name),
+                        title=container_name,
+                        description=container_name)        
         
         ##########
         # Admin User Interface
