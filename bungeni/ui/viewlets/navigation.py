@@ -34,7 +34,7 @@ from bungeni.core import location
 from bungeni.core.language import get_default_language
 from bungeni.ui.utils import url, debug
 from bungeni.ui import browser
-from bungeni.models.interfaces import IDoc, IGroup, IGroupMember
+from bungeni.models.interfaces import IDoc, IGroup
 from bungeni.models.utils import get_chamber_for_context, get_ancestor_group_for_context
 from bungeni.utils.naming import polymorphic_identity
 from bungeni import translate
