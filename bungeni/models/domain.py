@@ -1206,12 +1206,11 @@ class OAuthAccessToken(Entity):
 
 
 # !+CUSTOM
-
 class AgendaItem(Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
     interface.implements(
-        interfaces.IBungeniParliamentaryContent, # !+only used by AgendaItem?! Get rid of it, or rename accordingly
+        interfaces.ILegislativeContent,
         interfaces.IAgendaItem,
     )
 

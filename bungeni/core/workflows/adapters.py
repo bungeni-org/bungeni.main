@@ -8,10 +8,10 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows")
 
-from lxml import etree
+#from lxml import etree
 from zope import component
 from zope.interface import classImplements
-from zope.securitypolicy.interfaces import IRole, IRolePermissionMap
+from zope.securitypolicy.interfaces import IRolePermissionMap #, IRole
 from zope.dottedname.resolve import resolve
 from bungeni.models import interfaces
 from bungeni.core.workflow import xmlimport
@@ -19,7 +19,7 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
     IStateController, IWorkflowController
 from bungeni.core.workflow.states import StateController, WorkflowController, \
     Workflow, get_object_state_rpm, get_head_object_state_rpm
-import bungeni.core.audit
+import bungeni.core.audit #!+
 from bungeni.alchemist.utils import inisetattr
 from bungeni.utils import naming, misc
 from bungeni.capi import capi

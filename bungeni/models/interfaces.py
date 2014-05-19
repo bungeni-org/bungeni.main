@@ -126,22 +126,38 @@ class ISerializable(interface.Interface):
     """Marker interface for serializable types"""
 
 class IBungeniContent(interface.Interface):
-    """Parliamentary content
-    !+IAlchemistContent merge?
+    """Marker for Bungeni Content (all documents, not only legislative).
     
-    !+IBungeniContent(mr, nov-2011) clarify distinction, 
-    in intention and use, between the following interfaces: 
-    IBungeniParliamentaryContent -> IBungeniContent -> IAlchemistContent
-    Should standardize registration on the appropriate one (or on IWorklfowed).
+    Note the distinctions of the (current and intended) usage of the 
+    following related domain interfaces:
+    
+    IAlchemistContent:
+        all "bungeni content", for use by the autogeneration of
+        schemas/interfaces derived from rdb defns
+        !+IBungeniContent merge
+    IBungeniContent
+        all documents, not only legislative
+        !+IBungeniContent generalize to imply "all bungeni content" (thus
+        becoming equivalent to IAlchemistContent) and merge, 
+        standardize all registrations on the appropriate one
+    IDoc:
+        dedicated interface of the Doc system archetype (inherited also by
+        sub-archetypes i.e. Event)
+    ILegislativeContent:
+        true legislative (legal) content
     """
     # !+ schema attributes ?
     # status: sa.Unicode(48)
     # status_date: sa.DateTime(timezone=False)
 
-class IBungeniParliamentaryContent(IBungeniContent):
-    """Marker interface for true bungeni parliamentary content"""
-    # !+IBungeniContent(mr, may-2012) drop either IBungeniContent or
-    # IBungeniParliamentaryContent !
+class IDoc(IBungeniContent):
+    """Doc - dedicated interface.
+    """
+
+class ILegislativeContent(IBungeniContent):
+    """Marker interface for true legislative (legal) content.
+    """
+
 
 class ISittingContainer(IBungeniContainer): pass
 
@@ -167,16 +183,6 @@ class IEventContainer(IBungeniContainer): pass
 # !+IITEMVersion(mr, sep-2011): should IITEMVersion exist at all? if so, 
 # should it inherit from IITEM, or from IVersion? Note that 
 # IITEMVersionContainer inherits from IVersionContainer (is used by alchemist).
-
-class IDoc(IBungeniContent):
-    """Doc - dedicated interface.
-    """
-
-# !+IBungeniParliamentaryContent clean out deteriorated usage, clarify 
-# intention for these two as well as IBungeniContent, get rid of at least one
-def is_legal_doc(context):
-    # doc (but not event) types are legal documents
-    return IDoc.providedBy(context) and not IEvent.providedBy(context)
 
 
 class ISitting(interface.Interface): pass
@@ -212,6 +218,7 @@ class IItemScheduleVote(interface.Interface): pass
 class IItemScheduleVoteContainer(IAlchemistContainer): pass
 
 
+#!+CUSTOM
 class IAgendaItem(IBungeniContent): pass
 class IAgendaItemContainer(IBungeniContainer): pass
 # !+IITEMVersion

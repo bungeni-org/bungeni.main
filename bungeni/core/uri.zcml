@@ -5,13 +5,13 @@
            i18n_domain="bungeni.ui">
 
      <subscriber
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent
+        for="bungeni.models.interfaces.ILegislativeContent
           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
         handler=".uri.generate_uri"
      />
 
      <subscriber
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent
+        for="bungeni.models.interfaces.ILegislativeContent
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
         handler=".uri.generate_uri"
      />

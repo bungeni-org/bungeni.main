@@ -78,7 +78,7 @@ def assign_ownership(context):
     
     # bungeni.Owner - selected types
     owner_login = None
-    if interfaces.is_legal_doc(context):
+    if interfaces.ILegislativeContent.providedBy(context):
         owner_login = _determine_related_user(context,user_attr_name="owner").login
     elif interfaces.IUser.providedBy(context):
         owner_login = context.login
@@ -131,9 +131,9 @@ def _determine_related_user(context, user_attr_name="owner"):
 
 @capi.bungeni_custom_errors
 def get_mask(context):
-    # assert IBungeniParliamentaryContent.providedBy(context)
-    # !+IBungeniParliamentaryContent(mr, nov-2011) only context typed
-    # interfaces.IBungeniParliamentaryContent should ever get here!
+    # assert ILegislativeContent.providedBy(context)
+    # !+ILegislativeContent(mr, nov-2011) only context typed
+    # interfaces.ILegislativeContent should ever get here!
     # But for this case, all we need is that context defines a type:
     m = "PI context [%s] for get_mask must specify a type attr" % (context)
     assert hasattr(context, "type"), m
@@ -284,7 +284,7 @@ def check_agenda_finalized(context):
             return True
         #!+TYPES(mb, march-2012) There might be a more elegant approach here
         # to filter out 'text records' from the schedule
-        if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
+        if interfaces.ILegislativeContent.providedBy(schedule.item):
             schedule_feature = wfc.workflow.get_feature("schedule")
             return (wfc.state_controller.get_status() not in 
                 schedule_feature.p.scheduled_states

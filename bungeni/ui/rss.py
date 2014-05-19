@@ -496,7 +496,7 @@ class AkomantosoXMLView(BrowserView):
 class SubscriptionView(BrowserView):
     """View to manipulate with user's subscriptions (add or remove).
     """
-
+    
     def subscribe(self):
         session = Session()
         redirect_url = absoluteURL(self.context, self.request)

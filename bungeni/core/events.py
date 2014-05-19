@@ -22,7 +22,7 @@ from bungeni.models import domain
 from bungeni.models.interfaces import (
     IGroupMember, 
     IMemberRole,
-    IBungeniParliamentaryContent,
+    ILegislativeContent,
 )
 from bungeni.utils import register
 
@@ -44,7 +44,7 @@ def group_member_modified(ob, event):
                 title.end_date = ob.end_date
 
 
-@register.handler(adapts=(IBungeniParliamentaryContent, IObjectModifiedEvent))
+@register.handler(adapts=(ILegislativeContent, IObjectModifiedEvent))
 def timestamp(ob, event):
     """Set the timestamp for the item.
     """

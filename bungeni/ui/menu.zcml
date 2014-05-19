@@ -784,8 +784,8 @@
         <browser:menuItem action="workflow" title="Workflow" order="20" />
     </browser:menuItems>
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
-        action="files" 
+        for="bungeni.models.interfaces.ILegislativeContent"
+        action="files"
         title="attachments"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.attachment.View"

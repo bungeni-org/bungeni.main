@@ -118,8 +118,8 @@ class SubformRssSubscriptionViewletManager(manager.WeightOrderedViewletManager):
     """Displays rss subscription data."""
     interface.implements(ISubformRssSubscriptionViewletManager)
 
-# !+ IDoc but not IEvent
-@register.viewlet(interfaces.IBungeniParliamentaryContent, 
+
+@register.viewlet(interfaces.ILegislativeContent, 
     layer=IBungeniAuthenticatedSkin, 
     manager=ISubformRssSubscriptionViewletManager,
     name="keep-zca-happy-rsslink",

@@ -319,38 +319,28 @@
         layer=".interfaces.IRSSRepresentationLayer"
      />
 
-   <!-- Akomantoso XML views -->
-
-   <browser:page
-      name="feed.akomantoso"
-    for="bungeni.models.interfaces.IBungeniContent"
-    class=".rss.AkomantosoXMLView"
-    permission="zope.Public"
-    layer=".interfaces.IRSSRepresentationLayer"
-   />
-
-   <browser:pages
-      for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+    <!-- Akomantoso XML views -->
+    <browser:page name="feed.akomantoso"
+        for="bungeni.models.interfaces.IBungeniContent"
+        class=".rss.AkomantosoXMLView"
+        permission="zope.Public"
+        layer=".interfaces.IRSSRepresentationLayer"
+    />
+    
+    <browser:pages for="bungeni.models.interfaces.ILegislativeContent"
         class=".rss.SubscriptionView"
         permission="zope.Public"
         layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
-          <browser:page
-         name="subscribe"
-         attribute="subscribe"
-      />
-      <browser:page
-               name="unsubscribe"
-               attribute="unsubscribe"
-            />
-     </browser:pages>
+        <browser:page name="subscribe" attribute="subscribe" />
+        <browser:page name="unsubscribe" attribute="unsubscribe" />
+    </browser:pages>
 
-     <browser:page
-        name="filter"
+    <browser:page name="filter"
         for=".widgets.IAutoCompleteWidget"
         class=".widgets.AutoCompleteAjax"
         permission="zope.Public"
-     />
-
+    />
+    
     <!-- error pages -->
   <browser:page
       for="zope.security.interfaces.IException"
@@ -389,34 +379,31 @@
        />
     
     <!-- Redefining AbsoluteURL for permalink traversal section-->   
-  	<view
-       for="bungeni.models.interfaces.IBungeniParliamentaryContent"
-       name="absolute_url"
-       factory=".traversal.Permalink"
-       type="bungeni.ui.interfaces.IPermalinkSectionLayer"
-       permission="zope.Public"
-       allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
-       />
-       
+  	<view name="absolute_url"
+        for="bungeni.models.interfaces.ILegislativeContent"
+        factory=".traversal.Permalink"
+        type="bungeni.ui.interfaces.IPermalinkSectionLayer"
+        permission="zope.Public"
+        allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
+    />
     <view
-       for="bungeni.models.interfaces.IBungeniParliamentaryContent"
-       factory=".traversal.Permalink"
-       type="bungeni.ui.interfaces.IPermalinkSectionLayer"
-       permission="zope.Public"
-       provides="zope.traversing.browser.interfaces.IAbsoluteURL"
-       />
+        for="bungeni.models.interfaces.ILegislativeContent"
+        factory=".traversal.Permalink"
+        type="bungeni.ui.interfaces.IPermalinkSectionLayer"
+        permission="zope.Public"
+        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+    />
     
     <!-- premalink view for parliamentary items -->
-    <browser:view
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
-        name="permalink"
+    <browser:view name="permalink"
+        for="bungeni.models.interfaces.ILegislativeContent"
         class=".traversal.Permalink"
         permission="zope.Public"
-        />
+    />
         
    
     <!-- View to store and retreive the document that the user is being editing -->
-    <!-- !+ was for="bungeni.models.interfaces.IBungeniParliamentaryContent" but 
+    <!-- !+ was for="bungeni.models.interfaces.ILegislativeContent" but 
     that fails for custom types that are simply inheriting from Doc/IDoc.
     Should be for IDoc? Should we qualify in configuration whether a 
     custom type should be considered as ParliamentaryContent?

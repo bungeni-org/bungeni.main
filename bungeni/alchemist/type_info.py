@@ -11,6 +11,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist.type_info")
 
+from zope.interface import classImplements
 from zope.interface.interfaces import IInterface
 from zope.security.proxy import removeSecurityProxy
 from zope.dottedname.resolve import resolve
@@ -360,6 +361,15 @@ def register_new_custom_type(type_key, sys_archetype_key, custom_archetype_key,
         workflow_key = type_key
     if descriptor_key is None:
         descriptor_key = type_key    
+    
+    # ILegislativeContent === sys_archetype_key=="doc"
+    # Provide convenience marker to easily distinguish between 
+    # "system super archetype" and "system sub archetype", specifically 
+    # between Doc and Event, i.e. we want to mark all types implementing
+    # IDoc but not IEvent (that also always implement IDoc).
+    if sys_archetype_key == "doc":
+        if not interfaces.ILegislativeContent.implementedBy(domain_model):
+            classImplements(domain_model, interfaces.ILegislativeContent)
     
     # type_info entry
     ti = TI(type_key, workflow_key, domain_iface, domain_model, archetype_model)

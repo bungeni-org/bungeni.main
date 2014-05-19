@@ -24,7 +24,7 @@ from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
 from bungeni.core.interfaces import IWorkspaceContainer
 from bungeni.models.interfaces import (
-    IBungeniParliamentaryContent,
+    ILegislativeContent,
     IGroup,
     IGroupMember,
 )
@@ -236,7 +236,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
                 context=self.request)
         self.setupActions(transition_id)
         
-        if (IBungeniParliamentaryContent.providedBy(self.context) and
+        if (ILegislativeContent.providedBy(self.context) and
                 get_mask(self.context) == "manual" and 
                 not self.context.registry_number
             ):
@@ -335,7 +335,7 @@ class WorkflowChangeStateView(WorkflowView):
         else:
             self.update()
         
-        if (IBungeniParliamentaryContent.providedBy(self.context) and
+        if (ILegislativeContent.providedBy(self.context) and
                 get_mask(self.context) == "manual" and 
                 not self.context.registry_number
             ):
