@@ -79,7 +79,7 @@ def assign_ownership(context):
     # bungeni.Owner - selected types
     owner_login = None
     if interfaces.ILegislativeContent.providedBy(context):
-        owner_login = _determine_related_user(context,user_attr_name="owner").login
+        owner_login = _determine_related_user(context, user_attr_name="owner").login
     elif interfaces.IUser.providedBy(context):
         owner_login = context.login
     # !+GROUP_AS_GROUP_OWNER having the group itself be the "owner principal" is 

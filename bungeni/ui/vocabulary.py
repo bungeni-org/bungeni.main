@@ -1004,14 +1004,14 @@ class GroupAssignmentSource(GroupSource):
             assert IGroupAssignment.providedBy(context)
             assign_doc = context.doc
         assert assign_doc.group_assignment_feature.enabled
-                
+        
         assigned_group_ids = [ assignment.principal.principal_id
             for assignment in assign_doc.sa_group_assignments ]        
         if IGroupAssignment.providedBy(context):
             assigned_group_ids.remove(context.principal.principal_id)
         
         group_types = assign_doc.group_assignment_feature.p["assignable_group_types"]
-
+        
         groups_query = Session().query(domain.Group
             ).filter(sql.not_(domain.Group.principal_id.in_(assigned_group_ids))
             ).order_by(domain.Group.short_name, domain.Group.full_name)

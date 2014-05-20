@@ -22,6 +22,9 @@ from bungeni.utils.misc import describe
 from bungeni import _
 
 
+# !+CHAMBER_CUSTOM generalize spawn_doc to arbitrary group (not chamber)
+# allow from any type of group to any type of group e.g. from chamber to committee?
+# use target_group_name instead of target_chamber_type ?
 def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id):
     """Utility to help create parametrized "transfer to chamber" actions.
     Returns the newly spawned doc.
@@ -61,12 +64,13 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
     target_doc = target_ti.domain_model()
     session.add(target_doc)
     
-    # set "key" values
+    # set new "key" values
     target_doc.chamber = target_chamber
-    target_doc.head = source_doc
+    target_doc.group = target_chamber
     target_doc.owner_id = source_doc.owner.user_id # !+PrincipalRoleMap
+    target_doc.head = source_doc
     
-    # transfer values
+    # carry-over other values
     for attr_name in [
             #files -> not carried over !+ parametrize as optional?
             #signatories -> not carried over
@@ -88,9 +92,9 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
             "summary",
             "language",
             "body",
-            #"status",
-            #"status_date",
-            #"group_id", -> we do not carry this over?
+            #"status", -> auto
+            #"status_date", -> auto
+            #"group_id", -> target_chamber.group_id
             "subject",
             "doc_date",
             "coverage",
