@@ -356,8 +356,12 @@ class GroupAssignment(Feature):
     """Support for the "group_assignment" feature (Doc). !+Group?
     """
     feature_interface = interfaces.IFeatureGroupAssignment
-    feature_parameters = {}
-    # !+param assignable_types
+    feature_parameters = {
+        # parameter "assignable_group_types":
+        # Allow the doc to be assignable only to groups of the specified types.
+        # Default is None which is taken to imply all group types in the system.
+        "assignable_group_types": dict(type="space_separated_type_keys", default=None)
+    }
     subordinate_interface = model_ifaces.IGroupAssignment
     
     # !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment!

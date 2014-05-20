@@ -992,25 +992,32 @@ group = GroupSource(
 )
 component.provideUtility(group, IVocabularyFactory, "group")
 
+
 class GroupAssignmentSource(GroupSource):
     """Vocabulary for groups that may have a document assigned to them
     """
     def construct_query(self, context):
-        principal_ids = []
-        trusted = removeSecurityProxy(context)
-        if IGroupAssignmentContainer.providedBy(trusted):
-            for assignment in trusted.__parent__.sa_group_assignments:
-                principal_ids.append(assignment.principal.principal_id)
+        context = removeSecurityProxy(context)
+        if IGroupAssignmentContainer.providedBy(context):
+            assign_doc = context.__parent__
         else:
-            assert IGroupAssignment.providedBy(trusted)
-            for assignment in trusted.doc.sa_group_assignments:
-                principal_ids.append(assignment.principal.principal_id)
-            principal_ids.remove(trusted.principal.principal_id)
-        groups = Session().query(domain.Group).order_by(
-            domain.Group.short_name, domain.Group.full_name).filter(
-            sql.not_(domain.Group.principal_id.in_(principal_ids)))
-        return groups
+            assert IGroupAssignment.providedBy(context)
+            assign_doc = context.doc
+        assert assign_doc.group_assignment_feature.enabled
+                
+        assigned_group_ids = [ assignment.principal.principal_id
+            for assignment in assign_doc.sa_group_assignments ]        
+        if IGroupAssignment.providedBy(context):
+            assigned_group_ids.remove(context.principal.principal_id)
+        
+        group_types = assign_doc.group_assignment_feature.p["assignable_group_types"]
 
+        groups_query = Session().query(domain.Group
+            ).filter(sql.not_(domain.Group.principal_id.in_(assigned_group_ids))
+            ).order_by(domain.Group.short_name, domain.Group.full_name)
+        if group_types:
+            groups_query = groups_query.filter(domain.Group.type.in_(group_types))
+        return groups_query
 group_assignment = GroupAssignmentSource(
     token_field="principal_id",
     title_field="short_name",
