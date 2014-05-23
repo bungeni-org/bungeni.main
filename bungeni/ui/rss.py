@@ -6,6 +6,9 @@
 
 $Id$
 """
+log = __import__("logging").getLogger("bungeni.ui.rss")
+
+import sys
 import re
 import time
 import email
@@ -18,7 +21,7 @@ from zope.traversing.browser import absoluteURL
 
 from bungeni.alchemist import Session
 from bungeni.alchemist import utils
-from bungeni.models.domain import User
+from bungeni.models.domain import User, UserSubscription
 from bungeni.feature.interfaces import IFeatureAttachment
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.translation import translated
@@ -26,7 +29,7 @@ from bungeni.core.dc import IDCDescriptiveProperties
 
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
-from bungeni.ui.utils import uri
+from bungeni.ui.utils import uri, debug
 from bungeni.utils import naming
 from bungeni import _, translate
 
@@ -499,30 +502,36 @@ class SubscriptionView(BrowserView):
     
     def subscribe(self):
         session = Session()
-        redirect_url = absoluteURL(self.context, self.request)
+        context = removeSecurityProxy(self.context)
+        redirect_url = absoluteURL(context, self.request)
         user = session.query(User).filter(User.login == self.request.principal.id).first()
         # In case we somewhy couldn't find the user
         if user is None:
             return self.request.response.redirect(redirect_url)
         # Adding context item to user's subscriptions
-        trusted = removeSecurityProxy(self.context)
-        user.subscriptions.append(trusted)
+        #!+<class 'sqlalchemy.exc.IntegrityError'>: null value in column "activity" violates not-null constraint
+        #user.subscriptions.append(context)
+        us = UserSubscription()
+        us.principal = user
+        us.doc = context
+        session.add(us)
         # Redirecting back to the item's page
         return self.request.response.redirect(redirect_url)
-
+    
     def unsubscribe(self):
         session = Session()
-        redirect_url = absoluteURL(self.context, self.request)
+        context = removeSecurityProxy(self.context)
+        redirect_url = absoluteURL(context, self.request)
         user = session.query(User).filter(User.login == self.request.principal.id).first()
         # In case we somewhy couldn't find the user
         if user is None:
             return self.request.response.redirect(redirect_url)
         # Removing context item from user's subscriptions
-        trusted = removeSecurityProxy(self.context)
         try:
-            user.subscriptions.remove(trusted)
+            user.subscriptions.remove(context)
         except ValueError:
-            pass
+            log.error("Cannot unsubscribe: [%s] not subscribed by [%s]", context, user)
+            debug.log_exc_info(sys.exc_info(), log_handler=log.error)
         # Redirecting back to the item's page
         return self.request.response.redirect(redirect_url)
 

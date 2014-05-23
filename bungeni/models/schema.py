@@ -63,7 +63,7 @@ change = sa.Table("change", metadata,
     sa.Column("user_id", sa.Integer, sa.ForeignKey("user.user_id"), 
         nullable=False),
     # the type of change, also the change polymorphic identity
-    sa.Column("action", sa.Unicode(16), nullable=False),
+    sa.Column("action", sa.Unicode(128), nullable=False),
     # accumulative count, per (change.audit.audit_head_id, change.action) 
     # e.g default: 1 + max(seq(head, "version")), see ui.audit _get_seq()
     sa.Column("seq", sa.Integer, nullable=False),
@@ -108,7 +108,7 @@ audit_sequence = sa.Sequence("audit_sequence")
 audit = sa.Table("audit", metadata,
     sa.Column("audit_id", sa.Integer, audit_sequence, primary_key=True),
     # audit_type, for polymorphic_identity
-    sa.Column("audit_type", sa.String(30), nullable=False),
+    sa.Column("audit_type", sa.String(128), nullable=False),
 )
 
 
@@ -389,7 +389,7 @@ principal = sa.Table("principal", metadata,
     # and replace principal_id altogether!
     # !+principal_name sa.Column("principal_name", sa.Unicode(50), unique=True, nullable=False),
     # for polymorphic_identity
-    sa.Column("type", sa.String(30), nullable=False),
+    sa.Column("type", sa.String(128), nullable=False),
 )
 
 user = sa.Table("user", metadata,
@@ -558,7 +558,7 @@ member = sa.Table("member", metadata,
     ),
     sa.Column("substitution_type", sa.Unicode(100)),
     # the type of membership, polymorphic identity
-    sa.Column("member_type", sa.String(30), default="member", nullable=False),
+    sa.Column("member_type", sa.String(128), default="member", nullable=False),
     sa.Column("language", sa.String(5), nullable=False),
     # Representation of this member (in a chamber or any other group):
     # - geo: the region/province/constituency (divisions and order may be in any
@@ -637,7 +637,7 @@ doc_principal = sa.Table("doc_principal", metadata,
         sa.ForeignKey("principal.principal_id"),
         primary_key=True),
     # relationship qualifier, also the item's polymorphic identity
-    sa.Column("activity", sa.Unicode(16), primary_key=True, nullable=False),
+    sa.Column("activity", sa.Unicode(128), primary_key=True, nullable=False),
     sa.Column("date", sa.DateTime(timezone=False), 
         server_default=sa.sql.text("now()"),
         nullable=False),
