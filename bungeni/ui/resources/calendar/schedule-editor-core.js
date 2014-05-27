@@ -162,7 +162,7 @@ YAHOO.bungeni.scheduling = function(){
          * @description Launches a pop-out previewing the scheduled items
          **/
         var renderPreview = function(args) {
-            var previewPanel = new YAHOO.widget.Panel("agenda-preview-dialog",
+            YAHOO.bungeni.scheduling.previewPanel = new YAHOO.widget.Panel("agenda-preview-dialog",
                 { 
                     modal: true, 
                     visible: false, 
@@ -173,25 +173,21 @@ YAHOO.bungeni.scheduling = function(){
                     zindex: 2000,
                 }
             );
-            previewPanel.setHeader(SGlobals.preview_msg_header);
+            YAHOO.bungeni.scheduling.previewPanel.setHeader(SGlobals.preview_msg_header);
             YAHOO.bungeni.config.dialogs.blocking.show(SGlobals.preview_msg_generating);
-            var success = function(o){
+            iframe = document.createElement("iframe");
+            iframe.style.width = "100%";
+            iframe.style.border = "none";
+            YAHOO.bungeni.scheduling.iframeLoaded = function(iframe){
+                iframe.height = iframe.contentWindow.document.body.scrollHeight + 'px';
                 YAHOO.bungeni.config.dialogs.blocking.hide();
-                previewPanel.setBody(o.responseText);
-                previewPanel.show();
-                previewPanel.bringToTop();
+                YAHOO.bungeni.scheduling.previewPanel.show();
+                YAHOO.bungeni.scheduling.previewPanel.bringToTop();
             }
-            var failure = function(o){
-                YAHOO.bungeni.config.dialogs.blocking.hide();
-                YAHOO.bungeni.config.dialogs.notification.show(SGlobals.preview_msg_error);
-            }
-            var callback = {
-                success: success,
-                failure: failure,
-                argument: {}
-            }
-            var request = YAHOO.util.Connect.asyncRequest("GET", "./preview", callback);
-            previewPanel.render(document.body);
+            iframe.setAttribute("onload", "javascript: YAHOO.bungeni.scheduling.iframeLoaded(this)");
+            iframe.src = './preview'
+            YAHOO.bungeni.scheduling.previewPanel.setBody(iframe);
+            YAHOO.bungeni.scheduling.previewPanel.render(document.body);
         }
         
         /**
