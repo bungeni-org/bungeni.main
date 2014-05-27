@@ -58,6 +58,16 @@ def getLocaleFormatter(
         return locales.getLocale(capi.default_language).dates.getFormatter(
             category, length)
 
+def get_localized_date(request, value):
+    category = "date"
+    if isinstance(value, datetime.datetime):
+        category = "dateTime"
+    elif isinstance(value, datetime.date):
+        category = "date"
+    elif isinstance(value, datetime.time):
+        category = "time"
+    formatter = getLocaleFormatter(request, category)
+    return formatter.format(value)
  
 def parseDateTime(s):
     """Create datetime object representing date/time

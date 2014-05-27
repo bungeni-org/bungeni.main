@@ -23,9 +23,7 @@ from bungeni.core.workflows.utils import view_permission
 from bungeni.core import translation
 from bungeni.core.language import get_default_language
 
-from bungeni.ui import interfaces as ufaces
 from bungeni.ui.utils import url, date
-from bungeni.ui import cookies
 from bungeni.ui import browser
 from bungeni.utils import register
 from bungeni.capi import capi
@@ -56,14 +54,14 @@ def get_date_strings(date_string):
 
 
 def string_to_date(date_str):
-    date = None
+    date_value = None
     if date_str:
         try:
-            date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            date_value = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
         except:
             log.error("The string %s does not conform to the format required" %
                       date_str)
-    return date
+    return date_value
 
 class AjaxContainerListing(
         container.ContainerListing,
@@ -339,15 +337,10 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             for field in self.fields:
                 fn = field.__name__
                 d[fn] = listing_column_getters[fn](node, field)
-                # !+i18n_DATE(mr, sep-2010) two problems with the isinstance
-                # tests below:
-                # a) they seem to always fail (no field values of this type?)
-                # b) this is incorrect way to localize dates
                 v = d[fn]
-                if isinstance(v, datetime.datetime):
-                    d[fn] = v.strftime("%F %I:%M %p")
-                elif isinstance(v, datetime.date):
-                    d[fn] = v.strftime("%F")
+                #localize date values
+                if isinstance(v, (datetime.datetime, datetime.date, datetime.time)):
+                    d[fn] = date.get_localized_date(self.request, v)
             
             d["object_id"] = url.set_url_context(container.stringKey(node))
             values.append(d)
