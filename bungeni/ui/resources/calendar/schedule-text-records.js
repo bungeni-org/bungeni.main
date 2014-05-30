@@ -94,7 +94,6 @@ YAHOO.bungeni.textrecords = function() {
                     var data = hDt.getRecord(selected_rows[row_id]).getData();
                     var heading_value = {};
                     heading_value[Columns.TITLE] = data[Columns.TITLE];
-                    heading_value[Columns.ID] = data[Columns.ID];
                     heading_values.push(heading_value);
                 }
                 return { 
