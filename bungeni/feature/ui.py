@@ -243,19 +243,26 @@ def setup_customization_ui():
             first_tab = capi.workspace_tabs[0]
             action = "../../{first_tab}/add_{k}".format(
                 first_tab=first_tab, k=type_key)
-            register_menu_item(type_key, "Add", type_title, 
+            # !+MENUITEM_TITLE_r11350(mr, jun-2014) am switching the title of these 
+            # two menuItems to use the type_key instead of the ti label, as it seems 
+            # ZCML does not allow to have a same @title value for multiple menuItem 
+            # declarations for the same menu + target interface (even if @action,
+            # @permission are different).
+            register_menu_item(type_key, "Add", type_key, #type_title, !+MENUITEM_TITLE_r11350
                 "bungeni.models.interfaces.IGroup",
                 action,
                 menu="workspace_add_parliamentary_content",
                 filter_="python: context.is_type_workspaced(%r)" % (type_key),
                 order=7)
-            register_menu_item(type_key, "Add", type_title, 
+            register_menu_item(type_key, "Add", type_key, #type_title, !+MENUITEM_TITLE_r11350
                 "bungeni.core.interfaces.IWorkspaceContainer", 
                 action,
                 menu="workspace_add_parliamentary_content",
                 filter_="python: context.is_type_workspaced(%r)" % (type_key),
                 order=7)
-
+            
+            ''' !+MENUITEM_TITLE_r11350(mr, jun-2014) -- disabling to monitor 
+                if needed; re-enable or delete...
             # add menu item -> for admin ?!
             # !+AUTO_UI_ZCML_MENU_ITEMS: context_add_parliamentary_content
             # !+ why a duplicated (almost identical) menu item for admin?
@@ -270,6 +277,7 @@ def setup_customization_ui():
                 menu="context_add_parliamentary_content",
                 filter_="python: context.is_type_workspaced(%r)" % (type_key),
                 order=7)
+            '''
             
             # edit menu item
             # !+ edit/delete used to be on layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
