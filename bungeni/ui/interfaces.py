@@ -45,9 +45,10 @@ class IAnonymousSectionLayer(IDefaultBrowserLayer):
     information irrespective of who is logged in (or not). 
     """
 
+''' !+ARCHIVE
 class IArchiveSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the archive."""
-
+'''
 
 # !+PERMALINK(mr, may-2013) is this layer (and associated functionality) still used/needed?
 class IPermalinkSectionLayer(IAnonymousSectionLayer, IRSSRepresentationLayer):

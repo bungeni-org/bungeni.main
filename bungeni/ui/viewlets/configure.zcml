@@ -12,7 +12,7 @@
        layer="bungeni.ui.interfaces.IBungeniSkin"
        permission="zope.Public"
      />
-    <!--
+    <!-- !+ARCHIVE
     <browser:viewlet
         name="bungeni.content-actions-portlet"
         for="*"
@@ -52,6 +52,7 @@
     <!--
         IPortalHeaderManager ViewletManager defined in ploned/ui/viewlet.zcml
     -->
+    <!-- !+ARCHIVE
     <browser:viewlet name="bungeni.navigation.navtree"
         manager="ploned.ui.interfaces.ILeftColumnManager"
         class=".navigation.TopLevelContainerNavigation"
@@ -59,6 +60,7 @@
         layer="bungeni.ui.interfaces.IArchiveSectionLayer"
         weight="5"
     />
+    -->
     <browser:viewlet name="bungeni.navigation.admin.navtree"
         manager="ploned.ui.interfaces.ILeftColumnManager"
         class=".navigation.NavigationTreeViewlet"

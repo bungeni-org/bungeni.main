@@ -489,6 +489,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         return "%s_%s_%d" % (self.id_prefix, _id, depth)
 
 
+''' !+ARCHIVE
 class TopLevelContainerNavigation(NavigationTreeViewlet):
     
     def __new__(cls, context, request, view, manager):
@@ -496,5 +497,5 @@ class TopLevelContainerNavigation(NavigationTreeViewlet):
         # we require the tree to begin with a container object
         if not IReadContainer.providedBy(inst.chain[-1]):
             return
-
+'''
 
