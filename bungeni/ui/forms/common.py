@@ -309,6 +309,12 @@ class BaseForm(formlib.form.FormBase):
                     "skipping derived_table_schema validation...", name)
                 continue
             
+            # nullable
+            if value is None:
+                if col.nullable:
+                   continue                 
+                errors.append(self.set_widget_error(name, _(u"May not be null")))
+            
             # sa.String
             if isinstance(col.type, sa.types.String):
                 # length
