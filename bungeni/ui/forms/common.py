@@ -318,10 +318,12 @@ class BaseForm(formlib.form.FormBase):
             # sa.String
             if isinstance(col.type, sa.types.String):
                 # length
-                if len(value) > col.type.length:
-                    errors.append(self.set_widget_error(name, 
-                            _(u"May not be longer than ${length}", 
-                                mapping={"length": col.type.length})))
+                length = col.type.length
+                if length is not None:
+                    if length < len(value):
+                        errors.append(self.set_widget_error(name, 
+                                _(u"May not be longer than ${length}", 
+                                    mapping={"length": length})))
         return errors
 
     
