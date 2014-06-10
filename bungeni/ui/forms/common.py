@@ -298,23 +298,26 @@ class BaseForm(formlib.form.FormBase):
             if e:
                 errors.append(self.set_widget_error(name, e))
             
-            # validate against db column definition
-            dfield = getattr(dm, name)
-            assert isinstance(dfield.property, sa.orm.properties.ColumnProperty), name # !+TMP sanity check
+            # get db column definition
+            domain_attr = getattr(dm, name)
+            if not isinstance(domain_attr, sa.orm.attributes.InstrumentedAttribute):
+                continue
+            domain_attr_property = domain_attr.property
+            assert isinstance(domain_attr_property, sa.orm.properties.ColumnProperty), name # !+TMP sanity check
             # !+MULTIPLE_COLUMNS only single columns supported (so far)
-            if len(dfield.property.columns) == 1:
-                col = dfield.property.columns[0]
+            if len(domain_attr_property.columns) == 1:
+                col = domain_attr_property.columns[0]
             else:
                 log.warn("SQLAlchemy property %r NOT defined as a single column, "
                     "skipping derived_table_schema validation...", name)
                 continue
             
+            # validate against db column definition
             # nullable
             if value is None:
                 if col.nullable:
                    continue                 
                 errors.append(self.set_widget_error(name, _(u"May not be null")))
-            
             # sa.String
             if isinstance(col.type, sa.types.String):
                 # length
@@ -325,7 +328,6 @@ class BaseForm(formlib.form.FormBase):
                                 _(u"May not be longer than ${length}", 
                                     mapping={"length": length})))
         return errors
-
     
     @property
     def next_url(self):
