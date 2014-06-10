@@ -373,6 +373,7 @@ class AddForm(BaseForm, form.AddForm):
         
         # flush so we have database id
         bungeni.alchemist.Session().flush()
+        # !+DataError reload form and display this error?
         
         # fire an object created event
         notify(ObjectCreatedEvent(ob))
@@ -420,7 +421,8 @@ class AddForm(BaseForm, form.AddForm):
         self._next_url = "%s/@@edit?portal_status_message=%s Added" % (
             absoluteURL(ob, self.request), name)
         
-    @form.action(_(u"Save and add another"), condition=form.haveInputWidgets)
+    @form.action(_(u"Save and add another"), 
+        condition=form.haveInputWidgets)
     def handle_add_and_another(self, action, data):
         self.createAndAdd(data)
         name = self.domain_model.__name__

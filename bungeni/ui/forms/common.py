@@ -23,12 +23,11 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.contained import ObjectRemovedEvent
-import sqlalchemy as sa
 from zope.formlib.interfaces import IDisplayWidget
 from zope.formlib.namedtemplate import NamedTemplate
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.securitypolicy.settings import Allow
-from sqlalchemy.exc import IntegrityError
+import sqlalchemy as sa
 
 from bungeni.alchemist import Session
 from bungeni.alchemist import ui
@@ -243,6 +242,12 @@ class BaseForm(formlib.form.FormBase):
             return list(self.CustomValidation(self.context, data))
         return errors
     
+    def set_widget_error(self, key, message):
+        widget = self.widgets[key]
+        widget._error = formlib.form.WidgetInputError(
+            widget.name, widget.label, message)
+        return widget._error
+    
     def validateUnique(self, action, data):
         """Validate unique.
         
@@ -269,15 +274,50 @@ class BaseForm(formlib.form.FormBase):
                 value = session.query(dm).filter(col == data[key]).count()
                 if not value:
                     continue
-                widget = self.widgets[key]
-                error = formlib.form.WidgetInputError(
-                    widget.name,
-                    widget.label,
-                    _(u"A record with this value already exists")
-                )
-                widget._error = error
-                errors.append(error)
+                errors.append(self.set_widget_error(key,
+                        _(u"A record with this value already exists")))
         return errors
+    
+    def validate_derived_table_schema(self, action, data):
+        """Look-ahead validate against database contraints.
+        """
+        dm = self.domain_model
+        ti = capi.get_type_info(dm)
+        derived_table_schema = ti.derived_table_schema
+        errors = []
+        for name in derived_table_schema:
+            ff = self.form_fields.get(name)
+            if not ff:
+                continue
+            field = derived_table_schema.get(name)
+            assert field is ff.field, name # !+TMP sanity check
+            value = data.get(name, None)
+            
+            # standard field validation !+ necessary, already called elsewhere? 
+            e = field.validate(value)
+            if e:
+                errors.append(self.set_widget_error(name, e))
+            
+            # validate against db column definition
+            dfield = getattr(dm, name)
+            assert isinstance(dfield.property, sa.orm.properties.ColumnProperty), name # !+TMP sanity check
+            # !+MULTIPLE_COLUMNS only single columns supported (so far)
+            if len(dfield.property.columns) == 1:
+                col = dfield.property.columns[0]
+            else:
+                log.warn("SQLAlchemy property %r NOT defined as a single column, "
+                    "skipping derived_table_schema validation...", name)
+                continue
+            
+            # sa.String
+            if isinstance(col.type, sa.types.String):
+                # length
+                if len(value) > col.type.length:
+                    errors.append(self.set_widget_error(name, 
+                            _(u"May not be longer than ${length}", 
+                                mapping={"length": col.type.length})))
+        return errors
+
     
     @property
     def next_url(self):
@@ -349,6 +389,7 @@ class AddForm(BaseForm, ui.AddForm):
     def validate(self, action, data):
         errors = super(AddForm, self).validate(action, data)
         errors += self.validateUnique(action, data)
+        errors += self.validate_derived_table_schema(action, data)
         for validator in getattr(self.model_descriptor, "custom_validators", ()):
             errors += validator(action, data, None, self.context)
         return errors
@@ -436,8 +477,8 @@ class AddForm(BaseForm, ui.AddForm):
                     url.absoluteURL(ob, self.request), name)
     
     @formlib.form.action(_(u"Save and add another"),
-            name="save_and_add_another",
-            condition=formlib.form.haveInputWidgets)
+        name="save_and_add_another",
+        condition=formlib.form.haveInputWidgets)
     def handle_add_and_add_another(self, action, data):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
@@ -515,6 +556,7 @@ class EditForm(BaseForm, ui.EditForm):
     def validate(self, action, data):
         errors = super(EditForm, self).validate(action, data)
         errors += self.validateUnique(action, data)
+        errors += self.validate_derived_table_schema(action, data)
         for validator in getattr(self.model_descriptor, "custom_validators", ()):
             errors += validator(action, data, self.context, self.context.__parent__)
         return errors
@@ -860,7 +902,7 @@ class DeleteForm(PageForm):
         count += 1
         try:
             session.flush()
-        except IntegrityError, e:
+        except sa.exc.IntegrityError, e:
             # this should not happen in production; it's a critical
             # error, because the transaction might have failed in the
             # second phase of the commit
