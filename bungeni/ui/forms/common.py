@@ -8,6 +8,8 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.forms.common")
 
+
+import sys
 #import transaction
 from copy import copy
 from zope.publisher.interfaces import BadRequest
@@ -52,7 +54,7 @@ from bungeni.ui.interfaces import (
 )
 from bungeni.ui import browser
 #from bungeni.ui import z3evoque
-from bungeni.ui.utils import url
+from bungeni.ui.utils import url, debug
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import misc, naming, register
 from bungeni.capi import capi
@@ -294,9 +296,14 @@ class BaseForm(formlib.form.FormBase):
             value = data.get(name, None)
             
             # standard field validation !+ necessary, already called elsewhere? 
-            e = field.validate(value)
-            if e:
-                errors.append(self.set_widget_error(name, e))
+            try:
+                e = field.validate(value)
+                if e:
+                    errors.append(self.set_widget_error(name, e))
+            except (AttributeError,):
+                # !+ strangely occurs when editing Minister title...
+                log.error("%r.validate(%r) FAILED (field %r) ...", field, value, name)
+                debug.log_exc_info(sys.exc_info(), log_handler=log.error)
             
             # get db column definition
             domain_attr = getattr(dm, name)
@@ -315,9 +322,9 @@ class BaseForm(formlib.form.FormBase):
             # validate against db column definition
             # nullable
             if value is None:
-                if col.nullable:
-                   continue                 
-                errors.append(self.set_widget_error(name, _(u"May not be null")))
+                if not col.nullable:
+                    errors.append(self.set_widget_error(name, _(u"May not be null")))
+                continue
             # sa.String
             if isinstance(col.type, sa.types.String):
                 # length
