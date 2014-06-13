@@ -289,8 +289,14 @@ class BaseForm(formlib.form.FormBase):
         errors = []
         for name in derived_table_schema:
             ff = self.form_fields.get(name)
+            
+            # skip if no form does not define a corresponding form field
             if not ff:
                 continue
+            # !+ skip if field not included in this form "mode"?
+            #if name not in getattr("%s_columns" % (self.mode), ti.descriptor_model):
+            #    continue
+            
             field = derived_table_schema.get(name)
             assert field is ff.field, name # !+TMP sanity check
             value = data.get(name, None)
@@ -300,10 +306,19 @@ class BaseForm(formlib.form.FormBase):
                 e = field.validate(value)
                 if e:
                     errors.append(self.set_widget_error(name, e))
-            except (AttributeError,):
-                # !+ strangely occurs when editing Minister title...
-                log.error("%r.validate(%r) FAILED (field %r) ...", field, value, name)
+            except (Exception,):
+                # !+ error downstream strangely due to a dynamic vocabulary call 
+                # being passed a None context:
+                #File "/opt/bungeni/bungeni_apps/bungeni/eggs/zope.app.schema-3.5.0-py2.7.egg/zope/app/schema/vocabulary.py", line 33, in get
+                #   return factory(context)
+                #File "/opt/bungeni/bungeni_apps/bungeni/src/bungeni.main/bungeni/ui/vocabulary.py", line 526, in __call__
+                #    query = self.construct_query(removeSecurityProxy(context))
+                # e.g editing Minister title, adding a Member, ...
+                log.error("\n"
+                    "    %r.validate(%r) FAILED (field %r)\n"
+                    "    [context: %r]", field, value, name, self.context)
                 debug.log_exc_info(sys.exc_info(), log_handler=log.error)
+                #import pdb; pdb.set_trace()
             
             # get db column definition
             domain_attr = getattr(dm, name)
