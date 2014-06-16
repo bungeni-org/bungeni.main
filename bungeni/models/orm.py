@@ -10,8 +10,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.models.orm")
 
 import sqlalchemy as rdb
-from sqlalchemy.orm import mapper, class_mapper, relation, column_property, \
-    backref
+from sqlalchemy.orm import mapper, relation, backref #, column_property
 
 import schema
 import domain
@@ -564,12 +563,13 @@ mapper(domain.Sitting, schema.sitting,
             uselist=False,
             lazy=True
         ),
-        "start_date": column_property(
-            schema.sitting.c.start_date.label("start_date")
-        ),
-        "end_date": column_property(
-            schema.sitting.c.end_date.label("end_date")
-        ),
+        #!+AttributeError: '_Label' object has no attribute 'nullable'
+        #"start_date": column_property(
+        #    schema.sitting.c.start_date.label("start_date")
+        #),
+        #"end_date": column_property(
+        #    schema.sitting.c.end_date.label("end_date")
+        #),
         "item_schedule": relation(domain.ItemSchedule,
             order_by=schema.item_schedule.c.real_order,
             cascade="all"
@@ -917,12 +917,13 @@ mapper(domain.Chamber,
 mapper(domain.Member,
     inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.Member),
-    properties={ # !+ why these properties?
-        "start_date": column_property(
-            schema.member.c.start_date.label("start_date")),
-        "end_date": column_property(
-            schema.member.c.end_date.label("end_date")),
-    },
+    #!+AttributeError: '_Label' object has no attribute 'nullable'
+    #properties={ # !+ why these properties?
+    #    "start_date": column_property(
+    #        schema.member.c.start_date.label("start_date")),
+    #    "end_date": column_property(
+    #        schema.member.c.end_date.label("end_date")),
+    #},
 )
 
 

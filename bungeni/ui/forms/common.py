@@ -329,6 +329,9 @@ class BaseForm(formlib.form.FormBase):
             # !+MULTIPLE_COLUMNS only single columns supported (so far)
             if len(domain_attr_property.columns) == 1:
                 col = domain_attr_property.columns[0]
+                #!+AttributeError: '_Label' object has no attribute 'nullable'
+                # not: sa.sql.expression._Label, sa.sql.expression.ColumnElement
+                assert isinstance(col, sa.schema.Column), col 
             else:
                 log.warn("SQLAlchemy property %r NOT defined as a single column, "
                     "skipping derived_table_schema validation...", name)
