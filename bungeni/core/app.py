@@ -264,7 +264,7 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin)
         
         content = admin["content"] = Section(
-            title=_(u"Content"),
+            title=_(u"Legislature"),
             description=_(u"browse bungeni content"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="browse-admin")
