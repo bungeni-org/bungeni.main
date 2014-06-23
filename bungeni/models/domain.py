@@ -950,7 +950,7 @@ class Legislature(object):
     
     Always use the bungeni.capi.capi.legislature property to retrieve the same 
     Legislature singleton instance from anywhere in the application.
-
+    
     The Legislature type is really just a "placeholder" instance to collect 
     legislature-related capi parameters.
     """
@@ -1093,12 +1093,12 @@ class ItemScheduleVote(Entity):
     """
     interface.implements(interfaces.IItemScheduleVote)
 
-    #file download
+    # file download
     @property
     def data(self):
         return self.roll_call
     
-    #file download
+    # file download
     def name(self):
         return "vote-record-%d.xml" % self.vote_id
 

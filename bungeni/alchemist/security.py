@@ -197,11 +197,11 @@ def schema():
     )
     '''
     principal_role_map = sa.Table("zope_principal_role_map", metadata,
-        # !+ rename "principal_name"
-        sa.Column("principal_id", sa.Unicode(50), index=True, nullable=False),
+        # !+PRINCIPAL_NAME rename to "principal_name"
+        sa.Column("principal_id", sa.Unicode(128), index=True, nullable=False),
         sa.Column("role_id", sa.Unicode(50), nullable=False),
         sa.Column("setting", sa.Boolean, default=True, nullable=False),
-        sa.Column("object_type", sa.String(100)),
+        sa.Column("object_type", sa.Unicode(128)), # object polymorphic_identity
         sa.Column("object_id", sa.Integer),
     )
     schema.principal_role_map = principal_role_map
