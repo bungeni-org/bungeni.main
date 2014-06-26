@@ -8,8 +8,10 @@
   Created: Miano Njoka, 22-feb-2013
   
   Note: Always modify the RNC file - the RNG version is auto-derived from it:
-  one way to auto-derive workflow.rng from this file is:
-    java -jar trang.jar -I rnc -O rng workspace.rnc generated/workspace.rng
+  one way to auto-derive types.rng from this file is:
+    sudo apt-get upgrade trang # first time -> install
+    trang -I rnc -O rng workspace.rnc generated/workspace.rng
+  
   $Id$
 -->
 <grammar xmlns="http://relaxng.org/ns/structure/1.0">

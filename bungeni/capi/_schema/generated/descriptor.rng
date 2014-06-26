@@ -8,8 +8,9 @@
   Created: Mario Ruggier, 28-nov-2012
   
   Note: Always modify the RNC file - the RNG version is auto-derived from it:
-  one way to auto-derive descriptor.rng from this file is:
-    java -jar trang.jar -I rnc -O rng descriptor.rnc generated/descriptor.rng
+  one way to auto-derive types.rng from this file is:
+    sudo apt-get upgrade trang # first time -> install
+    trang -I rnc -O rng descriptor.rnc generated/descriptor.rng
   
   $Id$
 -->

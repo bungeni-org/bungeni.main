@@ -9,7 +9,9 @@
   
   Note: Always modify the RNC file - the RNG version is auto-derived from it:
   one way to auto-derive types.rng from this file is:
-    java -jar trang.jar -I rnc -O rng types.rnc generated/types.rng
+    sudo apt-get upgrade trang # first time -> install
+    trang -I rnc -O rng types.rnc generated/types.rng
+    #java -jar trang.jar -I rnc -O rng types.rnc generated/types.rng
   
   $Id$
 -->
