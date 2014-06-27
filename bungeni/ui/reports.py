@@ -59,22 +59,23 @@ class DateTimeFormatMixin(object):
         return date_time
 
 
-class IReportBuilder(interface.Interface):
-    report_type = schema.Choice(title=_(u"Report Type"),
-        description=_(u"Choose template to use in generating Report"),
-        vocabulary=vocabulary.report_xhtml_template_factory
-    )
-    start_date = schema.Date(
-        title=_("report_builder_start_date", default=u"Start Date"),
-        description=_(u"Start date for this Report")
-    )
-    publication_number = schema.TextLine(title=_(u"Publication Number"),
-        description=_(u"Optional publication number for this Report"),
-        required=False
-    )
-
 class ReportBuilder(form.Form, DateTimeFormatMixin):
     template = namedtemplate.NamedTemplate("alchemist.form")
+    
+    class IReportBuilder(interface.Interface):
+        report_type = schema.Choice(title=_(u"Report Type"),
+            description=_(u"Choose template to use in generating Report"),
+            vocabulary=vocabulary.report_xhtml_template_factory
+        )
+        start_date = schema.Date(
+            title=_("report_builder_start_date", default=u"Start Date"),
+            description=_(u"Start date for this Report")
+        )
+        publication_number = schema.TextLine(title=_(u"Publication Number"),
+            description=_(u"Optional publication number for this Report"),
+            required=False
+        )
+
     form_fields = form.fields(IReportBuilder)
     form_fields["start_date"].custom_widget = widgets.SelectDateWidget
     sittings = []
@@ -84,7 +85,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
     generated_content = None
     show_preview = False
     language = None
-
+    
     def __init__(self, context, request):
         self.context = context
         self.request = request
@@ -92,55 +93,52 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
             IWorkspaceReportGeneration
         )
         if IWorkspaceUnderConsideration.providedBy(self.context):
-            #change the vocabulary
-            self.form_fields["report_type"].field.vocabulary=\
+            # change the vocabulary
+            self.form_fields["report_type"].field.vocabulary = \
                 vocabulary.document_xhtml_template_factory
         super(ReportBuilder, self).__init__(context, request)
     
     def get_end_date(self, start_date, hours):
         end_date = start_date + datetime.timedelta(seconds=hours*3600)
         return end_date
-
-    def buildSittings(self):
+    
+    def build_sittings(self):
         if ISitting.providedBy(self.context):
             trusted = removeSecurityProxy(self.context)
-            order="real_order"
+            order = "real_order"
             trusted.item_schedule.sort(key=operator.attrgetter(order))
             self.sittings.append(trusted)
         else:
-            sittings = ISchedulingContext(self.context).get_sittings(
-                self.start_date, self.end_date
-            ).values()
+            sittings = ISchedulingContext(self.context
+                ).get_sittings(self.start_date, self.end_date).values()
             self.sittings = map(removeSecurityProxy, sittings)
-        self.sittings = [ ExpandedSitting(sitting) 
-            for sitting in self.sittings 
-        ]
-
-    def buildContext(self):
+        self.sittings = [ ExpandedSitting(s) for s in self.sittings ]
+    
+    def build_context(self):
         if IWorkspaceScheduling.providedBy(self.request):
-            self.buildSittings()
+            self.build_sittings()
         elif IWorkspaceUnderConsideration.providedBy(self.context):
             default_filters = {
-                'sort_dir': u'asc', 
-                'filter_status_date': u'%s->%s' %(
+                "sort_dir": u"asc", 
+                "filter_status_date": u"%s->%s" % (
                     self.start_date.isoformat(), self.end_date.isoformat()
                 ), 
-                'sort_on': u'status_date', 
-                'filter_type': u'',
+                "sort_on": u"status_date", 
+                "filter_type": u"",
             }
-            doc_container = self.context.publishTraverse(self.request,
+            doc_container = self.context.publishTraverse(self.request, 
                 "documents")
             for type_key, ti in capi.iter_type_info():
                 workflow = ti.workflow
                 if workflow and workflow.has_feature("workspace"):
-                    #add generators of various doctypes
+                    # add generators of various doctypes
                     container_name = naming.plural(type_key)
                     filters = dict(default_filters)
-                    filters['filter_type'] = type_key
-                    setattr(self, container_name,
+                    filters["filter_type"] = type_key
+                    setattr(self, container_name, 
                         doc_container.query(**filters)[0]
                     )
- 
+    
     def generateContent(self, data):
         self.start_date = (data.get("start_date") or 
             datetime.datetime.today().date()
@@ -151,10 +149,10 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         self.language = generator.language
         self.publication_number = data.get("publication_number")
         self.end_date = self.get_end_date(self.start_date, generator.coverage)
-        self.buildContext()
+        self.build_context()
         generator.context = self
         return generator.generateReport()
-
+    
     @form.action(_(u"Preview"), name="preview")
     def handle_preview(self, action, data):
         """Generate preview of the report
@@ -195,10 +193,8 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
 
 
 class SaveReportView(form.PageForm):
-
-    def __init__(self, context, request):
-        super(SaveReportView, self).__init__(context, request)
-
+    template = namedtemplate.NamedTemplate("alchemist.form")
+    
     class ISaveReportForm(interface.Interface):
         start_date = schema.Date(
             title=_("report_start_date", default=u"Date"),
@@ -220,8 +216,10 @@ class SaveReportView(form.PageForm):
         sittings = schema.TextLine(title=_(u"Sittings in Report"),
             description=_(u"List of sittings included in this report"),
             required=False)
-    template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.Fields(ISaveReportForm)
+    
+    def __init__(self, context, request):
+        super(SaveReportView, self).__init__(context, request)
     
     def setUpWidgets(self, ignore_request=False):
         class context:
