@@ -58,6 +58,7 @@ class DateTimeFormatMixin(object):
                 return date_time
         return date_time
 
+
 class IReportBuilder(interface.Interface):
     report_type = schema.Choice(title=_(u"Report Type"),
         description=_(u"Choose template to use in generating Report"),
@@ -173,9 +174,8 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
             else:
                 context_group_id = self.context.group_id
         else:
-            #get the chamber id
-            context_group_id = get_chamber_for_context(
-                self.context).chamber_id
+            # get the chamber id
+            context_group_id = get_chamber_for_context(self.context).group_id
         report = domain.Report(
             title=self.title,
             start_date=self.start_date,
@@ -192,6 +192,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         self.status = _(u"Report has been processed and saved")
         
         return self.template()
+
 
 class SaveReportView(form.PageForm):
 
@@ -280,6 +281,7 @@ class SaveReportView(form.PageForm):
         else:
             back_link = "./"
         self.request.response.redirect(back_link)
+
 
 # Event handler that publishes reports on sitting status change
 # if the status is published_agenda or published_minutes
