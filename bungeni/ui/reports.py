@@ -270,7 +270,7 @@ class SaveReportView(form.PageForm):
                     session.add(sr)
                     notify(ObjectCreatedEvent(report))
             except:
-                #if no sittings are present in report or some other error occurs
+                # if no sittings are present in report or some other error occurs
                 pass
         session.flush()
         
@@ -286,7 +286,11 @@ class SaveReportView(form.PageForm):
 # it generates report based on the default template and publishes it
 @register.handler(adapts=(ISitting, IWorkflowTransitionEvent))
 def default_reports(sitting, event):
-    #!+REPORTS(mb, Feb-2013) add a publish_report action - remove this handler
+    #!+REPORTS(mb, Feb-2013) - remove this handler for workflow events:
+    # EITHER a publish_report action, maybe configure this as a workflow action 
+    # (so not hardwired to status/workflow event) 
+    # OR make it part of sitting feature options e.g. publish state and report 
+    # template.
     if "published" in sitting.status:
         sitting = removeSecurityProxy(sitting)
         report_type = "sitting_agenda"

@@ -246,7 +246,33 @@ class TI(object):
     @property
     def sys_archetype(self):
         return _get_by_type_key(self.sys_archetype_key).domain_model
-
+        
+    def sanity_check_integrity(self):
+        """An integrity sanity check to be called at end of the loading and 
+        customzation process, or anytime a type_info instance is modified 
+        thereafter.
+        
+        Also serves as an explicit declaration of (some of the) constraints
+        on a type_info instance.
+        """
+        if self.custom:
+            assert self.scope == "custom", \
+                'Custom type %r must have scope="custom"' % (self.type_key)                
+            assert self.archetype, \
+                "Custom type %r must set archetype" % (self.type_key)
+            assert self.custom_archetype_key, \
+                "Custom type %r must set custom_archetype_key" % (self.type_key)
+            assert self.sys_archetype_key, \
+                "Custom type %r must set sys_archetype_key" % (self.type_key)
+        else:
+            assert self.scope in ("system", "archetype"), \
+                'System type %r must scope be "system" or "archetype"' % (self.type_key)                
+            assert not self.custom_archetype_key, \
+                "System type %r may not specify a custom_archtype_key: %r" % (self.type_key)
+            assert not self.custom_archetype_key, \
+                "System type %r may not specify a sys_archtype_key: %r" % (self.type_key)
+        
+        
 '''
 !+TYPE_REGISTRY externalize further to bungeni_custom, currently:
 - association of type key and dedicated interface are hard-wired here

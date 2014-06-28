@@ -129,7 +129,7 @@ def forms_localization_init():
             alchemist.model.localize_domain_model_from_descriptor_class(
                 ti.domain_model, ti.descriptor_model)
         else:
-            log.warn("Skipping localization - descripor for model %s is None", 
+            log.warn("Skipping localization - descriptor for model %s is None", 
                 ti.domain_model)
         
         # catalyze
@@ -145,6 +145,9 @@ def forms_localization_init():
             alchemist.catalyst.generate_collection_traversal(ti)
         else:
             alchemist.catalyst.catalyse(ti)
+
+        # sanity check integrity
+        ti.sanity_check_integrity()
 
 
 @capi.bungeni_custom_errors
@@ -183,6 +186,7 @@ def forms_localization_check_reload(event):
                 descriptor_elem = DESC_ELEMS_MODIFIED_SINCE[ti.descriptor_key]
                 descriptor_cls = localize_descriptor(type_key, descriptor_elem, scope="custom")
     DESC_ELEMS_MODIFIED_SINCE.clear()
+
 
 
 def localize_descriptor(type_key, descriptor_elem, scope="system"):
