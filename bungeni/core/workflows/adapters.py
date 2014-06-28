@@ -122,6 +122,7 @@ def register_custom_types():
     etypes = capi.schema.validate_file_rng("types", file_path)
     # register enabled types - ignoring not enabled types
     from bungeni.alchemist import type_info
+    
     # custom "event" types (must be loaded prior to custom "doc" types)
     for etype in enabled_elems(etypes.iterchildren("event")):
         type_key, ti = type_info.register_new_custom_type(*parse_elem(etype))
@@ -135,6 +136,18 @@ def register_custom_types():
         for emember in enabled_elems(egroup.iterchildren("member")):
             type_key, ti = type_info.register_new_custom_type(*parse_elem(emember))
             ti.within_type_key = group_type_key
+    
+    # SYSTEM WIDE settings (set on class attributes on capi)
+    capi.__class__.bicameral = xab(etypes, "bicameral")
+    capi.__class__.country_code = xas(etypes, "country_code")
+    capi.__class__.legislature_type_key = xas(etypes, "legislature_type")
+    capi.__class__.chamber_type_key = xas(etypes, "chamber_type")
+    
+    # sanity checks
+    for tk in (capi.chamber_type_key, capi.legislature_type_key):
+        ti = capi.get_type_info(tk) # KeyError
+        assert ti.sys_archetype_key == "group", \
+            "Value %r specified for %r must be a %r" % (tk, attr, "group")
 
 
 def load_workflow(type_key, ti):

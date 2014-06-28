@@ -66,6 +66,17 @@ class CAPI(object):
     """Accessor class for Bungeni Custom parameters.
     """
     
+    # SYSTEM-WIDE SETTINGS from types.xml
+    # whether uni- or bi- cameral legislature
+    bicameral = None # bool e.g. True
+    # official country code for where legislature locale is running - ISO 3166-1 alpha-2
+    country_code = None # 2-letter string e.g. "ke"
+    # the type_key for the "legislature" group type
+    legislature_type_key = None # string e.g. "legislature"
+    # the type_key for the "chamber" group type
+    # !+all chamber instances must be of same type?
+    chamber_type_key = None # string e.g. "chamber"
+    
     def __init__(self):
         self.validate_properties()
     
@@ -76,36 +87,20 @@ class CAPI(object):
         self.default_language
         self.right_to_left_languages
     
-    
     # the legislature
     
     @property
-    @bungeni_custom_errors
-    def _legislature(self):
-        """Called (only once) by models.domain.Legislature.__init__()
-        """
-        import datetime, re
-        def date_from_iso8601(s, required=True):
-            if not s and not required:
-                return None
-            return datetime.date(*map(int, re.split("[^\d]", s)))
-        bcd = bc.legislature # bungeni custom dict
-        bd = {} # bungeni dict - create a new one to not clobber original dict
-        bd["bicameral"] = bool(bcd["bicameral"] is True or bcd["bicameral"] == "1")
-        bd["full_name"] = unicode(bcd["full_name"])
-        bd["election_date"] = date_from_iso8601(bcd["election_date"])
-        bd["start_date"] = date_from_iso8601(bcd["start_date"])
-        bd["end_date"] = date_from_iso8601(bcd["end_date"], False)
-        bd["country_code"] = str(bcd["country_code"])
-        return bd
-    
-    @property
     def legislature(self):
-        """Is what is called from anywhere to retrieve the Legislature singleton.
+        """Get the Legislature singleton instance -- ALWAYS call this from
+        anywhere in the code to retrieve the Legislature singleton.
+        Raises sqlalchemy.orm.exc.NoResultFound.        
         """
         from bungeni.models.domain import Legislature
+        if Legislature._instance is None:
+            from bungeni.alchemist import Session
+            Session().query(Legislature).one() # this primes Legislature._instance
+        # retrieve the Legislature singleton by just "creating" a new one
         return Legislature()
-    
     
     # bungeni_custom parameter properties
     

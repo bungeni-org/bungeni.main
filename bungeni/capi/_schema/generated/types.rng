@@ -22,6 +22,25 @@
   </start>
   <define name="TYPES">
     <element name="types">
+      <!-- whether uni- or bi- cameral legislature, bool -->
+      <attribute name="bicameral">
+        <data type="boolean"/>
+      </attribute>
+      <!--
+        "true" | "false"
+        official country code for legislature locale is running - ISO 3166-1 alpha-2
+      -->
+      <attribute name="country_code">
+        <ref name="COUNTRY_CODE"/>
+      </attribute>
+      <!-- the type_key for the "legislature" group type -->
+      <attribute name="legislature_type">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <!-- the type_key for the "chamber" group type #!+excludes a different type per chamber instance? -->
+      <attribute name="chamber_type">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
       <optional>
         <attribute name="note"/>
       </optional>

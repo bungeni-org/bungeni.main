@@ -51,6 +51,12 @@ def as_bool(s):
         return False
     raise TypeError("Invalid bool: %s" % s)
 
+
+import datetime, re
+def date_from_iso8601(s):
+    return datetime.date(*map(int, re.split("[^\d]", s)))
+
+
 import difflib
 def unified_diff(old_str, new_str, old_name="OLD", new_name="NEW"):
     """Return a unified diff of two strings.

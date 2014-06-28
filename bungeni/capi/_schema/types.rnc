@@ -20,6 +20,15 @@ grammar {
     start = TYPES
     
     TYPES = element types {
+        # whether uni- or bi- cameral legislature, bool
+        attribute bicameral { xsd:boolean }, # "true" | "false"
+        # official country code for legislature locale is running - ISO 3166-1 alpha-2
+        attribute country_code { COUNTRY_CODE },
+        # the type_key for the "legislature" group type
+        attribute legislature_type { SYMBOL_NAME },
+        # the type_key for the "chamber" group type #!+excludes a different type per chamber instance?
+        attribute chamber_type { SYMBOL_NAME },
+        
         attribute note { text }?,
         
         # The (base) system "archetype" of a custom type is indicated by a 
@@ -47,7 +56,7 @@ grammar {
     TYPE.common_attlist =
         
         # the type name used throughout the system as the type key
-        attribute name { SYMBOL_NAME }, 
+        attribute name { SYMBOL_NAME },
         
         # the "custom" archetype key (name of a custom sub-type of the system 
         # archetype specified via the *same* element tag name).

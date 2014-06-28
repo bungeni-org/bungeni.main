@@ -87,6 +87,7 @@ class IGroupMemberContainer(IBungeniContainer): pass
 
 
 # !+CUSTOM
+class ILegislature(IGroup): pass
 class IChamber(IGroup): pass
 class IMember(IGroupMember): pass
 # /!+CUSTOM

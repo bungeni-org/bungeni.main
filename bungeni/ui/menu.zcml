@@ -314,7 +314,7 @@
     
     <browser:menuItem menu="admin_navigation"
         for="bungeni.models.interfaces.IBungeniApplication"
-        title="Legislature"
+        title="Content"
         action=""
         layer=".interfaces.IAdministratorWorkspace"
         permission="zope.ManageContent"

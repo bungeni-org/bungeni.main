@@ -24,3 +24,6 @@ SPACE_SEPARATED_SYMBOLS = list { SYMBOL_NAME+ }
 # numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
 SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][\w_]*" }
 
+# a two letter ISO 3166-1 alpha-2 country code (no mixed case)
+COUNTRY_CODE = xsd:string { pattern="[A-Z]{2}|[a-z]{2}" }
+

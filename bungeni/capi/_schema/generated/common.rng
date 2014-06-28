@@ -41,4 +41,10 @@
       <param name="pattern">[a-zA-Z_][\w_]*</param>
     </data>
   </define>
+  <!-- a two letter ISO 3166-1 alpha-2 country code (no mixed case) -->
+  <define name="COUNTRY_CODE">
+    <data type="string">
+      <param name="pattern">[A-Z]{2}|[a-z]{2}</param>
+    </data>
+  </define>
 </grammar>

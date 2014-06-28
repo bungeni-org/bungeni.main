@@ -941,36 +941,6 @@ class SignatoryAudit(Audit):
         return self.audit_head.user
 
 
-
-# legislature
-
-class Legislature(object):
-    """The conceptual "parliament" singleton, that may be composed of one or 
-    two chambers. 
-    
-    Always use the bungeni.capi.capi.legislature property to retrieve the same 
-    Legislature singleton instance from anywhere in the application.
-    
-    The Legislature type is really just a "placeholder" instance to collect 
-    legislature-related capi parameters.
-    """
-    _instance = None
-    
-    def __new__(cls, *args, **kw):
-        if not cls._instance:
-            cls._instance = super(Legislature, cls).__new__(cls, *args, **kw)
-            # "once-only" init
-            from bungeni.capi import capi
-            self, d = cls._instance, capi._legislature 
-            self.bicameral = d["bicameral"] # bool
-            self.full_name = d["full_name"] # unicode
-            self.election_date = d["election_date"]
-            self.start_date = d["start_date"]
-            self.end_date = d["end_date"]
-            self.country_code = d["country_code"] # 2-letter
-        return cls._instance
-
-
 # other sys/support types
 
 class Country(Entity):
@@ -1206,13 +1176,23 @@ class OAuthAccessToken(Entity):
 
 
 # !+CUSTOM
-class AgendaItem(Doc):
-    """Generic Agenda Item that can be scheduled on a sitting.
+
+# legislature
+class Legislature(Group):
+    """The conceptual "parliament" singleton, that may be composed of one or 
+    two chambers. 
+    
+    There must be only one legislature (active group) defined in the system.
+    
+    Always use the bungeni.capi.capi.legislature property to retrieve the same 
+    Legislature singleton instance from anywhere in the application.
     """
-    interface.implements(
-        interfaces.ILegislativeContent,
-        interfaces.IAgendaItem,
-    )
+    _instance = None
+    def __new__(cls, *args, **kw):
+        if not cls._instance:
+            cls._instance = super(Legislature, cls).__new__(cls, *args, **kw)
+        return cls._instance
+    interface.implements(interfaces.ILegislature)
 
 class Chamber(Group):
     """A chamber in parliament.
@@ -1223,6 +1203,14 @@ class Member(GroupMember):
     """Member of a Chamber i.e. of "Parliament")
     """
     interface.implements(interfaces.IMember)
+
+class AgendaItem(Doc):
+    """Generic Agenda Item that can be scheduled on a sitting.
+    """
+    interface.implements(
+        interfaces.ILegislativeContent,
+        interfaces.IAgendaItem,
+    )
 
 # !+/CUSTOM
 

@@ -264,7 +264,7 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin)
         
         content = admin["content"] = Section(
-            title=_(u"Legislature"),
+            title=_(u"Content"),
             description=_(u"browse bungeni content"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="browse-admin")
@@ -294,7 +294,8 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="serialization-manager")
         
-        # !+CUSTOM
+        # !+CUSTOM form descriptor container on legislature
+        content[u"legislatures"] = domain.LegislatureContainer()
         content[u"chambers"] = domain.ChamberContainer()
         to_locatable_container(domain.Chamber, content[u"chambers"])
         content[u"governments"] = domain.GovernmentContainer()
@@ -302,10 +303,10 @@ class AppSetup(object):
         content[u"joint-committees"] = domain.JointCommitteeContainer()
         to_locatable_container(domain.JointCommittee,
             content["joint-committees"])
-        
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
-
+        # !+/CUSTOM
+        
         api = self.context[u"api"] = APISection(
             title=_(u"Bungeni API"),
             description=_(u"Bungeni REST API"),

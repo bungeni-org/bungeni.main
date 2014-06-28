@@ -903,17 +903,14 @@ mapper(domain.OAuthAccessToken, schema.oauth_access_token,
 
 
 # !+CUSTOM
-
-mapper(domain.AgendaItem,
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
+mapper(domain.Legislature,
+    inherits=domain.Group,
+    polymorphic_identity=polymorphic_identity(domain.Legislature)
 )
-
 mapper(domain.Chamber,
     inherits=domain.Group,
     polymorphic_identity=polymorphic_identity(domain.Chamber)
 )
-
 mapper(domain.Member,
     inherits=domain.GroupMember,
     polymorphic_identity=polymorphic_identity(domain.Member),
@@ -925,7 +922,11 @@ mapper(domain.Member,
     #        schema.member.c.end_date.label("end_date")),
     #},
 )
-
+mapper(domain.AgendaItem,
+    inherits=domain.Doc,
+    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
+)
+# !+/CUSTOM
 
 mapper(domain.Session, schema.session,
     properties={
