@@ -7,41 +7,6 @@
 $Id: xmlconfexport.py 10366 2013-01-21 13:10:32Z ashok.hariharan $
 """
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-''' 
-
-!+ FOLLOW THE STYLEGUIDE -- ESPECIALLY NO MIXING OF TABS AND SPACECHARS !!!
-
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def write_to_custom(where, file_name, contents):
     """
     Helper api to write to bungeni_custom
@@ -209,8 +174,7 @@ def output_constraints():
     """
 
     import bungeni_custom.forms._constraints as cons
-    import inspect
-    
+
     li_cons = []
     li_cons.append("<constraints>")
     for name in dir(cons):
@@ -341,22 +305,23 @@ def output_features():
     for f in li_unique_features:
         fcls = get_feature_cls(f)
         li_features.append(' <feature name="%s" >' % f)
-	if fcls.depends_on:
+    if fcls.depends_on:
                 li_features.append('  <depends>')
                 for depends in fcls.depends_on:
-			li_features.append('   <depend>%s</depend>' % depends)
+                    li_features.append('   <depend>%s</depend>' % depends)
                 li_features.append('  </depends>') 
-  	if fcls.feature_parameters is not None:
-                if len(fcls.feature_parameters) > 0 :
-			li_features.append('  <params>')
-			for key, val in fcls.feature_parameters.iteritems():
-				li_features.append('    <param name="%s">' % key)
-                        	for key2, val2 in val.iteritems():
-					li_features.append('     <%(name)s>%(value)s</%(name)s>' %
-						{"name": key2, "value": val2 } )
-				li_features.append('    </param>')
-			li_features.append('  </params>') 	
-	li_features.append(' </feature>')
+    if fcls.feature_parameters is not None:
+        if len(fcls.feature_parameters) > 0 :
+            li_features.append('  <params>')
+            for key, val in fcls.feature_parameters.iteritems():
+                li_features.append('    <param name="%s">' % key)
+                for key2, val2 in val.iteritems():
+                    li_features.append('     <%(name)s>%(value)s</%(name)s>' %
+                        {"name": key2, "value": val2 } 
+                    )
+                li_features.append('    </param>')
+            li_features.append('  </params>')
+    li_features.append(' </feature>')
     li_features.append("</features>")
     
     print "\n".join(li_features).encode("utf-8")               
