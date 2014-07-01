@@ -914,8 +914,16 @@
         permission="zope.ManageContent"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.core.interfaces.ISchedulingContext"
+        for="bungeni.core.schedule.WorkspaceSchedulingContext"
         action="./index/create-report"
+        title="Create reports"
+        permission="bungeni.report.Edit"
+        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        order="40"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.core.schedule.GroupSchedulingContext"
+        action="./create-report"
         title="Create reports"
         permission="bungeni.report.Edit"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
