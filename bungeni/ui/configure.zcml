@@ -3,22 +3,22 @@
            xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:i18n="http://namespaces.zope.org/i18n"
            i18n_domain="bungeni.ui">
-
+    
     <!-- Alchemist UI overrides -->
     <includeOverrides package=".forms" file="overrides.zcml" />
     
-  <include package="bungeni.models" file="domain.zcml" />
-  <include package="bungeni.portal" />
-
-
-  <!-- Site Menus Definition -->
-  <include file="menu.zcml"/>
-
-  <include package="plone.memoize" />
-  <!--include package="marginalia" /-->
-
-  <!-- TimeZone Definition -->
-  <adapter factory=".tz.tzinfo" />
+    <include package="bungeni.models" file="domain.zcml" />
+    <include package="bungeni.portal" />
+    
+    
+    <!-- Site Menus Definition -->
+    <include file="menu.zcml" />
+    
+    <include package="plone.memoize" />
+    <!--include package="marginalia" /-->
+    
+    <!-- TimeZone Definition -->
+    <adapter factory=".tz.tzinfo" />
     
     
     <!-- pakage for resource registration -->
@@ -26,22 +26,22 @@
     <include package=".search" />
     
     <!-- Javascript -->
-    <include package="ore.yui"/>
-    <include package="ore.yuiwidget"/>
-    <include package="zdhtmlxscheduler"/>
-    <include package="z3tinymce"/>
+    <include package="ore.yui" />
+    <include package="ore.yuiwidget" />
+    <include package="zdhtmlxscheduler" />
+    <include package="z3tinymce" />
     
     <!-- Transcripts -->
     <!-- include package="bungeni.transcripts" /-->
     
-    <include file="skin.zcml"/>
+    <include file="skin.zcml" />
     <include file="absoluteurl.zcml" />
-    <include file="resources.zcml"/>
-    <include package=".admin"/>
+    <include file="resources.zcml" />
+    <include package=".admin" />
     <!-- -->
     <include file="views.zcml" />
     <include package=".viewlets" />
-    <include package=".forms"/>
+    <include package=".forms" />
     
     <browser:defaultView name="index"
         for="bungeni.models.interfaces.IBungeniApplication"
@@ -53,7 +53,7 @@
         interface=".interfaces.IBungeniRESTSkin" 
         type="bungeni.rest.interfaces.IRESTSkinType"
     />
-    <include file="rest.zcml"/>
+    <include file="rest.zcml" />
     
     <subscriber handler=".publication.on_before_traverse" trusted="True" />
     <subscriber handler=".publication.on_end_request" trusted="True" />
@@ -93,15 +93,19 @@
         factory=".widgets.widget"
     />
     
-   <!-- Workspace Adapters -->
-   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
-        for="bungeni.models.interfaces.IBungeniContent"/>
-   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
-        for="bungeni.models.interfaces.IGroup"/>
-   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
-        for="bungeni.models.interfaces.IDebateRecord"/>
-   <!-- Login Page restore password links -->
-   <browser:viewlet name="bungeni.login.restore.password"
+    <!-- Workspace Adapters -->
+    <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
+        for="bungeni.models.interfaces.IBungeniContent"
+    />
+    <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
+        for="bungeni.models.interfaces.IGroup"
+    />
+    <adapter factory=".workspaceadapters.WorkspaceContentAdapter" 
+        for="bungeni.models.interfaces.IDebateRecord"
+    />
+    
+    <!-- Login Page restore password links -->
+    <browser:viewlet name="bungeni.login.restore.password"
         view="bungeni.ui.login.Login"
         permission="zope.Public"
         manager="ploned.ui.interfaces.IBelowContentManager"
@@ -110,8 +114,7 @@
     <subscriber factory=".adaptors.DebateTraverserPlugin"
         provides="z3c.traverser.interfaces.ITraverserPlugin"
         for="bungeni.models.interfaces.ISitting
-             zope.publisher.interfaces.IPublisherRequest"
-    
+            zope.publisher.interfaces.IPublisherRequest"
     />
     <adapter for="bungeni.models.interfaces.IDebateRecord
             zope.publisher.interfaces.IPublisherRequest"
@@ -119,8 +122,10 @@
         provides="zope.publisher.interfaces.IPublishTraverse"
     />
     <adapter for="bungeni.models.domain.UserContainer
-                  bungeni.ui.interfaces.IBungeniAPILayer"
-         factory=".api.APIUserContainerTraverser"
-         provides="zope.publisher.interfaces.IPublishTraverse"
-     />
+            bungeni.ui.interfaces.IBungeniAPILayer"
+        factory=".api.APIUserContainerTraverser"
+        provides="zope.publisher.interfaces.IPublishTraverse"
+    />
+
 </configure>
+

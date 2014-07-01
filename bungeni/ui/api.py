@@ -1,5 +1,5 @@
 import simplejson
-from datetime import datetime, date, time, timedelta
+from datetime import date, time, timedelta
 from sqlalchemy.sql.expression import and_
 from zope import component
 from zope import formlib
@@ -26,8 +26,11 @@ from bungeni.models.utils import get_login_user
 from bungeni.models import domain
 
 
-dthandler = lambda obj: obj.isoformat() if type(obj) in \
-    (date, time, datetime) else obj
+def dthandler(obj):
+    if isinstance(obj, (date, time)):
+        return obj.isoformat() 
+    return obj
+
 
 class APIDefaultView(BungeniBrowserView):
     def __call__(self):
@@ -129,10 +132,7 @@ class APITakeListing(ContainerJSONListingRaw):
             d = {}
             for field in self.fields:
                 fn = field.__name__
-                d[fn] = getattr(node, fn, None)
-                v = d[fn]
-                if type(v) in (date, time, datetime):
-                    d[fn] = v.isoformat()
+                d[fn] = dthandler(getattr(node, fn, None))
             d["object_id"] = url.set_url_context(container.stringKey(node))
             d["media_url"] = node.media_url
             values.append(d)
