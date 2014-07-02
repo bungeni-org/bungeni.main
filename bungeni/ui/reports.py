@@ -61,24 +61,7 @@ class DateTimeFormatMixin(object):
 
 class ReportBuilder(form.Form, DateTimeFormatMixin):
     template = namedtemplate.NamedTemplate("alchemist.form")
-    
-    class IReportBuilder(interface.Interface):
-        report_type = schema.Choice(title=_(u"Report Type"),
-            description=_(u"Choose template to use in generating Report"),
-            vocabulary=vocabulary.report_xhtml_template_factory
-        )
-        start_date = schema.Date(
-            title=_("report_builder_start_date", default=u"Start Date"),
-            description=_(u"Start date for this Report")
-        )
-        publication_number = schema.TextLine(title=_(u"Publication Number"),
-            description=_(u"Optional publication number for this Report"),
-            required=False
-        )
-
-    form_fields = form.fields(IReportBuilder)
-    form_fields["start_date"].custom_widget = widgets.SelectDateWidget
-    sittings = []
+    IReportBuilder = None
     publication_date = datetime.datetime.today().date()
     publication_number = ""
     title = _(u"Report Title")
@@ -92,54 +75,15 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         interface.declarations.alsoProvides(removeSecurityProxy(self.context), 
             IWorkspaceReportGeneration
         )
-        if IWorkspaceUnderConsideration.providedBy(self.context):
-            # change the vocabulary
-            self.form_fields["report_type"].field.vocabulary = \
-                vocabulary.document_xhtml_template_factory
+        self.form_fields = form.fields(self.IReportBuilder)
+        self.form_fields["start_date"].custom_widget = widgets.SelectDateWidget
         super(ReportBuilder, self).__init__(context, request)
     
     def get_end_date(self, start_date, hours):
         end_date = start_date + datetime.timedelta(seconds=hours*3600)
         return end_date
     
-    def build_sittings(self):
-        if ISitting.providedBy(self.context):
-            trusted = removeSecurityProxy(self.context)
-            order = "real_order"
-            trusted.item_schedule.sort(key=operator.attrgetter(order))
-            self.sittings.append(trusted)
-        else:
-            sittings = ISchedulingContext(self.context
-                ).get_sittings(self.start_date, self.end_date).values()
-            self.sittings = map(removeSecurityProxy, sittings)
-        self.sittings = [ ExpandedSitting(s) for s in self.sittings ]
-    
-    def build_context(self):
-        if IWorkspaceScheduling.providedBy(self.request):
-            self.build_sittings()
-        elif IWorkspaceUnderConsideration.providedBy(self.context):
-            default_filters = {
-                "sort_dir": u"asc", 
-                "filter_status_date": u"%s->%s" % (
-                    self.start_date.isoformat(), self.end_date.isoformat()
-                ), 
-                "sort_on": u"status_date", 
-                "filter_type": u"",
-            }
-            doc_container = self.context.publishTraverse(self.request, 
-                "documents")
-            for type_key, ti in capi.iter_type_info():
-                workflow = ti.workflow
-                if workflow and workflow.has_feature("workspace"):
-                    # add generators of various doctypes
-                    container_name = naming.plural(type_key)
-                    filters = dict(default_filters)
-                    filters["filter_type"] = type_key
-                    setattr(self, container_name, 
-                        doc_container.query(**filters)[0]
-                    )
-    
-    def generateContent(self, data):
+    def generate_content(self, data):
         self.start_date = (data.get("start_date") or 
             datetime.datetime.today().date()
         )
@@ -158,13 +102,13 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         """Generate preview of the report
         """
         self.show_preview = True
-        self.generated_content = self.generateContent(data)
+        self.generated_content = self.generate_content(data)
         self.status = _(u"See the preview of the report below")
         return self.template()
-
+    
     @form.action(_("publish_report", default=u"Publish"), name="publish")
     def handle_publish(self, action, data):
-        self.generated_content = self.generateContent(data)
+        self.generated_content = self.generate_content(data)
         if IWorkspaceScheduling.providedBy(self.request):
             if not hasattr(self.context, "group_id"):
                 context_group_id = ISchedulingContext(
@@ -188,8 +132,80 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         session.flush()
         notify(ObjectCreatedEvent(report))
         self.status = _(u"Report has been processed and saved")
-        
         return self.template()
+
+
+#@register.view(ISchedulingContext, name="create-report",
+#    protect={"bungeni.report.Edit": register.VIEW_DEFAULT_ATTRS})
+class SchedulingContextReportBuilder(ReportBuilder):
+    
+    # uses a different report_type vocabulary
+    class IReportBuilder(interface.Interface):
+        report_type = schema.Choice(title=_(u"Report Type"),
+            description=_(u"Choose template to use in generating Report"),
+            vocabulary=vocabulary.report_xhtml_template_factory
+        )
+        start_date = schema.Date(
+            title=_("report_builder_start_date", default=u"Start Date"),
+            description=_(u"Start date for this Report")
+        )
+        publication_number = schema.TextLine(title=_(u"Publication Number"),
+            description=_(u"Optional publication number for this Report"),
+            required=False
+        )
+    
+    def build_context(self):
+        if ISitting.providedBy(self.context):
+            self.sittings = []
+            trusted = removeSecurityProxy(self.context)
+            order = "real_order"
+            trusted.item_schedule.sort(key=operator.attrgetter(order))
+            self.sittings.append(trusted)
+        else:
+            sittings = ISchedulingContext(self.context
+                ).get_sittings(self.start_date, self.end_date).values()
+            self.sittings = map(removeSecurityProxy, sittings)
+        self.sittings = [ ExpandedSitting(s) for s in self.sittings ]
+
+
+#@register.view(IWorkspaceUnderConsideration, name="create-report",
+#    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+class UnderConsiderationReportBuilder(ReportBuilder):
+    
+    # uses a different report_type vocabulary
+    class IReportBuilder(interface.Interface):
+        report_type = schema.Choice(title=_(u"Report Type"),
+            description=_(u"Choose template to use in generating Report"),
+            vocabulary=vocabulary.document_xhtml_template_factory
+        )
+        start_date = schema.Date(
+            title=_("report_builder_start_date", default=u"Start Date"),
+            description=_(u"Start date for this Report")
+        )
+        publication_number = schema.TextLine(title=_(u"Publication Number"),
+            description=_(u"Optional publication number for this Report"),
+            required=False
+        )
+    
+    def build_context(self):
+        default_filters = {
+            "sort_dir": u"asc", 
+            "filter_status_date": u"%s->%s" % (
+                self.start_date.isoformat(), self.end_date.isoformat()
+            ), 
+            "sort_on": u"status_date", 
+            "filter_type": u"",
+        }
+        doc_container = self.context.publishTraverse(self.request, "documents")
+        for type_key, ti in capi.iter_type_info():
+            workflow = ti.workflow
+            if workflow and workflow.has_feature("workspace"):
+                # add generators of various doctypes
+                container_name = naming.plural(type_key)
+                filters = dict(default_filters)
+                filters["filter_type"] = type_key
+                setattr(self, container_name, doc_container.query(**filters)[0])
+
 
 
 class SaveReportView(form.PageForm):

@@ -125,12 +125,12 @@
     <browser:page name="create-report"
         for="bungeni.core.interfaces.ISchedulingContext"
         permission="bungeni.report.Edit"
-        class=".reports.ReportBuilder"
+        class=".reports.SchedulingContextReportBuilder"
     />
     <browser:page name="create-report"
         for="bungeni.core.interfaces.IWorkspaceUnderConsideration"
         permission="bungeni.ui.workspace.View"
-        class=".reports.ReportBuilder"
+        class=".reports.UnderConsiderationReportBuilder"
     />
     <browser:page name="download"
         for="bungeni.models.interfaces.IBungeniContent"
