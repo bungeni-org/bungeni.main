@@ -27,23 +27,23 @@ from bungeni.core.language import get_default_language
 from bungeni.ui.utils import common, url, report_tools
 from bungeni.ui.reporting.interfaces import IReportGenerator, ReportException
 from bungeni.ui.calendar.data import ExpandedSitting
-from bungeni.utils.common import get_request
 from bungeni import _, translate
 
-BUNGENI_REPORTS_NS="http://bungeni.org/reports"
+
+BUNGENI_REPORTS_NS = "http://bungeni.org/reports"
 
 
 def value_repr(val):
     #!+REPORTING(mb, Nov-2012) Representation should reuse descriptor
-    #field rendering utilities
+    # field rendering utilities
     if type(val) == datetime:
         return val.isoformat()
     return val.__str__()
 
 def get_element_value(context, name, default=None):
     if name.startswith("dc:"):
-        dc_context = (context.sitting 
-            if (type(context)==ExpandedSitting) else context)
+        dc_context = (
+            context.sitting if type(context) == ExpandedSitting else context)
         dc_adapter = IDCDescriptiveProperties(dc_context, None)
         if dc_adapter is None:
             log.error("No dublin core adapter found for object %s", context)
@@ -53,16 +53,15 @@ def get_element_value(context, name, default=None):
                 return getattr(dc_adapter, name[3:])
             except AttributeError:
                 log.error("Dublin core adapter %s for %s has no attribute %s",
-                    dc_adapter, context, name
-                )
+                    dc_adapter, context, name)
                 return default
-    try:
-        return getattr(context, name)
-    except AttributeError:
-        log.error("Context %s has no such attribute %s. Check report template",
-            context, name
-        )
-        return default
+    else:
+        try:
+            return getattr(context, name)
+        except AttributeError:
+            log.error("Context %s has no such attribute %s. Check report template",
+                context, name)
+            return default
 
 def get_config(doctree, name, default=None):
     """Get configuration value from report template"""
@@ -98,7 +97,7 @@ def add_empty_listing_node(listing_node):
     no_items_node = etree.Element(no_items_tag)
     no_items_node.text = translate(_(u"No items found"))
 
-    #add to previous element of listing node - then drop it
+    # add to previous element of listing node - then drop it
     prev_element = listing_node.getprevious()
     add_after = None
     if prev_element:
@@ -111,17 +110,17 @@ def add_empty_listing_node(listing_node):
                 parent_table = prn
                 break
             if parent_table is not None:
-                #assumption: there's a title element
+                # assumption: there's a title element
                 add_after = parent_table.getprevious()
                 drop_element(parent_table)
     if add_after is not None:
         add_after.addnext(no_items_node)
 
 class _BaseGenerator(object):
-    """Base generator class. Child classes implement actual functionality"""
-
+    """Base generator class. Child classes implement actual functionality.
+    """
     zope.interface.implements(IReportGenerator)
-
+    
     context = None
     configuration = None
     coverage = 168
@@ -131,18 +130,18 @@ class _BaseGenerator(object):
     def __init__(self, report_template_file, context=None):
         self.report_template_file = report_template_file
         self.context = context
-        self.loadConfiguration()
+        self.load_configuration()
     
-    def loadConfiguration(self):
+    def load_configuration(self):
         raise NotImplementedError("""Must be implemented by child classes""")
     
-    def generateReport(self):
+    def generate_report(self):
         raise NotImplementedError("""Must be implemented by child classes""")
     
-    def publishReport(renderer):
+    def publish_report(renderer):
         raise NotImplementedError("""Must be implemented by child classes""")
-
-    def persistReport(self):
+    
+    def persist_report(self):
         raise NotImplementedError("""Must be implemented by child classes""")
 
 
@@ -151,7 +150,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
        `bungeni.models.Report`.
     """
     
-    def loadConfiguration(self):
+    def load_configuration(self):
         """Process report template for configuration
         """
         if os.path.exists(self.report_template_file):
@@ -178,16 +177,14 @@ class ReportGeneratorXHTML(_BaseGenerator):
                 )
             )
     
-    def generateReport(self):
-        """Generate report content based on report template and context
+    def generate_report(self, request):
+        """Generate report content based on report template and context.
         """
-        request = get_request()
-        
         def process_single_node(node, context, typ, src):
             clean_element(node)
-            if typ=="text":
+            if typ == "text":
                 node.text = value_repr(get_element_value(context, src))
-            elif typ=="html":
+            elif typ == "html":
                 raw_value = get_element_value(context, src, "")
                 if raw_value:
                     html_element = html.fragments_fromstring("<div>%s</div>" % 
@@ -197,7 +194,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
                         html_element.attrib[key] = value
                     node.addnext(html_element)
                     node.insert(0, html_element)
-            elif type=="link":
+            elif type == "link":
                 url_src = get_attr(node, "url")
                 if url_src:
                     link_url = get_element_value(context, url_src)
@@ -206,10 +203,10 @@ class ReportGeneratorXHTML(_BaseGenerator):
                 node.attrib["href"] = link_url
                 if src:
                     node.text = get_element_value(context, src)
-
+        
         def check_exists(context, prop):
             return bool(get_element_value(context, prop))
-                
+        
         def process_document_tree(root, context):
             """Iterate and optionally update children of provided root node.
             
@@ -241,36 +238,35 @@ class ReportGeneratorXHTML(_BaseGenerator):
                     if typ:
                         process_single_node(child, context, typ, src)
                 else:
-                    if typ:
-                        if typ == "listing":
-                            clean_element(child)
-                            children = child.getchildren()
-                            listing = get_element_value(context, src, default=[])
-                            if IAlchemistContainer.providedBy(listing):
-                                listing = [ item for item in 
-                                    common.list_container_items(listing) 
-                                ]
-                            len_listing = len(listing)
-                            if len(listing) == 0:
-                                add_empty_listing_node(child)
-                            else:
-                                expanded_children = [ deepcopy(children) 
-                                    for x in range(len_listing)
-                                ]
-                                empty_element(child)
-                                for (index, item) in enumerate(listing):
-                                    for inner_element in expanded_children[index]:
-                                        iroot = process_document_tree(inner_element, 
-                                            item
-                                        )
-                                        if iroot is not None:
-                                            child.append(iroot)
-                        elif typ == "block" and src:
-                            block_context = get_element_value(context, src,
-                                default=None)
-                            process_document_tree(child, block_context)
+                    if not typ:
+                        process_document_tree(child, context)
+                    elif typ == "listing":
+                        clean_element(child)
+                        children = child.getchildren()
+                        listing = get_element_value(context, src, default=[])
+                        if IAlchemistContainer.providedBy(listing):
+                            listing = [ item for item in 
+                                common.list_container_items(listing) 
+                            ]
+                        len_listing = len(listing)
+                        if not len_listing:
+                            add_empty_listing_node(child)
                         else:
-                            process_document_tree(child, context)
+                            expanded_children = [ deepcopy(children) 
+                                for x in range(len_listing)
+                            ]
+                            empty_element(child)
+                            for i, item in enumerate(listing):
+                                for inner_element in expanded_children[i]:
+                                    iroot = process_document_tree(inner_element, 
+                                        item
+                                    )
+                                    if iroot is not None:
+                                        child.append(iroot)
+                    elif typ == "block" and src:
+                        block_context = get_element_value(context, src, 
+                            default=None)
+                        process_document_tree(child, block_context)
                     else:
                         process_document_tree(child, context)
             clean_element(root)
@@ -278,8 +274,9 @@ class ReportGeneratorXHTML(_BaseGenerator):
         process_document_tree(self.report_template, self.context)
         return etree.tostring(self.report_template)
 
-    def publishReport(self):
+    def publish_report(self):
         pass
     
-    def persistReport(self):
+    def persist_report(self):
         pass
+

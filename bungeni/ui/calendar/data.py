@@ -94,10 +94,12 @@ def get_filter_config():
             for (type_key, ti) in get_schedulable_types().iteritems() ]
     )
 
+
 class ReportContext(object):
     def __init__(self, **kw):
         for key, value in kw.iteritems():
             setattr(self, key, value)
+
 
 class SchedulableItemsGetter(object):
     item_type = None
@@ -133,7 +135,7 @@ class SchedulableItemsGetter(object):
     def group_id(self):
         group_id = None
         if IScheduleText.implementedBy(self.domain_class):
-            #use current chamber if any as group id
+            # use current chamber if any as group id
             chamber = get_chamber_for_context(self.context)
             if chamber:
                 group_id = chamber.group_id
@@ -175,7 +177,7 @@ class SchedulableItemsGetter(object):
                 items_query = items_query.filter(expression)
         if self.group_filter and not IScheduleText.implementedBy(self.domain_class):
             if hasattr(self.domain_class, "chamber_id") and self.group_id:
-                #filter by the current chamber
+                # filter by the current chamber
                 #!+(SCHEDULING, Oct-2013) Todo: rework to get group documents
                 items_query = items_query.filter(
                     self.domain_class.chamber_id==
@@ -203,22 +205,16 @@ class SchedulableItemsGetter(object):
                 item_id = orm.object_mapper(item).primary_key_from_instance(
                     item
                 )[0],
-                item_title = (item.text if is_text else 
-                    IDCDescriptiveProperties(item).title),
-                status = (IWorkflow(item).get_state(item.status).title 
-                    if not is_text else None),
-                status_date = ( date_formatter.format(item.submission_date) 
-                    if (hasattr(item, "submission_date") and 
-                        getattr(item, "submission_date")
-                    )
-                    else None
-                ),
-                registry_number = ( item.registry_number if
-                    hasattr(item, "registry_number") else None
-                ),
-                item_mover = ( IDCDescriptiveProperties(item.owner).title if
-                    hasattr(item, "owner") else None
-                ),
+                item_title = item.text if \
+                    is_text else IDCDescriptiveProperties(item).title,
+                status = IWorkflow(item).get_state(item.status).title if not \
+                    is_text else None,
+                status_date = date_formatter.format(item.submission_date) if \
+                    getattr(item, "submission_date", None) else None,
+                registry_number = item.registry_number if \
+                    hasattr(item, "registry_number") else None,
+                item_mover = IDCDescriptiveProperties(item.owner).title if \
+                    hasattr(item, "owner") else None,
                 item_uri = "%s-%d" % (self.item_type,
                     orm.object_mapper(item).primary_key_from_instance(item)[0]
                 )
@@ -239,26 +235,31 @@ class ExpandedSitting(object):
     
     def __init__(self, sitting=None):
         self.sitting = sitting
-        if len(self.grouped.keys())==0:
-            self.groupItems()
+        if not self.grouped:
+            self.group_items()
     
     def __getattr__(self, name):
-        """ Attribute lookup fallback - Sitting should have access to item
+        """Attribute lookup fallback - Sitting should have access to item.
         """
-        if name in self.grouped.keys():
-            return self.grouped.get(name)
-        if hasattr(self.sitting, name):
-            return getattr(self.sitting, name)
-        dc_adapter = IDCDescriptiveProperties(self.sitting)
+        s = self.sitting
+        success_message = (
+            "SUCCESS LOOKUP of ATTR %r (%s) on %s / sitting=%s / grouped=%r" % (
+                name, "%s", self, s, self.grouped))
+        if name in self.grouped:
+            log.debug(success_message, "[1] via ExpandedSitting.grouped")
+            return self.grouped[name]
+        if hasattr(s, name):
+            log.debug(success_message, "[2] directly via sitting")
+            return getattr(s, name)
+        dc_adapter = IDCDescriptiveProperties(s)
         if hasattr(dc_adapter, name):
+            log.debug(success_message, "[3] via sitting DCAdapter %s" % (dc_adapter))
             return getattr(dc_adapter, name)
-        else:
-            log.error("Sitting Context %s has no such attribute: %s",
-                self.sitting.__str__(), name
-            )
-            return []
+        log.error("FAILED LOOKUP of ATTR %r on %s / sitting=%s / grouped=%r", 
+            name, self, s, self.grouped)
+        #return [] !+ why is the failed default return value an empty list ?!
     
-    def groupItems(self):
+    def group_items(self):
         for scheduled in self.sitting.item_schedule:
             item_group = "%ss" % scheduled.item.type
             if item_group not in self.grouped.keys():
@@ -268,8 +269,11 @@ class ExpandedSitting(object):
                 self.grouped[item_group] = []
             self.grouped[item_group].append(scheduled.item)
 
+
+# !+CUSTOM site-wide parameter? Scheduling feature parameter?
 TIME_OPTIONS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', 
     '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', 
     '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00',
     '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00',
     '23:30', '00:00']
+

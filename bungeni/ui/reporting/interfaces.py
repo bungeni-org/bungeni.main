@@ -10,6 +10,7 @@ $Id$
 from zope.interface import Interface, Attribute
 from exceptions import Exception
 
+
 class IReportGenerator(Interface):
     """Specification for report generation"""
     
@@ -20,17 +21,18 @@ class IReportGenerator(Interface):
     title = Attribute("""Title of the report""")
     language = Attribute("""Language of the Report""")
 
-    def loadConfiguration():
+    def load_configuration():
         """Load report configuration from a config file. Sets up attributes."""
         
-    def generateReport():
-        """Generates text for report"""
+    def generate_report():
+        """Generates text for report."""
 
-    def publishReport(renderer):
-        """Publishes text report using a renderer"""
+    def publish_report(renderer):
+        """Publishes text report using a renderer."""
 
-    def persistReport():
-        """Persist report to storage"""
+    def persist_report():
+        """Persist report to storage."""
+
 
 class IReportRenderer(Interface):
     """Specification for report renderers"""
@@ -42,8 +44,10 @@ class IReportRenderer(Interface):
     def render():
         """Render the report content using the specified template"""
 
+
 class ReportException(Exception):
     """Exception raised during report processing.
     
     Should pass in a useful i18n message in call to show to the user
     """
+

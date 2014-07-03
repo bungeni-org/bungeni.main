@@ -38,7 +38,7 @@ from bungeni.ui.reporting import generators
 from bungeni.ui.calendar.data import ExpandedSitting, ReportContext
 
 from bungeni.capi import capi
-from bungeni.utils import register, naming
+from bungeni.utils import common, naming, register
 from bungeni import _, translate
 
 
@@ -95,7 +95,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         self.end_date = self.get_end_date(self.start_date, generator.coverage)
         self.build_context()
         generator.context = self
-        return generator.generateReport()
+        return generator.generate_report(self.request)
     
     @form.action(_(u"Preview"), name="preview")
     def handle_preview(self, action, data):
@@ -337,7 +337,7 @@ def default_reports(sitting, event):
         generator.context = report_context
         report.title = report_title_i18n
         report.language = generator.language
-        report.body = generator.generateReport()
+        report.body = generator.generate_report(common.get_request())
         session.add(report)
         session.flush()
         notify(ObjectCreatedEvent(report))

@@ -1214,7 +1214,7 @@ class AgendaPreview(BrowserView):
         generator.context = data.ReportContext(
             sittings=sittings, title=title
         )
-        return generator.generateReport()
+        return generator.generate_report(self.request)
 
     def __call__(self):
         self.request.response.setHeader("Content-type", "text/html")

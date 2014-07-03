@@ -166,7 +166,7 @@ class DownloadDocument(BrowserView):
         generator = generators.ReportGeneratorXHTML(doc_template, 
             self.document
         )
-        return generator.generateReport()
+        return generator.generate_report(self.request)
 
     def generateDoc(self):
         """Generates ODT/PDF doc"""
