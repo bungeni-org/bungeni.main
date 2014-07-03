@@ -230,11 +230,9 @@ class SchedulableItemsGetter(object):
 class ExpandedSitting(object):
     """Contains list of sittings and groups of documents in the schedule
     """
-    sitting = None
-    grouped = {}
-    
     def __init__(self, sitting=None):
         self.sitting = sitting
+        self.grouped = {} # protect against recursive calling from __getattr__ 
         if not self.grouped:
             self.group_items()
     
@@ -257,17 +255,14 @@ class ExpandedSitting(object):
             return getattr(dc_adapter, name)
         log.error("FAILED LOOKUP of ATTR %r on %s / sitting=%s / grouped=%r", 
             name, self, s, self.grouped)
-        #return [] !+ why is the failed default return value an empty list ?!
     
     def group_items(self):
         for scheduled in self.sitting.item_schedule:
             item_group = "%ss" % scheduled.item.type
-            if item_group not in self.grouped.keys():
-                log.debug("[Reports] Setting up expanded listing with:: %s", 
-                    item_group
-                )
-                self.grouped[item_group] = []
-            self.grouped[item_group].append(scheduled.item)
+            log.debug(
+                "[Reports] Adding item %s to group %r in expanded sitting %s", 
+                    scheduled, item_group)
+            self.grouped.setdefault(item_group, []).append(scheduled.item)
 
 
 # !+CUSTOM site-wide parameter? Scheduling feature parameter?
