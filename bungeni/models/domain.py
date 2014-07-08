@@ -644,6 +644,7 @@ class GroupMemberAudit(Audit):
         return IDCDescriptiveProperties(self.audit_head).title
 
 
+# !+IS_GLOBAL rename table/class to member_subrole/MemberSubRole ?!
 class MemberRole(Entity):
     """Association between an group member and subroles that are granted when 
     a document is assigned to a user.

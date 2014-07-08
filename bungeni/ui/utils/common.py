@@ -285,11 +285,16 @@ def list_container_items(container_instance, permission=None):
         if checkPermission(permission, item):
             yield item
 
-def get_users(role_id):
+
+def get_local_users_for_subrole(subrole_id):
+    """ !+IS_GLOBAL(mr, jul-2014) what is the reasoning for this utility?
+        why only users for which the member_role is NOT global?
+    """
     session = bungeni.alchemist.Session()
     gmrs = session.query(bungeni.models.domain.MemberRole).filter(
         sql.and_(
-            bungeni.models.domain.MemberRole.role_id == role_id,
+            bungeni.models.domain.MemberRole.role_id == subrole_id,
             bungeni.models.domain.MemberRole.is_global == False)).all()
-    return [gmr.member.user for gmr in gmrs]
+    return [ gmr.member.user for gmr in gmrs ]
+
 

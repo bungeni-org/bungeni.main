@@ -17,7 +17,6 @@ import zope.interface
 from lxml import etree
 from lxml import html
 from tidylib import tidy_fragment
-from datetime import datetime
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 
@@ -36,14 +35,13 @@ BUNGENI_REPORTS_NS = "http://bungeni.org/reports"
 def value_repr(val):
     #!+REPORTING(mb, Nov-2012) Representation should reuse descriptor
     # field rendering utilities
-    if type(val) == datetime:
-        return val.isoformat()
-    return val.__str__()
+    from bungeni.ui.api import dthandler
+    return str(dthandler(val))
 
 def get_element_value(context, name, default=None):
     if name.startswith("dc:"):
         dc_context = (
-            context.sitting if type(context) == ExpandedSitting else context)
+            context.sitting if isinstance(context, ExpandedSitting) else context)
         dc_adapter = IDCDescriptiveProperties(dc_context, None)
         if dc_adapter is None:
             log.error("No dublin core adapter found for object %s", context)

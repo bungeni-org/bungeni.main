@@ -137,7 +137,7 @@ class UserAssignmentView(forms.common.BaseForm):
 
     def role_listing(self, role_id, editable):
         listing = []
-        users = common.get_users(role_id)
+        users = common.get_local_users_for_subrole(role_id)
         if not users:
             return _("No users available for this role.")
         for user in users:
@@ -177,7 +177,7 @@ class UserAssignmentView(forms.common.BaseForm):
 
     def process_assignment(self):
         for role_id in self.assignable_roles():
-            for user in common.get_users(role_id):
+            for user in common.get_local_users_for_subrole(role_id):
                 key = self.make_id(user.login, role_id)
                 if key in self.request.form.keys():
                     self.prm.assignRoleToPrincipal(role_id, user.login)
@@ -194,4 +194,5 @@ class UserAssignmentView(forms.common.BaseForm):
     def handle_cancel(self, action, data):
         next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(next_url)
+
 

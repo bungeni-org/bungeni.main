@@ -118,7 +118,7 @@ class GenerateDebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
     def get_transcribers(self):
         transcribers = []
         transcriber_role = self.get_transcriber_role()
-        users = common.get_users(transcriber_role)
+        users = common.get_local_users_for_subrole(transcriber_role)
         for user in users:
             if self.user_is_assigned(user.login, transcriber_role):
                 transcribers.append(user)
@@ -220,3 +220,5 @@ class AddItems(forms.common.BaseForm):
                     datetime.timedelta(seconds=item["end_time"])
                 session.add(agenda_item)
         session.flush()
+
+

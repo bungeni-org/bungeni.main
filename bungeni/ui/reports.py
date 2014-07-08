@@ -161,7 +161,9 @@ class SchedulingContextReportBuilder(ReportBuilder):
             sittings = map(removeSecurityProxy, 
                 ISchedulingContext(self.context).get_sittings(
                     self.start_date, self.end_date).values())
-        # ensure item_schedule is sorted via "real_order"
+        # sort sittings chronologically
+        sittings.sort(key=operator.attrgetter("start_date"))
+        # ensure item_schedule is sorted via "real_order" within each sitting
         for sitting in sittings:
             sitting.item_schedule.sort(key=operator.attrgetter("real_order"))
         self.sittings = [ ExpandedSitting(s) for s in sittings ]

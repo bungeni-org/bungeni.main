@@ -593,6 +593,7 @@ member_role = sa.Table("member_role", metadata,
         primary_key=True),
     sa.Column("role_id", sa.Unicode(256), nullable=False,
         primary_key=True),
+    # !+IS_GLOBAL(mr, jul-2014) what is the exact intention for this column?
     sa.Column("is_global", sa.Boolean, default=False),
 )
 
@@ -826,7 +827,7 @@ item_schedule = sa.Table("item_schedule", metadata,
     ),
     sa.Column("planned_order", sa.Integer),
     sa.Column("real_order", sa.Integer),
-    # item was discussed on this sitting sitting
+    # item was discussed on this sitting
     sa.Column("active", sa.Boolean, default=True),
     # workflow status of the item for this schedule
     # NOT workflow status of this item_schedule!
