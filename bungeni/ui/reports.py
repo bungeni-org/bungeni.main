@@ -156,16 +156,15 @@ class SchedulingContextReportBuilder(ReportBuilder):
     
     def build_context(self):
         if ISitting.providedBy(self.context):
-            self.sittings = []
-            trusted = removeSecurityProxy(self.context)
-            order = "real_order"
-            trusted.item_schedule.sort(key=operator.attrgetter(order))
-            self.sittings.append(trusted)
+            sittings = [removeSecurityProxy(self.context)]
         else:
-            sittings = ISchedulingContext(self.context
-                ).get_sittings(self.start_date, self.end_date).values()
-            self.sittings = map(removeSecurityProxy, sittings)
-        self.sittings = [ ExpandedSitting(s) for s in self.sittings ]
+            sittings = map(removeSecurityProxy, 
+                ISchedulingContext(self.context).get_sittings(
+                    self.start_date, self.end_date).values())
+        # ensure item_schedule is sorted via "real_order"
+        for sitting in sittings:
+            sitting.item_schedule.sort(key=operator.attrgetter("real_order"))
+        self.sittings = [ ExpandedSitting(s) for s in sittings ]
 
 
 #@register.view(IWorkspaceUnderConsideration, name="create-report",

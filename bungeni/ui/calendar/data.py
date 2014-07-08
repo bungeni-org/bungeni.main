@@ -21,7 +21,7 @@ from bungeni.feature import feature
 from bungeni.models.utils import get_user_chamber, get_login_user
 from bungeni.models.utils import get_chamber_for_context
 from bungeni.ui.utils import date
-from bungeni.utils import common
+from bungeni.utils import common, naming
 from bungeni.alchemist import Session
 
 from bungeni.capi import capi
@@ -257,12 +257,32 @@ class ExpandedSitting(object):
             name, self, s, self.grouped)
     
     def group_items(self):
+        """Prepare and remember item aggregations, for convenient access from 
+        within templates. Grouping aggregations are keyed on the *pluralized* 
+        name of:
+        a) the item's type key
+        b) (if different to type key) its custom archetype key 
+        c) (if different to custom archetype key) its system archetype key.
+        Example, an item of type "assembly_question" (that has custom 
+        archetype "question", and system archetype "doc") will be included in
+        the following aggregation list attributes on this instance:
+        a) es.assembly_questions
+        b) es.questions
+        c) es.docs
+        """
         for scheduled in self.sitting.item_schedule:
-            item_group = "%ss" % scheduled.item.type
-            log.debug(
-                "[Reports] Adding item %s to group %r in expanded sitting %s", 
-                    scheduled, item_group)
-            self.grouped.setdefault(item_group, []).append(scheduled.item)
+            type_key = scheduled.item.type
+            ti = capi.get_type_info(type_key)
+            grouping_type_keys = [type_key]
+            for tk in (ti.custom_archetype_key, ti.sys_archetype_key):
+                if tk is not None and tk not in grouping_type_keys:
+                    grouping_type_keys.append(tk)
+            for tk in grouping_type_keys:
+                grouping_name = naming.plural(tk)
+                log.debug(
+                    "[Reports] Adding %s to grouping %r in expanded sitting %s", 
+                        scheduled, grouping_name, self)
+                self.grouped.setdefault(grouping_name, []).append(scheduled.item)
 
 
 # !+CUSTOM site-wide parameter? Scheduling feature parameter?
