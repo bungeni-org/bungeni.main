@@ -68,7 +68,7 @@
     require="jquery dhtmlxscheduler-theme-glossy
         dhtmlxscheduler-recurring dhtmlxscheduler-multisource 
         dhtmlxscheduler-multi-day-visible 
-        dhtmlxscheduler-year-view dhtmlxscheduler-week-agenda-view 
+        dhtmlxscheduler-year-view dhtmlxscheduler-agenda-view
         dhtmlxscheduler-expand bungeni-calendar-globals
         dhtmlxscheduler-limit dhtmlxscheduler-timeline dhtmlxscheduler-tooltip 
         dhtmlxscheduler-minical dhtmlxscheduler-collision

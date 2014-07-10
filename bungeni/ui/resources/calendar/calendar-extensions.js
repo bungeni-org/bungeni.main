@@ -85,7 +85,7 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
         mapping = timeline_mapping[old_mode]
         if (mapping == undefined){
             mapping = timeline_mapping.default
-            scheduler._min_date = scheduler.date.week_agenda_start(new Date());
+            scheduler._min_date = scheduler.date.agenda_start(new Date());
         }else{
             scheduler._min_date = scheduler.date[old_mode + "_start"](new Date());
         }
@@ -102,7 +102,7 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
         });
         
         var min_date_getter = (scheduler.date[old_mode+"_start"] ||
-            scheduler.date.week_agenda_start
+            scheduler.date.agenda_start
         )
         scheduler.date[new_mode + "_start"] = min_date_getter;
     }

@@ -378,7 +378,7 @@ YAHOO.bungeni.scheduling = function(){
                     {
                         selectionMode: "single",
                         scrollable: 'y',
-                        width: "99.4%",
+                        width: "102%",
                         height: (container.body.clientHeight-30) + "px",
                         MSG_EMPTY: AgendaConfig.EMPTY_AGENDA_MESSAGE
                     }

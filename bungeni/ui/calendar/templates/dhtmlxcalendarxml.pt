@@ -16,10 +16,9 @@
 <text><span tal:replace="structure python:'&lt;![CDATA['"/>
 <tal:activity tal:condition="s/short_name">
 <span tal:replace="s/short_name"/>
+<b><span tal:omit-tag="">&nbsp;&ndash;&nbsp;</span></b>
 </tal:activity>
-<tal:noactivity tal:condition="not:s/short_name">
-<span i18n:translate="scheduler_label_sitting">Sitting</span>
-</tal:noactivity>
+<group><span tal:replace="s/group/dc:title"/></group>
 <tal:withvenue tal:condition="s/venue|nothing">
 <b><span tal:omit-tag="">&nbsp;&ndash;&nbsp;</span></b>
 <span tal:replace="s/venue/dc:title"/><br/>

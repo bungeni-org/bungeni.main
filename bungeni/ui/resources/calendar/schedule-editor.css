@@ -111,6 +111,10 @@ span.delete-minute-control{
     left:18px;
     background:url("/@@/portal/images/cross.png") right center no-repeat;
 }
+span.agenda_heading{
+    text-align:center;
+    display:block;   
+}
 span.dt_title_unit{
     padding:0.2em 0.4em;
     margin-left: 0.3em;

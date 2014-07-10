@@ -365,7 +365,8 @@ YAHOO.bungeni.config = function () {
                 rec_data = record.getData();
                 if (rec_data.item_type == SGlobals.types.HEADING) {
                     el.innerHTML = (
-                        "<span style='text-align:center;display:block;'><strong>" + rec_data.item_title + "</strong></span>");
+                        "<span class='agenda_heading'><h3>" + 
+                            rec_data.item_title + "</h3></span>");
                 } else if (rec_data.item_type == SGlobals.types.EDITORIAL_NOTE) {
                     el.innerHTML = BungeniUtils.wrapText(rec_data.item_title);
                 } else {
