@@ -462,6 +462,7 @@ class GroupDescriptor(ModelDescriptor):
     default_field_order = [
         "full_name",
         "short_name",
+        "conceptual_name",
         "acronym",
         "combined_name",
         "language",
@@ -500,6 +501,15 @@ class GroupDescriptor(ModelDescriptor):
             derived="group_combined_name",
         ),
         LanguageField("language"), # [user-req]
+        F(name="conceptual_name",
+            label="Conceptual Name",
+            required=True,
+            localizable=[
+                show("view edit add"),
+            ],
+            value_type="text",
+            render_type="text_box",
+        ),
         F(name="description",
             label="Description",
             localizable=[
@@ -543,7 +553,7 @@ class GroupDescriptor(ModelDescriptor):
             render_type="single_select",
             vocabulary="workflow_states",
         ),
-        F(name="group_mandate",
+        F(name="group_mandate_type",
           label="Group Mandate Type",
           required=False,
           localizable=[show("view edit add listing")],

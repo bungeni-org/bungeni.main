@@ -587,7 +587,7 @@ class Group(Principal):
             return False
         else:
             return True
-
+    
     def is_type_workspaced(self, type_key):
         """Is this type workspaced within this group context (for user)?
         """
@@ -596,7 +596,7 @@ class Group(Principal):
         workspace_feature = ti.workflow.get_feature("workspace")
         if workspace_feature is not None:
             group_names = workspace_feature.p["group_names"]
-            return self.principal_name in group_names
+            return self.conceptual_name in group_names
         return False
 
 class GroupAudit(Audit):

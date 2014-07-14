@@ -315,7 +315,7 @@ class Workspace(Feature):
     feature_interface = interfaces.IFeatureWorkspace
     feature_parameters = {
         # parameter "group_names": apply "workspace" feature only to the 
-        # specified groups (identified by their unique principal_name).
+        # specified groups (identified by their (unique) conceptual_name).
         # Each group *instance* within which a document type may be created in 
         # MUST be declared in this way. This is to replace assumption to-date 
         # that a legislative document may only be created within a chamber.

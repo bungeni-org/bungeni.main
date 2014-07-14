@@ -272,7 +272,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
             if group_names:
                 user = utils.get_login_user()
                 for group in utils.get_user_groups(user):
-                    if group.principal_name in group_names:
+                    if group.conceptual_name in group_names:
                         return True
         return False
 

@@ -22,9 +22,9 @@ from bungeni.utils.misc import describe
 from bungeni import _
 
 
-# !+CHAMBER_CUSTOM generalize spawn_doc to arbitrary group (not chamber)
+# !+GROUP_GENERALIZE generalize spawn_doc to arbitrary group (not chamber)
 # allow from any type of group to any type of group e.g. from chamber to committee?
-# use target_group_name instead of target_chamber_type ?
+# use target_group_conceptual_name or target_group_sub_type instead of target_chamber_type ?
 def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id):
     """Utility to help create parametrized "transfer to chamber" actions.
     Returns the newly spawned doc.

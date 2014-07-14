@@ -29,9 +29,10 @@ def col_status(name):
 def col_status_date(name):
     return sa.Column(name, sa.DateTime(timezone=False),
         server_default=sa.sql.text("now()"), nullable=False)
-def col_principal_name(name):
+def col_principal_name(name, default=None):
     # !+login_regex - principal_name should also be a valid login name
-    return sa.Column(name, sa.Unicode(128), unique=True, nullable=False)
+    return sa.Column(name, sa.Unicode(128), default=default,
+        unique=True, nullable=False)
 
 
 metadata = sa.MetaData()
@@ -85,7 +86,7 @@ change = sa.Table("change", metadata,
     # the type of change, also the change polymorphic identity
     sa.Column("action", sa.Unicode(128), nullable=False),
     # accumulative count, per (change.audit.audit_head_id, change.action) 
-    # e.g default: 1 + max(seq(head, "version")), see ui.audit _get_seq()
+    # e.g default: 1 + max(seq(head, "version")), see core.audit _get_seq()
     sa.Column("seq", sa.Integer, nullable=False),
     sa.Column("procedure", sa.String(1), default="a", nullable=False),
     # audit datetime, exclusively managed by the system, real datetime of 
@@ -496,6 +497,13 @@ password_restore_link = sa.Table("password_restore_link", metadata,
 ) 
 
 
+def _group_principal_name(context):
+    """Derive the group principal_name (from conceptual_name, group_id)
+    """
+    params = context.current_parameters
+    return u"{0}.g{1}".format(params["conceptual_name"], params["group_id"])
+
+
 # group - we use a very normalized form here to represent all kinds of
 # groups and their relations to other things in the system.
 group = sa.Table("group", metadata,
@@ -506,7 +514,12 @@ group = sa.Table("group", metadata,
     sa.Column("short_name", sa.Unicode(512), nullable=False),
     sa.Column("full_name", sa.Unicode(1024)),
     col_acronym("acronym"),
-    col_principal_name("principal_name"),
+    # conceptual_name - user-selected conceptual name for the group:
+    # - used to automatically derive the principal_name (login) for the group
+    #   and for this reason is limited to half the size of that
+    # - there may only be one *active* group per (conceptual_name, principal.type)
+    sa.Column("conceptual_name", sa.Unicode(64), nullable=False),
+    col_principal_name("principal_name", default=_group_principal_name),
     sa.Column("description", sa.UnicodeText),
     sa.Column("body", sa.UnicodeText),
     col_status("status"),
@@ -525,7 +538,7 @@ group = sa.Table("group", metadata,
     # the role gained by being a member of this group
     sa.Column("group_role", sa.Unicode(256), nullable=False),
     # is the group "permament", "temporary", ... ?
-    sa.Column("group_mandate", sa.Unicode(128)),
+    sa.Column("group_mandate_type", sa.Unicode(128)),
 )
 group_audit = make_audit_table(group, metadata)
 

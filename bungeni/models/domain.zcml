@@ -312,6 +312,7 @@
                 short_name
                 full_name
                 acronym
+                conceptual_name
                 principal_name
                 description
                 body
