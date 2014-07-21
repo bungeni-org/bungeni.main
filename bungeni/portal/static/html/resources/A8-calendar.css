@@ -294,6 +294,7 @@ white-space: normal;
 .dhtmlx_calendar_title {
     text-align: center;
     height:30px;
+    font-size: 130% !important;
 }
 
 .dhtmlx_calendar_main {
@@ -338,30 +339,34 @@ white-space: normal;
 }
 
 .dhx_cal_navline #combined_tab{
-    left:470px;
+    left:750px;
 }
 .dhx_cal_next_button{
-    left:540px; !important;
-    right:auto;  !important;
+    left:470px !important;
+    right:auto !important;
+    margin-top: 0.3em !important;
 }
 .dhx_cal_today_button
 {
-    left:580px; !important;
+    display: none;
 }
 .dhx_cal_navline #dhx_minical_icon{
-    left:660px;
+    left:510px;
     top:4px;
 }
 .dhx_cal_navline #dhx_ical_icon{
     width: 60px;
     height: 18px;
-    left: 685px;
+    left: 535px;
     top: 6px;
     cursor: pointer;
     background: url(images/ical.png) no-repeat;
 }
 
 /* events */
+.dhx_cal_event_line {
+  min-width: 44px !important;
+}
 .quick-view {
     color:#887A2E;
     padding-right: 10px;

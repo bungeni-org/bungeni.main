@@ -273,8 +273,11 @@ class CalendarView(BungeniBrowserView):
             group = self.context.get_group()
             if model_interfaces.ICommittee.providedBy(group):
                 group_container = group.parent_group.committees
+                group_list.append({
+                    "key": group.parent_group.group_id,
+                    "label": IDCDescriptiveProperties(group.parent_group).title,
+                })
             else:
-                group = self.context.get_group()
                 group_container = group.committees
                 group_list.append({
                     "key": self.context.group_id,
@@ -829,6 +832,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 )
             else:
                 sitting.sitting_length = data.get("event_length")
+                sitting = removeSecurityProxy(sitting)
                 session.merge(sitting)
                 self.template_data.append({
                         "sitting_id": sitting.sitting_id, 
