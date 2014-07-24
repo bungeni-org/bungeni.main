@@ -529,7 +529,7 @@ class SpecializedMemberSource(BaseVocabularyFactory):
             vocabulary.SimpleTerm(
                 value=ob.user_id,
                 token=ob.user_id,
-                title="%s %s" % (ob.first_name, ob.last_name))
+                title="%s %s %s" % (ob.first_name, ob.middle_name, ob.last_name))
             for ob in sorted(results)
         ]
         
