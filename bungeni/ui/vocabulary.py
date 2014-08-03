@@ -525,11 +525,13 @@ class SpecializedMemberSource(BaseVocabularyFactory):
     def __call__(self, context=None):
         query = self.construct_query(removeSecurityProxy(context))
         results = query.all() # either([Member], [User])
+        combined_name_getter = (lambda ob:(ob.combined_name if hasattr
+                        (ob, "combined_name") else ob.user.combined_name))
         terms = [
             vocabulary.SimpleTerm(
                 value=ob.user_id,
                 token=ob.user_id,
-                title="%s %s %s" % (ob.first_name, ob.middle_name, ob.last_name))
+                title=combined_name_getter(ob))
             for ob in sorted(results)
         ]
         
@@ -555,7 +557,7 @@ class SpecializedMemberSource(BaseVocabularyFactory):
                     terms.append(vocabulary.SimpleTerm(
                             value=user.user_id,
                             token=user.user_id,
-                            title="(%s %s)" % (user.first_name, user.last_name)))
+                            title=user.combined_name))
         
         return vocabulary.SimpleVocabulary(terms)
     

@@ -628,9 +628,6 @@ class GroupMember(HeadParentedMixin, Entity):
     def first_name(self):
         return self.user.first_name
     @property
-    def middle_name(self):
-        return self.user.middle_name
-    @property
     def last_name(self):
         return self.user.last_name
     
