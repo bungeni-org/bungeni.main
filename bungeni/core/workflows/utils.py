@@ -215,10 +215,16 @@ def get_group_privilege_extent_context(group):
     raise ValueError(group)
 
 def set_group_local_role(group):
+    """Grant the group role to this group principal, on target context 
+    as specified by this group's privilege_extent setting.
+    """
     set_role(group.group_role, group.principal_name, 
         get_group_privilege_extent_context(group))
 
 def unset_group_local_role(group):
+    """Revoke the group role to this group principal, on target context 
+    as specified by this group's privilege_extent setting.
+    """
     unset_role(group.group_role, group.principal_name, 
         get_group_privilege_extent_context(group))
 

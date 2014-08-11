@@ -59,12 +59,20 @@ from bungeni.core.workflows.dbutils import (
 @describe(_(u"Activate a group"))
 def activate(group):
     """Perform any actions required to activate a group.
+    
+    When a group is activated the group role is granted to the group principal 
+    (and by virtue of membership, also to each active member of the group) 
+    on target context as specified by this group's privilege_extent setting.
     """
     utils.set_group_local_role(group)
 
 @describe(_(u"Deactivate a group"))
 def deactivate(group):
     """Perform any actions required to deactivate a group.
+    
+    When a group is deactivated the group role is revoked to the group principal 
+    (and by virtue of membership, also to each active member of the group) 
+    on target context as specified by this group's privilege_extent setting.
     """
     utils.unset_group_local_role(group)
 
