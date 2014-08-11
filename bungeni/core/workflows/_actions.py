@@ -20,6 +20,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
 from bungeni.core.workflows import utils
+from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.utils.misc import describe
 from bungeni import _
 
@@ -52,6 +53,7 @@ from bungeni.core.workflows.utils import (
 from bungeni.core.workflows.dbutils import (
     # utility to help create parametrized "transfer to chamber" actions
     # PARAMETERS: (source_doc, target_chamber_type, target_type_key, target_state_id)
+    # !+SUB_TYPE: PARAMETERS: (source_doc, target_group_conceptual_name, target_type_key, target_state_id)
     spawn_doc,
 )
 
@@ -79,16 +81,28 @@ def deactivate(group):
 
 @describe(_(u"Dissolve a group"))
 def dissolve(group):
-    """Perform any actions required to dissolve a group.
+    """Perform any actions required to dissolve a group - 
+    typically set as an action on group workflow state "dissolved".
     
-    When a group is dissolved all members of this group get the end date of 
+    When a group is dissolved:
+    - all members of this group get the end date of 
     the group (if they do not have one yet) and there active_p status gets set
     to False.
+    - any child group is ended and dissolved.
+    
     """
     from bungeni.core.workflows import dbutils
-    dbutils.deactivateGroupMembers(group)
-    groups = dbutils.endChildGroups(group)
-    utils.dissolveChildGroups(groups, group)
+    dbutils.deactivate_group_members(group)
+    for ended_child_group in dbutils.end_child_groups(group):
+        # !+GROUP_DISSOLVE assumes that workflow of EVERY child group type has:
+        # - a state "active" AND a state "dissolved" AND
+        # - a transition from first to second AND
+        # - that the semantic meaning of the state "dissolved" is indeed 
+        #   dissolution of the group...
+        # should probably replace with a GroupType.dissolve() method that 
+        # knows how to dissolve itself and/or as dissolve feature parameters
+        IWorkflowController(ended_child_group
+            ).fireTransition("active-dissolved", check_security=False)
     utils.unset_group_local_role(group)
 
 

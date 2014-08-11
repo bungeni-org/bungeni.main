@@ -229,17 +229,6 @@ def unset_group_local_role(group):
         get_group_privilege_extent_context(group))
 
 
-def dissolveChildGroups(groups, context):
-    for group in groups:
-        # !+group_dissolve(mr, may-2012) assumes that workflow of EVERY group
-        # type has a state "active" AND a state "dissolved" AND a transition
-        # from first to second AND that the semantic meaning of state 
-        # "dissolved" is indeed dissolution of the group... should probably 
-        # be replaced by a GroupType.dissolve() method that knows how to 
-        # dissolve itself.
-        IWorkflowController(group).fireTransition("active-dissolved", 
-            check_security=False)
-
 # sitting
 @describe(_(u"Schedules the items on a sitting"))
 def schedule_sitting_items(context):

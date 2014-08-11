@@ -22,9 +22,10 @@ from bungeni.utils.misc import describe
 from bungeni import _
 
 
-# !+GROUP_GENERALIZE generalize spawn_doc to arbitrary group (not chamber)
+# !+GENERALIZE_GROUP generalize spawn_doc to arbitrary group (not just chamber)
 # allow from any type of group to any type of group e.g. from chamber to committee?
-# use target_group_conceptual_name or target_group_sub_type instead of target_chamber_type ?
+# !+SUB_TYPE use target_group_conceptual_name or target_group_sub_type instead of target_chamber_type?
+#def spawn_doc(source_doc, target_group_conceptual_name, target_type_key, target_state_id):
 def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id):
     """Utility to help create parametrized "transfer to chamber" actions.
     Returns the newly spawned doc.
@@ -50,9 +51,12 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
     session = Session()
     session.merge(source_doc)
     
+    # !+GENERALIZE_GROUP
+    # !+get the singleton "active" chamber of target_group_conceptual_name
     # get the singleton "active" chamber of target_chamber_type
     target_chamber = session.query(domain.Chamber
         ).filter(sa.and_(
+                #!+domain.Chamber.conceptual_name == target_group_conceptual_name, 
                 domain.Chamber.sub_type == target_chamber_type, 
                 domain.Chamber.status == "active")).one()
     
@@ -65,7 +69,7 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
     session.add(target_doc)
     
     # set new "key" values
-    target_doc.chamber = target_chamber
+    target_doc.chamber = target_chamber #!+GENERALIZE_GROUP
     target_doc.group = target_chamber
     target_doc.owner_id = source_doc.owner.user_id # !+PrincipalRoleMap
     target_doc.head = source_doc
@@ -137,6 +141,7 @@ def spawn_doc(source_doc, target_chamber_type, target_type_key, target_state_id)
     assign_ownership(target_doc)
     
     log.info("Spawned new document [%s] : (%r, %r, %r) -- from: %s", 
+        #!+target_doc, target_group_conceptual_name, target_type_key, target_state_id, source_doc)
         target_doc, target_chamber_type, target_type_key, target_state_id, source_doc)
     return target_doc
 
@@ -236,14 +241,16 @@ def get_ministry(group_id):
     return Session().query(domain.Ministry).get(group_id)
 
 
-def deactivateGroupMembers(group):
-    """ upon dissolution of a group all group members
-    are deactivated and get the end date of the group"""
-    session = Session()
+def deactivate_group_members(group):
+    """Upon dissolution of a group all group members
+    are deactivated and get the end date of the group
+    """
+    # !+GROUP_DISSOLVE - rewrite using generic model relationships for
+    # Group.group_members and GroupMember.member_titles ?
     group_id = group.group_id
     end_date = group.end_date
-    assert(end_date != None)
-    connection = session.connection(domain.Group)
+    assert end_date is not None
+    connection = Session().connection(domain.Group)
     connection.execute(
         schema.member.update().where(
             sa.and_(
@@ -260,33 +267,36 @@ def deactivateGroupMembers(group):
             )
         ).values(end_date=end_date)
     )
-    def deactivateGroupMemberTitles(group):
-        group_members = sa.select([schema.member.c.user_id],
+    def deactivate_group_member_titles(group):
+        group_members = sa.select([schema.member.c.member_id],
                  schema.member.c.group_id == group_id)
         connection.execute(
             schema.member_title.update().where(
                 sa.and_(
-                    # !+ why is this checking member_id vales not in user_id values ???
                     schema.member_title.c.member_id.in_(group_members),
                     schema.member_title.c.end_date == None
                 ) 
             ).values(end_date=end_date)
         )
-    deactivateGroupMemberTitles(group)
+    deactivate_group_member_titles(group)
 
 
 
-def endChildGroups(group):
+def end_child_groups(group):
     """Upon dissolution of a chamber for all committees,
     offices and political groups of this chamber the end date is set 
     or upon dissolution of a government for all ministries 
     of this government the end date is set
-    (in order to be able to dissolve those groups)"""
-    # !+CUSTOM un-hardwire all refs to custom group types
+    (in order to be able to dissolve those groups)
+    """
+    # !+CUSTOM un-hardwire all refs to custom group types - rewrite using
+    # generic model parent/child (Group.contained_groups) heirarchical logic
     def _end_chamber_group(group_class, parent_id, end_date):
         groups = session.query(group_class).filter(
-            sa.and_(group_class.status == "active",
-                group_class.parent_group_id == chamber_id)).all()
+            sa.and_(
+                group_class.status == "active",
+                group_class.parent_group_id == chamber_id)
+            ).all()
         for group in groups:
             if group.end_date == None:
                 group.end_date = end_date
