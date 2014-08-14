@@ -518,6 +518,7 @@ class User(Principal):
         attempt = self.encode(password_attempt)
         return attempt == self.password
     
+    # !+ACTIVE_P replace with "status" in db
     def status():
         doc = """A "status" attribute as alias onto "active_p" attribute."""
         def fget(self):
@@ -526,6 +527,13 @@ class User(Principal):
             self.active_p = value
         return locals()
     status = property(**status())
+    
+    # !+ACTIVE normalize across user/group/member 
+    @property
+    def active(self):
+        """Is this user active? 
+        """
+        return self.active_p == "A"
     
     delegations = one2many("delegations",
         "bungeni.models.domain.UserDelegationContainer", "user_id")
@@ -573,6 +581,16 @@ class Group(Principal):
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)
         utils.unset_group_local_role(self)
+    
+    # !+ACTIVE normalize across user/group/member 
+    # base on end_date or introduce across the board an @active attr on workflow states?
+    @property
+    def active(self):
+        """Is this group active? 
+        A group is taken to be active if valid (past) start_date and no end_date.
+        """
+        return (self.start_date < datetime.datetime.today().date() and 
+            not self.end_date)
     
     def active_membership(self, user_id):
         session = alchemist.Session()
@@ -630,6 +648,19 @@ class GroupMember(HeadParentedMixin, Entity):
     @property
     def last_name(self):
         return self.user.last_name
+    
+    # !+ACTIVE normalize across user/group/member 
+    # base on end_date, status, dedicated column "active_p", 
+    # or introduce across the board an @active attr on workflow states?
+    @property
+    def active(self):
+        """Is this member active? 
+        A member is taken to be active if valid (past) start_date and no end_date.
+        Note: when end_date is set, then "active_p" SHOULD always be False (but,
+        there are data inconsistencies)
+        """
+        return (self.start_date < datetime.datetime.today().date() and 
+            not self.end_date)
     
     # !+SORT_ON_USER
     def __lt__(self, other):

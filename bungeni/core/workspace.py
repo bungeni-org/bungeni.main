@@ -469,10 +469,22 @@ def load_workspaces():
         if ti.workflow and ti.workflow.has_feature("workspace"):
             load_workspace("%s.xml" % type_key, ti.domain_model, ti.workflow)
 
+
 @capi.bungeni_custom_errors
 def load_workspace(file_name, domain_class, workflow):
     """Loads the workspace configuration for each documemnt.
     """
+    # !+GROUP_NAMES_VALIDATION
+    from bungeni.models.utils import get_group_conceptual_active
+    for conceptual_name in workflow.get_feature("workspace").p["group_names"]:
+        try:
+            get_group_conceptual_active(conceptual_name)
+        except orm.exc.NoResultFound:
+            raise Exception("Workflow %r feature %r parameter %r contains "
+                "invalid value %r -- no active group with such a conceptual_name "
+                "found in the database." % (
+                    workflow.name, "workspace", "group_names", conceptual_name))
+    # !+/GROUP_NAMES_VALIDATION
     workspace_utility = component.getUtility(IWorkspaceTabsUtility)
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)

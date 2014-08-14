@@ -10,6 +10,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.models.utils")
 
 
+import datetime
 import sqlalchemy as sa
 from sqlalchemy import sql
 from sqlalchemy.orm import eagerload
@@ -237,6 +238,18 @@ def get_group(group_id):
     Raises sqlalchemy.orm.exc.NoResultFound
     """
     return Session().query(domain.Group).get(group_id)
+
+
+def get_group_conceptual_active(conceptual_name):
+    """Get the one active group for conceptual_name.
+    Raises sqlalchemy.orm.exc.NoResultFound.
+    """
+    return Session().query(domain.Group).filter(sql.expression.and_(
+            domain.Group.conceptual_name == conceptual_name,
+            # !+ACTIVE Group.active 
+            domain.Group.start_date < datetime.datetime.today().date(),
+            domain.Group.end_date == None # !+ cannot use "is" operator !
+        )).one()
 
 
 # misc

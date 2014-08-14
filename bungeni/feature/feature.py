@@ -201,7 +201,8 @@ class Feature(object):
     # hooks to be redefined by subclasses
     
     def validate_parameters(self):
-        """Additional feature parameter validation."""
+        """Additional feature parameter validation.
+        """
         pass
     
     def decorate_model(self, model):
@@ -322,6 +323,12 @@ class Workspace(Feature):
         "group_names": dict(type="space_separated_names", default=None)
     }
     subordinate_interface = None
+    
+    def validate_parameters(self):
+        """Additional feature parameter validation.
+        """
+        # !+GROUP_NAMES_VALIDATION as this is bound to db data, can not validate
+        # here while loading workflows, as db/model is not yet setup
 
 
 class Notification(Feature):
