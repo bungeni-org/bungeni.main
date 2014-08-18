@@ -133,7 +133,9 @@ class VDEXVocabularyMixin(object):
         (zope.schema.vocabulary.SimpleTerm) terms from the vocabulary.
         zope.schema.interfaces.IIterableVocabulary
         """
-        for term_value in self.vdex.term_dict:
+        #for term_value in self.vdex.term_dict:
+        # !+ORDER_SIGNIFICANT using prepared vdex.term_dict above does not respect order
+        for term_value in self.vdex.getTerms(self.vdex.tree):
             yield self.getTerm(term_value)
 
     def __len__(self):
