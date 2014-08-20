@@ -99,6 +99,7 @@ class CAPI(object):
         if Legislature._instance is None:
             from bungeni.alchemist import Session
             Session().query(Legislature).one() # this primes Legislature._instance
+        assert Legislature._instance.group_id is not None # !+LEGISLATURE_SETUP
         # retrieve the Legislature singleton by just "creating" a new one
         return Legislature()
     
