@@ -4,7 +4,7 @@
 
 """Bungeni Workspace
 
-$Id: $
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workspace")
 

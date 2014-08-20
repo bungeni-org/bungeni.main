@@ -1,29 +1,45 @@
+# bungeni - http://www.bungeni.org/
+# Parliamentary and Legislative Information System
+# Copyright (C) 2010 UN/DESA - http://www.un.org/esa/desa/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Bungeni UI API
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.ui.api")
+
+
 import simplejson
 from datetime import date, time, timedelta
 from sqlalchemy.sql.expression import and_
 from zope import component
 from zope import formlib
 from zope.publisher.browser import BrowserPage
-from zope.publisher.interfaces import NotFound
+from zope.publisher.interfaces import IPublishTraverse, NotFound
 from zope.security.proxy import removeSecurityProxy
 from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.formlib.namedtemplate import NamedTemplate
 from bungeni import translate
 from bungeni.alchemist import container, Session
+from bungeni.models.utils import get_login_user
+from bungeni.models import domain
 from bungeni.core.serialize import obj2dict
 from bungeni.core.workflow.interfaces import (
     IWorkflowController,
     WorkflowRuntimeError,
-    InvalidTransitionError
-    )
+    InvalidTransitionError,
+)
+from bungeni.ui.interfaces import IBungeniAPILayer
 from bungeni.ui.workspace import WorkspaceAddForm
 from bungeni.ui.forms.common import AddForm, EditForm
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.utils import url, misc
 from bungeni.ui.container import ContainerJSONListingRaw
-from bungeni.models.utils import get_login_user
-from bungeni.models import domain
+from bungeni.utils import register
+
+
 
 
 def dthandler(obj):
@@ -75,13 +91,17 @@ class APIUserView(BrowserPage):
         return simplejson.dumps(data, default=dthandler)
 
 
+@register.adapter(
+    adapts=(domain.UserContainer, IBungeniAPILayer), 
+    provides=IPublishTraverse)
 class APIUserContainerTraverser(SimpleComponentTraverser):
-    """Traverser for workspace containers"""
-
+    """Traverser for API User container.
+    """
+    
     def __init__(self, context, request):
         self.context = context
         self.request = request
-
+    
     def publishTraverse(self, request, name):
         if name == "current":
             return get_login_user()
