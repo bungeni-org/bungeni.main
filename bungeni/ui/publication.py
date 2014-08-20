@@ -64,7 +64,7 @@ def on_before_traverse(event):
     remember_traversed_context(event)
     if has_feature("devmode"):
         forms_localization_check_reload(event)
-
+    
 @component.adapter(IEndRequestEvent)
 def on_end_request(event):
     """Subscriber to catch end of request processing, and dispatch cleanup 
@@ -101,23 +101,23 @@ mapping_on_path = (
         interfaces.IWorkspaceSectionLayer
     ), 
     
-    #matches "workspace/under-consideration"
+    # matches "workspace/under-consideration"
     (re.compile(r'^/workspace/under-consideration(/.*)?$'),
         interfaces.IWorkspaceUnderConsiderationSectionLayer
     ),
-    # Matches "workspace/scheduling"
+    # matches "workspace/scheduling"
     (re.compile(r'^/workspace/scheduling(/.*)?$'),
         interfaces.IWorkspaceSchedulingSectionLayer
     ),
-    #matches "workspace/my-documents"
+    # matches "workspace/my-documents"
     (re.compile(r'^/workspace/my-documents(/.*)?$'),
         interfaces.IWorkspaceMyDocumentsSectionLayer
     ),
-    #matches "workspace/groups"
+    # matches "workspace/groups"
     (re.compile(r'^/workspace/groups(/.*)?$'),
         interfaces.IWorkspaceGroupsSectionLayer
     ),
-    #matches "workspace"
+    # matches "workspace"
     (re.compile(r'^/workspace(/.*)?$'),
         interfaces.IWorkspaceMyDocumentsSectionLayer
     ),
@@ -142,7 +142,7 @@ def apply_request_layer_by_url(event):
     path = url.get_destination_url_path(request)
     path_info = request.get("PATH_INFO")
     log.debug(" [apply_request_layer_by_url] path=%s path_info=%s" % (
-                                                            path, path_info))
+            path, path_info))
     for condition, layer in mapping_on_path:
         if condition.match(path) is not None:
             log.debug("Adding %s layer to request for path <%s>" % (layer, path))
@@ -153,7 +153,7 @@ def apply_request_layer_by_url(event):
         for condition, layer in mapping_on_path_info:
             if condition.match(path_info) is not None:
                 log.debug("Adding %s layer to request for path_info <%s>" % (
-                                                            layer, path_info))
+                        layer, path_info))
                 interface.alsoProvides(request, layer)
                 break
 # filter this event handler to be called only ONCE per request

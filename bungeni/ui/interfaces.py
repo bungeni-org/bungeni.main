@@ -92,22 +92,23 @@ class IOpenOfficeConfigSchema(interface.Interface):
         title=u"UNO Python Path",
         description=u"This is the path to UNO enabled Python",
         required=True
-        )
+    )
     port = schema.Int(
         title=u"OpenOffice.org Port",
         description=u"Port on which OpenOffice is running",
         required=True,
         default=2002
-        )
+    )
     maxConnections = schema.Int(
         title=u"Max Connectiond",
         description=u"Maximum number of simultaneous connections to OpenOffice",
         required=True,
         default=5
-        )
+    )
 
 class IGenenerateVocabularyDefault(interface.Interface):
-    """Generate default value for vocabulary"""
+    """Generate default value for vocabulary.
+    """
     
     def getDefaultVocabularyValue():
         """Get the default value in vocabulary"""
@@ -130,16 +131,18 @@ class ITreeVocabulary(interface.Interface):
 
 
 class IVocabularyTextField(schema.interfaces.IText):
-    """Text field supporting vocabulary """
+    """Text field supporting vocabulary.
+    """
     vocabulary = interface.Attribute("A vocabulary")
 
 class IWorkspaceContentAdapter(interface.Interface):
-    """Provides workspace item fields
+    """Provides workspace item fields.
     """
     
 
 class ISerializationManager(interface.Interface):
-    """Schema for batch serialization manager form"""
+    """Schema for batch serialization manager form.
+    """
     object_type = schema.Choice(
         title=_(u"Object type"),
         description=_(u"Choose the type of object to be serialized."),
@@ -156,3 +159,5 @@ class ISerializationManager(interface.Interface):
         description=_(u"Items with a status before this date"),
         required=False,
     )
+
+

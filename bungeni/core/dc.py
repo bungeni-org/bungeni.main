@@ -38,8 +38,10 @@ def _merged(context):
     return Session().merge(removeSecurityProxy(context))
 
 
-@register.adapter(adapts=(interface.Interface,), # for="*"
-    provides=zope.traversing.interfaces.IPathAdapter, name="dc")
+@register.adapter(
+    adapts=(interface.Interface,),
+    provides=zope.traversing.interfaces.IPathAdapter, 
+    name="dc")
 class DublinCoreMetadataAdapter(object):
     """Generic dublin core metadata adapter which will retrieve
     metadata attributes lazily.

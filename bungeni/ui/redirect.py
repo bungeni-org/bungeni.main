@@ -24,7 +24,7 @@ class RedirectToCurrent(BrowserView):
     """Redirect to current.
     
     Goto a url like current/members or current/committees
-    and you will be redirected to the apropriate container
+    and you will be redirected to the appropriate container.
     
     """
     interface.implements(IPublishTraverse)
