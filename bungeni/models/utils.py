@@ -20,21 +20,23 @@ from bungeni.models import interfaces, domain, delegation
 from bungeni.utils import common
 
 
-def get_ancestor_group_for_context(context, interface=interfaces.IGroup):
+def get_ancestor_group_for_context(context, name=None, interface=interfaces.IGroup):
     """Return the frist ancestor group (providing the specified interface)
     in which the context exists, or None.
     """
-    return common.getattr_ancestry(context, acceptable=interface.providedBy)
+    return common.getattr_ancestry(context, 
+        name=name, acceptable=interface.providedBy)
 
 
 # legislature and chambers
 
 # !+CUSTOM
-def get_chamber_for_context(context):
+def get_chamber_for_context(context, name=None):
     """Return the chamber in which the context exists.
     """
     # first look for current chamber from context traversal stack
-    chamber = get_ancestor_group_for_context(context, interface=interfaces.IChamber)
+    chamber = get_ancestor_group_for_context(context, name=name, 
+        interface=interfaces.IChamber)
     
     # !+ should this ever be None here? Cases when it is:
     # - in workspace, the "contextual" chamber is not defined in the traversal 

@@ -328,20 +328,29 @@ class DatabaseSource(BaseVocabularyFactory):
             query = query.order_by(self.order_by)
         return query
     
-    def __call__(self, context=None):
+    def execute_query(self, context):
         query = self.construct_query(context)
-        results = query.all()
+        return query.all()
+    
+    def __call__(self, context):
+        context = removeSecurityProxy(context)
+        log.debug("DatabaseSource.__call__(%s)", context)
+        log.debug("    type_key=%r, token_field=%r, value_field=%r" % (
+            self.type_key, self.token_field, self.value_field))
+        log.debug("    domain_model=%s", self.domain_model)
+        results = self.execute_query(context)
         terms = []
         title_field = self.title_field or self.token_field
         title_getter = self.title_getter or (lambda ob: getattr(ob, title_field))
         for ob in results:
             if ITranslatable.providedBy(ob):
                 ob = translated(ob)
-            terms.append(vocabulary.SimpleTerm(
-                    value = getattr(ob, self.value_field), 
-                    token = getattr(ob, self.token_field),
-                    title = title_getter(ob),
-            ))
+            term = vocabulary.SimpleTerm(
+                value=getattr(ob, self.value_field), 
+                token=getattr(ob, self.token_field),
+                title=title_getter(ob))
+            terms.append(term)
+            log.debug("        term: %r", (term.value, term.token, term.title))
         return vocabulary.SimpleVocabulary(terms)
 
 
@@ -356,11 +365,29 @@ chamber_factory = DatabaseSource(
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
 component.provideUtility(chamber_factory, IVocabularyFactory, "chamber")
 
+''' !+
 committee_factory = DatabaseSource(
     "committee", "short_name", "group_id",
     title_getter=lambda ob: get_translated_group_label(ob)
 )
 component.provideUtility(committee_factory, IVocabularyFactory, "committee")
+'''
+
+class ChamberDatabaseSource(DatabaseSource):
+    """All active instances in the context's chamber.
+    """    
+    def execute_query(self, context):
+        chamber = utils.get_chamber_for_context(context, name="group")
+        query = self.construct_query(context)
+        return [ item for item in query.all() 
+            if item.active and 
+                utils.get_chamber_for_context(item, name="parent_group") == chamber ]
+
+chamber_committee_factory = ChamberDatabaseSource(
+    "committee", "short_name", "group_id",
+    title_getter=lambda ob: get_translated_group_label(ob)
+)
+component.provideUtility(chamber_committee_factory, IVocabularyFactory, "chamber_committee")
 
 # !+/CUSTOM
 
@@ -430,6 +457,7 @@ class VenueFactory(BaseVocabularyFactory):
         return vocabulary.SimpleVocabulary(terms)
 venue_factory = VenueFactory()
 component.provideUtility(venue_factory, IVocabularyFactory, "venue")
+
 
 class SessionFactory(BaseVocabularyFactory):
     def __call__(self, context):
@@ -969,7 +997,6 @@ component.provideUtility(user, IVocabularyFactory, "user")
 class GroupSource(SpecializedSource):
     """All active groups.
     """
-
     def construct_query(self, context):
         # !+GROUP_FILTERS, refine, check for active, ...
         groups = Session().query(domain.Group).order_by(
@@ -978,14 +1005,15 @@ class GroupSource(SpecializedSource):
     
     # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
-        results = self.construct_query(context).all()
+        groups = [ group for group in self.construct_query(context).all()
+            if group.active() ]
         terms = []
-        for ob in results:
+        for group in groups:
             terms.append(
                 vocabulary.SimpleTerm(
-                    value = getattr(ob, "group_id"), 
-                    token = getattr(ob, "group_id"),
-                    title = get_translated_group_label(ob)
+                    value = getattr(group, "group_id"), 
+                    token = getattr(group, "group_id"),
+                    title = get_translated_group_label(group)
                 ))
         return vocabulary.SimpleVocabulary(terms)
 

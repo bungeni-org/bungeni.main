@@ -80,7 +80,8 @@ def get_traversed_context(request=None, index=-1):
 
 # pick data
 
-def getattr_ancestry(context, name=None,
+def getattr_ancestry(context, 
+        name=None,
         parent_ref="__parent__",
         acceptable=lambda v: v is not None
     ):
