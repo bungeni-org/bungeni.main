@@ -95,10 +95,13 @@ class CAPI(object):
         anywhere in the code to retrieve the Legislature singleton.
         Raises sqlalchemy.orm.exc.NoResultFound.        
         """
+        from bungeni.alchemist import Session
         from bungeni.models.domain import Legislature
+        session = Session()
         if Legislature._instance is None:
-            from bungeni.alchemist import Session
-            Session().query(Legislature).one() # this primes Legislature._instance
+            session.query(Legislature).one() # this primes Legislature._instance
+        # merge to avoid sqlalchemy.orm.exc.DetachedInstanceError
+        session.merge(Legislature._instance)
         assert Legislature._instance.group_id is not None # !+LEGISLATURE_SETUP
         # retrieve the Legislature singleton by just "creating" a new one
         return Legislature()
