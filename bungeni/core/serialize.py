@@ -455,9 +455,9 @@ def serialization_notifications_callback(channel, method, properties, body):
             except Exception, e:
                 ex_type, ex, tb = sys.exc_info()
                 log.info("Error while publish_to_xml : %s", repr(traceback.format_tb(tb)))
-                notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
-                    obj=obj, message=obj_data, error=e
-                )
+                #notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
+                #    obj=obj, message=obj_data, error=e
+                #)
             channel.basic_ack(delivery_tag=method.delivery_tag)
         else:
             log.error("Could not query object of type %s with key %s. "
@@ -505,11 +505,11 @@ class SerializeThread(threading.Thread):
                         "worker after %d seconds (%d attempts).", 
                         delay, num_attempts
                     )
-                    notify_serialization_failure(None,
-                        subject="Notice - Bungeni Serialization Workers",
-                        body="""Unable to restart serialization worker.
-                    Please check the Bungeni logs."""
-                    )
+                    #notify_serialization_failure(None,
+                    #    subject="Notice - Bungeni Serialization Workers",
+                    #    body="""Unable to restart serialization worker.
+                    #Please check the Bungeni logs."""
+                    #)
                 else:
                     log.info("Attempting to respawn serialization "
                         "consumer in %d seconds", delay
@@ -628,17 +628,17 @@ def queue_object_serialization(obj):
         try:
             publish_to_xml(obj)
         except Exception, e:
-            notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
-                obj=obj, message="", error=e
-            )
-            notify_serialization_failure(None, 
-                body="Failed to find running RabbitMQ",
-                subject="Notice - RabbitMQ"
-            )
-        notify_serialization_failure(None, 
-            body="Failed to find running RabbitMQ",
-            subject="Notice - RabbitMQ"
-        )
+            #notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
+            #    obj=obj, message="", error=e
+            #)
+            #notify_serialization_failure(None, 
+            #    body="Failed to find running RabbitMQ",
+            #    subject="Notice - RabbitMQ"
+            #)
+        #notify_serialization_failure(None, 
+        #    body="Failed to find running RabbitMQ",
+        #    subject="Notice - RabbitMQ"
+        #)
         return
     wf_state = None
     try:
