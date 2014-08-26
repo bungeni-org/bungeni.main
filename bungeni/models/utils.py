@@ -18,10 +18,11 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.alchemist import Session
 from bungeni.models import interfaces, domain, delegation
 from bungeni.utils import common
+from bungeni.capi import capi
 
 
-def get_ancestor_group_for_context(context, name=None, interface=interfaces.IGroup):
-    """Return the frist ancestor group (providing the specified interface)
+def get_ancestor_group_for_context(context, name="group", interface=interfaces.IGroup):
+    """Return the first ancestor group (providing the specified interface)
     in which the context exists, or None.
     """
     return common.getattr_ancestry(context, 
@@ -31,18 +32,21 @@ def get_ancestor_group_for_context(context, name=None, interface=interfaces.IGro
 # legislature and chambers
 
 # !+CUSTOM
-def get_chamber_for_context(context, name=None):
+def get_chamber_for_context(context, name="group"):
     """Return the chamber in which the context exists.
     """
     # first look for current chamber from context traversal stack
-    chamber = get_ancestor_group_for_context(context, name=name, 
-        interface=interfaces.IChamber)
+    chamber = get_ancestor_group_for_context(context, name=name,
+        interface=capi.chamber_type_info.interface)
     
     # !+ should this ever be None here? Cases when it is:
     # - in workspace, the "contextual" chamber is not defined in the traversal 
     #   hierarchy (even if all doc instances define the "chamber" attr directly).
     # - context is an event (no chamber/group set) and user is a non-mp minister
     if chamber is None:
+        log.warn(" !+ No ANCESTOR chamber found on CONTEXT [%s] -- TEMPORARILY "
+            "falling back to determining it in some other POSSIBLY INCORRECT "
+            "way ", context)
         # is context a sub-document? If so, take the chamber of the head doc:
         if getattr(context, "head", None):
             head = context.head
@@ -68,7 +72,7 @@ def get_chamber_for_group(group):
     """Cascade up first group ancestry to chamber, returning it (or None).
     """
     return common.getattr_ancestry(group, None, "parent_group",
-        acceptable=interfaces.IChamber.providedBy)
+        acceptable=capi.chamber_type_info.interface.providedBy)
     ''' !+ equivalent alternative:
     if group:
         if group.type == "chamber":

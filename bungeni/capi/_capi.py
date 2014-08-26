@@ -106,6 +106,12 @@ class CAPI(object):
         # retrieve the Legislature singleton by just "creating" a new one
         return Legislature()
     
+    @property
+    def chamber_type_info(self):
+        """Get the type_info instance for the "chamber" type.
+        """
+        return self.get_type_info(self.chamber_type_key)
+    
     # bungeni_custom parameter properties
     
     @property

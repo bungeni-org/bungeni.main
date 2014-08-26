@@ -21,7 +21,7 @@ from zope.schema.interfaces import (
     IVocabularyFactory)
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
-from zope.app.container.interfaces import IContainer
+#from zope.app.container.interfaces import IContainer
 from zope.component import getUtility
 from zope.component import getUtilitiesFor
 from zope.securitypolicy.interfaces import IRole
@@ -358,32 +358,24 @@ class DatabaseSource(BaseVocabularyFactory):
 # in the system. keyed on type_key ? 
 # Take title off domain model for the type, or dc adapter for its archetype.
 chamber_factory = DatabaseSource(
-    "chamber", "short_name", "group_id",
+    capi.chamber_type_key, "short_name", "group_id",
     title_getter=lambda ob: "%s (%s-%s)" % (
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
 component.provideUtility(chamber_factory, IVocabularyFactory, "chamber")
 
-''' !+
-committee_factory = DatabaseSource(
-    "committee", "short_name", "group_id",
-    title_getter=lambda ob: get_translated_group_label(ob)
-)
-component.provideUtility(committee_factory, IVocabularyFactory, "committee")
-'''
-
-class ChamberDatabaseSource(DatabaseSource):
-    """All active instances in the context's chamber.
-    """    
+class ChamberGroupDatabaseSource(DatabaseSource):
+    """All active groups of specified type within the context's chamber.
+    """
     def execute_query(self, context):
         chamber = utils.get_chamber_for_context(context, name="group")
         query = self.construct_query(context)
-        return [ item for item in query.all() 
-            if item.active and 
-                utils.get_chamber_for_context(item, name="parent_group") == chamber ]
+        return [ group for group in query.all()
+            if group.active and 
+                utils.get_chamber_for_context(group, name="parent_group") == chamber ]
 
-chamber_committee_factory = ChamberDatabaseSource(
+chamber_committee_factory = ChamberGroupDatabaseSource(
     "committee", "short_name", "group_id",
     title_getter=lambda ob: get_translated_group_label(ob)
 )
@@ -994,6 +986,7 @@ user = UserSource(
 component.provideUtility(user, IVocabularyFactory, "user")
 
 
+
 class GroupSource(SpecializedSource):
     """All active groups.
     """
@@ -1006,7 +999,7 @@ class GroupSource(SpecializedSource):
     # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
     def __call__(self, context=None):
         groups = [ group for group in self.construct_query(context).all()
-            if group.active() ]
+            if group.active ]
         terms = []
         for group in groups:
             terms.append(
@@ -1057,6 +1050,7 @@ group_assignment = GroupAssignmentSource(
 )
 component.provideUtility(group_assignment, IVocabularyFactory,
     "group_assignment")
+
 
 
 class MembershipUserSource(UserSource):
@@ -1562,4 +1556,5 @@ def _doc_version_tmp_aggregated_type():
     register_vocabulary_utility(
         "doc_version_tmp_aggregated_type", FlatVDEXVocabularyFactory(vdex))
 _doc_version_tmp_aggregated_type()
+
 
