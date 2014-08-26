@@ -85,17 +85,23 @@ def getattr_ancestry(context,
         parent_ref="__parent__",
         acceptable=lambda v: v is not None
     ):
-    """Get the first encountered acceptable value for attribute {name}, 
-    cascading upwards to parent via {parent_ref}.
-    If no attribute name is specifed, as value use the context.
+    """Pick off the first acceptable value, starting from {context} and 
+    traversing upwards, and testing for an cceptable value in the following 
+    order:
+    - the specified {context} itself
+    - (if a horizontal attribute {name} is specified) the context's value for {name}
+    - the parent of {context} via {parent_ref} that becomes the new {context}
+    - (if a horizontal attribute {name} is specified) the context's value for {name}
+    - and so on... until last parent. 
+    Return None if no acceptable value found.
     """
     while context is not None:
+        if acceptable(context):
+            return context
         if name is not None:
             value = getattr(context, name, None)
-        else:
-            value = context
-        if acceptable(value):
-            return value
+            if acceptable(value):
+                return value
         context = getattr(context, parent_ref, None)
 
 
