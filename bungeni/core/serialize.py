@@ -144,7 +144,7 @@ class memoized(object):
     def __init__(self, func):
         self.func = func
     def __call__(self, *args, **kwargs):
-        #check if a thread locals cache has been set up
+        # check if a thread locals cache has been set up
         if not hasattr(thread_locals, "serialize_cache"):
             return self.func(*args, **kwargs)
         key_args = (args[0], kwargs.get("root_key"))
@@ -399,7 +399,7 @@ def _serialize_dict(parent_elem, data_dict):
         parent_elem.append(key_elem)
         _serialize(key_elem, v)
 
-#notifications setup for serialization
+# notifications setup for serialization
 SERIALIZE_QUEUE = "bungeni_serialization_queue"
 SERIALIZE_EXCHANGE = "bungeni_serialization_exchange"
 SERIALIZE_ROUTING_KEY = "bungeni_serialization"
@@ -423,6 +423,10 @@ Error:
 """
 
 def notify_serialization_failure(template, **kw):
+    log.debug("notify_serialization_failure / %s / %s", template, kw)
+    # !+DISABLING to see if the observed delays when running with only the db 
+    # are actually caused by this
+    return
     email_settings = settings.EmailSettings(common.get_application())
     recipients = [ email_settings.default_sender ]    
     if template:
@@ -440,7 +444,7 @@ def notify_serialization_failure(template, **kw):
 def serialization_notifications_callback(channel, method, properties, body):
     """Publish an object to XML on receiving AMQP message
     """
-    #set up thread local cache
+    # set up thread local cache
     thread_locals.serialize_cache = {}
     obj_data = simplejson.loads(body)
     obj_type = obj_data.get("obj_type")
@@ -455,16 +459,15 @@ def serialization_notifications_callback(channel, method, properties, body):
             except Exception, e:
                 ex_type, ex, tb = sys.exc_info()
                 log.info("Error while publish_to_xml : %s", repr(traceback.format_tb(tb)))
-                #notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
-                #    obj=obj, message=obj_data, error=e
-                #)
+                notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
+                    obj=obj, message=obj_data, error=e)
             channel.basic_ack(delivery_tag=method.delivery_tag)
         else:
             log.error("Could not query object of type %s with key %s. "
                 "Check database records - Rejecting message.",
                 domain_model, obj_key
             )
-            #Reject the message
+            # reject the message
             channel.basic_reject(delivery_tag=method.delivery_tag,
                 requeue=False
             )
@@ -473,7 +476,7 @@ def serialization_notifications_callback(channel, method, properties, body):
         log.error("Failed to get class in bungeni.models.domain named %s",
             obj_type
         )
-    #clear thread local cache
+    # clear thread local cache
     del thread_locals.serialize_cache
 
 def serialization_worker():
@@ -482,8 +485,8 @@ def serialization_worker():
         return
     channel = connection.channel()
     channel.basic_qos(prefetch_count=1)
-    channel.basic_consume(serialization_notifications_callback,
-                          queue=SERIALIZE_QUEUE)
+    channel.basic_consume(serialization_notifications_callback, 
+        queue=SERIALIZE_QUEUE)
     channel.start_consuming()
 
 
@@ -505,11 +508,10 @@ class SerializeThread(threading.Thread):
                         "worker after %d seconds (%d attempts).", 
                         delay, num_attempts
                     )
-                    #notify_serialization_failure(None,
-                    #    subject="Notice - Bungeni Serialization Workers",
-                    #    body="""Unable to restart serialization worker.
-                    #Please check the Bungeni logs."""
-                    #)
+                    notify_serialization_failure(None,
+                        subject="Notice - Bungeni Serialization Workers",
+                        body="Unable to restart serialization worker. "
+                            "Please check the Bungeni logs.")
                 else:
                     log.info("Attempting to respawn serialization "
                         "consumer in %d seconds", delay
@@ -537,9 +539,9 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
     Item set may be filtered by status date (start_date and/or end date)
     range.
     """
-    #keep count of serialized objects for feedback
+    # keep count of serialized objects for feedback
     serialized_count = 0
-    #list of domain classes to be serialized
+    # list of domain classes to be serialized
     domain_models = []
     if type_key == "*":
         types_vocab = zope.component.getUtility(
@@ -628,33 +630,30 @@ def queue_object_serialization(obj):
         try:
             publish_to_xml(obj)
         except Exception, e:
-            #notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
-            #    obj=obj, message="", error=e
-            #)
-            #notify_serialization_failure(None, 
-            #    body="Failed to find running RabbitMQ",
-            #    subject="Notice - RabbitMQ"
-            #)
-        #notify_serialization_failure(None, 
-        #    body="Failed to find running RabbitMQ",
-        #    subject="Notice - RabbitMQ"
-        #)
+            notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
+                obj=obj, message="", error=e)
+            notify_serialization_failure(None, 
+                body="Failed to find running RabbitMQ",
+                subject="Notice - RabbitMQ")
+        notify_serialization_failure(None, 
+            body="Failed to find running RabbitMQ",
+            subject="Notice - RabbitMQ")
         return
     wf_state = None
     try:
         wfc = IWorkflowController(obj)
         wf_state = wfc.state_controller.get_state()
     except InvalidStateError:
-        #this is probably a draft document - skip queueing
+        # this is probably a draft document - skip queueing
         log.warning("Could not get workflow state for object %s. "
             "State: %s", obj, wf_state)
         return
     unproxied = zope.security.proxy.removeSecurityProxy(obj)
     mapper = object_mapper(unproxied)
     primary_key = mapper.primary_key_from_instance(unproxied)
-    #!+CAPI(mb, Aug-2012) capi lookup in as at r9707 fails for some keys
-    #e.g. get_type_info(instance).workflow_key resolves while 
-    #get_type_info(same_workflow_key) raises KeyError
+    # !+CAPI(mb, Aug-2012) capi lookup in as at r9707 fails for some keys
+    # e.g. get_type_info(instance).workflow_key resolves while 
+    # get_type_info(same_workflow_key) raises KeyError
     message = {
         "obj_key": primary_key,
         "obj_type": unproxied.__class__.__name__
@@ -677,7 +676,7 @@ def serialization_notifications():
     mq_utility = zope.component.getUtility(IMessageQueueConfig)
     connection = bungeni.core.notifications.get_mq_connection()
     if not connection:
-        #delay
+        # delay
         delay = TIMER_DELAYS["serialize_setup"]
         if delay > MAX_DELAY:
             log.error("Could not set up amqp workers - No rabbitmq " 
@@ -701,7 +700,7 @@ def serialization_notifications():
     channel.queue_bind(queue=SERIALIZE_QUEUE,
        exchange=SERIALIZE_EXCHANGE,
        routing_key=SERIALIZE_ROUTING_KEY)
-    #xml outputs channel and queue
+    # xml outputs channel and queue
     channel.exchange_declare(exchange=SERIALIZE_OUTPUT_EXCHANGE,
         type="direct", passive=False)
     channel.queue_declare(queue=SERIALIZE_OUTPUT_QUEUE, 
