@@ -12,6 +12,7 @@ from copy import deepcopy
 
 from bungeni.alchemist.descriptor import ModelDescriptor, show, hide, classproperty
 
+# !+ADAPTERS_IMPORT
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
 # when importing bungeni.ui.descriptor.descriptor from standalone scripts:

@@ -71,9 +71,9 @@ class CAPI(object):
     bicameral = None # bool e.g. True
     # official country code for where legislature locale is running - ISO 3166-1 alpha-2
     country_code = None # 2-letter string e.g. "ke"
-    # the type_key for the "legislature" group type
+    # the type_key for the "legislature" group type, set in register_custom_types
     legislature_type_key = None # string e.g. "legislature"
-    # the type_key for the "chamber" group type
+    # the type_key for the "chamber" group type, set in register_custom_types
     # !+all chamber instances must be of same type?
     chamber_type_key = None # string e.g. "chamber"
     

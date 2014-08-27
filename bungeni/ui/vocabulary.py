@@ -28,6 +28,12 @@ from zope.securitypolicy.interfaces import IRole
 
 import sqlalchemy.sql.expression as sql
 
+# !+ADAPTERS_IMPORT
+# ensure that register_custom_types() is called (in adapters._setup_all())
+# to ensure that capi is properly set up e.g. capi.chamber_type_key used
+# to set up some vocabularies.
+import bungeni.core.workflows.adapters
+
 from bungeni.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
@@ -314,12 +320,14 @@ class DatabaseSource(BaseVocabularyFactory):
             # on domanin model
             order_by=None, # [str] : list of attr names on type_key domain model
         ):
+        assert type_key is not None, "%s: type_key may not be None: %s" % (
+                self.__class__.__name__, locals())
         self.type_key = type_key
         self.token_field = token_field
         self.value_field = value_field
         assert title_field is None or title_getter is None, \
-            "DatabaseSource [%s]: EITHER title_field [%s] OR title_getter [%s]" % (
-                title_field, title_getter)
+            "%s: EITHER title_field [%s] OR title_getter [%s]" % (
+                self.__class__.__name__, title_field, title_getter)
         self.title_field = title_field
         self.title_getter = title_getter
         self.condition_filter = condition_filter
