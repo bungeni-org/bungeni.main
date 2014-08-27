@@ -78,7 +78,8 @@ import imsvdex.vdex
 # filename, the vocab is just not loaded?! Should just use the "symbol" regex.
 VDEX_FILE_REGEX = re.compile("^[a-z]+[a-z|_]+\.vdex$")
 
-# !+combined_name?
+
+# !+combined_name? deprecate, replace with combined_name
 def get_translated_group_label(group):
     """Get a translated display text to refer to the group.
     """
@@ -180,8 +181,7 @@ class VDEXVocabularyMixin(object):
         As per imsvdex.vdex.VDEXManager.
         """
         return self.vdex.getTermCaptionById(value, lang)
-
-
+    
     value_cast = unicode
     # zope.schema.interfaces.IVocabularyFactory
     def __call__(self, context=None):
@@ -303,10 +303,16 @@ class DatabaseSource(BaseVocabularyFactory):
     # across DatabaseSource and SpecializedSource to (token, title, value)
     # !+SOURCE_FACTORY(mr, aug-2012) merge DatabaseSource and SpecializedSource 
     # down to only one source factory class.
-    def __init__(self, type_key, token_field, value_field, 
-            title_field=None, 
-            title_getter=None, 
-            order_by=None
+    def __init__(self, type_key, 
+            # on result item
+            token_field, value_field, 
+            title_field=None,
+            title_getter=None,
+            condition_filter=None, # callable -> bool
+            # on context
+            context_value_field=None, # to ensure that possibly inactive item will not be filtered out
+            # on domanin model
+            order_by=None, # [str] : list of attr names on type_key domain model
         ):
         self.type_key = type_key
         self.token_field = token_field
@@ -316,6 +322,8 @@ class DatabaseSource(BaseVocabularyFactory):
                 title_field, title_getter)
         self.title_field = title_field
         self.title_getter = title_getter
+        self.condition_filter = condition_filter
+        self.context_value_field = context_value_field
         self.order_by = order_by
     
     @property
@@ -323,21 +331,38 @@ class DatabaseSource(BaseVocabularyFactory):
         return capi.get_type_info(self.type_key).domain_model
     
     def construct_query(self, context):
-        query = Session().query(self.domain_model)
+        dm = self.domain_model
+        query = Session().query(dm)
         if self.order_by:
-            query = query.order_by(self.order_by)
+            query = query.order_by(*[ 
+                        getattr(dm, order_by_attr) 
+                        for order_by_attr in self.order_by ])
         return query
+    
+    def get_filter(self, context):
+        """Combine system filtering logic with user specified filter.
+        """
+        # ensure to not filter out an item that may have since become not
+        # active if it is the currently set value on context
+        context_value = None
+        if self.context_value_field is not None:
+            if hasattr(context, self.context_value_field):
+                context_value = getattr(context, self.context_value_field)
+        def _filter(item):
+            return (context_value == getattr(item, self.value_field) or 
+                self.condition_filter is None or
+                self.condition_filter(item))
+        return _filter
     
     def execute_query(self, context):
         query = self.construct_query(context)
-        return query.all()
+        return filter(self.get_filter(context), query.all())
     
     def __call__(self, context):
         context = removeSecurityProxy(context)
         log.debug("DatabaseSource.__call__(%s)", context)
         log.debug("    type_key=%r, token_field=%r, value_field=%r" % (
             self.type_key, self.token_field, self.value_field))
-        log.debug("    domain_model=%s", self.domain_model)
         results = self.execute_query(context)
         terms = []
         title_field = self.title_field or self.token_field
@@ -354,11 +379,63 @@ class DatabaseSource(BaseVocabularyFactory):
         return vocabulary.SimpleVocabulary(terms)
 
 
+# all active groups
+group_factory = DatabaseSource(
+    # type_key, token_field, value_field
+    "group", "conceptual_name", "group_id",
+    title_field="combined_name",
+    condition_filter=lambda group: group.active,
+    context_value_field="group_id", # doc, event, ... ?
+    order_by=("short_name", "full_name"), # group
+)
+component.provideUtility(group_factory, IVocabularyFactory, "group")
+
+
+class GroupAssignmentDatabaseSource(DatabaseSource):
+    """Groups that may have a document assigned to them.
+    """
+    def construct_query(self, context):
+        # assign_doc
+        if IGroupAssignmentContainer.providedBy(context):
+            assign_doc = context.__parent__
+        else:
+            assert IGroupAssignment.providedBy(context)
+            assign_doc = context.doc
+        assert assign_doc.group_assignment_feature.enabled
+        # query
+        query = super(GroupAssignmentDatabaseSource, self).construct_query(context)
+        dm = self.domain_model
+        # filter query on assigned_group_ids
+        assigned_group_ids = [ assignment.principal.principal_id
+            for assignment in assign_doc.sa_group_assignments ]        
+        if IGroupAssignment.providedBy(context):
+            assigned_group_ids.remove(context.principal.principal_id)
+        if assigned_group_ids:
+            query = query.filter(sql.not_(dm.principal_id.in_(assigned_group_ids)))
+        # filter query on assignable_group_types
+        assignable_group_types = \
+            assign_doc.group_assignment_feature.p["assignable_group_types"]
+        if assignable_group_types:
+            query = query.filter(dm.type.in_(assignable_group_types))
+        return query
+
+group_assignment_factory = GroupAssignmentDatabaseSource(
+    # type_key, token_field, value_field
+    "group", "conceptual_name", "principal_id",
+    title_field="combined_name",
+    condition_filter=lambda group: group.active,
+    context_value_field="principal_id", # doc_principal
+    order_by=("short_name", "full_name"), # group
+)
+component.provideUtility(group_assignment_factory, IVocabularyFactory,
+    "group_assignment")
+
 # !+CUSTOM auto-generate a generic vocabulary for every enabled custom type 
 # in the system. keyed on type_key ? 
-# Take title off domain model for the type, or dc adapter for its archetype.
+
 chamber_factory = DatabaseSource(
     capi.chamber_type_key, "short_name", "group_id",
+    # take title off domain model for the type, or dc adapter for its archetype.
     title_getter=lambda ob: "%s (%s-%s)" % (
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
@@ -377,7 +454,10 @@ class ChamberGroupDatabaseSource(DatabaseSource):
 
 chamber_committee_factory = ChamberGroupDatabaseSource(
     "committee", "short_name", "group_id",
-    title_getter=lambda ob: get_translated_group_label(ob)
+    title_field="combined_name",
+    condition_filter=lambda committee: committee.active,
+    context_value_field="group_id", # doc, event, ... ?
+    order_by=("short_name", "full_name"), # committee
 )
 component.provideUtility(chamber_committee_factory, IVocabularyFactory, "chamber_committee")
 
@@ -984,73 +1064,6 @@ user = UserSource(
     value_field="user_id"
 )
 component.provideUtility(user, IVocabularyFactory, "user")
-
-
-
-class GroupSource(SpecializedSource):
-    """All active groups.
-    """
-    def construct_query(self, context):
-        # !+GROUP_FILTERS, refine, check for active, ...
-        groups = Session().query(domain.Group).order_by(
-            domain.Group.short_name, domain.Group.full_name)
-        return groups
-    
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
-        groups = [ group for group in self.construct_query(context).all()
-            if group.active ]
-        terms = []
-        for group in groups:
-            terms.append(
-                vocabulary.SimpleTerm(
-                    value = getattr(group, "group_id"), 
-                    token = getattr(group, "group_id"),
-                    title = get_translated_group_label(group)
-                ))
-        return vocabulary.SimpleVocabulary(terms)
-
-group = GroupSource(
-    token_field="group_id",
-    title_field="short_name",
-    value_field="group_id",
-)
-component.provideUtility(group, IVocabularyFactory, "group")
-
-
-class GroupAssignmentSource(GroupSource):
-    """Vocabulary for groups that may have a document assigned to them
-    """
-    def construct_query(self, context):
-        context = removeSecurityProxy(context)
-        if IGroupAssignmentContainer.providedBy(context):
-            assign_doc = context.__parent__
-        else:
-            assert IGroupAssignment.providedBy(context)
-            assign_doc = context.doc
-        assert assign_doc.group_assignment_feature.enabled
-        
-        assigned_group_ids = [ assignment.principal.principal_id
-            for assignment in assign_doc.sa_group_assignments ]        
-        if IGroupAssignment.providedBy(context):
-            assigned_group_ids.remove(context.principal.principal_id)
-        
-        group_types = assign_doc.group_assignment_feature.p["assignable_group_types"]
-        
-        groups_query = Session().query(domain.Group
-            ).filter(sql.not_(domain.Group.principal_id.in_(assigned_group_ids))
-            ).order_by(domain.Group.short_name, domain.Group.full_name)
-        if group_types:
-            groups_query = groups_query.filter(domain.Group.type.in_(group_types))
-        return groups_query
-group_assignment = GroupAssignmentSource(
-    token_field="principal_id",
-    title_field="short_name",
-    value_field="principal_id",
-)
-component.provideUtility(group_assignment, IVocabularyFactory,
-    "group_assignment")
-
 
 
 class MembershipUserSource(UserSource):
