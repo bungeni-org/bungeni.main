@@ -85,14 +85,6 @@ import imsvdex.vdex
 VDEX_FILE_REGEX = re.compile("^[a-z]+[a-z|_]+\.vdex$")
 
 
-# !+combined_name? deprecate, replace with combined_name
-def get_translated_group_label(group):
-    """Get a translated display text to refer to the group.
-    """
-    g = translated(group)
-    return "%s - %s" % (g.short_name, g.full_name)
-
-
 class BaseVocabularyFactory(object):
     
     interface.implements(
@@ -308,7 +300,7 @@ class DatabaseSource(BaseVocabularyFactory):
     # !+SOURCE_PARAMS(mr, aug-2012) make order of equivalent params consistent
     # across DatabaseSource and SpecializedSource to (token, title, value)
     # !+SOURCE_FACTORY(mr, aug-2012) merge DatabaseSource and SpecializedSource 
-    # down to only one source factory class.
+    # down to only one source factory class -> all SpecializedSource to DatabaseSource
     def __init__(self, type_key, 
             # on result item
             token_field, value_field, 
@@ -974,7 +966,7 @@ class MinistrySource(SpecializedSource):
                 vocabulary.SimpleTerm(
                     value = getattr(ob, "group_id"), 
                     token = getattr(ob, "group_id"),
-                    title = get_translated_group_label(ob)
+                    title = ob.combined_name
                 ))
         # !+MINISTRY_ID(mr, jul-2012) logic below must be faulty... (a) if this 
         # is ever executed, it will fail as "obj" is undefined (since long time), 
@@ -988,7 +980,7 @@ class MinistrySource(SpecializedSource):
                     vocabulary.SimpleTerm(
                         value = getattr(ob, "group_id"), 
                         token = getattr(ob, "group_id"),
-                        title = get_translated_group_label(ob)
+                        title = ob.combined_name
                 ))
         return vocabulary.SimpleVocabulary(terms)
 ministry = MinistrySource("group_id")
