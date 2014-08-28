@@ -182,6 +182,7 @@ class VDEXVocabularyMixin(object):
     
     value_cast = unicode
     # zope.schema.interfaces.IVocabularyFactory
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
     def __call__(self, context=None):
         """Return a context-bound instance that implements ISource.
         zope.schema.interfaces.IVocabularyFactory
@@ -232,6 +233,7 @@ class BoolFlatVDEXVocabularyFactory(FlatVDEXVocabularyFactory):
 # /vdex
 
 class GroupRoleFactory(BaseVocabularyFactory):
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
     def __call__(self, context=None):
         app = common.get_application()
         terms = []
@@ -562,8 +564,7 @@ class GroupTitleTypesFactory(SpecializedSource):
         return session.query(domain.TitleType) \
                 .filter(schema.title_type.c.group_id == context.group_id)
     
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         while not IGroup.providedBy(context):
             context = context.__parent__
             if not context:
@@ -623,8 +624,7 @@ class SpecializedMemberSource(BaseVocabularyFactory):
     chamber = None # subs MUST set in self.construct_query
     context_user = None # subs MUST set in self.construct_query (when not in IAlchemistContainer)
     
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         query = self.construct_query(removeSecurityProxy(context))
         results = query.all() # either([Member], [User])
         combined_name_getter = (lambda ob:(ob.combined_name if hasattr
@@ -954,8 +954,7 @@ class MinistrySource(SpecializedSource):
             query = session.query(domain.Ministry)
         return query
     
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         query = self.construct_query(context)
         results = query.all()
         terms = []
@@ -1112,8 +1111,7 @@ class SittingAttendanceSource(SpecializedSource):
                     ~ domain.User.user_id.in_(attended_ids)))
             return query
     
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         query = self.construct_query(context)
         results = query.all()
         terms = []
@@ -1180,8 +1178,7 @@ class SubstitutionSource(SpecializedSource):
                 domain.GroupMember.group_id == group_id)
         return query
     
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         query = self.construct_query(context)
         results = query.all()
         tdict = {}
@@ -1281,6 +1278,7 @@ class MotionPoliticalGroupSource(SpecializedSource):
         return query
 '''
 
+''' !+UNUSED?
 class QuerySource(object):
     """ call a query with an additonal filter and ordering
     note that the domain_model *must* not have a where and order_by clause 
@@ -1334,8 +1332,7 @@ class QuerySource(object):
         
         return query
     
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         query = self.construct_query(context)
         results = query.all()
         terms = []
@@ -1348,7 +1345,7 @@ class QuerySource(object):
                     title = getattr(ob, title_field),
             ))
         return vocabulary.SimpleVocabulary(terms)
-
+'''
 
 def child_selected(children, selected):
     return (
@@ -1476,6 +1473,7 @@ _i18n_message_factory = _
 class WorkflowedTypeVocabulary(BaseVocabularyFactory):
     """A vocabulary of workflowed types
     """
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
     def __call__(self, context=None):
         terms = [vocabulary.SimpleTerm(value="*", token="*",
                 title=_("* All types *")
@@ -1501,6 +1499,7 @@ component.provideUtility(serializable_type_factory, IVocabularyFactory, "seriali
 class TextRecordTypesVocabulary(BaseVocabularyFactory):
     """This is a vocabulary of text records types used in scheduling.
     """
+    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
     def __call__(self, context=None):
         terms = []
         for (type_key, info) in capi.iter_type_info():
