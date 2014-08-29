@@ -13,7 +13,7 @@ import re
 import hashlib
 from lxml import etree
 
-from zope import interface, component
+from zope import interface
 from zope.schema.interfaces import (
     IContextSourceBinder,
     IBaseVocabulary,  # IBaseVocabulary(ISource)
@@ -36,7 +36,8 @@ import bungeni.core.workflows.adapters
 
 from bungeni.capi import capi
 from bungeni.alchemist import Session
-from bungeni.alchemist.container import valueKey
+from bungeni.alchemist.utils import get_vocabulary, set_vocabulary_factory
+#from bungeni.alchemist.container import valueKey
 from bungeni.alchemist.interfaces import (
     IAlchemistContainer,
     IAlchemistContent
@@ -61,7 +62,7 @@ from bungeni.models.interfaces import (
     IScheduleContent,
     ISerializable
 )
-from bungeni.core.interfaces import IWorkspaceContainer
+from bungeni.core.interfaces import IWorkspaceContainer, ISchedulingContext
 
 from bungeni.core.translation import translated
 from bungeni.core.language import get_default_language
@@ -182,8 +183,7 @@ class VDEXVocabularyMixin(object):
     
     value_cast = unicode
     # zope.schema.interfaces.IVocabularyFactory
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         """Return a context-bound instance that implements ISource.
         zope.schema.interfaces.IVocabularyFactory
         """
@@ -233,8 +233,7 @@ class BoolFlatVDEXVocabularyFactory(FlatVDEXVocabularyFactory):
 # /vdex
 
 class GroupRoleFactory(BaseVocabularyFactory):
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         app = common.get_application()
         terms = []
         roles = getUtilitiesFor(IRole, app)
@@ -254,8 +253,7 @@ class GroupRoleFactory(BaseVocabularyFactory):
             if not ISubRoleAnnotations(role).is_sub_role:
                 terms.append(vocabulary.SimpleTerm(name, name, role.title))
         return vocabulary.SimpleVocabulary(sorted(terms, key=lambda a: a.title))
-group_role_factory = GroupRoleFactory()
-component.provideUtility(GroupRoleFactory(), IVocabularyFactory, "group_role")
+set_vocabulary_factory("group_role", GroupRoleFactory())
 
 
 class GroupSubRoleFactory(BaseVocabularyFactory):
@@ -287,14 +285,13 @@ class GroupSubRoleFactory(BaseVocabularyFactory):
                 continue # member already has this sub role
             terms.append(vocabulary.SimpleTerm(sub_role_id, sub_role_id, sub_role_id))
         return vocabulary.SimpleVocabulary(terms)
-group_sub_role_factory = GroupSubRoleFactory()
-component.provideUtility(group_sub_role_factory, IVocabularyFactory, "group_sub_role")
+set_vocabulary_factory("group_sub_role", GroupSubRoleFactory())
 
 
 # database sources
 
 class DatabaseSource(BaseVocabularyFactory):
-    """A simple implementation of vocabularies on top of a domain model, 
+    """A simple implementation of vocabulary factory on top of a domain model, 
     ideally should only be used with small skinny tables, 
     actual value stored is the id.
     """
@@ -381,16 +378,15 @@ class DatabaseSource(BaseVocabularyFactory):
         return vocabulary.SimpleVocabulary(terms)
 
 
-# all active groups
-group_factory = DatabaseSource(
-    # type_key, token_field, value_field
-    "group", "conceptual_name", "group_id",
-    title_field="combined_name",
-    condition_filter=lambda group: group.active,
-    context_value_field="group_id", # doc, event, ... ?
-    order_by=("short_name", "full_name"), # group
-)
-component.provideUtility(group_factory, IVocabularyFactory, "group")
+# All active groups.
+set_vocabulary_factory("group", DatabaseSource(
+        # type_key, token_field, value_field
+        "group", "principal_name", "group_id",
+        title_field="combined_name",
+        condition_filter=lambda group: group.active,
+        context_value_field="group_id", # doc, event, ... ?
+        order_by=("short_name", "full_name"), # group
+    ))
 
 
 class GroupAssignmentDatabaseSource(DatabaseSource):
@@ -420,29 +416,28 @@ class GroupAssignmentDatabaseSource(DatabaseSource):
         if assignable_group_types:
             query = query.filter(dm.type.in_(assignable_group_types))
         return query
+set_vocabulary_factory("group_assignment", GroupAssignmentDatabaseSource(
+        # type_key, token_field, value_field
+        "group", "principal_name", "principal_id",
+        title_field="combined_name",
+        condition_filter=lambda group: group.active,
+        context_value_field="principal_id", # doc_principal
+        order_by=("short_name", "full_name"), # group
+    ))
 
-group_assignment_factory = GroupAssignmentDatabaseSource(
-    # type_key, token_field, value_field
-    "group", "conceptual_name", "principal_id",
-    title_field="combined_name",
-    condition_filter=lambda group: group.active,
-    context_value_field="principal_id", # doc_principal
-    order_by=("short_name", "full_name"), # group
-)
-component.provideUtility(group_assignment_factory, IVocabularyFactory,
-    "group_assignment")
 
 # !+CUSTOM auto-generate a generic vocabulary for every enabled custom type 
 # in the system. keyed on type_key ? 
 
-chamber_factory = DatabaseSource(
-    capi.chamber_type_key, "short_name", "group_id",
-    # take title off domain model for the type, or dc adapter for its archetype.
-    title_getter=lambda ob: "%s (%s-%s)" % (
-        ob.full_name,
-        ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
-        ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
-component.provideUtility(chamber_factory, IVocabularyFactory, "chamber")
+set_vocabulary_factory("chamber", DatabaseSource(
+        capi.chamber_type_key, "principal_name", "group_id",
+        # take title off domain model for the type, or dc adapter for its archetype.
+        title_getter=lambda ob: "%s (%s-%s)" % (
+            ob.full_name,
+            ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
+            ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?")
+    ))
+
 
 class ChamberGroupDatabaseSource(DatabaseSource):
     """All active groups of specified type within the context's chamber.
@@ -453,36 +448,31 @@ class ChamberGroupDatabaseSource(DatabaseSource):
         return [ group for group in query.all()
             if group.active and 
                 utils.get_chamber_for_context(group, name="parent_group") == chamber ]
+set_vocabulary_factory("chamber_committee", ChamberGroupDatabaseSource(
+        "committee", "principal_name", "group_id",
+        title_field="combined_name",
+        condition_filter=lambda committee: committee.active,
+        context_value_field="group_id", # doc, event, ... ?
+        order_by=("short_name", "full_name"), # committee
+    ))
 
-chamber_committee_factory = ChamberGroupDatabaseSource(
-    "committee", "short_name", "group_id",
-    title_field="combined_name",
-    condition_filter=lambda committee: committee.active,
-    context_value_field="group_id", # doc, event, ... ?
-    order_by=("short_name", "full_name"), # committee
-)
-component.provideUtility(chamber_committee_factory, IVocabularyFactory, "chamber_committee")
 
 # !+/CUSTOM
 
+set_vocabulary_factory("country", DatabaseSource(
+        "country", "country_id", "country_id",
+        title_field="country_name",
+    ))
 
-country_factory = DatabaseSource(
-    "country", "country_id", "country_id",
-    title_field="country_name",
-)
-component.provideUtility(country_factory, IVocabularyFactory, "country")
+set_vocabulary_factory("report", DatabaseSource(
+        "report", "doc_id", "doc_id",
+        title_getter=lambda ob: IDCDescriptiveProperties(ob).title
+    ))
 
-report_factory = DatabaseSource(
-    "report", "doc_id", "doc_id",
-    title_getter=lambda ob: IDCDescriptiveProperties(ob).title
-)
-component.provideUtility(report_factory, IVocabularyFactory, "report")
-
-sitting_factory = DatabaseSource(
-    "sitting", "sitting_id", "sitting_id",
-    title_getter=lambda ob: IDCDescriptiveProperties(ob).title
-)
-component.provideUtility(sitting_factory, IVocabularyFactory, "sitting")
+set_vocabulary_factory("sitting", DatabaseSource(
+        "sitting", "sitting_id", "sitting_id",
+        title_getter=lambda ob: IDCDescriptiveProperties(ob).title
+    ))
 
 
 class SpecializedSource(BaseVocabularyFactory):
@@ -530,11 +520,14 @@ class VenueFactory(BaseVocabularyFactory):
                 ))
         return vocabulary.SimpleVocabulary(terms)
 venue_factory = VenueFactory()
-component.provideUtility(venue_factory, IVocabularyFactory, "venue")
-
+set_vocabulary_factory("venue", venue_factory)
 
 class SessionFactory(BaseVocabularyFactory):
     def __call__(self, context):
+        #from bungeni.ui.utils.debug import interfaces
+        #print interfaces(context)
+        #import pdb; pdb.set_trace()
+        
         chamber = utils.get_chamber_for_context(context)
         if chamber is not None:
             results = [ sess for sess in chamber.sessions.values() ]
@@ -551,8 +544,7 @@ class SessionFactory(BaseVocabularyFactory):
                     title=IDCDescriptiveProperties(ob).title
                 ))
         return vocabulary.SimpleVocabulary(terms)
-session_factory = SessionFactory()
-component.provideUtility(session_factory, IVocabularyFactory, "session")
+set_vocabulary_factory("session", SessionFactory())
 
 
 class GroupTitleTypesFactory(SpecializedSource):
@@ -580,7 +572,7 @@ class GroupTitleTypesFactory(SpecializedSource):
                     title = obj.title_name,
                 ))
         return vocabulary.SimpleVocabulary(terms)
-component.provideUtility(GroupTitleTypesFactory(), IVocabularyFactory, "group_title_types")
+set_vocabulary_factory("group_title_type", GroupTitleTypesFactory())
 
 
 class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):
@@ -598,8 +590,7 @@ class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):
             for status in wf.states.keys() 
         ]
         return vocabulary.SimpleVocabulary(terms)
-workflow_states = WorkflowStatesVocabularyFactory()
-component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
+set_vocabulary_factory("workflow_states", WorkflowStatesVocabularyFactory())
 
 
 # Chamber Member vocabularies
@@ -712,8 +703,7 @@ class MemberSource(SpecializedMemberSource):
                             domain.Member.group_id == chamber_id,
                             domain.Member.active_p == True)))
         return query
-component.provideUtility(
-    MemberSource(), IVocabularyFactory, "chamber_member")
+set_vocabulary_factory("chamber_member", MemberSource())
 
 
 class MemberDelegationSource(MemberSource):
@@ -789,8 +779,7 @@ class MemberDelegationSource(MemberSource):
             return all_mp_query
         else:
             return delegated_mp_query
-component.provideUtility(
-    MemberDelegationSource(), IVocabularyFactory, "chamber_member_delegation")
+set_vocabulary_factory("chamber_member_delegation", MemberDelegationSource())
 
 
 class MemberSignatorySource(MemberSource):
@@ -838,7 +827,7 @@ class MemberSignatorySource(MemberSource):
         exclude_ids.add(head_doc.owner_id)
         return all_mp_query.filter(sql.not_(
                 domain.Member.user_id.in_(list(exclude_ids))))
-component.provideUtility(MemberSignatorySource(), IVocabularyFactory, "signatory")
+set_vocabulary_factory("signatory", MemberSignatorySource())
 
 
 class UserNotMPSource(SpecializedMemberSource):
@@ -872,7 +861,7 @@ class UserNotMPSource(SpecializedMemberSource):
         if self.chamber is not group:
             query = filter_query_users_not_members_in_group(query, group)
         return query
-component.provideUtility(UserNotMPSource(), IVocabularyFactory, "user_not_mp")
+set_vocabulary_factory("user_not_mp", UserNotMPSource())
 
 
 class UserNotInGroupSource(SpecializedSource):
@@ -900,12 +889,11 @@ class UserNotInGroupSource(SpecializedSource):
         # filter out members of related chamber
         query = filter_query_users_not_members_in_group(query, group)
         return query
-user_not_in_group = UserNotInGroupSource(
-    token_field="user_id", 
-    title_field="combined_name", 
-    value_field="user_id"
-)
-component.provideUtility(user_not_in_group, IVocabularyFactory, "user_not_in_group")
+set_vocabulary_factory("user_not_in_group", UserNotInGroupSource(
+        token_field="user_id", 
+        title_field="combined_name", 
+        value_field="user_id"
+    ))
 
 
 class MinistrySource(SpecializedSource):
@@ -982,8 +970,7 @@ class MinistrySource(SpecializedSource):
                         title = ob.combined_name
                 ))
         return vocabulary.SimpleVocabulary(terms)
-ministry = MinistrySource("group_id")
-component.provideUtility(ministry, IVocabularyFactory, "ministry")
+set_vocabulary_factory("ministry", MinistrySource("group_id"))
 
 
 '''
@@ -1042,12 +1029,11 @@ class OwnerOrLoggedInUserSource(SpecializedSource):
                 title=getattr(obj, title_field)),
         ]
         return vocabulary.SimpleVocabulary(terms)
-owner_or_login = OwnerOrLoggedInUserSource(
-    token_field="user_id",
-    title_field="combined_name",
-    value_field="user_id"
-)
-component.provideUtility(owner_or_login, IVocabularyFactory, "owner_or_login")
+set_vocabulary_factory("owner_or_login", OwnerOrLoggedInUserSource(
+        token_field="user_id",
+        title_field="combined_name",
+        value_field="user_id"
+    ))
 
 
 class UserSource(SpecializedSource):
@@ -1057,12 +1043,11 @@ class UserSource(SpecializedSource):
         session = Session()
         users = session.query(domain.User).filter(domain.User.active_p == "A")
         return users
-user = UserSource(
-    token_field="user_id", 
-    title_field="combined_name", 
-    value_field="user_id"
-)
-component.provideUtility(user, IVocabularyFactory, "user")
+set_vocabulary_factory("user", UserSource(
+        token_field="user_id", 
+        title_field="combined_name", 
+        value_field="user_id"
+    ))
 
 
 class MembershipUserSource(UserSource):
@@ -1077,14 +1062,12 @@ class MembershipUserSource(UserSource):
             group = trusted.__parent__
             users = filter_query_users_not_members_in_group(users, group)
         return users
-member = MembershipUserSource(
-    token_field="user_id",
-    title_field="combined_name",
-    value_field="user_id",
-)
-component.provideUtility(member, IVocabularyFactory, "member")
+set_vocabulary_factory("member", MembershipUserSource(
+        token_field="user_id",
+        title_field="combined_name",
+        value_field="user_id",
+    ))
 
-                
 
 class SittingAttendanceSource(SpecializedSource):
     """All members of this group who do not have an attendance record yet.
@@ -1136,14 +1119,11 @@ class SittingAttendanceSource(SpecializedSource):
                             getattr(ob, "last_name"))
                    ))
         return vocabulary.SimpleVocabulary(terms)
-sitting_attendance = SittingAttendanceSource(
-    token_field="user_id",
-    title_field="combined_name",
-    value_field="member_id"
-)
-component.provideUtility(sitting_attendance, IVocabularyFactory, "sitting_attendance")
-
-
+set_vocabulary_factory("sitting_attendance", SittingAttendanceSource(
+        token_field="user_id",
+        title_field="combined_name",
+        value_field="member_id"
+    ))
 
 
 class SubstitutionSource(SpecializedSource):
@@ -1199,12 +1179,11 @@ class SubstitutionSource(SpecializedSource):
             terms.append(
                 vocabulary.SimpleTerm(value=t, token=t, title=tdict[t]))
         return vocabulary.SimpleVocabulary(terms)
-substitution = SubstitutionSource(
-    token_field="user_id",
-    title_field="combined_name",
-    value_field="user_id"
-)
-component.provideUtility(substitution, IVocabularyFactory, "substitution")
+set_vocabulary_factory("substitution", SubstitutionSource(
+        token_field="user_id",
+        title_field="combined_name",
+        value_field="member_id"
+    ))
 
 
 ''' !+ORPHANED(mr, jun-2012) some time prior to r9435
@@ -1433,11 +1412,10 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
                 return term
         return None
     
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, jul-2013) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         return vocabulary.SimpleVocabulary(self.terms)
-
 report_xhtml_template_factory = ReportXHTMLTemplateFactory()
+#!+
 
 def update_term_doctype(term):
     template_file = open(term.value)
@@ -1466,15 +1444,14 @@ class DocumentXHTMLTemplateFactory(ReportXHTMLTemplateFactory):
         """Read configuration options and update terms with doctype property.
         """
         self.terms = map(update_term_doctype, self.terms)
-
 document_xhtml_template_factory = DocumentXHTMLTemplateFactory()
+#!+
 
 _i18n_message_factory = _
 class WorkflowedTypeVocabulary(BaseVocabularyFactory):
     """A vocabulary of workflowed types
     """
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         terms = [vocabulary.SimpleTerm(value="*", token="*",
                 title=_("* All types *")
         )]
@@ -1493,33 +1470,26 @@ class WorkflowedTypeVocabulary(BaseVocabularyFactory):
                     )
                 ))
         return vocabulary.SimpleVocabulary(terms)
-serializable_type_factory = WorkflowedTypeVocabulary()
-component.provideUtility(serializable_type_factory, IVocabularyFactory, "serializable_type")
+set_vocabulary_factory("serializable_type", WorkflowedTypeVocabulary())
+
 
 class TextRecordTypesVocabulary(BaseVocabularyFactory):
     """This is a vocabulary of text records types used in scheduling.
     """
-    # !+VOCAB_OPTIONAL_CONTEXT(mr, aug-2014) why?
-    def __call__(self, context=None):
+    def __call__(self, context):
         terms = []
-        for (type_key, info) in capi.iter_type_info():
-            if (IScheduleText.implementedBy(info.domain_model) 
-                and IScheduleContent.implementedBy(info.domain_model)):
-                    terms.append(
-                        vocabulary.SimpleTerm(
-                            value=type_key,
-                            token=type_key,
-                            title=_i18n_message_factory(
-                                info.descriptor.display_name)
-                        )
-                    )
-text_record_types_factory = TextRecordTypesVocabulary()
-component.provideUtility(text_record_types_factory, IVocabularyFactory, "text_record_type")
+        for (type_key, ti) in capi.iter_type_info():
+            if (IScheduleText.implementedBy(ti.domain_model) and 
+                    IScheduleContent.implementedBy(ti.domain_model)
+                ):
+                terms.append(vocabulary.SimpleTerm(
+                        value=type_key,
+                        token=type_key,
+                        title=_i18n_message_factory(ti.descriptor.display_name)
+                    ))
+set_vocabulary_factory("text_record_type", TextRecordTypesVocabulary())
 
-
-def register_vocabulary_utility(vocabulary_name, vocabulary):
-    globals()[vocabulary_name] = vocabulary
-    component.provideUtility(vocabulary, IVocabularyFactory, vocabulary_name)
+#
 
 def register_vdex_vocabularies():
     """Register all VDEX vocabularies.
@@ -1545,7 +1515,8 @@ def register_vdex_vocabularies():
             else:
                 vocab_class = TreeVDEXVocabulary
             vocabulary_name = file_name[:-len(".vdex")]
-            register_vocabulary_utility(vocabulary_name, vocab_class(vdex))
+            set_vocabulary_factory(vocabulary_name, vocab_class(vdex))
+            globals()[vocabulary_name] = get_vocabulary(vocabulary_name) # !+
         else:
             log.warning("Will not process VDEX file named %s. File name is "
                 "not valid. File name must start with a lower case letter, "
@@ -1560,12 +1531,12 @@ register_vdex_vocabularies()
 # of doc_version; only needed until a dedicated version classes per version.
 def _doc_version_tmp_aggregated_type():
     import copy
-    vdex = copy.deepcopy(doc_type.vdex)
-    vdex.term_dict.update(event_type.vdex.term_dict)
-    vdex.term_dict.update(question_type.vdex.term_dict)
-    vdex.term_dict.update(bill_type.vdex.term_dict)
-    vdex.term_dict.update(doc_type.vdex.term_dict)
-    register_vocabulary_utility(
+    vdex = copy.deepcopy(get_vocabulary("doc_type").vdex)
+    vdex.term_dict.update(get_vocabulary("event_type").vdex.term_dict)
+    vdex.term_dict.update(get_vocabulary("question_type").vdex.term_dict)
+    vdex.term_dict.update(get_vocabulary("bill_type").vdex.term_dict)
+    vdex.term_dict.update(get_vocabulary("doc_type").vdex.term_dict)
+    set_vocabulary_factory(
         "doc_version_tmp_aggregated_type", FlatVDEXVocabularyFactory(vdex))
 _doc_version_tmp_aggregated_type()
 

@@ -86,7 +86,8 @@ class PrincipalGroupSchedulingContext(object):
             return group.short_name
         return _(u"Unknown user group")
     
-    def get_group(self, name="group"):
+    # !+SCHEDULING_CONTEXT_GROUP make "group" property
+    def get_group(self):
         if self.group_id is None:
             return
         try:
@@ -162,8 +163,7 @@ class SessionSchedulingContext(PrincipalGroupSchedulingContext):
     def sittings_container(self):
         return self.__parent__.sittings
 
-    def get_group(self, name=None):
-        assert name is None
+    def get_group(self):
         return removeSecurityProxy(self.__parent__).group
 
     @property
@@ -180,8 +180,7 @@ class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
         """
         return self.__parent__.__parent__.group_id
 
-    def get_group(self, name=None):
-        assert name is None
+    def get_group(self):
         return self.__parent__.__parent__
 
 
@@ -192,8 +191,7 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     def group_id(self):
         return self.get_group().group_id
         
-    def get_group(self, name=None):
-        assert name is None
+    def get_group(self):
         return get_chamber_for_context(self.__parent__)
 
 

@@ -37,6 +37,7 @@ from sqlalchemy import sql
 from bungeni.alchemist.container import stringKey, valueKey
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContent
+from bungeni.alchemist.utils import get_vocabulary
 from bungeni.core.workflow.states import get_object_state_rpm
 from bungeni.core.interfaces import (
     IMessageQueueConfig, 
@@ -544,8 +545,7 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
     # list of domain classes to be serialized
     domain_models = []
     if type_key == "*":
-        types_vocab = zope.component.getUtility(
-            schema.interfaces.IVocabularyFactory, "serializable_type")
+        types_vocab = get_vocabulary("serializable_type")
         for term in types_vocab():
             if term.value == "*": 
                 continue
@@ -835,96 +835,74 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                 if (not is_foreign) and (mproperty.key in descriptor.keys()):
                     field = descriptor.get(mproperty.key)
                     if (field and field.property and
-                        (schema.interfaces.IChoice.providedBy(field.property)
-                            or IVocabularyTextField.providedBy(field.property))
+                            (schema.interfaces.IChoice.providedBy(field.property) or
+                                IVocabularyTextField.providedBy(field.property))
                         ):
-                                factory = (field.property.vocabulary or 
-                                    field.property.source
-                                )
-                                if factory is None:
-                                    vocab_name = getattr(field.property, 
-                                        "vocabularyName", None)
-                                    factory = zope.component.getUtility(
-                                        schema.interfaces.IVocabularyFactory,
-                                        vocab_name
-                                    )
-                                # !+VOCABULARIES(mb, aug-2012)some vocabularies
-                                # expect an interaction to generate values
-                                # todo - update these vocabularies to work 
-                                # with no request e.g. in notification threads
-                                display_name = None
-                                try:
-                                    vocabulary = factory(obj)                             
-                                    #handle vdex hierarchical terms
-                                    if ITreeVocabulary.providedBy(factory):
-                                        values = value.splitlines()
-                                        term_values = []
-                                        for val in values:
-                                            term_values.append(dict(
-                                                name=mproperty.key,
-                                                value=val,
-                                                displayAs=factory.vdex.getTermCaption(
-                                                    factory.getTermById(val),
-                                                    lang
-                                                )
-                                            ))
-                                        result[mproperty.key] = term_values
-                                        continue
-                                    term = vocabulary.getTerm(value)
-                                    if lang:
-                                        if hasattr(factory, "vdex"):
-                                            display_name = (
-                                                factory.vdex.getTermCaption(
-                                                factory.getTermById(value), 
-                                                lang
-                                            ))
-                                        else:
-                                            display_name = translate(
-                                                (term.title or term.value),
-                                                target_language=lang,
-                                                domain="bungeni"
-                                            )
-                                    else:
-                                        display_name = term.title or term.value
-                                except zope.security.interfaces.NoInteraction:
-                                    log.error("This vocabulary %s expects an"
-                                        "interaction to generate terms.",
-                                        factory
-                                    )
-                                    # try to use dc adapter lookup
-                                    try:
-                                        _prop = mapper.get_property_by_column(
-                                            mproperty.columns[0])
-                                        _prop_value = getattr(obj, _prop.key)
-                                        dc = IDCDescriptiveProperties(
-                                            _prop_value, None)
-                                        if dc:
-                                            display_name = (
-                                                IDCDescriptiveProperties(
-                                                    _prop_value).title
-                                            )
-                                    except KeyError:
-                                        log.warn("No display text found for %s" 
-                                            " on object %s. Unmapped in orm.",
-                                            property.key, obj
-                                        )
-                                except Exception, e:
-                                    log.error("Could not instantiate"
-                                        " vocabulary %s. Exception: %s",
-                                        factory, e
-                                    )
-                                finally:
-                                    # fallback we cannot look up vocabularies/dc
-                                    if display_name is None:
-                                        if not isinstance(value, unicode):
-                                            display_name = unicode(value)
-                                if display_name is not None:
-                                    result[mproperty.key] = dict(
-                                        name=mproperty.key,
-                                        value=value,
-                                        displayAs=display_name
-                                    )
-                                    continue
+                        factory = field.property.vocabulary or field.property.source
+                        if factory is None:
+                            vocab_name = getattr(field.property, "vocabularyName", None)
+                            factory = get_vocabulary(vocab_name)
+                        # !+VOCABULARIES(mb, aug-2012)some vocabularies
+                        # expect an interaction to generate values
+                        # todo - update these vocabularies to work 
+                        # with no request e.g. in notification threads
+                        display_name = None
+                        try:
+                            vocabulary = factory(obj)                             
+                            # handle vdex hierarchical terms
+                            if ITreeVocabulary.providedBy(factory):
+                                values = value.splitlines()
+                                term_values = []
+                                for val in values:
+                                    term_values.append(dict(
+                                            name=mproperty.key,
+                                            value=val,
+                                            displayAs=factory.vdex.getTermCaption(
+                                                factory.getTermById(val), lang)))
+                                result[mproperty.key] = term_values
+                                continue
+                            term = vocabulary.getTerm(value)
+                            if lang:
+                                if hasattr(factory, "vdex"):
+                                    display_name = factory.vdex.getTermCaption(
+                                            factory.getTermById(value), lang)
+                                else:
+                                    display_name = translate(
+                                        term.title or term.value,
+                                        target_language=lang,
+                                        domain="bungeni")
+                            else:
+                                display_name = term.title or term.value
+                        except zope.security.interfaces.NoInteraction:
+                            log.error("This vocabulary %s expects an interaction "
+                                "to generate terms.", factory)
+                            # try to use dc adapter lookup
+                            try:
+                                _prop = mapper.get_property_by_column(
+                                    mproperty.columns[0])
+                                _prop_value = getattr(obj, _prop.key)
+                                dc = IDCDescriptiveProperties(_prop_value, None)
+                                if dc:
+                                    display_name = IDCDescriptiveProperties(
+                                            _prop_value).title
+                            except KeyError:
+                                log.warn("No display text found for %s on " 
+                                    "object %s. Unmapped in orm.",
+                                    property.key, obj)
+                        except Exception, e:
+                            log.error("Could not instantiate vocabulary %s. "
+                                "Exception: %s", factory, e)
+                        finally:
+                            # fallback we cannot look up vocabularies/dc
+                            if display_name is None:
+                                if not isinstance(value, unicode):
+                                    display_name = unicode(value)
+                        if display_name is not None:
+                            result[mproperty.key] = dict(
+                                name=mproperty.key,
+                                value=value,
+                                displayAs=display_name)
+                            continue
             result[mproperty.key] = value
     
     extended_props = []

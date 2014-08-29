@@ -7,12 +7,12 @@
 $Id$
 $URL$
 """
+log = __import__("logging").getLogger("bungeni.ui.fields")
 
 from zope.schema import Text
-from zope.schema.interfaces import IVocabularyFactory
 from zope.interface import implements    
-from zope.component import getUtility
 from zope.schema.interfaces import ValidationError
+from bungeni.alchemist.utils import get_vocabulary
 from bungeni.ui.interfaces import IVocabularyTextField
 from bungeni import _
 
@@ -28,7 +28,7 @@ class VocabularyTextField(Text):
     
     @property
     def vocabulary(self):
-        return getUtility(IVocabularyFactory, self.vocabulary_name)
+        return get_vocabulary(self.vocabulary_name)
     
     def __init__(self, vocabulary, **kw):
         self.vocabulary_name = vocabulary

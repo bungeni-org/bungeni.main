@@ -7,6 +7,8 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 import inspect
+from zope import component
+from zope.schema.interfaces import IVocabularyFactory
 from sqlalchemy.orm import class_mapper
 from bungeni.alchemist.interfaces import IManagedContainer
 
@@ -33,6 +35,15 @@ def get_derived_table_schema(discriminator):
 def get_workflow(discriminator):
     from bungeni.capi import capi
     return capi.get_type_info(discriminator).workflow
+
+
+# vocabulary
+
+def get_vocabulary(name):
+    return component.getUtility(IVocabularyFactory, name)
+
+def set_vocabulary_factory(name, factory):
+    return component.provideUtility(factory, IVocabularyFactory, name)
 
 
 # sqlalchemy 

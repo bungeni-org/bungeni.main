@@ -747,7 +747,7 @@ class MemberTitleDescriptor(ModelDescriptor):
             ],
             value_type="vocabulary",
             render_type="single_select",
-            vocabulary="group_title_types",
+            vocabulary="group_title_type",
         ),
         F(name="start_date",
             label="Start Date",

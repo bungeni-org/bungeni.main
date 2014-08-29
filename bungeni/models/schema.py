@@ -517,7 +517,8 @@ group = sa.Table("group", metadata,
     # conceptual_name - user-selected conceptual name for the group:
     # - used to automatically derive the principal_name (login) for the group
     #   and for this reason is limited to half the size of that
-    # - there may only be one *active* group per (conceptual_name, principal.type)
+    # - there may only be one *active* group per conceptual_name
+    # - 
     sa.Column("conceptual_name", sa.Unicode(64), nullable=False),
     col_principal_name("principal_name", default=_group_principal_name),
     sa.Column("description", sa.UnicodeText),

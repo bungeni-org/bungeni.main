@@ -24,7 +24,6 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor.listing")
 from sqlalchemy.sql import expression, func
 from sqlalchemy.exc import ArgumentError
 
-from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 #from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
@@ -32,6 +31,7 @@ import zope.formlib
 from zc.table import column
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.utils import get_vocabulary
 from bungeni.models import domain
 from bungeni.models.utils import get_login_user
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
@@ -106,8 +106,6 @@ def get_mapper_property_name_for_fk(name_id):
         "related_user_name_column name=%r does not end with %r" % (name_id, "_id")
     return name_id[:-len("_id")]
 
-def get_vocabulary(vocabulary_name):
-    return getUtility(IVocabularyFactory, vocabulary_name)
 
 
 # column listings & filters
