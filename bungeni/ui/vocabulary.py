@@ -302,9 +302,10 @@ class DatabaseSource(BaseVocabularyFactory):
     # down to only one source factory class -> all SpecializedSource to DatabaseSource
     def __init__(self, type_key, 
             # on result item
-            token_field, value_field, 
-            title_field=None,
-            title_getter=None,
+            token_field, # the value in the UI -- should be predictable (for manageable selenium tests)
+            value_field, # the actual value to be persisted
+            title_field=None, # one of title_field and title_getter MUST be None
+            title_getter=None, # callable -> translated title
             condition_filter=None, # callable -> bool
             # on context
             context_value_field=None, # to ensure that possibly inactive item will not be filtered out
@@ -359,7 +360,7 @@ class DatabaseSource(BaseVocabularyFactory):
     
     def __call__(self, context):
         context = removeSecurityProxy(context)
-        log.debug("DatabaseSource.__call__(%s)", context)
+        log.debug("DatabaseSource[name:%s].__call__(%s)", self.__name__, context)
         log.debug("    type_key=%r, token_field=%r, value_field=%r" % (
             self.type_key, self.token_field, self.value_field))
         results = self.execute_query(context)
@@ -616,17 +617,24 @@ class SpecializedMemberSource(BaseVocabularyFactory):
     context_user = None # subs MUST set in self.construct_query (when not in IAlchemistContainer)
     
     def __call__(self, context):
-        query = self.construct_query(removeSecurityProxy(context))
+        context = removeSecurityProxy(context)
+        log.debug("SpecializedMemberSource[name:%s].__call__(%s)", self.__name__, context)
+        log.debug("           %r", self.__dict__)
+        query = self.construct_query(context)
         results = query.all() # either([Member], [User])
-        combined_name_getter = (lambda ob:(ob.combined_name if hasattr
-                        (ob, "combined_name") else ob.user.combined_name))
-        terms = [
-            vocabulary.SimpleTerm(
+        terms = []
+        def title_getter(ob):
+            if hasattr(ob, "combined_name"):
+                return ob.combined_name
+            else:
+                return ob.user.combined_name
+        for ob in sorted(results):
+            term = vocabulary.SimpleTerm(
                 value=ob.user_id,
                 token=ob.user_id,
-                title=combined_name_getter(ob))
-            for ob in sorted(results)
-        ]
+                title=title_getter(ob))
+            terms.append(term)
+            log.debug("        term: %r", (term.value, term.token, term.title))
         
         # only for Doc/Member/User contexts
         if not IAlchemistContainer.providedBy(context):
@@ -647,10 +655,12 @@ class SpecializedMemberSource(BaseVocabularyFactory):
                     log.warn("Adding chamber [%s] non-member user [%s] to "
                         "vocabulary [%s] terms for context [%s]",
                             self.chamber.group_id, user.user_id, self, context)
-                    terms.append(vocabulary.SimpleTerm(
+                    term = vocabulary.SimpleTerm(
                             value=user.user_id,
                             token=user.user_id,
-                            title=user.combined_name))
+                            title=user.combined_name)
+                    terms.append(term)
+                    log.debug("        term: %r", (term.value, term.token, term.title))
         
         return vocabulary.SimpleVocabulary(terms)
     
@@ -706,7 +716,7 @@ class MemberSource(SpecializedMemberSource):
 set_vocabulary_factory("chamber_member", MemberSource())
 
 
-class MemberDelegationSource(MemberSource):
+class MemberDelegationSource(SpecializedMemberSource):
     """MemberSource filtered down to either:
     
     a) EITHER only include only those Members who have delegated to current 
@@ -727,6 +737,9 @@ class MemberDelegationSource(MemberSource):
     """
     
     def construct_query(self, ctx):
+        from bungeni.ui.utils.debug import interfaces
+        log.debug(interfaces(ctx))
+        #import pdb; pdb.set_trace()
         
         if IAlchemistContainer.providedBy(ctx):
             if IWorkspaceContainer.providedBy(ctx):

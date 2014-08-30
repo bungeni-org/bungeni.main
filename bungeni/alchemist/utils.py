@@ -5,7 +5,7 @@
 """Bungeni alchemist utilities.
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.alchemist")
+log = __import__("logging").getLogger("bungeni.alchemist.utils")
 import inspect
 from zope import component
 from zope.schema.interfaces import IVocabularyFactory
@@ -43,7 +43,19 @@ def get_vocabulary(name):
     return component.getUtility(IVocabularyFactory, name)
 
 def set_vocabulary_factory(name, factory):
-    return component.provideUtility(factory, IVocabularyFactory, name)
+    """Register vocabulary factory instance (only once) under {name}.
+    Stuff {name} on factory.__name__ for logging convenience downstream.
+    """
+    log.info("set_vocabulary_factory: registering [%s] on %r", factory, name)
+    assert factory not in set_vocabulary_factory.registered, (
+        "Vocabulary factory %s has already been registered under name %r, "
+        "not registering same instance also under name %r." % (
+            factory.__name__, name))
+    # remember registration name on this instance, for logging convenience
+    factory.__name__ = name
+    component.provideUtility(factory, IVocabularyFactory, name)
+    set_vocabulary_factory.registered.add(factory)
+set_vocabulary_factory.registered = set()
 
 
 # sqlalchemy 
