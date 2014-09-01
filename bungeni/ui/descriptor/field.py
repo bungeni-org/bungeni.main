@@ -8,6 +8,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.descriptor.field")
 
+import inspect
 from zope import component, schema
 from bungeni.alchemist.descriptor import Field
 from bungeni.ui import widgets
@@ -18,8 +19,14 @@ from bungeni.capi import capi
 from bungeni import _
 
 
-# supported value types
-# {str: {property-kwarg:value}}
+# supported value types (and parameters passed to RType widget class)
+# {str: {property-kwarg:value}} 
+# !+VALUE_TYPE_PARAMS(mr, sep-2014):
+# - either, move all params (other than "default", "constraints", ...?) to be
+# handled by configurable constraints (currently in ui/descriptor/constraints.py)
+# - or, better, add a capi field/integrity element (similar to descriptor/integrity) 
+# and move all default/constraints/params to de declared there.
+# - or, should these parms be on render_type in the first place?!
 VALUETYPE = {
     "text": {},
     "date": {},
@@ -32,7 +39,7 @@ VALUETYPE = {
     "language": {},
     "vocabulary": {}, # !+ constraint ?
     "email": {"constraint": constraints.check_email},
-    "login": {"min_length": 3, "max_length": 79, "constraint": constraints.check_login},
+    "login": {"min_length": 3, "max_length": 64, "constraint": constraints.check_login},
     "password": {},
     "image": {},
     "file": {},
@@ -91,7 +98,7 @@ WIDGETS = {
     ("text", "radio"):
         (None, widgets.CustomRadioWidget, widgets.CustomRadioWidget, None, None, None),
     ("text", "single_select"): # !+ merge with ("vocabulary", "single_select")
-        (None, None, None, None, None, None),
+        (None, None, None, None, listing.vocabulary_column, None),
     ("text", "tree_text"):
         (widgets.TermsDisplayWidget, widgets.TreeVocabularyWidget, 
             widgets.TreeVocabularyWidget, None, None, None),
@@ -130,6 +137,8 @@ WIDGETS = {
         (None, None, None, None, None, None),
     ("login", "text_line"):
         (None, None, None, None, None, None),
+    ("login", "single_select"): # !+ merge with ("vocabulary", "single_select")
+        (None, None, None, None, listing.vocabulary_column, None),
     ("password", "text_line"):
         (None, None, None, None, None, None),
     ("image", "image"):
@@ -275,7 +284,24 @@ def F(name=None, label=None, description=None,
                 raise LookupException(
                     "Vocabulary named %r not found in registry." % vocabulary)
             render_property_kwargs["vocabulary"] = vocabulary
-        render_property_kwargs.update(VALUETYPE[value_type])
+        
+        # additional kwargs from VALUETYPE config
+        rtype_argspec = inspect.getargspec(RType.__init__) # getfullargspec
+        value_type_params = VALUETYPE[value_type]
+        for kwarg_key in value_type_params:
+            assert kwarg_key not in render_property_kwargs, kwarg_key
+            # !+VALUE_TYPE_PARAMS
+            if issubclass(RType, schema.Choice):
+                if kwarg_key in ("min_length", "max_length"):
+                    assert kwarg_key not in rtype_argspec.args, (
+                        name, RType, kwarg_key, rtype_argspec)
+                    log.warn("Skipping widget param [%r=%r] -- not supported by "
+                        "widget %s (for render_type %r)" % (kwarg_key, 
+                            value_type_params[kwarg_key], RType, render_type))
+                    continue
+            render_property_kwargs[kwarg_key] = value_type_params[kwarg_key]
+        #render_property_kwargs.update(VALUETYPE[value_type])
+        log.debug("field %r render_property %s(**%s)", name, RType, render_property_kwargs)
         render_property = RType(**render_property_kwargs)
     
     view_widget, edit_widget, add_widget, search_widget = widgets[0:4]

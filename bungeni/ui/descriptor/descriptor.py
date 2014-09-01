@@ -169,7 +169,7 @@ class UserDescriptor(ModelDescriptor):
             required=True,
             description="Must contain only letters, numbers, a period (.) "
                 "and underscore (_). Should start with a letter and be "
-                "between 3 and 79 characters long",
+                "between 3 and 64 characters long", # normalized with group.conceptual_name
             localizable=[
                 show("add view"), # db-not-null-ui-add
                 hide("listing"),
@@ -508,8 +508,8 @@ class GroupDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit add"),
             ],
-            value_type="text",
-            render_type="text_box",
+            value_type="login",
+            render_type="text_line",
         ),
         F(name="description",
             label="Description",

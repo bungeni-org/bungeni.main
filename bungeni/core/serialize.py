@@ -64,7 +64,7 @@ from bungeni.capi import capi
 import transaction
 import pika
 
-#local thread storage
+# local thread storage
 thread_locals = threading.local()
 
 # timer delays in setting up serialization workers
@@ -233,8 +233,8 @@ def publish_to_xml(context):
     #root key (used to cache files to zip)
     root_key = make_key()
 
-    #create a fake interaction to ensure items requiring a participation
-    #are serialized 
+    # create a fake interaction to ensure items requiring a participation
+    # are serialized 
     #!+SERIALIZATION(mb, Jan-2013) review this approach
     try:
         zope.security.management.getInteraction()
