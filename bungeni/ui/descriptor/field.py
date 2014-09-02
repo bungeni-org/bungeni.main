@@ -125,6 +125,8 @@ WIDGETS = {
             listing.duration_column, None),
     ("bool", "bool"):
         (None, None, None, None, None, None),
+    ("bool", "single_select"): # !+ merge with ("vocabulary", "single_select")
+        (None, None, None, None, listing.vocabulary_column, None),
     ("number", "number"):
         (None, None, None, None, None, None),
     ("status", "single_select"):

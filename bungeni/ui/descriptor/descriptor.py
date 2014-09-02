@@ -715,7 +715,7 @@ class TitleTypeDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit add listing"),
             ],
-            value_type="text", # in schema bool w. default=False
+            value_type="bool", # in schema bool w. default=False
             render_type="single_select",
             vocabulary="yes_no", 
         ),
