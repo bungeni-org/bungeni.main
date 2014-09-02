@@ -106,17 +106,15 @@ class BaseVocabularyFactory(object):
 
 # vdex
 
-VDEX_BOOL_PROFILE_TYPE = "booleanTerms"
 class VDEXManager(imsvdex.vdex.VDEXManager):
     default_language = capi.default_language
     fallback_to_default_language = True
-
-    def isBoolean(self):
+    
+    def is_boolean(self):
+        """Does the VDEX profile type denote a boolean type vocabulary?
         """
-        returns true if the VDEX profile type denotes a bool type vocabulary
-        """ 
-        vdex = self.tree._root
-        return vdex.get("profileType") == VDEX_BOOL_PROFILE_TYPE
+        return self.tree._root.vdex.get("profileType") == "booleanTerms"
+
 
 class VDEXVocabularyMixin(object):
     interface.implements(IBaseVocabulary)
@@ -160,8 +158,7 @@ class VDEXVocabularyMixin(object):
         # and vdex does not define a term for None.
         term = self.getTermById(value)
         title = self.vdex.getTermCaption(term, lang=get_default_language())
-        value_cast = self.__class__.value_cast
-        return vocabulary.SimpleTerm(value_cast(value), value, title)
+        return vocabulary.SimpleTerm(value, value, title)
     
     # imsvdex.vdex.VDEXManager
     
@@ -169,7 +166,9 @@ class VDEXVocabularyMixin(object):
         """Return the caption(s) for a given term identifier.
         As per imsvdex.vdex.VDEXManager (well, almost... None is LookupError).
         """
-        term = self.vdex.getTermById(value)
+        # the vdex term is always keyed in on the termIdentifier *text* value
+        # so we lookup with ensuring value is textual...
+        term = self.vdex.getTermById(unicode(value))
         # !+NONE_LOOKUPERROR(mr, jul-2012) how should one handle a None value?
         if term is None:
             raise LookupError("This VDEX has no such ID :: %s", value)
@@ -181,7 +180,6 @@ class VDEXVocabularyMixin(object):
         """
         return self.vdex.getTermCaptionById(value, lang)
     
-    value_cast = unicode
     # zope.schema.interfaces.IVocabularyFactory
     def __call__(self, context):
         """Return a context-bound instance that implements ISource.
@@ -221,16 +219,9 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     """
     interface.implements(IVocabulary) # IVocabulary(IIterableVocabulary, IBaseVocabulary)
     # !+BaseVocabularyFactory should probably simply include this, instead of IBaseVocabulary?
-
-class BoolFlatVDEXVocabularyFactory(FlatVDEXVocabularyFactory):
-    value_cast = staticmethod(misc.as_bool)
-
-    def getTermById(self, value):
-        """Look up vdex term using unicode of boolean value"""
-        value = unicode(value)
-        return super(BoolFlatVDEXVocabularyFactory, self).getTermById(value)
-
+    
 # /vdex
+
 
 class GroupRoleFactory(BaseVocabularyFactory):
     def __call__(self, context):
@@ -1523,9 +1514,7 @@ def register_vdex_vocabularies():
                 # be on matching file name found on disk e.g. on an @enabled 
                 # attr inside each file, or a declaration of enabled vocabularies 
                 # in e.g. types.xml.
-            if vdex.isBoolean():
-                vocab_class = BoolFlatVDEXVocabularyFactory
-            elif vdex.isFlat():
+            if vdex.isFlat():
                 vocab_class = FlatVDEXVocabularyFactory
             else:
                 vocab_class = TreeVDEXVocabulary
