@@ -857,15 +857,15 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                                     term_values.append(dict(
                                             name=mproperty.key,
                                             value=val,
-                                            displayAs=factory.vdex.getTermCaption(
-                                                factory.getTermById(val), lang)))
+                                            displayAs=factory.getTermCaption(
+                                                factory.getTermById(val), lang=lang)))
                                 result[mproperty.key] = term_values
                                 continue
                             term = vocabulary.getTerm(value)
                             if lang:
-                                if hasattr(factory, "vdex"):
-                                    display_name = factory.vdex.getTermCaption(
-                                            factory.getTermById(value), lang)
+                                if hasattr(factory, "getTermCaption"):
+                                    display_name = factory.getTermCaption(
+                                            factory.getTermById(value), lang=lang)
                                 else:
                                     display_name = translate(
                                         term.title or term.value,

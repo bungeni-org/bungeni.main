@@ -122,9 +122,9 @@ class VDEXVocabularyMixin(object):
     cast_up = staticmethod(unicode) # handler to cast from storage to real value
     cast_down = staticmethod(unicode) # handler to cast from real value to storage
     
-    def __init__(self, manager):
-        assert isinstance(manager, VDEXManager)
-        self.vdex = manager
+    def __init__(self, vdex_manager):
+        assert isinstance(vdex_manager, VDEXManager)
+        self._vm = vdex_manager
     
     # zope.schema.interfaces.ISource(Interface)
 
@@ -134,22 +134,22 @@ class VDEXVocabularyMixin(object):
         (zope.schema.vocabulary.SimpleTerm) terms from the vocabulary.
         zope.schema.interfaces.IIterableVocabulary
         """
-        #for term_value in self.vdex.term_dict:
-        # !+ORDER_SIGNIFICANT using prepared vdex.term_dict above does not respect order
-        for term_value in self.vdex.getTerms(self.vdex.tree):
+        #for term_value in self._vm.term_dict:
+        # !+ORDER_SIGNIFICANT using prepared _vm.term_dict above does not respect order
+        for term_value in self._vm.getTerms(self._vm.tree):
             yield self.getTerm(term_value)
 
     def __len__(self):
         """Return the number of valid terms, or sys.maxint.
         zope.schema.interfaces.IIterableVocabulary
         """
-        return len(self.vdex.term_dict)
+        return len(self._vm.term_dict)
     
     def __contains__(self, value):
         """Is the value available in this source? 
         (zope.schema.interfaces.ISource)
         """
-        return self.vdex.getTermById(value) is not None
+        return self._vm.getTermById(value) is not None
     
     # zope.schema.interfaces.IBaseVocabulary(ISource)
     def getTerm(self, value):
@@ -160,13 +160,12 @@ class VDEXVocabularyMixin(object):
         # "schema vocab" with this method gives problems when value is None, 
         # and vdex does not define a term for None.
         term = self.getTermById(value)
-        title = self.vdex.getTermCaption(term, lang=get_default_language())
+        title = self.getTermCaption(term)
         if isinstance(value, basestring):
             # the real value may not be string, so we cast up
             value = self.cast_up(value)
         return vocabulary.SimpleTerm(value, value, title)
-
-
+    
     # imsvdex.vdex.VDEXManager
     
     def getTermById(self, value):
@@ -174,21 +173,29 @@ class VDEXVocabularyMixin(object):
         As per imsvdex.vdex.VDEXManager (well, almost... None is LookupError).
         """
         # the vdex term is always keyed in on the termIdentifier *text* value so
-        # we ensure that value to use for lookup is the "textual" storage value... 
+        # we ensure that value to use for lookup is the "textual" storage value...
         # (but only if real value is not a already "textual").
         if not isinstance(value, basestring):
             value = self.cast_down(value)
-        term = self.vdex.getTermById(value)
+        term = self._vm.getTermById(value)
         # !+NONE_LOOKUPERROR(mr, jul-2012) how should one handle a None value?
         if term is None:
             raise LookupError("This VDEX has no such ID :: %s", value)
         return term
     
-    def getTermCaptionById(self, value, lang=get_default_language()):
-        """Returns the str caption(s) for a given term identifier, in lang.
+    def getTermCaption(self, value, lang=get_default_language()):
+        """Returns the str caption(s) for a given term, in lang.
+        For lang == "*", returns a dict with all translations keyed by langguage.
         As per imsvdex.vdex.VDEXManager.
         """
-        return self.vdex.getTermCaptionById(value, lang)
+        return self._vm.getTermCaption(value, lang=lang)
+    
+    def getTermCaptionById(self, value, lang=get_default_language()):
+        """Returns the str caption(s) for a given term identifier, in lang.
+        For lang == "*", returns a dict with all translations keyed by langguage.
+        As per imsvdex.vdex.VDEXManager.
+        """
+        return self._vm.getTermCaptionById(value, lang=lang)
     
     # zope.schema.interfaces.IVocabularyFactory
     def __call__(self, context):
@@ -207,7 +214,7 @@ class TreeVDEXVocabulary(VDEXVocabularyMixin):
     interface.implements(ITreeVocabulary)
     
     def generateJSON(self, selected = []):
-        vdict = self.vdex.getVocabularyDict(lang=get_default_language())
+        vdict = self._vm.getVocabularyDict(lang=get_default_language())
         dynatree_dict = dict_to_dynatree(vdict, selected)
         return json.dumps(dynatree_dict)
 
@@ -380,7 +387,7 @@ class DatabaseSource(BaseVocabularyFactory):
                 token=getattr(ob, self.token_field),
                 title=title_getter(ob))
             terms.append(term)
-            log.debug("        term: %r", (term.value, term.token, term.title))
+            #log.debug("        term: %r", (term.value, term.token, term.title))
         return vocabulary.SimpleVocabulary(terms)
 
 
@@ -527,6 +534,7 @@ class VenueFactory(BaseVocabularyFactory):
         return vocabulary.SimpleVocabulary(terms)
 venue_factory = VenueFactory()
 set_vocabulary_factory("venue", venue_factory)
+
 
 class SessionFactory(BaseVocabularyFactory):
     def __call__(self, context):
@@ -1514,12 +1522,12 @@ def register_vdex_vocabularies():
     """Register all VDEX vocabularies.
     """
     vocab_dir = capi.get_path_for("vocabularies")
-    os.chdir(vocab_dir)
     for file_name in os.listdir(vocab_dir):
         if re.match(VDEX_FILE_REGEX, file_name) is not None:
+            file_path = capi.get_path_for("vocabularies", file_name)
             try:
                 log.info("Loading VDEX file: %s", file_name)
-                vdex = VDEXManager(open(file_name))
+                _vm = VDEXManager(open(file_path)) # !+ fails when passing str path
             except imsvdex.vdex.VDEXError:
                 log.error("Exception while loading VDEX file %s", file_name)
                 raise #continue !+ such an error should never be silenced!
@@ -1527,20 +1535,20 @@ def register_vdex_vocabularies():
                 # be on matching file name found on disk e.g. on an @enabled 
                 # attr inside each file, or a declaration of enabled vocabularies 
                 # in e.g. types.xml.
-            if vdex.is_boolean():
+            if _vm.is_boolean():
                 vocab_class = BoolFlatVDEXVocabularyFactory
-            elif vdex.isFlat():
+            elif _vm.isFlat():
                 vocab_class = FlatVDEXVocabularyFactory
             else:
                 vocab_class = TreeVDEXVocabulary
             vocabulary_name = file_name[:-len(".vdex")]
-            set_vocabulary_factory(vocabulary_name, vocab_class(vdex))
+            set_vocabulary_factory(vocabulary_name, vocab_class(_vm))
             globals()[vocabulary_name] = get_vocabulary(vocabulary_name) # !+
         else:
             log.warning("Will not process VDEX file named %s. File name is "
                 "not valid. File name must start with a lower case letter, "
                 "may contain underscores and must have a 'vdex' extension",
-                file_name)
+                    file_name)
 #!+REGISTRATION(mb, feb-2013) - can't use ZCML to register
 # descriptors seem to be imported before vocabularies are set up
 register_vdex_vocabularies()
@@ -1550,13 +1558,13 @@ register_vdex_vocabularies()
 # of doc_version; only needed until a dedicated version classes per version.
 def _doc_version_tmp_aggregated_type():
     import copy
-    vdex = copy.deepcopy(get_vocabulary("doc_type").vdex)
-    vdex.term_dict.update(get_vocabulary("event_type").vdex.term_dict)
-    vdex.term_dict.update(get_vocabulary("question_type").vdex.term_dict)
-    vdex.term_dict.update(get_vocabulary("bill_type").vdex.term_dict)
-    vdex.term_dict.update(get_vocabulary("doc_type").vdex.term_dict)
+    _vm = copy.deepcopy(get_vocabulary("doc_type")._vm)
+    _vm.term_dict.update(get_vocabulary("event_type")._vm.term_dict)
+    _vm.term_dict.update(get_vocabulary("question_type")._vm.term_dict)
+    _vm.term_dict.update(get_vocabulary("bill_type")._vm.term_dict)
+    _vm.term_dict.update(get_vocabulary("doc_type")._vm.term_dict)
     set_vocabulary_factory(
-        "doc_version_tmp_aggregated_type", FlatVDEXVocabularyFactory(vdex))
+        "doc_version_tmp_aggregated_type", FlatVDEXVocabularyFactory(_vm))
 _doc_version_tmp_aggregated_type()
 
 
