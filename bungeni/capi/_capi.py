@@ -164,6 +164,18 @@ class CAPI(object):
         int(bc.check_auto_reload_localization) # TypeError if not an int
         return bc.check_auto_reload_localization
     
+    @property
+    @bungeni_custom_errors
+    def search_service_url(self):
+        """
+        """
+        from urlparse import urlparse
+        surl = urlparse(bc.search_service_url)
+        if surl.scheme.strip() == "" or surl.netloc.strip() == "" or surl.path.strip() == "":
+            raise ValueError("invalid URL set in search_service_url")
+        return bc.search_service_url
+           
+ 
     
     @bungeni_custom_errors
     def get_workflow_condition(self, condition):

@@ -124,7 +124,7 @@ URL_MAKERS = {
 }
 DEFAULT_URL_MAKER = make_workspace_url
 
-SEARCH_URL = "http://localhost:8088/exist/restxq/ontology_bungeni"
+SEARCH_URL = capi.search_service_url
 
 BASE_MAPPING = {
     "status": "status",
