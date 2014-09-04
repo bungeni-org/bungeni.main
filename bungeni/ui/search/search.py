@@ -9,9 +9,6 @@ See: https://code.google.com/p/bungeni-exist/wiki/BungeniRESTXQSearchService
 log = __import__("logging").getLogger("bungeni.ui.search")
 
 import re
-import json
-import urllib2
-import urllib
 import dateutil.parser
 import zope.interface
 import zope.component
@@ -39,6 +36,8 @@ from bungeni.feature.interfaces import IFeatureWorkspace
 from bungeni.utils import register
 from bungeni.utils.common import getattr_ancestry
 from bungeni.capi import capi
+
+import requests
 
 class SearchTextWidget(TextWidget):
 
@@ -222,8 +221,8 @@ def execute_search(data, prefix, request, context):
         del data["page"]
     # we are only interested in documents
     data["group"]  = "document"
-    search_request = urllib2.Request(SEARCH_URL, urllib.urlencode(data))
-    exist_results = json.loads(urllib2.urlopen(search_request).read())
+    search_request = requests.get(SEARCH_URL, params = data)
+    exist_results = search_request.json()
     item_count = int(exist_results.get("total"))
     page_query_string = request.get("QUERY_STRING")
     page_query_string = re.sub("&page=\d+", "", page_query_string)
