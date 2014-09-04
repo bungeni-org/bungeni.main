@@ -17,6 +17,7 @@ import zope.interface
 from lxml import etree
 from lxml import html
 from tidylib import tidy_fragment
+import urlparse
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 
@@ -44,48 +45,59 @@ def get_element_value(context, name, default=None):
             context.sitting if isinstance(context, ExpandedSitting) else context)
         dc_adapter = IDCDescriptiveProperties(dc_context, None)
         if dc_adapter is None:
-            log.error("No dublin core adapter found for object %s", context)
+            log.error("No dublin core adapter found for object %s.", context)
             return default
         else:
             try:
                 return getattr(dc_adapter, name[3:])
             except AttributeError:
-                log.error("Dublin core adapter %s for %s has no attribute %s",
+                log.error("Dublin core adapter %s for %s has no attribute %s.",
                     dc_adapter, context, name)
                 return default
     else:
         try:
-            return getattr(context, name)
+            value = getattr(context, name)
+            assert value is not None
+            return value
+        except AssertionError:
+            msg = "Context %s attribute %s is None. Check report template."
         except AttributeError:
-            log.error("Context %s has no such attribute %s. Check report template",
-                context, name)
-            return default
+            msg = "Context %s has no such attribute %s. Check report template."
+        log.error(msg, context, name)
+        return default
 
 def get_config(doctree, name, default=None):
-    """Get configuration value from report template"""
+    """Get configuration value from report template.
+    """
     element = doctree.find("{%s}config/%s" % (BUNGENI_REPORTS_NS, name))
     if element is not None:
         return element.text
     return default
 
 def get_attr(element, name, namespace=BUNGENI_REPORTS_NS, default=None):
-    """Returns attribute of element from tree"""
-    if namespace=="":
-        return element.get(name, default)
-    return element.get("{%s}%s"  % (namespace, name), default)
+    """Returns attribute of element from tree.
+    """
+    if namespace != "":
+        name = "{%s}%s" % (namespace, name)
+    return element.get(name, default)
 
 def clean_element(element):
-    """Clean out bungeni report namespace tags from document"""
+    """Modify element cleaning out bungeni report namespace tags from it, 
+    returning element.
+    """
     for key in element.keys():
         if BUNGENI_REPORTS_NS in key:
             del element.attrib[key]
+    return element
 
 def empty_element(element):
-    """Remove an element's children from document tree."""
+    """Remove an element's children from document tree.
+    """
     map(lambda child:element.remove(child), element.getchildren())
 
 def drop_element(element):
-    """Remove an element from the document tree"""
+    """Remove an element from the document tree.
+    """
     element.getparent().remove(element)
 
 def add_empty_listing_node(listing_node):
@@ -179,7 +191,6 @@ class ReportGeneratorXHTML(_BaseGenerator):
         """Generate report content based on report template and context.
         """
         def process_single_node(node, context, typ, src):
-            clean_element(node)
             if typ == "text":
                 node.text = value_repr(get_element_value(context, src))
             elif typ == "html":
@@ -192,15 +203,34 @@ class ReportGeneratorXHTML(_BaseGenerator):
                         html_element.attrib[key] = value
                     node.addnext(html_element)
                     node.insert(0, html_element)
-            elif type == "link":
-                url_src = get_attr(node, "url")
-                if url_src:
-                    link_url = get_element_value(context, url_src)
+            # !+ANCHOR(mr, sep-2014) this should be type "anchor" not "link" !!
+            # There is another HTML element "link" that is something else altogether...
+            # e.g. <link rel="stylesheet" type="text/css" href="/browserref.css">
+            elif typ == "link":
+                src_url = get_attr(node, "url")
+                if src_url:
+                    link_url = get_element_value(context, src_url)
                 else:
                     link_url = url.absoluteURL(context, request)
                 node.attrib["href"] = link_url
                 if src:
                     node.text = get_element_value(context, src)
+            # For outputting elements that have an @src attribute to an external
+            # resource, such as <img>, <script>, ... resolves @src to the 
+            # designated resource base url, as per configuration. Any additional
+            # attrs needed to be output are specified verbatim in the template.
+            elif typ == "src":
+                src_url = get_attr(node, "src")
+                assert src_url is not None, \
+                    "Node %s attribute %r is invalid. Check report template." % ( 
+                        node, typ)
+                parsed_url = urlparse.urlparse(src_url)
+                if not parsed_url.path.startswith("/"):
+                    node.attrib["src"] = urlparse.urljoin("/@@/reporting-static/", src_url)
+                else:
+                    # absolute or external, pass on as is
+                    node.attrib["src"] = src_url
+            clean_element(node)
         
         def check_exists(context, prop):
             return bool(get_element_value(context, prop))
@@ -239,7 +269,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
                     if not typ:
                         process_document_tree(child, context)
                     elif typ == "listing":
-                        clean_element(child)
+                        child = clean_element(child)
                         children = child.getchildren()
                         listing = get_element_value(context, src, default=[])
                         if IAlchemistContainer.providedBy(listing):
@@ -267,8 +297,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
                         process_document_tree(child, block_context)
                     else:
                         process_document_tree(child, context)
-            clean_element(root)
-            return root
+            return clean_element(root)
         process_document_tree(self.report_template, self.context)
         return etree.tostring(self.report_template)
 

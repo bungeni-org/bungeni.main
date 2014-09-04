@@ -21,10 +21,11 @@ ZCML_SLUG = """
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
     
+    <include package="zope.browserresource" file="meta.zcml"/>
     <include package="zope.browsermenu" file="meta.zcml" />
     <include package="zope.browserpage" file="meta.zcml" />
     <include package="zope.viewlet" file="meta.zcml" />
-
+    
 {ui_zcml_decls}
 
 </configure>
@@ -64,6 +65,7 @@ def setup_customization_ui():
     very late) that need to have been executed prior to this e.g. 
     creation of specific menus such as "context_actions".
     """
+    
     # http://docs.zope.org/zope3/ZCML/http_co__sl__sl_namespaces.zope.org_sl_browser/menuItems/index.html
     def register_menu_item(type_key, privilege, title, for_, action,
             menu="context_actions", 
@@ -109,7 +111,15 @@ def setup_customization_ui():
     #def model_title(type_key):
     #    return naming.split_camel(naming.model_name(type_key))
     
+    
     UI_ZC_DECLS[:] = []
+    
+    # setup bungeni_custom resource
+    UI_ZC_DECLS.append("""
+        <browser:resourceDirectory name="reporting-static" 
+            directory="%s/reporting/static" />
+        """ % (capi.get_root_path()))
+    
     # we assume that non-custom types have already been set up as needed
     for type_key, ti in capi.iter_type_info(scope="custom"):
         UI_ZC_DECLS.append("""
