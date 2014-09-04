@@ -546,7 +546,7 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
     domain_models = []
     if type_key == "*":
         types_vocab = get_vocabulary("serializable_type")
-        for term in types_vocab():
+        for term in types_vocab(None):
             if term.value == "*": 
                 continue
             info = capi.get_type_info(term.value)

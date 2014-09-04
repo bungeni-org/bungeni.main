@@ -238,11 +238,11 @@ NONE_STATE_RPM = _NoneStateRPM()
 def get_object_state_rpm(context):
     """IRolePermissionMap(context) adapter factory. 
     
-    Looks up the workflow.states.State singleton instance that is the current
+    Looks up the workflow State singleton instance that is the current
     IRolePermissionMap responsible for the context.
     
     Lighweight and high-performance wrapper on get_object_state(context), 
-    to *lookup* (note: no creation of any instance) the workflow.states.State 
+    to *lookup* (note: no creation of any instance) the workflow State 
     singleton instance.
 
     On lookup error, returns NONE_STATE_RPM, instead of what would be a 
@@ -267,7 +267,7 @@ def get_head_object_state_rpm(sub_context):
     """IRolePermissionMap(context) adapter factory.
     
     Lighweight and high-performance wrapper on get_object_state(context), 
-    to *lookup* (note: no creation of any instance) the workflow.states.State 
+    to *lookup* (note: no creation of any instance) the workflow State 
     singleton instance for the sub context's head's status.
     
     Note that sub context is NOT workflowed.
@@ -526,12 +526,11 @@ class Workflow(object):
             if f.name == name:
                 return f
     
-    @property
-    def states(self):
-        """ () -> { status: State } """
-        log.warn("DEPRECATED [%s] Workflow.states, " \
-            "use Workflow.get_state(status) instead" % (self.name))
-        return self._states_by_id
+    def iter_states(self):
+        """ () -> iterator on all (state_id, state) defined by this workflow.
+        """
+        for state_id in self._states_by_id:
+            yield state_id, self._states_by_id[state_id]
     
     def get_state(self, state_id):
         """Get State instance for state_id.
@@ -640,7 +639,8 @@ class WorkflowController(object):
     
     @property
     def workflow(self):
-        """ () -> bungeni.core.workflow.states.Workflow """
+        """ () -> bungeni.core.workflow.states.Workflow
+        """
         return interfaces.IWorkflow(self.context)
     
     def _get_checkPermission(self):

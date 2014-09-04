@@ -601,7 +601,7 @@ class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):
         wf = capi.get_type_info(discriminator).workflow
         terms = [ 
             vocabulary.SimpleTerm(status, status, _(wf.get_state(status).title))
-            for status in wf.states.keys() 
+            for status, state in wf.iter_states() 
         ]
         return vocabulary.SimpleVocabulary(terms)
 set_vocabulary_factory("workflow_states", WorkflowStatesVocabularyFactory())

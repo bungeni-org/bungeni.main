@@ -175,8 +175,8 @@ def load_workflow(type_key, ti):
         log.info("Loaded WORKFLOW: %s.xml as %r - %s" % (
             workflow_file_key, workflow_name, ti.workflow))
         # debug info
-        for state_key, state in ti.workflow.states.items():
-            log.debug("   STATE: %s %s" % (state_key, state))
+        for state_id, state in ti.workflow.iter_states():
+            log.debug("   STATE: %s %s" % (state_id, state))
             for p in state.permissions:
                 log.debug("          %s" % (p,))
     
