@@ -197,6 +197,7 @@ def unique_columns(mapper):
             except:
                 continue
 
+
 class DynamicFields(object):
     mode = None # required string attribute
     template = None # namedtemplate.NamedTemplate("alchemist.form")
@@ -304,44 +305,7 @@ class DynamicFields(object):
 
 # alchemist.ui.content
 
-class BaseForm(object):
-    # !+BASEFORM merge with ui.forms.common.BaseForm
-    name_template = "%sForm"
-    template = namedtemplate.NamedTemplate("alchemist.form")
-    
-    additional_form_fields = form.Fields()
-    
-    status = None
-    mode = None
-    
-    @property
-    def domain_model(self):
-        return removeSecurityProxy(self.context).__class__
-    
-    @property
-    def model_interface(self):
-        # !+ does this give the the correct interface?
-        return tuple(interface.implementedBy(self.domain_model))[0]
-    
-    def get_form_fields(self):
-        return setUpFields(self.domain_model, self.mode)
-    
-    def form_fields():
-        doc = "The prepared fields for self.mode."
-        def fget(self):
-            try:
-                fields = self.__dict__["form_fields"]
-            except KeyError:
-                fields = self.__dict__["form_fields"] = self.get_form_fields()
-            return fields
-        def fset(self, form_fields):
-            self.__dict__["form_fields"] = form_fields
-        return locals()
-    form_fields = property(**form_fields())
-
-
-
-class AddForm(BaseForm, form.AddForm):
+class AddForm(form.AddForm):
     """Static add form for db content.
     """
     mode = "add"
@@ -437,7 +401,7 @@ class AddForm(BaseForm, form.AddForm):
         return errors
 
 
-class EditForm(BaseForm, form.EditForm):
+class EditForm(form.EditForm):
     mode = "edit"
     
     adapters = None
@@ -462,6 +426,7 @@ class EditForm(BaseForm, form.EditForm):
             if isinstance(error, interface.Invalid):
                 errors.append(error)
         return errors
+
 
 # alchemist.ui.core.handle_edit_action
 # formlib 3.5.0 backports.. these variants will send field descriptions on edit

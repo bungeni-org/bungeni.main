@@ -211,7 +211,7 @@ def execute_search(data, prefix, request, context):
     data = dict([(key, 
         (",".join(value) if isinstance(value, list) else value))
         for key,value in data.iteritems() if value])
-    #set default search types (context-aware) if none is set in form
+    # set default search types (context-aware) if none is set in form
     if data.get("type") is None:
         data["type"] = [tp for tp in 
             interfaces.search_document_types(context)][0].value
@@ -220,8 +220,8 @@ def execute_search(data, prefix, request, context):
         data["offset"] = (int(data["page"])-1)*int(limit)+1
         del data["page"]
     # we are only interested in documents
-    data["group"]  = "document"
-    search_request = requests.get(SEARCH_URL, params = data)
+    data["group"] = "document"
+    search_request = requests.get(SEARCH_URL, params=data)
     exist_results = search_request.json()
     item_count = int(exist_results.get("total"))
     page_query_string = request.get("QUERY_STRING")

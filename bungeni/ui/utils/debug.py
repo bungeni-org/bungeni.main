@@ -84,7 +84,8 @@ def interfaces_iro(obj):
 
 
 def location_stack(obj):
-    """Dump out __parent__ stack for an object."""
+    """Dump out __parent__ stack for an object.
+    """
     ps = []
     def _ps(ob):
         if ob is not None:
@@ -95,6 +96,41 @@ def location_stack(obj):
     _ps(obj)
     return """  parent [[context]] stack for %s:
     %s""" % (obj, "\n    ".join(ps))
+
+
+# dependency introspection
+
+import inspect
+from bungeni.utils import naming
+def class_inheritance(obj):
+    """Dump out class inheritance stack for obj, in mro order.
+    """
+    #!+inspect.getclasstree( [type] )
+    s = ["", "MRO (vertical, downwards) INHERITANCE (horizontal, to right) for (* denotes duplicate base):"]
+    s.append("    %s" % (obj))
+    if not isinstance(obj, type):
+        obj = type(obj)
+    classes_mro = []
+    bases_depth = {obj: 0}
+    duplicate_bases = set()
+    for i, x in enumerate(inspect.getmro(obj)):
+        assert x not in classes_mro
+        classes_mro.append(x)
+        for b in x.__bases__:
+            if b in bases_depth:
+                duplicate_bases.add(b)
+            bases_depth[b] = i + 2
+    flattened_depth = sorted([ i for i in set(bases_depth.values()) ])
+    def bname(base):
+        if base in duplicate_bases:
+            return "*%s*" % (naming.qualname(base))
+        return naming.qualname(base)
+    for x in classes_mro:
+        depth = flattened_depth.index(bases_depth[x])
+        ds = "    " * depth
+        xbases = ", ".join([ bname(b) for b in x.__bases__ ])
+        s.append("    %s%s (%s)" % (ds, bname(x), xbases))
+    return "\n".join(s)
 
 
 # exception logging
@@ -136,6 +172,7 @@ def log_io(f):
         print " ** %s: %s, %s -->> %s" % (name, args, kw, ret)
         return ret
     return _f
+
 
 # events 
 

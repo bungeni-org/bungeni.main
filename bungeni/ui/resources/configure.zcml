@@ -1,176 +1,158 @@
 <?xml version="1.0"?>
-<configure
-   xmlns="http://namespaces.zope.org/zope"
-   xmlns:browser="http://namespaces.zope.org/browser"
-   xmlns:zcml="http://namespaces.zope.org/zcml"
-   >
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    >
+    
+    <include package="zc.resourcelibrary" file="meta.zcml"/>
+    <include package="zc.resourcelibrary" />
+    
+    <resourceLibrary name="jquery">
+        <directory source="jquery" include="jquery.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="jqueryui" require="jquery">
+        <directory source="jqueryui" include="jquery.ui.core.js jquery.ui.widget.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="jquery-block-ui" require="jquery">
+        <directory source="jquery" include="jquery.uiblock.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-form-block-ui" require="jquery-block-ui">
+        <directory source="jquery" include="jquery.formsubmit.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="jquerycookie" require="jquery">
+        <directory source="jquery" include="plugins/jquery.cookie.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="dynatree" require="jqueryui jquerycookie">
+        <directory zcml:condition="not-have devmode"
+            source="dynatree"
+            include="js/jquery.dynatree.min.js js/init.js css/ui.dynatree.css" />
+        <directory zcml:condition="have devmode"
+            source="dynatree"
+            include="js/jquery.dynatree.js js/init.js css/ui.dynatree.css" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="diff-form" require="jquery">
+        <directory source="difform" include="js/nowediting.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-calendar-bundle" 
+        require="
+            jquery
+            dhtmlxscheduler-theme-glossy
+            dhtmlxscheduler-recurring
+            dhtmlxscheduler-multisource
+            dhtmlxscheduler-multi-day-visible
+            dhtmlxscheduler-year-view
+            dhtmlxscheduler-agenda-view
+            dhtmlxscheduler-expand
+            bungeni-calendar-globals
+            dhtmlxscheduler-limit
+            dhtmlxscheduler-timeline
+            dhtmlxscheduler-tooltip 
+            dhtmlxscheduler-minical
+            dhtmlxscheduler-collision
+            dhtmlxscheduler-readonly
+        ">
+        <directory source="calendar"
+            include="calendar-extensions.js calendar-multisource.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="scheduler-globals">
+        <directory source="calendar" include="scheduler-globals.js"
+            factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-calendar-globals">
+        <directory source="calendar" include="calendar-globals.js"
+            factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-schedule-config" 
+        require="
+            scheduler-globals 
+            yui-core
+            yui-datatable
+            yui-selector
+            yui-connection
+            yui-container
+            yui-button
+        ">
+        <directory source="calendar" include="schedule-config.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-schedule-text-records"
+        require="bungeni-schedule-config yui-tab yui-button yui-container">
+        <directory source="calendar" include="schedule-text-records.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-schedule-available-items" 
+        require="bungeni-schedule-config yui-tab yui-button yui-container yui-calendar">
+        <directory source="calendar" include="schedule-available-items.js" />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-schedule-editor" 
+        require="
+            bungeni-schedule-config
+            bungeni-schedule-available-items 
+            yui-container
+            yui-connection
+            yui-menu
+            yui-button
+            yui-rte
+            yui-calendar 
+            yui-layout
+            yui-tab
+            yui-json
+            bungeni-schedule-text-records
+        ">
+        <directory source="calendar" 
+            include="
+                schedule-editor.js
+                schedule-editor-core.js
+                schedule-editor.css
+            " />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-schedule-minutes" 
+        require="bungeni-schedule-config yui-container yui-connection 
+            yui-button yui-rte yui-layout yui-json bungeni-schedule-text-records">
+        <directory source="calendar" 
+            include="
+                schedule-editor-minutes.js
+                schedule-editor-core.js
+                schedule-editor.css
+            " />
+    </resourceLibrary>
+    
+    <resourceLibrary name="bungeni-schedule-preview" 
+        require="bungeni-schedule-config yui-layout">
+        <directory source="calendar" 
+            include="schedule-preview.js schedule-editor.css" />
+    </resourceLibrary>
+    
+    <!-- Search Page resources --> 
+    <resourceLibrary name="highlight">
+        <directory source="search/highlight"
+            include="jquery-highlight-min.js highlight.css" />
+    </resourceLibrary>
+    <resourceLibrary name="search-css">
+        <directory source="search" include="search.css" />
+    </resourceLibrary>  
+    <resourceLibrary name="search-js" require="jquery">
+        <directory source="search" include="search.js" />
+    </resourceLibrary>
+    <resourceLibrary name="tiny-mce-config" require="tiny-mce">
+        <directory source="tinymceconfig" include="tinymce_config.js" />
+    </resourceLibrary>
+    <resourceLibrary name="debate-css">
+        <directory source="debate" include="debate.css" />
+    </resourceLibrary>
+    <browser:resourceDirectory name="debate" directory="debate" />
 
-  <include package="zc.resourcelibrary" file="meta.zcml"/>
-  <include package="zc.resourcelibrary" />
-
-  <resourceLibrary name="jquery">
-    <directory
-      source="jquery"
-      include="jquery.js"
-    />
-  </resourceLibrary>
-
-  <resourceLibrary name="jqueryui" require="jquery">
-    <directory
-      source="jqueryui"
-      include="jquery.ui.core.js
-               jquery.ui.widget.js"
-    />
-  </resourceLibrary>
-
-  <resourceLibrary name="jquery-block-ui" require="jquery">
-    <directory
-      source="jquery"
-      include="jquery.uiblock.js"
-    />
-  </resourceLibrary>
-
-  <resourceLibrary name="bungeni-form-block-ui" require="jquery-block-ui">
-    <directory
-      source="jquery"
-      include="jquery.formsubmit.js"
-    />
-  </resourceLibrary>
-
-  <resourceLibrary name="jquerycookie" require="jquery">
-    <directory source="jquery"
-        include="plugins/jquery.cookie.js"
-    />
-  </resourceLibrary>
-
-  <resourceLibrary name="dynatree" require="jqueryui jquerycookie">
-    <directory
-       zcml:condition="not-have devmode"
-       source="dynatree"
-       include="js/jquery.dynatree.min.js
-                js/init.js
-                css/ui.dynatree.css"
-       />
-    <directory
-       zcml:condition="have devmode"
-       source="dynatree"
-       include="js/jquery.dynatree.js
-                js/init.js
-                css/ui.dynatree.css"               
-       />
-  </resourceLibrary>
-  <resourceLibrary name="diff-form" require="jquery">
-    <directory source="difform"
-      include="js/nowediting.js"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="bungeni-calendar-bundle" 
-    require="jquery dhtmlxscheduler-theme-glossy
-        dhtmlxscheduler-recurring dhtmlxscheduler-multisource 
-        dhtmlxscheduler-multi-day-visible 
-        dhtmlxscheduler-year-view dhtmlxscheduler-agenda-view
-        dhtmlxscheduler-expand bungeni-calendar-globals
-        dhtmlxscheduler-limit dhtmlxscheduler-timeline dhtmlxscheduler-tooltip 
-        dhtmlxscheduler-minical dhtmlxscheduler-collision
-        dhtmlxscheduler-readonly">
-    <directory source="calendar"
-        include="calendar-extensions.js
-                 calendar-multisource.js"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="scheduler-globals">
-    <directory
-      source="calendar"
-      include="scheduler-globals.js"
-      factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="bungeni-calendar-globals">
-    <directory
-      source="calendar"
-      include="calendar-globals.js"
-      factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-config" require="scheduler-globals 
-    yui-core yui-datatable yui-selector yui-connection yui-container yui-button">
-    <directory source="calendar" 
-        include="schedule-config.js"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-text-records"
-    require="bungeni-schedule-config yui-tab yui-button yui-container">
-    <directory source="calendar" 
-        include="schedule-text-records.js"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-available-items" 
-    require="bungeni-schedule-config yui-tab yui-button yui-container 
-        yui-calendar">
-    <directory source="calendar" 
-        include="schedule-available-items.js"
-    />
-  </resourceLibrary>  
-  <resourceLibrary name="bungeni-schedule-editor" 
-    require="bungeni-schedule-config bungeni-schedule-available-items 
-        yui-container yui-connection yui-menu yui-button yui-rte yui-calendar 
-        yui-layout yui-tab yui-json bungeni-schedule-text-records ">
-    <directory source="calendar" 
-        include="schedule-editor.js
-                 schedule-editor-core.js
-                 schedule-editor.css"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-minutes" 
-    require="bungeni-schedule-config yui-container yui-connection 
-        yui-button yui-rte yui-layout yui-json bungeni-schedule-text-records">
-    <directory source="calendar" 
-        include="schedule-editor-minutes.js
-                 schedule-editor-core.js
-                 schedule-editor.css"
-    />
-  </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-preview" 
-    require="bungeni-schedule-config yui-layout">
-    <directory source="calendar" 
-        include="schedule-preview.js
-                 schedule-editor.css"
-    />
-  </resourceLibrary>
-  <!-- Search Page resources --> 
-     <resourceLibrary name="highlight">
-          <directory
-             source="search/highlight"
-             include="jquery-highlight-min.js highlight.css"
-         />
-     </resourceLibrary>
-     <resourceLibrary name="search-css">
-       <directory
-        source="search"
-        include="search.css"
-       />
-     </resourceLibrary>  
-     <resourceLibrary name="search-js" require="jquery">
-       <directory
-        source="search"
-        include="search.js"
-       />
-     </resourceLibrary>  
-
-     <resourceLibrary
-        name="tiny-mce-config"
-        require="tiny-mce">
-        <directory
-          source="tinymceconfig"
-          include="tinymce_config.js"
-          />
-     </resourceLibrary>
-     <resourceLibrary name="debate-css">
-      <directory source="debate"
-          include="debate.css"/>       
-   </resourceLibrary>
-   <browser:resourceDirectory
-     name="debate"
-     directory="debate"
-     />
 </configure>
+

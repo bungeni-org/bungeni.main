@@ -126,6 +126,7 @@ class DisplayForm(browser.BungeniBrowserView):
         return self.template()
 
 
+# !+zope.formlib.form.FormBase also inherited from by alchemist.ui AddForm & EditForm
 class BaseForm(formlib.form.FormBase):
     """Base form class for Bungeni content.
 
@@ -154,15 +155,14 @@ class BaseForm(formlib.form.FormBase):
         i.e. (context, request, view, manager)
     
     """
-
     Adapts = None
     CustomValidation = None
-
+    
     legends = {} # { iface:_(str) } i.e. 
     # keys are of type Interface, values are localized strings
 
     status = None
-
+    
     def __init__(self, context, request,
             # to support usage as a viewlet
             view=None, manager=None
@@ -223,13 +223,35 @@ class BaseForm(formlib.form.FormBase):
 
     def update(self):
         self.status = self.request.get("portal_status_message", self.status)
-        self.form_fields = self.filter_fields()
+        self.form_fields = self.filter_fields() # !+FORM_FILTER_FROM_FIELDS?!
         # !+SUPERFLUOUS_ObejctModifiedEvent(mr, nov-2011)
         super(BaseForm, self).update()
         set_widget_errors(self.widgets, self.errors)
 
     def filter_fields(self):
-        return self.form_fields
+        return self.form_fields # !+FORM_FILTER_FROM_FIELDS?!
+    
+    # !+BASEFORM from prev super alchemist.ui.BaseForm
+    template = NamedTemplate("alchemist.form")
+    
+    def form_fields():
+        doc = "The prepared fields for self.mode."
+        def fget(self):
+            try:
+                fields = self.__dict__["form_fields"]
+            except KeyError:
+                fields = self.__dict__["form_fields"] = self.get_form_fields()
+            return fields
+        def fset(self, form_fields):
+            self.__dict__["form_fields"] = form_fields
+        return locals()
+    form_fields = property(**form_fields())
+    
+    @property
+    def model_interface(self):
+        # !+ does this give the the correct interface? Switch to capi?
+        return tuple(interface.implementedBy(self.domain_model))[0]
+    # !+/BASEFORM
     
     def get_form_fields(self):
         return ui.setUpFields(self.domain_model, self.mode)
@@ -376,9 +398,6 @@ class BaseForm(formlib.form.FormBase):
         return filter(None,
                 [ error.message for error in self.invariantErrors ])
     
-    # !+BaseForm(mr, oct-2012) combine this BaseForm with alchemist.ui.BaseForm
-    # e.g. following props "overlap" into "defn focus" of alchemist.ui.BaseForm
-    
     @misc.cached_property
     def model_descriptor(self):
         return utils.get_descriptor(self.domain_model)
@@ -428,7 +447,7 @@ class AddForm(BaseForm, ui.AddForm):
         for validator in getattr(self.model_descriptor, "custom_validators", ()):
             errors += validator(action, data, None, self.context)
         return errors
-        
+    
     def filter_fields(self):
         return filterFields(self.context, self.form_fields)
     

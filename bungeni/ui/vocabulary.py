@@ -751,8 +751,8 @@ class MemberDelegationSource(SpecializedMemberSource):
     """
     
     def construct_query(self, ctx):
-        from bungeni.ui.utils.debug import interfaces
-        log.debug(interfaces(ctx))
+        #from bungeni.ui.utils.debug import interfaces
+        #log.debug(interfaces(ctx))
         #import pdb; pdb.set_trace()
         
         if IAlchemistContainer.providedBy(ctx):
