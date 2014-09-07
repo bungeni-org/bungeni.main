@@ -102,12 +102,13 @@ def location_stack(obj):
 
 import inspect
 from bungeni.utils import naming
-def class_inheritance(obj):
-    """Dump out class inheritance stack for obj, in mro order.
+def class_inheritance(obj, indent=4):
+    """Dump out a simple text representation of possibly complex diamond-shaped 
+    class hierarchy for an obj (instance or type), displaying ancestors
+    cascading upwards in mro order and inheritance via indentation. 
     """
-    #!+inspect.getclasstree( [type] )
-    s = ["", "MRO (vertical, downwards) INHERITANCE (horizontal, to right) for (* denotes duplicate base):"]
-    s.append("    %s" % (obj))
+    # !+inspect.getclasstree( [type] ) possible alternative approach
+    s = ["", "MRO x INHERITANCE (* denotes duplicate base) for: %s" % (obj)]
     if not isinstance(obj, type):
         obj = type(obj)
     classes_mro = []
@@ -121,15 +122,16 @@ def class_inheritance(obj):
                 duplicate_bases.add(b)
             bases_depth[b] = i + 2
     flattened_depth = sorted([ i for i in set(bases_depth.values()) ])
+    flattened_depth.reverse()
     def bname(base):
         if base in duplicate_bases:
             return "*%s*" % (naming.qualname(base))
         return naming.qualname(base)
-    for x in classes_mro:
+    for x in reversed(classes_mro):
         depth = flattened_depth.index(bases_depth[x])
-        ds = "    " * depth
+        ds = " " * indent * depth
         xbases = ", ".join([ bname(b) for b in x.__bases__ ])
-        s.append("    %s%s (%s)" % (ds, bname(x), xbases))
+        s.append("%s%s (%s)" % (ds, bname(x), xbases))
     return "\n".join(s)
 
 
