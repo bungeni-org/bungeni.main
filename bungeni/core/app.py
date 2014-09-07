@@ -263,13 +263,6 @@ class AppSetup(object):
             default_name="admin-index",
             marker=model_interfaces.IBungeniAdmin)
         
-        content = admin["content"] = Section(
-            title=_(u"Content"),
-            description=_(u"browse bungeni content"),
-            marker=model_interfaces.IBungeniAdmin,
-            default_name="browse-admin")
-        alsoProvides(content, interfaces.ISearchableSection)
-        
         admin["email-settings"] = Section(
             title=_(u"email settings"),
             description=_(u"manage email settings"),
@@ -294,8 +287,18 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="serialization-manager")
         
+        content = admin["content"] = Section(
+            title=_(u"Content"),
+            description=_(u"browse bungeni content"),
+            marker=model_interfaces.IBungeniAdmin,
+            default_name="browse-admin")
+        alsoProvides(content, interfaces.ISearchableSection)
         # !+CUSTOM form descriptor container on legislature
         content[u"legislatures"] = domain.LegislatureContainer()
+        ''' !+LEGISLATURE requires that all chamber/government/joint_committee
+        groups be created *under* the legislature in admin (or use demo data 
+        dump from circa r11500 or newer).
+        
         content[u"chambers"] = domain.ChamberContainer()
         to_locatable_container(domain.Chamber, content[u"chambers"])
         content[u"governments"] = domain.GovernmentContainer()
@@ -303,6 +306,7 @@ class AppSetup(object):
         content[u"joint-committees"] = domain.JointCommitteeContainer()
         to_locatable_container(domain.JointCommittee,
             content["joint-committees"])
+        '''
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
         # !+/CUSTOM
@@ -312,11 +316,9 @@ class AppSetup(object):
             description=_(u"Bungeni REST API"),
             default_name="index",
         )
-
         api[u"workspace"] = copy.deepcopy(workspace)
-
         api[u"users"] = copy.deepcopy(content[u"users"])
-
+        
         self.context["oauth"] = OAuthSection(
             title=_(u"Bungeni OAuth API"),
             description=_(u"Bungeni OAuth API"),
