@@ -366,8 +366,9 @@ def vocabulary_column(name, title, vocabulary):
             # and getattr(context, name)...
             value = getattr(context, name)
             m = "******** LookupError: vocabulary [%s, length:%s] term value [%s] " \
-                "for context [%s.%s]" % (
-                    vocabulary, len(vocabulary), value, context, name)
+                "for context [%s.%s] -- vocabulary terms: %s" % (
+                    vocabulary, len(vocabulary), value, context, name,
+                    [ (t.value, t.token, t.title)  for t in vocabulary._terms ])
             log.error(m)
             # we should only have a LookupError on a None value (and it is not 
             # defined in the vocabulary), in which case we return None
