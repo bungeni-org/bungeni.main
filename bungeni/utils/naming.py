@@ -14,8 +14,9 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.utils")
 
+import keyword 
 import re
-from zope.interface.interfaces import IInterface
+#from zope.interface.interfaces import IInterface
 from zope.dottedname.resolve import resolve
 
 
@@ -92,11 +93,28 @@ plural.endings = {
 }
 
 
-def is_valid_identifier(name):
+def is_valid_identifier(name, 
+        underscore_start=True, uppercase_start=True, numeric_follow=True
+    ):
     """Is name a valid identifier ::=  (letter|"_") (letter | digit | "_")*
+    
+    i.e does name start with an alphabetic or an underscore, followed by 
+    one or more alphanumerics or underscores 
+    AND is not a reserved python keyword.
+    
+    !+SYMBOL_NAME in capi schema common.rnc should be consistent with this!
     """
-    return is_valid_identifier.RE.match(name)
-is_valid_identifier.RE = re.compile("^[\w_][\w\d_]+$")
+    match = is_valid_identifier.REGEXS[
+        (underscore_start, uppercase_start, numeric_follow)].match(name)
+    return match and not keyword.iskeyword(name)
+is_valid_identifier.REGEXS = {
+    # (underscore_start, uppercase_start, numeric_follow)
+    (True, True, True): re.compile("^[a-zA-Z_][a-zA-Z0-9_]+$"),
+    (False, True, True): re.compile("^[a-zA-Z][a-zA-Z0-9_]+$"),
+    (False, False, True): re.compile("^[a-z][a-zA-Z0-9_]+$"),
+    (False, False, False): re.compile("^[a-z][a-zA-Z_]+$"),
+}
+
 def as_identifier(name):
     """Ensure name is a valid idenifier (for python, js, etc)... replace any
     whitespace, "-" and "." with "_".

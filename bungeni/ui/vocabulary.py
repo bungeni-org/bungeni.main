@@ -8,8 +8,8 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.vocabulary")
 
+import glob
 import os
-import re
 import hashlib
 from lxml import etree
 
@@ -62,7 +62,7 @@ from bungeni.models.interfaces import (
     IScheduleContent,
     ISerializable
 )
-from bungeni.core.interfaces import IWorkspaceContainer, ISchedulingContext
+from bungeni.core.interfaces import IWorkspaceContainer #, ISchedulingContext
 
 from bungeni.core.translation import translated
 from bungeni.core.language import get_default_language
@@ -79,11 +79,6 @@ try:
 except ImportError:
     import simplejson as json
 import imsvdex.vdex
-
-# valid vdex filenames 
-# !+VDEX_FILE_REGEX what about digits? so, if a number is used in a vdex 
-# filename, the vocab is just not loaded?! Should just use the "symbol" regex.
-VDEX_FILE_REGEX = re.compile("^[a-z]+[a-z|_]+\.vdex$")
 
 
 class BaseVocabularyFactory(object):
@@ -1422,7 +1417,7 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
             os.listdir(template_folder)
         )
         for file_name in file_list:
-            file_path = "/".join([template_folder, file_name])
+            file_path = os.path.join(template_folder, file_name)
             vocabulary_terms.append(
                 vocabulary.SimpleTerm(file_path,
                     token=hashlib.md5(file_name).hexdigest(),
@@ -1518,18 +1513,21 @@ set_vocabulary_factory("text_record_type", TextRecordTypesVocabulary())
 
 #
 
+@capi.bungeni_custom_errors
 def register_vdex_vocabularies():
     """Register all VDEX vocabularies.
     """
     vocab_dir = capi.get_path_for("vocabularies")
-    for file_name in os.listdir(vocab_dir):
-        if re.match(VDEX_FILE_REGEX, file_name) is not None:
-            file_path = capi.get_path_for("vocabularies", file_name)
+    # only consider files with a "vdex" extension
+    for file_path in glob.glob(os.path.join(vocab_dir, "*.vdex")):
+        path, name_ext = os.path.split(file_path)
+        file_name = os.path.splitext(name_ext)[0]
+        log.info("Loading VDEX file: %s", name_ext)
+        if naming.is_valid_identifier(file_name):
             try:
-                log.info("Loading VDEX file: %s", file_name)
                 _vm = VDEXManager(open(file_path)) # !+ fails when passing str path
             except imsvdex.vdex.VDEXError:
-                log.error("Exception while loading VDEX file %s", file_name)
+                log.error("Exception while loading VDEX file %s", file_path)
                 raise #continue !+ such an error should never be silenced!
                 # !+ criteria for registering vocabularies should not simply 
                 # be on matching file name found on disk e.g. on an @enabled 
@@ -1541,14 +1539,19 @@ def register_vdex_vocabularies():
                 vocab_class = FlatVDEXVocabularyFactory
             else:
                 vocab_class = TreeVDEXVocabulary
-            vocabulary_name = file_name[:-len(".vdex")]
+            # register vocabulary on {filename}
+            vocabulary_name = file_name
             set_vocabulary_factory(vocabulary_name, vocab_class(_vm))
             globals()[vocabulary_name] = get_vocabulary(vocabulary_name) # !+
         else:
-            log.warning("Will not process VDEX file named %s. File name is "
-                "not valid. File name must start with a lower case letter, "
-                "may contain underscores and must have a 'vdex' extension",
-                    file_name)
+            raise ValueError("Invalid VDEX vocabulary file name: %r " 
+                "-- must be a valid Python identifier i.e. starts with an "
+                "alphabetic or an underscore followed by one or more "
+                "alphanumeric or underscore characters " 
+                "AND is not a reserved python keyword "
+                "AND must have a %r extension" % (
+                    name_ext, "vdex"))
+
 #!+REGISTRATION(mb, feb-2013) - can't use ZCML to register
 # descriptors seem to be imported before vocabularies are set up
 register_vdex_vocabularies()
