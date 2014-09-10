@@ -19,10 +19,9 @@ from zope.publisher.interfaces import NotFound
 from zc.resourcelibrary import need
 from zope.formlib.namedtemplate import NamedTemplate
 
-from bungeni.alchemist import Session
+from bungeni.alchemist import Session, ui
 from bungeni.models import domain
 from bungeni.models.interfaces import IDebateTakeContainer
-from bungeni.ui import forms
 from bungeni.core.interfaces import IDebateRecordConfig
 from bungeni.ui.utils import url, common
 from bungeni.ui.browser import BungeniBrowserView
@@ -94,7 +93,7 @@ class GenerateTakesViewlet(object):
         self.form = GenerateDebateRecordTakes(self.context, self.request)
 
 
-class GenerateDebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
+class GenerateDebateRecordTakes(BungeniBrowserView, ui.BaseForm):
     """View to generate takes
     """
     form_fields = []
@@ -173,7 +172,7 @@ class GenerateDebateRecordTakes(BungeniBrowserView, forms.common.BaseForm):
         return self.request.response.redirect(next_url + "/takes")
 
 
-class AddItems(forms.common.BaseForm):
+class AddItems(ui.BaseForm):
     template = NamedTemplate("alchemist.form")
 
     class IAddItemsForm(interface.Interface):

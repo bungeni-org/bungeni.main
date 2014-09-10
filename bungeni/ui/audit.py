@@ -331,7 +331,7 @@ class TableFormatter(
     """Simple non-batching table formatter, with alternating rows.
     """
 
-# !+AuditLogView(mr, nov-2011) should inherit from forms.common.BaseForm, 
+# !+AuditLogView(mr, nov-2011) should inherit from alchemist.ui.BaseForm, 
 # as for VersionLogView?
 class AuditLogMixin(object):
     """Base handling of audit change log listing for a context.

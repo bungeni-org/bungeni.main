@@ -19,7 +19,7 @@ from zope.formlib.widgets import TextAreaWidget
 from zc.table import column
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
-from bungeni.alchemist import Session
+from bungeni.alchemist import Session, ui
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
 from bungeni.core.interfaces import IWorkspaceContainer
@@ -34,7 +34,6 @@ from bungeni import models
 from bungeni.feature.interfaces import IFeatureAudit
 
 from bungeni.ui.forms.workflow import bindTransitions
-from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
@@ -44,7 +43,7 @@ from bungeni.ui.utils.url import absoluteURL
 from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
-from bungeni.utils import common, register
+from bungeni.utils import register
 from bungeni import _, translate
 
 
@@ -111,7 +110,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
 
 
 class WorkflowActionViewlet(browser.BungeniBrowserView, 
-        BaseForm, viewlet.ViewletBase
+        ui.BaseForm, viewlet.ViewletBase
     ):
     """Display workflow status and actions.
     """

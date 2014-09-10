@@ -23,41 +23,71 @@ __all__ = [
 #
 
 import copy, math, itertools
+import sys
 from zope import interface
 from zope.security.proxy import removeSecurityProxy
-from zope.formlib import form, namedtemplate
+from zope import formlib
 from zope.viewlet import manager
 from zope.event import notify
 from zope.lifecycleevent import Attributes, \
     ObjectCreatedEvent, ObjectModifiedEvent
 from zope.traversing.browser import absoluteURL
-from sqlalchemy import orm
+import sqlalchemy as sa
 from bungeni.alchemist.interfaces import (
+    IAlchemistContainer,
     IAlchemistContent,
 )
-import bungeni.alchemist
+from bungeni.alchemist import Session, utils
+from bungeni.ui.utils import debug
+from bungeni.utils import misc
+from bungeni.capi import capi
 from bungeni import _
 
+TRUE_VALS = "true", "1"
+
+class NoPrefix(unicode):
+    """The ``formlib`` library insists on concatenating the form
+    prefix with field names; we override the ``__add__`` method to
+    prevent this.
+    """
+
+    def __add__(self, name):
+        return name
+NO_PREFIX = NoPrefix()
+
+class DefaultAction(formlib.form.Action):
+    def __init__(self, action):
+        self.__dict__.update(action.__dict__)
+    def submitted(self):
+        return True
+
+def set_widget_errors(widgets, errors):
+    for widget in widgets:
+        name = widget.context.getName()
+        for error in errors:
+            if isinstance(error, interface.Invalid) and name in error.args[1:]:
+                if widget._error is None:
+                    widget._error = error
 
 def setUpFields(domain_model, mode):
     """
     setup form fields for add/edit/view/search modes, with custom widgets
     enabled from model descriptor. this expects the domain model and mode
-    passed in and will return a form.Fields instance
+    passed in and will return a formlib.form.Fields instance
     """
     domain_model = removeSecurityProxy(domain_model)
     #import time
     #t = time.time()
-    table_schema = bungeni.alchemist.utils.get_derived_table_schema(domain_model)
-    descriptor_model = bungeni.alchemist.utils.get_descriptor(table_schema)
+    table_schema = utils.get_derived_table_schema(domain_model)
+    descriptor_model = utils.get_descriptor(table_schema)
     
     search_mode = mode == "search"
     
     if not descriptor_model:
         if search_mode:
-            form_fields = form.Fields(*setUpSearchFields(table_schema))
+            form_fields = formlib.form.Fields(*setUpSearchFields(table_schema))
         else:
-            form_fields = form.Fields(table_schema)
+            form_fields = formlib.form.Fields(table_schema)
         return form_fields
     
     fields = []
@@ -69,14 +99,14 @@ def setUpFields(domain_model, mode):
             continue
         custom_widget = getattr(field_info, "%s_widget" % mode)
         if search_mode:
-            fields.append(form.Field(
+            fields.append(formlib.form.Field(
                     setUpSearchField(table_schema[field_info.name]),
                     custom_widget=custom_widget))
         else:
-            fields.append(form.Field(
+            fields.append(formlib.form.Field(
                     table_schema[field_info.name],
                     custom_widget=custom_widget))
-    form_fields = form.Fields(*fields)
+    form_fields = formlib.form.Fields(*fields)
     #print "field setup cost", time.time()-t    
     return form_fields
 
@@ -87,7 +117,8 @@ def setUpSearchFields(iface):
     return fields
 
 def setUpSearchField(field):
-    "Search fields shouldn't be required"    
+    """Search fields shouldn't be required.
+    """
     if field.required:
         field = copy.deepcopy(field)
         field.required = False
@@ -117,10 +148,10 @@ def setUpColumns(domain_model):
     """Use model descriptor on domain model extract columns for table listings
     """
     columns = []
-    table_schema = bungeni.alchemist.utils.get_derived_table_schema(domain_model)
+    table_schema = utils.get_derived_table_schema(domain_model)
     if not table_schema:
         raise SyntaxError("Model must have domain interface %r" % (domain_model))
-    descriptor_model = bungeni.alchemist.utils.get_descriptor(table_schema)
+    descriptor_model = utils.get_descriptor(table_schema)
     
     field_column_names = \
         descriptor_model and descriptor_model.listing_columns \
@@ -187,7 +218,7 @@ def null_validator(form, action, data):
 def unique_columns(mapper):
     def columns(mapper):
         for p in mapper.iterate_properties:
-            if isinstance(p, orm.properties.ColumnProperty):
+            if isinstance(p, sa.orm.properties.ColumnProperty):
                 yield p
     for cp in columns(mapper):
         for c in cp.columns:
@@ -200,8 +231,8 @@ def unique_columns(mapper):
 
 class DynamicFields(object):
     mode = None # required string attribute
-    template = None # namedtemplate.NamedTemplate("alchemist.form")
-    form_fields = form.Fields()
+    template = None # formlib.namedtemplate.NamedTemplate("alchemist.form")
+    form_fields = formlib.form.Fields()
     
     def getDomainModel(self):
         return getattr(self.context, "domain_model", self.context.__class__)
@@ -253,7 +284,7 @@ class DynamicFields(object):
                 second_half_widgets.append(self.widgets[ field.__name__ ])
         return first_half_widgets, second_half_widgets
 
-    def validateUnique(self, action, data):
+    def validate_unique(self, action, data):
         """
         verification method for adding or editing against anything existing
         that conflicts with an existing row, as regards unique column constraints.
@@ -268,22 +299,22 @@ class DynamicFields(object):
         
         TODO : assumes column == attribute
         
-        !+BASEFORM-VALIDATEUNIQUE merge with almost identical ui.forms.common.BaseForm.validateUnique
+        !+BASEFORM_VALIDATE_UNIQUE merge with almost identical BaseForm.validate_unique
         """
-        errors = form.getWidgetsData(self.widgets, self.prefix, data) + \
-            form.checkInvariants(self.form_fields, data) 
+        errors = formlib.form.getWidgetsData(self.widgets, self.prefix, data) + \
+            formlib.form.checkInvariants(self.form_fields, data) 
         if errors:
             return errors
         
         domain_model = removeSecurityProxy(self.getDomainModel())
         
         # find unique columns in data model.. TODO do this statically
-        mapper = orm.class_mapper(domain_model)
+        mapper = sa.orm.class_mapper(domain_model)
         ucols = list(unique_columns(mapper))
         
         errors = []
         # query out any existing values with the same unique values,
-        s = bungeni.alchemist.Session()        
+        s = Session()        
         # find data matching unique columns
         for key, col in ucols:
             if key in data:
@@ -295,7 +326,7 @@ class DynamicFields(object):
                 if not value:
                     continue
                 widget = self.widgets[ key ]
-                error = form.WidgetInputError(widget.name, widget.label, 
+                error = formlib.form.WidgetInputError(widget.name, widget.label, 
                     u"Duplicate Value for Unique Field")
                 widget._error = error
                 errors.append(error)
@@ -303,20 +334,302 @@ class DynamicFields(object):
             return tuple(errors)
 
 
+# bungeni baseform
+
+class BaseForm(formlib.form.FormBase):
+    """Base form class for Bungeni content.
+
+    Headless submission
+
+        Adds support for "headless" submission, relying only on the
+        schema field ids. The headless mode is enabled by giving a
+        true value for the request parameter ``headless``.  In this
+        mode, no form prefix is applied and the default action is
+        always executed.
+
+    Custom validation
+
+        The ``CustomValidation`` attribute is queried for extra validation
+        steps to be performed.
+
+    Redirection
+
+        If ``next_url`` is provided, a redirect is issued upon
+        successful form submission.
+        
+    As a viewlet
+        
+        Two additional init params to the "view" standard init API of 
+        (context, request) are specified for when usage is as as "viewlet"
+        i.e. (context, request, view, manager)
+    
+    """
+    Adapts = None
+    CustomValidation = None
+    
+    legends = {} # { iface:_(str) } i.e. 
+    # keys are of type Interface, values are localized strings
+
+    status = None
+    
+    template = formlib.namedtemplate.NamedTemplate("alchemist.form")
+    
+    def __init__(self, context, request,
+            # to support usage as a viewlet
+            view=None, manager=None
+        ):
+        # !+view/viewlet(mr, jul-2011): (self, context, request, view, manager)
+        # here, we make the distinction explicit, for some clarity, but in 
+        # subclasses we simply use the open-ended *args
+        if view is not None:
+            # viewlet api
+            super(BaseForm, self).__init__(context, request, view, manager)
+        else:
+            # view api
+            super(BaseForm, self).__init__(context, request)
+        
+        if str(self.request.get("headless", "")).lower() in TRUE_VALS:
+            self.setPrefix(NO_PREFIX)
+
+            # in headless mode, the first action defined is submitted
+            # by default
+            for action in self.actions:
+                default = DefaultAction(action)
+                self.actions = formlib.form.Actions(default)
+                break
+        
+        # the ``_next_url`` attribute is used internally by our
+        # superclass to implement formlib's ``nextURL`` method
+        next_url = self._next_url = self.request.get("next_url", None)
+        if next_url == "...":
+            self._next_url = self.request.get("HTTP_REFERER", "")
+
+    def __call__(self):
+        #session = Session()
+        # XXX control the display order of the submit buttons 
+        # the order seems to be determined by the self.actions.actions 
+        # tuple of zope.formlib.form.Action instances
+        print "XXX Order of Form Submit Buttons:", [ 
+            (a.name, a.label) for a in self.actions.actions ]
+        return super(BaseForm, self).__call__()
+    
+    @property
+    def widget_groups(self):
+        groups = {}
+        for widget in self.widgets:
+            iface = widget.context.interface
+            legend = self.legends.get(iface)
+            if legend is None:
+                iface = interface.Interface
+            group = groups.setdefault(iface, [])
+            group.append(widget)
+        return groups
+    
+    @property
+    def is_headless(self):
+        """Boolean flag if form has been submitted in headless mode
+        """
+        return str(self.request.get("headless", "")).lower() in TRUE_VALS
+
+    def update(self):
+        self.form_fields = self.filter_fields() # !+FORM_FILTER_FROM_FIELDS?!
+        self.status = self.request.get("portal_status_message", self.status)
+        super(BaseForm, self).update()
+        set_widget_errors(self.widgets, self.errors)
+    
+    def filter_fields(self):
+        return self.form_fields # !+FORM_FILTER_FROM_FIELDS?!
+    
+    def form_fields():
+        doc = "The prepared fields for self.mode."
+        def fget(self):
+            try:
+                fields = self.__dict__["form_fields"]
+            except KeyError:
+                fields = self.__dict__["form_fields"] = self.get_form_fields()
+            return fields
+        def fset(self, form_fields):
+            self.__dict__["form_fields"] = form_fields
+        return locals()
+    form_fields = property(**form_fields())
+    
+    @property
+    def model_interface(self):
+        # !+ does this give the the correct interface? Switch to capi?
+        return tuple(interface.implementedBy(self.domain_model))[0]
+    
+    def get_form_fields(self):
+        return setUpFields(self.domain_model, self.mode)
+    
+    def validate(self, action, data):
+        """Validation that require context must be called here,
+        invariants may be defined in the descriptor."""
+        errors = (
+            formlib.form.getWidgetsData(self.widgets, self.prefix, data) +
+            formlib.form.checkInvariants(self.form_fields, data))
+        if not errors and self.CustomValidation is not None:
+            return list(self.CustomValidation(self.context, data))
+        return errors
+    
+    def set_widget_error(self, key, message):
+        widget = self.widgets[key]
+        widget._error = formlib.form.WidgetInputError(
+            widget.name, widget.label, message)
+        return widget._error
+    
+    def validate_unique(self, action, data):
+        """Validate unique.
+        
+        Since this class always adds a single object, we can safely
+        return an empty list of errors.
+        """
+        errors = []
+        dm = removeSecurityProxy(self.domain_model)
+        
+        # find unique columns in data model.. TODO do this statically
+        mapper = sa.orm.class_mapper(dm)
+        ucols = list(unique_columns(mapper))
+        
+        # query out any existing values with the same unique values,
+        session = Session()
+        # find data matching unique columns
+        ctx = removeSecurityProxy(self.context)
+        ctx_is_dm_instance = isinstance(ctx, dm) # !+when is this not true?
+        for key, col in ucols:
+            if key in data:
+                # on edit ignore new value if its the same as the previous value
+                if ctx_is_dm_instance and data[key] == getattr(ctx, key, None):
+                    continue
+                value = session.query(dm).filter(col == data[key]).count()
+                if not value:
+                    continue
+                errors.append(self.set_widget_error(key,
+                        _(u"A record with this value already exists")))
+        return errors
+    
+    def validate_derived_table_schema(self, action, data):
+        """Look-ahead validate against database contraints.
+        """
+        dm = self.domain_model
+        ti = capi.get_type_info(dm)
+        derived_table_schema = ti.derived_table_schema
+        errors = []
+        for name in derived_table_schema:
+            ff = self.form_fields.get(name)
+            
+            # skip if no form does not define a corresponding form field
+            if not ff:
+                continue
+            # !+ skip if field not included in this form "mode"?
+            #if name not in getattr("%s_columns" % (self.mode), ti.descriptor_model):
+            #    continue
+            
+            field = derived_table_schema.get(name)
+            assert field is ff.field, name # !+TMP sanity check
+            value = data.get(name, None)
+            
+            # standard field validation !+ necessary, already called elsewhere? 
+            try:
+                e = field.validate(value)
+                if e:
+                    errors.append(self.set_widget_error(name, e))
+            except (Exception,):
+                # !+ error downstream strangely due to a dynamic vocabulary call 
+                # being passed a None context:
+                #File "/opt/bungeni/bungeni_apps/bungeni/eggs/zope.app.schema-3.5.0-py2.7.egg/zope/app/schema/vocabulary.py", line 33, in get
+                #   return factory(context)
+                #File "/opt/bungeni/bungeni_apps/bungeni/src/bungeni.main/bungeni/ui/vocabulary.py", line 526, in __call__
+                #    query = self.construct_query(removeSecurityProxy(context))
+                # e.g editing Minister title, adding a Member, ...
+                log.error("\n"
+                    "    %r.validate(%r) FAILED (field %r)\n"
+                    "    [context: %r]", field, value, name, self.context)
+                debug.log_exc_info(sys.exc_info(), log_handler=log.error)
+                #import pdb; pdb.set_trace()
+            
+            # get db column definition
+            domain_attr = getattr(dm, name)
+            if not isinstance(domain_attr, sa.orm.attributes.InstrumentedAttribute):
+                continue
+            domain_attr_property = domain_attr.property
+            assert isinstance(domain_attr_property, sa.orm.properties.ColumnProperty), name # !+TMP sanity check
+            # !+MULTIPLE_COLUMNS only single columns supported (so far)
+            if len(domain_attr_property.columns) == 1:
+                col = domain_attr_property.columns[0]
+                #!+AttributeError: '_Label' object has no attribute 'nullable'
+                # not: sa.sql.expression._Label, sa.sql.expression.ColumnElement
+                assert isinstance(col, sa.schema.Column), col 
+            else:
+                log.warn("SQLAlchemy property %r NOT defined as a single column, "
+                    "skipping derived_table_schema validation...", name)
+                continue
+            
+            # validate against db column definition
+            # nullable
+            if value is None:
+                if not col.nullable:
+                    errors.append(self.set_widget_error(name, _(u"May not be null")))
+                continue
+            # sa.String
+            if isinstance(col.type, sa.types.String):
+                # length
+                length = col.type.length
+                if length is not None:
+                    if length < len(value):
+                        errors.append(self.set_widget_error(name, 
+                                _(u"May not be longer than ${length}", 
+                                    mapping={"length": length})))
+        return errors
+    
+    @property
+    def next_url(self):
+        return self._next_url
+
+    @property
+    def invariantErrors(self):
+        """ () -> [error:zope.interface.Invalid]
+        """
+        errors = []
+        for error in self.errors:
+            if isinstance(error, interface.Invalid):
+                errors.append(error)
+        return errors
+    
+    @property
+    def invariantMessages(self):
+        """ () -> [message:str]
+        Called from the form.html#form template.
+        """
+        return filter(None,
+                [ error.message for error in self.invariantErrors ])
+    
+    
+    @misc.cached_property
+    def model_descriptor(self):
+        return utils.get_descriptor(self.domain_model)
+
+    @misc.cached_property
+    def domain_model(self):
+        context = removeSecurityProxy(self.context)
+        if IAlchemistContainer.providedBy(context):
+            return context.domain_model
+        elif IAlchemistContent.providedBy(context):
+            return context.__class__
+        else:
+            raise AttributeError("Could not find domain model for context: %s",
+                context)
+
+
+
 # alchemist.ui.content
 
-class AddForm(form.AddForm):
+class AddForm(BaseForm, formlib.form.AddForm):
     """Static add form for db content.
     """
     mode = "add"
     defaults = {}
-    
     _next_url = None
     adapters = None
-    
-    @property
-    def domain_model(self):
-        return removeSecurityProxy(self.context).domain_model
     
     def createAndAdd(self, data):
         domain_model = self.domain_model
@@ -330,13 +643,15 @@ class AddForm(form.AddForm):
         self.finishConstruction(ob)
         
         # apply extra form values
-        form.applyChanges(ob, self.form_fields, data, self.adapters)
+        formlib.form.applyChanges(ob, self.form_fields, data, self.adapters)
         
-        # save the object, id is generated by db on flush
+        # set the object in container context, causing autosetting of 
+        # constrained values e.g. one2many attributes, by triggering call to 
+        # _ManagedContainer.constraints.setConstrainedValues()
         self.context[""] = ob
         
         # flush so we have database id
-        bungeni.alchemist.Session().flush()
+        Session().flush()
         # !+DataError reload form and display this error?
         
         # fire an object created event
@@ -345,13 +660,18 @@ class AddForm(form.AddForm):
         # signal to add form machinery to go to next url
         self._finished_add = True
         
-        mapper = orm.object_mapper(ob)
+        mapper = sa.orm.object_mapper(ob)
         
         # TODO single primary key (need changes to base container)
         oid = mapper.primary_key_from_instance(ob)
         
         # retrieve the object with location and security information
         return self.context[oid]
+    
+    def update(self):
+        for name, value in self.defaults.items():
+            self.form_fields[name].field.default = value
+        super(AddForm, self).update()
     
     def finishConstruction(self, ob):
         """No op, subclass to provide additional initialization behavior"""
@@ -361,71 +681,50 @@ class AddForm(form.AddForm):
         if not self._next_url:
             return absoluteURL(self.context, self.request)
         return self._next_url
-        
-    def update(self):
-        for name, value in self.defaults.items():
-            self.form_fields[name].field.default = value
-        self.status = self.request.get("portal_status_message", "")
-        super(AddForm, self).update()
     
     def validateAdd(self, action, data):
-        errors = self.validateUnique(action, data)
+        errors = self.validate_unique(action, data)
         return errors
         
-    @form.action(_(u"Cancel"), validator=null_validator)
+    @formlib.form.action(_(u"Cancel"), validator=null_validator)
     def handle_cancel(self, action, data):
         url = self.nextURL()
         return self.request.response.redirect(url)
     
-    @form.action(_(u"Save and continue editing"), 
-        condition=form.haveInputWidgets, validator="validateAdd")
+    @formlib.form.action(_(u"Save and continue editing"), 
+        condition=formlib.form.haveInputWidgets, validator="validateAdd")
     def handle_add_edit(self, action, data):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
         self._next_url = "%s/@@edit?portal_status_message=%s Added" % (
             absoluteURL(ob, self.request), name)
-        
-    @form.action(_(u"Save and add another"), 
-        condition=form.haveInputWidgets)
+    
+    @formlib.form.action(_(u"Save and add another"), 
+        condition=formlib.form.haveInputWidgets)
     def handle_add_and_another(self, action, data):
         self.createAndAdd(data)
         name = self.domain_model.__name__
         self._next_url = "%s/@@add?portal_status_message=%s Added" % (
             absoluteURL(self.context, self.request), name)
-        
-    def invariantErrors(self):        
-        errors = []
-        for error in self.errors:
-            if isinstance(error, interface.Invalid):
-                errors.append(error)
-        return errors
 
 
-class EditForm(form.EditForm):
+class EditForm(BaseForm, formlib.form.EditForm):
     mode = "edit"
-    
     adapters = None
     
     def setUpWidgets(self, ignore_request=False):
         self.adapters = self.adapters or {}
-        self.widgets = form.setUpEditWidgets(
+        self.widgets = formlib.form.setUpEditWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             adapters=self.adapters, ignore_request=ignore_request)
     
-    @form.action(_(u"Save"), condition=form.haveInputWidgets)
+    @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_edit_action(self, action, data):
         return _handle_edit_action(self, action, data)
     
-    @form.action(_(u"Cancel"), condition=form.haveInputWidgets, validator=null_validator)
+    @formlib.form.action(_(u"Cancel"), condition=formlib.form.haveInputWidgets, validator=null_validator)
     def handle_cancel_action(self, action, data):
         return _handle_edit_action(self, action, data)            
-        
-    def invariantErrors(self):        
-        errors = []
-        for error in self.errors:
-            if isinstance(error, interface.Invalid):
-                errors.append(error)
-        return errors
 
 
 # alchemist.ui.core.handle_edit_action
@@ -506,9 +805,9 @@ def createInstance(cls, data):
         
         if v is _marker:
             if i < nrequired:
-                raise TypeError("missing argument %s" % n)
+                raise TypeError("missing argument %r" % n)
             else:
-                v = defaults[ i-nrequired ]
+                v = defaults[i - nrequired]
         else:
             used.append(n)
         args.append(v)
@@ -524,7 +823,7 @@ def createInstance(cls, data):
 # viewlet
 
 class ContentViewletManager(manager.ViewletManagerBase):
-    template = namedtemplate.NamedTemplate("alchemist.content")
+    template = formlib.namedtemplate.NamedTemplate("alchemist.content")
 
 
 

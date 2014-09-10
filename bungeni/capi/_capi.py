@@ -10,7 +10,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.capi")
 
-import sys
 import time
 import os
 import zope.interface

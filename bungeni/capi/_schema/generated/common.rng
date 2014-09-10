@@ -38,9 +38,10 @@
   -->
   <define name="SYMBOL_NAME">
     <data type="string">
-      <param name="pattern">[a-zA-Z_][\w_]*</param>
+      <param name="pattern">[a-zA-Z_][a-zA-Z0-9_]*</param>
     </data>
   </define>
+  <!-- !+ change * to +, to not allow single-letter symbols? -->
   <!-- a two letter ISO 3166-1 alpha-2 country code (no mixed case) -->
   <define name="COUNTRY_CODE">
     <data type="string">

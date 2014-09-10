@@ -178,7 +178,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         """
         return self.context.__class__.__name__
 
-    # !+ from ui.forms.common.BaseForm -- merge these 2 base classes? 
+    # !+INVARIANT from alchemist.ui.BaseForm -- merge these 2 base classes? 
     @property
     def invariantErrors(self):
         """ () -> [error:zope.interface.Invalid]

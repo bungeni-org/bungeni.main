@@ -201,7 +201,7 @@ class AlchemistContainer(Persistent, Contained):
     _class = None
     
     interface.implements(interfaces.IAlchemistContainer)
-
+    
     def setClassName(self, name):
         self._class_name = name
         self._class = resolve(name)
@@ -224,7 +224,7 @@ class AlchemistContainer(Persistent, Contained):
             query = query.filter(filter)
         if order_by:
             query = query.order_by(order_by)
-        #limit and offset must be applied after filter and order_by            
+        # limit and offset must be applied after filter and order_by            
         query = query.limit(limit).offset(offset)            
         for ob in query:
             ob = contained(ob, self, stringKey(ob))
@@ -281,11 +281,15 @@ class AlchemistContainer(Persistent, Contained):
         return value
     
     def __setitem__(self, name, item):
+        #print "AlchemistContainer.__setitem__", self, repr(name), item
+        #from bungeni.ui.utils.debug import class_inheritance
+        #print class_inheritance(self)
+        #import pdb; pdb.set_trace()
         session = Session()
         session.add(item)
     
     def __delitem__(self, name):
-        instance = self[ name ]
+        instance = self[name]
         session = Session()
         session.delete(instance)
     
@@ -301,10 +305,10 @@ class AlchemistContainer(Persistent, Contained):
 
 class PartialContainer(AlchemistContainer):
     """An alchemist container that matches against an arbitrary subset,
-    via definition of a query modification function. contents added to this
-    container, may there fore not nesc. be accessible from it, unless they 
-    also match the query. the alchemist ui views provide add views which can 
-    maintain the constraint.
+    via definition of a query modification function. Contents added to this
+    container, may therefore not nescessarily be accessible from it, unless 
+    they also match the query. The alchemist ui views provide add views which
+    can maintain the constraint.
     """
     _subset_query = None
     

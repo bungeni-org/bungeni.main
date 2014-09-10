@@ -25,14 +25,13 @@ from sqlalchemy import orm
 
 from bungeni import translate, _
 from bungeni.alchemist.interfaces import IIModelInterface
-from bungeni.alchemist.ui import getSelected
+from bungeni.alchemist import ui
 from bungeni.core import version
 from bungeni.core.workflows.utils import view_permission
 from bungeni.feature.interfaces import IFeatureVersion
 from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
 from bungeni.ui.utils import url
 from bungeni.ui import browser
-from bungeni.ui import forms
 from bungeni.utils import register
 from bungeni.ui.htmldiff import htmldiff
 from bungeni.ui import audit
@@ -131,7 +130,7 @@ class VersionLogMixin(object):
         dict(attributes=["publishTraverse", "browserDefault", "__call__"])})
 class VersionLogView(VersionLogMixin, 
         browser.BungeniBrowserView, 
-        forms.common.BaseForm,
+        ui.BaseForm,
     ):
     """Version Log View for an object
     """
@@ -174,9 +173,9 @@ class VersionLogView(VersionLogMixin,
         # in core.audit...get_field_names_to_audit(kls)
         # !+ replace with a more explict permission check?
         table = orm.class_mapper(trusted.__class__).mapped_table
-        for column in table.columns:
+        for col in table.columns:
             try:
-                if canWrite(self.context, column.name):
+                if canWrite(self.context, col.name):
                     return True
                 else:
                     return False
@@ -211,7 +210,7 @@ class VersionLogView(VersionLogMixin,
         condition=has_write_permission)
     def handle_revert_version(self, action, data):
         # !+REVERSION must be reviewed, probably obsoleted
-        selected_audit_ids = getSelected(self.selection_column, self.request)
+        selected_audit_ids = ui.getSelected(self.selection_column, self.request)
         if len(selected_audit_ids) != 1:
             self.status = _("Select one item to revert to")
             return
@@ -231,7 +230,7 @@ class VersionLogView(VersionLogMixin,
         validator=lambda form, action, data: ())
     def handle_diff_version(self, action, data):
         self.status = _("Displaying differences")
-        selected_audit_ids = sorted(getSelected(self.selection_column, self.request))
+        selected_audit_ids = sorted(ui.getSelected(self.selection_column, self.request))
         if len(selected_audit_ids) not in (1, 2):
             self.status = _("Select one or two items to show differences")
             return

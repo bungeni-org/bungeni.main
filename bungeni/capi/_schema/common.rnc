@@ -22,7 +22,8 @@ SPACE_SEPARATED_SYMBOLS = list { SYMBOL_NAME+ }
 # a valid programming language symbol name e.g. in python this means must 
 # start a with letter or "_" char, followed with zero or more of letters, 
 # numbers and "_" chars (i.e. no whitespace or "-" or "." etc).
-SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][\w_]*" }
+SYMBOL_NAME = xsd:string { pattern="[a-zA-Z_][a-zA-Z0-9_]*" }
+# !+ change * to +, to not allow single-letter symbols?
 
 # a two letter ISO 3166-1 alpha-2 country code (no mixed case)
 COUNTRY_CODE = xsd:string { pattern="[A-Z]{2}|[a-z]{2}" }

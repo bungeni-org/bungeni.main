@@ -20,18 +20,17 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 
 from sqlalchemy import sql
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.alchemist import Session
+from bungeni.alchemist import Session, ui
 from bungeni.models.interfaces import ISittingAttendance
 from bungeni.models.domain import SittingAttendance
 
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.table import TableFormatter
-from bungeni.ui import forms
 from bungeni.ui.utils import url
 from bungeni import _
 
 
-class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
+class AttendanceEditor(BungeniBrowserView, ui.BaseForm):
     """Multiple attendance record editor for sittings"""
     
     form_fields = []

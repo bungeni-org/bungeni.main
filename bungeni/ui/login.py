@@ -24,14 +24,14 @@ from zope.component import getUtility
 from bungeni.core.interfaces import IBungeniMailer
 from bungeni.core.language import I18N_COOKIE_NAME
 
-from bungeni.alchemist import Session
+from bungeni.alchemist import Session, ui
 from bungeni.models.domain import User
 from bungeni.models.domain import PasswordRestoreLink
 from bungeni.models.utils import get_login_user
 
 from bungeni.ui import widgets
 import bungeni.ui.utils as ui_utils
-from bungeni.ui.forms.common import BaseForm, EditForm
+from bungeni.ui.forms.common import EditForm
 from bungeni import _
 
 
@@ -266,7 +266,7 @@ class IChangePasswordForm(interface.Interface):
             raise interface.Invalid(_("Old password incorrect"), "old_password")
     
 
-class ChangePasswordForm(BaseForm):
+class ChangePasswordForm(ui.BaseForm):
     form_fields = form.Fields(IChangePasswordForm)
     
     prefix = ""

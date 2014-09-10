@@ -18,16 +18,16 @@ from zope.security.proxy import removeSecurityProxy
 from zc.table import column
 from zope import formlib
 
+from bungeni.alchemist import ui
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.ui.table import TableFormatter
-from bungeni.ui import forms
 from bungeni.ui.utils import url, common
 from bungeni.capi import capi
 from bungeni.models.interfaces import ISubRoleAnnotations
 from bungeni import utils
 from bungeni import _
 
-class UserAssignmentView(forms.common.BaseForm):
+class UserAssignmentView(ui.BaseForm):
     """View for user assignments. Allows users with adequate permissions
     to edit the assignments
     """
@@ -164,7 +164,7 @@ class UserAssignmentView(forms.common.BaseForm):
             self.tables.append(
                 {"title": getUtility(IRole, role_id).title,
                  "table": self.role_listing(role_id, editable)})
-        forms.common.BaseForm.update(self)
+        ui.BaseForm.update(self)
 
     def get_selected(self):
         selected = [
