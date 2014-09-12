@@ -342,23 +342,19 @@ def vocabulary_column(name, title, vocabulary):
     if isinstance(vocabulary, basestring): # !+tmp
         vocabulary = get_vocabulary(vocabulary)
     
-    from bungeni.ui.vocabulary import VDEXVocabularyMixin
+    #from bungeni.ui.vocabulary import VDEXVocabularyMixin
     def getter(context, formatter, vocabulary=vocabulary):
-        
         # if this is a vocabulary factory, we need to instantiate with context
-        #
         # !+ but, when context is irrelevant, call-it-as-factory to get a 
         # context-bound instance seems unnecessarily inefficient! 
-        #
         # !+ VDEXVocabularyMixin-based FlatVDEXVocabularyFactory and 
         # TreeVDEXVocabulary (but this is as yet never included in a listing) 
         # already implement getTerm() -- that is all that is needed here, and 
         # the term returned is already localized, so we really do not need to 
         # call-it-as-factory to bind it to context on each lookup...
-        if not isinstance(vocabulary, VDEXVocabularyMixin):
-            if IVocabularyFactory.providedBy(vocabulary):
-                vocabulary = vocabulary(context)
-        
+        #if not isinstance(vocabulary, VDEXVocabularyMixin):
+        if IVocabularyFactory.providedBy(vocabulary):
+            vocabulary = vocabulary(context)
         try:
             return vocabulary.getTerm(getattr(context, name)).title
         except LookupError:

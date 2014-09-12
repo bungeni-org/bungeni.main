@@ -21,7 +21,7 @@ ZCML_SLUG = """
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
     
-    <include package="zope.browserresource" file="meta.zcml"/>
+    <include package="zope.browserresource" file="meta.zcml" />
     <include package="zope.browsermenu" file="meta.zcml" />
     <include package="zope.browserpage" file="meta.zcml" />
     <include package="zope.viewlet" file="meta.zcml" />
