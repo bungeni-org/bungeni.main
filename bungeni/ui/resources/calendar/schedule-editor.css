@@ -127,6 +127,13 @@ span.dt_title_unit{
   margin:25% !important;
 }
 
+#text-records-dialog {
+    height: 40em;
+    overflow: auto;
+    resize: both;
+    background-color: #F2F2F2;
+}
+
 #agenda-preview-dialog_c {
     margin:0 auto !important;
     left:20%;
