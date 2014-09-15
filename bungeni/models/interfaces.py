@@ -219,7 +219,7 @@ class IItemScheduleVote(interface.Interface): pass
 class IItemScheduleVoteContainer(IAlchemistContainer): pass
 
 
-#!+CUSTOM
+# !+AGENDA_ITEM
 class IAgendaItem(IBungeniContent): pass
 class IAgendaItemContainer(IBungeniContainer): pass
 # !+IITEMVersion

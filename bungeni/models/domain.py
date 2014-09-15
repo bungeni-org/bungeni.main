@@ -1236,6 +1236,7 @@ class Member(GroupMember):
     """
     interface.implements(interfaces.IMember)
 
+''' !+AGENDA_ITEM
 class AgendaItem(Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
@@ -1243,6 +1244,6 @@ class AgendaItem(Doc):
         interfaces.ILegislativeContent,
         interfaces.IAgendaItem,
     )
-
+'''
 # !+/CUSTOM
 

@@ -150,10 +150,11 @@ class WorkspaceBaseContainer(AlchemistContainer):
     
     def filter_group(self, query, domain_class, kw):
         try:
-            group_id = int(kw.get("filter_group", None))
+            group_id = int(kw.get("filter_group", 0) or 0) # incoming value is 
+            # typically the "" empty string, resulting in exception noise below
         except (TypeError, ValueError):
             debug.log_exc(sys.exc_info(), log_handler=log.error)
-            group_id = None
+            group_id = 0
         if group_id:
             if hasattr(domain_class, "group_id"):
                 query = query.filter(domain_class.group_id==group_id)

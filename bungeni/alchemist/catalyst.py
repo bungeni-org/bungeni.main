@@ -52,9 +52,12 @@ def validate_required_fields(ti):
     """Raise a ValueError if a field is not required in ui but required in db.
     """
     mapper = orm.class_mapper(ti.domain_model)
-    if not mapper: 
+    if not mapper:
         return
-    type_name = ti.workflow_key or naming.polymorphic_identity(ti.domain_model)
+    type_key = ti.workflow_key or naming.polymorphic_identity(ti.domain_model)
+    # !+DESCRIPTOR_KEY_DIFF_FIRST_USE descriptor_model would ne None if this is
+    # the first use of it and its key is different than the type_key
+    #if ti.descriptor_model is None:
     for field_name, field in ti.descriptor_model.fields_by_name.iteritems():
         if field.property and not field.property.required:
             column = mapper.columns.get(field_name)
@@ -62,7 +65,7 @@ def validate_required_fields(ti):
                 if column.nullable == False:
                     raise ValueError("Descriptor %r field %r is required in "
                         "the db. Must set to be required." % (
-                            type_name, field_name))
+                            type_key, field_name))
 
 
 def catalyse_system_descriptors(module):

@@ -922,10 +922,12 @@ mapper(domain.Member,
     #        schema.member.c.end_date.label("end_date")),
     #},
 )
+''' !+AGENDA_ITEM
 mapper(domain.AgendaItem,
     inherits=domain.Doc,
     polymorphic_identity=polymorphic_identity(domain.AgendaItem),
 )
+'''
 # !+/CUSTOM
 
 mapper(domain.Session, schema.session,
