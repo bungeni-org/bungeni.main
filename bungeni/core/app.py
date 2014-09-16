@@ -213,12 +213,14 @@ class AppSetup(object):
             container_getter(get_chamber_for_context, "venues"),
             title=_("section_scheduling_venues", default=u"Venues"),
             description=_(u"Venues"))
-        ws_sched["agenda_items"] = QueryContent(
+        ''' !+CALENDAR_DOC_TYPES
+        ws_sched["agenda_items"] = QueryContent( # !+AGENDA_ITEM
             container_getter(get_chamber_for_context, "agenda_items"),
             title=_("section_scheduling_agenda_items", 
                 default=u"Agenda items"),
             #marker=interfaces.IAgendaItemAddContext,
             description=_(u"Manage agenda items"))
+        '''
         ws_sched["publications"] = QueryContent(
             container_getter(get_chamber_for_context, "publications"),
             title=_("section_scheduling_publications", 

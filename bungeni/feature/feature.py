@@ -265,7 +265,10 @@ class Sitting(Feature):
     For Group types, means support for holding sittings.
     """
     feature_interface = interfaces.IFeatureSitting
-    feature_parameters = {}
+    feature_parameters = {
+        "calendar_doc_types": dict(type="space_separated_type_keys", default=None,
+            doc="doc types that are createable in the calendaring context"),
+    }
     subordinate_interface = model_ifaces.ISitting
     
     # !+ chamber MUST have "sitting" feature enabled! 
@@ -273,9 +276,18 @@ class Sitting(Feature):
     
     def decorate_ui(self, model):
         add_info_container_to_descriptor(model, "sittings", "sitting", "group_id")
-        add_info_container_to_descriptor(model, "agenda_items", "agenda_item", "group_id")
         add_info_container_to_descriptor(model, "headings", "heading", "group_id")
         add_info_container_to_descriptor(model, "editorial_notes", "editorial_note", "group_id")
+        #add_info_container_to_descriptor(model, "agenda_items", "agenda_item", "group_id")
+        # container property per enabled calendar_doc_type
+        for calendar_doc_type_key in self.p.calendar_doc_types:
+            if capi.has_type_info(calendar_doc_type_key):
+                container_property_name = naming.plural(calendar_doc_type_key)
+                add_info_container_to_descriptor(model, 
+                    container_property_name, calendar_doc_type_key, "group_id")
+            else:
+                log.warn("IGNORING feature %r ref to disabled type %r", 
+                    self.name, calendar_doc_type_key)
 
 class Schedule(Feature):
     """Support for the "schedule" feature.

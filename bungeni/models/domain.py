@@ -582,15 +582,16 @@ class Group(Principal):
         utils.assign_ownership(self)
         utils.unset_group_local_role(self)
     
-    # !+ACTIVE normalize across user/group/member 
+    # !+ACTIVE normalize across user/group/member !+ self.status == "active"
     # base on end_date or introduce across the board an @active attr on workflow states?
     @property
     def active(self):
         """Is this group active? 
         A group is taken to be active if valid (past) start_date and no end_date.
         """
-        return (self.start_date < datetime.datetime.today().date() and 
-            not self.end_date)
+        today = datetime.datetime.today().date()
+        return (self.start_date <= today and 
+            (not self.end_date or self.end_date > today))
     
     def active_membership(self, user_id):
         session = alchemist.Session()
@@ -659,8 +660,9 @@ class GroupMember(HeadParentedMixin, Entity):
         Note: when end_date is set, then "active_p" SHOULD always be False (but,
         there are data inconsistencies)
         """
-        return (self.start_date < datetime.datetime.today().date() and 
-            not self.end_date)
+        today = datetime.datetime.today().date()
+        return (self.start_date <= today and 
+            (not self.end_date or self.end_date > today))
     
     # !+SORT_ON_USER
     def __lt__(self, other):

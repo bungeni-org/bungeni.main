@@ -12,7 +12,7 @@ log = __import__("logging").getLogger("bungeni.feature")
 from zope.configuration import xmlconfig
 from bungeni.models import domain
 from bungeni.capi import capi
-from bungeni.utils import naming, misc
+from bungeni.utils import naming, common, misc
 
 
 ZCML_SLUG = """
@@ -120,6 +120,9 @@ def setup_customization_ui():
             directory="%s/reporting/static" />
         """ % (capi.get_root_path()))
     
+    # remember for once-only processing later
+    CALENDAR_DOC_TYPE_KEYS = set()
+    
     # we assume that non-custom types have already been set up as needed
     for type_key, ti in capi.iter_type_info(scope="custom"):
         UI_ZC_DECLS.append("""
@@ -191,19 +194,26 @@ def setup_customization_ui():
                     menu="additems", 
                     order=40,
                     layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
-                # add agenda_item !+CUSTOM?
-                agenda_item_ti = capi.get_type_info("agenda_item")
-                register_menu_item("agenda_item", "Add", "Add %s..." % (agenda_item_ti.label),
-                    model_interface_qualname,
-                    "./agenda_items/add",
-                    menu="additems", 
-                    order=41,
-                    layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+                # add calendar "createable" add doc menu items
+                sitting_feature = ti.workflow.get_feature("sitting")
+                for calendar_doc_type_key in sitting_feature.p.calendar_doc_types:
+                    CALENDAR_DOC_TYPE_KEYS.add(calendar_doc_type_key)
+                    calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
+                    container_property_name = naming.plural(calendar_doc_type_key)
+                    register_menu_item(calendar_doc_type_key, 
+                        "Add",
+                        "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
+                        model_interface_qualname,
+                        "./%s/add" % (container_property_name),
+                        menu="additems", 
+                        order=41,
+                        layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+                
                 # group CalendarView
                 register_form_view(type_key, "View", "schedule",
                     model_interface_qualname,
                     "bungeni.ui.calendar.browser.CalendarView")
-
+        
         # member
         if issubclass(ti.domain_model, domain.GroupMember):
             group_ti = capi.get_type_info(ti.within_type_key)
@@ -367,7 +377,41 @@ def setup_customization_ui():
             elif issubclass(ti.domain_model, domain.User):
                 # !+ User not a custom type (so should never pass here)
                 assert False, "Type %s may not be a custom type" % (ti.domain_model)
-
+    
+    # once-only processing
+    from bungeni.core.content import QueryContent
+    from bungeni.models.utils import get_chamber_for_context
+    from bungeni.models.utils import container_getter
+    # !+ui.app.on_wsgi_application_created_event app is still not setup here!
+    #app = common.get_application()
+    #ws_sched = app["workspace"]["scheduling"]
+    for calendar_doc_type_key in CALENDAR_DOC_TYPE_KEYS:
+        # !+CALENDAR_DOC_TYPES
+        calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
+        container_property_name = naming.plural(calendar_doc_type_key)
+        register_menu_item(calendar_doc_type_key, 
+            "Add", 
+            "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
+            "bungeni.core.schedule.GroupSchedulingContext",
+            "./%s/add" % (container_property_name),
+            menu="plone_contentmenu", 
+            #order=41,
+            layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+        register_menu_item(calendar_doc_type_key, 
+            "Add", 
+            "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
+            "bungeni.core.schedule.WorkspaceSchedulingContext",
+            "./%s/add" % (container_property_name),
+            menu="plone_contentmenu", 
+            #order=41,
+            layer="bungeni.ui.interfaces.IWorkspaceSectionLayer")
+        ''' !+ui.app.on_wsgi_application_created_event
+        ws_sched[container_property_name] = QueryContent(
+            container_getter(get_chamber_for_context, container_property_name),
+            title=_("section_scheduling_%s" % (container_property_name), 
+                default=calendar_doc_ti.container_label),
+            description=_(u"Manage %s" % (calendar_doc_ti.container_label)))
+        '''
 
 def apply_customization_ui():
     """Called from ui.app.on_wsgi_application_created_event -- must be called
