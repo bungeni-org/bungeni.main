@@ -109,7 +109,7 @@ def class_inheritance(obj, indent=4):
     """
     # !+inspect.getclasstree( [type] ) possible alternative approach
     s = ["", "MRO x INHERITANCE (* denotes duplicate base) for: %s" % (obj)]
-    if not isinstance(obj, type):
+    if not isinstance(obj, (type, interface.interface.InterfaceClass)):
         obj = type(obj)
     classes_mro = []
     bases_depth = {obj: 0}

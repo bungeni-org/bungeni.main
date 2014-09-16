@@ -5,49 +5,41 @@
     i18n_domain="bungeni">
 
 
-  <!-- Application JS -->
-  
-  <browser:resourceDirectory
-     name="bungeni-js"
-     directory="js"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     />
-  <browser:viewlet
-     name="bungeni-plugins"
-     for="*"
-     class=".js.Plugins"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="10"
-     />
-
-  <browser:viewlet
-     name="bungeni-behavior"
-     for="*"
-     class=".js.Behavior"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="15"
-     />
-
-  <browser:viewlet
-     name="jquery-form-tabbing"
-     for="*"
-     class=".js.FormTabbing"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="25"
-     />
+    <!-- Application JS -->
+    <browser:resourceDirectory name="bungeni-js"
+        directory="js"
+        layer="ploned.ui.interfaces.IPlonedSkin"
+    />
+    <browser:viewlet name="bungeni-plugins"
+        for="*"
+        class=".js.Plugins"
+        manager="ploned.ui.interfaces.IJavaScriptManager"
+        permission="zope.Public"
+        layer="ploned.ui.interfaces.IPlonedSkin"
+        weight="10"
+    />
+    <browser:viewlet name="bungeni-behavior"
+        for="*"
+        class=".js.Behavior"
+        manager="ploned.ui.interfaces.IJavaScriptManager"
+        permission="zope.Public"
+        layer="ploned.ui.interfaces.IPlonedSkin"
+        weight="15"
+    />
+    <browser:viewlet name="jquery-form-tabbing"
+        for="*"
+        class=".js.FormTabbing"
+        manager="ploned.ui.interfaces.IJavaScriptManager"
+        permission="zope.Public"
+        layer="ploned.ui.interfaces.IPlonedSkin"
+        weight="25"
+    />
      
-     <browser:viewletManager
-      name="feed-manager"
-      provides=".interfaces.IFeedViewletManager"
-      permission="zope.Public"
-      class="zope.viewlet.manager.WeightOrderedViewletManager"
-      />
+    <browser:viewletManager name="feed-manager"
+        provides=".interfaces.IFeedViewletManager"
+        permission="zope.Public"
+        class="zope.viewlet.manager.WeightOrderedViewletManager"
+    />
     
     <!-- !+CUSTOM
      <browser:viewlet
@@ -99,15 +91,14 @@
      layer=".interfaces.IRSSRepresentationLayer"
      />
     -->
-     <browser:viewlet
-     name="rss-viewlet"
-     for="bungeni.models.interfaces.IAgendaItemContainer"
-     class=".viewlets.feedresource.RSSFeedViewlet"
-     manager=".interfaces.IFeedViewletManager"
-     permission="zope.Public"
-     weight="5"
-     layer=".interfaces.IRSSRepresentationLayer"
-     />
+    <browser:viewlet name="rss-viewlet"
+        for="bungeni.models.interfaces.IAgendaItemContainer"
+        class=".viewlets.feedresource.RSSFeedViewlet"
+        manager=".interfaces.IFeedViewletManager"
+        permission="zope.Public"
+        weight="5"
+        layer=".interfaces.IRSSRepresentationLayer"
+    />
     <browser:viewlet name="rss-viewlet"
         for="bungeni.models.interfaces.ISittingContainer"
         class=".viewlets.feedresource.RSSFeedViewlet"
@@ -116,15 +107,14 @@
         weight="5"
         layer=".interfaces.IRSSRepresentationLayer"
     />
-     <browser:viewlet
-     name="rss-viewlet"
-     for="bungeni.models.interfaces.IReportContainer"
-     class=".viewlets.feedresource.RSSFeedViewlet"
-     manager=".interfaces.IFeedViewletManager"
-     permission="zope.Public"
-     weight="5"
-     layer=".interfaces.IRSSRepresentationLayer"
-     />
+    <browser:viewlet name="rss-viewlet"
+        for="bungeni.models.interfaces.IReportContainer"
+        class=".viewlets.feedresource.RSSFeedViewlet"
+        manager=".interfaces.IFeedViewletManager"
+        permission="zope.Public"
+        weight="5"
+        layer=".interfaces.IRSSRepresentationLayer"
+    />
     <!-- !+CUSTOM
      <browser:viewlet
      name="rss-viewlet"
@@ -154,32 +144,30 @@
      layer=".interfaces.IRSSRepresentationLayer"
      />
     -->
-     <browser:viewlet
-     name="rss-viewlet"
-     for="bungeni.models.interfaces.IAgendaItem"
-     class=".viewlets.feedresource.RSSFeedViewlet"
-     manager=".interfaces.IFeedViewletManager"
-     permission="zope.Public"
-     weight="5"
-     layer=".interfaces.IRSSRepresentationLayer"
-     />
-     <!-- Loads the appropriate Dhtmlxscheduler language translation -->
-     <browser:viewlet
-     name="dhtmlxscheduler-main-language-js"
-     for="bungeni.core.interfaces.ISchedulingContext"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     class=".js.dhtmlxscheduler.DhtmlxSchedulerMainLanguage"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="50"
-     />
-     <browser:viewlet
-     name="dhtmlscheduler-recurring-language-js"
-     for="bungeni.core.interfaces.ISchedulingContext"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     class=".js.dhtmlxscheduler.DhtmlxSchedulerRecurringLanguage"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="55"
-     />
+    <browser:viewlet name="rss-viewlet"
+        for="bungeni.models.interfaces.IAgendaItem"
+        class=".viewlets.feedresource.RSSFeedViewlet"
+        manager=".interfaces.IFeedViewletManager"
+        permission="zope.Public"
+        weight="5"
+        layer=".interfaces.IRSSRepresentationLayer"
+    />
+    <!-- Loads the appropriate Dhtmlxscheduler language translation -->
+    <browser:viewlet name="dhtmlxscheduler-main-language-js"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        manager="ploned.ui.interfaces.IJavaScriptManager"
+        class=".js.dhtmlxscheduler.DhtmlxSchedulerMainLanguage"
+        permission="zope.Public"
+        layer="ploned.ui.interfaces.IPlonedSkin"
+        weight="50"
+    />
+    <browser:viewlet name="dhtmlscheduler-recurring-language-js"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        manager="ploned.ui.interfaces.IJavaScriptManager"
+        class=".js.dhtmlxscheduler.DhtmlxSchedulerRecurringLanguage"
+        permission="zope.Public"
+        layer="ploned.ui.interfaces.IPlonedSkin"
+        weight="55"
+    />
+
 </configure>
