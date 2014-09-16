@@ -32,10 +32,12 @@ def get_vp_kls(extended_type):
 
 # domain model, create, update
 
-def new_custom_domain_interface(type_key, domain_iface_name):
+def new_custom_domain_interface(type_key, domain_iface_name, archetype_model):
+    archetype_domain_iface = utils.get_interface(archetype_model)
     domain_iface = interface.InterfaceClass(
         domain_iface_name,
-        bases=(interfaces.IBungeniContent,), # !+archetype?
+        #bases=(interfaces.IBungeniContent,), # !+archetype?
+        bases=(archetype_domain_iface,), # !+archetype?
         __module__=INTERFACE_MODULE.__name__
     )
     # set on INTERFACE_MODULE (register on type_info downstream)

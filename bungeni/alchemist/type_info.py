@@ -373,7 +373,7 @@ def register_new_custom_type(type_key, sys_archetype_key, custom_archetype_key,
         domain_iface = resolve("%s.%s" % (INTERFACE_MODULE.__name__, domain_iface_name))
         log.warn("Custom interface ALREADY EXISTS: %s" % (domain_iface))
     except ImportError:
-        domain_iface = new_custom_domain_interface(type_key, domain_iface_name)
+        domain_iface = new_custom_domain_interface(type_key, domain_iface_name, archetype_model)
     
     # generate custom domain_model
     domain_model_name = naming.model_name(type_key)

@@ -333,7 +333,7 @@ def generate_container_class(ti):
     type_key = naming.polymorphic_identity(ti.domain_model)
     container_name = naming.container_class_name(type_key)
     container_iname = naming.container_interface_name(type_key)
-    base_interfaces = (IAlchemistContainer,)
+    base_interfaces = (IAlchemistContainer,) # !+achetype.container_interface?
     
     # logging variables
     msg = (ti.domain_model.__name__, CONTAINER_MODULE.__name__, container_name)

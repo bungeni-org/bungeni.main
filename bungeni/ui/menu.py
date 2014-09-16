@@ -11,7 +11,6 @@ log = __import__("logging").getLogger("bungeni.ui.menu")
 
 import os
 import operator
-import datetime
 from lxml import etree
 import base64
 
@@ -45,7 +44,7 @@ from bungeni.ui.utils import url, misc
 from bungeni.ui import interfaces
 
 from bungeni.capi import capi
-from bungeni.utils import naming
+from bungeni.utils import naming, common
 from bungeni import _, translate
 
 
@@ -363,59 +362,36 @@ class CalendarSubMenuItem(BrowserSubMenuItem):
         return False
 
 class CalendarMenu(BrowserMenu):
-    """Retrieve menu actions for available calendars."""
-
+    """Retrieve menu actions for available calendars.
+    """
     def getSchedulingContexts(self, request):
         """Set up scheduling contexts.
-
+        
         Currently we include:
-
+        
         - committees
         - plenary
-
-        """
-
-        contexts = []
-        app = getSite()
-        today = datetime.date.today()
-        check_permissions = False
         
+        """
+        app = common.get_application()
+        committees = []
+        contexts = []
+        # !+GENERALIZE_GROUP
         #!+HARDWIRING(mb, Aug-2012) unhardwire committees lookup
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
-            committees = app["workspace"]["scheduling"]["committees"].values()
-            check_permissions = True
-        else:
-            committees = []
-        
-        if check_permissions:
-            for committee in committees:
-                    if ((committee.end_date is None
-                         or committee.end_date >= today) and
-                       (committee.start_date is None
-                        or committee.start_date <= today) and
-                       checkPermission("bungeni.agenda_item.Add", 
-                        committee) and
-                       (committee.status == "active")
-                    ):
-                        contexts.append(
-                            schedule.GroupSchedulingContext(committee)
-                        )
-        else:
-            for committee in committees:
-                if ((committee.end_date is None or committee.end_date >= today) and
-                       (committee.start_date is None or committee.start_date <= today) and
-                       (committee.status == "active")
-                    ):
+            committees[:] = app["workspace"]["scheduling"]["committees"].values()
+        for committee in committees:
+            if committee.active:
+                if capi.get_type_info(committee).workflow.has_feature("sitting"):
                     contexts.append(schedule.GroupSchedulingContext(committee))
         for context in contexts:
             context.__name__ = u"schedule"
-        #!+HARDWIRING(mb, Aug-2012) unhardwire committees lookup
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
             contexts.append(schedule.ISchedulingContext(app["workspace"]["scheduling"]))
         if len(contexts):
             contexts[-1].__name__ = u""
         return contexts
-
+    
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
         group_id = context.get_group().group_id
@@ -445,9 +421,8 @@ class CalendarMenu(BrowserMenu):
                     selected=False,
                     icon=None,
                     extra=extra,
-                    submenu=None
+                    submenu=None,
             ))
-
         # sort on title
         results.sort(key=operator.itemgetter("title"))
         return results
@@ -615,14 +590,17 @@ class CalendarContentMenu(BrowserMenu):
                 except NotFound:
                     continue
         for key, item in items:
-            if not IAlchemistContainer.providedBy(item): continue
-            if not IScheduleContent.implementedBy(item.domain_model): continue
+            if not IAlchemistContainer.providedBy(item):
+                continue
+            if not IScheduleContent.implementedBy(item.domain_model):
+                continue
             type_info = capi.get_type_info(item.domain_model)
             permission = "bungeni.%s.Add" % (
                 type_info.workflow_key or 
                 naming.type_key("model_name", item.domain_model.__name__)
             )
-            if not checkPermission(permission, context): continue
+            if not checkPermission(permission, context):
+                continue
             dc_adapter = IDCDescriptiveProperties(item, None)
             if dc_adapter:
                 _title = dc_adapter.title
@@ -635,7 +613,8 @@ class CalendarContentMenu(BrowserMenu):
                 selected=False,
                 icon=None,
                 extra={"id": "nav_calendar_content_%s" % key},
-                submenu=None
-                
+                submenu=None,
             ))
         return results
+
+

@@ -5,7 +5,7 @@
 """The Bungeni domain model interfaces
 
 Bungeni-specific model interfaces, exclusively dedicated for Bungeni use, 
-and applying to any target arget type is the sole responsibility of Bungeni.
+and applying to any target type is the sole responsibility of Bungeni.
 
 A domain model may define a dedicated conventionally-named interface and then
 use that interface as desired by the bungeni application e.g. for registering 
@@ -220,7 +220,8 @@ class IItemScheduleVoteContainer(IAlchemistContainer): pass
 
 
 # !+AGENDA_ITEM
-class IAgendaItem(IBungeniContent): pass
+#class IAgendaItem(IBungeniContent): pass
+class IAgendaItem(IDoc): pass
 class IAgendaItemContainer(IBungeniContainer): pass
 # !+IITEMVersion
 #class IAgendaItemVersion(IAgendaItem): pass
