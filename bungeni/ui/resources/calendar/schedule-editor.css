@@ -127,11 +127,14 @@ span.dt_title_unit{
   margin:25% !important;
 }
 
-#text-records-dialog {
+#text-records-dialog .bd {
     height: 40em;
     overflow: auto;
-    resize: both;
     background-color: #F2F2F2;
+}
+
+#minute-editor {
+    width: 60em;
 }
 
 #agenda-preview-dialog_c {
