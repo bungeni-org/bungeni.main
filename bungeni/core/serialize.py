@@ -220,7 +220,6 @@ def publish_to_xml(context):
 
     context = zope.security.proxy.removeSecurityProxy(context)
     obj_type = IWorkflow(context).name
-    
     #locking
     random_name_sfx = generate_random_filename()
     context_file_name = "%s-%s" % (stringKey(context), random_name_sfx)
@@ -232,7 +231,6 @@ def publish_to_xml(context):
     #    
     #root key (used to cache files to zip)
     root_key = make_key()
-
     # create a fake interaction to ensure items requiring a participation
     # are serialized 
     #!+SERIALIZATION(mb, Jan-2013) review this approach
@@ -256,7 +254,6 @@ def publish_to_xml(context):
 	    exclude=exclude,
 	    root_key=root_key
         )
-
     data.update(
         updated_dict
     )
@@ -300,7 +297,11 @@ def publish_to_xml(context):
 
     # add explicit origin chamber for this object (used to partition data
     # in if more than one chamber exists)
-    data["origin_chamber"] = get_origin_chamber(context)
+    
+    if obj_type == "Legislature":
+        data["origin_chamber"] = None
+    else:
+        data["origin_chamber"] = get_origin_chamber(context)
 
     # add any additional files to file list
     files = files + PersistFiles.get_files(root_key)
@@ -546,11 +547,18 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
     domain_models = []
     if type_key == "*":
         types_vocab = get_vocabulary("serializable_type")
+        # we add the legislature and the chamber first
+        for term in types_vocab(None):
+            if term.value in ("legislature", "chamber"):
+                info = capi.get_type_info(term.value)
+                domain_models.append(info.domain_model)
+        # we add the rest now
         for term in types_vocab(None):
             if term.value == "*": 
                 continue
-            info = capi.get_type_info(term.value)
-            domain_models.append(info.domain_model)
+            if term.value not in ("legislature", "chamber"):
+                info = capi.get_type_info(term.value)
+                domain_models.append(info.domain_model)
     else:
         info = capi.get_type_info(type_key)
         if info.workflow:
@@ -739,7 +747,7 @@ def get_permissions_dict(permissions):
     return results
 
 
-INNER_EXCLUDES = ["changes", "image"]
+INNER_EXCLUDES = ["changes", "image", "change",  "logo_data", "saved_file"]
 @memoized
 def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_key=None):
     """ Returns dictionary representation of a domain object.
