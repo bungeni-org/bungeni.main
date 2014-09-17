@@ -180,7 +180,7 @@ mapper(domain.Doc, schema.doc,
         ),
         "group": relation(domain.Group,
             primaryjoin=schema.doc.c.group_id == schema.group.c.group_id,
-            #backref="agenda_items",
+            #backref="agenda_items", !+CUSTOM?
             lazy=False,
             uselist=False,
         ),
@@ -922,12 +922,6 @@ mapper(domain.Member,
     #        schema.member.c.end_date.label("end_date")),
     #},
 )
-''' !+AGENDA_ITEM
-mapper(domain.AgendaItem,
-    inherits=domain.Doc,
-    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
-)
-'''
 # !+/CUSTOM
 
 mapper(domain.Session, schema.session,

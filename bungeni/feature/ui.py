@@ -12,7 +12,7 @@ log = __import__("logging").getLogger("bungeni.feature")
 from zope.configuration import xmlconfig
 from bungeni.models import domain
 from bungeni.capi import capi
-from bungeni.utils import naming, common, misc
+from bungeni.utils import naming, misc
 
 
 ZCML_SLUG = """
@@ -31,7 +31,11 @@ ZCML_SLUG = """
 </configure>
 """
 
+# module-global accumulation list of generated zcml code
 UI_ZC_DECLS = []
+
+# remember for once-only processing later
+CALENDAR_DOC_TYPE_KEYS = set()
 
 
 # utils
@@ -58,6 +62,49 @@ def container_sub_form_viewlet_cls_name(type_key, info_container):
     return "_".join(["SFV", type_key, info_container.container_attr_name])
 
 
+# http://docs.zope.org/zope3/ZCML/http_co__sl__sl_namespaces.zope.org_sl_browser/menuItems/index.html
+def register_menu_item(type_key, privilege, title, for_, action,
+        menu="context_actions", 
+        filter_="python: True",
+        order=10,
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    ):
+    naming.MSGIDS.add(title) # for i18n extraction
+    UI_ZC_DECLS.append(register_menu_item.TMPL.format(**locals()))
+register_menu_item.TMPL = """
+        <browser:menuItem menu="{menu}"
+            for="{for_}"
+            action="{action}"
+            title="{title}"
+            filter="{filter_}"
+            order="{order}"
+            layer="{layer}"
+            permission="bungeni.{type_key}.{privilege}"
+        />"""
+
+def register_form_view(type_key, privilege, name, for_, class_,
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    ):
+    UI_ZC_DECLS.append(register_form_view.TMPL.format(**locals()))
+register_form_view.TMPL = """
+        <browser:page name="{name}"
+            for="{for_}"
+            class="{class_}"
+            permission="bungeni.{type_key}.{privilege}"
+            layer="{layer}"
+        />"""
+
+def register_container_viewlet(type_key, name, for_):
+    UI_ZC_DECLS.append(register_container_viewlet.TMPL.format(**locals()))
+register_container_viewlet.TMPL = """
+        <browser:viewlet name="bungeni.viewlet.{name}"
+            manager="bungeni.ui.forms.interfaces.ISubFormViewletManager"
+            for="{for_}"
+            class="bungeni.ui.forms.viewlets.{name}"
+            permission="zope.Public"
+        />"""
+
+#
 
 def setup_customization_ui():
     """Called from ui.app.on_wsgi_application_created_event -- must be called
@@ -65,53 +112,11 @@ def setup_customization_ui():
     very late) that need to have been executed prior to this e.g. 
     creation of specific menus such as "context_actions".
     """
-    
-    # http://docs.zope.org/zope3/ZCML/http_co__sl__sl_namespaces.zope.org_sl_browser/menuItems/index.html
-    def register_menu_item(type_key, privilege, title, for_, action,
-            menu="context_actions", 
-            filter_="python: True",
-            order=10,
-            layer="bungeni.ui.interfaces.IBungeniSkin"
-        ):
-        naming.MSGIDS.add(title) # for i18n extraction
-        UI_ZC_DECLS.append(register_menu_item.TMPL.format(**locals()))
-    register_menu_item.TMPL = """
-            <browser:menuItem menu="{menu}"
-                for="{for_}"
-                action="{action}"
-                title="{title}"
-                filter="{filter_}"
-                order="{order}"
-                layer="{layer}"
-                permission="bungeni.{type_key}.{privilege}"
-            />"""
-    
-    def register_form_view(type_key, privilege, name, for_, class_,
-            layer="bungeni.ui.interfaces.IBungeniSkin"
-        ):
-        UI_ZC_DECLS.append(register_form_view.TMPL.format(**locals()))
-    register_form_view.TMPL = """
-            <browser:page name="{name}"
-                for="{for_}"
-                class="{class_}"
-                permission="bungeni.{type_key}.{privilege}"
-                layer="{layer}"
-            />"""
-    
-    def register_container_viewlet(type_key, name, for_):
-        UI_ZC_DECLS.append(register_container_viewlet.TMPL.format(**locals()))
-    register_container_viewlet.TMPL = """
-            <browser:viewlet name="bungeni.viewlet.{name}"
-                manager="bungeni.ui.forms.interfaces.ISubFormViewletManager"
-                for="{for_}"
-                class="bungeni.ui.forms.viewlets.{name}"
-                permission="zope.Public"
-            />"""
-    
     #def model_title(type_key):
     #    return naming.split_camel(naming.model_name(type_key))
     
-    
+    # clear accumulation of generated zcml code -- but retain the same GLOBAL 
+    # list variable instance
     UI_ZC_DECLS[:] = []
     
     # setup bungeni_custom resource
@@ -119,9 +124,6 @@ def setup_customization_ui():
         <browser:resourceDirectory name="reporting-static" 
             directory="%s/reporting/static" />
         """ % (capi.get_root_path()))
-    
-    # remember for once-only processing later
-    CALENDAR_DOC_TYPE_KEYS = set()
     
     # we assume that non-custom types have already been set up as needed
     for type_key, ti in capi.iter_type_info(scope="custom"):
@@ -198,7 +200,7 @@ def setup_customization_ui():
                 sitting_feature = ti.workflow.get_feature("sitting")
                 for calendar_doc_type_key in sitting_feature.p.calendar_doc_types:
                     CALENDAR_DOC_TYPE_KEYS.add(calendar_doc_type_key)
-                    calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
+                    #calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
                     container_property_name = naming.plural(calendar_doc_type_key)
                     register_menu_item(calendar_doc_type_key, 
                         "Add",
@@ -379,24 +381,12 @@ def setup_customization_ui():
                 assert False, "Type %s may not be a custom type" % (ti.domain_model)
     
     # once-only processing
-    from bungeni.core.content import QueryContent
-    from bungeni.models.utils import get_chamber_for_context
-    from bungeni.models.utils import container_getter
-    # !+ui.app.on_wsgi_application_created_event app is still not setup here!
-    #app = common.get_application()
-    #ws_sched = app["workspace"]["scheduling"]
     for calendar_doc_type_key in CALENDAR_DOC_TYPE_KEYS:
         # !+CALENDAR_DOC_TYPES
-        calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
+        #calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
         container_property_name = naming.plural(calendar_doc_type_key)
-        register_menu_item(calendar_doc_type_key, 
-            "Add", 
-            "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
-            "bungeni.core.schedule.GroupSchedulingContext",
-            "./%s/add" % (container_property_name),
-            menu="plone_contentmenu", 
-            #order=41,
-            layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+        # !+SchedulingContext why do they need to be different?
+        # plenary scheduling
         register_menu_item(calendar_doc_type_key, 
             "Add", 
             "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
@@ -405,13 +395,16 @@ def setup_customization_ui():
             menu="plone_contentmenu", 
             #order=41,
             layer="bungeni.ui.interfaces.IWorkspaceSectionLayer")
-        ''' !+ui.app.on_wsgi_application_created_event
-        ws_sched[container_property_name] = QueryContent(
-            container_getter(get_chamber_for_context, container_property_name),
-            title=_("section_scheduling_%s" % (container_property_name), 
-                default=calendar_doc_ti.container_label),
-            description=_(u"Manage %s" % (calendar_doc_ti.container_label)))
-        '''
+        # group (committee) scheduling 
+        register_menu_item(calendar_doc_type_key, 
+            "Add", 
+            "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
+            "bungeni.core.schedule.GroupSchedulingContext",
+            "./../%s/add" % (container_property_name),
+            menu="plone_contentmenu", 
+            #order=41,
+            layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
+
 
 def apply_customization_ui():
     """Called from ui.app.on_wsgi_application_created_event -- must be called

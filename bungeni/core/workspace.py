@@ -263,7 +263,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
     def __setitem__(self, name, item):
         session = Session()
         chamber = utils.get_user_chamber(utils.get_login_user())
-        item.chamber_id = chamber.group_id
+        item.chamber_id = chamber.group_id # !+on_create?
         group_id = chamber.group_id
         item.group_id = group_id
         session.add(item)

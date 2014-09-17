@@ -170,9 +170,10 @@ class QuestionsViewlet(SubformViewlet):
     sub_attr_name = "questions"
 '''
 
-
+''' !+AGENDA_ITEM(mr, sep-2014) unused anyway?
 class AgendaItemsViewlet(SubformViewlet):
     sub_attr_name = "agenda_items"
+'''
 
 
 # BungeniAttributeDisplay

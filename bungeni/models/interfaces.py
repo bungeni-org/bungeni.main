@@ -219,14 +219,6 @@ class IItemScheduleVote(interface.Interface): pass
 class IItemScheduleVoteContainer(IAlchemistContainer): pass
 
 
-# !+AGENDA_ITEM
-#class IAgendaItem(IBungeniContent): pass
-class IAgendaItem(IDoc): pass
-class IAgendaItemContainer(IBungeniContainer): pass
-# !+IITEMVersion
-#class IAgendaItemVersion(IAgendaItem): pass
-
-
 class ISession(interface.Interface): pass
 class ISessionContainer(IAlchemistContainer): pass
 

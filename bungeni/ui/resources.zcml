@@ -90,7 +90,6 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
-    -->
     <browser:viewlet name="rss-viewlet"
         for="bungeni.models.interfaces.IAgendaItemContainer"
         class=".viewlets.feedresource.RSSFeedViewlet"
@@ -99,6 +98,7 @@
         weight="5"
         layer=".interfaces.IRSSRepresentationLayer"
     />
+    -->
     <browser:viewlet name="rss-viewlet"
         for="bungeni.models.interfaces.ISittingContainer"
         class=".viewlets.feedresource.RSSFeedViewlet"
@@ -143,7 +143,6 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
-    -->
     <browser:viewlet name="rss-viewlet"
         for="bungeni.models.interfaces.IAgendaItem"
         class=".viewlets.feedresource.RSSFeedViewlet"
@@ -152,6 +151,7 @@
         weight="5"
         layer=".interfaces.IRSSRepresentationLayer"
     />
+    -->
     <!-- Loads the appropriate Dhtmlxscheduler language translation -->
     <browser:viewlet name="dhtmlxscheduler-main-language-js"
         for="bungeni.core.interfaces.ISchedulingContext"

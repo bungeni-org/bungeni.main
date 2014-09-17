@@ -541,18 +541,6 @@
         layer=".interfaces.IAdminSectionLayer"
     />
     
-    <!-- committee agenda items 
-    !+CUSTOM agenda_item, feature-driven
-    !+SchedulingContext why do they need to be different
-    !+CALENDAR_DOC_TYPES
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.core.schedule.GroupSchedulingContext"
-        title="Add agenda item..."
-        action="./../agenda_items/add"
-        permission="bungeni.agenda_item.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    -->
     
     <!-- submenu adapters -->
     
@@ -680,19 +668,6 @@
         order="41"
         permission="bungeni.item_schedule_vote.Delete"
     />
-
-    <!-- scheduling agenda items 
-    !+CUSTOM agenda_item, feature-driven
-    !+SchedulingContext why do they need to be different
-    !+CALENDAR_DOC_TYPES
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.core.schedule.WorkspaceSchedulingContext"
-        title="Add agenda item..."
-        action="./agenda_items/add"
-        permission="bungeni.agenda_item.Add"
-        layer=".interfaces.IWorkspaceSectionLayer"
-    />
-    -->
     
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.core.schedule.WorkspaceSchedulingContext"

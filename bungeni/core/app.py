@@ -23,7 +23,12 @@ from ore.wsgiapp.app import Application
 from ore.wsgiapp.interfaces import IWSGIApplicationCreatedEvent
 
 from bungeni.models import domain
-from bungeni.models import interfaces as model_interfaces
+from bungeni.models.interfaces import (
+    IBungeniApplication,
+    IBungeniSetup,
+    IBungeniAdmin,
+    IScheduleContent,
+)
 from bungeni.models.utils import get_chamber_for_context
 from bungeni.models.utils import container_getter
 
@@ -49,13 +54,16 @@ from bungeni import _
 
 
 
-@register.handler(
-    (model_interfaces.IBungeniApplication, IWSGIApplicationCreatedEvent))
+@register.handler((IBungeniApplication, IWSGIApplicationCreatedEvent))
 def on_wsgi_application_created_event(application, event):
     """Additional setup on IWSGIApplicationCreatedEvent.
     """
     # !+ui.app.on_wsgi_application_created_event ALWAYS gets called prior to this
     log.debug("CORE ON_WSGI_APPLICATION_CREATED_EVENT: %s, %s", application, event) 
+    
+    # execute application setup, creating sections, etc.
+    app_setup = IBungeniSetup(application)
+    app_setup.setUp()
     
     # additional workflow validation
     for type_key, ti in capi.iter_type_info():
@@ -70,19 +78,16 @@ def on_wsgi_application_created_event(application, event):
     
     # load notifications
     load_notifications()
-
+    
     # load email notifications
     load_email()
-
+    
     # !+SERIALIZER(ah, 21-06-2013) This has been moved to a separate app
     # set up serialization notifications
     #serialization_notifications()
     
     # import events modules, registering handlers
     import bungeni.core.events
-    
-    app_setup = model_interfaces.IBungeniSetup(application)
-    app_setup.setUp()
     
     # write configuration parameters to xml
     import bungeni.utils.xmlconfexport as confexp
@@ -98,11 +103,11 @@ def to_locatable_container(domain_class, *domain_containers):
 
 
 class BungeniApp(Application):
-    implements(model_interfaces.IBungeniApplication)
+    implements(IBungeniApplication)
 
 class AppSetup(object):
     
-    implements(model_interfaces.IBungeniSetup)
+    implements(IBungeniSetup)
     
     def __init__(self, application):
         self.context = application
@@ -213,19 +218,25 @@ class AppSetup(object):
             container_getter(get_chamber_for_context, "venues"),
             title=_("section_scheduling_venues", default=u"Venues"),
             description=_(u"Venues"))
-        ''' !+CALENDAR_DOC_TYPES
-        ws_sched["agenda_items"] = QueryContent( # !+AGENDA_ITEM
-            container_getter(get_chamber_for_context, "agenda_items"),
-            title=_("section_scheduling_agenda_items", 
-                default=u"Agenda items"),
-            #marker=interfaces.IAgendaItemAddContext,
-            description=_(u"Manage agenda items"))
-        '''
         ws_sched["publications"] = QueryContent(
             container_getter(get_chamber_for_context, "publications"),
             title=_("section_scheduling_publications", 
                 default=u"Publications"),
             description=_(u"Publications"))
+        # !+CALENDAR_DOC_TYPES finish off setup_customization_ui steps that need 
+        # application sections to be created...
+        import bungeni.feature.ui
+        for calendar_doc_type_key in bungeni.feature.ui.CALENDAR_DOC_TYPE_KEYS:
+            calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
+            container_property_name = naming.plural(calendar_doc_type_key)
+            # add section containers to workspace/scheduling
+            ws_sched[container_property_name] = QueryContent(
+                container_getter(get_chamber_for_context, container_property_name),
+                title=_("section_scheduling_${container_property_name}", 
+                    mapping={"container_property_name": container_property_name}, 
+                    default=calendar_doc_ti.container_label),
+                description=_(u"Manage ${container_label}",
+                    mapping={"container_label": calendar_doc_ti.container_label}))
         
         workspace["groups"] = WorkspaceSection(
             title=_("section_groups", default=u"Groups"),
@@ -241,7 +252,7 @@ class AppSetup(object):
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
         # type_info missing container name
         for type_key, ti in capi.iter_type_info():
-            if model_interfaces.IScheduleContent.implementedBy(ti.domain_model):
+            if IScheduleContent.implementedBy(ti.domain_model):
                 container_property_name = naming.plural(type_key)
                 container_name = naming.model_name(container_property_name)
                 if not ws_sched.has_key(container_property_name):
@@ -263,36 +274,36 @@ class AppSetup(object):
             title=_(u"Administration"),
             description=_(u"Manage bungeni settings"),
             default_name="admin-index",
-            marker=model_interfaces.IBungeniAdmin)
+            marker=IBungeniAdmin)
         
         admin["email-settings"] = Section(
             title=_(u"email settings"),
             description=_(u"manage email settings"),
-            marker=model_interfaces.IBungeniAdmin,
+            marker=IBungeniAdmin,
             default_name="email-settings")
         
         admin["search-settings"] = Section(
             title=_(u"search settings"),
             description=_(u"manage bungeni email settings"),
-            marker=model_interfaces.IBungeniAdmin,
+            marker=IBungeniAdmin,
             default_name="search-settings")
         
         admin["registry-settings"] = Section(
             title=_(u"registry settings"),
             description=_(u"manage registry settings"),
-            marker=model_interfaces.IBungeniAdmin,
+            marker=IBungeniAdmin,
             default_name="registry-settings")
         
         admin["serialization-manager"] = Section(
             title=_(u"serialization manager"),
             description=_(u"batch serialization of content"),
-            marker=model_interfaces.IBungeniAdmin,
+            marker=IBungeniAdmin,
             default_name="serialization-manager")
         
         content = admin["content"] = Section(
             title=_(u"Content"),
             description=_(u"browse bungeni content"),
-            marker=model_interfaces.IBungeniAdmin,
+            marker=IBungeniAdmin,
             default_name="browse-admin")
         alsoProvides(content, interfaces.ISearchableSection)
         # !+CUSTOM form descriptor container on legislature

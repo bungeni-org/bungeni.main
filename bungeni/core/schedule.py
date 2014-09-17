@@ -53,16 +53,14 @@ class SchedulingContextTraverser(SimpleComponentTraverser):
         # this is the primary condition; traverse to ``name`` by
         # looking up methods on this class
         try:
-            method = getattr(self.context, 'get_%s' % name)
+            method = getattr(self.context, "get_%s" % name)
         except AttributeError:
             # fall back to default traversal (view lookup)
             def method():
-                return super(
-                    SchedulingContextTraverser, self).publishTraverse(
-                    request, name)
-
+                return super(SchedulingContextTraverser, self
+                    ).publishTraverse(request, name)
         obj = method()
-        assert ILocation.providedBy(obj)
+        assert ILocation.providedBy(obj), obj
         log.debug("SchedulingContextTraverser.publishTraverse: " \
             "self=%s context=%s name=%s obj=%s" % (self, self.context, name, obj))
         return ProxyFactory(LocationProxy(
@@ -71,14 +69,14 @@ class SchedulingContextTraverser(SimpleComponentTraverser):
 
 class PrincipalGroupSchedulingContext(object):
     interface.implements(ISchedulingContext)
-
+    
     group_id = None
     start_date = None # limit dates in scheduler
     end_date = None # limit dates in scheduler
     
     def __init__(self, context):
         self.__parent__ = context
-
+    
     @property
     def label(self):
         group = self.get_group()
@@ -91,8 +89,7 @@ class PrincipalGroupSchedulingContext(object):
         if self.group_id is None:
             return
         try:
-            session = Session()
-            group = session.query(domain.Group).filter_by(group_id=self.group_id)[0]
+            group = Session().query(domain.Group).filter_by(group_id=self.group_id)[0]
         except IndexError:
             raise RuntimeError("Group not found (%d)." % self.group_id)
         return group
@@ -136,13 +133,13 @@ class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
 
 class GroupSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IGroup)
-
+    
     @property
     def group_id(self):
         """Return committee's group id.
         """
         return self.__parent__.group_id
-
+    
     def get_group(self, name=None):
         assert name is None
         return self.__parent__
@@ -173,13 +170,13 @@ class SessionSchedulingContext(PrincipalGroupSchedulingContext):
 
 class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ISittingContainer)
-
+    
     @property
     def group_id(self):
         """Return committee's group id.
         """
         return self.__parent__.__parent__.group_id
-
+    
     def get_group(self):
         return self.__parent__.__parent__
 
@@ -190,7 +187,7 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     @property
     def group_id(self):
         return self.get_group().group_id
-        
+    
     def get_group(self):
         return get_chamber_for_context(self.__parent__)
 

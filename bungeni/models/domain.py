@@ -394,10 +394,13 @@ class Doc(Entity):
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
         """
+        # !+chamber_id -- needs self.group to be set!
+        from bungeni.models.events import set_chamber_id
+        set_chamber_id(self, None)
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)
-        # !+utils.setParliamentId(self)
+        
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id
@@ -1238,14 +1241,5 @@ class Member(GroupMember):
     """
     interface.implements(interfaces.IMember)
 
-''' !+AGENDA_ITEM
-class AgendaItem(Doc):
-    """Generic Agenda Item that can be scheduled on a sitting.
-    """
-    interface.implements(
-        interfaces.ILegislativeContent,
-        interfaces.IAgendaItem,
-    )
-'''
 # !+/CUSTOM
 
