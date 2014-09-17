@@ -41,7 +41,7 @@ def get_destination_url_path(request=None):
             for url_component in request.get("PATH_INFO").split("/")
             if not url_component.startswith("++") and 
                 not url_component.startswith("@@") ])
-    log.debug(" [get_destination_url_path] %s " % _url)
+    log.debug(" [get_destination_url_path] %s ", _url)
     return _url
 
 
@@ -109,12 +109,12 @@ def absoluteURL(context, request):
         url = zope.traversing.browser.absoluteURL(context, request).split("/")
     except:
         # !+ABSOLUTE_URL: TypeError: There isn't enough context to get URL information. 
-        # This is probably due to a bug in setting up location information.
+        # This is probably due to incorrect setting up of location information.
         debug.log_exc(sys.exc_info(), log_handler=log.error)
-        log.error("\n    ...CONTEXT: %s\n    ...REQUEST URL: %s" ,context, request.getURL())
+        log.error("\n    ...CONTEXT: %s\n    ...REQUEST URL: %s", context, request.getURL())
         return ""
     while url[-1] in indexNames:
-        log.warning(" POPPING: %s -> %s" % ("/".join(url), url[-1]))
+        log.warn("POPPING: %s -> %s", "/".join(url), url[-1])
         url.pop()
     return "/".join(url)
 

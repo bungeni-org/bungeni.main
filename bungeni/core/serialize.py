@@ -269,7 +269,7 @@ def publish_to_xml(context):
 
     # setup path to save serialized data
     path = os.path.join(setupStorageDirectory(), obj_type)
-    log.info("Setting up path to write to : %s" % path)
+    log.info("Setting up path to write to : %s", path)
     if not os.path.exists(path):
         os.makedirs(path)
 
@@ -645,7 +645,7 @@ def queue_object_serialization(obj):
         wf_state = wfc.state_controller.get_state()
     except InvalidStateError:
         # this is probably a draft document - skip queueing
-        log.warning("Could not get workflow state for object %s. "
+        log.warn("Could not get workflow state for object %s. "
             "State: %s", obj, wf_state)
         return
     unproxied = zope.security.proxy.removeSecurityProxy(obj)

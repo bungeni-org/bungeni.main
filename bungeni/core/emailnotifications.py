@@ -60,8 +60,7 @@ class BungeniSMTPMailer(object):
                       " a connection with the SMTP server.")
             return
         except socket.error, v:
-            log.error("Connection to SMTP server failed with error code: %s"
-                % v[0])
+            log.error("Connection to SMTP server failed with error code: %s", v[0])
             return
         if self.settings.use_tls:
             connection.ehlo()
@@ -92,8 +91,8 @@ class BungeniDummySMTPMailer(BungeniSMTPMailer):
     def send(self, msg, recipients):
         msg["From"] = self.settings.default_sender
         msg["To"] = ",".join(recipients)
-        log.info("%s -> %s: %s." % (
-                msg["From"], msg["To"], msg.as_string()))
+        log.info("%s -> %s: %s.", 
+                msg["From"], msg["To"], msg.as_string())
 
 
 def get_principals(principal_ids):
@@ -137,15 +136,15 @@ class EmailTemplate(PageTemplate):
         return options
 
 
-class Item:
+class Item(object):
     def __init__(self, message):
         self.message = message
 
     def __getitem__(self, name):
-        if name in self.message.keys():
+        if name in self.message:
             return self.message[name]
         else:
-            log.warning()
+            log.warn(name)
             return "None"
 
 
@@ -175,13 +174,13 @@ class EmailBlock(object):
         # get defaults
         if not subject:
             subject = "Item Notification: %s" % (self.message["title"])
-            log.warn("Missing subject template for %s:%s. Using default" % (
-                    self.message["type"], self.message["status"]))
+            log.warn("Missing subject template for %s:%s. Using default",
+                    self.message["type"], self.message["status"])
         if not body:
             body = "Item, %s, type: %s, status: %s" % (self.message["title"],
                 self.message["type"], self.message["status"]["value"])
-            log.warn("Missing body template for %s:%s. Using default" % (
-                    self.message["type"], self.message["status"]))
+            log.warn("Missing body template for %s:%s. Using default",
+                    self.message["type"], self.message["status"])
         subject_template = EmailTemplate()
         body_template = EmailTemplate()
         subject_template.write(subject)
@@ -258,4 +257,5 @@ def notify_users(event):
             msg, message.get("recipients"))
     else:
         log.warn("Could not send notification message. No recipient")
-    
+
+

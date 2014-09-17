@@ -402,8 +402,8 @@ class Doc(Entity):
                 chamber = get_chamber_for_group(self.group)
                 self.chamber_id = chamber.group_id
             else:
-                log.warning(
-                    "Doc.oncreate: cannot set %r on %s [id: %s] -- %r not set." % (
+                log.warn(
+                    "Doc.on_create: cannot set %r on %s [id: %s] -- %r not set." % (
                         "chamber_id", self, self.doc_id, "group_id"))
         # requires self db id to have been updated
         from bungeni.core.workflows import utils

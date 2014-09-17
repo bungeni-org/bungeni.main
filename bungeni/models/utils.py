@@ -44,9 +44,9 @@ def get_chamber_for_context(context, name="group"):
     #   hierarchy (even if all doc instances define the "chamber" attr directly).
     # - context is an event (no chamber/group set) and user is a non-mp minister
     if chamber is None:
-        log.warn("get_chamber_for_context!+No ANCESTOR chamber found on CONTEXT [%s] "
-            "-- TEMPORARILY falling back to determining it in some other "
-            "POSSIBLY INCORRECT way ", context)
+        log.warn(" !+ get_chamber_for_context: No ANCESTOR chamber found on "
+            "CONTEXT [%s] -- TEMPORARILY falling back to determining it in "
+            "some other POSSIBLY INCORRECT way ", context)
         # is context a sub-document? If so, take the chamber of the head doc:
         if getattr(context, "head", None):
             head = context.head
@@ -59,11 +59,12 @@ def get_chamber_for_context(context, name="group"):
         user = get_login_user()
         if user:
             chamber = get_user_chamber(user)
-            log.warn(" !+ CONTEXT [%s] has no ANCESTOR or HEAD chamber... "
-                "trying via login_user, GOT [%s]", context, chamber)
+            log.warn(" !+ get_chamber_for_context: CONTEXT [%s] has no ANCESTOR "
+                "or HEAD chamber... trying via login_user, GOT [%s]", 
+                    context, chamber)
         else:
-            log.warn(" !+ CONTEXT [%s] has no ANCESTOR or HEAD chamber... "
-                "and no USER is logged in.", context)
+            log.warn(" !+ get_chamber_for_context: CONTEXT [%s] has no ANCESTOR "
+                "or HEAD chamber... and no USER is logged in.", context)
     return chamber
 
 
