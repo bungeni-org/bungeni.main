@@ -394,9 +394,17 @@ class Doc(Entity):
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
         """
-        # !+chamber_id -- needs self.group to be set!
-        from bungeni.models.events import set_chamber_id
-        set_chamber_id(self, None)
+        # set chamber_id when docs are added outside of chamber context
+        # !+ some events do not always have group_id set... which ones, and why?
+        if self.chamber_id is None:
+            if self.group is not None:
+                from bungeni.models.utils import get_chamber_for_group
+                chamber = get_chamber_for_group(self.group)
+                self.chamber_id = chamber.group_id
+            else:
+                log.warning(
+                    "Doc.oncreate: cannot set %r on %s [id: %s] -- %r not set." % (
+                        "chamber_id", self, self.doc_id, "group_id"))
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)

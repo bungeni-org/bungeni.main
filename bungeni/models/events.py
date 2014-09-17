@@ -14,18 +14,10 @@ from zope.security.proxy import removeSecurityProxy
 from zope.lifecycleevent.interfaces import IObjectCreatedEvent, \
     IObjectModifiedEvent
 from sqlalchemy import sql, orm
-import domain, utils, interfaces
+import domain, interfaces
 from bungeni.core.interfaces import ISchedulingContext # !+MODEL_DEPENDENCY_CORE
 from bungeni.utils import register, common
 
-
-@register.handler(adapts=(interfaces.ISession, IObjectCreatedEvent))
-def set_chamber_id(context, event):
-    """Set chamber_id when objects are added outside of chamber context
-    """
-    if context.chamber_id is None:
-        chamber = utils.get_chamber_for_group(context.group)
-        context.chamber_id = chamber.group_id
 
 @register.handler(adapts=(interfaces.IScheduleText, IObjectCreatedEvent))
 def set_schedule_text_group(context, event):

@@ -72,37 +72,37 @@ def register_menu_item(type_key, privilege, title, for_, action,
     naming.MSGIDS.add(title) # for i18n extraction
     UI_ZC_DECLS.append(register_menu_item.TMPL.format(**locals()))
 register_menu_item.TMPL = """
-        <browser:menuItem menu="{menu}"
-            for="{for_}"
-            action="{action}"
-            title="{title}"
-            filter="{filter_}"
-            order="{order}"
-            layer="{layer}"
-            permission="bungeni.{type_key}.{privilege}"
-        />"""
+    <browser:menuItem menu="{menu}"
+        for="{for_}"
+        action="{action}"
+        title="{title}"
+        filter="{filter_}"
+        order="{order}"
+        layer="{layer}"
+        permission="bungeni.{type_key}.{privilege}"
+    />"""
 
 def register_form_view(type_key, privilege, name, for_, class_,
         layer="bungeni.ui.interfaces.IBungeniSkin"
     ):
     UI_ZC_DECLS.append(register_form_view.TMPL.format(**locals()))
 register_form_view.TMPL = """
-        <browser:page name="{name}"
-            for="{for_}"
-            class="{class_}"
-            permission="bungeni.{type_key}.{privilege}"
-            layer="{layer}"
-        />"""
+    <browser:page name="{name}"
+        for="{for_}"
+        class="{class_}"
+        permission="bungeni.{type_key}.{privilege}"
+        layer="{layer}"
+    />"""
 
 def register_container_viewlet(type_key, name, for_):
     UI_ZC_DECLS.append(register_container_viewlet.TMPL.format(**locals()))
 register_container_viewlet.TMPL = """
-        <browser:viewlet name="bungeni.viewlet.{name}"
-            manager="bungeni.ui.forms.interfaces.ISubFormViewletManager"
-            for="{for_}"
-            class="bungeni.ui.forms.viewlets.{name}"
-            permission="zope.Public"
-        />"""
+    <browser:viewlet name="bungeni.viewlet.{name}"
+        manager="bungeni.ui.forms.interfaces.ISubFormViewletManager"
+        for="{for_}"
+        class="bungeni.ui.forms.viewlets.{name}"
+        permission="zope.Public"
+    />"""
 
 #
 
@@ -121,15 +121,14 @@ def setup_customization_ui():
     
     # setup bungeni_custom resource
     UI_ZC_DECLS.append("""
-        <browser:resourceDirectory name="reporting-static" 
-            directory="%s/reporting/static" />
-        """ % (capi.get_root_path()))
+    <browser:resourceDirectory name="reporting-static" 
+        directory="%s/reporting/static" />""" % (capi.get_root_path()))
     
     # we assume that non-custom types have already been set up as needed
     for type_key, ti in capi.iter_type_info(scope="custom"):
         UI_ZC_DECLS.append("""
-            
-            <!-- {type_key} -->""".format(type_key=type_key))
+    
+    <!-- {type_key} -->""".format(type_key=type_key))
         
         type_title = ti.label or ti.type_key
         
