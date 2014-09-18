@@ -528,24 +528,30 @@ class BaseForm(formlib.form.FormBase):
             assert field is ff.field, name # !+TMP sanity check
             value = data.get(name, None)
             
+            # !+VTF bungeni.ui.fields.VocabularyTextField -- here a vocabulary 
+            # field is not necessarily the type defined by bungeni 
+            # e.g. zope.schema._field.Choice that during validation attempts to
+            # retrieve the vocabulary and initialize it with a None context...
+            # To preempt the error that this causes, we check for and stuff
+            # an appropiately initialized vocabulary instance onto this field...
+            if hasattr(field, "vocabulary"):
+                if field.vocabulary is None:
+                    from bungeni.alchemist.utils import get_vocabulary
+                    field.vocabulary = get_vocabulary(field.vocabularyName)(self.context)
+                    log.debug("Validation of vocabulary field (%r, %r) with value=%r -- "
+                        "stuffing vocabulary instance %s [context: %r] onto field %s ...", 
+                        name, field.vocabularyName, value, field.vocabulary, self.context, field)
+            
             # standard field validation !+ necessary, already called elsewhere? 
-            try:
-                e = field.validate(value)
-                if e:
-                    errors.append(self.set_widget_error(name, e))
-            except (Exception,):
-                # !+ error downstream strangely due to a dynamic vocabulary call 
-                # being passed a None context:
-                #File "/opt/bungeni/bungeni_apps/bungeni/eggs/zope.app.schema-3.5.0-py2.7.egg/zope/app/schema/vocabulary.py", line 33, in get
-                #   return factory(context)
-                #File "/opt/bungeni/bungeni_apps/bungeni/src/bungeni.main/bungeni/ui/vocabulary.py", line 526, in __call__
-                #    query = self.construct_query(removeSecurityProxy(context))
-                # e.g editing Minister title, adding a Member, ...
-                log.error("\n"
-                    "    %r.validate(%r) FAILED (field %r)\n"
-                    "    [context: %r]", field, value, name, self.context)
-                debug.log_exc_info(sys.exc_info(), log_handler=log.error)
-                #import pdb; pdb.set_trace()
+            #try:
+            e = field.validate(value)
+            if e:
+                errors.append(self.set_widget_error(name, e))
+            #except (Exception,):
+            #    log.error("\n"
+            #        "    %r.validate(%r) FAILED (field %r)\n"
+            #        "    [context: %r]", field, value, name, self.context)
+            #    debug.log_exc_info(sys.exc_info(), log_handler=log.error)
             
             # get db column definition
             domain_attr = getattr(dm, name)
