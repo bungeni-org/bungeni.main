@@ -6,8 +6,8 @@
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.core.serialize")
-
+logging = __import__("logging")
+log = logging.getLogger("bungeni.core.serialize")
 import os
 import threading
 import functools
@@ -69,7 +69,7 @@ thread_locals = threading.local()
 
 # timer delays in setting up serialization workers
 INITIAL_DELAY = 10
-MAX_DELAY = 300
+MAX_DELAY = 900
 TIMER_DELAYS = {
     "serialize_setup": INITIAL_DELAY
 }
@@ -217,7 +217,6 @@ def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains
     attachments - XML is saved in zip archive with all attached files. 
     """
-
     context = zope.security.proxy.removeSecurityProxy(context)
     obj_type = IWorkflow(context).name
     #locking
@@ -246,7 +245,7 @@ def publish_to_xml(context):
         include.append("versions")
     if IFeatureEvent.providedBy(context):
         include.append("event")
-
+    
     exclude = ["data", "event", "attachments"]
     updated_dict = obj2dict(context, 1, 
 	    parent=None,
@@ -576,6 +575,11 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
                 expression = (column<=end_date)
             query = query.filter(expression)
         objects = query.all()
+        # !+FILTER(ah, 2014-09-19) adding a filter here - sometimes there is a mismatch
+        # between the count shown on the screen i.e. X items sent for serialization and 
+        # and only X-n items appear in the queue - there seem to be empty objects returned
+        # sometimes, so eliminating those
+        objects = filter(None, objects)
         map(queue_object_serialization, objects)
         serialized_count += len(objects)
     return serialized_count
@@ -807,7 +811,13 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
             if isinstance(value, collections.Iterable):
                 result[mproperty.key] = []
                 for item in value:
-                    result[mproperty.key].append(obj2dict(item, 1, 
+                    # !+DEPTH(ah, 2014-09-19) depth was set to 1 here, this causes 
+                    # a very deep branching for upper level groups like legislature and chamber
+                    # and legislature times out occasionally. Doesnt seem neccessary to go depth=1
+                    # for child objects, because they get serialized independently anyway, changing
+                    # depth to depth-1 so all dependent objects are iterated 1 level lower than the 
+                    # parent.
+                    result[mproperty.key].append(obj2dict(item, depth-1, 
                             parent=obj,
                             include=[],
                             exclude=exclude + INNER_EXCLUDES,
