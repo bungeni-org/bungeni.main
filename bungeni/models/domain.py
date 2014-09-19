@@ -77,8 +77,8 @@ class Entity(object):
             domain_schema = alchemist.utils.get_derived_table_schema(type(self))
             known_names = [ k for k, d in domain_schema.namesAndDescriptions(all=True) ]
         except Exception, e:
-            log.debug("Failed table schema lookup for %s: %s: %s" % (
-                type(self), type(e).__name__, e))
+            log.debug("Failed table schema lookup for %s: %s: %s", 
+                type(self), type(e).__name__, e)
             known_names = None
         
         for k, v in kw.items():
@@ -86,8 +86,7 @@ class Entity(object):
                 setattr(self, k, v)
             else:
                 log.error(
-                    "Invalid attribute on %s %s" % (
-                        self.__class__.__name__, k))
+                    "Invalid attribute on %s %s", self.__class__.__name__, k)
     
     def on_create(self):
         """Hook to call on creation of an instance, to handle any business 
@@ -403,8 +402,8 @@ class Doc(Entity):
                 self.chamber_id = chamber.group_id
             else:
                 log.warn(
-                    "Doc.on_create: cannot set %r on %s [id: %s] -- %r not set." % (
-                        "chamber_id", self, self.doc_id, "group_id"))
+                    "Doc.on_create: cannot set %r on %s [id: %s] -- %r not set.", 
+                        "chamber_id", self, self.doc_id, "group_id")
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)

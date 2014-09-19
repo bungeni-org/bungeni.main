@@ -251,7 +251,7 @@ class ExpandedSitting(object):
             return getattr(s, name)
         dc_adapter = IDCDescriptiveProperties(s)
         if hasattr(dc_adapter, name):
-            log.debug(success_message, "[3] via sitting DCAdapter %s" % (dc_adapter))
+            log.debug(success_message, "[3] via sitting DCAdapter %s", dc_adapter)
             return getattr(dc_adapter, name)
         log.error("FAILED LOOKUP of ATTR %r on %s / sitting=%s / grouped=%r", 
             name, self, s, self.grouped)

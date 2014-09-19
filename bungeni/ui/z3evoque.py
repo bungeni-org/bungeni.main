@@ -177,12 +177,12 @@ def set_get_gettext():
         except (IOError,):
             cls, exc, tb = sys.exc_info()
             if language != "en":
-                log.error(""" [%s] %s [lang=%s] -> trying with [lang=%s]""" % (
-                    cls.__name__, exc, language, "en"))
+                log.error(""" [%s] %s [lang=%s] -> trying with [lang=%s]""",
+                    cls.__name__, exc, language, "en")
                 return _get_gettext(i18n_domain, "en")
             else:
-                log.error(""" [%s] %s [lang=%s]""" % (
-                    cls.__name__, exc, language))
+                log.error(""" [%s] %s [lang=%s]""",
+                    cls.__name__, exc, language)
                 raise exc
         # wrap t.gettext to intercept and log possibly untranslated msgids
         def _gt(msgid):
@@ -192,8 +192,8 @@ def set_get_gettext():
             finally:
                 if msgid == msgstr and msgid not in _untranslated:
                     _untranslated.append(msgid)
-                    log.warn('i18n NOT LOCALIZED [%s, %s] "%s"' % (
-                        i18n_domain, language, msgid))
+                    log.warn('i18n NOT LOCALIZED [%s, %s] "%s"',
+                        i18n_domain, language, msgid)
         return _gt
     global get_gettext
     get_gettext = _get_gettext
@@ -341,8 +341,8 @@ class _ViewTemplateBase(object):
         # these are updated each time a caller view gets this ViewTemplate
         _descriptor_view = None
         _descriptor_type = None
-        log.debug("%s [%s][%s] %s" % (
-            self.__class__.__name__, collection, name, self))
+        log.debug("%s [%s][%s] %s",
+            self.__class__.__name__, collection, name, self)
         self.lock = threading.RLock()
     
     def __get__(self, view, type_):
@@ -370,11 +370,10 @@ class _ViewTemplateBase(object):
         try:
             namespace = self._get_context()
             t = self.template
-            log.debug(" __call__ [%s][%s] %s %s %s" % (
-                            (t.collection and t.collection.name), t.name, 
-                            self, namespace, kwds))
+            log.debug(" __call__ [%s][%s] %s %s %s",
+                (t.collection and t.collection.name), t.name, self, namespace, kwds)
             if args:
-                log.warn(" __call__ IGNORING args: %s" % str(args))
+                log.warn(" __call__ IGNORING args: %s", args)
             # !+ bungeni+html specific
             if t.collection.domain.globals.get("devmode"):
                 return self._devmode_call__(t.evoque(namespace, **kwds))

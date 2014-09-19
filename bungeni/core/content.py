@@ -57,7 +57,7 @@ class Section(OrderedContainer):
         # overriding publishTraverse() insists on giving ForbiddenAttribute 
         # erros. 
         self.publishTraverseResolver = publishTraverseResolver
-        log.debug(" __init__ %s (title:%s, default_name:%s)" % (self, title, default_name))
+        log.debug(" __init__ %s (title:%s, default_name:%s)", self, title, default_name)
     # !+ section.title is duplicated in ZCML menuItem definitions
     # Section should be modified to just get its title from the associated
     # view descriptor (via default_name)
@@ -105,9 +105,9 @@ class Section(OrderedContainer):
         correct object.
         """
         _meth_id = "%s.publishTraverse" % self.__class__.__name__
-        log.debug("%s: name=%s __name__=%s __parent__=%s context=%s" % (
+        log.debug("%s: name=%s __name__=%s __parent__=%s context=%s",
             _meth_id, name, self.__name__, self.__parent__, 
-            getattr(self, "context", "UNDEFINED")))
+            getattr(self, "context", "UNDEFINED"))
         try:
             assert self.publishTraverseResolver is not None
             return self.publishTraverseResolver(self, request, name)
@@ -141,8 +141,8 @@ class AkomaNtosoSection(OrderedContainer):
             # __parent__ is nullified when deleting a Section from parent container
             assert self._parent is obj, \
                 "Section parent may not be changed! %s -> %s" % (self._parent, obj)
-            log.warn(" [Section:%s] IGNORING reset of __parent__ to same " \
-                    "value: %s" % (self.title, obj))
+            log.warn(" [Section:%s] IGNORING reset of __parent__ to same "
+                    "value: %s", self.title, obj)
             return
         self._parent = obj
     __parent__ = property(_get_parent, _set_parent)
@@ -165,7 +165,7 @@ class AkomaNtosoSection(OrderedContainer):
         # overriding publishTraverse() insists on giving ForbiddenAttribute 
         # erros. 
         self.publishTraverseResolver = publishTraverseResolver
-        log.debug(" __init__ %s (title:%s, default_name:%s)" % (self, title, default_name))
+        log.debug(" __init__ %s (title:%s, default_name:%s)", self, title, default_name)
         
         
     # !+ section.title is duplicated in ZCML menuItem definitions

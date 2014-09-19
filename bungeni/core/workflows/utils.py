@@ -72,8 +72,8 @@ def assign_ownership(context):
     
     # bungeni.Drafter - all types
     current_user_login = common.get_request_login()
-    log.debug("assign_ownership: role %r to user %r on [%s]" % (
-        "bungeni.Drafter", current_user_login, context))
+    log.debug("assign_ownership: role %r to user %r on [%s]",
+        "bungeni.Drafter", current_user_login, context)
     set_role("bungeni.Drafter", current_user_login, context)
     
     # bungeni.Owner - selected types
@@ -94,12 +94,12 @@ def assign_ownership(context):
     elif interfaces.ISignatory.providedBy(context):
         owner_login = _determine_related_user(context, user_attr_name="user").login
     if owner_login is not None:
-        log.debug("assign_ownership: role %r to user %r on [%s]" % (
-            "bungeni.Owner", owner_login, context))
+        log.debug("assign_ownership: role %r to user %r on [%s]",
+            "bungeni.Owner", owner_login, context)
         set_role("bungeni.Owner", owner_login, context)
     else:
         log.warn("assign_ownership: NO owner could be determined from [%s] - "
-            "NOT assigning role %r to any user" % (context, "bungeni.Owner"))
+            "NOT assigning role %r to any user", context, "bungeni.Owner")
 
 def user_is_context_owner(context):
     """Test if current user is the context owner e.g. to check if someone 
@@ -155,8 +155,8 @@ def set_doc_registry_number(doc):
     """
     # never overwrite a previously set registry_number
     if doc.registry_number is not None:
-        log.warn("Ignoring attempt to reset doc [%s] registry_number [%s]" % (
-            doc, doc.registry_number))
+        log.warn("Ignoring attempt to reset doc [%s] registry_number [%s]", 
+            doc, doc.registry_number)
         return
     
     mask = get_mask(doc)

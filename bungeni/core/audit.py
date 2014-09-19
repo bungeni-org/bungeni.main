@@ -58,8 +58,8 @@ def _trace_audit_handler(ah):
     audit handler. 
     """
     def _ah(ob, event):
-        log.debug("AUDITING %s(%s, %s) originator=%s" % (
-            ah.__name__, ob, event, getattr(event, "originator", None)))
+        log.debug("AUDITING %s(%s, %s) originator=%s", 
+            ah.__name__, ob, event, getattr(event, "originator", None))
         ah(ob, event)
     return _ah
 
@@ -84,8 +84,8 @@ def _object_modify(ob, event):
     # no audit ObjectModifiedEvent if originates from a WorkflowTransitionEvent
     originator = getattr(event, "originator", None)
     if IWorkflowTransitionEvent.providedBy(originator):
-        log.debug("NOT AUDITING event [%s] as it originates from [%s]" % (
-            event, originator))
+        log.debug("NOT AUDITING event [%s] as it originates from [%s]", 
+            event, originator)
         return
     auditor = get_auditor(ob)
     auditor.object_modify(removeSecurityProxy(ob), event)
@@ -142,7 +142,7 @@ class _AuditorFactory(object):
         # If this is a semantic "delete" e.g. to mark the item as obsolete, 
         # then it would be desireable to audit it as any other change action.
         #return self._object_changed("remove", ob)
-        log.warn("!+AUDIT_REMOVE not auditing deletion of [%s]" % (ob))
+        log.warn("!+AUDIT_REMOVE not auditing deletion of [%s]", ob)
     
     def object_workflow(self, ob, event):
         change_data = self._get_change_data()
@@ -276,8 +276,8 @@ class _AuditorFactory(object):
         # when change persistence is reworked along with single document table.
         
         session.flush()
-        log.debug("AUDIT [%s] %s" % (au, au.__dict__))
-        log.debug("CHANGE [%s] %s" % (action, ch.__dict__))
+        log.debug("AUDIT [%s] %s", au, au.__dict__)
+        log.debug("CHANGE [%s] %s", action, ch.__dict__)
         return ch
     
     #
@@ -354,7 +354,7 @@ def set_auditor(kls):
     """
     name = kls.__name__
     auditor_name = "%sAuditor" % (name)
-    log.debug("Setting AUDITOR %s [for type %s]" % (auditor_name, name))
+    log.debug("Setting AUDITOR %s [for type %s]", auditor_name, name)
     from bungeni.alchemist.catalyst import MODEL_MODULE
     audit_kls = getattr(MODEL_MODULE, "%sAudit" % (name))
     audit_tbl = getattr(schema, domain.get_audit_table_name(kls))
@@ -362,14 +362,14 @@ def set_auditor(kls):
     auditor = globals().get(auditor_name)
     if auditor is not None:
         if (auditor.audit_table, auditor.audit_class) is (audit_tbl, audit_kls):
-            log.warn("SET_AUDITOR: ignoring attempt to reset Auditor for: %s" % audit_kls)
+            log.warn("SET_AUDITOR: ignoring attempt to reset Auditor for: %s", audit_kls)
             return
         else:
             log.warn("SET_AUDITOR: resetting auditor for (tbl, kls), \n"
                 "  changed from (%s, %s)\n"
-                "            to (%s, %s)" % (
+                "            to (%s, %s)",
                     auditor.audit_table, auditor.audit_class,
-                    audit_tbl, audit_kls))
+                    audit_tbl, audit_kls)
     # /debug check of repeat calls
     globals()[auditor_name] = _AuditorFactory(audit_tbl, audit_kls)
 

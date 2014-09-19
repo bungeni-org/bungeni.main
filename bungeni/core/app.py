@@ -93,8 +93,8 @@ def on_wsgi_application_created_event(application, event):
     import bungeni.utils.xmlconfexport as confexp
     confexp.write_all()
     
-    log.debug("on_wsgi_application_created_event: _features: %s" % (
-        getConfigContext()._features))
+    log.debug("on_wsgi_application_created_event: _features: %s", 
+        getConfigContext()._features)
 
 
 def to_locatable_container(domain_class, *domain_containers):

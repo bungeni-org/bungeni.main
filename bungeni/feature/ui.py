@@ -415,7 +415,7 @@ def apply_customization_ui():
     misc.check_overwrite_file(capi.get_path_for("workflows/.auto/ui.zcml"), 
         '<?xml version="1.0"?>\n<!-- !! AUTO-GENERATED !! DO NOT MODIFY !! -->' + zcml)
     # execute the zcml
-    log.debug("Executing UI feature configuration:\n%s" % (zcml))
+    log.debug("Executing UI feature configuration:\n%s", zcml)
     xmlconfig.string(zcml)
 
 

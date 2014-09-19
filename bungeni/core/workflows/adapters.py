@@ -167,18 +167,18 @@ def load_workflow(type_key, ti):
     try:
         # retrieve
         ti.workflow = Workflow.get_singleton(workflow_name)
-        log.warn("Already Loaded WORKFLOW: %s.xml as %r - %s" % (
-            workflow_file_key, workflow_name, ti.workflow))
+        log.warn("Already Loaded WORKFLOW: %s.xml as %r - %s", 
+            workflow_file_key, workflow_name, ti.workflow)
     except KeyError:
         # load
         ti.workflow = xmlimport.load(workflow_file_key, workflow_name)
-        log.info("Loaded WORKFLOW: %s.xml as %r - %s" % (
-            workflow_file_key, workflow_name, ti.workflow))
+        log.info("Loaded WORKFLOW: %s.xml as %r - %s", 
+            workflow_file_key, workflow_name, ti.workflow)
         # debug info
         for state_id, state in ti.workflow.iter_states():
-            log.debug("   STATE: %s %s" % (state_id, state))
+            log.debug("   STATE: %r %s %r", state_id, state, state.tags)
             for p in state.permissions:
-                log.debug("          %s" % (p,))
+                log.debug("          %s", p)
     
     # setup
     if ti.workflow:

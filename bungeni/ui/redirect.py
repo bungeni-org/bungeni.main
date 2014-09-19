@@ -79,8 +79,8 @@ class _IndexRedirect(BrowserView):
     index_name = "index"
     def __call__(self):
         request = self.request
-        log.warn("%s: %s -> %s" % (
-            self.__class__.__name__, request.getURL(), self.index_name))
+        log.warn("%s: %s -> %s",
+            self.__class__.__name__, request.getURL(), self.index_name)
         request.response.redirect(self.index_name)
 class ArchiveIndexRedirect(_IndexRedirect):
     index_name = "browse"
@@ -131,3 +131,5 @@ class WorkflowRedirectSitting(WorkflowRedirect):
         if "draft" in wfc.state_controller.get_status():
             return "./schedule"
         return WorkflowRedirect.redirect_to
+
+

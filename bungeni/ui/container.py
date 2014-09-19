@@ -59,8 +59,8 @@ def string_to_date(date_str):
         try:
             date_value = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
         except:
-            log.error("The string %s does not conform to the format required" %
-                      date_str)
+            log.error("The string %s does not conform to the date format required", 
+                date_str)
     return date_value
 
 class AjaxContainerListing(
@@ -574,14 +574,14 @@ def on_invalidate_cache_event(instance, event):
     """Invalidate caches affected by creation of this instance.
     See similar handler: core.workflows.initializeWorkflow
     """
-    log.debug("[invalidate_cache_event] %s / %s" % (instance, event))
+    log.debug("[invalidate_cache_event] %s / %s", instance, event)
     class_name = event.object.__class__.__name__
     event_name = event.__class__.__name__ # !+DRAFT_CACHE_INVALIDATION
     try:
         invalidate_caches_for(class_name, EVENT_TYPE_TO_ACTION_MAP[event_name])
     except KeyError:
-        log.debug("[invalidate_cache_event] No action declared for [%s]" % (
-            event_name))
+        log.debug("[invalidate_cache_event] No action declared for [%s]", 
+            event_name)
 
 # !+DRAFT_CACHE_INVALIDATION(mr, mar-2011) only JSON Listings that are 
 # publically viewable are cached. Most bungeni domain types are created into 
@@ -612,13 +612,13 @@ def invalidate_caches_for(class_name, action):
     if class_name in CacheByClassName:
         for jslc in CacheByClassName[class_name]:
             log.debug("Invalidating [descriptor: %s] cache [num items: %i] "
-                "on [%s] of an instance of [%s]" % (
+                "on [%s] of an instance of [%s]", 
                     jslc.descriptor.__class__.__name__,
                     len(jslc.cache.order),
                     action, 
-                    class_name))
+                    class_name)
             jslc.clear()
     else:
-        log.warn("No cache for class_name [%s] / action [%s] " % (
-            class_name, action))
+        log.warn("No cache for class_name [%s] / action [%s] ", 
+            class_name, action)
 

@@ -363,8 +363,8 @@ def new_descriptor_cls(type_key, archetype_key, order,
     setattr(DESCRIPTOR_MODULE, descriptor_cls_name, cls)
     ti = capi.get_type_info(type_key)
     ti.descriptor_model = cls
-    log.info("generated descriptor [type=%s] %s.%s" % (
-            type_key, DESCRIPTOR_MODULE.__name__, descriptor_cls_name))
+    log.info("generated descriptor [type=%s] %s.%s", 
+            type_key, DESCRIPTOR_MODULE.__name__, descriptor_cls_name)
     return cls
 
 def update_descriptor_cls(type_key, order, 

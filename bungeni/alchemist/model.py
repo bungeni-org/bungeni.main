@@ -42,8 +42,8 @@ def new_custom_domain_interface(type_key, domain_iface_name, archetype_model):
     )
     # set on INTERFACE_MODULE (register on type_info downstream)
     setattr(INTERFACE_MODULE, domain_iface_name, domain_iface)
-    log.info("new_custom_domain_interface [%s] %s.%s" % (
-            type_key, INTERFACE_MODULE.__name__, domain_iface_name))
+    log.info("new_custom_domain_interface [%s] %s.%s", 
+            type_key, INTERFACE_MODULE.__name__, domain_iface_name)
     return domain_iface
 
 def new_custom_domain_model(type_key, domain_interface, archetype_key):
@@ -69,8 +69,8 @@ def new_custom_domain_model(type_key, domain_interface, archetype_key):
         inherits=archetype,
         polymorphic_identity=type_key, #naming.polymorphic_identity(domain_model),
     )
-    log.info("new_custom_domain_model [%s] %s.%s" % (
-            type_key, MODEL_MODULE.__name__, domain_model_name))
+    log.info("new_custom_domain_model [%s] %s.%s", 
+            type_key, MODEL_MODULE.__name__, domain_model_name)
     return domain_model
 
 

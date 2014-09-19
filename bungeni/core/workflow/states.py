@@ -194,8 +194,8 @@ class StateController(object):
             # additional actions related to change of workflow status
             self.on_status_change(source_status, status)
         else:
-            log.warn("Attempt to reset unchanged status [%s] on item [%s]" % (
-                status, self.context))
+            log.warn("Attempt to reset unchanged status [%s] on item [%s]",
+                status, self.context)
     
     def on_status_change(self, source, destination):
         state = self.get_state()
@@ -253,8 +253,8 @@ def get_object_state_rpm(context):
     except interfaces.InvalidStateError:
         # log it... !+bungeni.ui.utils.debug
         cls, exc, tb = sys.exc_info()
-        log.error(""" ***get_object_state_rpm/%s:%s [%s] %s """ % (
-            type(context).__name__, context.pk, cls.__name__, exc))
+        log.error(""" ***get_object_state_rpm/%s:%s [%s] %s """, 
+            type(context).__name__, context.pk, cls.__name__, exc)
         return NONE_STATE_RPM
     if state.parent_permissions:
         # this state delegates permissions to parent, 
@@ -286,8 +286,8 @@ def get_head_object_state_rpm(sub_context):
         else:
             # log it... !+bungeni.ui.utils.debug
             cls, exc, tb = sys.exc_info()
-            log.error(""" ***get_head_object_state_rpm/%s:%s [%s] %s """ % (
-                type(sub_context).__name__, sub_context.pk, cls.__name__, exc))
+            log.error(""" ***get_head_object_state_rpm/%s:%s [%s] %s """, 
+                type(sub_context).__name__, sub_context.pk, cls.__name__, exc)
         return NONE_STATE_RPM
     # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012)
 
@@ -430,8 +430,8 @@ class Workflow(object):
         # and that every obsolete state is NOT reachable
         tbyd = self._transitions_by_destination
         for dest_id, sources in tbyd.items():
-            log.debug("Workflow [%s] transition [%s]: sources %s -> destination [%s]" % (
-                self.name, t.id, [t.source for t in sources], dest_id))
+            log.debug("Workflow [%s] transition [%s]: sources %s -> destination [%s]", 
+                self.name, t.id, [t.source for t in sources], dest_id)
             if self.get_state(dest_id).obsolete:
                 assert not sources, \
                     "Reachable obsolete state [%s] in Workflow [%s]" % (
@@ -662,8 +662,8 @@ class WorkflowController(object):
     # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):
         if not (comment is None and check_security is True):
-            log.warn("%s.fireTransition(%s, comment=%s, check_security=%s)" % (
-                self, transition_id, comment, check_security))
+            log.warn("%s.fireTransition(%s, comment=%s, check_security=%s)",
+                self, transition_id, comment, check_security)
         # raises InvalidTransitionError if id is invalid for current state
         transition = self.workflow.get_transition(transition_id)
         self._check(transition, check_security)

@@ -16,19 +16,21 @@ from bungeni.models.interfaces import IBungeniApplication
 annotation_key = "rh"
 _safe = '@+' # see ``zope.traversing.browser.absoluteurl``
 
+
 class ResourceHost(object):
     def __init__(self, host, proto, port):
         if port and str(port) != DEFAULT_PORTS.get(proto):
             host = '%s:%s' % (host, port)
         self.host = "%s://%s" % (proto, host)
-        
+    
     def setVirtualHostRoot(self, app_names):
         self.app_names = tuple(app_names)
-
+    
     @property
     def url(self):
         return "/".join((self.host,)+self.app_names)
-            
+
+
 class rh(view):
     def traverse(self, name, ignored):
         traversal_stack = self.request.getTraversalStack()
@@ -55,15 +57,16 @@ class rh(view):
             raise ValueError(
                 "Must have a path element '++' after a virtual host "
                 "directive.")
-
+        
         rhost.setVirtualHostRoot(app_names)
-
+        
         return self.context
+
 
 class ResourceSiteAbsoluteURL(SiteAbsoluteURL):
     component.adapts(IBungeniApplication, IHTTPRequest)
     interface.implementsOnly(IAbsoluteURL)
-
+    
     rhost = None
     
     def __new__(cls, context, request):
@@ -74,9 +77,10 @@ class ResourceSiteAbsoluteURL(SiteAbsoluteURL):
             return inst
     
     def __str__(self):
-        log.debug("ResourceSiteAbsoluteURL.__str__: %s [%s]" % (
-                                                self.rhost.url, self.context))
+        log.debug("ResourceSiteAbsoluteURL.__str__: %s [%s]", 
+            self.rhost.url, self.context)
         return self.rhost.url
 
     __call__ = __str__
+
 

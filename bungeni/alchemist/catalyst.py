@@ -289,7 +289,7 @@ def apply_security(ti):
                     n, domain_model)
     
     # container attributes (never a UI Field for these)
-    log.debug("      __dict__: %s" % (domain_model))
+    log.debug("      __dict__: %s", domain_model)
     for k in sorted(domain_model.__dict__.keys()):
         # !+ if IManagedContainer.providedBy(v): ?
         v = domain_model.__dict__[k]
@@ -297,7 +297,7 @@ def apply_security(ti):
             if k in _view_protected:
                 log.debug("           ---- %s RESETTING...", k)
             _view_protected.add(k)
-            log.debug("        managed %s view:%s" % (k, "zope.Public"))
+            log.debug("        managed %s view:%s", k, "zope.Public")
         elif isinstance(v, orm.attributes.InstrumentedAttribute):     
             if k in _view_protected:
                 log.debug("           ---- %s RESETTING...", k)
@@ -340,7 +340,7 @@ def generate_container_class(ti):
     
     # container class - if we already have one, exit                
     if getattr(CONTAINER_MODULE, container_name, None):
-        log.info("generate_container_class [model=%s] found container %s.%s, skipping" % msg)
+        log.info("generate_container_class [model=%s] found container %s.%s, skipping", *msg)
         ti.container_class = getattr(CONTAINER_MODULE, container_name)
         return
     
@@ -352,7 +352,7 @@ def generate_container_class(ti):
     # set on CONTAINER_MODULE, register on type_info
     setattr(CONTAINER_MODULE, container_name, container_class)
     ti.container_class = container_class
-    log.info("generate_container_class [model=%s] generated container %s.%s" % msg)
+    log.info("generate_container_class [model=%s] generated container %s.%s", *msg)
     
     # container interface - if we already have one, skip creation 
     # !+ should always be newly created?
@@ -360,7 +360,7 @@ def generate_container_class(ti):
     msg = (ti.domain_model.__name__, CONTAINER_MODULE.__name__, container_iname)
     if container_iface is not None:
         assert issubclass(container_iface, IAlchemistContainer)
-        log.info("generate_container_class [model=%s] skipping container interface %s.%s for" % msg)
+        log.info("generate_container_class [model=%s] skipping container interface %s.%s for", *msg)
     else:
         container_iface = interface.interface.InterfaceClass(
             container_iname,
@@ -370,7 +370,7 @@ def generate_container_class(ti):
         # set on INTERFACE_MODULE, register on type_info
         setattr(INTERFACE_MODULE, container_iname, container_iface)
         ti.container_interface = container_iface
-        log.info("generate_container_class [model=%s] generated container interface %s.%s" % msg)
+        log.info("generate_container_class [model=%s] generated container interface %s.%s", *msg)
     
     # setup security
     for n, d in container_iface.namesAndDescriptions(all=True):

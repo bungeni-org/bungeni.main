@@ -367,8 +367,8 @@ class DatabaseSource(BaseVocabularyFactory):
     def __call__(self, context):
         context = removeSecurityProxy(context)
         log.debug("DatabaseSource[name:%s].__call__(%s)", self.__name__, context)
-        log.debug("    type_key=%r, token_field=%r, value_field=%r" % (
-            self.type_key, self.token_field, self.value_field))
+        log.debug("    type_key=%r, token_field=%r, value_field=%r",
+            self.type_key, self.token_field, self.value_field)
         assert context is not None, "Vocabulary %r context may not be None" % (self.__name__)
         results = self.execute_query(context)
         terms = []

@@ -371,7 +371,7 @@ def register_new_custom_type(type_key, sys_archetype_key, custom_archetype_key,
     domain_iface_name = naming.model_interface_name(type_key)
     try:
         domain_iface = resolve("%s.%s" % (INTERFACE_MODULE.__name__, domain_iface_name))
-        log.warn("Custom interface ALREADY EXISTS: %s" % (domain_iface))
+        log.warn("Custom interface ALREADY EXISTS: %s", domain_iface)
     except ImportError:
         domain_iface = new_custom_domain_interface(type_key, domain_iface_name, archetype_model)
     
@@ -379,7 +379,7 @@ def register_new_custom_type(type_key, sys_archetype_key, custom_archetype_key,
     domain_model_name = naming.model_name(type_key)
     try:
         domain_model = resolve("%s.%s" % (MODEL_MODULE.__name__, domain_model_name))
-        log.warn("Custom domain model ALREADY EXISTS: %s" % (domain_model))
+        log.warn("Custom domain model ALREADY EXISTS: %s", domain_model)
     except ImportError:
         domain_model = new_custom_domain_model(type_key, domain_iface, custom_archetype_key)
     
@@ -407,7 +407,7 @@ def register_new_custom_type(type_key, sys_archetype_key, custom_archetype_key,
     ti.sys_archetype_key = sys_archetype_key
     TYPE_REGISTRY.append(ti)
     
-    log.info("Registered custom type [%s]: %s" % (custom_archetype_key, type_key))
+    log.info("Registered custom type [%s]: %s", custom_archetype_key, type_key)
     return type_key, ti
 
 

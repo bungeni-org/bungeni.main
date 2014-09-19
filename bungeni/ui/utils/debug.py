@@ -185,11 +185,13 @@ def log_io(f):
 #    zope.event.subscribers.append(log_event)
 
 def subscribe_log_all_events():
-    """Subscribe log_event handler, to log all events."""
+    """Subscribe log_event handler, to log all events.
+    """
     zope.event.subscribers.append(log_event)
 
 def log_event(event):
-    """Handler to log an event."""
-    log.debug(" [log_event] %s" % event)
+    """Handler to log an event.
+    """
+    log.debug(" [log_event] %s", event)
 
 

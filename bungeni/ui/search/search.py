@@ -196,7 +196,7 @@ def get_results_meta(items_list, context, search_context=SEARCH_WORKSPACE):
         item["url"] = url_maker(obj_key, type_key, status_key, context, chamber_id)
         MAP = BASE_MAPPING.items() + MAPPING.get(result_type, []).items()
         for (key, node_key) in MAP:
-            log.debug("get_node_value %s %s" % (key, node_key))
+            log.debug("get_node_value %s %s", key, node_key)
             item[key] = get_node_value(record, node_key)
             
         items.append(item) 
@@ -224,7 +224,7 @@ def execute_search(data, prefix, request, context):
     # we are only interested in documents
     data["group"] = "document"
     search_request = requests.get(SEARCH_URL, params=data)
-    log.info( "search_request.url %s  " % search_request.url)
+    log.info( "search_request.url %s  ", search_request.url)
     exist_results = search_request.json()
     item_count = int(exist_results.get("total"))
     page_query_string = request.get("QUERY_STRING")

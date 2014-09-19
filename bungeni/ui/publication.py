@@ -39,7 +39,7 @@ def once_per_request(event_handler):
             IAnnotations(event.request)[flag_name] = True
             event_handler(event)
         else:
-            log.debug(" [once_per_request->%s] IGNORING..." % (flag_name))
+            log.debug(" [once_per_request->%s] IGNORING...", flag_name)
     return event_handler_closure
 
 
@@ -55,8 +55,8 @@ def on_before_traverse(event):
     request pre-processors. We intercept centrally and then call processors
     explicitly to guarantee execution order.
     """
-    log.debug("IBeforeTraverseEvent:%s:%s:%s" % (
-        id(event.request), event.request.getURL(), event.object))
+    log.debug("IBeforeTraverseEvent:%s:%s:%s",
+        id(event.request), event.request.getURL(), event.object)
     apply_request_layer_by_url(event)
     if not IUnauthenticatedPrincipal.providedBy(event.request.principal):
         interface.alsoProvides(event.request,
@@ -73,8 +73,8 @@ def on_end_request(event):
     common._clear_request_cache()
     session = Session()
     log.debug("IEndRequestEvent:%s:%s:%s\n"
-        "    closing SqlAlchemy session: %s" % (
-            id(event.request), event.request.getURL(), event.object, session))
+        "    closing SqlAlchemy session: %s", 
+            id(event.request), event.request.getURL(), event.object, session)
     #session.close()
     #gc.collect()
 
@@ -141,19 +141,18 @@ def apply_request_layer_by_url(event):
     #path = "/".join(reversed(request.getTraversalStack()))
     path = url.get_destination_url_path(request)
     path_info = request.get("PATH_INFO")
-    log.debug(" [apply_request_layer_by_url] path=%s path_info=%s" % (
-            path, path_info))
+    log.debug(" [apply_request_layer_by_url] path=%s path_info=%s", path, path_info)
     for condition, layer in mapping_on_path:
         if condition.match(path) is not None:
-            log.debug("Adding %s layer to request for path <%s>" % (layer, path))
+            log.debug("Adding %s layer to request for path <%s>", layer, path)
             interface.alsoProvides(request, layer)
             break # only apply first matching layer
     else: # there was no break, no mapping_on_path layer added
         # !+IResourceNonLayer(mr, nov-2010) almost never passes thru here
         for condition, layer in mapping_on_path_info:
             if condition.match(path_info) is not None:
-                log.debug("Adding %s layer to request for path_info <%s>" % (
-                        layer, path_info))
+                log.debug("Adding %s layer to request for path_info <%s>",
+                        layer, path_info)
                 interface.alsoProvides(request, layer)
                 break
 # filter this event handler to be called only ONCE per request

@@ -526,8 +526,8 @@ def _load(workflow_name, workflow):
         for source in sources:
             args = (title, source, destination)
             transitions.append(Transition(*args, **kw))
-            log.debug("[%s] adding transition [%s-%s] [%s]" % (
-                workflow_name, source or "", destination, kw))
+            log.debug("[%s] adding transition [%s-%s] [%s]",
+                workflow_name, source or "", destination, kw)
     
     wf = Workflow(workflow_name,
         workflow_features, workflow_facets, states, transitions, global_grants,
@@ -607,4 +607,5 @@ def add_retract_transitions(wf):
             log.debug("Workflow [%s] adding retract transition: %r", 
                     wf.name, ntransition.id)
     wf.refresh(wf._states_by_id.values(), transitions)
+
 

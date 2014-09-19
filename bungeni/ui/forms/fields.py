@@ -41,8 +41,8 @@ def filterFields(context, form_fields):
                 can_write = security.canWrite(context, field.__name__)
                 can_read = security.canAccess(context, field.__name__)
             except AttributeError:
-                log.warn('filterFields: item [%s] has no field named "%s"' % (
-                    context, field.__name__))
+                log.warn('filterFields: item [%s] has no field named "%s"', 
+                    context, field.__name__)
                 can_write = can_read = False
             if can_write:
                 continue
@@ -196,4 +196,5 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         """
         return filter(None,
                 [ error.message for error in self.invariantErrors ])
+
 

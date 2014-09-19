@@ -242,8 +242,8 @@ class VersionLogView(VersionLogMixin,
         diff_view = DiffView(source, target, self.request)
         self.diff_view = diff_view(
             *filter(IIModelInterface.providedBy, interface.providedBy(self.context)))
-        log.debug("handle_diff_version: source=%s target=%s \n%s" % (
-                        source, target, self.diff_view))
+        log.debug("handle_diff_version: source=%s target=%s \n%s",
+                        source, target, self.diff_view)
     
     def get_version_change(self, audit_id):
         for c in removeSecurityProxy(self.context).versions:
