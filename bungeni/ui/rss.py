@@ -29,7 +29,7 @@ from bungeni.core.dc import IDCDescriptiveProperties
 
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
-from bungeni.ui.utils import uri, debug
+from bungeni.ui.utils import date, uri, debug
 from bungeni.utils import naming
 from bungeni import _, translate
 
@@ -132,8 +132,9 @@ class RSSView(BrowserView):
         return item_element
 
     def replace_html_entities(self, text):
-        """ replaces HTML entities from the text """
-        global glEntities
+        """Replaces HTML entities from the text.
+        """
+        global glEntities # !+ where is this set to anything?
         # replace numeric entities
         _numentities = set(re.findall("(&#\d+;)", text))
         for entity in _numentities:
@@ -214,11 +215,11 @@ class TimelineRSSView(RSSView):
                 )
             )
         return self.response.toxml("utf-8")
-
+    
     def format_date(self, date_, category="date", length="medium"):
-        formatter = self.request.locale.dates.getFormatter(category, length=length)
+        formatter = date.getLocaleFormatter(self.request, category, length)
         return formatter.format(date_)
-
+    
     def get_description(self, item):
         return audit.format_description(item, self.context)
     

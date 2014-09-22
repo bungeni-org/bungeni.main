@@ -18,8 +18,6 @@ import re
 from bungeni.utils import common
 from bungeni.capi import capi
 
-# date
-
 
 def getDisplayDate(request):
     """ () -> datetime.date
@@ -41,10 +39,10 @@ def getDisplayDate(request):
 
 
 def getLocaleFormatter(
-            request=None, 
-            category="date",    # "date" | "time" | "dateTime"
-            length="medium"     # "short" | "medium" | "long" | "full" | None
-        ):
+        request=None,
+        category="date",    # "date" | "time" | "dateTime"
+        length="medium"     # "short" | "medium" | "long" | "full" | None
+    ):
     """See: zope.i18n.locales.LocaleDates.getFormatter
     """
     if request is None:
@@ -58,6 +56,7 @@ def getLocaleFormatter(
         return locales.getLocale(capi.default_language).dates.getFormatter(
             category, length)
 
+
 def get_localized_date(request, value):
     category = "date"
     if isinstance(value, datetime.datetime):
@@ -68,6 +67,7 @@ def get_localized_date(request, value):
         category = "time"
     formatter = getLocaleFormatter(request, category)
     return formatter.format(value)
+
  
 def parseDateTime(s):
     """Create datetime object representing date/time
@@ -124,4 +124,5 @@ def parseDateTime(s):
     # Return updated datetime object with microseconds and
     # timezone information.
     return x.replace(microsecond=int(fractional), tzinfo=tz)
- 
+
+

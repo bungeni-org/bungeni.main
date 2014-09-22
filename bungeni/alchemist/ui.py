@@ -38,7 +38,7 @@ from bungeni.alchemist.interfaces import (
     IAlchemistContent,
 )
 from bungeni.alchemist import Session, utils
-from bungeni.ui.utils import debug
+from bungeni.ui.utils import date, debug
 from bungeni.utils import misc
 from bungeni.capi import capi
 from bungeni import _
@@ -764,7 +764,7 @@ def _handle_edit_action(self, action, data):
         descriptions = [ Attributes(iface, *tuple(keys))
             for iface, keys in descriptions.items() ]
         notify(ObjectModifiedEvent(self.context, *descriptions))
-        formatter = self.request.locale.dates.getFormatter("dateTime", "medium")
+        formatter = date.getLocaleFormatter(self.request, "dateTime", "medium")
         import pytz, datetime
         try:
             time_zone = interface.common.idatetime.ITZInfo(self.request)

@@ -15,24 +15,28 @@ timedelta = datetime.timedelta
 from zope import interface
 from zope import schema
 from zope.formlib import form
-from zope.formlib import namedtemplate
+#from zope.formlib import namedtemplate
 from zope.security.proxy import removeSecurityProxy
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 
 from bungeni.alchemist import Session
+from bungeni.alchemist import ui
 from bungeni.models import domain
 from bungeni.models.utils import get_login_user, get_chamber_for_context
 from bungeni.models.interfaces import ISitting
 
-from bungeni.core.interfaces import (ISchedulingContext, 
-    IWorkspaceScheduling, IWorkspaceUnderConsideration)
+from bungeni.core.interfaces import (
+    ISchedulingContext, 
+    IWorkspaceScheduling, 
+    #IWorkspaceUnderConsideration,
+)
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
-from bungeni.core.language import get_default_language
+#from bungeni.core.language import get_default_language
 
 from bungeni.ui import widgets
 from bungeni.ui import vocabulary
-from bungeni.ui.utils import date
+#from bungeni.ui.utils import date
 from bungeni.ui.interfaces import IWorkspaceReportGeneration
 from bungeni.ui.reporting import generators
 from bungeni.ui.calendar.data import ExpandedSitting, ReportContext
@@ -42,25 +46,7 @@ from bungeni.utils import common, naming, register
 from bungeni import _, translate
 
 
-class DateTimeFormatMixin(object):
-    """Helper methods to format and localize date and time objects
-    """
-    def format_date(self, date_time, category="dateTime"):
-        formatter = date.getLocaleFormatter(self.request, category=category)
-        return formatter.format(date_time)
-
-    def l10n_dates(self, date_time, dt_format="dateTime"):
-        if date_time:
-            try:
-                formatter = self.request.locale.dates.getFormatter(dt_format)
-                return formatter.format(date_time)
-            except AttributeError:
-                return date_time
-        return date_time
-
-
-class ReportBuilder(form.Form, DateTimeFormatMixin):
-    template = namedtemplate.NamedTemplate("alchemist.form")
+class ReportBuilder(ui.BaseForm):
     IReportBuilder = None
     publication_date = datetime.datetime.today().date()
     publication_number = ""
@@ -111,8 +97,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         self.generated_content = self.generate_content(data)
         if IWorkspaceScheduling.providedBy(self.request):
             if not hasattr(self.context, "group_id"):
-                context_group_id = ISchedulingContext(
-                    self.context).group_id
+                context_group_id = ISchedulingContext(self.context).group_id
             else:
                 context_group_id = self.context.group_id
         else:
@@ -130,6 +115,8 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         session = Session()
         session.add(report)
         session.flush()
+        # requires self db id to have been updated
+        report.on_create() 
         notify(ObjectCreatedEvent(report))
         self.status = _(u"Report has been processed and saved")
         return self.template()
@@ -208,7 +195,7 @@ class UnderConsiderationReportBuilder(ReportBuilder):
                 setattr(self, container_name, doc_container.query(**filters)[0])
 
 
-
+''' !+UNUSED
 class SaveReportView(form.PageForm):
     template = namedtemplate.NamedTemplate("alchemist.form")
     
@@ -296,6 +283,7 @@ class SaveReportView(form.PageForm):
         else:
             back_link = "./"
         self.request.response.redirect(back_link)
+'''
 
 
 # Event handler that publishes reports on sitting status change
