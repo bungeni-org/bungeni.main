@@ -328,15 +328,23 @@ def publish_to_xml(context):
     if not connection:
         return
     channel = connection.channel()
+    #channel.confirm_delivery()
     publish_file_path = "%s.%s" %(file_path, ("zip" if files else "xml"))
+    #channel_delivery = 
     channel.basic_publish(
         exchange=SERIALIZE_OUTPUT_EXCHANGE,
         routing_key=SERIALIZE_OUTPUT_ROUTING_KEY,
         body=simplejson.dumps({"type": "file", "location": publish_file_path }),
         properties=pika.BasicProperties(content_type="text/plain",
-	    delivery_mode=2
+            delivery_mode=2
         )
     )
+    #if channel_delivery:
+    #    log.info("Message published to exchange %s with key %s for %s" % 
+    #        (SERIALIZE_OUTPUT_EXCHANGE, SERIALIZE_OUTPUT_ROUTING_KEY, publish_file_path))
+    #else:
+    #    log.error("Message publication failed for %r", publish_file_path)
+        
 
     #clean up - remove any files if zip was/was not created
     if files:
@@ -581,6 +589,7 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
         # sometimes, so eliminating those
         objects = filter(None, objects)
         map(queue_object_serialization, objects)
+        log.error(" COUNTING_TYPES_SERIALIZED -- %s COUNT -- %s" % (domain_model, len(objects)))
         serialized_count += len(objects)
     return serialized_count
 
@@ -634,10 +643,14 @@ def queue_object_serialization(obj):
     """Send a message to the serialization queue for non-draft documents
     """
     connection = bungeni.core.notifications.get_mq_connection()
+    
     if not connection:
-        log.warn("Could not get rabbitmq connection. Will not send "
+        log.error("Could not get rabbitmq connection. Will not send "
             "AMQP message for this change."
         )
+        log.error("Serialization failure for item %r", obj)
+        ## If there is no connection MQ dont publish at all !!! !+MQ(ah, 2014-09-19)
+        """
         log.warn("Publishing XML directly - this will slow things down")
         try:
             publish_to_xml(obj)
@@ -651,6 +664,7 @@ def queue_object_serialization(obj):
             body="Failed to find running RabbitMQ",
             subject="Notice - RabbitMQ")
         return
+        """
     wf_state = None
     try:
         wfc = IWorkflowController(obj)
@@ -658,7 +672,8 @@ def queue_object_serialization(obj):
     except InvalidStateError:
         # this is probably a draft document - skip queueing
         log.warn("Could not get workflow state for object %s. "
-            "State: %s", obj, wf_state)
+            "State: %s ; this could be a document in draft state", 
+            obj, wf_state)
         return
     unproxied = zope.security.proxy.removeSecurityProxy(obj)
     mapper = object_mapper(unproxied)
@@ -674,11 +689,13 @@ def queue_object_serialization(obj):
         exchange=SERIALIZE_EXCHANGE,
         routing_key=SERIALIZE_ROUTING_KEY,
         body=simplejson.dumps(message),
-        properties=pika.BasicProperties(content_type="text/plain",
+        properties=pika.BasicProperties(
+            content_type="text/plain",
             delivery_mode=2
         )
     )
     txn = transaction.get()
+    log.error("AACH key: %s , type : %s" % (primary_key, unproxied.__class__))
     txn.addAfterCommitHook(bungeni.core.notifications.post_commit_publish, (), kwargs)
  
     
@@ -708,10 +725,12 @@ def serialization_notifications():
     # create exchange
     channel.exchange_declare(exchange=SERIALIZE_EXCHANGE,
         type="fanout", durable=True)
-    channel.queue_declare(queue=SERIALIZE_QUEUE, durable=True)
+    channel.queue_declare(queue=SERIALIZE_QUEUE, 
+        durable=True,
+    )
     channel.queue_bind(queue=SERIALIZE_QUEUE,
-       exchange=SERIALIZE_EXCHANGE,
-       routing_key=SERIALIZE_ROUTING_KEY)
+        exchange=SERIALIZE_EXCHANGE,
+        routing_key=SERIALIZE_ROUTING_KEY)
     # xml outputs channel and queue
     channel.exchange_declare(exchange=SERIALIZE_OUTPUT_EXCHANGE,
         type="direct", passive=False)
@@ -725,9 +744,6 @@ def serialization_notifications():
         a_thread = init_thread()
         worker_threads.append(a_thread)
     return worker_threads
-
-
-
 
 # serialization utilities
 

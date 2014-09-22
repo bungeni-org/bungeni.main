@@ -10,6 +10,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.notifications")
 
 import os
+import sys
 import pika
 import simplejson
 import datetime
@@ -136,16 +137,25 @@ def post_commit_publish(status, **kwargs):
     """
     connection = get_mq_connection()
     if not connection:
-        log.warn("Can't rabbitmq connection. Won't send message")
+        log.error("Can't rabbitmq connection. Won't send message")
         return
-    if status:
-        channel = connection.channel()
-        channel.basic_publish(**kwargs)
-    else:
-        log.error("Transaction did not commit successfully. "
-            "AMQP message will not be sent"
-        )
-
+    try:
+        log.error("PCH status %s -- kwargs -- %s" % (status, kwargs))
+        if status:
+            channel = connection.channel()
+            channel.confirm_delivery()
+            if channel.basic_publish(**kwargs):
+               log.info("SMF: Serializaton Message SUCCESS publication")
+            else:
+               log.error("SMF: Serialization Message FAILURE publication %r", kwargs)
+        else:
+            log.error("PCH Exception Transaction did not commit successfully. "
+                "AMQP message will not be sent"
+            )
+    except:
+        e = sys.exc_info()[0]
+        log.error("PCH Exception for item %r", **kwargs)
+        log.error("PCH Exception while publishing to channel %r", e)
 
 def queue_notification(document, event):
     connection = get_mq_connection()
@@ -246,6 +256,7 @@ def worker():
     mq_utility = component.getUtility(IMessageQueueConfig)
 
     def callback(channel, method, properties, body):
+        #channel.confirm_delivery()
         notification_utl = component.getUtility(INotificationsUtility)
         exchange = str(mq_utility.get_message_exchange())
         message = simplejson.loads(body)
@@ -266,6 +277,7 @@ def worker():
                     mes["notification_type"] = "onstate"
                     dthandler = lambda obj: obj.isoformat() if isinstance(
                         obj, datetime.datetime) else obj
+                    #channel_conf = 
                     channel.basic_publish(
                         exchange=exchange,
                         body=simplejson.dumps(mes, default=dthandler),
@@ -273,7 +285,12 @@ def worker():
                             content_type="text/plain",
                             delivery_mode=1
                         ),
-                        routing_key="")
+                        routing_key=""
+                    )
+                    #if channel_conf:
+                    #   log.info("Message published for exchange %r", exchange)
+                    #else:
+                    #   log.error("Message publication failed for exchange %s and message %s" % (exchange, mes))
                 # then we handle the time based notifications
                 time_roles = notification_utl.get_time_based_time_and_roles(
                     domain_class, message["destination"]
