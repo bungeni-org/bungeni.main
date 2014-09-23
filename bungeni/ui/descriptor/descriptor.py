@@ -1292,6 +1292,7 @@ class EventDescriptor(DocDescriptor):
     insert_field_after(fields, "owner_id",
         F(name="group_id",
             label="Group",
+            required=True,
             localizable=[
                 show("view edit add listing"),
             ],

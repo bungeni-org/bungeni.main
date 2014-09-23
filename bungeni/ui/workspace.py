@@ -1,3 +1,13 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Bungeni Workspace
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.ui.workspace")
+
 import os
 import simplejson
 
@@ -7,14 +17,10 @@ from zope.publisher.browser import BrowserPage
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
-from zope.formlib import form
-from zope.event import notify
-from zope.lifecycleevent import ObjectCreatedEvent
 from zc.resourcelibrary import need
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.alchemist.container import contained
-from bungeni.alchemist.ui import createInstance
 from bungeni.alchemist import utils, Session
 from bungeni.core import translation
 from bungeni.core.language import get_default_language
@@ -33,7 +39,7 @@ from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
-from bungeni.ui.forms.common import AddForm
+from bungeni.ui.forms import common
 from bungeni.core.workspace import ROLES_DIRECTLY_DEFINED_ON_OBJECTS
 #from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.utils import register
@@ -112,7 +118,8 @@ class WorkspaceContainerJSONListing(BrowserPage):
         self.sort_dir = self.request.get("dir")
 
     def get_offsets(self, default_start=0,
-        default_limit=capi.default_number_of_listing_items):
+            default_limit=capi.default_number_of_listing_items
+        ):
         start = self.request.get("start", default_start)
         limit = self.request.get("limit", default_limit)
         try:
@@ -308,8 +315,11 @@ class WorkspaceContainerListing(BrowserPage):
         need("yui-datatable")
         self.context = removeSecurityProxy(self.context)
         return self.render()
-
+    
     def update(self):
+        # !+ pyflakes bungeni/ui/workspace.py !!!
+        # bungeni/ui/workspace.py:327: undefined name 'column'
+        # bungeni/ui/workspace.py:328: undefined name 'Getter'
         for field in self.workspace_fields:
             self.columns.append(
                 column.GetterColumn(title=field.name,
@@ -441,38 +451,24 @@ class WorkspaceTabCount(BrowserPage):
         return simplejson.dumps(data)
 
 
-class WorkspaceAddForm(AddForm):
+class WorkspaceAddForm(common.AddForm):
     
-    # from alchemist.ui.content (assumes all responsibility, does NOT call super)
-    def createAndAdd(self, data):
-        domain_model = removeSecurityProxy(self.domain_model)
-        # create the object, inspect data for constructor args
-        try:
-            ob = createInstance(domain_model, data)
-        except TypeError:
-            ob = domain_model()
-        # apply any context values
-        self.finishConstruction(ob)
-        # apply extra form values
-        form.applyChanges(ob, self.form_fields, data, self.adapters)
-        # add ob to container
-        self.context[""] = ob
-        # fire an object created event
-        notify(ObjectCreatedEvent(ob))
-        # signal to add form machinery to go to next url
-        self._finished_add = True
-        name = self.context.string_key(ob)
-        # execute domain.Entity on create hook -- doc_id must have been set
-        ob.on_create()
-        return self.context.get(name)
+    def get_oid(self, ob):
+        return self.context.string_key(ob)
+    
+    @property
+    def add_action_verb(self):
+        return self.__name__ # "add_%s" % (self.__name__[len("add_"):])
     
     @property
     def domain_model(self):
-        item_type = self.__name__.split("_", 1)[1]
+        item_type_key = self.__name__[len("add_"):]
+        # !+ domain_model = capi.get_type_info(item_type_key).domain_model
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        domain = workspace_config.get_domain(item_type)
-        return domain
+        return workspace_config.get_domain(item_type_key)
     
+    # !+ why is this variation of domain_model needed?
     def getDomainModel(self):
         return getattr(self, "domain_model", self.context.__class__)
+
 

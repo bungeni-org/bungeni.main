@@ -245,11 +245,6 @@ class WorkspaceBaseContainer(AlchemistContainer):
         chamber = utils.get_user_chamber(utils.get_login_user())
         return chamber.group_id
 
-    def __getitem__(self, name):
-        value = self.get(name)
-        if value is None:
-            raise KeyError(name)
-        return value
     # see alchemist.traversal.managed.One2Many
     # see alchemist.ui.content.AddFormBase -> self.context[""] = ob
     # see bungeni.core.app.AppSetup
@@ -259,15 +254,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
     # This does the same for the workspace containers
     # This sets the foreign key of the doc to the chamber the currently
     # logged in member is a user
-
-    def __setitem__(self, name, item):
-        session = Session()
-        chamber = utils.get_user_chamber(utils.get_login_user())
-        item.chamber_id = chamber.group_id # !+on_create?
-        group_id = chamber.group_id
-        item.group_id = group_id
-        session.add(item)
-
+    
     def is_type_workspaced(self, type_key):
         """Is this type workspaced for this !+workspace context (for user)?
         !+WORKSPACE_GROUP_CONTEXTS should be refined further to specific groups, 

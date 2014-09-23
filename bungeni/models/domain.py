@@ -393,21 +393,27 @@ class Doc(Entity):
     def on_create(self):
         """Application-internal creation logic i.e. logic NOT subject to config.
         """
-        # set chamber_id when docs are added outside of chamber context
-        # !+ some events do not always have group_id set... which ones, and why?
+        # set chamber_id if not set -- requires that group_id is ALWAYS set, 
+        # on all new doc, event, report instances
         if self.chamber_id is None:
-            if self.group is not None:
-                from bungeni.models.utils import get_chamber_for_group
-                chamber = get_chamber_for_group(self.group)
-                self.chamber_id = chamber.group_id
-            else:
-                log.warn(
-                    "Doc.on_create: cannot set %r on %s [id: %s] -- %r not set.", 
-                        "chamber_id", self, self.doc_id, "group_id")
+            from bungeni.models import utils
+            chamber = utils.get_chamber_for_group(self.group)
+            # above will be None if self.group is None or is outside of a chamber...
+            if chamber is None:
+                chamber = utils.get_user_chamber(utils.get_login_user())
+                log.warn("Doc.on_create: falling back to picking off chamber_id "
+                    "[%s] from logged in user for new doc %s [doc_id=%s]",
+                        chamber.group_id, self, self.doc_id)
+            self.chamber_id = chamber.group_id
+        # !+GROUP_ID_REQUIRED if no group_id, push back chamber_id as group_id...
+        if self.group_id is None:
+            self.group_id = self.chamber_id
+            log.warn("Doc.on_create: setting None group_id to just be "
+                "chamber_id [%s] for new doc %s [doc_id=%s]",
+                    chamber.group_id, self, self.doc_id)
         # requires self db id to have been updated
         from bungeni.core.workflows import utils
         utils.assign_ownership(self)
-        
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id

@@ -643,36 +643,35 @@ class AddForm(BaseForm, formlib.form.AddForm):
         try:  
             ob = createInstance(domain_model, data)
         except TypeError:
+            log.error("Failure: createInstance(%s, %s)", domain_model, data)
+            debug.log_exc(sys.exc_info(), log_handler=log.error)
             ob = domain_model()
-        
         # apply any context values
         self.finishConstruction(ob)
-        
         # apply extra form values
         formlib.form.applyChanges(ob, self.form_fields, data, self.adapters)
-        
         # set the object in container context, causing autosetting of 
         # constrained values e.g. one2many attributes, by triggering call to 
         # _ManagedContainer.constraints.setConstrainedValues()
         self.context[""] = ob
-        
         # flush so we have database id
         Session().flush()
         # !+DataError reload form and display this error?
-        
         # fire an object created event
-        notify(ObjectCreatedEvent(ob))
-        
+        notify(ObjectCreatedEvent(ob)) # !+ would set doc_id (if session not flushed) !!
         # signal to add form machinery to go to next url
         self._finished_add = True
-        
-        mapper = sa.orm.object_mapper(ob)
-        
-        # TODO single primary key (need changes to base container)
-        oid = mapper.primary_key_from_instance(ob)
-        
         # retrieve the object with location and security information
+        oid = self.get_oid(ob)
         return self.context[oid]
+    
+    def get_oid(self, ob):
+        """Return the string id to be used as the key for the container entry 
+        for this object.
+        """
+        mapper = sa.orm.object_mapper(ob)
+        # TODO single primary key (need changes to base container)
+        return mapper.primary_key_from_instance(ob)
     
     def update(self):
         for name, value in self.defaults.items():
@@ -792,6 +791,7 @@ def createInstance(cls, data):
     func = cls.__init__.im_func
     func = func.func_dict.get("_oldinit", func)
     
+    # !+REVIEW this logic !!
     if isinstance(func, wrapper_type):
         defaults = ()
         names = ()
@@ -808,21 +808,21 @@ def createInstance(cls, data):
     for i in range(len(names)):
         n = names[i]
         v = data.get(n, _marker)
-        
         if v is _marker:
             if i < nrequired:
+                # !+REVIEW
                 raise TypeError("missing argument %r" % n)
             else:
                 v = defaults[i - nrequired]
         else:
             used.append(n)
         args.append(v)
-        
+    
     for n in used:
         del data[n]
-
+    
     ob = cls(*args)
-
+    
     return ob
 
 

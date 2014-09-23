@@ -33,10 +33,7 @@ import sqlalchemy as sa
 from bungeni.alchemist import Session
 from bungeni.alchemist import ui
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from bungeni.core.interfaces import (
-    TranslationCreatedEvent, 
-    IWorkspaceContainer,
-)
+from bungeni.core.interfaces import TranslationCreatedEvent
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation, get_field_translations
 from bungeni.core.language import CurrentLanguageVocabulary, get_language_by_name
@@ -176,10 +173,10 @@ class AddForm(ui.AddForm):
     
     def createAndAdd(self, data):
         ob = super(AddForm, self).createAndAdd(data)
-        self.created_object = ob
+        self.created_object = ob # !+ used by calendar/browser sitting
         # execute domain.Entity on create hook
         removeSecurityProxy(ob).on_create()
-        #cascade_modifications(ob)
+        # cascade_modifications(ob)
         return ob
     
     @formlib.form.action(_(u"Save and view"), name="save_and_view",
@@ -215,12 +212,15 @@ class AddForm(ui.AddForm):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
         if not self._next_url:
-            action_verb = "add"
-            if IWorkspaceContainer.providedBy(self.__parent__):
-                type_key = capi.get_type_info(ob).type_key
-                action_verb = "add_%s" % (type_key)
             self._next_url = "%s/%s?portal_status_message=%s Added" % (
-                    url.absoluteURL(self.context, self.request), action_verb, name)
+                    url.absoluteURL(self.context, self.request),
+                    self.add_action_verb, 
+                    name)
+    
+    @property
+    def add_action_verb(self):
+        return "add"
+
 
 
 @register.view(domain.Attachment, layer=IBungeniSkin, name="edit",
