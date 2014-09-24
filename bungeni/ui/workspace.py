@@ -17,10 +17,12 @@ from zope.publisher.browser import BrowserPage
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
+from zc.table import column
 from zc.resourcelibrary import need
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.alchemist.container import contained
+from bungeni.alchemist.ui import Getter
 from bungeni.alchemist import utils, Session
 from bungeni.core import translation
 from bungeni.core.language import get_default_language
@@ -317,9 +319,6 @@ class WorkspaceContainerListing(BrowserPage):
         return self.render()
     
     def update(self):
-        # !+ pyflakes bungeni/ui/workspace.py !!!
-        # bungeni/ui/workspace.py:327: undefined name 'column'
-        # bungeni/ui/workspace.py:328: undefined name 'Getter'
         for field in self.workspace_fields:
             self.columns.append(
                 column.GetterColumn(title=field.name,

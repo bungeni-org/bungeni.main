@@ -535,9 +535,15 @@ class BaseForm(formlib.form.FormBase):
             # To preempt the error that this causes, we check for and stuff
             # an appropiately initialized vocabulary instance onto this field...
             if hasattr(field, "vocabulary"):
-                if field.vocabulary is None:
+                # preset a vocabulary on self.context, or reset with one off current 
+                # self.context if last one preset was off a different self.context
+                if (field.vocabulary is None or 
+                        getattr(field, "_vtf_last_context", None) is not self.context
+                    ):
                     from bungeni.alchemist.utils import get_vocabulary
                     field.vocabulary = get_vocabulary(field.vocabularyName)(self.context)
+                    # remember last context used to preset vocabulary
+                    field._vtf_last_context = self.context
                     log.debug("Validation of vocabulary field (%r, %r) with value=%r -- "
                         "stuffing vocabulary instance %s [context: %r] onto field %s ...", 
                         name, field.vocabularyName, value, field.vocabulary, self.context, field)
