@@ -528,6 +528,10 @@ class BaseForm(formlib.form.FormBase):
             assert field is ff.field, name # !+TMP sanity check
             value = data.get(name, None)
             
+            ''' !+VTF disabling for now, as attempting to preset a contextualized
+            vocab fails for subsequent lodaing of a *view*, as this is executed 
+            when validating a *submit* -- may still work if executed right moment.
+            
             # !+VTF bungeni.ui.fields.VocabularyTextField -- here a vocabulary 
             # field is not necessarily the type defined by bungeni 
             # e.g. zope.schema._field.Choice that during validation attempts to
@@ -536,9 +540,12 @@ class BaseForm(formlib.form.FormBase):
             # an appropiately initialized vocabulary instance onto this field...
             if hasattr(field, "vocabulary"):
                 # preset a vocabulary on self.context, or reset with one off current 
-                # self.context if last one preset was off a different self.context
-                if (field.vocabulary is None or 
-                        getattr(field, "_vtf_last_context", None) is not self.context
+                # context if the one preset previously was off a different context
+                if (field.vocabulary is None or (
+                        # a vocab was preset previously
+                        hasattr(field, "_vtf_last_context") and
+                        # and it was prepared with a different context
+                        getattr(field, "_vtf_last_context") is not self.context)
                     ):
                     from bungeni.alchemist.utils import get_vocabulary
                     field.vocabulary = get_vocabulary(field.vocabularyName)(self.context)
@@ -547,6 +554,7 @@ class BaseForm(formlib.form.FormBase):
                     log.debug("Validation of vocabulary field (%r, %r) with value=%r -- "
                         "stuffing vocabulary instance %s [context: %r] onto field %s ...", 
                         name, field.vocabularyName, value, field.vocabulary, self.context, field)
+            '''
             
             # standard field validation !+ necessary, already called elsewhere? 
             try:
