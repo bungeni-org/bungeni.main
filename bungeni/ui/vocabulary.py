@@ -317,6 +317,8 @@ class DatabaseSource(BaseVocabularyFactory):
             context_value_field=None, # to ensure that possibly inactive item will not be filtered out
             # on domanin model
             order_by=None, # [str] : list of attr names on type_key domain model
+            # vocabulary qualifiers
+            contextual=True, # bool : whether vocabulary requires a non-None context or not
         ):
         assert type_key is not None, "%s: type_key may not be None: %s" % (
                 self.__class__.__name__, locals())
@@ -331,6 +333,7 @@ class DatabaseSource(BaseVocabularyFactory):
         self.condition_filter = condition_filter
         self.context_value_field = context_value_field
         self.order_by = order_by
+        self.contextual = contextual
     
     @property
     def domain_model(self):
@@ -369,7 +372,13 @@ class DatabaseSource(BaseVocabularyFactory):
         log.debug("DatabaseSource[name:%s].__call__(%s)", self.__name__, context)
         log.debug("    type_key=%r, token_field=%r, value_field=%r",
             self.type_key, self.token_field, self.value_field)
-        assert context is not None, "Vocabulary %r context may not be None" % (self.__name__)
+        if self.contextual:
+            assert context is not None, \
+                "Contextual vocabulary %r context may not be None" % (
+                    self.__name__)
+        elif context is not None:
+            log.warn("Non-contextual vocabulary %r called with non-None context %s", 
+                self.__name__, context)
         results = self.execute_query(context)
         terms = []
         title_field = self.title_field or self.token_field
@@ -470,6 +479,8 @@ set_vocabulary_factory("chamber_committee", ChamberGroupDatabaseSource(
 set_vocabulary_factory("country", DatabaseSource(
         "country", "country_id", "country_id",
         title_field="country_name",
+        #!+context_value_field = country_id, birth_country, birth_nationality, current_nationality
+        contextual=False
     ))
 
 set_vocabulary_factory("report", DatabaseSource(
