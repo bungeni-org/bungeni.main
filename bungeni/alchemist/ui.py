@@ -27,6 +27,7 @@ import sys
 from zope import interface
 from zope.security.proxy import removeSecurityProxy
 from zope import formlib
+from zope.schema.interfaces import RequiredMissing
 from zope.viewlet import manager
 from zope.event import notify
 from zope.lifecycleevent import Attributes, \
@@ -516,7 +517,6 @@ class BaseForm(formlib.form.FormBase):
         errors = []
         for name in derived_table_schema:
             ff = self.form_fields.get(name)
-            
             # skip if no form does not define a corresponding form field
             if not ff:
                 continue
@@ -543,15 +543,22 @@ class BaseForm(formlib.form.FormBase):
                         name, field.vocabularyName, value, field.vocabulary, self.context, field)
             
             # standard field validation !+ necessary, already called elsewhere? 
-            #try:
-            e = field.validate(value)
-            if e:
-                errors.append(self.set_widget_error(name, e))
-            #except (Exception,):
-            #    log.error("\n"
-            #        "    %r.validate(%r) FAILED (field %r)\n"
-            #        "    [context: %r]", field, value, name, self.context)
-            #    debug.log_exc_info(sys.exc_info(), log_handler=log.error)
+            try:
+                widget_error = field.validate(value)
+            except (RequiredMissing,) as exc:
+                widget_error = exc
+            # !+ other possible exceptions, should never pass here?
+            except (formlib.form.NoInputData, interface.Invalid, Exception,) as exc:
+                widget_error = exc
+                debug.log_exc(sys.exc_info(), log_handler=log.error)
+                log.debug(debug.class_inheritance(exc))
+                log.error("\n"
+                    "    %r.validate(%r) FAILED (field %r)\n"
+                    "    [context: %r]", field, value, name, self.context)
+            if widget_error:
+                errors.append(self.set_widget_error(name, widget_error))
+                widget_error = None
+                continue
             
             # get db column definition
             domain_attr = getattr(dm, name)
