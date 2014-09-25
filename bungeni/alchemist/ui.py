@@ -555,7 +555,13 @@ class BaseForm(formlib.form.FormBase):
                         "stuffing vocabulary instance %s [context: %r] onto field %s ...", 
                         name, field.vocabularyName, value, field.vocabulary, self.context, field)
             '''
-            
+            # !+VTF a "temporary" and simpler version of above, to avoid 
+            # AttributeError in try block below (and incorrectly failed validation).
+            TMP_SET_VOCAB = False
+            if hasattr(field, "vocabulary") and field.vocabulary is None:
+                TMP_SET_VOCAB = True
+                from bungeni.alchemist.utils import get_vocabulary
+                field.vocabulary = get_vocabulary(field.vocabularyName)(self.context)
             # standard field validation !+ necessary, already called elsewhere? 
             try:
                 widget_error = field.validate(value)
@@ -569,6 +575,10 @@ class BaseForm(formlib.form.FormBase):
                 log.error("\n"
                     "    %r.validate(%r) FAILED (field %r)\n"
                     "    [context: %r]", field, value, name, self.context)
+                #raise # !+?
+            # !+VTF clear any vocabulary that we preset above
+            if TMP_SET_VOCAB:
+                field.vocabulary = None
             if widget_error:
                 errors.append(self.set_widget_error(name, widget_error))
                 widget_error = None
