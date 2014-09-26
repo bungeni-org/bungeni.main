@@ -205,7 +205,8 @@ class ILanguageProvider(interface.Interface):
         """Return a language code.
         """
 
-class IWorkspaceContainer(interface.Interface):
+from bungeni.models.interfaces import ISUBMENU_workspace_add_parliamentary_content
+class IWorkspaceContainer(ISUBMENU_workspace_add_parliamentary_content):
     """Workspace containers
     """
 class IWorkspaceUnderConsiderationContainer(IWorkspaceContainer):

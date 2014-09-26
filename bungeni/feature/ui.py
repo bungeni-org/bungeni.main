@@ -262,21 +262,18 @@ def setup_customization_ui():
             # !+workspace_feature_add(mr, oct-2012) note that an enabled
             # workspace feature also implies "add" functionality for the type
             first_tab = capi.workspace_tabs[0]
-            action = "../../{first_tab}/add_{k}".format(
-                first_tab=first_tab, k=type_key)
+            action_verb = "add_{k}".format(k=type_key)
+            action = "../../{first_tab}/{action_verb}".format(
+                first_tab=first_tab, action_verb=action_verb)
             # !+MENUITEM_TITLE_r11350(mr, jun-2014) am switching the title of these 
             # two menuItems to use the type_key instead of the ti label, as it seems 
             # ZCML does not allow to have a same @title value for multiple menuItem 
             # declarations for the same menu + target interface (even if @action,
             # @permission are different).
-            register_menu_item(type_key, "Add", type_key, #type_title, !+MENUITEM_TITLE_r11350
-                "bungeni.models.interfaces.IGroup",
-                action,
-                menu="workspace_add_parliamentary_content",
-                filter_="python: context.is_type_workspaced(%r)" % (type_key),
-                order=7)
-            register_menu_item(type_key, "Add", type_key, #type_title, !+MENUITEM_TITLE_r11350
-                "bungeni.core.interfaces.IWorkspaceContainer", 
+            # bungeni.models.interfaces.IGroup, bungeni.core.interfaces.IWorkspaceContainer
+            register_menu_item(type_key, "Add", 
+                action_verb, #type_title, !+MENUITEM_TITLE_r11350
+                "bungeni.models.interfaces.ISUBMENU_workspace_add_parliamentary_content",
                 action,
                 menu="workspace_add_parliamentary_content",
                 filter_="python: context.is_type_workspaced(%r)" % (type_key),

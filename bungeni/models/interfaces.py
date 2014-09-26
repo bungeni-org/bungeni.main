@@ -71,7 +71,13 @@ class IBungeniUser(interface.Interface):
 IUser = IBungeniUser
 class IUserContainer(IAlchemistContainer): pass
 
-class IGroup(interface.Interface):
+
+class ISUBMENU_workspace_add_parliamentary_content(interface.Interface):
+    """Interface dedicated to register submenu items on the 
+    "workspace_add_parliamentary_content" menu -- not to have to register
+    essentially same submenu items multiple times...
+    """
+class IGroup(ISUBMENU_workspace_add_parliamentary_content):
     """A group in bungeni.
     """
 
