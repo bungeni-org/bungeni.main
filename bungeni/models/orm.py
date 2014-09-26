@@ -903,13 +903,14 @@ mapper(domain.OAuthAccessToken, schema.oauth_access_token,
 
 
 # !+CUSTOM
-mapper(domain.Legislature,
-    inherits=domain.Group,
-    polymorphic_identity=polymorphic_identity(domain.Legislature)
-)
 mapper(domain.Chamber,
     inherits=domain.Group,
     polymorphic_identity=polymorphic_identity(domain.Chamber)
+)
+# !+LEGISLATURE_AS_CHAMBER
+mapper(domain.Legislature,
+    inherits=domain.Chamber,
+    polymorphic_identity=polymorphic_identity(domain.Legislature)
 )
 mapper(domain.Member,
     inherits=domain.GroupMember,

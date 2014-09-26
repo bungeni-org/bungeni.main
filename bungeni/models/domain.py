@@ -1227,8 +1227,14 @@ class OAuthAccessToken(Entity):
 
 # !+CUSTOM
 
+class Chamber(Group):
+    """A chamber in parliament.
+    """
+    interface.implements(interfaces.IChamber)
+
 # legislature
-class Legislature(Group):
+# !+LEGISLATURE_AS_CHAMBER
+class Legislature(Chamber):
     """The conceptual "parliament" singleton, that may be composed of one or 
     two chambers. 
     
@@ -1244,10 +1250,6 @@ class Legislature(Group):
         return cls._instance
     interface.implements(interfaces.ILegislature)
 
-class Chamber(Group):
-    """A chamber in parliament.
-    """
-    interface.implements(interfaces.IChamber)
 
 class Member(GroupMember):
     """Member of a Chamber i.e. of "Parliament")
