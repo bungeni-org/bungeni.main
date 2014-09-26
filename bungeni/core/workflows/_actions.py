@@ -124,7 +124,6 @@ def propagate_parent_assigned_group_role(child_doc):
     """
     from bungeni.models.interfaces import IDoc
     assert IDoc.providedBy(child_doc), "Not a Doc: %s" % (child_doc)
-    assert child_doc.group is None, "!+GROUP_ID must be unset! %s" % (child_doc)
     def get_parent_doc_assigned_group(child_doc):
         parent_group_assignments = child_doc.head.sa_group_assignments
         for group_assignment in parent_group_assignments:
@@ -139,5 +138,9 @@ def propagate_parent_assigned_group_role(child_doc):
             return group_assignment.principal
     pag = parent_assigned_group = get_parent_doc_assigned_group(child_doc)
     assert pag is not None, child_doc
+    # !+ is this constraint correct?
+    assert child_doc.group is pag, \
+        "!+GROUP child doc [%s] group [%s] must be the assigned group [%s] for parent doc [%s]" % (
+            child_doc, child_doc.group, pag, child_doc.head)
     utils.set_role(pag.group_role, pag.principal_name, child_doc)
 
