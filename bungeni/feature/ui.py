@@ -199,11 +199,11 @@ def setup_customization_ui():
                 sitting_feature = ti.workflow.get_feature("sitting")
                 for calendar_doc_type_key in sitting_feature.p.calendar_doc_types:
                     CALENDAR_DOC_TYPE_KEYS.add(calendar_doc_type_key)
-                    #calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
+                    calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
                     container_property_name = naming.plural(calendar_doc_type_key)
                     register_menu_item(calendar_doc_type_key, 
                         "Add",
-                        "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
+                        "Add %s..." % (calendar_doc_ti.label), #!+MENUITEM_TITLE
                         model_interface_qualname,
                         "./%s/add" % (container_property_name),
                         menu="additems", 
@@ -272,7 +272,7 @@ def setup_customization_ui():
             # @permission are different).
             # bungeni.models.interfaces.IGroup, bungeni.core.interfaces.IWorkspaceContainer
             register_menu_item(type_key, "Add", 
-                action_verb, #type_title, !+MENUITEM_TITLE_r11350
+                type_title, # !+MENUITEM_TITLE
                 "bungeni.models.interfaces.ISUBMENU_workspace_add_parliamentary_content",
                 action,
                 menu="workspace_add_parliamentary_content",
@@ -379,13 +379,13 @@ def setup_customization_ui():
     # once-only processing
     for calendar_doc_type_key in CALENDAR_DOC_TYPE_KEYS:
         # !+CALENDAR_DOC_TYPES
-        #calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
+        calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
         container_property_name = naming.plural(calendar_doc_type_key)
         # !+SchedulingContext why do they need to be different?
         # plenary scheduling
         register_menu_item(calendar_doc_type_key, 
             "Add", 
-            "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
+            "Add %s..." % (calendar_doc_ti.label), #!+MENUITEM_TITLE
             "bungeni.core.schedule.WorkspaceSchedulingContext",
             "./%s/add" % (container_property_name),
             menu="plone_contentmenu", 
@@ -394,7 +394,7 @@ def setup_customization_ui():
         # group (committee) scheduling 
         register_menu_item(calendar_doc_type_key, 
             "Add", 
-            "Add %s..." % (calendar_doc_type_key), #calendar_doc_ti.label), !+MENUITEM_TITLE
+            "Add %s..." % (calendar_doc_ti.label), #!+MENUITEM_TITLE
             "bungeni.core.schedule.GroupSchedulingContext",
             "./../%s/add" % (container_property_name),
             menu="plone_contentmenu", 

@@ -397,6 +397,16 @@ def register_new_custom_type(type_key, sys_archetype_key, custom_archetype_key,
         if not interfaces.ILegislativeContent.implementedBy(domain_model):
             classImplements(domain_model, interfaces.ILegislativeContent)
     
+    # !+MENUITEM_TITLE check uniqueness constraint on type labels -- due to 
+    # zope.componenet registration issues on registering multiple menuitems on 
+    # same (interface, title) pairs, may be changed in future... possible 
+    # alternative is to infer a sub-interface to distinguish between "same" pairs
+    if label is not None:
+        for tk, ti in _iter():
+            assert not label == ti.label, \
+                "Label %r for custom type %r is not unique (see type %r)" % (
+                    label, type_key, tk)
+    
     # type_info entry
     ti = TI(type_key, workflow_key, domain_iface, domain_model, archetype_model)
     ti.descriptor_key = descriptor_key

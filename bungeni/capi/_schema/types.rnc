@@ -81,6 +81,8 @@ grammar {
         # i.e. if label/container_label are present, the mechanism to auto-derive 
         # the display_name/container_name from @name (as type_key) will be 
         # "hidden" by the specified fixed value.
+        # !+MENUITEM_TITLE due to zope.componenet registration issues, the label 
+        # for the type is for now required to be unique 
         attribute label { text }?, # i18n msgid, descriptor.display_name
         attribute container_label { text }?, # i18n msgid, descriptor.container_name
         

@@ -153,6 +153,8 @@
         i.e. if label/container_label are present, the mechanism to auto-derive 
         the display_name/container_name from @name (as type_key) will be 
         "hidden" by the specified fixed value.
+        !+MENUITEM_TITLE due to zope.componenet registration issues, the label 
+        for the type is for now required to be unique 
       -->
       <attribute name="label"/>
     </optional>
