@@ -577,8 +577,8 @@ class GroupDescriptor(ModelDescriptor):
 
 class GroupAssignmentDescriptor(ModelDescriptor):
     localizable = False
-    display_name = "Document Group Assignment" # !+
-    container_name = "Document Group Assignment" # !+
+    display_name = "Group Assignment"
+    container_name = "Group Assignments"
     fields = [
         F(name="principal_id",
             label="Group",

@@ -935,9 +935,9 @@
     
    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.feature.interfaces.IFeatureGroupAssignment"
-        action="group_assignments"
-        title="Group Assignment"
-        permission="bungeni.group_assignment.View"
+        action="group_assignments/add"
+        title="Add group assignment"
+        permission="bungeni.group_assignment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="2"
     />
