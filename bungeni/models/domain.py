@@ -404,7 +404,7 @@ class Doc(Entity):
                 chamber = utils.get_user_chamber(owner)
                 log.warn("Doc.on_create: falling back to picking off chamber_id "
                     "[%s] from Doc.owner_id [%s] for new doc %s [doc_id=%s]",
-                        chamber.group_id, sself.owner_id, elf, self.doc_id)
+                        chamber.group_id, self.owner_id, self, self.doc_id)
             self.chamber_id = chamber.group_id
         # !+GROUP_ID_REQUIRED if no group_id, push back chamber_id as group_id...
         if self.group_id is None:
