@@ -400,20 +400,21 @@ class Doc(Entity):
             chamber = utils.get_chamber_for_group(self.group)
             # above will be None if self.group is None or is outside of a chamber...
             if chamber is None:
-                chamber = utils.get_user_chamber(utils.get_login_user())
+                owner = utils.get_user(self.owner_id)
+                chamber = utils.get_user_chamber(owner)
                 log.warn("Doc.on_create: falling back to picking off chamber_id "
-                    "[%s] from logged in user for new doc %s [doc_id=%s]",
-                        chamber.group_id, self, self.doc_id)
+                    "[%s] from Doc.owner_id [%s] for new doc %s [doc_id=%s]",
+                        chamber.group_id, sself.owner_id, elf, self.doc_id)
             self.chamber_id = chamber.group_id
         # !+GROUP_ID_REQUIRED if no group_id, push back chamber_id as group_id...
         if self.group_id is None:
             self.group_id = self.chamber_id
             log.warn("Doc.on_create: setting None group_id to just be "
                 "chamber_id [%s] for new doc %s [doc_id=%s]",
-                    chamber.group_id, self, self.doc_id)
+                    self.chamber_id, self, self.doc_id)
         # requires self db id to have been updated
-        from bungeni.core.workflows import utils
-        utils.assign_ownership(self)
+        from bungeni.core import workflows
+        workflows.utils.assign_ownership(self)
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id
