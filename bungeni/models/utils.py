@@ -28,6 +28,15 @@ def get_ancestor_group_for_context(context, name="group", interface=interfaces.I
     return common.getattr_ancestry(context, 
         name=name, acceptable=interface.providedBy)
 
+def is_descendent_of(group, ancestor):
+    """Does group descend from ancestor?
+    """
+    if group is None:
+        return False
+    # !+ comparing with "is" keyword operator fails without removeSecurityProxy
+    parent_group = group.parent_group
+    return parent_group == ancestor or is_descendent_of(parent_group, ancestor)
+
 
 # legislature and chambers
 

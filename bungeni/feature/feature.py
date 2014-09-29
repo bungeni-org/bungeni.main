@@ -82,6 +82,17 @@ class PPV(object):
     def integer(value, default=None):
         return int(value or default or 0)
 
+    @staticmethod
+    def _enumeration(value, allowed_values=()):
+        assert value in allowed_values, \
+            "Invalid value %r - must be one of %s" % (value, allowed_values)
+        return value
+    
+    @staticmethod
+    def group_limit(value, default="legislature"):
+        return PPV._enumeration(value or default, 
+            allowed_values=("legislature", "chamber")) # !+chamber-other?
+
 
 # containers
 
@@ -319,9 +330,6 @@ class Address(Feature):
 
 
 
-
-# !+ resolve why assembly/senate duplicate menu items in admin add legislative content....
-
 class Workspace(Feature):
     """Support for the "workspace" feature.
     """
@@ -333,6 +341,7 @@ class Workspace(Feature):
         # MUST be declared in this way. This is to replace assumption to-date 
         # that a legislative document may only be created within a chamber.
         "group_names": dict(type="space_separated_names", default=None)
+        # !+ replace with "group_types" and "group_limit" ?
     }
     subordinate_interface = None
     
@@ -361,7 +370,7 @@ class Email(Feature):
 
 
 class UserAssignment(Feature):
-    """Support for the "user_assignment" feature (Doc). !+User?
+    """Support for the "user_assignment" feature (Doc). !+ "assignee" on member?
     """
     feature_interface = interfaces.IFeatureUserAssignment
     feature_parameters = {
@@ -372,20 +381,28 @@ class UserAssignment(Feature):
 
 
 class GroupAssignment(Feature):
-    """Support for the "group_assignment" feature (Doc). !+Group?
+    """Support for the "group_assignment" feature (Doc). !+ "assignee" on group?
     """
     feature_interface = interfaces.IFeatureGroupAssignment
     feature_parameters = {
         # parameter "assignable_group_types":
         # Allow the doc to be assignable only to groups of the specified types.
         # Default is None which is taken to imply all group types in the system.
-        "assignable_group_types": dict(type="space_separated_type_keys", default=None)
+        "assignable_group_types": dict(type="space_separated_type_keys", default=None),
+        # parameter "assignable_group_limit": "legislature" | "chamber"
+        # Limit the assignable groups only to descendent groups of the 
+        # document's "owning" chamber or unlimited i.e. all child groups within
+        # the legislature. Default is "legislature".
+        "assignable_group_limit": dict(type="group_limit", default="legislature"),
     }
     subordinate_interface = model_ifaces.IGroupAssignment
     
     # !+QUALIFIED_FEATURES(mr, apr-2013) may need to "qualify" each assignment!
     # Or, alternatively, each "group_assignment" enabling needs to be "part of" 
     # a qualified "event" feature.
+    # Or, parameter "activity": to qualify assignment, what gets written
+    # into doc_principal.activty column & what domain.GroupAssignment
+    # subtype is selected as thetype for this assigment "instance"
     
     def decorate_ui(self, model):
         add_info_container_to_descriptor(model, "group_assignments", "group_assignment", "doc_id")

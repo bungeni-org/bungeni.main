@@ -408,14 +408,18 @@ set_vocabulary_factory("group", DatabaseSource(
 
 class GroupAssignmentDatabaseSource(DatabaseSource):
     """Groups that may have a document assigned to them.
+    Contextual and parametrized by the "group_assignmment" feature settings for
+    the type of document that is being assigned to a group.
     """
-    def construct_query(self, context):
-        # assign_doc
+    def _assign_doc(self, context):
         if IGroupAssignmentContainer.providedBy(context):
-            assign_doc = context.__parent__
+            return context.__parent__
         else:
             assert IGroupAssignment.providedBy(context)
-            assign_doc = context.doc
+            return context.doc
+    
+    def construct_query(self, context):
+        assign_doc = self._assign_doc(context)
         assert assign_doc.group_assignment_feature.enabled
         # query
         query = super(GroupAssignmentDatabaseSource, self).construct_query(context)
@@ -433,6 +437,19 @@ class GroupAssignmentDatabaseSource(DatabaseSource):
         if assignable_group_types:
             query = query.filter(dm.type.in_(assignable_group_types))
         return query
+    
+    def execute_query(self, context):
+        groups = super(GroupAssignmentDatabaseSource, self).execute_query(context)
+        assign_doc = self._assign_doc(context)
+        # filter query on assignable_group_limit
+        assignable_group_limit = \
+            assign_doc.group_assignment_feature.p["assignable_group_limit"]
+        if assignable_group_limit == "chamber":
+            chamber = utils.get_chamber_for_context(context, name="chamber")
+            groups[:] = [ group for group in groups
+                if group.active and utils.is_descendent_of(group, chamber) ]
+        return groups
+
 set_vocabulary_factory("group_assignment", GroupAssignmentDatabaseSource(
         # type_key, token_field, value_field
         "group", "principal_name", "principal_id",
@@ -460,11 +477,11 @@ class ChamberGroupDatabaseSource(DatabaseSource):
     """All active groups of specified type within the context's chamber.
     """
     def execute_query(self, context):
+        groups = super(ChamberGroupDatabaseSource, self).execute_query(context)
         chamber = utils.get_chamber_for_context(context, name="group")
-        query = self.construct_query(context)
-        return [ group for group in query.all()
-            if group.active and 
-                utils.get_chamber_for_context(group, name="parent_group") == chamber ]
+        return [ group for group in groups
+            if group.active and utils.is_descendent_of(group, chamber) ]
+        # get_chamber_for_group(group)
 set_vocabulary_factory("chamber_committee", ChamberGroupDatabaseSource(
         "committee", "principal_name", "group_id",
         title_field="combined_name",
