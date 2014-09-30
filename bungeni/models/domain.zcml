@@ -333,12 +333,14 @@
             attributes="
                 principal_id
                 doc_id
+                date
             "
         />
         <require permission="bungeni.group_assignment.Edit"
             set_attributes="
                 principal_id
                 doc_id
+                date
             "
         />
     </class>
