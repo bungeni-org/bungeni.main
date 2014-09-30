@@ -21,7 +21,6 @@
   </start>
   <define name="WORKSPACE">
     <element name="workspace">
-      <attribute name="id"/>
       <oneOrMore>
         <ref name="STATE"/>
       </oneOrMore>

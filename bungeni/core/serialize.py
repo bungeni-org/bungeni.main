@@ -277,7 +277,7 @@ def publish_to_xml(context):
             os.makedirs(path)
         except OSError as exc:
             if exc.errno == errno.EEXIST and os.path.isdir(path):
-                log.info("Error Folder : %s already exists, ignoring exception " % path)
+                log.info("Error Folder : %s already exists, ignoring exception ", path)
             else:
                 raise
 
@@ -479,8 +479,8 @@ def serialization_notifications_callback(channel, method, properties, body):
                 publish_to_xml(obj)
             except Exception, e:
                 ex_type, ex, tb = sys.exc_info()
-                log.info("Error while publish_to_xml : %s", repr(traceback.format_tb(tb)))
-                log.info("Error info type: %s, obj_key: %s, obj: %s" % (obj_type, obj_key, obj))
+                log.warn("Error while publish_to_xml : %r", traceback.format_tb(tb))
+                log.warn("Error info type: %s, obj_key: %s, obj: %s", obj_type, obj_key, obj)
                 notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
                     obj=obj, message=obj_data, error=e)
             channel.basic_ack(delivery_tag=method.delivery_tag)
@@ -602,7 +602,7 @@ def batch_serialize(type_key="*", start_date=None, end_date=None):
         # sometimes, so eliminating those
         objects = filter(None, objects)
         map(queue_object_serialization, objects)
-        log.error(" COUNTING_TYPES_SERIALIZED -- %s COUNT -- %s" % (domain_model, len(objects)))
+        log.error(" COUNTING_TYPES_SERIALIZED -- %s COUNT -- %s", domain_model, len(objects))
         serialized_count += len(objects)
     return serialized_count
 
@@ -708,7 +708,7 @@ def queue_object_serialization(obj):
         )
     )
     txn = transaction.get()
-    log.error("AACH key: %s , type : %s" % (primary_key, unproxied.__class__))
+    log.error("AACH key: %s , type : %s", primary_key, unproxied.__class__)
     txn.addAfterCommitHook(bungeni.core.notifications.post_commit_publish, (), kwargs)
  
     
