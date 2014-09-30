@@ -9,6 +9,7 @@ $Id$
 logging = __import__("logging")
 log = logging.getLogger("bungeni.core.serialize")
 import os
+import errno
 import threading
 import functools
 import inspect
@@ -267,7 +268,18 @@ def publish_to_xml(context):
     path = os.path.join(setupStorageDirectory(), obj_type)
     log.info("Setting up path to write to : %s", path)
     if not os.path.exists(path):
-        os.makedirs(path)
+        #
+        # !+THREADSAFE(AH, 2014-09-24) making makedirs threadsafe, 
+        # sometimes between checking for existence and execution 
+        # of makedirs() the folder has already been created by 
+        # another thread
+        try:
+            os.makedirs(path)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                log.info("Error Folder : %s already exists, ignoring exception " % path)
+            else:
+                raise
 
     # xml file path
     file_path = os.path.join(path, context_file_name) 
@@ -468,6 +480,7 @@ def serialization_notifications_callback(channel, method, properties, body):
             except Exception, e:
                 ex_type, ex, tb = sys.exc_info()
                 log.info("Error while publish_to_xml : %s", repr(traceback.format_tb(tb)))
+                log.info("Error info type: %s, obj_key: %s, obj: %s" % (obj_type, obj_key, obj))
                 notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
                     obj=obj, message=obj_data, error=e)
             channel.basic_ack(delivery_tag=method.delivery_tag)
