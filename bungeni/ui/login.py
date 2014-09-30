@@ -17,47 +17,59 @@ from zope.formlib import form
 from zope.formlib.namedtemplate import NamedTemplate
 from zope.publisher.browser import BrowserView
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
-from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.component import getUtility
 
 from bungeni.core.interfaces import IBungeniMailer
 from bungeni.core.language import I18N_COOKIE_NAME
 
-from bungeni.alchemist import Session, ui
+from bungeni.alchemist import Session
 from bungeni.models.domain import User
 from bungeni.models.domain import PasswordRestoreLink
 from bungeni.models.utils import get_login_user
 
 from bungeni.ui import widgets
-import bungeni.ui.utils as ui_utils
 from bungeni.ui.forms.common import EditForm
+from bungeni.ui.utils.url import absoluteURL
+from bungeni.utils.common import get_application
 from bungeni import _
-
 
 SECRET_KEY = "bungeni"
 
-class ILoginForm(interface.Interface):
-    login = schema.TextLine(title=_("label_login_form_username",
-        default=u"Username"))
-    password = schema.Password(title=_("label_login_form_password", 
-        default=u"Password"))
-    camefrom = schema.TextLine(required=False)
+
+class Profile(EditForm):
+    form_name = _(u"Profile")
 
 
-class Login(form.FormBase):
+class Logout(BrowserView):
+    def __call__( self ):
+        self.request.response.expireCookie("wc.cookiecredentials")
+        self.request.response.expireCookie(I18N_COOKIE_NAME)
+        site_url = absoluteURL(get_application(), self.request)
+        self.request.response.redirect(site_url)
+
+
+
+class LoginBase(form.FormBase):
+    template = NamedTemplate("alchemist.form")
+    prefix = ""
+
+
+class Login(LoginBase):
+    class ILoginForm(interface.Interface):
+        login = schema.TextLine(title=_("label_login_form_username",
+            default=u"Username"))
+        password = schema.Password(title=_("label_login_form_password", 
+            default=u"Password"))
+        camefrom = schema.TextLine(required=False)
     form_fields = form.Fields(ILoginForm)
     form_fields["camefrom"].custom_widget = widgets.HiddenTextWidget
-    prefix = ""
     form_name = _("login_form_title", default=u"Login")
-    template = NamedTemplate("alchemist.form")
-
+    
     def __call__(self):
         if not IUnauthenticatedPrincipal.providedBy(self.request.principal):
-            app = getSite()
-            workspace = app["workspace"]
-            self.request.response.redirect(
-                ui_utils.url.absoluteURL(workspace, self.request))
+            workspace = get_application()["workspace"]
+            self.request.response.redirect(absoluteURL(workspace, self.request))
         return super(Login, self).__call__()
 
     @form.action(_("label_login_form_login", default=u"Login"),
@@ -69,7 +81,7 @@ class Login(form.FormBase):
             if data.get("camefrom", None) and data.get("camefrom").strip():
                 camefrom = data["camefrom"].strip()
             else:
-                camefrom = ui_utils.url.absoluteURL(getSite(), self.request)
+                camefrom = absoluteURL(get_application(), self.request)
             self.status = _("You are now logged in")
             self.request.response.redirect(camefrom)
 
@@ -79,34 +91,19 @@ class Login(form.FormBase):
         super(Login, self).update()
 
 
-class Logout(BrowserView):
-    def __call__( self ):
-        self.request.response.expireCookie("wc.cookiecredentials")
-        self.request.response.expireCookie(I18N_COOKIE_NAME)
-        site_url = ui_utils.url.absoluteURL(getSite(), self.request)
-        self.request.response.redirect( site_url )
-
-
-class IRestoreLoginForm(interface.Interface):
-    email = schema.TextLine(
-        title=_("label_restore_login_email", default=u"Email"))        
-
-class RestoreLogin(form.FormBase):
+class RestoreLogin(LoginBase):
+    class IRestoreLoginForm(interface.Interface):
+        email = schema.TextLine(
+            title=_("label_restore_login_email", default=u"Email"))        
     form_fields = form.Fields(IRestoreLoginForm)
-    prefix = ""
     form_name = _(u"Restore Login")
-    
-    template = NamedTemplate("alchemist.form")
     
     def __call__(self):
         if not IUnauthenticatedPrincipal.providedBy(self.request.principal):
-            app = getSite()
-            workspace = app["workspace"]
-            self.request.response.redirect(
-                        ui_utils.url.absoluteURL(workspace, self.request))
-        
+            workspace = get_application()["workspace"]
+            self.request.response.redirect(absoluteURL(workspace, self.request))
         return super(RestoreLogin, self).__call__()
-            
+    
     @form.action(_(u"Restore"), name="restore")
     def handle_restore(self, action, data):
         email = data.get("email", "")
@@ -129,46 +126,34 @@ class RestoreLogin(form.FormBase):
                 self.status = _(u"Wrong email address.")
 
 
-class IRestorePasswordForm(interface.Interface):
-    login = schema.TextLine(
-        title=_("label_restore_password_username", default=u"Username"), 
-        required=False
-    )
-    email = schema.TextLine(
-        title=_("label_restore_password_email", default=u"Email"), 
-        required=False
-    )
-    
-class RestorePassword(form.FormBase):
+class RestorePassword(LoginBase):
+    class IRestorePasswordForm(interface.Interface):
+        login = schema.TextLine(
+            title=_("label_restore_password_username", default=u"Username"), 
+            required=False)
+        email = schema.TextLine(
+            title=_("label_restore_password_email", default=u"Email"), 
+            required=False)
     form_fields = form.Fields(IRestorePasswordForm)
-    prefix = ""
     form_name = _(u"Restore Password")
-    
-    template = NamedTemplate("alchemist.form")
     
     def __call__(self):
         if not IUnauthenticatedPrincipal.providedBy(self.request.principal):
-            app = getSite()
-            workspace = app["workspace"]
-            self.request.response.redirect(
-                        ui_utils.url.absoluteURL(workspace, self.request))
-            
+            workspace = get_application()["workspace"]
+            self.request.response.redirect(absoluteURL(workspace, self.request))
         return super(RestorePassword, self).__call__()
-            
+    
     @form.action(_(u"Restore"), name="restore")
     def handle_restore(self, action, data):
-        site_url = ui_utils.url.absoluteURL(getSite(), self.request)
+        site_url = absoluteURL(get_application(), self.request)
         login = data.get("login", "")
         email = data.get("email", "")
         user = None
         session = Session()
         if email:
-            user = session.query(User).filter(
-                                User.email==email).first()
+            user = session.query(User).filter(User.email==email).first()
         elif login:
-            user = session.query(User).filter(
-                                User.login==login).first()
-                                    
+            user = session.query(User).filter(User.login==login).first()
         if user:
             email = user.email
             link = session.query(PasswordRestoreLink).filter(
@@ -179,17 +164,15 @@ class RestorePassword(form.FormBase):
                     return
             else:
                 link = PasswordRestoreLink()
-                
-            link.hash = hashlib.sha224(user.login + 
-                                        SECRET_KEY + 
-                                        str(datetime.datetime.now())).hexdigest()
+            
+            link.hash = hashlib.sha224(
+                user.login + SECRET_KEY + str(datetime.datetime.now())).hexdigest()
             link.expiration_date = datetime.datetime.now() + datetime.timedelta(1)
             link.user_id = user.user_id
             session.add(link)
-                        
+            
             mailer = getUtility(IBungeniMailer)
-                
-                
+            
             self.message = _(u"Restore password link: ")\
                         + "%s/reset_password?key=%s" % (site_url, link.hash)
             self.message += u"\n\n"
@@ -205,26 +188,22 @@ class RestorePassword(form.FormBase):
         else:
             self.status = _(u"User not found!")
 
-        
-class IResetPasswordForm(interface.Interface):
-    password = schema.Password(title=_(u"Password"))
-    confirm_password = schema.Password(title=_(u"Confirm Password"))
-    key = schema.TextLine(required=False)
 
-class ResetPassword(form.FormBase):
+class ResetPassword(LoginBase):
+    class IResetPasswordForm(interface.Interface):
+        password = schema.Password(title=_(u"Password"))
+        confirm_password = schema.Password(title=_(u"Confirm Password"))
+        key = schema.TextLine(required=False)
     form_fields = form.Fields(IResetPasswordForm)
     form_fields["key"].custom_widget = widgets.HiddenTextWidget
-    prefix = ""
     form_name = _(u"Reset Password")
     status = ""
-    template = NamedTemplate("alchemist.form")
     
     def __init__(self, *args, **kwargs):
         super(ResetPassword, self).__init__(*args, **kwargs)
-        key = self.request.get("key",self.request.get("form.key",""))
-        self.session = Session()
-        self.link = self.session.query(PasswordRestoreLink).filter(
-                                PasswordRestoreLink.hash==key).first()
+        key = self.request.get("key", self.request.get("form.key",""))
+        self.link = Session().query(PasswordRestoreLink
+                        ).filter(PasswordRestoreLink.hash==key).first()
     
     def __call__(self):
         if not self.link:
@@ -251,56 +230,45 @@ class ResetPassword(form.FormBase):
                 self.status = _(u"Password successfully reset!")
 
 
-class Profile(EditForm):
-    form_name = _(u"Profile")
-
-class IChangePasswordForm(interface.Interface):
-    old_password = schema.Password(title=_(u"Old password"), required=True)
-    pswd = schema.Password(title=_(u"New password"), required=True)
-    confirm_password = schema.Password(title=_(u"Confirm new password"),
-                                       required=True)
-    
-    @interface.invariant
-    def checkOldPassword(self):
-        if not get_login_user().checkPassword(self.old_password):
-            raise interface.Invalid(_("Old password incorrect"), "old_password")
-    
-
-class ChangePasswordForm(ui.BaseForm):
+class ChangePasswordForm(LoginBase):
+    class IChangePasswordForm(interface.Interface):
+        old_password = schema.Password(title=_(u"Old password"), required=True)
+        password = schema.Password(title=_(u"New password"), required=True)
+        confirm_password = schema.Password(title=_(u"Confirm new password"), required=True)    
+        @interface.invariant
+        def check_old_password(self):
+            if not get_login_user().checkPassword(self.old_password):
+                raise interface.Invalid(_("Old password incorrect"), "old_password")
     form_fields = form.Fields(IChangePasswordForm)
-    
-    prefix = ""
-    form_name = _("change_password_form_title", 
-        default=u"Change password")
-    
-    # !+ only used here [ bungeni.ui.login.Login ] ?
-    template = NamedTemplate("alchemist.form")
+    form_name = _("change_password_form_title", default=u"Change password")
     
     def __init__(self, *args, **kwargs):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
-        self.session = Session()
-        self.user = get_login_user()
-            
+        self.user = get_login_user() # !+ self.context
+    
     def __call__(self):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):
-            self.request.response.redirect(
-                        ui_utils.url.absoluteURL(
-                        getSite(), self.request)+"/login"
-                        )
+            self.request.response.redirect("%s/login" % (
+                    absoluteURL(get_application(), self.request)))
         return super(ChangePasswordForm, self).__call__()
     
-    @form.action(_("label_change_password", default=u"Change password"), 
+    @form.action(
+        _("label_change_password", default=u"Change password"), 
         name="change_password")
-    def save_password(self, action, data):
-        password = data.get("pswd","")
-        confirm_password= data.get("confirm_password","")
-        
+    def change_password(self, action, data):
+        password = data.get("password", "")
+        confirm_password = data.get("confirm_password", "")
         if password:
             if password != confirm_password:
                 self.status = _("Password confirmation failed")
                 return
             self.user._password = password
-        
         self.status = _("Password changed")
-
+    ''' !+CONIFRM_PASSWORD_CHANGE_POPUP in Mozilla, if the browser is set to 
+    remember passwords for sites, a worrisome "Confirm Password Change" popup
+    with a variety of login names is displayed... to "correct" this, the user
+    should uncheck that setting i.e. in Edit -> Preferences -> Security,
+    uncheck "Remember passwords for sites". Here's some more explanations: 
+    http://forums.mozillazine.org/viewtopic.php?f=38&t=538550
+    '''
 
