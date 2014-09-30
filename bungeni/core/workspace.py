@@ -462,7 +462,7 @@ def load_workspaces():
 
 @capi.bungeni_custom_errors
 def load_workspace(file_name, domain_class, workflow):
-    """Loads the workspace configuration for each documemnt.
+    """Loads the workspace configuration for each document.
     """
     # !+LEGISLATURE_SETUP on first run on an emtpy database, no groups exists 
     # and so all these tests will fail -- as a partial workaround, only execute
@@ -485,24 +485,32 @@ def load_workspace(file_name, domain_class, workflow):
     workspace = capi.schema.validate_file_rng("workspace", file_path)
     type_key = file_name.split(".")[0]
     workspace_utility.register_domain_type(domain_class, type_key)
+    # to bookkeep that every workflow state is workspace-declared
+    workflow_state_ids = set(workflow._states_by_id.keys())
     for state in workspace.iterchildren(tag="state"):
-        # Raises invalid state error if there is no such state defined in the
-        # workflow
-        workflow.get_state(state.get("id"))
+        state_id = state.get("id")
+        workflow.get_state(state_id) # InvalidStateError if no such state
+        assert state_id in workflow_state_ids, \
+            "configuration file workspace/%s - duplicate declaration found for state: %r" % (
+                file_name, state_id)
+        workflow_state_ids.remove(state_id)
         for tab in state.iterchildren(tag="tab"):
-            assert tab.get("id") in capi.workspace_tabs, \
-                "Workspace configuration error : " \
-                "Invalid tab - %s. file: %s, state : %s" % (
-                    tab.get("id"), file_name, state.get("id"))
-            if tab.get("roles"): # !+ required in schema
-                roles = capi.schema.qualified_roles(tab.get("roles").split())
+            tab_name = tab.get("id") # !+
+            assert tab_name in capi.workspace_tabs, \
+                "configuration file workspace/%s - invalid tab: %r [state: %r]" % (
+                    file_name, tab_name, state_id)
+            tab_roles = tab.get("roles")
+            if tab_roles:
+                roles = capi.schema.qualified_roles(tab_roles.split())
                 for role in roles:
                     assert component.queryUtility(IRole, role, None), \
-                        "Workspace configuration error : " \
-                        "Invalid role - %s. file: %s, state : %s" % (
-                            role, file_name, state.get("id"))
-                    workspace_utility.set_content(role,
-                        tab.get("id"), domain_class, state.get("id"))
+                        "configuration file workspace/%s - invalid role: %r [state: %r]" % (
+                            file_name, role, state_id)
+                    workspace_utility.set_content(
+                        role, tab_name, domain_class, state_id)
+    assert not workflow_state_ids, \
+        "configuration file workspace/%s - no declaration found for states: %s" % (
+            file_name, list(workflow_state_ids))
 
 
 class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):

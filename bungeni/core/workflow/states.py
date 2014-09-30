@@ -548,7 +548,7 @@ class Workflow(object):
         ):
         """Get the list of matching state ids in workflow.
         
-        tagged: matches all states tagged with ANY tag in in this list
+        tagged: matches all states tagged with ANY tag in this list
         not_tagged: matches all states tagged with NONE of these tags
         keys: matches all states explictly named by key here; only keys for
             which a state is actually defined are retained
@@ -562,7 +562,7 @@ class Workflow(object):
         if tagged:
             wf_tagged = [ t for t in tagged if t in self.tags ]
             if restrict:
-                assert wf_tagged==tagged, \
+                assert wf_tagged == tagged, \
                     "workflow_tagged %s != tagged %s" % (wf_tagged, tagged)
             # for tagged, we only need to consider known tags
             _tagged = set()
@@ -575,7 +575,7 @@ class Workflow(object):
         if not_tagged:
             if restrict:
                 wf_not_tagged = [ t for t in not_tagged if t in self.tags ]
-                assert wf_not_tagged==not_tagged
+                assert wf_not_tagged == not_tagged
             # for not_tagged, we must also consider all unknown tags
             _not_tagged = set(self._states_by_id.keys())
             for state in self._states_by_id.values():
@@ -586,7 +586,7 @@ class Workflow(object):
         if keys: # state_ids
             wf_keys = [ k for k in keys if k in self._states_by_id ]
             if restrict:
-                assert wf_keys==keys
+                assert wf_keys == keys
             # we may only return valid state ids
             _keys = set(wf_keys)
         assert conjunction in ("OR", "AND"), "Not supported."
@@ -769,4 +769,5 @@ class WorkflowTransitionEvent(zope.component.interfaces.ObjectEvent):
         self.destination = destination
         self.transition = transition
         self.comment = comment
+
 

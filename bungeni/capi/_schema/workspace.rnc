@@ -14,17 +14,16 @@
 
 grammar {
     include "common.rnc"
-
+    
     start = WORKSPACE
-
+    
     WORKSPACE = element workspace {
         STATE+
     }
-
+    
     STATE = element state {
         attribute id { text },
-          
-        TAB+
+        TAB*
     }
 
     TAB = element tab {

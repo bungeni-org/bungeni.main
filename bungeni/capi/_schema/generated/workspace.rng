@@ -29,9 +29,9 @@
   <define name="STATE">
     <element name="state">
       <attribute name="id"/>
-      <oneOrMore>
+      <zeroOrMore>
         <ref name="TAB"/>
-      </oneOrMore>
+      </zeroOrMore>
     </element>
   </define>
   <define name="TAB">
