@@ -80,28 +80,28 @@ def get_traversed_context(request=None, index=-1):
 
 # pick data
 
-def getattr_ancestry(context, 
-        name=None,
-        parent_ref="__parent__",
+def getattr_ancestry(context,
+        horizontal_attr=None,
+        vertical_attr="__parent__",
         acceptable=lambda v: v is not None
     ):
     """Pick off the first acceptable value, starting from {context} and 
-    traversing upwards, and testing for an cceptable value in the following 
+    traversing upwards, and testing for an acceptable value in the following 
     order:
     - the specified {context} itself
-    - (if a horizontal attribute {name} is specified) the context's value for {name}
-    - the parent of {context} via {parent_ref} that becomes the new {context}
-    - (if a horizontal attribute {name} is specified) the context's value for {name}
-    - and so on... until last parent. 
+    - the context's value for {horizontal_attr} (if a {horizontal_attr} is specified)
+    - the parent of {context} via {vertical_attr} that becomes the new {context}
+    - the context's value for {horizontal_attr} (if a {horizontal_attr} is specified)
+    - and so on... until last parent.
     Return None if no acceptable value found.
     """
     while context is not None:
         if acceptable(context):
             return context
-        if name is not None:
-            value = getattr(context, name, None)
+        if horizontal_attr is not None:
+            value = getattr(context, {horizontal_attr}, None)
             if acceptable(value):
                 return value
-        context = getattr(context, parent_ref, None)
+        context = getattr(context, vertical_attr, None)
 
 

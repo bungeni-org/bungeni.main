@@ -35,7 +35,7 @@ from bungeni.core.language import get_default_language
 from bungeni.ui.utils import url, debug
 from bungeni.ui import browser
 from bungeni.models.interfaces import IDoc, IGroup
-from bungeni.models.utils import get_chamber_for_context, get_ancestor_group_for_context
+from bungeni.models.utils import get_chamber_for_context, get_group_for_context
 from bungeni.utils.naming import polymorphic_identity
 from bungeni import translate
 
@@ -292,8 +292,9 @@ class BreadCrumbsViewlet(browser.BungeniViewlet):
         self.path = self._get_path(self.context)
         
         # if the view is a location, append this to the breadcrumbs
-        if ILocation.providedBy(self.__parent__) and \
-               IDCDescriptiveProperties.providedBy(self.__parent__):
+        if (ILocation.providedBy(self.__parent__) and
+               IDCDescriptiveProperties.providedBy(self.__parent__)
+            ):
             self.path.append({
                     "name": self.__parent__.title,
                     "url": None,
@@ -444,7 +445,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             # do not include doc containers for docs who do not specifically 
             # declare the parent group instance as a workspace.group_name
             if IDoc.implementedBy(container.domain_model):
-                group = get_ancestor_group_for_context(container)
+                group = get_group_for_context(container)
                 assert IGroup.providedBy(group)
                 doc_type_key = polymorphic_identity(container.domain_model)
                 if not group.is_type_workspaced(doc_type_key):

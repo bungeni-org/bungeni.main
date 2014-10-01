@@ -625,6 +625,7 @@ mapper(domain.UserAddress, schema.address,
 )
 mapper(domain.GroupAddress, schema.address,
     properties={
+        "group": relation(domain.Group, uselist=False, lazy=False),
         "country": relation(domain.Country, uselist=False, lazy=False),
     },
 )
@@ -736,7 +737,9 @@ mapper(domain.ItemSchedule, schema.item_schedule,
     }
 )
 
-mapper(domain.EditorialNote, schema.editorial_note)
+mapper(domain.EditorialNote, schema.editorial_note,
+    properties={"group": relation(domain.Group, uselist=False, lazy=False)}
+)
 
 mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussion,
     properties={

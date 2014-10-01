@@ -16,17 +16,18 @@ from sqlalchemy import sql
 from sqlalchemy.orm import eagerload
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.alchemist import Session
+from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import interfaces, domain, delegation
 from bungeni.utils import common
 from bungeni.capi import capi
 
 
-def get_ancestor_group_for_context(context, name="group", interface=interfaces.IGroup):
-    """Return the first ancestor group (providing the specified interface)
-    in which the context exists, or None.
+def get_ancestor_group(group, acceptable=None):
+    """Cascade up group ancestry to first acceptable(group), or None.
     """
-    return common.getattr_ancestry(context, 
-        name=name, acceptable=interface.providedBy)
+    return common.getattr_ancestry(group, 
+        horizontal_attr=None, vertical_attr="parent_group", acceptable=acceptable)
+
 
 def is_descendent_of(group, ancestor):
     """Does group descend from ancestor?
@@ -38,51 +39,82 @@ def is_descendent_of(group, ancestor):
     return parent_group == ancestor or is_descendent_of(parent_group, ancestor)
 
 
+def get_group_for_context(context):
+    """Return the "main" (as meaning of this for type) group for this context,
+    or None if no such logical group can be determined.
+    
+    The group may be None if:
+    - context is a user who is not a member of any group within any chamber
+    - context is a core.interfaces.ISection or workspace Container, for which
+      there is no "contextual" chamber is defined in the traversal hierarchy
+    - context is an IAlchemistContainer that is not hierarchically contained
+      within an IBungeniContent (no such instance in its __parent__ ancestry)
+      
+    !+ should this be shipped out as a domain_model.group property, or 
+    interfaces organized in "how group is determined" categories?
+    """
+    if interfaces.IGroup.providedBy(context):
+        return context
+    elif interfaces.IEvent.providedBy(context):
+        return context.group or context.head.group
+    elif (interfaces.IDoc.providedBy(context) or 
+            interfaces.IGroupMember.providedBy(context) or
+            interfaces.IGroupAddress.providedBy(context) or
+            interfaces.ISitting.providedBy(context) or
+            interfaces.ITitleType.providedBy(context) or
+            interfaces.IEditorialNote.providedBy(context) or
+            interfaces.IHeading.providedBy(context)
+        ):
+        return context.group
+    elif IAlchemistContainer.providedBy(context):
+        return get_group_for_context(context.__parent__)
+    elif (interfaces.IAttachment.providedBy(context) or
+            interfaces.ISignatory.providedBy(context)
+        ):
+        return context.head.group
+    elif (interfaces.IMemberTitle.providedBy(context) or
+            interfaces.IMemberRole.providedBy(context)
+        ):
+        return context.member.group
+    elif (interfaces.IDebateRecord.providedBy(context) or
+            interfaces.ISittingAttendance.providedBy(context)
+        ):
+        return context.sitting.group
+    #raise ValueError, "No group for context: %s" % (context)
+    #from bungeni.ui.utils import debug
+    #log.warn(debug.interfaces(context))
+    log.warn("!+GROUP_FOR_CONTEXT Cannot determine group for context: %s", context)
+
+
 # legislature and chambers
 
-# !+CUSTOM
 def get_chamber_for_context(context, name="group"):
     """Return the chamber in which the context exists.
-    """
-    # first look for current chamber from context traversal stack
-    chamber = get_ancestor_group_for_context(context, name=name,
-        interface=capi.chamber_type_info.interface)
     
-    # !+ should this ever be None here? Cases when it is:
-    # - in workspace, the "contextual" chamber is not defined in the traversal 
-    #   hierarchy (even if all doc instances define the "chamber" attr directly).
-    # - context is an event (no chamber/group set) and user is a non-mp minister
+    The chamber may be None if:
+    - group is None
+    - group is outside of a chamber
+    """
+    group = get_group_for_context(context)
+    chamber = get_chamber_for_group(group) 
+    # !+LEGISLATURE_AS_CHAMBER returned chamber may be the Legislature (e.g.
+    # for a ministry outside of both chambers) ?
     if chamber is None:
-        log.warn(" !+ get_chamber_for_context: No ANCESTOR chamber found on "
-            "CONTEXT [%s] -- TEMPORARILY falling back to determining it in "
-            "some other POSSIBLY INCORRECT way ", context)
-        # is context a sub-document? If so, take the chamber of the head doc:
-        if getattr(context, "head", None):
-            head = context.head
-            if hasattr(head, "chamber"):
-                chamber = head.chamber
-                log.warn("get_chamber_for_context!+CONTEXT [%s] has no ANCESTOR chamber... "
-                    "trying via HEAD, GOT [%s]", context, chamber)
-    if chamber is None:
-        # check logged in user's chamber
+        # !+USER_CHAMBER approximation, does this always give the correct chamber?
         user = get_login_user()
         if user:
             chamber = get_user_chamber(user)
-            log.warn(" !+ get_chamber_for_context: CONTEXT [%s] has no ANCESTOR "
-                "or HEAD chamber... trying via login_user, GOT [%s]", 
-                    context, chamber)
+            log.warn("!+USER_CHAMBER [%s] via LOGIN_USER %r GOT [%s]", 
+                    context, user.login, chamber)
         else:
-            log.warn(" !+ get_chamber_for_context: CONTEXT [%s] has no ANCESTOR "
-                "or HEAD chamber... and no USER is logged in.", context)
+            log.warn("!+USER_CHAMBER [%s] - no USER logged in!", context)
     return chamber
 
 
-# !+CUSTOM
 def get_chamber_for_group(group):
     """Cascade up first group ancestry to chamber, returning it (or None).
     """
-    return common.getattr_ancestry(group, None, "parent_group",
-        acceptable=capi.chamber_type_info.interface.providedBy)
+    return get_ancestor_group(group, acceptable=capi.chamber_type_info.interface.providedBy)
     ''' !+ equivalent alternative:
     if group:
         if group.type == "chamber":
@@ -120,14 +152,26 @@ def get_user_groups(user):
             group_ids.append(group.parent_group_id)
     return parent_groups + groups
 
+
 def get_user_chamber(user):
+    """Pick off the first non-None chamber via user's group memberships (via 
+    the group) else return None. 
+    
+    !+GROUP_MEMBERSHIP_ORDER is this logic always comes out correct? 
+    What is the order that user.group_membership is returned in? 
+    Possibility of different chamber if different order?
+    """
     user_delegations = get_user_delegations(user)
     if user_delegations:
         user = user_delegations[0].user
     for gm in user.group_membership:
-        # cascade up first group ancestry, to chamber (or None)
-        return get_chamber_for_group(gm.group)
+        # cascade up the group ancestry, to chamber (or None)
+        chamber = get_chamber_for_group(gm.group)
+        if chamber is not None:
+            return chamber
 
+
+# user
 
 def get_login_user():
     """Get the logged in user, if any.
@@ -193,9 +237,8 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     # !+ the parent container SHOULD be implementing IAlchemistContainer but it
     # does not seem to! As a best alternative, that is close but conceptually 
     # not quite the same, we check for IGroup
-    from bungeni.models.interfaces import IGroup
     def func(context):
-        if IGroup.providedBy(parent_container_or_getter):
+        if interfaces.IGroup.providedBy(parent_container_or_getter):
             parent_container = parent_container_or_getter
         else:
             parent_container = parent_container_or_getter(context)
