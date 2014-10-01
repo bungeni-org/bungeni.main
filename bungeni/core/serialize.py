@@ -102,13 +102,18 @@ def setupStorageDirectory(part_target="xml_db"):
 
 def get_origin_chamber(context):
     """get the chamber applicable to this object
+    !+UPGRADE_NOTE(ah, 2014-10-01) this API needs to be deprecated
+    and its use-case merged with bungeni.models.utils.get_chamber_for_context
     """
     chamber_id = getattr(context, "chamber_id", None)
     if not chamber_id:
         group_id = getattr(context, "group_id", None)
         if group_id:
             group = Session().query(domain.Group).get(group_id)
-            while group.parent_group_id is not None:
+            # The top-most group is a legislature now, not a 
+            # chamber, but we are interested only in the chamber
+            # container.
+            while not isinstance(group, domain.Chamber):
                 group = Session().query(
                     domain.Group).get(group.parent_group_id)
             if isinstance(group, domain.Chamber):
