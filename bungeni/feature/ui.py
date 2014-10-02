@@ -346,7 +346,7 @@ def setup_customization_ui():
                         "event", event_type_key)
         
         # register other non-workspace menu items for custom types (only once)
-        # custom events !+GET_ARCHETYPE
+        # custom events !+GET_ARCHETYPE !+ARCHETYPE_INSTANTIATABLE
         if issubclass(ti.domain_model, domain.Event):
             # edit menu item
             register_menu_item(type_key, "Edit", "Edit {t}".format(t=type_title),
