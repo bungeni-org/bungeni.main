@@ -136,8 +136,8 @@ def _eval_as_dict(s):
         return d
     except (SyntaxError, TypeError, AssertionError):
         import sys
-        from bungeni.ui.utils import debug
-        debug.log_exc(sys.exc_info(), log_handler=log.info)
+        from bungeni.utils import probing
+        probing.log_exc(sys.exc_info(), log_handler=log.info)
         return {}
 '''
 

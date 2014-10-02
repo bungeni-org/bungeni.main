@@ -11,7 +11,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.utils.misc")
 
-import sys
 import os
 
 
@@ -55,24 +54,6 @@ def as_bool(s):
 import datetime, re
 def date_from_iso8601(s):
     return datetime.date(*map(int, re.split("[^\d]", s)))
-
-
-import difflib
-def unified_diff(old_str, new_str, old_name="OLD", new_name="NEW"):
-    """Return a unified diff of two strings.
-    """
-    return "".join(difflib.unified_diff(
-                old_str.splitlines(1), 
-                new_str.splitlines(1), 
-                fromfile=old_name, 
-                tofile=new_name))
-
-
-def callers_module():
-    import inspect
-    module_name = inspect.currentframe().f_back.f_globals["__name__"]
-    return sys.modules[module_name]
-
 
 def named_repr(obj, name):
     return "<%s.%s '%s' object at %s>" % (
@@ -165,22 +146,10 @@ def check_overwrite_file(file_path, content, log_handler=log.debug):
         persisted = """<NO-SUCH-FILE path="%s" />\n""" % (file_path)
     # compare with saved file, and re-write if needed
     if persisted != content:
+        from bungeni.utils import probing
         log_handler("CHANGES to file:\n%s", 
-            unified_diff(persisted, content, file_path, "NEW"))
+            probing.unified_diff(persisted, content, file_path, "NEW"))
         open(file_path, "w").write(content.encode("utf-8"))
-
-
-# introspection
-
-def get_caller_module_name(depth=1):
-    """Get the global __name__ value at the given caller depth, by default
-    the immediate caller's module.
-    
-    Calling with depth=0 is equivalent to __name__ (current module name).
-    Calling with a depth greater than call stack will throw ValueError.
-    """ 
-    return sys._getframe(depth).f_globals["__name__"]
-
 
 # 
 

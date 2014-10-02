@@ -282,7 +282,7 @@ class AlchemistContainer(Persistent, Contained):
     
     def __setitem__(self, name, item):
         #print "AlchemistContainer.__setitem__", self, repr(name), item
-        #from bungeni.ui.utils.debug import class_inheritance
+        #from bungeni.utils.probing import class_inheritance
         #print class_inheritance(self)
         #import pdb; pdb.set_trace()
         session = Session()

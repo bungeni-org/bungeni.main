@@ -49,7 +49,7 @@ from bungeni.core.emailnotifications import load_email
 #from bungeni.core.serialize import serialization_notifications
 from bungeni.ui.utils import url  # !+ core dependency on ui
 from bungeni.capi import capi
-from bungeni.utils import common, naming, register
+from bungeni.utils import common, naming, register, probing
 from bungeni import _
 
 
@@ -96,16 +96,11 @@ def on_wsgi_application_created_event(application, event):
     log.info("on_wsgi_application_created_event: _features: %s", 
         getConfigContext()._features)
     
-    import math
-    def saccadic_padding(s, jump=16, starting=32):
-        indent = jump * int(math.ceil(len(s)/float(jump)))
-        if indent < starting:
-            indent = starting
-        return " " * (indent - len(s))
     from bungeni.alchemist.utils import set_vocabulary_factory
     log.info("on_wsgi_application_created_event: Dynamic Vocabularies:\n    %s",
-        "\n    ".join(sorted([ "%s%s%s" % (v.__name__, saccadic_padding(v.__name__), v)
-                        for v in set_vocabulary_factory.registered ])))
+        "\n    ".join(sorted([ "%s%s%s" % (
+                        v.__name__, probing.saccadic_padding(v.__name__), v)
+                    for v in set_vocabulary_factory.registered ])))
 
 
 def to_locatable_container(domain_class, *domain_containers):

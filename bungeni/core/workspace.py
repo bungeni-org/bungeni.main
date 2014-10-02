@@ -38,9 +38,8 @@ from bungeni.core.interfaces import (
     IWorkspaceTrackedDocumentsContainer,
     IWorkspaceGroupsContainer,
 )
-from bungeni.ui.utils import debug
 from bungeni.ui.utils.common import get_workspace_roles
-from bungeni.utils import common
+from bungeni.utils import common, probing
 from bungeni.ui.container import get_date_strings, string_to_date
 from bungeni.core.workflows.utils import view_permission
 
@@ -153,7 +152,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
             group_id = int(kw.get("filter_group", 0) or 0) # incoming value is 
             # typically the "" empty string, resulting in exception noise below
         except (TypeError, ValueError):
-            debug.log_exc(sys.exc_info(), log_handler=log.error)
+            probing.log_exc(sys.exc_info(), log_handler=log.error)
             group_id = 0
         if group_id:
             if hasattr(domain_class, "group_id"):

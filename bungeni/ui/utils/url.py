@@ -14,10 +14,10 @@ log = __import__("logging").getLogger("bungeni.ui.utils.url")
 import sys
 import zope
 
-from bungeni.ui.utils import debug
-from bungeni.utils import common, register
+from bungeni.utils import common, register, probing
 from ploned.ui.interfaces import IBodyCSS
 from bungeni.models import utils
+
 
 def get_destination_url_path(request=None):
     """Get the (effective, sans any "traversal namespace notation" components
@@ -110,7 +110,7 @@ def absoluteURL(context, request):
     except:
         # !+ABSOLUTE_URL: TypeError: There isn't enough context to get URL information. 
         # This is probably due to incorrect setting up of location information.
-        debug.log_exc(sys.exc_info(), log_handler=log.error)
+        probing.log_exc(sys.exc_info(), log_handler=log.error)
         log.error("\n    ...CONTEXT: %s\n    ...REQUEST URL: %s", context, request.getURL())
         return ""
     while url[-1] in indexNames:

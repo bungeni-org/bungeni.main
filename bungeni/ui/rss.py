@@ -29,8 +29,8 @@ from bungeni.core.dc import IDCDescriptiveProperties
 
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
-from bungeni.ui.utils import date, uri, debug
-from bungeni.utils import naming
+from bungeni.ui.utils import date, uri
+from bungeni.utils import naming, probing
 from bungeni import _, translate
 
 
@@ -532,7 +532,7 @@ class SubscriptionView(BrowserView):
             user.subscriptions.remove(context)
         except ValueError:
             log.error("Cannot unsubscribe: [%s] not subscribed by [%s]", context, user)
-            debug.log_exc_info(sys.exc_info(), log_handler=log.error)
+            probing.log_exc_info(sys.exc_info(), log_handler=log.error)
         # Redirecting back to the item's page
         return self.request.response.redirect(redirect_url)
 

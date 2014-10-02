@@ -16,7 +16,8 @@ import zope.viewlet.viewlet
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflowed
 from bungeni.ui import z3evoque
-from bungeni.ui.utils import date, debug, misc
+from bungeni.ui.utils import date, misc
+from bungeni.utils import probing
 from bungeni import _
 
 
@@ -62,7 +63,7 @@ class BungeniBrowserView(zope.publisher.browser.BrowserPage):
             # title attribute of the component."
             return IDCDescriptiveProperties(context).title
         except (Exception,):
-            debug.log_exc(sys.exc_info(), log_handler=log.debug)
+            probing.log_exc(sys.exc_info(), log_handler=log.debug)
         # otherwise try to determine it from the context
         if getattr(context, "title", None):
             return context.title 
@@ -93,7 +94,7 @@ class BungeniBrowserView(zope.publisher.browser.BrowserPage):
             # description attribute of the component."
             return IDCDescriptiveProperties(context).description
         except (Exception,):
-            debug.log_exc(sys.exc_info(), log_handler=log.debug)
+            probing.log_exc(sys.exc_info(), log_handler=log.debug)
         # otherwise try to determine it from the context
         if getattr(context, "description", None):
             return context.description  

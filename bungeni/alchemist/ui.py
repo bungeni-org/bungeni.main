@@ -39,8 +39,8 @@ from bungeni.alchemist.interfaces import (
     IAlchemistContent,
 )
 from bungeni.alchemist import Session, utils
-from bungeni.ui.utils import date, debug
-from bungeni.utils import misc
+from bungeni.ui.utils import date
+from bungeni.utils import misc, probing
 from bungeni.capi import capi
 from bungeni import _
 
@@ -570,8 +570,8 @@ class BaseForm(formlib.form.FormBase):
             # !+ other possible exceptions, should never pass here?
             except (formlib.form.NoInputData, interface.Invalid, Exception,) as exc:
                 widget_error = exc
-                debug.log_exc(sys.exc_info(), log_handler=log.error)
-                log.debug(debug.class_inheritance(exc))
+                probing.log_exc(sys.exc_info(), log_handler=log.error)
+                log.debug(probing.class_inheritance(exc))
                 log.error("\n"
                     "    %r.validate(%r) FAILED (field %r)\n"
                     "    [context: %r]", field, value, name, self.context)
@@ -675,7 +675,7 @@ class AddForm(BaseForm, formlib.form.AddForm):
             ob = createInstance(domain_model, data)
         except TypeError:
             log.error("Failure: createInstance(%s, %s)", domain_model, data)
-            debug.log_exc(sys.exc_info(), log_handler=log.error)
+            probing.log_exc(sys.exc_info(), log_handler=log.error)
             ob = domain_model()
         # apply any context values
         self.finishConstruction(ob)

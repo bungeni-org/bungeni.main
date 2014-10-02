@@ -17,6 +17,7 @@ from sqlalchemy.orm import eagerload
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.core.interfaces import ISection
 from bungeni.models import interfaces, domain, delegation
 from bungeni.utils import common
 from bungeni.capi import capi
@@ -49,14 +50,15 @@ def get_group_for_context(context):
       there is no "contextual" chamber is defined in the traversal hierarchy
     - context is an IAlchemistContainer that is not hierarchically contained
       within an IBungeniContent (no such instance in its __parent__ ancestry)
-      
+    
     !+ should this be shipped out as a domain_model.group property, or 
     interfaces organized in "how group is determined" categories?
     """
+    group = None
     if interfaces.IGroup.providedBy(context):
-        return context
+        group = context
     elif interfaces.IEvent.providedBy(context):
-        return context.group or context.head.group
+        group = context.group or context.head.group
     elif (interfaces.IDoc.providedBy(context) or 
             interfaces.IGroupMember.providedBy(context) or
             interfaces.IGroupAddress.providedBy(context) or
@@ -65,25 +67,29 @@ def get_group_for_context(context):
             interfaces.IEditorialNote.providedBy(context) or
             interfaces.IHeading.providedBy(context)
         ):
-        return context.group
-    elif IAlchemistContainer.providedBy(context):
-        return get_group_for_context(context.__parent__)
+        group = context.group
+    elif (IAlchemistContainer.providedBy(context) or
+            ISection.providedBy(context) # !+group ALWAYS None?
+        ):
+        group = get_group_for_context(context.__parent__)
     elif (interfaces.IAttachment.providedBy(context) or
             interfaces.ISignatory.providedBy(context)
         ):
-        return context.head.group
+        group = context.head.group
     elif (interfaces.IMemberTitle.providedBy(context) or
             interfaces.IMemberRole.providedBy(context)
         ):
-        return context.member.group
+        group = context.member.group
     elif (interfaces.IDebateRecord.providedBy(context) or
             interfaces.ISittingAttendance.providedBy(context)
         ):
-        return context.sitting.group
-    #raise ValueError, "No group for context: %s" % (context)
-    #from bungeni.ui.utils import debug
-    #log.warn(debug.interfaces(context))
-    log.warn("!+GROUP_FOR_CONTEXT Cannot determine group for context: %s", context)
+        group = context.sitting.group
+    if group is None:
+        #from bungeni.utils import probing
+        #log.warn(probing.interfaces(context))
+        log.warn("!+GROUP_FOR_CONTEXT Cannot determine group for context: %s", context)
+        #raise ValueError, "No group for context: %s" % (context)
+    return group
 
 
 # legislature and chambers

@@ -21,7 +21,7 @@ import zope.event
 import zope.lifecycleevent
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
-from bungeni.utils import error, misc
+from bungeni.utils import error, misc, probing
 
 
 GRANT, DENY = 1, 0
@@ -251,10 +251,8 @@ def get_object_state_rpm(context):
     try:
         state = get_object_state(context)
     except interfaces.InvalidStateError:
-        # log it... !+bungeni.ui.utils.debug
-        cls, exc, tb = sys.exc_info()
-        log.error(""" ***get_object_state_rpm/%s:%s [%s] %s """, 
-            type(context).__name__, context.pk, cls.__name__, exc)
+        log.error("get_object_state_rpm:%s:%s", type(context).__name__, context.pk)
+        probing.log_exc(sys.exc_info(), log_handler=log.error)
         return NONE_STATE_RPM
     if state.parent_permissions:
         # this state delegates permissions to parent, 
@@ -284,10 +282,8 @@ def get_head_object_state_rpm(sub_context):
             # if status is None,then must have an "add" change action... ignore.
             assert sub_context.action == "add"
         else:
-            # log it... !+bungeni.ui.utils.debug
-            cls, exc, tb = sys.exc_info()
-            log.error(""" ***get_head_object_state_rpm/%s:%s [%s] %s """, 
-                type(sub_context).__name__, sub_context.pk, cls.__name__, exc)
+            log.error("get_head_object_state_rpm:%s:%s", type(sub_context).__name__, sub_context.pk)
+            probing.log_exc(sys.exc_info(), log_handler=log.error)
         return NONE_STATE_RPM
     # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012)
 

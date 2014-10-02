@@ -23,8 +23,7 @@ from bungeni.models.utils import (
 )
 from bungeni.feature.interfaces import IFeatureSchedule
 
-from bungeni.utils import common
-from bungeni.ui.utils import debug
+from bungeni.utils import common, probing
 from bungeni.utils.misc import describe
 from bungeni import _
 #from bungeni.alchemist import Session
@@ -247,7 +246,7 @@ def schedule_sitting_items(context):
             raise RuntimeWarning(
                 "It has WORKED !!! fireTransitionToward(%r)" % (toward))
         except (NoTransitionAvailableError, RuntimeWarning):
-            debug.log_exc_info(sys.exc_info(), log.error)
+            probing.log_exc_info(sys.exc_info(), log.error)
     
     for schedule in context.items.values():
         if not IFeatureSchedule.providedBy(schedule.item):

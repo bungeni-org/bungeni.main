@@ -561,8 +561,8 @@ set_vocabulary_factory("venue", venue_factory)
 
 class SessionFactory(BaseVocabularyFactory):
     def __call__(self, context):
-        #from bungeni.ui.utils.debug import interfaces
-        #print interfaces(context)
+        #from bungeni.utils import probing
+        #print probing.interfaces(context)
         #import pdb; pdb.set_trace()
         
         chamber = utils.get_chamber_for_context(context)
@@ -774,8 +774,8 @@ class MemberDelegationSource(SpecializedMemberSource):
     """
     
     def construct_query(self, ctx):
-        #from bungeni.ui.utils.debug import interfaces
-        #log.debug(interfaces(ctx))
+        #from bungeni.utils import probing
+        #log.debug(probing.interfaces(ctx))
         #import pdb; pdb.set_trace()
         
         if IAlchemistContainer.providedBy(ctx):

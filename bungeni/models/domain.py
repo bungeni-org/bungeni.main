@@ -311,8 +311,8 @@ class Version(Change):
                 return utils.FILES_VERSION_CONTAINER_ATTRIBUTE_ERROR_HACK(self, name)
             except:
                 import sys
-                from bungeni.ui.utils import debug
-                debug.log_exc(sys.exc_info(), log_handler=log.error)
+                from bungeni.utils import probing
+                probing.log_exc(sys.exc_info(), log_handler=log.error)
             
             raise AttributeError(
                 "%r [audit_id=%r, audit_type=%r] object has no attribute %r" % (

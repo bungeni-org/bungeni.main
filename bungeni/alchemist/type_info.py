@@ -96,8 +96,8 @@ def _get(discriminator):
             m = "No type registered for discriminator: %r" % (discriminator)
     else:
         m = "Invalid type info lookup discriminator: %r" % (discriminator)
-    from bungeni.ui.utils import debug
-    log.debug(debug.interfaces(discriminator))
+    from bungeni.utils import probing
+    log.debug(probing.interfaces(discriminator))
     log.debug(m)
     raise KeyError(m)
 

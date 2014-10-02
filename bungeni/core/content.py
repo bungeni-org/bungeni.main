@@ -16,8 +16,8 @@ from zope.location.interfaces import ILocation
 
 from bungeni.core.proxy import NavigationProxy
 from bungeni.core.proxy import DublinCoreDescriptivePropertiesProxy
-from bungeni.ui.utils import debug
 from bungeni.ui.interfaces import IBungeniAPILayer
+from bungeni.utils import probing
 
 from interfaces import ISection, IAkomaNtosoSection, IWorkspaceSection
 from interfaces import IQueryContent
@@ -115,9 +115,9 @@ class Section(OrderedContainer):
             pass # self.publishTraverseResolver is None, not an error
         except (NotFound,):
             pass # this is not really an error
-            #debug.log_exc_info(sys.exc_info(), log.debug)
+            #probing.log_exc_info(sys.exc_info(), log.debug)
         except (TypeError, Exception):
-            debug.log_exc_info(sys.exc_info(), log.error)
+            probing.log_exc_info(sys.exc_info(), log.error)
         traverser = ItemTraverser(self, request)
         return traverser.publishTraverse(request, name)
 

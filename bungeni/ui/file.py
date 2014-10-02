@@ -233,6 +233,7 @@ class VersionFile_HACK_NonListingViewlet(FileListingViewlet):
     def __init__(self, context, request, view, manager):
         self.for_display = False # bool(self.file_data_items)        
         log.warn("!+IAttachedFileVersion should NOT be trying to list attachments !!!")
-        from bungeni.ui.utils import debug
-        print self.__class__.__name__, debug.interfaces(context)
+        from bungeni.utils import probing
+        print self.__class__.__name__, probing.interfaces(context)
+
 

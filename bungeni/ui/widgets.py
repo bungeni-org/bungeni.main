@@ -33,9 +33,9 @@ from zc.resourcelibrary import need
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from bungeni.ui.utils import url, uri, debug, date, misc
+from bungeni.ui.utils import url, uri, date, misc
 from bungeni.ui.calendar.data import TIME_OPTIONS
-from bungeni.utils import common
+from bungeni.utils import common, probing
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
     IAdminSectionLayer
 from bungeni.models.utils import get_login_user, get_user, get_member_of_chamber
@@ -713,7 +713,7 @@ class TextDateTimeWidget(TextDateWidget):
                 datetime.datetime.strftime(value, "%H:%M"))
         except:
             #log.error("TextDateTimeWidget._toFormValue(%s) FAILED" % (value))
-            #debug.log_exc(sys.exc_info(), log_handler=log.error)
+            #probing.log_exc(sys.exc_info(), log_handler=log.error)
             return("", "12:00")
     
     def _toFieldValue(self, (date, time)):

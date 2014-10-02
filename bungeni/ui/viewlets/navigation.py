@@ -32,11 +32,11 @@ from bungeni.alchemist import utils
 from bungeni.core.interfaces import IWorkspaceContainer, ISection
 from bungeni.core import location
 from bungeni.core.language import get_default_language
-from bungeni.ui.utils import url, debug
+from bungeni.ui.utils import url
 from bungeni.ui import browser
 from bungeni.models.interfaces import IDoc, IGroup
 from bungeni.models.utils import get_chamber_for_context, get_group_for_context
-from bungeni.utils.naming import polymorphic_identity
+from bungeni.utils import naming, probing
 from bungeni import translate
 
 
@@ -135,7 +135,7 @@ class SecondaryNavigationViewlet(browser.BungeniViewlet):
             menu = component.getUtility(IBrowserMenu, name=menu_name)
             items = menu.getMenuItems(container, self.request)
         except (Exception,):
-            debug.log_exc(sys.exc_info(), log_handler=log.debug)
+            probing.log_exc(sys.exc_info(), log_handler=log.debug)
             return []
         
         # OK, do any necessary post-processing of each menu item
@@ -447,7 +447,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
             if IDoc.implementedBy(container.domain_model):
                 group = get_group_for_context(container)
                 assert IGroup.providedBy(group)
-                doc_type_key = polymorphic_identity(container.domain_model)
+                doc_type_key = naming.polymorphic_identity(container.domain_model)
                 if not group.is_type_workspaced(doc_type_key):
                     continue
             

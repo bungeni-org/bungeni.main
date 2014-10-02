@@ -83,7 +83,7 @@ def catalyse_system_descriptors(module):
     import inspect
     from bungeni.alchemist.descriptor import IModelDescriptor
     from bungeni.capi import capi
-    from bungeni.ui.utils import debug
+    from bungeni.utils import probing
     
     def descriptor_classes():
         """A generator of descriptor classes in this module, preserving the
@@ -98,7 +98,7 @@ def catalyse_system_descriptors(module):
                 # we decorate with the source code line number for the cls
                 decorated.append((inspect.getsourcelines(cls)[1], cls))
             except (TypeError, AttributeError, AssertionError):
-                debug.log_exc(sys.exc_info(), log_handler=log.debug)
+                probing.log_exc(sys.exc_info(), log_handler=log.debug)
         # we yield each cls in order of definition
         for cls in [ cls for (line_num, cls) in sorted(decorated) ]:
             yield cls
