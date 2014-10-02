@@ -1002,7 +1002,7 @@ class MinistrySource(SpecializedSource):
             terms.append(
                 vocabulary.SimpleTerm(
                     value = getattr(ob, "group_id"), 
-                    token = getattr(ob, "group_id"),
+                    token = getattr(ob, "principal_name"),
                     title = ob.combined_name
                 ))
         # !+MINISTRY_ID(mr, jul-2012) logic below must be faulty... (a) if this 
@@ -1016,7 +1016,7 @@ class MinistrySource(SpecializedSource):
                 terms.append(
                     vocabulary.SimpleTerm(
                         value = getattr(ob, "group_id"), 
-                        token = getattr(ob, "group_id"),
+                        token = getattr(ob, "principal_name"),
                         title = ob.combined_name
                 ))
         return vocabulary.SimpleVocabulary(terms)
