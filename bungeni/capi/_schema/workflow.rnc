@@ -63,7 +63,7 @@ grammar {
     STATE = element state {
         attribute id { SYMBOL_NAME },
         attribute title { text }, # i18n msgid
-        attribute actions { SPACE_SEPARATED_SYMBOLS }?,
+        attribute actions { SPACE_SEPARATED_SYMBOLS | empty }?,
         attribute note { text }?,
         attribute obsolete { xsd:boolean }?, # default:false
         

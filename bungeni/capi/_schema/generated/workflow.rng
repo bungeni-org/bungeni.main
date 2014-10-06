@@ -127,7 +127,10 @@
       <optional>
         <!-- i18n msgid -->
         <attribute name="actions">
-          <ref name="SPACE_SEPARATED_SYMBOLS"/>
+          <choice>
+            <ref name="SPACE_SEPARATED_SYMBOLS"/>
+            <empty/>
+          </choice>
         </attribute>
       </optional>
       <optional>
