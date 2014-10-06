@@ -14,6 +14,9 @@ float:left;
 width: 16em;
 padding: 0;
 }
+.section-bungeni-admin #portal-column-one {
+width: 26em;
+}
 
 #portal-column-content {
 padding: 1em 1em 0 1em;
@@ -22,9 +25,16 @@ margin: 0em 0em 2em 0em;
 #portal-column-content.sl {
 margin-left: 16em;
 }
+.section-bungeni-admin #portal-column-content.sl {
+margin-left: 26em;
+}
 #portal-column-content.sr {
 margin-right: 16em;
 }
+.section-bungeni-admin ##portal-column-content.sr {
+margin-right: 26em;
+}
+
 #portal-content-wrapper {
 float:left;
 width:100%;
@@ -49,3 +59,5 @@ padding: 0;
 /*  */
 
 }
+
+

@@ -330,8 +330,8 @@ class MemberRoleDescriptor(ModelDescriptor):
     """Role associated with a group membership
     """
     localizable = False
-    display_name = "sub roles"
-    container_name = "sub roles"
+    display_name = "Sub Role"
+    container_name = "Sub Roles"
     fields = [
         F(name="role_id",
           label="sub role",
@@ -1641,8 +1641,8 @@ class SittingReportDescriptor(ModelDescriptor):
 class SessionDescriptor(ModelDescriptor):
     order = 16
     localizable = True
-    display_name = "Parliamentary session"
-    container_name = "Parliamentary sessions"
+    display_name = "Session" # parliamentary session
+    container_name = "Sessions"
     sort_on = ["start_date", ]
     sort_dir = "desc"
     fields = [
@@ -1932,8 +1932,8 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     ]
 
 class ItemScheduleVoteDescriptor(ModelDescriptor):
-    display_name = _("vote record")
-    container_name = _("vote records")
+    display_name = "Vote Record"
+    container_name = "Vote Records"
     localizable=True
     fields =[
         F(name="time",

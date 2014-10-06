@@ -102,6 +102,7 @@ register_container_viewlet.TMPL = """
         for="{for_}"
         class="bungeni.ui.forms.viewlets.{name}"
         permission="zope.Public"
+        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
     />"""
 
 #

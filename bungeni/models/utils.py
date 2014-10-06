@@ -99,12 +99,12 @@ def get_chamber_for_context(context, name="group"):
     
     The chamber may be None if:
     - group is None
-    - group is outside of a chamber
+    - group is outside of a chamber !+LEGISLATURE_AS_CHAMBER this temporary 
+    workaround will cause the returned "chamber" for a group outside either 
+    chamber to be the Legislature e.g. for a ministry outside of both chambers
     """
     group = get_group_for_context(context)
     chamber = get_chamber_for_group(group) 
-    # !+LEGISLATURE_AS_CHAMBER returned chamber may be the Legislature (e.g.
-    # for a ministry outside of both chambers) ?
     if chamber is None:
         # !+USER_CHAMBER approximation, does this always give the correct chamber?
         user = get_login_user()

@@ -402,7 +402,7 @@ class GroupAssignment(Feature):
     # a qualified "event" feature.
     # Or, parameter "activity": to qualify assignment, what gets written
     # into doc_principal.activty column & what domain.GroupAssignment
-    # subtype is selected as thetype for this assigment "instance"
+    # subtype is selected as the type for this assigment "instance"
     
     def decorate_ui(self, model):
         add_info_container_to_descriptor(model, "group_assignments", "group_assignment", "doc_id")
