@@ -486,9 +486,16 @@ def serialization_notifications_callback(channel, method, properties, body):
                 ex_type, ex, tb = sys.exc_info()
                 log.warn("Error while publish_to_xml : %r", traceback.format_tb(tb))
                 log.warn("Error info type: %s, obj_key: %s, obj: %s", obj_type, obj_key, obj)
+                # requeue, usually fails becuase of an object introspection timeout
+                # so we simply retry
+                channel.basic_reject(delivery_tag=method.delivery_tag,
+                    requeue=True
+                )
                 notify_serialization_failure(SERIALIZE_FAILURE_TEMPLATE,
                     obj=obj, message=obj_data, error=e)
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            else:
+                # no exceptions so acknowledge the message
+                channel.basic_ack(delivery_tag=method.delivery_tag)
         else:
             log.error("Could not query object of type %s with key %s. "
                 "Check database records - Rejecting message.",
