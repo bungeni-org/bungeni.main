@@ -70,7 +70,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
     @staticmethod
     def value_key(identity_key):
-        """Returns a tuple, (domain_class, primary_key)"""
+        """Returns a tuple, (domain_class, primary_key).
+        """
         if not isinstance(identity_key, basestring):
             raise ValueError
         properties = identity_key.split("-")
@@ -101,7 +102,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
                         else:
                             domain_status[domain_class] = status
         return domain_status
-
+    
     def item_status_filter(self, kw, roles):
         """Returns {type: [str]} where type is a domain model class and [str]
         is the list of workflow states.
@@ -621,10 +622,11 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
                          reverse=reverse)
         return (results, count)
 
+
 class WorkspaceGroupsContainer(WorkspaceBaseContainer):
-
+    
     interface.implements(IWorkspaceGroupsContainer)
-
+    
     def __init__(self, name, title, description, marker=None):
         self.__name__ = name
         self.title = title
@@ -633,24 +635,26 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
         if marker is not None:
             interface.alsoProvides(self, marker)
         AlchemistContainer.__init__(self)
-
+    
     @staticmethod
     def string_key(instance):
         unproxied = removeSecurityProxy(instance)
         principal_name = unproxied.principal_name
-        url_id = str(principal_name).replace(".", "-")
+        url_id = "-".join(str(principal_name).split(".g", 1))
         return url_id
-
+    
     @staticmethod
-    def value_key(principal_name):
-        if not isinstance(principal_name, basestring):
+    def value_key(url_id):
+        # !+ if url_id is actual principal_name (e.g. "assembly_office_clerk.g9"
+        # instead of "assembly_office_clerk-9") this would still work...
+        if not isinstance(url_id, basestring):
             raise ValueError
-        #properties = principal_name.split("-")
+        #properties = url_id.split("-")
         #if len(properties) != 3:
         #    raise ValueError
-        #principal_name = principal_name.replace("-", ".")
+        principal_name = ".g".join(url_id.split("-", 1))
         return domain.Group, principal_name
-
+    
     def title_column(self, domain_class):
         table = orm.class_mapper(domain_class).mapped_table
         utk = dict([(table.columns[k].key, k) for k in table.columns.keys()])
@@ -663,10 +667,10 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
             domain_class, principal_name = self.value_key(name)
         except ValueError:
             return default
-        session = Session()
+        query = Session().query(domain_class
+                    ).filter(domain_class.principal_name == principal_name)
         try:
-            value = session.query(domain_class).filter(
-                domain_class.principal_name == principal_name).one()
+            value = query.one()
         except orm.exc.NoResultFound:
             return default
         return contained(value, self, name)
@@ -675,7 +679,7 @@ class WorkspaceGroupsContainer(WorkspaceBaseContainer):
         if kw.get("filter_type", None):
             query = query.filter(domain_class.type == kw.get("filter_type"))
         return query
-
+    
     def _query(self, **kw):
         results = []
         session = Session()

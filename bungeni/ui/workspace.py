@@ -85,7 +85,7 @@ workspace_doc_fields = [
     WorkspaceField("translation_status", 
         _("workspace_column_translation_status", default="translations")),
     WorkspaceField("group_id", 
-        _("workspace_column_document_group", default="group"))
+        _("workspace_column_document_group", default="Within My Group"))
     ]
 
 

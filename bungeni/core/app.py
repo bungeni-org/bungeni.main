@@ -185,14 +185,14 @@ class AppSetup(object):
             )
 
         ws_uc = workspace["under-consideration"] = WorkspaceSection(
-            title=_(u"under consideration"),
-            description=_(u"documents under consideration"),
+            title=_(u"Under consideration"),
+            description=_(u"Documents under consideration"),
             default_name="documents",
             marker=interfaces.IWorkspaceUnderConsideration)
         ws_uc["documents"] = WorkspaceUnderConsiderationContainer(
             name="documents",
-            title=_(u"under consideration"),
-            description=_(u"documents under consideration"),
+            title=_(u"Under consideration"),
+            description=_(u"Documents under consideration"),
             marker=interfaces.IWorkspaceTrackedDocuments)
         ws_uc["tracked-documents"] = WorkspaceTrackedDocumentsContainer(
             name="tracked documents",
@@ -245,14 +245,14 @@ class AppSetup(object):
                     mapping={"container_label": calendar_doc_ti.container_label}))
         
         workspace["groups"] = WorkspaceSection(
-            title=_("section_groups", default=u"Groups"),
-            description=_(u"Bungeni Groups"),
+            title=_("section_groups", default=u"My groups"),
+            description=_(u"My bungeni groups"),
             default_name="my-groups",
             marker=interfaces.IWorkspaceGroups)
         workspace["groups"]["my-groups"] = WorkspaceGroupsContainer(
             name="my-groups",
-            title=_(u"My Groups"),
-            description=_(u"Groups that the user is a member of"))
+            title=_(u"My groups"),
+            description=_(u"Groups that I am a member of"))
         
         #!+TIMING
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
