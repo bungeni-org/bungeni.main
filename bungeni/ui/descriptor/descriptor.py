@@ -329,7 +329,7 @@ class UserDelegationDescriptor(ModelDescriptor):
 class MemberRoleDescriptor(ModelDescriptor):
     """Role associated with a group membership
     """
-    localizable = False
+    localizable = True
     display_name = "Sub Role"
     container_name = "Sub Roles"
     fields = [
@@ -576,7 +576,7 @@ class GroupDescriptor(ModelDescriptor):
 
 
 class GroupAssignmentDescriptor(ModelDescriptor):
-    localizable = False
+    localizable = True
     display_name = "Group Assignment"
     container_name = "Group Assignments"
     fields = [
@@ -690,6 +690,7 @@ class AddressDescriptor(ModelDescriptor):
     ]
 
 class GroupAddressDescriptor(AddressDescriptor):
+    order = 20
     localizable = True
     fields = deepcopy(AddressDescriptor.fields)
 class UserAddressDescriptor(AddressDescriptor):
@@ -697,7 +698,7 @@ class UserAddressDescriptor(AddressDescriptor):
     fields = deepcopy(AddressDescriptor.fields)
 
 class TitleTypeDescriptor(ModelDescriptor):
-    order = 22
+    order = 3
     localizable = True
     display_name = "Title type" # !+
     container_name = "Title types" # !+
@@ -735,6 +736,7 @@ class TitleTypeDescriptor(ModelDescriptor):
     #custom_validators = [ validations.validate_sub_role_unique ]
 
 class MemberTitleDescriptor(ModelDescriptor):
+    order = 3
     localizable = True
     display_name = "Title"
     container_name = "Titles"
@@ -1439,7 +1441,7 @@ class AttachmentVersionDescriptor(VersionDescriptor):
 
 
 class HeadingDescriptor(ModelDescriptor):
-    order = 3 # top
+    order = 13
     localizable = True
     
     fields = [
@@ -1463,7 +1465,7 @@ class MotionChangeDescriptor(ChangeDescriptor):
 
 
 class VenueDescriptor(ModelDescriptor):
-    localizable = False
+    localizable = True
     fields = [
         F(name="short_name",
             label="Title",
@@ -1495,7 +1497,7 @@ class VenueDescriptor(ModelDescriptor):
 
 
 class SittingDescriptor(ModelDescriptor):
-    order = 17
+    order = 11
     localizable = True
     fields = [
         F(name="duration", # [derived]
@@ -1639,7 +1641,7 @@ class SittingReportDescriptor(ModelDescriptor):
     ]
 
 class SessionDescriptor(ModelDescriptor):
-    order = 16
+    order = 10
     localizable = True
     display_name = "Session" # parliamentary session
     container_name = "Sessions"
@@ -1818,6 +1820,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
     ]
 
 class EditorialNoteDescriptor(ModelDescriptor):
+    order = 15
     localizable = True
     fields = [
         F(name="text",
@@ -1833,7 +1836,7 @@ class EditorialNoteDescriptor(ModelDescriptor):
     ]
 
 class AgendaTextRecordDescriptor(ModelDescriptor):
-    localizable = False
+    localizable = True
     fields = [
         F(name="text",
             label="Text",
@@ -1858,7 +1861,7 @@ class AgendaTextRecordDescriptor(ModelDescriptor):
     ]
 
 class DebateMediaDescriptor(ModelDescriptor):
-    localizable = False
+    localizable = True
     fields = [
         F(name="media_path",
           label="Media Path",
@@ -1876,7 +1879,7 @@ class DebateMediaDescriptor(ModelDescriptor):
     ]
 
 class DebateTakeDescriptor(ModelDescriptor):
-    localizable = False
+    localizable = True
     fields = [
         F(name="transcriber_id",
           label="Transcriber",
