@@ -27,7 +27,8 @@ from bungeni.alchemist import utils, Session
 from bungeni.core import translation
 from bungeni.core.language import get_default_language
 from bungeni.core.content import WorkspaceSection
-from bungeni.core.interfaces import (IWorkspaceTabsUtility,
+from bungeni.core.interfaces import (
+    IWorkspaceTabsUtility,
     IWorkspaceContainer,
     IWorkspaceUnderConsiderationContainer,
     IWorkspaceGroupsContainer,
@@ -53,41 +54,61 @@ from bungeni import _, translate
 _path = os.path.split(os.path.abspath(__file__))[0]
 
 
+def json_dump_dict_ordered(d, order_by="values"):
+    """Return the serialized json for d:dict, ordered as indicated by order_by:
+        "keys": order by dict keys (UI token value)
+        "values": order by dict values (UI displayed label)
+        None: no ordering, natural dict serialization ordering
+    """
+    if order_by == "values":
+        import json # !+ order of dict below is not preserved with simplejson.dumps
+        from collections import OrderedDict
+        values = OrderedDict(
+            [ kv for (v, kv) in sorted([ (d[k], (k, d[k])) for k in d ]) ])
+        return json.dumps(values, sort_keys=False)
+    elif order_by == "keys":
+        return simplejson.dumps(values, sort_keys=True)
+    elif order_by is None:
+        return simplejson.dumps(values)
+    #!+elif callable(order_by):
+    raise ValueError("json_dump_dict_sorted: order_by=%r" % order_by)
+
+
 def get_document_groups():
-    """Get Document Groups
+    """Get Document Groups - order by group id
     """
     group_options = [("", "-")]
     user = model_utils.get_login_user()
     groups = [ g for g in model_utils.get_user_groups(user) ]
     group_values = [ (g.group_id, IDCDescriptiveProperties(g).short_title)
         for g in groups ]
-    group_options += group_values
+    group_options += sorted(group_values)
     return group_options
 
-class WorkspaceField(object):
 
+class WorkspaceField(object):
+    
     def __init__(self, name, title):
         self.name = name
         self.title = title
-
-    def query(item, formatter):
-        return getattr(IWorkspaceContentAdapter(item), name, None)
-
+    
+    ''' !+UNUSED?
+    def query(self, item, formatter):
+        return getattr(IWorkspaceContentAdapter(item), self.name, None)
+    '''
+    
 # These are the columns to be displayed in the workspace
 workspace_doc_fields = [
     WorkspaceField("title", _("workspace_column_title", default="title")),
-    WorkspaceField("type", 
-        _("workspace_column_type", default="item type")),
-    WorkspaceField("status", 
-        _("workspace_column_status", default="status")),
+    WorkspaceField("type", _("workspace_column_type", default="item type")),
+    WorkspaceField("status", _("workspace_column_status", default="status")),
     WorkspaceField("status_date", 
         _("workspace_column_status_date", default="status date")),
     WorkspaceField("translation_status", 
         _("workspace_column_translation_status", default="translations")),
     WorkspaceField("group_id", 
-        _("workspace_column_document_group", default="Within My Group"))
+        _("workspace_column_document_group", default="Within my group"))
     ]
-
 
 workspace_group_fields = [
     WorkspaceField("title", 
@@ -100,13 +121,14 @@ workspace_group_fields = [
         _("workspace_column_group_status_date", default="status date"))
     ]
 
+
 @register.view(IWorkspaceContainer, name="jsonlisting",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
     """
     workspace_fields = workspace_doc_fields
-
+    
     def __init__(self, context, request):
         super(WorkspaceContainerJSONListing, self).__init__(context, request)
         self.defaults_sort_on = "status_date"
@@ -118,7 +140,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
         if not self.request.get("dir"):
             self.request.form["dir"] = "desc"
         self.sort_dir = self.request.get("dir")
-
+    
     def get_offsets(self, default_start=0,
             default_limit=capi.default_number_of_listing_items
         ):
@@ -133,17 +155,16 @@ class WorkspaceContainerJSONListing(BrowserPage):
         except ValueError:
             start, limit = default_start, default_limit
         return start, limit
-
+    
     def json_batch(self, start, limit, lang):
         batch = self.get_batch(start, limit, lang)
         data = dict(
             length=self.set_size,  # total result set length, set in getBatch()
             start=start,
             recordsReturned=len(batch),
-            nodes=batch
-            )
+            nodes=batch)
         return simplejson.dumps(data)
-
+    
     def _json_values(self, nodes):
         values = []
         for node in nodes:
@@ -155,7 +176,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
             d["object_id"] = url.set_url_context(node.__name__)
             values.append(d)
         return values
-
+    
     def translate_objects(self, nodes, lang=None):
         """ Translate container items if translatable
         """
@@ -212,22 +233,20 @@ COLUMN_DEFS = {
 class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
     workspace_fields = workspace_doc_fields
-
+    
     js_file = open(_path + "/templates/datatable-workspace.js")
     script = js_file.read()
     js_file.close()
-
+    
     def get_search_widgets(self):
         return date_input_search_widget("table", "status_date")
-
+    
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         roles = get_workspace_roles() + ROLES_DIRECTLY_DEFINED_ON_OBJECTS
         domains = []
         for role in roles:
-            dom = workspace_config.get_role_domains(
-                role, self.context.__name__
-                )
+            dom = workspace_config.get_role_domains(role, self.context.__name__)
             if dom:
                 for key in dom:
                     if key not in domains:
@@ -240,7 +259,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
                 name = descriptor_model.display_name if descriptor_model else value
                 result[value] = translate(name, context=self.request)
         return result
-
+    
     def get_status(self, type_key):
         translated = dict()
         if not type_key:
@@ -263,24 +282,27 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
                 context=self.request)
             translated[result] = status_title
         return translated
-
+    
     def getDataTableConfig(self):
         config = super(WorkspaceDataTableFormatter, self).getDataTableConfig()
         item_types = self.get_item_types()
-        config["item_types"] = simplejson.dumps(item_types)
+        config["item_types"] = json_dump_dict_ordered(item_types)
         document_groups = get_document_groups()
         config["document_groups"] = simplejson.dumps(document_groups)
         all_item_status = dict()
         status = dict([("", "-")])
         for item_type in item_types:
             for k, v in self.get_status(item_type).iteritems():
-                item_status_value = "%s+%s" % (item_type, k)
-                status[item_status_value] = v
+                status_item_typed = "%s+%s" % (item_type, k)
+                # !+ ordering ui status label, ineffective
+                #value_item_typed = "%s/%s" % (item_types[item_type], v)
+                #status[status_item_typed] = value_item_typed
+                status[status_item_typed] = v
                 all_item_status[k] = v
         status.update(all_item_status)
-        config["status"] = simplejson.dumps(status)
+        config["status"] = json_dump_dict_ordered(status)
         return config
-
+    
     def getFieldColumns(self):
         column_model = []
         field_model = []
@@ -290,8 +312,8 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
             coldef = {
                 "key": field.name,
                 "label": translate(_(field.title), context=self.request),
-                "formatter": self.context.__name__
-                }
+                "formatter": self.context.__name__,
+            }
             coldef_format = COLUMN_DEFS.get(field.name, None)
             if column_model == []:
                 if not coldef_format:
@@ -312,7 +334,7 @@ class WorkspaceContainerListing(BrowserPage):
     columns = []
     prefix = "workspace"
     workspace_fields = workspace_doc_fields
-
+    
     def __call__(self):
         need("yui-datatable")
         self.context = removeSecurityProxy(self.context)
@@ -321,12 +343,11 @@ class WorkspaceContainerListing(BrowserPage):
     def update(self):
         for field in self.workspace_fields:
             self.columns.append(
-                column.GetterColumn(title=field.name,
-                                 getter=Getter(field.query)))
-
+                column.GetterColumn(title=field.name, getter=Getter(field.query)))
+    
     def listing(self):
         return self.formatter()
-
+    
     @property
     def formatter(self):
         formatter = self.formatter_factory(
@@ -342,7 +363,7 @@ class WorkspaceContainerListing(BrowserPage):
 
 
 class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
-
+    
     def get_item_types(self):
         result = dict([("", "-")])
         for type_key, ti in capi.iter_type_info():
@@ -352,7 +373,7 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
                     ti.descriptor_model else ti.workflow_key
                 result[ti.workflow_key] = translate(name, context=self.request)
         return result
-
+    
     def get_status(self, item_type):
         result = {}
         for type_key, ti in capi.iter_type_info():
@@ -370,23 +391,25 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
                     result[state] = state_title
                 break
         return result
-
+    
     def getDataTableConfig(self):
         config = table.ContextDataTableFormatter.getDataTableConfig(self)
         item_types = self.get_item_types()
-        config["item_types"] = simplejson.dumps(item_types)
+        config["item_types"] = json_dump_dict_ordered(item_types)
         document_groups = get_document_groups()
         config["document_groups"] = simplejson.dumps(document_groups)
         all_item_status = dict()
         status = dict([("", "-")])
         for item_type in item_types:
-            x = self.get_status(item_type)
-            for k, v in x.iteritems():
-                item_status_value = "%s+%s" % (item_type, k)
-                status[item_status_value] = v
+            for k, v in self.get_status(item_type).iteritems():
+                status_item_typed = "%s+%s" % (item_type, k)
+                # !+ ordering ui status label, ineffective
+                #value_item_typed = "%s/%s" % (item_types[item_type], v)
+                #status[status_item_typed] = value_item_typed
+                status[status_item_typed] = v
                 all_item_status[k] = v
         status.update(all_item_status)
-        config["status"] = simplejson.dumps(status)
+        config["status"] = json_dump_dict_ordered(status)
         return config
 
 
@@ -409,14 +432,14 @@ class WorkspaceGroupsFormatter(WorkspaceDataTableFormatter):
             result[group_type[0]] = translate(
                 group_type[0], context=self.request)
         return result
-
+    
     def get_status(self, item_type):
         return {}
 
     def getDataTableConfig(self):
         config = table.ContextDataTableFormatter.getDataTableConfig(self)
         item_types = self.get_item_types()
-        config["item_types"] = simplejson.dumps(item_types)
+        config["item_types"] = json_dump_dict_ordered(item_types)
         config["status"] = simplejson.dumps(dict([("", "-")]))
         config["document_groups"] = "[]"
         return config
