@@ -1465,6 +1465,7 @@ class MotionChangeDescriptor(ChangeDescriptor):
 
 
 class VenueDescriptor(ModelDescriptor):
+    order = 11
     localizable = True
     fields = [
         F(name="short_name",

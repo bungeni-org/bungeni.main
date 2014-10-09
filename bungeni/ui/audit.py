@@ -22,6 +22,7 @@ from bungeni.models import domain
 from bungeni.feature.interfaces import IFeatureAudit
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.core.workflows.utils import view_permission
+from bungeni.ui.interfaces import IWorkspaceSectionLayer, IBungeniSkin
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.descriptor import listing
 from bungeni.ui.utils import date
@@ -390,12 +391,11 @@ class AuditLogMixin(object):
     #    return auditor.audit_class
 
 
-@register.view(IFeatureAudit, name="audit-log",
+@register.view(IFeatureAudit, layer=IBungeniSkin, name="audit-log",
     protect={"bungeni.ui.audit.View": register.VIEW_DEFAULT_ATTRS})
 class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
     """
-    
     __call__ = ViewPageTemplateFile("templates/listing-view.pt")
     
     _page_title = _("Change Log")
@@ -411,8 +411,9 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
             )
 
 # !+TIMELINE_VIEWLET parametrize audit feature further (for timeline vs auditlog)
-@register.viewlet(IFeatureAudit, manager=ISubFormViewletManager, 
-    name="keep-zca-happy-timeline", protect=register.PROTECT_VIEWLET_PUBLIC)
+@register.viewlet(IFeatureAudit, layer=IWorkspaceSectionLayer, 
+    manager=ISubFormViewletManager, name="keep-zca-happy-timeline",
+    protect=register.PROTECT_VIEWLET_PUBLIC)
 class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     view_title = "Timeline"
     view_id = "timeline"

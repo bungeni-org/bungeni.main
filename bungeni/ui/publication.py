@@ -8,6 +8,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.publication")
 
+from time import time
 import re
 #import gc
 
@@ -17,6 +18,7 @@ from zope.app.publication.interfaces import IBeforeTraverseEvent
 from zope.app.publication.interfaces import IEndRequestEvent
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.annotation.interfaces import IAnnotations
+from zope.security.proxy import removeSecurityProxy
 
 from bungeni.alchemist import Session
 
@@ -32,7 +34,8 @@ from bungeni.ui.descriptor.localization import forms_localization_check_reload
 # cleaned out after updating to that package.
 
 def once_per_request(event_handler):
-    """Wrap event_handler to limit execution of it to once per request."""
+    """Wrap event_handler to limit execution of it to once per request.
+    """
     flag_name = "%s_DONE" % (event_handler.func_name)
     def event_handler_closure(event):
         if not IAnnotations(event.request).get(flag_name, False): 
@@ -55,8 +58,11 @@ def on_before_traverse(event):
     request pre-processors. We intercept centrally and then call processors
     explicitly to guarantee execution order.
     """
+    # on "first" traversal, remember request "start" (approx) time...
+    if not hasattr(event.request, "_BUNGENI_STARTTIME"):
+        event.request._BUNGENI_STARTTIME = time()
     log.debug("IBeforeTraverseEvent:%s:%s:%s",
-        id(event.request), event.request.getURL(), event.object)
+        hex(id(event.request)), event.request.getURL(), event.object)
     apply_request_layer_by_url(event)
     if not IUnauthenticatedPrincipal.providedBy(event.request.principal):
         interface.alsoProvides(event.request,
@@ -64,24 +70,26 @@ def on_before_traverse(event):
     remember_traversed_context(event)
     if has_feature("devmode"):
         forms_localization_check_reload(event)
-    
+
 @component.adapter(IEndRequestEvent)
 def on_end_request(event):
     """Subscriber to catch end of request processing, and dispatch cleanup 
     tasks as needed. 
     """
     common._clear_request_cache()
-    session = Session()
-    log.debug("IEndRequestEvent:%s:%s:%s\n"
-        "    closing SqlAlchemy session: %s", 
-            id(event.request), event.request.getURL(), event.object, session)
+    #session = Session()
+    req_url = event.request.getURL()
+    log.debug("IEndRequestEvent:%s:%s\n"
+            "    REQUEST URL: %s\n"    
+            "    REQUEST COMPLETED duration (secs): %s",
+        hex(id(event.request)), event.object, req_url, 
+        time() - event.request._BUNGENI_STARTTIME)
     #session.close()
     #gc.collect()
 
 
 # some actual handlers
 
-from zope.security.proxy import removeSecurityProxy
 def remember_traversed_context(event):
     """Called per IBeforeTraverseEvent -- remember request's context
     (event.object) at each traversal, for downstream convenience.
