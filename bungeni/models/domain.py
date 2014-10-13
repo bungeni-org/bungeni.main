@@ -631,7 +631,7 @@ class Group(Principal):
         ti = capi.get_type_info(type_key)
         workspace_feature = ti.workflow.get_feature("workspace")
         if workspace_feature is not None:
-            group_names = workspace_feature.p["group_names"]
+            group_names = workspace_feature.get_param("group_names")
             return self.conceptual_name in group_names
         return False
 

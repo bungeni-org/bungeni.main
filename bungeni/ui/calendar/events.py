@@ -30,7 +30,7 @@ def retract_scheduled_items(context, event):
         
         # take back to schedule pending
         wfc = IWorkflowController(item)
-        for state in schedule_feature.p.schedulable_states:
+        for state in schedule_feature.get_param("schedulable_states"):
             transitions = wfc.getFireableTransitionIdsToward(state)
             if transitions:
                 wfc.fireTransition(transitions[0])

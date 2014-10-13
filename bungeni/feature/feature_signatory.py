@@ -75,9 +75,9 @@ class Signatory(feature.Feature):
     
     def validate_parameters(self):
         assert not set.intersection(
-                set(self.p.submitted_states), 
-                set(self.p.unsign_states), 
-                set(self.p.elapse_states)), \
+                set(self.get_param("submitted_states")), 
+                set(self.get_param("unsign_states")), 
+                set(self.get_param("elapse_states"))), \
                     "draft, submitted and expired states must be distinct lists"
     
     def decorate_model(self, model):
@@ -108,7 +108,7 @@ class Signatory(feature.Feature):
     def needs_signatures(self):
         """Does the document or object require signatures?
         """
-        return self.p.min_signatories > 0
+        return self.get_param("min_signatories") > 0
     
     
     # contextual
@@ -125,36 +125,36 @@ class Signatory(feature.Feature):
         """Validate number of consented signatories against min and max.
         """
         return (
-            (self.num_consented_signatories(context) >= self.p.min_signatories) and
-            ((not self.p.max_signatories) or 
-                (self.num_consented_signatories(context) <= self.p.max_signatories)
+            (self.num_consented_signatories(context) >= self.get_param("min_signatories")) and
+            ((not self.get_param("max_signatories")) or 
+                (self.num_consented_signatories(context) <= self.get_param("max_signatories"))
             )
         )
     
     def allow_signature(self, context):
         """Check that the current user has the right to consent on document.
         """
-        return (not self.p.max_signatories or 
-            (self.num_consented_signatories(context) < self.p.max_signatories)
+        return (not self.get_param("max_signatories") or 
+            (self.num_consented_signatories(context) < self.get_param("max_signatories"))
         ) and (self.document_submitted(context) or self.auto_sign(context))
     
     def auto_sign(self, context):
-        return context.status in self.p.open_states
-
+        return context.status in self.get_param("open_states")
+    
     def auto_unsign(self, context):
         """Check that a document is being redrafted - unsign signatures.
         """
-        return context.status in self.p.unsign_states
+        return context.status in self.get_param("unsign_states")
 
     def elapse_signatures(self, context):
         """Should pending signatures be archived.
         """
-        return context.status in self.p.elapse_states
+        return context.status in self.get_param("elapse_states")
     
     def document_submitted(self, context):
         """Check that the document has been submitted.
         """
-        return context.status in self.p.submitted_states
+        return context.status in self.get_param("submitted_states")
     
     def on_signatory_doc_workflow_transition(self, context):
         """Perform any workflow related actions on signatories and/or parent.

@@ -263,7 +263,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         ti = capi.get_type_info(type_key)
         workspace_feature = ti.workflow.get_feature("workspace")
         if workspace_feature is not None:
-            group_names = workspace_feature.p["group_names"]
+            group_names = workspace_feature.get_param("group_names")
             if group_names:
                 user = utils.get_login_user()
                 for group in utils.get_user_groups(user):
@@ -470,7 +470,7 @@ def load_workspace(file_name, domain_class, workflow):
     if Session().query(domain.Legislature).all():
         # !+GROUP_NAMES_VALIDATION
         from bungeni.models.utils import get_group_conceptual_active
-        for conceptual_name in workflow.get_feature("workspace").p["group_names"]:
+        for conceptual_name in workflow.get_feature("workspace").get_param("group_names"):
             try:
                 get_group_conceptual_active(conceptual_name)
             except orm.exc.NoResultFound:

@@ -32,13 +32,13 @@ from bungeni import _
 def get_schedulable_states(type_key):
     schedule_feature = feature.get_feature(type_key, "schedule")
     if schedule_feature:
-        return schedule_feature.p.schedulable_states
+        return schedule_feature.get_param("schedulable_states")
     return []
 
 def get_scheduled_states(type_key):
     schedule_feature = feature.get_feature(type_key, "schedule")
     if schedule_feature:
-        return schedule_feature.p.scheduled_states
+        return schedule_feature.get_param("scheduled_states")
     return []
 
 def can_schedule(type_key, workflow):

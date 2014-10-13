@@ -433,7 +433,7 @@ class GroupAssignmentDatabaseSource(DatabaseSource):
             query = query.filter(sql.not_(dm.principal_id.in_(assigned_group_ids)))
         # filter query on assignable_group_types
         assignable_group_types = \
-            assign_doc.group_assignment_feature.p["assignable_group_types"]
+            assign_doc.group_assignment_feature.get_param("assignable_group_types")
         if assignable_group_types:
             query = query.filter(dm.type.in_(assignable_group_types))
         return query
@@ -443,7 +443,7 @@ class GroupAssignmentDatabaseSource(DatabaseSource):
         assign_doc = self._assign_doc(context)
         # filter query on assignable_group_limit
         assignable_group_limit = \
-            assign_doc.group_assignment_feature.p["assignable_group_limit"]
+            assign_doc.group_assignment_feature.get_param("assignable_group_limit")
         if assignable_group_limit == "chamber":
             chamber = utils.get_chamber_for_context(context, name="chamber")
             groups[:] = [ group for group in groups
@@ -1464,8 +1464,7 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
         assert ISchedulingContext.providedBy(context), context
         group = removeSecurityProxy(context.get_group())
         assert group.sitting_feature.enabled, group
-        # !+ Feature.get_param(name, (subtype, condition))
-        report_template_names = group.sitting_feature.p["report_templates"]
+        report_template_names = group.sitting_feature.get_param("report_templates")
         terms = self.build_terms(report_template_names)
         return vocabulary.SimpleVocabulary(terms)
 report_xhtml_template_factory = ReportXHTMLTemplateFactory()

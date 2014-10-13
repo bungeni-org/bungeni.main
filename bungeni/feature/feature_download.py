@@ -24,10 +24,10 @@ class Download(feature.Feature):
     subordinate_interface = None
     
     def validate_parameters(self):
-        assert set(self.p.allowed_types).issubset(interfaces.DOWNLOAD_TYPE_KEYS), \
+        assert set(self.get_param("allowed_types")).issubset(interfaces.DOWNLOAD_TYPE_KEYS), \
             "Allowed download types: %s. You entered: %s" % (
                 ", ".join(interfaces.DOWNLOAD_TYPE_KEYS),
-                ", ".join(self.p.allowed_types))
+                ", ".join(self.get_param("allowed_types")))
     
     
     # feature class utilities
@@ -35,9 +35,9 @@ class Download(feature.Feature):
     def get_allowed_types(self):
         """Get a subset of DOWNLOAD_TYPES.
         """
-        if len(self.p.allowed_types):
+        if len(self.get_param("allowed_types")):
             return [ typ for typ in interfaces.DOWNLOAD_TYPES
-                if typ[0] in self.p.allowed_types ]
+                if typ[0] in self.get_param("allowed_types") ]
         else:
             return interfaces.DOWNLOAD_TYPES
 

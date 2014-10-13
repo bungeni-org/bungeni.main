@@ -254,8 +254,8 @@ def schedule_sitting_items(context):
         wfc = IWorkflowController(schedule.item)
         wf = wfc.workflow
         schedule_feature = wf.get_feature("schedule")
-        scheduled_states = schedule_feature.p.scheduled_states
-        schedulable_states = schedule_feature.p.schedulable_states
+        scheduled_states = schedule_feature.get_param("scheduled_states")
+        schedulable_states = schedule_feature.get_param("schedulable_states")
         try:
             for target_state in scheduled_states:
                 if wf.get_state(target_state):
@@ -281,7 +281,7 @@ def check_agenda_finalized(context):
         if interfaces.ILegislativeContent.providedBy(schedule.item):
             schedule_feature = wfc.workflow.get_feature("schedule")
             return (wfc.state_controller.get_status() not in 
-                schedule_feature.p.scheduled_states
+                schedule_feature.get_param("scheduled_states")
             )
         else:
             return True

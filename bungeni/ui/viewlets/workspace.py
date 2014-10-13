@@ -97,7 +97,7 @@ class SignatoriesStatus(MessageViewlet):
                     ),
                     mapping = {
                         "signed_members": signatory_feature.num_consented_signatories(context),
-                        "required_members": signatory_feature.p.min_signatories
+                        "required_members": signatory_feature.get_param("min_signatories")
                     }
                 )
             else:
@@ -109,7 +109,7 @@ class SignatoriesStatus(MessageViewlet):
                             u"${signed_members} member(s) have signed."
                         ),
                         mapping={
-                            "required_members": signatory_feature.p.min_signatories,
+                            "required_members": signatory_feature.get_param("min_signatories"),
                             "signed_members": signatory_feature.num_consented_signatories(context)
                         }
                 )

@@ -136,12 +136,15 @@ class Feature(object):
     def __init__(self, enabled, note, kws):
         self.enabled = enabled
         self.note = note
-        self.p = misc.bunch(**self.parse_parameters(kws))
+        self._p = misc.bunch(**self.parse_parameters(kws))
         self.validate_parameters()
     
     def __str__(self):
         return misc.named_repr(self, self.name)
     __repr__ = __str__
+    
+    def get_param(self, name, context=None):
+        return self._p[name]
     
     #
     
@@ -262,7 +265,7 @@ class Event(Feature):
     
     def decorate_ui(self, model):
         # container property per enabled event type
-        for event_type_key in self.p.types:
+        for event_type_key in self.get_param("types"):
             if capi.has_type_info(event_type_key):
                 container_property_name = naming.plural(event_type_key)
                 add_info_container_to_descriptor(model, container_property_name, event_type_key, "head_id")
@@ -294,7 +297,7 @@ class Sitting(Feature):
         add_info_container_to_descriptor(model, "editorial_notes", "editorial_note", "group_id")
         #add_info_container_to_descriptor(model, "agenda_items", "agenda_item", "group_id")
         # container property per enabled calendar_doc_type
-        for calendar_doc_type_key in self.p.calendar_doc_types:
+        for calendar_doc_type_key in self.get_param("calendar_doc_types"):
             if capi.has_type_info(calendar_doc_type_key):
                 container_property_name = naming.plural(calendar_doc_type_key)
                 add_info_container_to_descriptor(model, 

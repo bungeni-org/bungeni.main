@@ -198,7 +198,7 @@ def setup_customization_ui():
                     layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer")
                 # add calendar "createable" add doc menu items
                 sitting_feature = ti.workflow.get_feature("sitting")
-                for calendar_doc_type_key in sitting_feature.p.calendar_doc_types:
+                for calendar_doc_type_key in sitting_feature.get_param("calendar_doc_types"):
                     CALENDAR_DOC_TYPE_KEYS.add(calendar_doc_type_key)
                     calendar_doc_ti = capi.get_type_info(calendar_doc_type_key)
                     container_property_name = naming.plural(calendar_doc_type_key)
@@ -328,7 +328,7 @@ def setup_customization_ui():
         if ti.workflow.has_feature("event"):
             log.debug("Setting up UI for feature %r for type %r", "event", type_key)
             event_feature = ti.workflow.get_feature("event")
-            for event_type_key in event_feature.p.types:
+            for event_type_key in event_feature.get_param("types"):
                 if capi.has_type_info(event_type_key):
                     container_property_name = naming.plural(event_type_key)
                     event_type_ti = capi.get_type_info(event_type_key)
