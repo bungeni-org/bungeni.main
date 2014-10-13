@@ -1464,7 +1464,7 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
         assert ISchedulingContext.providedBy(context), context
         group = removeSecurityProxy(context.get_group())
         assert group.sitting_feature.enabled, group
-        report_template_names = group.sitting_feature.get_param("report_templates")
+        report_template_names = group.sitting_feature.get_param("report_templates", context=group)
         terms = self.build_terms(report_template_names)
         return vocabulary.SimpleVocabulary(terms)
 report_xhtml_template_factory = ReportXHTMLTemplateFactory()

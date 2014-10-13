@@ -111,6 +111,18 @@ def add_info_container_to_descriptor(model,
         viewlet=True, _origin="feature")
 
 
+class _When(object):
+    """A Feature (enabled) "when" object.
+    """
+    def __init__(self, subtype, condition_name, condition, note, params):
+        #RNC: assert subtype or condition, "<when> @subtype or @condition may not both be unset"
+        self.subtype = subtype # either(str, None)
+        self.condition_name = condition_name # either(str, None)
+        self.condition = condition # either(_capi.wrapped_callable, None)
+        self.note = note # either(str, None)
+        self.params = params # dict
+
+
 # Base Workflow Feature
 
 class Feature(object):
@@ -133,10 +145,12 @@ class Feature(object):
     def name(cls):
         return naming.polymorphic_identity(cls)
     
-    def __init__(self, enabled, note, kws):
+    def __init__(self, enabled, note, whens):
         self.enabled = enabled
         self.note = note
-        self._p = misc.bunch(**self.parse_parameters(kws))
+        self.whens = whens # {(when.subtype, when.condition): when}
+        for k in whens:
+            self.parse_parameters(whens[k].params)
         self.validate_parameters()
     
     def __str__(self):
@@ -144,7 +158,32 @@ class Feature(object):
     __repr__ = __str__
     
     def get_param(self, name, context=None):
-        return self._p[name]
+        default_when = self.whens[(None, None)]
+        if context is not None:
+            when = None
+            context_subtype = naming.polymorphic_identity(type(context))
+            for subtype, condition_name in self.whens:
+                # !+ what about subs of subtype?
+                if context_subtype == subtype:
+                    # !+ what if multiple conditions for same suntype?
+                    when = self.whens[(subtype, condition_name)]
+                    if condition_name is not None:
+                        if when.condition(context): # raises BungeniCustomError
+                            break
+                    else:
+                        break
+            else:
+                for subtype, condition_name in self.whens:
+                    if subtype is None:
+                        if condition_name is not None:
+                            when = self.whens[(None, condition_name)]
+                            if when.condition(context): # raises BungeniCustomError
+                               break
+                            else:
+                                when = None
+            if when:
+                return when.params.get(name, default_when.params[name])
+        return default_when.params[name] 
     
     #
     

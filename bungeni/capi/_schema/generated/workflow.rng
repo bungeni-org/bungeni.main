@@ -82,21 +82,78 @@
         <data type="boolean"/>
       </attribute>
       <optional>
+        <!-- default:false -->
         <attribute name="note"/>
       </optional>
       <zeroOrMore>
-        <element name="parameter">
-          <!-- !+ name by feature -->
-          <attribute name="name">
-            <ref name="SYMBOL_NAME"/>
-          </attribute>
-          <!-- !+ unique name per feature -->
-          <attribute name="value"/>
+        <!-- default/fallback feature parameters -->
+        <ref name="PARAMETER"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="when">
+          <choice>
+            <!-- only one of @subtype, @condition may be empty -->
+            <group>
+              <optional>
+                <!-- subtype type_key must be a descendent of feature subordinate type -->
+                <attribute name="subtype">
+                  <choice>
+                    <ref name="SYMBOL_NAME"/>
+                    <empty/>
+                  </choice>
+                </attribute>
+              </optional>
+              <!-- type_key -->
+              <attribute name="condition">
+                <ref name="SYMBOL_NAME"/>
+              </attribute>
+            </group>
+            <!-- callable -->
+            <group>
+              <attribute name="subtype">
+                <ref name="SYMBOL_NAME"/>
+              </attribute>
+              <optional>
+                <!-- type_key -->
+                <attribute name="condition">
+                  <choice>
+                    <ref name="SYMBOL_NAME"/>
+                    <empty/>
+                  </choice>
+                </attribute>
+              </optional>
+            </group>
+            <!-- callable -->
+          </choice>
           <optional>
+            <attribute name="enabled">
+              <data type="boolean"/>
+            </attribute>
+          </optional>
+          <optional>
+            <!-- default:false -->
             <attribute name="note"/>
           </optional>
+          <zeroOrMore>
+            <!-- overridden parameters (subset of feature parameters) for this scenario -->
+            <ref name="PARAMETER"/>
+          </zeroOrMore>
         </element>
       </zeroOrMore>
+    </element>
+  </define>
+  <define name="PARAMETER">
+    <element name="parameter">
+      <attribute name="name">
+        <ref name="SYMBOL_NAME"/>
+      </attribute>
+      <!-- unique name per feature -->
+      <attribute name="value">
+        <ref name="TEXT_NOT_EMPTY"/>
+      </attribute>
+      <optional>
+        <attribute name="note"/>
+      </optional>
     </element>
   </define>
   <define name="FACET">

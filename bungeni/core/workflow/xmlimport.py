@@ -122,13 +122,10 @@ def get_loaded_workflow(workflow_name):
         return None # no such workflow (or workflow not yet loaded)
 
 
-def load_params(feature_name, feature_elem):
+def load_params(feature_name, params_container_elem):
     # feature.parameter !+constraints, in models.feature_* ?
-    params = []
-    for param in feature_elem.iterchildren("parameter"):
-        name_value = param.get("name"), param.get("value")
-        assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value) #!+RNC
-        params.append(name_value)
+    params = [ (param.get("name"), param.get("value")) 
+        for param in params_container_elem.iterchildren("parameter") ]
     num_params, params = len(params), dict(params)
     assert num_params == len(params), \
         "Repeated parameters in feature %r" % (feature_name)
@@ -146,11 +143,36 @@ def load_features(workflow_name, workflow_elem):
         if feature_enabled and feature_name == "version":
             assert "audit" in [ fe.name for fe in workflow_features if fe.enabled ], \
                 "Workflow [%s] has version but no audit feature" % (workflow_name)
-        params = load_params(feature_name, f)
+        
+        # !+ if not feature_enabled, we still load the feature...
+        
+        whens = {}
+        default_params = load_params(feature_name, f)
+        whens[(None, None)] = feature._When(None, None, None, None, default_params)
+        for w in f.iterchildren("when"):
+            if not xab(w, "enabled"):
+                continue
+            subtype = xas(w, "subtype")
+            condition = xas(w, "condition")
+            assert (subtype, condition) not in whens, \
+                "Repeated <when> (%r, %r) discriminators in feature %r" % (
+                    subtype, condition, feature_name)
+            # condition is a python resolvable
+            condition_wrapped_callable = None
+            if condition is not None:
+                condition_wrapped_callable = capi.get_workflow_condition(condition)
+            whens[(subtype, condition)] = feature._When(
+                subtype, condition, condition_wrapped_callable, xas(w, "note"), 
+                load_params(feature_name, w))
+            # !+ param in Feature.feature_parameters
+            for param in whens[(subtype, condition)].params:
+                assert param in default_params, "<when> (%r, %r) parameter %r " \
+                    "not included in feature %r default parameters." % (
+                        subtype, condition, param, feature_name)
         
         workflow_features.append(
             feature.get_feature_cls(feature_name)(
-                feature_enabled, xas(f, "note"), params))
+                feature_enabled, xas(f, "note"), whens))
     return workflow_features
 
 

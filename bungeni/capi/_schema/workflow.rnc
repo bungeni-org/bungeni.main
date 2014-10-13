@@ -43,16 +43,38 @@ grammar {
     
     FEATURE = element feature {
         attribute name { SYMBOL_NAME },
-        attribute enabled { xsd:boolean },
+        attribute enabled { xsd:boolean }, # default:false
         attribute note { text }?,
         
-        element parameter { # !+ name by feature
-            attribute name { SYMBOL_NAME }, # !+ unique name per feature
-            attribute value { text },
-            attribute note { text }?
+        # default/fallback feature parameters
+        PARAMETER*,
+        
+        element when {
+            (
+                # only one of @subtype, @condition may be empty
+                (
+                    # subtype type_key must be a descendent of feature subordinate type
+                    attribute subtype { SYMBOL_NAME | empty }?,  # type_key
+                    attribute condition { SYMBOL_NAME }  # callable
+                )|(
+                    attribute subtype { SYMBOL_NAME },  # type_key
+                    attribute condition { SYMBOL_NAME | empty }?  # callable
+                )
+            ),
+            attribute enabled { xsd:boolean }?, # default:false
+            attribute note { text }?,
+            
+            # overridden parameters (subset of feature parameters) for this scenario
+            PARAMETER*
         }*
     }
     
+    PARAMETER = element parameter {
+            attribute name { SYMBOL_NAME }, # unique name per feature
+            attribute value { TEXT_NOT_EMPTY },
+            attribute note { text }?
+    }
+        
     FACET = element facet {
         attribute name { SYMBOL_NAME },
         attribute default { xsd:boolean }?, # default:false, may be true only once
@@ -111,7 +133,7 @@ grammar {
                 attribute roles { SPACE_SEPARATED_TOKENS }?)
         ),
         attribute order { xsd:integer }?, # default:0
-        attribute require_confirmation { xsd:boolean }?,  # default:false
+        attribute require_confirmation { xsd:boolean }?, # default:false
         attribute note { text }?
     }
     

@@ -48,4 +48,10 @@
       <param name="pattern">[A-Z]{2}|[a-z]{2}</param>
     </data>
   </define>
+  <!-- non-empty text value (the "text" type matches also empty text) -->
+  <define name="TEXT_NOT_EMPTY">
+    <data type="string">
+      <param name="pattern">.*[\S]+.*</param>
+    </data>
+  </define>
 </grammar>
