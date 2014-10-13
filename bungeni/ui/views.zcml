@@ -121,7 +121,9 @@
     />
 
     <!-- Reporting -->
-    <!-- !+Reports(mb, 09-2011) To use one interface for registration. -->
+    <!-- !+Reports(mb, 09-2011) To use one interface for registration.
+        !+GROUP_SCHEDULING
+    -->
     <browser:page name="create-report"
         for="bungeni.core.interfaces.ISchedulingContext"
         permission="bungeni.report.Edit"

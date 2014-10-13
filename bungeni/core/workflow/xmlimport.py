@@ -122,6 +122,19 @@ def get_loaded_workflow(workflow_name):
         return None # no such workflow (or workflow not yet loaded)
 
 
+def load_params(feature_name, feature_elem):
+    # feature.parameter !+constraints, in models.feature_* ?
+    params = []
+    for param in feature_elem.iterchildren("parameter"):
+        name_value = param.get("name"), param.get("value")
+        assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value) #!+RNC
+        params.append(name_value)
+    num_params, params = len(params), dict(params)
+    assert num_params == len(params), \
+        "Repeated parameters in feature %r" % (feature_name)
+    return params
+
+
 def load_features(workflow_name, workflow_elem):
     # all workflow features (enabled AND disabled)
     workflow_features = []
@@ -133,21 +146,11 @@ def load_features(workflow_name, workflow_elem):
         if feature_enabled and feature_name == "version":
             assert "audit" in [ fe.name for fe in workflow_features if fe.enabled ], \
                 "Workflow [%s] has version but no audit feature" % (workflow_name)
-        # feature.parameter !+constraints, in models.feature_* ?
-        params = []
-        for param in f.iterchildren("parameter"):
-            name_value = param.get("name"), param.get("value")
-            assert name_value[0] and name_value[1], (workflow_name, feature_name, name_value) #!+RNC
-            params.append(name_value)
-        num_params, params = len(params), dict(params)
-        assert num_params == len(params), \
-            "Repeated parameters in feature %r" % (feature_name)
+        params = load_params(feature_name, f)
         
         workflow_features.append(
             feature.get_feature_cls(feature_name)(
-                enabled=feature_enabled,
-                note=xas(f, "note"), 
-                **params))
+                feature_enabled, xas(f, "note"), params))
     return workflow_features
 
 

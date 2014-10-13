@@ -133,7 +133,7 @@ class Feature(object):
     def name(cls):
         return naming.polymorphic_identity(cls)
     
-    def __init__(self, enabled=True, note=None, **kws):
+    def __init__(self, enabled, note, kws):
         self.enabled = enabled
         self.note = note
         self.p = misc.bunch(**self.parse_parameters(kws))
@@ -279,6 +279,9 @@ class Sitting(Feature):
     feature_parameters = {
         "calendar_doc_types": dict(type="space_separated_type_keys", default=None,
             doc="doc types that are createable in the calendaring context"),
+        "report_templates": dict(type="space_separated_names", default=None,
+            doc="filenames (without the .html extension) for the report "
+                "templates supported by this group"),
     }
     subordinate_interface = model_ifaces.ISitting
     

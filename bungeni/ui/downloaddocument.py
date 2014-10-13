@@ -137,16 +137,15 @@ class DownloadDocument(BrowserView):
         which it may be used.
         """
         def default_template(templates):
-            default_templates = filter(lambda term: "default" in term.doctypes,
-                templates
-            )
+            default_templates = filter(
+                lambda term: "default" in term._doctypes, templates)
             if default_templates:
                 return default_templates[0].value
             return  None
         template_vocabulary = vocabulary.document_xhtml_template_factory()
-        doc_templates = [ term.value for term in template_vocabulary if 
-            self.document.type in term.doctypes
-        ]
+        doc_templates = [ 
+            term.value for term in template_vocabulary 
+            if self.document.type in term._doctypes ]
         log.debug("Looking for templates to generate [%s] report. Found : %s",
             self.document.type, doc_templates
         )

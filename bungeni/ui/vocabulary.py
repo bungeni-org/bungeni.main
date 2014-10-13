@@ -10,7 +10,7 @@ log = __import__("logging").getLogger("bungeni.ui.vocabulary")
 
 import glob
 import os
-import hashlib
+#import hashlib
 from lxml import etree
 
 from zope import interface
@@ -62,7 +62,7 @@ from bungeni.models.interfaces import (
     IScheduleContent,
     ISerializable
 )
-from bungeni.core.interfaces import IWorkspaceContainer #, ISchedulingContext
+from bungeni.core.interfaces import IWorkspaceContainer, ISchedulingContext
 
 from bungeni.core.translation import translated
 from bungeni.core.language import get_default_language
@@ -1418,65 +1418,59 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
     `bungeni_custom/reporting/templates/scheduling/`
     """
     terms = []
-    template_folder = "scheduling"
+    template_subfolder_name = "scheduling"
     
-    def __init__(self):
-        self.terms = self.buildTerms()
+    #def __init__(self):
     
-    def getTitle(self, path):
-        title = None
+    def get_title_from_template_file(self, path):
+        """Pick off title from template file or raise ValueError
+        """
         doctree = etree.fromstring(open(path).read())
         node = doctree.find("{%s}config/title" % BUNGENI_REPORTS_NS)
         if node is not None:
-            title = node.text
-        return title
+            return node.text
+        raise ValueError("No title node found in XHTML template file: %s", path)
     
-    def buildTerms(self):
-        vocabulary_terms = []
-        template_folder = capi.get_path_for("reporting", "templates", 
-            self.template_folder
-        )
-        if not os.path.exists(template_folder):
-            log.error("Directory for XHTML templates does not exist: %s",
-                template_folder
-            )
-            return
-        file_list = filter(lambda fname: fname.endswith(".html"),
-            os.listdir(template_folder)
-        )
-        for file_name in file_list:
-            file_path = os.path.join(template_folder, file_name)
-            vocabulary_terms.append(
-                vocabulary.SimpleTerm(file_path,
-                    token=hashlib.md5(file_name).hexdigest(),
-                    title=self.getTitle(file_path)
-                )
-            )
-        return vocabulary_terms
-
+    def build_terms(self, report_template_names):
+        terms = []
+        template_folder_path = capi.get_path_for("reporting", "templates", 
+            self.template_subfolder_name)
+        assert os.path.exists(template_folder_path), (
+            "Folder for XHTML templates does not exist: %s" % template_folder_path)
+        
+        for rt in report_template_names:
+            file_name = "%s.html" % (rt)
+            file_path = os.path.join(template_folder_path, file_name)
+            assert os.path.exists(file_path), (
+                "File for XHTML template %r does not exist: %s" % (rt, file_path))
+            terms.append(
+                vocabulary.SimpleTerm(
+                    value=file_path,
+                    token=rt, #!+hashlib.md5(file_name).hexdigest(),
+                    title=self.get_title_from_template_file(file_path)
+                ))
+        self.terms = terms #!+self.terms
+        return terms
+    
+    # !+self.terms
     def getTermByFileName(self, file_name):
-        """Get the vocabulary term with the file_name.
+        """Get the vocabulary term with the file_name or None.
         """
         for term in self.terms:
             if os.path.basename(term.value).startswith(file_name):
                 return term
-        return None
     
     def __call__(self, context):
-        return vocabulary.SimpleVocabulary(self.terms)
+        assert ISchedulingContext.providedBy(context), context
+        group = removeSecurityProxy(context.get_group())
+        assert group.sitting_feature.enabled, group
+        # !+ Feature.get_param(name, (subtype, condition))
+        report_template_names = group.sitting_feature.p["report_templates"]
+        terms = self.build_terms(report_template_names)
+        return vocabulary.SimpleVocabulary(terms)
 report_xhtml_template_factory = ReportXHTMLTemplateFactory()
 #!+
 
-def update_term_doctype(term):
-    template_file = open(term.value)
-    doctree = etree.fromstring(template_file.read())
-    node = doctree.find("{%s}config/doctypes" % BUNGENI_REPORTS_NS)
-    if node is None:
-        term.doctypes = []
-    else:
-        term.doctypes = [ dtype.strip() for dtype in node.text.split() ]
-    template_file.close()
-    return term
 
 class DocumentXHTMLTemplateFactory(ReportXHTMLTemplateFactory):
     """XHTML templates for publication of documents in other formats.
@@ -1484,16 +1478,36 @@ class DocumentXHTMLTemplateFactory(ReportXHTMLTemplateFactory):
     Templates can be customized or added in:
     `bungeni_custom/reporting/templates/documents`
     """
-    template_folder = "documents"
+    template_subfolder_name = "documents"
     
     def __init__(self):
         super(DocumentXHTMLTemplateFactory, self).__init__()
-        self.updateTermDocTypes()
     
-    def updateTermDocTypes(self):
-        """Read configuration options and update terms with doctype property.
+    def update_term_doctypes(self, term):
+        """Read configuration options and update term with doctype property.
         """
-        self.terms = map(update_term_doctype, self.terms)
+        if hasattr(term, "_doctypes"):
+            term._doctypes[:] = []
+        else:
+            term._doctypes = []
+        doctree = etree.fromstring(open(term.value).read())
+        node = doctree.find("{%s}config/doctypes" % BUNGENI_REPORTS_NS)
+        if node is not None:
+            term._doctypes = [ dtype.strip() for dtype in node.text.split() ]
+    
+    def __call__(self, context):
+        # !+ "document_templates" feature parameter, on which types?
+        # for now infer the value of template names off the file system...
+        template_folder_path = capi.get_path_for("reporting", "templates", 
+            self.template_subfolder_name)
+        assert os.path.exists(template_folder_path), (
+            "Folder for XHTML templates does not exist: %s" % template_folder_path)
+        template_names = [
+            os.path.splitext(os.path.split(fpath)[1])[0]
+            for fpath in glob.glob(os.path.join(template_folder_path, "*.html")) ]
+        terms = self.build_terms(template_names)
+        map(self.update_term_doctypes, terms)
+        return vocabulary.SimpleVocabulary(terms)
 document_xhtml_template_factory = DocumentXHTMLTemplateFactory()
 #!+
 
@@ -1502,9 +1516,8 @@ class WorkflowedTypeVocabulary(BaseVocabularyFactory):
     """A vocabulary of workflowed types
     """
     def __call__(self, context):
-        terms = [vocabulary.SimpleTerm(value="*", token="*",
-                title=_("* All types *")
-        )]
+        terms = [
+            vocabulary.SimpleTerm(value="*", token="*", title=_("* All types *"))]
         for (type_key, info) in capi.iter_type_info():
             if not ISerializable.implementedBy(info.domain_model):
                 continue

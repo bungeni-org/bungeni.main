@@ -892,6 +892,7 @@
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.ManageContent"
     />
+    <!-- !+GROUP_SCHEDULING for chamber -->
     <browser:menuItem menu="context_actions"
         for="bungeni.core.schedule.WorkspaceSchedulingContext"
         action="./index/create-report"
@@ -900,6 +901,7 @@
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         order="40"
     />
+    <!-- !+GROUP_SCHEDULING for other groups -->
     <browser:menuItem menu="context_actions"
         for="bungeni.core.schedule.GroupSchedulingContext"
         action="./create-report"
@@ -908,6 +910,7 @@
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         order="40"
     />
+    <!-- !+GROUP_SCHEDULING -->
     <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.IWorkspaceUnderConsiderationContainer"
         layer=".interfaces.IWorkspaceUnderConsiderationSectionLayer"
