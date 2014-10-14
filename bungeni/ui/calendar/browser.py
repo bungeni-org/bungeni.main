@@ -1214,7 +1214,7 @@ class AgendaPreview(BrowserView):
         if "minutes" in sitting.status:
             title = generator.title = _(u"Sitting Votes and Proceedings")
         else:
-            title = generator.title = _(u"Sitting Agenda")
+            title = generator.title = _(u"Order of the day")
         generator.context = data.ReportContext(
             sittings=sittings, title=title
         )

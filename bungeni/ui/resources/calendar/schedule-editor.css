@@ -127,6 +127,10 @@ span.dt_title_unit{
   margin:25% !important;
 }
 
+#minute-editor_c {
+  margin-left:15% !important;
+}
+
 #text-records-dialog .bd {
     height: 40em;
     overflow: auto;
@@ -134,7 +138,7 @@ span.dt_title_unit{
 }
 
 #minute-editor {
-    width: 60em;
+    width: 300% !important;
 }
 
 #agenda-preview-dialog_c {
@@ -156,6 +160,24 @@ span.dt_title_unit{
 .yui-skin-sam #scheduler-layout .yui-layout-wrap .yui-button {
     margin-top: .20em;
 }
+
+#scheduler-layout .yui-dt th.yui-dt-col-row_controls {
+    width: 18.5% !important;
+}
+
+#scheduler-layout .yui-dt th.yui-dt-col-item_title {
+    width: 81.5% !important;
+}
+
+#scheduler-layout td.yui-dt-first {
+    width: 18.5% !important;
+} 
+
+
+#scheduler-layout td.yui-dt-last {
+    width: 81.5% !important;
+} 
+
 
 #yui-gen0 .yui-button,
 #yui-gen0 .yui-radio-button {

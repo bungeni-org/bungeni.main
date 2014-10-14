@@ -155,7 +155,7 @@ class SittingDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         context = _merged(self.context)
-        return "%s %s, %s %s %s" % (translate(_(u"Sitting:")), 
+        return "%s %s, %s %s" % ( 
                 self.translate(context.group, "short_name"), 
                 context.start_date.strftime('%Y-%m-%d, %H:%M'), 
                 _(u"to"), 
@@ -163,7 +163,7 @@ class SittingDescriptiveProperties(DescriptiveProperties):
     
     @property
     def duration(self):
-        return "%s &rarr; %s" % (
+        return "%s - %s" % (
             self.formatDate(self.context.start_date, "dateTime"),
             self.formatDate(self.context.end_date, "dateTime"))
     

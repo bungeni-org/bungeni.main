@@ -299,12 +299,12 @@ def default_reports(sitting, event):
     if "published" in sitting.status:
         sitting = removeSecurityProxy(sitting)
         report_type = "sitting_agenda"
-        report_title = _("report_title_sitting_agenda", 
-            default=u"Sitting Agenda")
+        report_title = _("report_title_order_of_the_day", 
+            default=u"Order of the day")
         if "minutes" in sitting.status:
             report_type = "sitting_minutes"
             report_title =  _("report_title_votes_and_proceedings", 
-                default=u"Sitting Votes and Proceedings")
+                default=u"Votes and Proceedings")
         sittings = [ExpandedSitting(sitting)]
         report = domain.Report()
         session = Session()
