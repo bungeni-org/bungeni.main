@@ -315,8 +315,11 @@ def default_reports(sitting, event):
         report.group_id = sitting.group_id
         # generate using html template in bungeni_custom
         vocab = vocabulary.report_xhtml_template_factory(sitting)
-        term = vocab.getTermByFileName(report_type)
-        doc_template = term and term.value or vocab.terms[0].value
+        try:
+            term = vocab.getTermByToken(report_type)
+            doc_template = term and term.value    
+        except LookupError:
+            doc_template = vocab._terms[0].value
         generator = generators.ReportGeneratorXHTML(doc_template)
         generator.title = report_title
         report_title_i18n = translate(report_title, 

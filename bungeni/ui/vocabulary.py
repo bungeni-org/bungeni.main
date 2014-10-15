@@ -1425,6 +1425,7 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
     def get_title_from_template_file(self, path):
         """Pick off title from template file or raise ValueError
         """
+        log.debug("[%s] get_title_from_template_file: %s", self, path)
         doctree = etree.fromstring(open(path).read())
         node = doctree.find("{%s}config/title" % BUNGENI_REPORTS_NS)
         if node is not None:
