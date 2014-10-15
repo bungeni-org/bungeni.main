@@ -1461,8 +1461,12 @@ class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
                 return term
     
     def __call__(self, context):
-        assert ISchedulingContext.providedBy(context), context
-        group = removeSecurityProxy(context.get_group())
+        group = None
+        if ISchedulingContext.providedBy(context):
+            group = removeSecurityProxy(context.get_group())
+        elif IScheduleContent.providedBy(context):
+            group = removeSecurityProxy(context.group)
+        assert group, group
         assert group.sitting_feature.enabled, group
         report_template_names = group.sitting_feature.get_param("report_templates", context=group)
         terms = self.build_terms(report_template_names)
