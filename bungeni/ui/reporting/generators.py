@@ -137,8 +137,8 @@ class _BaseGenerator(object):
     title = _(u"Report")
     language = None
     
-    def __init__(self, report_template_file, context=None):
-        self.report_template_file = report_template_file
+    def __init__(self, report_template_path, context=None):
+        self.report_template_path = report_template_path
         self.context = context
         self.load_configuration()
     
@@ -163,8 +163,8 @@ class ReportGeneratorXHTML(_BaseGenerator):
     def load_configuration(self):
         """Process report template for configuration
         """
-        if os.path.exists(self.report_template_file):
-            template_file = open(self.report_template_file)
+        if os.path.exists(self.report_template_path):
+            template_file = open(self.report_template_path)
             file_string = template_file.read()
             self.report_template = etree.fromstring(file_string)
             template_file.close()
@@ -183,7 +183,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
             raise ReportException(
                 _(u"report-template-missing",
                     default=u"Report template file does not exist at ${path}",
-                    mapping={"path": self.report_template_file}
+                    mapping={"path": self.report_template_path}
                 )
             )
     

@@ -316,11 +316,15 @@ def default_reports(sitting, event):
         # generate using html template in bungeni_custom
         vocab = vocabulary.report_xhtml_template_factory(sitting)
         try:
-            term = vocab.getTermByToken(report_type)
-            doc_template = term and term.value    
+            report_template_path = vocab.getTermByToken(report_type).value
         except LookupError:
-            doc_template = vocab._terms[0].value
-        generator = generators.ReportGeneratorXHTML(doc_template)
+            vtokens = [ t.token for t in vocab._terms ]
+            log.warning("Sitting %s Workflow Transition Handler - "
+                "entry for report type %r NOT found in vocabulary: %s - "
+                "proceeding with the template for first entry found: %r ",
+                    sitting, report_type, vtokens, vtokens[0])
+            report_template_path = vocab._terms[0].value
+        generator = generators.ReportGeneratorXHTML(report_template_path)
         generator.title = report_title
         report_title_i18n = translate(report_title, 
             target_language=generator.language)

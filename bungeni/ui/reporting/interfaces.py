@@ -15,7 +15,7 @@ class IReportGenerator(Interface):
     """Specification for report generation"""
     
     context = Attribute("""Context for which report is being generated""")
-    report_template_file = Attribute("""Filesystem path to report template""")
+    report_template_path = Attribute("""Filesystem path to report template file""")
     report_template = Attribute("""Parsed report template document tree""")
     coverage = Attribute("""Period in hours covered by the report""")
     title = Attribute("""Title of the report""")
