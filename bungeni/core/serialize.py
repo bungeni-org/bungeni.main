@@ -860,7 +860,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                     # parent.
                     result[mproperty.key].append(obj2dict(item, depth-1, 
                             parent=obj,
-                            include=[],
+                            include=["owner"],
                             exclude=exclude + INNER_EXCLUDES,
                             lang=lang,
                             root_key=root_key
@@ -868,7 +868,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
             else:
                 result[mproperty.key] = obj2dict(value, depth-1, 
                     parent=obj,
-                    include=[],
+                    include=["owner"],
                     exclude=exclude + INNER_EXCLUDES,
                     lang=lang,
                     root_key=root_key
