@@ -313,6 +313,7 @@ def default_reports(sitting, event):
         report.owner_id = get_login_user().user_id
         report.created_date = datetime.datetime.now()
         report.group_id = sitting.group_id
+        # !+ReportXHTMLTemplateFactory
         # generate using html template in bungeni_custom
         vocab = vocabulary.report_xhtml_template_factory(sitting)
         try:

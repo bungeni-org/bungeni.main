@@ -1143,6 +1143,7 @@ class ScheduleAddView(BrowserView):
         self.saveSchedule()
         return json.dumps(dict(messages=self.messages))
 
+
 class DiscussionAddView(BrowserView):
     messages = []
     def __init__(self, context, request):
@@ -1191,25 +1192,37 @@ class DiscussionAddView(BrowserView):
         self.saveDiscussions()
         return json.dumps(dict(messages=self.messages))
 
+
 class AgendaPreview(BrowserView):
-    """View to display an agenda preview using HTML template in bungeni_custom
+    """View to display an agenda preview using HTML template in bungeni_custom.
     """
     def __init__(self, context, request):
         super(AgendaPreview, self).__init__(context, request)
-
-    def get_template(self):
-        vocab = vocabulary.report_xhtml_template_factory
+    
+    def get_report_template_path(self):
+        sitting = removeSecurityProxy(self.context)
+        # !+ReportXHTMLTemplateFactory
+        vocab = vocabulary.report_xhtml_template_factory(sitting)
+        #!+report_templates(mr, aug-2014) externalize logic off feature parameter 
         report_type = "sitting_agenda"
         #!+TAGS(mb, Feb-2013) Deprecate with tags. Configure as wf/feature.
-        if "minutes" in self.context.status:
+        if "minutes" in sitting.status:
             report_type = "sitting_minutes"
-        term = vocab.getTermByFileName(report_type)
-        return term and term.value or vocab.terms[0].value
-
+        try:
+            report_template_path = vocab.getTermByToken(report_type).value
+        except LookupError:
+            vtokens = [ t.token for t in vocab._terms ]
+            log.warning("Sitting %s Workflow Transition Handler - "
+                "entry for report type %r NOT found in vocabulary: %s - "
+                "proceeding with the template for first entry found: %r ",
+                    sitting, report_type, vtokens, vtokens[0])
+            report_template_path = vocab._terms[0].value
+        return report_template_path
+    
     def generate_preview(self):
         sitting = removeSecurityProxy(self.context)
         sittings = [data.ExpandedSitting(sitting)]
-        generator = generators.ReportGeneratorXHTML(self.get_template())
+        generator = generators.ReportGeneratorXHTML(self.get_report_template_path())
         #!+TAGS(mb, Feb-2013) Deprecate with tags. Configure as wf/feature.
         if "minutes" in sitting.status:
             title = generator.title = _(u"Sitting Votes and Proceedings")
@@ -1219,7 +1232,9 @@ class AgendaPreview(BrowserView):
             sittings=sittings, title=title
         )
         return generator.generate_report(self.request)
-
+    
     def __call__(self):
         self.request.response.setHeader("Content-type", "text/html")
         return self.generate_preview()
+
+
