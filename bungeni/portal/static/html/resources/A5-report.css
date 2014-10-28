@@ -72,7 +72,7 @@ dd.SittingReport #report_id
 dd.Report div.content-right-column,
 dd.SittingReport div.content-right-column
 {
-    width:100%;
+    width:100% !important;
     line-height:normal;
 }
 #searchButtonDiv{
