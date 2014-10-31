@@ -320,6 +320,13 @@ def default_reports(sitting, event):
             report_template_path = vocab.getTermByToken(report_type).value
         except LookupError:
             vtokens = [ t.token for t in vocab._terms ]
+            # first check if we have any values in the reports vocab for this context
+            if not vtokens:
+                log.error("Sitting %s Workflow Transition Handler - "
+                    "entry for report type %r NOT found in EMPTY vocabulary: %s", 
+                        sitting, report_type, vtokens)
+                raise
+            # ok, as a tmp workaround, pick off the first term value in the reports vocab
             log.warning("Sitting %s Workflow Transition Handler - "
                 "entry for report type %r NOT found in vocabulary: %s - "
                 "proceeding with the template for first entry found: %r ",
