@@ -858,13 +858,27 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None, root_ke
                     # for child objects, because they get serialized independently anyway, changing
                     # depth to depth-1 so all dependent objects are iterated 1 level lower than the 
                     # parent.
-                    result[mproperty.key].append(obj2dict(item, depth-1, 
+                    # UPDATE(ah, 2014-11-03) Item Schedule is an exceptional case of an object 
+                    # whose context is within a parent container but is not visible outside of the sitting
+                    # it is not a type defined in types.xml and does not have its own 
+                    # wokflow so we need to handle that in a unique way
+                    # we don't decrement the depth and instead process it as is 
+                    active_depth = depth
+                    if item.__class__.__name__ == "ItemSchedule":
+                        active_depth = depth
+                    else:
+                        active_depth = depth-1
+                    result[mproperty.key].append(
+                         obj2dict(
+                            item,
+                            active_depth, 
                             parent=obj,
-                            include=["owner"],
+                            include=["owner", "item_schedule", "item_schedule_discussion"],
                             exclude=exclude + INNER_EXCLUDES,
                             lang=lang,
                             root_key=root_key
-                    ))
+                         )
+                    )
             else:
                 result[mproperty.key] = obj2dict(value, depth-1, 
                     parent=obj,
